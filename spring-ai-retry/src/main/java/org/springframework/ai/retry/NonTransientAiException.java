@@ -17,6 +17,7 @@
 package org.springframework.ai.retry;
 
 /**
+ * <p>非瞬时AI异常。</p>
  * Root of the hierarchy of Model access exceptions that are considered non-transient -
  * where a retry of the same operation would fail unless the cause of the Exception is
  * corrected.

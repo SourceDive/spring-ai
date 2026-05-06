@@ -277,95 +277,94 @@ public class TransformersEmbeddingModel extends AbstractEmbeddingModel implement
 	@Override
 	public List<float[]> embed(List<String> texts) {
 		return this.call(new EmbeddingRequest(texts, EmbeddingOptionsBuilder.builder().build()))
-			.getResults()
-			.stream()
-			.map(e -> e.getOutput())
-			.toList();
+				.getResults()
+				.stream()
+				.map(e -> e.getOutput())
+				.toList();
 	}
 
 	@Override
 	public EmbeddingResponse call(EmbeddingRequest request) {
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(request)
-			.provider(AiProvider.ONNX.value())
-			.build();
+				.embeddingRequest(request)
+				.provider(AiProvider.ONNX.value())
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				List<float[]> resultEmbeddings = new ArrayList<>();
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					List<float[]> resultEmbeddings = new ArrayList<>();
 
-				try {
+					try {
 
-					Encoding[] encodings = this.tokenizer.batchEncode(request.getInstructions());
+						Encoding[] encodings = this.tokenizer.batchEncode(request.getInstructions());
 
-					long[][] input_ids0 = new long[encodings.length][];
-					long[][] attention_mask0 = new long[encodings.length][];
-					long[][] token_type_ids0 = new long[encodings.length][];
+						long[][] input_ids0 = new long[encodings.length][];
+						long[][] attention_mask0 = new long[encodings.length][];
+						long[][] token_type_ids0 = new long[encodings.length][];
 
-					for (int i = 0; i < encodings.length; i++) {
-						input_ids0[i] = encodings[i].getIds();
-						attention_mask0[i] = encodings[i].getAttentionMask();
-						token_type_ids0[i] = encodings[i].getTypeIds();
-					}
+						for (int i = 0; i < encodings.length; i++) {
+							input_ids0[i] = encodings[i].getIds();
+							attention_mask0[i] = encodings[i].getAttentionMask();
+							token_type_ids0[i] = encodings[i].getTypeIds();
+						}
 
-					try (OnnxTensor inputIds = OnnxTensor.createTensor(this.environment, input_ids0);
-							OnnxTensor attentionMask = OnnxTensor.createTensor(this.environment, attention_mask0);
-							OnnxTensor tokenTypeIds = OnnxTensor.createTensor(this.environment, token_type_ids0);) {
+						try (OnnxTensor inputIds = OnnxTensor.createTensor(this.environment, input_ids0);
+						     OnnxTensor attentionMask = OnnxTensor.createTensor(this.environment, attention_mask0);
+						     OnnxTensor tokenTypeIds = OnnxTensor.createTensor(this.environment, token_type_ids0);) {
 
-						Map<String, OnnxTensor> modelInputs = Map.of("input_ids", inputIds, "attention_mask",
-								attentionMask, "token_type_ids", tokenTypeIds);
+							Map<String, OnnxTensor> modelInputs = Map.of("input_ids", inputIds, "attention_mask",
+									attentionMask, "token_type_ids", tokenTypeIds);
 
-						modelInputs = removeUnknownModelInputs(modelInputs);
+							modelInputs = removeUnknownModelInputs(modelInputs);
 
-						// The Run result object is AutoCloseable to prevent references
-						// from leaking out. Once the Result object is
-						// closed, all it’s child OnnxValues are closed too.
-						try (OrtSession.Result results = this.session.run(modelInputs)) {
+							// The Run result object is AutoCloseable to prevent references
+							// from leaking out. Once the Result object is
+							// closed, all it’s child OnnxValues are closed too.
+							try (OrtSession.Result results = this.session.run(modelInputs)) {
 
-							// OnnxValue lastHiddenState = results.get(0);
-							OnnxValue lastHiddenState = results.get(this.modelOutputName).get();
+								// OnnxValue lastHiddenState = results.get(0);
+								OnnxValue lastHiddenState = results.get(this.modelOutputName).get();
 
-							// 0 - batch_size (1..x)
-							// 1 - sequence_length (128)
-							// 2 - embedding dimensions (384)
-							float[][][] tokenEmbeddings = (float[][][]) lastHiddenState.getValue();
+								// 0 - batch_size (1..x)
+								// 1 - sequence_length (128)
+								// 2 - embedding dimensions (384)
+								float[][][] tokenEmbeddings = (float[][][]) lastHiddenState.getValue();
 
-							try (NDManager manager = NDManager.newBaseManager()) {
-								NDArray ndTokenEmbeddings = create(tokenEmbeddings, manager);
-								NDArray ndAttentionMask = manager.create(attention_mask0);
+								try (NDManager manager = NDManager.newBaseManager()) {
+									NDArray ndTokenEmbeddings = create(tokenEmbeddings, manager);
+									NDArray ndAttentionMask = manager.create(attention_mask0);
 
-								NDArray embedding = meanPooling(ndTokenEmbeddings, ndAttentionMask);
+									NDArray embedding = meanPooling(ndTokenEmbeddings, ndAttentionMask);
 
-								for (int i = 0; i < embedding.size(0); i++) {
-									resultEmbeddings.add(embedding.get(i).toFloatArray());
+									for (int i = 0; i < embedding.size(0); i++) {
+										resultEmbeddings.add(embedding.get(i).toFloatArray());
+									}
 								}
 							}
 						}
+					} catch (OrtException ex) {
+						throw new RuntimeException(ex);
 					}
-				}
-				catch (OrtException ex) {
-					throw new RuntimeException(ex);
-				}
 
-				var indexCounter = new AtomicInteger(0);
+					var indexCounter = new AtomicInteger(0);
 
-				EmbeddingResponse embeddingResponse = new EmbeddingResponse(
-						resultEmbeddings.stream().map(e -> new Embedding(e, indexCounter.incrementAndGet())).toList());
-				observationContext.setResponse(embeddingResponse);
+					EmbeddingResponse embeddingResponse = new EmbeddingResponse(
+							resultEmbeddings.stream().map(e -> new Embedding(e, indexCounter.incrementAndGet())).toList());
+					observationContext.setResponse(embeddingResponse);
 
-				return embeddingResponse;
-			});
+					return embeddingResponse;
+				});
 	}
 
 	private Map<String, OnnxTensor> removeUnknownModelInputs(Map<String, OnnxTensor> modelInputs) {
 
 		return modelInputs.entrySet()
-			.stream()
-			.filter(a -> this.onnxModelInputs.contains(a.getKey()))
-			.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+				.stream()
+				.filter(a -> this.onnxModelInputs.contains(a.getKey()))
+				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
 
 	}
 
@@ -387,17 +386,17 @@ public class TransformersEmbeddingModel extends AbstractEmbeddingModel implement
 	private NDArray meanPooling(NDArray tokenEmbeddings, NDArray attentionMask) {
 
 		NDArray attentionMaskExpanded = attentionMask.expandDims(-1)
-			.broadcast(tokenEmbeddings.getShape())
-			.toType(DataType.FLOAT32, false);
+				.broadcast(tokenEmbeddings.getShape())
+				.toType(DataType.FLOAT32, false);
 
 		// Multiply token embeddings with expanded attention mask
 		NDArray weightedEmbeddings = tokenEmbeddings.mul(attentionMaskExpanded);
 
 		// Sum along the appropriate axis
-		NDArray sumEmbeddings = weightedEmbeddings.sum(new int[] { EMBEDDING_AXIS });
+		NDArray sumEmbeddings = weightedEmbeddings.sum(new int[]{EMBEDDING_AXIS});
 
 		// Clamp the attention mask sum to avoid division by zero
-		NDArray sumMask = attentionMaskExpanded.sum(new int[] { EMBEDDING_AXIS }).clip(1e-9f, Float.MAX_VALUE);
+		NDArray sumMask = attentionMaskExpanded.sum(new int[]{EMBEDDING_AXIS}).clip(1e-9f, Float.MAX_VALUE);
 
 		// Divide sum embeddings by sum mask
 		return sumEmbeddings.div(sumMask);
@@ -405,6 +404,7 @@ public class TransformersEmbeddingModel extends AbstractEmbeddingModel implement
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(EmbeddingModelObservationConvention observationConvention) {

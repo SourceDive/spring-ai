@@ -111,16 +111,16 @@ public class QuestionAnswerAdvisorTests {
 		// @formatter:on
 
 		given(this.vectorStore.similaritySearch(this.vectorSearchCaptor.capture()))
-			.willReturn(List.of(new Document("doc1"), new Document("doc2")));
+				.willReturn(List.of(new Document("doc1"), new Document("doc2")));
 
 		var qaAdvisor = QuestionAnswerAdvisor.builder(this.vectorStore)
-			.searchRequest(SearchRequest.builder().similarityThreshold(0.99d).topK(6).build())
-			.build();
+				.searchRequest(SearchRequest.builder().similarityThreshold(0.99d).topK(6).build())
+				.build();
 
 		var chatClient = ChatClient.builder(this.chatModel)
-			.defaultSystem("Default system text.")
-			.defaultAdvisors(qaAdvisor)
-			.build();
+				.defaultSystem("Default system text.")
+				.defaultAdvisors(qaAdvisor)
+				.build();
 
 		// @formatter:off
 		var response = chatClient.prompt()

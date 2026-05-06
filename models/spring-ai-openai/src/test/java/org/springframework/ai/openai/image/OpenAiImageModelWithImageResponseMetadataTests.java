@@ -107,9 +107,9 @@ public class OpenAiImageModelWithImageResponseMetadataTests {
 		httpHeaders.set(OpenAiApiResponseHeaders.TOKENS_RESET_HEADER.getName(), "27h55s451ms");
 
 		this.server.expect(requestTo(StringContains.containsString("v1/images/generations")))
-			.andExpect(method(HttpMethod.POST))
-			.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
-			.andRespond(withSuccess(getJson(), MediaType.APPLICATION_JSON).headers(httpHeaders));
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
+				.andRespond(withSuccess(getJson(), MediaType.APPLICATION_JSON).headers(httpHeaders));
 
 	}
 

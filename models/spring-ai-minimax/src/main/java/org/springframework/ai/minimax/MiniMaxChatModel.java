@@ -128,8 +128,9 @@ public class MiniMaxChatModel implements ChatModel {
 
 	/**
 	 * Creates an instance of the MiniMaxChatModel.
+	 *
 	 * @param miniMaxApi The MiniMaxApi instance to be used for interacting with the
-	 * MiniMax Chat API.
+	 *                   MiniMax Chat API.
 	 * @throws IllegalArgumentException if MiniMaxApi is null
 	 */
 	public MiniMaxChatModel(MiniMaxApi miniMaxApi) {
@@ -138,9 +139,10 @@ public class MiniMaxChatModel implements ChatModel {
 
 	/**
 	 * Initializes an instance of the MiniMaxChatModel.
+	 *
 	 * @param miniMaxApi The MiniMaxApi instance to be used for interacting with the
-	 * MiniMax Chat API.
-	 * @param options The MiniMaxChatOptions to configure the chat model.
+	 *                   MiniMax Chat API.
+	 * @param options    The MiniMaxChatOptions to configure the chat model.
 	 */
 	public MiniMaxChatModel(MiniMaxApi miniMaxApi, MiniMaxChatOptions options) {
 		this(miniMaxApi, options, ToolCallingManager.builder().build(), RetryUtils.DEFAULT_RETRY_TEMPLATE);
@@ -148,9 +150,10 @@ public class MiniMaxChatModel implements ChatModel {
 
 	/**
 	 * Initializes a new instance of the MiniMaxChatModel.
-	 * @param miniMaxApi The MiniMaxApi instance to be used for interacting with the
-	 * MiniMax Chat API.
-	 * @param options The MiniMaxChatOptions to configure the chat model.
+	 *
+	 * @param miniMaxApi         The MiniMaxApi instance to be used for interacting with the
+	 *                           MiniMax Chat API.
+	 * @param options            The MiniMaxChatOptions to configure the chat model.
 	 * @param toolCallingManager The tool calling manager.
 	 */
 	public MiniMaxChatModel(MiniMaxApi miniMaxApi, MiniMaxChatOptions options, ToolCallingManager toolCallingManager) {
@@ -159,30 +162,32 @@ public class MiniMaxChatModel implements ChatModel {
 
 	/**
 	 * Initializes a new instance of the MiniMaxChatModel.
-	 * @param miniMaxApi The MiniMaxApi instance to be used for interacting with the
-	 * MiniMax Chat API.
-	 * @param options The MiniMaxChatOptions to configure the chat model.
+	 *
+	 * @param miniMaxApi         The MiniMaxApi instance to be used for interacting with the
+	 *                           MiniMax Chat API.
+	 * @param options            The MiniMaxChatOptions to configure the chat model.
 	 * @param toolCallingManager The tool calling manager.
-	 * @param retryTemplate The retry template.
+	 * @param retryTemplate      The retry template.
 	 */
 	public MiniMaxChatModel(MiniMaxApi miniMaxApi, MiniMaxChatOptions options, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate) {
+	                        RetryTemplate retryTemplate) {
 		this(miniMaxApi, options, toolCallingManager, retryTemplate, ObservationRegistry.NOOP,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
 	/**
 	 * Initializes a new instance of the MiniMaxChatModel.
-	 * @param miniMaxApi The MiniMaxApi instance to be used for interacting with the
-	 * MiniMax Chat API.
-	 * @param options The MiniMaxChatOptions to configure the chat model.
-	 * @param retryTemplate The retry template.
-	 * @param observationRegistry The ObservationRegistry used for instrumentation.
+	 *
+	 * @param miniMaxApi                        The MiniMaxApi instance to be used for interacting with the
+	 *                                          MiniMax Chat API.
+	 * @param options                           The MiniMaxChatOptions to configure the chat model.
+	 * @param retryTemplate                     The retry template.
+	 * @param observationRegistry               The ObservationRegistry used for instrumentation.
 	 * @param toolExecutionEligibilityPredicate The Tool
 	 */
 	public MiniMaxChatModel(MiniMaxApi miniMaxApi, MiniMaxChatOptions options, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	                        RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
+	                        ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 		Assert.notNull(miniMaxApi, "MiniMaxApi must not be null");
 		Assert.notNull(options, "Options must not be null");
 		Assert.notNull(toolCallingManager, "toolCallingManager cannot be null");
@@ -200,31 +205,30 @@ public class MiniMaxChatModel implements ChatModel {
 	private static Generation buildGeneration(Choice choice, Map<String, Object> metadata) {
 		List<AssistantMessage.ToolCall> toolCalls = choice.message().toolCalls() == null ? List.of()
 				: choice.message()
-					.toolCalls()
-					.stream()
-					// the MiniMax's stream function calls response are really odd
-					// occasionally, tool call might get split.
-					// for example, id empty means the previous tool call is not finished,
-					// the toolCalls:
-					// [{id:'1',function:{name:'a'}},{id:'',function:{arguments:'[1]'}}]
-					// these need to be merged into [{id:'1', name:'a', arguments:'[1]'}]
-					// it worked before, maybe the model provider made some adjustments
-					.reduce(new ArrayList<>(), (acc, current) -> {
-						if (!acc.isEmpty() && current.id().isEmpty()) {
-							AssistantMessage.ToolCall prev = acc.get(acc.size() - 1);
-							acc.set(acc.size() - 1, new AssistantMessage.ToolCall(prev.id(), prev.type(), prev.name(),
-									current.function().arguments()));
-						}
-						else {
-							AssistantMessage.ToolCall currentToolCall = new AssistantMessage.ToolCall(current.id(),
-									current.type(), current.function().name(), current.function().arguments());
-							acc.add(currentToolCall);
-						}
-						return acc;
-					}, (acc1, acc2) -> {
-						acc1.addAll(acc2);
-						return acc1;
-					});
+				  .toolCalls()
+				  .stream()
+				// the MiniMax's stream function calls response are really odd
+				// occasionally, tool call might get split.
+				// for example, id empty means the previous tool call is not finished,
+				// the toolCalls:
+				// [{id:'1',function:{name:'a'}},{id:'',function:{arguments:'[1]'}}]
+				// these need to be merged into [{id:'1', name:'a', arguments:'[1]'}]
+				// it worked before, maybe the model provider made some adjustments
+				  .reduce(new ArrayList<>(), (acc, current) -> {
+					  if (!acc.isEmpty() && current.id().isEmpty()) {
+						  AssistantMessage.ToolCall prev = acc.get(acc.size() - 1);
+						  acc.set(acc.size() - 1, new AssistantMessage.ToolCall(prev.id(), prev.type(), prev.name(),
+								  current.function().arguments()));
+					  } else {
+						  AssistantMessage.ToolCall currentToolCall = new AssistantMessage.ToolCall(current.id(),
+								  current.type(), current.function().name(), current.function().arguments());
+						  acc.add(currentToolCall);
+					  }
+					  return acc;
+				  }, (acc1, acc2) -> {
+					  acc1.addAll(acc2);
+					  return acc1;
+				  });
 		var assistantMessage = new AssistantMessage(choice.message().content(), metadata, toolCalls);
 		String finishReason = (choice.finishReason() != null ? choice.finishReason().name() : "");
 		var generationMetadata = ChatGenerationMetadata.builder().finishReason(finishReason).build();
@@ -239,34 +243,34 @@ public class MiniMaxChatModel implements ChatModel {
 		ChatCompletionRequest request = createRequest(requestPrompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(requestPrompt)
-			.provider(MiniMaxApiConstants.PROVIDER_NAME)
-			.build();
+				.prompt(requestPrompt)
+				.provider(MiniMaxApiConstants.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ResponseEntity<ChatCompletion> completionEntity = this.retryTemplate
-					.execute(ctx -> this.miniMaxApi.chatCompletionEntity(request));
+					ResponseEntity<ChatCompletion> completionEntity = this.retryTemplate
+							.execute(ctx -> this.miniMaxApi.chatCompletionEntity(request));
 
-				var chatCompletion = completionEntity.getBody();
+					var chatCompletion = completionEntity.getBody();
 
-				if (chatCompletion == null) {
-					logger.warn("No chat completion returned for prompt: {}", requestPrompt);
-					return new ChatResponse(List.of());
-				}
+					if (chatCompletion == null) {
+						logger.warn("No chat completion returned for prompt: {}", requestPrompt);
+						return new ChatResponse(List.of());
+					}
 
-				List<Choice> choices = chatCompletion.choices();
-				if (choices == null) {
-					logger.warn("No choices returned for prompt: {}, because: {}}", requestPrompt,
-							chatCompletion.baseResponse().message());
-					return new ChatResponse(List.of());
-				}
+					List<Choice> choices = chatCompletion.choices();
+					if (choices == null) {
+						logger.warn("No choices returned for prompt: {}, because: {}}", requestPrompt,
+								chatCompletion.baseResponse().message());
+						return new ChatResponse(List.of());
+					}
 
-				List<Generation> generations = choices.stream().map(choice -> {
-			// @formatter:off
+					List<Generation> generations = choices.stream().map(choice -> {
+						// @formatter:off
 						// if the choice is a web search tool call, return last message of choice.messages
 						ChatCompletionMessage message = null;
 						if (choice.message() != null) {
@@ -282,26 +286,25 @@ public class MiniMaxChatModel implements ChatModel {
 								"role", message != null && message.role() != null ? message.role().name() : "",
 								"finishReason", choice.finishReason() != null ? choice.finishReason().name() : "");
 						// @formatter:on
-					return buildGeneration(message, choice.finishReason(), metadata);
-				}).toList();
+						return buildGeneration(message, choice.finishReason(), metadata);
+					}).toList();
 
-				ChatResponse chatResponse = new ChatResponse(generations, from(completionEntity.getBody()));
+					ChatResponse chatResponse = new ChatResponse(generations, from(completionEntity.getBody()));
 
-				observationContext.setResponse(chatResponse);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
-			});
+					return chatResponse;
+				});
 
 		if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(requestPrompt.getOptions(), response)) {
 			var toolExecutionResult = this.toolCallingManager.executeToolCalls(requestPrompt, response);
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the client.
 				return ChatResponse.builder()
-					.from(response)
-					.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-					.build();
-			}
-			else {
+						.from(response)
+						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+						.build();
+			} else {
 				// Send the tool execution result back to the model.
 				return this.call(new Prompt(toolExecutionResult.conversationHistory(), requestPrompt.getOptions()));
 			}
@@ -324,16 +327,16 @@ public class MiniMaxChatModel implements ChatModel {
 			ChatCompletionRequest request = createRequest(requestPrompt, true);
 
 			Flux<ChatCompletionChunk> completionChunks = this.retryTemplate
-				.execute(ctx -> this.miniMaxApi.chatCompletionStream(request));
+					.execute(ctx -> this.miniMaxApi.chatCompletionStream(request));
 
 			// For chunked responses, only the first chunk contains the choice role.
 			// The rest of the chunks with same ID share the same role.
 			ConcurrentHashMap<String, String> roleMap = new ConcurrentHashMap<>();
 
 			final ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(requestPrompt)
-				.provider(MiniMaxApiConstants.PROVIDER_NAME)
-				.build();
+					.prompt(requestPrompt)
+					.provider(MiniMaxApiConstants.PROVIDER_NAME)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -344,12 +347,12 @@ public class MiniMaxChatModel implements ChatModel {
 			// Convert the ChatCompletionChunk into a ChatCompletion to be able to reuse
 			// the function call handling logic.
 			Flux<ChatResponse> chatResponse = completionChunks.map(this::chunkToChatCompletion)
-				.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
-					try {
-						@SuppressWarnings("null")
-						String id = chatCompletion2.id();
+					.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
+						try {
+							@SuppressWarnings("null")
+							String id = chatCompletion2.id();
 
-				// @formatter:off
+							// @formatter:off
 							List<Generation> generations = chatCompletion2.choices().stream().map(choice -> {
 								if (choice.message().role() != null) {
 									roleMap.putIfAbsent(id, choice.message().role().name());
@@ -400,12 +403,12 @@ public class MiniMaxChatModel implements ChatModel {
 	private ChatResponseMetadata from(ChatCompletion result) {
 		Assert.notNull(result, "MiniMax ChatCompletionResult must not be null");
 		return ChatResponseMetadata.builder()
-			.id(result.id() != null ? result.id() : "")
-			.usage(result.usage() != null ? getDefaultUsage(result.usage()) : new EmptyUsage())
-			.model(result.model() != null ? result.model() : "")
-			.keyValue("created", result.created() != null ? result.created() : 0L)
-			.keyValue("system-fingerprint", result.systemFingerprint() != null ? result.systemFingerprint() : "")
-			.build();
+				.id(result.id() != null ? result.id() : "")
+				.usage(result.usage() != null ? getDefaultUsage(result.usage()) : new EmptyUsage())
+				.model(result.model() != null ? result.model() : "")
+				.keyValue("created", result.created() != null ? result.created() : 0L)
+				.keyValue("system-fingerprint", result.systemFingerprint() != null ? result.systemFingerprint() : "")
+				.build();
 	}
 
 	private DefaultUsage getDefaultUsage(MiniMaxApi.Usage usage) {
@@ -413,16 +416,16 @@ public class MiniMaxChatModel implements ChatModel {
 	}
 
 	private Generation buildGeneration(ChatCompletionMessage message, ChatCompletionFinishReason completionFinishReason,
-			Map<String, Object> metadata) {
+	                                   Map<String, Object> metadata) {
 		if (message == null || message.role() == Role.TOOL) {
 			return null;
 		}
 		List<AssistantMessage.ToolCall> toolCalls = message.toolCalls() == null ? List.of()
 				: message.toolCalls()
-					.stream()
-					.map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), toolCall.type(),
-							toolCall.function().name(), toolCall.function().arguments()))
-					.toList();
+				  .stream()
+				  .map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), toolCall.type(),
+						  toolCall.function().name(), toolCall.function().arguments()))
+				  .toList();
 
 		var assistantMessage = new AssistantMessage(message.content(), metadata, toolCalls);
 		String finishReason = (completionFinishReason != null ? completionFinishReason.name() : "");
@@ -432,6 +435,7 @@ public class MiniMaxChatModel implements ChatModel {
 
 	/**
 	 * Convert the ChatCompletionChunk into a ChatCompletion. The Usage is set to null.
+	 *
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
@@ -455,8 +459,7 @@ public class MiniMaxChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
 						MiniMaxChatOptions.class);
-			}
-			else {
+			} else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						MiniMaxChatOptions.class);
 			}
@@ -478,8 +481,7 @@ public class MiniMaxChatModel implements ChatModel {
 					this.defaultOptions.getToolCallbacks()));
 			requestOptions.setToolContext(ToolCallingChatOptions.mergeToolContext(runtimeOptions.getToolContext(),
 					this.defaultOptions.getToolContext()));
-		}
-		else {
+		} else {
 			requestOptions.setInternalToolExecutionEnabled(this.defaultOptions.getInternalToolExecutionEnabled());
 			requestOptions.setToolNames(this.defaultOptions.getToolNames());
 			requestOptions.setToolCallbacks(this.defaultOptions.getToolCallbacks());
@@ -501,8 +503,7 @@ public class MiniMaxChatModel implements ChatModel {
 				Object content = message.getText();
 				return List.of(new ChatCompletionMessage(content,
 						ChatCompletionMessage.Role.valueOf(message.getMessageType().name())));
-			}
-			else if (message.getMessageType() == MessageType.ASSISTANT) {
+			} else if (message.getMessageType() == MessageType.ASSISTANT) {
 				var assistantMessage = (AssistantMessage) message;
 				List<ToolCall> toolCalls = null;
 				if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
@@ -513,20 +514,18 @@ public class MiniMaxChatModel implements ChatModel {
 				}
 				return List.of(new ChatCompletionMessage(assistantMessage.getText(),
 						ChatCompletionMessage.Role.ASSISTANT, null, null, toolCalls));
-			}
-			else if (message.getMessageType() == MessageType.TOOL) {
+			} else if (message.getMessageType() == MessageType.TOOL) {
 				ToolResponseMessage toolMessage = (ToolResponseMessage) message;
 
 				toolMessage.getResponses()
-					.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
+						.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
 
 				return toolMessage.getResponses()
-					.stream()
-					.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
-							tr.id(), null))
-					.toList();
-			}
-			else {
+						.stream()
+						.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
+								tr.id(), null))
+						.toList();
+			} else {
 				throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 			}
 		}).flatMap(List::stream).toList();
@@ -549,8 +548,7 @@ public class MiniMaxChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions,
 						ToolCallingChatOptions.class, MiniMaxChatOptions.class);
-			}
-			else {
+			} else {
 				updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						MiniMaxChatOptions.class);
 			}

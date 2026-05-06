@@ -73,7 +73,7 @@ public class TokenTextSplitter extends TextSplitter {
 	}
 
 	public TokenTextSplitter(int chunkSize, int minChunkSizeChars, int minChunkLengthToEmbed, int maxNumChunks,
-			boolean keepSeparator) {
+	                         boolean keepSeparator) {
 		this.chunkSize = chunkSize;
 		this.minChunkSizeChars = minChunkSizeChars;
 		this.minChunkLengthToEmbed = minChunkLengthToEmbed;

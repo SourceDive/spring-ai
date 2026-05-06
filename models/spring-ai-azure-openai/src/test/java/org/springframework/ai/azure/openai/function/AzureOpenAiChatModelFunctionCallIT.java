@@ -69,12 +69,12 @@ class AzureOpenAiChatModelFunctionCallIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -97,12 +97,12 @@ class AzureOpenAiChatModelFunctionCallIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -118,25 +118,25 @@ class AzureOpenAiChatModelFunctionCallIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		final var counter = new AtomicInteger();
 		String content = response.doOnEach(listSignal -> counter.getAndIncrement())
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(counter.get()).isGreaterThan(30).as("The response should be chunked in more than 30 messages");
@@ -155,13 +155,13 @@ class AzureOpenAiChatModelFunctionCallIT {
 		streamOptions.setIncludeUsage(true);
 
 		var promptOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.streamOptions(streamOptions)
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.streamOptions(streamOptions)
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
@@ -181,26 +181,26 @@ class AzureOpenAiChatModelFunctionCallIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		final var counter = new AtomicInteger();
 		String content = response.doOnEach(listSignal -> counter.getAndIncrement())
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(Objects::nonNull)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining());
 
 		logger.info("Response: {}", response);
 
@@ -214,8 +214,7 @@ class AzureOpenAiChatModelFunctionCallIT {
 			String deploymentName = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
 			if (StringUtils.hasText(deploymentName)) {
 				return deploymentName;
-			}
-			else {
+			} else {
 				return "gpt-4o";
 			}
 		}
@@ -223,15 +222,15 @@ class AzureOpenAiChatModelFunctionCallIT {
 		@Bean
 		public OpenAIClientBuilder openAIClient() {
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(System.getenv("AZURE_OPENAI_API_KEY")))
-				.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"));
+					.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"));
 		}
 
 		@Bean
 		public AzureOpenAiChatModel azureOpenAiChatModel(OpenAIClientBuilder openAIClient, String selectedModel) {
 			return AzureOpenAiChatModel.builder()
-				.openAIClientBuilder(openAIClient)
-				.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName(selectedModel).maxTokens(500).build())
-				.build();
+					.openAIClientBuilder(openAIClient)
+					.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName(selectedModel).maxTokens(500).build())
+					.build();
 		}
 
 		@Bean

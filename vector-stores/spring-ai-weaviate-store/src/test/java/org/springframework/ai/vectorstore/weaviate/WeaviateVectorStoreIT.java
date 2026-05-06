@@ -59,10 +59,10 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 
 	@Container
 	static WeaviateContainer weaviateContainer = new WeaviateContainer(WeaviateImage.DEFAULT_IMAGE)
-		.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
+			.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	List<Document> documents = List.of(
 			new Document("471a8c78-549a-4b2c-bce5-ef3ae6579be3", getText("classpath:/test/data/spring.ai.txt"),
@@ -76,8 +76,7 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -106,7 +105,7 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -140,45 +139,45 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT((country == 'BG' && year == 2020) || (country == 'NL'))")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT((country == 'BG' && year == 2020) || (country == 'NL'))")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
@@ -202,7 +201,7 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(document));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -243,7 +242,7 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -284,10 +283,10 @@ public class WeaviateVectorStoreIT extends BaseVectorStoreTests {
 					new Config("http", weaviateContainer.getHttpHostAddress()));
 
 			return WeaviateVectorStore.builder(weaviateClient, embeddingModel)
-				.filterMetadataFields(List.of(WeaviateVectorStore.MetadataField.text("country"),
-						WeaviateVectorStore.MetadataField.number("year")))
-				.consistencyLevel(WeaviateVectorStore.ConsistentLevel.ONE)
-				.build();
+					.filterMetadataFields(List.of(WeaviateVectorStore.MetadataField.text("country"),
+							WeaviateVectorStore.MetadataField.number("year")))
+					.consistencyLevel(WeaviateVectorStore.ConsistentLevel.ONE)
+					.build();
 		}
 
 		@Bean

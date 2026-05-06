@@ -89,40 +89,40 @@ public class VertexAiTextEmbeddingRetryTests {
 	public void vertexAiEmbeddingTransientError() {
 		// Setup the mock PredictResponse
 		PredictResponse mockResponse = PredictResponse.newBuilder()
-			.addPredictions(Value.newBuilder()
-				.setStructValue(Struct.newBuilder()
-					.putFields("embeddings", Value.newBuilder()
+				.addPredictions(Value.newBuilder()
 						.setStructValue(Struct.newBuilder()
-							.putFields("values",
-									Value.newBuilder()
-										.setListValue(com.google.protobuf.ListValue.newBuilder()
-											.addValues(Value.newBuilder().setNumberValue(9.9))
-											.addValues(Value.newBuilder().setNumberValue(8.8))
-											.build())
-										.build())
-							.putFields("statistics",
-									Value.newBuilder()
+								.putFields("embeddings", Value.newBuilder()
 										.setStructValue(Struct.newBuilder()
-											.putFields("token_count", Value.newBuilder().setNumberValue(10).build())
-											.build())
+												.putFields("values",
+														Value.newBuilder()
+																.setListValue(com.google.protobuf.ListValue.newBuilder()
+																		.addValues(Value.newBuilder().setNumberValue(9.9))
+																		.addValues(Value.newBuilder().setNumberValue(8.8))
+																		.build())
+																.build())
+												.putFields("statistics",
+														Value.newBuilder()
+																.setStructValue(Struct.newBuilder()
+																		.putFields("token_count", Value.newBuilder().setNumberValue(10).build())
+																		.build())
+																.build())
+												.build())
 										.build())
-							.build())
+								.build())
 						.build())
-					.build())
-				.build())
-			.build();
+				.build();
 
 		// Setup the mock PredictionServiceClient
 		given(this.mockPredictionServiceClient.predict(any())).willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(mockResponse);
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(mockResponse);
 
 		EmbeddingOptions options = VertexAiTextEmbeddingOptions.builder().model("model").build();
 		EmbeddingResponse result = this.embeddingModel.call(new EmbeddingRequest(List.of("text1", "text2"), options));
 
 		assertThat(result).isNotNull();
 		assertThat(result.getResults()).hasSize(1);
-		assertThat(result.getResults().get(0).getOutput()).isEqualTo(new float[] { 9.9f, 8.8f });
+		assertThat(result.getResults().get(0).getOutput()).isEqualTo(new float[]{9.9f, 8.8f});
 		assertThat(this.retryListener.onSuccessRetryCount).isEqualTo(2);
 		assertThat(this.retryListener.onErrorRetryCount).isEqualTo(2);
 
@@ -137,7 +137,7 @@ public class VertexAiTextEmbeddingRetryTests {
 		EmbeddingOptions options = VertexAiTextEmbeddingOptions.builder().model("model").build();
 		// Assert that a RuntimeException is thrown and not retried
 		assertThatThrownBy(() -> this.embeddingModel.call(new EmbeddingRequest(List.of("text1", "text2"), options)))
-			.isInstanceOf(RuntimeException.class);
+				.isInstanceOf(RuntimeException.class);
 
 		// Verify that predict was called only once (no retries for non-transient errors)
 		verify(this.mockPredictionServiceClient, times(1)).predict(any());
@@ -156,7 +156,7 @@ public class VertexAiTextEmbeddingRetryTests {
 
 		@Override
 		public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback,
-				Throwable throwable) {
+		                                             Throwable throwable) {
 			this.onErrorRetryCount = context.getRetryCount();
 		}
 

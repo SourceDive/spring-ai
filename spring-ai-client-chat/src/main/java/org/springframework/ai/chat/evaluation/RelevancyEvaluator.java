@@ -35,21 +35,21 @@ public class RelevancyEvaluator implements Evaluator {
 	private static final PromptTemplate DEFAULT_PROMPT_TEMPLATE = new PromptTemplate("""
 				Your task is to evaluate if the response for the query
 				is in line with the context information provided.
-
+			
 				You have two options to answer. Either YES or NO.
-
+			
 				Answer YES, if the response for the query
 				is in line with context information otherwise NO.
-
+			
 				Query:
 				{query}
-
+			
 				Response:
 				{response}
-
+			
 				Context:
 				{context}
-
+			
 				Answer:
 			""");
 
@@ -73,7 +73,7 @@ public class RelevancyEvaluator implements Evaluator {
 		var context = doGetSupportingData(evaluationRequest);
 
 		var userMessage = this.promptTemplate
-			.render(Map.of("query", evaluationRequest.getUserText(), "response", response, "context", context));
+				.render(Map.of("query", evaluationRequest.getUserText(), "response", response, "context", context));
 
 		String evaluationResponse = this.chatClientBuilder.build().prompt().user(userMessage).call().content();
 

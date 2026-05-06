@@ -44,12 +44,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BedrockTitanEmbeddingAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withPropertyValues("spring.ai.model.embedding=bedrock-titan",
-				"spring.ai.bedrock.aws.access-key=" + System.getenv("AWS_ACCESS_KEY_ID"),
-				"spring.ai.bedrock.aws.secret-key=" + System.getenv("AWS_SECRET_ACCESS_KEY"),
-				"spring.ai.bedrock.aws.region=" + Region.US_EAST_1.id(),
-				"spring.ai.bedrock.titan.embedding.model=" + TitanEmbeddingModel.TITAN_EMBED_IMAGE_V1.id())
-		.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.model.embedding=bedrock-titan",
+					"spring.ai.bedrock.aws.access-key=" + System.getenv("AWS_ACCESS_KEY_ID"),
+					"spring.ai.bedrock.aws.secret-key=" + System.getenv("AWS_SECRET_ACCESS_KEY"),
+					"spring.ai.bedrock.aws.region=" + Region.US_EAST_1.id(),
+					"spring.ai.bedrock.titan.embedding.model=" + TitanEmbeddingModel.TITAN_EMBED_IMAGE_V1.id())
+			.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class));
 
 	@Test
 	public void singleTextEmbedding() {
@@ -70,7 +70,7 @@ public class BedrockTitanEmbeddingAutoConfigurationIT {
 			assertThat(embeddingModel).isNotNull();
 
 			byte[] image = new DefaultResourceLoader().getResource("classpath:/spring_framework.png")
-				.getContentAsByteArray();
+					.getContentAsByteArray();
 
 			var base64Image = Base64.getEncoder().encodeToString(image);
 
@@ -86,53 +86,53 @@ public class BedrockTitanEmbeddingAutoConfigurationIT {
 	public void propertiesTest() {
 
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withPropertyValues("spring.ai.model.embedding=bedrock-titan",
-					"spring.ai.bedrock.aws.access-key=ACCESS_KEY", "spring.ai.bedrock.aws.secret-key=SECRET_KEY",
-					"spring.ai.bedrock.aws.region=" + Region.US_EAST_1.id(),
-					"spring.ai.bedrock.titan.embedding.model=MODEL_XYZ",
-					"spring.ai.bedrock.titan.embedding.inputType=TEXT")
-			.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var properties = context.getBean(BedrockTitanEmbeddingProperties.class);
-				var awsProperties = context.getBean(BedrockAwsConnectionProperties.class);
+				.withPropertyValues("spring.ai.model.embedding=bedrock-titan",
+						"spring.ai.bedrock.aws.access-key=ACCESS_KEY", "spring.ai.bedrock.aws.secret-key=SECRET_KEY",
+						"spring.ai.bedrock.aws.region=" + Region.US_EAST_1.id(),
+						"spring.ai.bedrock.titan.embedding.model=MODEL_XYZ",
+						"spring.ai.bedrock.titan.embedding.inputType=TEXT")
+				.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var properties = context.getBean(BedrockTitanEmbeddingProperties.class);
+					var awsProperties = context.getBean(BedrockAwsConnectionProperties.class);
 
-				assertThat(awsProperties.getRegion()).isEqualTo(Region.US_EAST_1.id());
-				assertThat(properties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(awsProperties.getRegion()).isEqualTo(Region.US_EAST_1.id());
+					assertThat(properties.getModel()).isEqualTo("MODEL_XYZ");
 
-				assertThat(properties.getInputType()).isEqualTo(InputType.TEXT);
+					assertThat(properties.getInputType()).isEqualTo(InputType.TEXT);
 
-				assertThat(awsProperties.getAccessKey()).isEqualTo("ACCESS_KEY");
-				assertThat(awsProperties.getSecretKey()).isEqualTo("SECRET_KEY");
-			});
+					assertThat(awsProperties.getAccessKey()).isEqualTo("ACCESS_KEY");
+					assertThat(awsProperties.getSecretKey()).isEqualTo("SECRET_KEY");
+				});
 	}
 
 	@Test
 	public void embeddingActivation() {
 
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockTitanEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(BedrockTitanEmbeddingModel.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockTitanEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(BedrockTitanEmbeddingModel.class)).isNotEmpty();
+				});
 
 		// Explicitly enable the embedding auto-configuration.
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withPropertyValues("spring.ai.model.embedding=bedrock-titan")
-			.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockTitanEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(BedrockTitanEmbeddingModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=bedrock-titan")
+				.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockTitanEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(BedrockTitanEmbeddingModel.class)).isNotEmpty();
+				});
 
 		// Explicitly disable the embedding auto-configuration.
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withPropertyValues("spring.ai.model.embedding=none")
-			.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockTitanEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(BedrockTitanEmbeddingModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=none")
+				.withConfiguration(AutoConfigurations.of(BedrockTitanEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockTitanEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(BedrockTitanEmbeddingModel.class)).isEmpty();
+				});
 	}
 
 }

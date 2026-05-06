@@ -52,16 +52,15 @@ class DisabledIfProcessUnavailableCondition implements ExecutionCondition {
 		try {
 			commands.forEach(this::check);
 			return ConditionEvaluationResult.enabled("All processes available");
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			return ConditionEvaluationResult.disabled("Process unavailable", ex.getMessage());
 		}
 	}
 
 	private Stream<String[]> getAnnotationValue(AnnotatedElement testElement) {
 		return MergedAnnotations.from(testElement, SearchStrategy.TYPE_HIERARCHY)
-			.stream(DisabledIfProcessUnavailable.class)
-			.map(annotation -> annotation.getStringArray(MergedAnnotation.VALUE));
+				.stream(DisabledIfProcessUnavailable.class)
+				.map(annotation -> annotation.getStringArray(MergedAnnotation.VALUE));
 	}
 
 	private void check(String[] command) {
@@ -71,8 +70,7 @@ class DisabledIfProcessUnavailableCondition implements ExecutionCondition {
 			Assert.isTrue(process.waitFor(30, TimeUnit.SECONDS), "Process did not exit within 30 seconds");
 			Assert.state(process.exitValue() == 0, () -> "Process exited with %d".formatted(process.exitValue()));
 			process.destroy();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			String path = processBuilder.environment().get("PATH");
 			if (MAC_OS && path != null && !path.contains(USR_LOCAL_BIN)
 					&& !command[0].startsWith(USR_LOCAL_BIN + "/")) {

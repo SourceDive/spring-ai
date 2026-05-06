@@ -41,6 +41,7 @@ public class ChatClientBuilderConfigurer {
 	/**
 	 * Configure the specified {@link ChatClient.Builder}. The builder can be further
 	 * tuned and default settings can be overridden.
+	 *
 	 * @param builder the {@link ChatClient.Builder} instance to configure
 	 * @return the configured builder
 	 */

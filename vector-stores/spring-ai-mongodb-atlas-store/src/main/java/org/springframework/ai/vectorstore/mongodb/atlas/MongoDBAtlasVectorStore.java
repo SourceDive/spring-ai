@@ -198,8 +198,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 	private void createSearchIndex() {
 		try {
 			this.mongoTemplate.executeCommand(createSearchIndexDefinition());
-		}
-		catch (UncategorizedMongoDbException e) {
+		} catch (UncategorizedMongoDbException e) {
 			Throwable cause = e.getCause();
 			if (cause instanceof MongoCommandException commandException) {
 				// Ignore any IndexAlreadyExists errors
@@ -219,23 +218,24 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 		List<org.bson.Document> vectorFields = new ArrayList<>();
 
 		vectorFields.add(new org.bson.Document().append("type", "vector")
-			.append("path", this.pathName)
-			.append("numDimensions", this.embeddingModel.dimensions())
-			.append("similarity", "cosine"));
+				.append("path", this.pathName)
+				.append("numDimensions", this.embeddingModel.dimensions())
+				.append("similarity", "cosine"));
 
 		vectorFields.addAll(this.metadataFieldsToFilter.stream()
-			.map(fieldName -> new org.bson.Document().append("type", "filter").append("path", "metadata." + fieldName))
-			.toList());
+				.map(fieldName -> new org.bson.Document().append("type", "filter").append("path", "metadata." + fieldName))
+				.toList());
 
 		return new org.bson.Document().append("createSearchIndexes", this.collectionName)
-			.append("indexes",
-					List.of(new org.bson.Document().append("name", this.vectorIndexName)
-						.append("type", "vectorSearch")
-						.append("definition", new org.bson.Document("fields", vectorFields))));
+				.append("indexes",
+						List.of(new org.bson.Document().append("name", this.vectorIndexName)
+								.append("type", "vectorSearch")
+								.append("definition", new org.bson.Document("fields", vectorFields))));
 	}
 
 	/**
 	 * Maps a Bson Document to a Spring AI Document
+	 *
 	 * @param mongoDocument the mongoDocument to map to a Spring AI Document
 	 * @return the Spring AI Document
 	 */
@@ -283,8 +283,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 			DeleteResult deleteResult = this.mongoTemplate.remove(query, this.collectionName);
 
 			logger.debug("Deleted " + deleteResult.getDeletedCount() + " documents matching filter expression");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
 	}
@@ -306,25 +305,25 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 		Aggregation aggregation = Aggregation.newAggregation(vectorSearch,
 				Aggregation.addFields()
-					.addField(SCORE_FIELD_NAME)
-					.withValueOfExpression("{\"$meta\":\"vectorSearchScore\"}")
-					.build(),
+						.addField(SCORE_FIELD_NAME)
+						.withValueOfExpression("{\"$meta\":\"vectorSearchScore\"}")
+						.build(),
 				Aggregation.match(new Criteria(SCORE_FIELD_NAME).gte(request.getSimilarityThreshold())));
 
 		return this.mongoTemplate.aggregate(aggregation, this.collectionName, org.bson.Document.class)
-			.getMappedResults()
-			.stream()
-			.map(d -> mapMongoDocument(d, queryEmbedding))
-			.toList();
+				.getMappedResults()
+				.stream()
+				.map(d -> mapMongoDocument(d, queryEmbedding))
+				.toList();
 	}
 
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.MONGODB.value(), operationName)
-			.collectionName(this.collectionName)
-			.dimensions(this.embeddingModel.dimensions())
-			.fieldName(this.pathName);
+				.collectionName(this.collectionName)
+				.dimensions(this.embeddingModel.dimensions())
+				.fieldName(this.pathName);
 	}
 
 	@Override
@@ -336,6 +335,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 	/**
 	 * Creates a new builder instance for MongoDBAtlasVectorStore.
+	 *
 	 * @return a new MongoDBBuilder instance
 	 */
 	public static Builder builder(MongoTemplate mongoTemplate, EmbeddingModel embeddingModel) {
@@ -372,6 +372,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 		/**
 		 * Configures the collection name. This must match the name of the collection for
 		 * the Vector Search Index in Atlas.
+		 *
 		 * @param collectionName the name of the collection
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -385,6 +386,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 		/**
 		 * Configures the vector index name. This must match the name of the Vector Search
 		 * Index Name in Atlas.
+		 *
 		 * @param vectorIndexName the name of the vector index
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if vectorIndexName is null or empty
@@ -398,6 +400,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 		/**
 		 * Configures the path name. This must match the name of the field indexed for the
 		 * Vector Search Index in Atlas.
+		 *
 		 * @param pathName the name of the path
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if pathName is null or empty
@@ -410,6 +413,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 		/**
 		 * Sets the number of candidates for vector search.
+		 *
 		 * @param numCandidates the number of candidates
 		 * @return the builder instance
 		 */
@@ -420,6 +424,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 		/**
 		 * Sets the metadata fields to filter in vector search.
+		 *
 		 * @param metadataFieldsToFilter list of metadata field names
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if metadataFieldsToFilter is null or empty
@@ -432,6 +437,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -442,6 +448,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 		/**
 		 * Sets the filter expression converter.
+		 *
 		 * @param converter the filter expression converter to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if converter is null
@@ -454,6 +461,7 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 
 		/**
 		 * Builds the MongoDBAtlasVectorStore instance.
+		 *
 		 * @return a new MongoDBAtlasVectorStore instance
 		 * @throws IllegalStateException if the builder is in an invalid state
 		 */
@@ -467,9 +475,9 @@ public class MongoDBAtlasVectorStore extends AbstractObservationVectorStore impl
 	/**
 	 * The representation of {@link Document} along with its embedding.
 	 *
-	 * @param id The id of the document
-	 * @param content The content of the document
-	 * @param metadata The metadata of the document
+	 * @param id        The id of the document
+	 * @param content   The content of the document
+	 * @param metadata  The metadata of the document
 	 * @param embedding The vectors representing the content of the document
 	 */
 	public record MongoDBDocument(String id, String content, Map<String, Object> metadata, float[] embedding) {

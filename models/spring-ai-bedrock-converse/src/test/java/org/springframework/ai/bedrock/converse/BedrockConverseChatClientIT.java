@@ -252,7 +252,7 @@ class BedrockConverseChatClientIT {
 		assertThat(metadata.getUsage().getCompletionTokens()).isLessThan(1500);
 
 		assertThat(metadata.getUsage().getTotalTokens())
-			.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
+				.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
 
 		logger.info("Response: {}", response);
 
@@ -330,12 +330,12 @@ class BedrockConverseChatClientIT {
 		assertThat(metadata.getUsage().getCompletionTokens()).isLessThan(1500);
 
 		assertThat(metadata.getUsage().getTotalTokens())
-			.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
+				.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
 
 		String content = chatResponses.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).contains("30", "10", "15");
@@ -362,7 +362,7 @@ class BedrockConverseChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "anthropic.claude-3-5-sonnet-20240620-v1:0" })
+	@ValueSource(strings = {"anthropic.claude-3-5-sonnet-20240620-v1:0"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		// @formatter:off
@@ -379,7 +379,7 @@ class BedrockConverseChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "anthropic.claude-3-5-sonnet-20240620-v1:0" })
+	@ValueSource(strings = {"anthropic.claude-3-5-sonnet-20240620-v1:0"})
 	void multiModalityImageUrl2(String modelName) throws IOException {
 
 		// TODO: add url method that wrapps the checked exception.
@@ -399,7 +399,7 @@ class BedrockConverseChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "anthropic.claude-3-5-sonnet-20240620-v1:0" })
+	@ValueSource(strings = {"anthropic.claude-3-5-sonnet-20240620-v1:0"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		// TODO: add url method that wrapps the checked exception.

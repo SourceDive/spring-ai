@@ -53,10 +53,10 @@ public class ZhipuAiFunctionCallbackIT {
 	private final Logger logger = LoggerFactory.getLogger(ZhipuAiFunctionCallbackIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.zhipuai.apiKey=" + System.getenv("ZHIPU_AI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-				RestClientAutoConfiguration.class, ZhiPuAiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.zhipuai.apiKey=" + System.getenv("ZHIPU_AI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+					RestClientAutoConfiguration.class, ZhiPuAiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
@@ -68,7 +68,7 @@ public class ZhipuAiFunctionCallbackIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius.");
 
 			ChatResponse response = chatModel
-				.call(new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().toolNames("WeatherInfo").build()));
+					.call(new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().toolNames("WeatherInfo").build()));
 
 			logger.info("Response: {}", response);
 
@@ -90,13 +90,13 @@ public class ZhipuAiFunctionCallbackIT {
 					new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().toolNames("WeatherInfo").build()));
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).containsAnyOf("30.0", "30");
@@ -113,10 +113,10 @@ public class ZhipuAiFunctionCallbackIT {
 		public ToolCallback weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				// .responseConverter(response -> "" + response.temp() + response.unit())
-				.build();
+					.description("Get the weather in location")
+					.inputType(MockWeatherService.Request.class)
+					// .responseConverter(response -> "" + response.temp() + response.unit())
+					.build();
 		}
 
 	}

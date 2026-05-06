@@ -85,12 +85,11 @@ public class McpStdioClientProperties {
 			return mcpServerJsonConfig.entrySet().stream().collect(Collectors.toMap(kv -> kv.getKey(), kv -> {
 				Parameters parameters = kv.getValue();
 				return ServerParameters.builder(parameters.command())
-					.args(parameters.args())
-					.env(parameters.env())
-					.build();
+						.args(parameters.args())
+						.env(parameters.env())
+						.build();
 			}));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to read stdio connection resource", e);
 		}
 	}

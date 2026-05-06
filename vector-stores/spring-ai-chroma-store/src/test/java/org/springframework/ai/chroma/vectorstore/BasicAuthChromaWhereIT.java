@@ -44,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * ChromaDB with Basic Authentication:
  * https://docs.trychroma.com/usage-guide#basic-authentication
- *
+ * <p>
  * The scr/test/resource/server.htpasswd file is generated with:
  * <code>htpasswd -Bbn admin admin > server.htpasswd</code>
  *
@@ -63,13 +63,13 @@ public class BasicAuthChromaWhereIT {
 	 */
 	@Container
 	static ChromaDBContainer chromaContainer = new ChromaDBContainer(ChromaImage.DEFAULT_IMAGE)
-		.withEnv("CHROMA_SERVER_AUTHN_CREDENTIALS_FILE", "/chroma/server.htpasswd")
-		.withEnv("CHROMA_SERVER_AUTHN_PROVIDER", "chromadb.auth.basic_authn.BasicAuthenticationServerProvider")
-		.withCopyToContainer(MountableFile.forClasspathResource("server.htpasswd"), "/chroma/server.htpasswd");
+			.withEnv("CHROMA_SERVER_AUTHN_CREDENTIALS_FILE", "/chroma/server.htpasswd")
+			.withEnv("CHROMA_SERVER_AUTHN_PROVIDER", "chromadb.auth.basic_authn.BasicAuthenticationServerProvider")
+			.withCopyToContainer(MountableFile.forClasspathResource("server.htpasswd"), "/chroma/server.htpasswd");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
 
 	@Test
 	public void withInFiltersExpressions1() {
@@ -88,11 +88,11 @@ public class BasicAuthChromaWhereIT {
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query(query)
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("author in ['john', 'jill']")
-				.build());
+					.query(query)
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("author in ['john', 'jill']")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(d -> d.getId()).toList()).containsExactlyInAnyOrder("1", "3");
@@ -110,18 +110,18 @@ public class BasicAuthChromaWhereIT {
 		@Bean
 		public ChromaApi chromaApi(RestClient.Builder builder) {
 			return ChromaApi.builder()
-				.baseUrl(chromaContainer.getEndpoint())
-				.restClientBuilder(builder)
-				.build()
-				.withBasicAuthCredentials("admin", "password");
+					.baseUrl(chromaContainer.getEndpoint())
+					.restClientBuilder(builder)
+					.build()
+					.withBasicAuthCredentials("admin", "password");
 		}
 
 		@Bean
 		public VectorStore chromaVectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi) {
 			return ChromaVectorStore.builder(chromaApi, embeddingModel)
-				.collectionName("TestCollection")
-				.initializeSchema(true)
-				.build();
+					.collectionName("TestCollection")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

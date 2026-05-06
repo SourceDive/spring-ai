@@ -58,6 +58,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 
 	/**
 	 * a constructor
+	 *
 	 * @param jdbcTemplate JdbcTemplate
 	 */
 	public PostgresMlEmbeddingModel(JdbcTemplate jdbcTemplate) {
@@ -70,11 +71,12 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 
 	/**
 	 * a PostgresMlEmbeddingModel constructor
+	 *
 	 * @param jdbcTemplate JdbcTemplate to use to interact with the database.
-	 * @param options PostgresMlEmbeddingOptions to configure the client.
+	 * @param options      PostgresMlEmbeddingOptions to configure the client.
 	 */
 	public PostgresMlEmbeddingModel(JdbcTemplate jdbcTemplate, PostgresMlEmbeddingOptions options,
-			boolean createExtension) {
+	                                boolean createExtension) {
 		Assert.notNull(jdbcTemplate, "jdbc template must not be null.");
 		Assert.notNull(options, "options must not be null.");
 		Assert.notNull(options.getTransformer(), "transformer must not be null.");
@@ -143,6 +145,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 
 	/**
 	 * Merge the default and request options.
+	 *
 	 * @param requestOptions request options to merge.
 	 * @return the merged options.
 	 */
@@ -166,7 +169,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 		this.jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS pgml");
 		if (StringUtils.hasText(this.defaultOptions.getVectorType().extensionName)) {
 			this.jdbcTemplate
-				.execute("CREATE EXTENSION IF NOT EXISTS " + this.defaultOptions.getVectorType().extensionName);
+					.execute("CREATE EXTENSION IF NOT EXISTS " + this.defaultOptions.getVectorType().extensionName);
 		}
 	}
 
@@ -181,7 +184,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 		PG_VECTOR("::vector", "vector", (rs, i) -> {
 			String embedding = rs.getString("embedding");
 			return EmbeddingUtils.toPrimitive(Arrays.stream((embedding.substring(1, embedding.length() - 1)
-				/* remove leading '[' and trailing ']' */.split(","))).map(Float::parseFloat).toList());
+					/* remove leading '[' and trailing ']' */.split(","))).map(Float::parseFloat).toList());
 		});
 
 		private final String cast;

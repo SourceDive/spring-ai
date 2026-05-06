@@ -43,8 +43,8 @@ class PromptTests {
 
 		// Try to render with missing value for template variable, expect exception
 		Assertions.assertThatThrownBy(() -> pt.render(model))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("Not all variables were replaced in the template. Missing variable names are: [lastName].");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("Not all variables were replaced in the template. Missing variable names are: [lastName].");
 
 		pt.add("lastName", "Park"); // TODO investigate partial
 		String promptString = pt.render(model);

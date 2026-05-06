@@ -43,7 +43,7 @@ public class StaticToolCallbackResolver implements ToolCallbackResolver {
 		Assert.noNullElements(toolCallbacks, "toolCallbacks cannot contain null elements");
 
 		toolCallbacks
-			.forEach(toolCallback -> this.toolCallbacks.put(toolCallback.getToolDefinition().name(), toolCallback));
+				.forEach(toolCallback -> this.toolCallbacks.put(toolCallback.getToolDefinition().name(), toolCallback));
 	}
 
 	@Override

@@ -98,18 +98,19 @@ public final class AnthropicApi {
 
 	/**
 	 * Create a new client api.
-	 * @param baseUrl api base URL.
-	 * @param completionsPath path to append to the base URL.
-	 * @param anthropicApiKey Anthropic api Key.
-	 * @param anthropicVersion Anthropic version.
-	 * @param restClientBuilder RestClient builder.
-	 * @param webClientBuilder WebClient builder.
-	 * @param responseErrorHandler Response error handler.
+	 *
+	 * @param baseUrl               api base URL.
+	 * @param completionsPath       path to append to the base URL.
+	 * @param anthropicApiKey       Anthropic api Key.
+	 * @param anthropicVersion      Anthropic version.
+	 * @param restClientBuilder     RestClient builder.
+	 * @param webClientBuilder      WebClient builder.
+	 * @param responseErrorHandler  Response error handler.
 	 * @param anthropicBetaFeatures Anthropic beta features.
 	 */
 	private AnthropicApi(String baseUrl, String completionsPath, String anthropicApiKey, String anthropicVersion,
-			RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ResponseErrorHandler responseErrorHandler, String anthropicBetaFeatures) {
+	                     RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+	                     ResponseErrorHandler responseErrorHandler, String anthropicBetaFeatures) {
 
 		Consumer<HttpHeaders> jsonContentHeaders = headers -> {
 			headers.add(HEADER_X_API_KEY, anthropicApiKey);
@@ -121,23 +122,24 @@ public final class AnthropicApi {
 		this.completionsPath = completionsPath;
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 
 		this.webClient = webClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(HttpStatusCode::isError,
-					resp -> resp.bodyToMono(String.class)
-						.flatMap(it -> Mono.error(new RuntimeException(
-								"Response exception, Status: [" + resp.statusCode() + "], Body:[" + it + "]"))))
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(HttpStatusCode::isError,
+						resp -> resp.bodyToMono(String.class)
+								.flatMap(it -> Mono.error(new RuntimeException(
+										"Response exception, Status: [" + resp.statusCode() + "], Body:[" + it + "]"))))
+				.build();
 	}
 
 	/**
 	 * Creates a model response for the given chat conversation.
+	 *
 	 * @param chatRequest The chat completion request.
 	 * @return Entity response with {@link ChatCompletionResponse} as a body and HTTP
 	 * status code and headers.
@@ -148,30 +150,32 @@ public final class AnthropicApi {
 
 	/**
 	 * Creates a model response for the given chat conversation.
-	 * @param chatRequest The chat completion request.
+	 *
+	 * @param chatRequest          The chat completion request.
 	 * @param additionalHttpHeader Additional HTTP headers.
 	 * @return Entity response with {@link ChatCompletionResponse} as a body and HTTP
 	 * status code and headers.
 	 */
 	public ResponseEntity<ChatCompletionResponse> chatCompletionEntity(ChatCompletionRequest chatRequest,
-			MultiValueMap<String, String> additionalHttpHeader) {
+	                                                                   MultiValueMap<String, String> additionalHttpHeader) {
 
 		Assert.notNull(chatRequest, "The request body can not be null.");
 		Assert.isTrue(!chatRequest.stream(), "Request must set the stream property to false.");
 		Assert.notNull(additionalHttpHeader, "The additional HTTP headers can not be null.");
 
 		return this.restClient.post()
-			.uri(this.completionsPath)
-			.headers(headers -> headers.addAll(additionalHttpHeader))
-			.body(chatRequest)
-			.retrieve()
-			.toEntity(ChatCompletionResponse.class);
+				.uri(this.completionsPath)
+				.headers(headers -> headers.addAll(additionalHttpHeader))
+				.body(chatRequest)
+				.retrieve()
+				.toEntity(ChatCompletionResponse.class);
 	}
 
 	/**
 	 * Creates a streaming chat response for the given chat conversation.
+	 *
 	 * @param chatRequest The chat completion request. Must have the stream property set
-	 * to true.
+	 *                    to true.
 	 * @return Returns a {@link Flux} stream from chat completion chunks.
 	 */
 	public Flux<ChatCompletionResponse> chatCompletionStream(ChatCompletionRequest chatRequest) {
@@ -180,13 +184,14 @@ public final class AnthropicApi {
 
 	/**
 	 * Creates a streaming chat response for the given chat conversation.
-	 * @param chatRequest The chat completion request. Must have the stream property set
-	 * to true.
+	 *
+	 * @param chatRequest          The chat completion request. Must have the stream property set
+	 *                             to true.
 	 * @param additionalHttpHeader Additional HTTP headers.
 	 * @return Returns a {@link Flux} stream from chat completion chunks.
 	 */
 	public Flux<ChatCompletionResponse> chatCompletionStream(ChatCompletionRequest chatRequest,
-			MultiValueMap<String, String> additionalHttpHeader) {
+	                                                         MultiValueMap<String, String> additionalHttpHeader) {
 
 		Assert.notNull(chatRequest, "The request body can not be null.");
 		Assert.isTrue(chatRequest.stream(), "Request must set the stream property to true.");
@@ -197,39 +202,39 @@ public final class AnthropicApi {
 		AtomicReference<ChatCompletionResponseBuilder> chatCompletionReference = new AtomicReference<>();
 
 		return this.webClient.post()
-			.uri(this.completionsPath)
-			.headers(headers -> headers.addAll(additionalHttpHeader))
-			.body(Mono.just(chatRequest), ChatCompletionRequest.class)
-			.retrieve()
-			.bodyToFlux(String.class)
-			.takeUntil(SSE_DONE_PREDICATE)
-			.filter(SSE_DONE_PREDICATE.negate())
-			.map(content -> ModelOptionsUtils.jsonToObject(content, StreamEvent.class))
-			.filter(event -> event.type() != EventType.PING)
-			// Detect if the chunk is part of a streaming function call.
-			.map(event -> {
-				if (this.streamHelper.isToolUseStart(event)) {
-					isInsideTool.set(true);
-				}
-				return event;
-			})
-			// Group all chunks belonging to the same function call.
-			.windowUntil(event -> {
-				if (isInsideTool.get() && this.streamHelper.isToolUseFinish(event)) {
-					isInsideTool.set(false);
-					return true;
-				}
-				return !isInsideTool.get();
-			})
-			// Merging the window chunks into a single chunk.
-			.concatMapIterable(window -> {
-				Mono<StreamEvent> monoChunk = window.reduce(new ToolUseAggregationEvent(),
-						this.streamHelper::mergeToolUseEvents);
-				return List.of(monoChunk);
-			})
-			.flatMap(mono -> mono)
-			.map(event -> this.streamHelper.eventToChatCompletionResponse(event, chatCompletionReference))
-			.filter(chatCompletionResponse -> chatCompletionResponse.type() != null);
+				.uri(this.completionsPath)
+				.headers(headers -> headers.addAll(additionalHttpHeader))
+				.body(Mono.just(chatRequest), ChatCompletionRequest.class)
+				.retrieve()
+				.bodyToFlux(String.class)
+				.takeUntil(SSE_DONE_PREDICATE)
+				.filter(SSE_DONE_PREDICATE.negate())
+				.map(content -> ModelOptionsUtils.jsonToObject(content, StreamEvent.class))
+				.filter(event -> event.type() != EventType.PING)
+				// Detect if the chunk is part of a streaming function call.
+				.map(event -> {
+					if (this.streamHelper.isToolUseStart(event)) {
+						isInsideTool.set(true);
+					}
+					return event;
+				})
+				// Group all chunks belonging to the same function call.
+				.windowUntil(event -> {
+					if (isInsideTool.get() && this.streamHelper.isToolUseFinish(event)) {
+						isInsideTool.set(false);
+						return true;
+					}
+					return !isInsideTool.get();
+				})
+				// Merging the window chunks into a single chunk.
+				.concatMapIterable(window -> {
+					Mono<StreamEvent> monoChunk = window.reduce(new ToolUseAggregationEvent(),
+							this.streamHelper::mergeToolUseEvents);
+					return List.of(monoChunk);
+				})
+				.flatMap(mono -> mono)
+				.map(event -> this.streamHelper.eventToChatCompletionResponse(event, chatCompletionReference))
+				.filter(chatCompletionResponse -> chatCompletionResponse.type() != null);
 	}
 
 	/**
@@ -292,6 +297,7 @@ public final class AnthropicApi {
 
 		/**
 		 * Get the value of the model.
+		 *
 		 * @return The value of the model.
 		 */
 		public String getValue() {
@@ -300,6 +306,7 @@ public final class AnthropicApi {
 
 		/**
 		 * Get the name of the model.
+		 *
 		 * @return The name of the model.
 		 */
 		@Override
@@ -411,14 +418,14 @@ public final class AnthropicApi {
 
 	@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type",
 			visible = true)
-	@JsonSubTypes({ @JsonSubTypes.Type(value = ContentBlockStartEvent.class, name = "content_block_start"),
+	@JsonSubTypes({@JsonSubTypes.Type(value = ContentBlockStartEvent.class, name = "content_block_start"),
 			@JsonSubTypes.Type(value = ContentBlockDeltaEvent.class, name = "content_block_delta"),
 			@JsonSubTypes.Type(value = ContentBlockStopEvent.class, name = "content_block_stop"),
 			@JsonSubTypes.Type(value = PingEvent.class, name = "ping"),
 			@JsonSubTypes.Type(value = ErrorEvent.class, name = "error"),
 			@JsonSubTypes.Type(value = MessageStartEvent.class, name = "message_start"),
 			@JsonSubTypes.Type(value = MessageDeltaEvent.class, name = "message_delta"),
-			@JsonSubTypes.Type(value = MessageStopEvent.class, name = "message_stop") })
+			@JsonSubTypes.Type(value = MessageStopEvent.class, name = "message_stop")})
 	public interface StreamEvent {
 
 		@JsonProperty("type")
@@ -429,50 +436,50 @@ public final class AnthropicApi {
 	/**
 	 * Chat completion request object.
 	 *
-	 * @param model The model that will complete your prompt. See the list of
-	 * <a href="https://docs.anthropic.com/claude/docs/models-overview">models</a> for
-	 * additional details and options.
-	 * @param messages Input messages.
-	 * @param system System prompt. A system prompt is a way of providing context and
-	 * instructions to Claude, such as specifying a particular goal or role. See our
-	 * <a href="https://docs.anthropic.com/claude/docs/system-prompts">guide</a> to system
-	 * prompts.
-	 * @param maxTokens The maximum number of tokens to generate before stopping. Note
-	 * that our models may stop before reaching this maximum. This parameter only
-	 * specifies the absolute maximum number of tokens to generate. Different models have
-	 * different maximum values for this parameter.
-	 * @param metadata An object describing metadata about the request.
+	 * @param model         The model that will complete your prompt. See the list of
+	 *                      <a href="https://docs.anthropic.com/claude/docs/models-overview">models</a> for
+	 *                      additional details and options.
+	 * @param messages      Input messages.
+	 * @param system        System prompt. A system prompt is a way of providing context and
+	 *                      instructions to Claude, such as specifying a particular goal or role. See our
+	 *                      <a href="https://docs.anthropic.com/claude/docs/system-prompts">guide</a> to system
+	 *                      prompts.
+	 * @param maxTokens     The maximum number of tokens to generate before stopping. Note
+	 *                      that our models may stop before reaching this maximum. This parameter only
+	 *                      specifies the absolute maximum number of tokens to generate. Different models have
+	 *                      different maximum values for this parameter.
+	 * @param metadata      An object describing metadata about the request.
 	 * @param stopSequences Custom text sequences that will cause the model to stop
-	 * generating. Our models will normally stop when they have naturally completed their
-	 * turn, which will result in a response stop_reason of "end_turn". If you want the
-	 * model to stop generating when it encounters custom strings of text, you can use the
-	 * stop_sequences parameter. If the model encounters one of the custom sequences, the
-	 * response stop_reason value will be "stop_sequence" and the response stop_sequence
-	 * value will contain the matched stop sequence.
-	 * @param stream Whether to incrementally stream the response using server-sent
-	 * events.
-	 * @param temperature Amount of randomness injected into the response.Defaults to 1.0.
-	 * Ranges from 0.0 to 1.0. Use temperature closer to 0.0 for analytical / multiple
-	 * choice, and closer to 1.0 for creative and generative tasks. Note that even with
-	 * temperature of 0.0, the results will not be fully deterministic.
-	 * @param topP Use nucleus sampling. In nucleus sampling, we compute the cumulative
-	 * distribution over all the options for each subsequent token in decreasing
-	 * probability order and cut it off once it reaches a particular probability specified
-	 * by top_p. You should either alter temperature or top_p, but not both. Recommended
-	 * for advanced use cases only. You usually only need to use temperature.
-	 * @param topK Only sample from the top K options for each subsequent token. Used to
-	 * remove "long tail" low probability responses. Learn more technical details here.
-	 * Recommended for advanced use cases only. You usually only need to use temperature.
-	 * @param tools Definitions of tools that the model may use. If provided the model may
-	 * return tool_use content blocks that represent the model's use of those tools. You
-	 * can then run those tools using the tool input generated by the model and then
-	 * optionally return results back to the model using tool_result content blocks.
-	 * @param thinking Configuration for the model's thinking mode. When enabled, the
-	 * model can perform more in-depth reasoning before responding to a query.
+	 *                      generating. Our models will normally stop when they have naturally completed their
+	 *                      turn, which will result in a response stop_reason of "end_turn". If you want the
+	 *                      model to stop generating when it encounters custom strings of text, you can use the
+	 *                      stop_sequences parameter. If the model encounters one of the custom sequences, the
+	 *                      response stop_reason value will be "stop_sequence" and the response stop_sequence
+	 *                      value will contain the matched stop sequence.
+	 * @param stream        Whether to incrementally stream the response using server-sent
+	 *                      events.
+	 * @param temperature   Amount of randomness injected into the response.Defaults to 1.0.
+	 *                      Ranges from 0.0 to 1.0. Use temperature closer to 0.0 for analytical / multiple
+	 *                      choice, and closer to 1.0 for creative and generative tasks. Note that even with
+	 *                      temperature of 0.0, the results will not be fully deterministic.
+	 * @param topP          Use nucleus sampling. In nucleus sampling, we compute the cumulative
+	 *                      distribution over all the options for each subsequent token in decreasing
+	 *                      probability order and cut it off once it reaches a particular probability specified
+	 *                      by top_p. You should either alter temperature or top_p, but not both. Recommended
+	 *                      for advanced use cases only. You usually only need to use temperature.
+	 * @param topK          Only sample from the top K options for each subsequent token. Used to
+	 *                      remove "long tail" low probability responses. Learn more technical details here.
+	 *                      Recommended for advanced use cases only. You usually only need to use temperature.
+	 * @param tools         Definitions of tools that the model may use. If provided the model may
+	 *                      return tool_use content blocks that represent the model's use of those tools. You
+	 *                      can then run those tools using the tool input generated by the model and then
+	 *                      optionally return results back to the model using tool_result content blocks.
+	 * @param thinking      Configuration for the model's thinking mode. When enabled, the
+	 *                      model can perform more in-depth reasoning before responding to a query.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record ChatCompletionRequest(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("model") String model,
 		@JsonProperty("messages") List<AnthropicMessage> messages,
 		@JsonProperty("system") String system,
@@ -488,12 +495,12 @@ public final class AnthropicApi {
 		// @formatter:on
 
 		public ChatCompletionRequest(String model, List<AnthropicMessage> messages, String system, Integer maxTokens,
-				Double temperature, Boolean stream) {
+		                             Double temperature, Boolean stream) {
 			this(model, messages, system, maxTokens, null, null, stream, temperature, null, null, null, null);
 		}
 
 		public ChatCompletionRequest(String model, List<AnthropicMessage> messages, String system, Integer maxTokens,
-				List<String> stopSequences, Double temperature, Boolean stream) {
+		                             List<String> stopSequences, Double temperature, Boolean stream) {
 			this(model, messages, system, maxTokens, null, stopSequences, stream, temperature, null, null, null, null);
 		}
 
@@ -509,9 +516,9 @@ public final class AnthropicApi {
 		 * Metadata about the request.
 		 *
 		 * @param userId An external identifier for the user who is associated with the
-		 * request. This should be a uuid, hash value, or other opaque identifier.
-		 * Anthropic may use this id to help detect abuse. Do not include any identifying
-		 * information such as name, email address, or phone number.
+		 *               request. This should be a uuid, hash value, or other opaque identifier.
+		 *               Anthropic may use this id to help detect abuse. Do not include any identifying
+		 *               information such as name, email address, or phone number.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		public record Metadata(@JsonProperty("user_id") String userId) {
@@ -521,13 +528,13 @@ public final class AnthropicApi {
 		/**
 		 * Configuration for the model's thinking mode.
 		 *
-		 * @param type The type of thinking mode. Currently, "enabled" is supported.
+		 * @param type         The type of thinking mode. Currently, "enabled" is supported.
 		 * @param budgetTokens The token budget available for the thinking process. Must
-		 * be ≥1024 and less than max_tokens.
+		 *                     be ≥1024 and less than max_tokens.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		public record ThinkingConfig(@JsonProperty("type") ThinkingType type,
-				@JsonProperty("budget_tokens") Integer budgetTokens) {
+		                             @JsonProperty("budget_tokens") Integer budgetTokens) {
 		}
 
 	}
@@ -659,7 +666,7 @@ public final class AnthropicApi {
 
 	/**
 	 * Input messages.
-	 *
+	 * <p>
 	 * Our models are trained to operate on alternating user and assistant conversational
 	 * turns. When creating a new Message, you specify the prior conversational turns with
 	 * the messages parameter, and the model then generates the next Message in the
@@ -671,13 +678,13 @@ public final class AnthropicApi {
 	 * response.
 	 *
 	 * @param content The contents of the message. Can be of one of String or
-	 * MultiModalContent.
-	 * @param role The role of the messages author. Could be one of the {@link Role}
-	 * types.
+	 *                MultiModalContent.
+	 * @param role    The role of the messages author. Could be one of the {@link Role}
+	 *                types.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record AnthropicMessage(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("content") List<ContentBlock> content,
 		@JsonProperty("role") Role role) {
 		// @formatter:on
@@ -686,23 +693,23 @@ public final class AnthropicApi {
 	/**
 	 * The content block of the message.
 	 *
-	 * @param type the content type can be "text", "image", "tool_use", "tool_result" or
-	 * "text_delta".
-	 * @param source The source of the media content. Applicable for "image" types only.
-	 * @param text The text of the message. Applicable for "text" types only.
-	 * @param index The index of the content block. Applicable only for streaming
-	 * responses.
-	 * @param id The id of the tool use. Applicable only for tool_use response.
-	 * @param name The name of the tool use. Applicable only for tool_use response.
-	 * @param input The input of the tool use. Applicable only for tool_use response.
+	 * @param type      the content type can be "text", "image", "tool_use", "tool_result" or
+	 *                  "text_delta".
+	 * @param source    The source of the media content. Applicable for "image" types only.
+	 * @param text      The text of the message. Applicable for "text" types only.
+	 * @param index     The index of the content block. Applicable only for streaming
+	 *                  responses.
+	 * @param id        The id of the tool use. Applicable only for tool_use response.
+	 * @param name      The name of the tool use. Applicable only for tool_use response.
+	 * @param input     The input of the tool use. Applicable only for tool_use response.
 	 * @param toolUseId The id of the tool use. Applicable only for tool_result response.
-	 * @param content The content of the tool result. Applicable only for tool_result
-	 * response.
+	 * @param content   The content of the tool result. Applicable only for tool_result
+	 *                  response.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ContentBlock(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("type") Type type,
 		@JsonProperty("source") Source source,
 		@JsonProperty("text") String text,
@@ -730,8 +737,9 @@ public final class AnthropicApi {
 
 		/**
 		 * Create content block
+		 *
 		 * @param mediaType The media type of the content.
-		 * @param data The content data.
+		 * @param data      The content data.
 		 */
 		public ContentBlock(String mediaType, String data) {
 			this(new Source(mediaType, data));
@@ -739,7 +747,8 @@ public final class AnthropicApi {
 
 		/**
 		 * Create content block
-		 * @param type The type of the content.
+		 *
+		 * @param type   The type of the content.
 		 * @param source The source of the content.
 		 */
 		public ContentBlock(Type type, Source source) {
@@ -748,6 +757,7 @@ public final class AnthropicApi {
 
 		/**
 		 * Create content block
+		 *
 		 * @param source The source of the content.
 		 */
 		public ContentBlock(Source source) {
@@ -756,6 +766,7 @@ public final class AnthropicApi {
 
 		/**
 		 * Create content block
+		 *
 		 * @param text The text of the content.
 		 */
 		public ContentBlock(String text) {
@@ -763,11 +774,13 @@ public final class AnthropicApi {
 		}
 
 		// Tool result
+
 		/**
 		 * Create content block
-		 * @param type The type of the content.
+		 *
+		 * @param type      The type of the content.
 		 * @param toolUseId The id of the tool use.
-		 * @param content The content of the tool result.
+		 * @param content   The content of the tool result.
 		 */
 		public ContentBlock(Type type, String toolUseId, String content) {
 			this(type, null, null, null, null, null, null, toolUseId, content, null, null, null);
@@ -775,21 +788,24 @@ public final class AnthropicApi {
 
 		/**
 		 * Create content block
-		 * @param type The type of the content.
+		 *
+		 * @param type   The type of the content.
 		 * @param source The source of the content.
-		 * @param text The text of the content.
-		 * @param index The index of the content block.
+		 * @param text   The text of the content.
+		 * @param index  The index of the content block.
 		 */
 		public ContentBlock(Type type, Source source, String text, Integer index) {
 			this(type, source, text, index, null, null, null, null, null, null, null, null);
 		}
 
 		// Tool use input JSON delta streaming
+
 		/**
 		 * Create content block
-		 * @param type The type of the content.
-		 * @param id The id of the tool use.
-		 * @param name The name of the tool use.
+		 *
+		 * @param type  The type of the content.
+		 * @param id    The id of the tool use.
+		 * @param name  The name of the tool use.
 		 * @param input The input of the tool use.
 		 */
 		public ContentBlock(Type type, String id, String name, Map<String, Object> input) {
@@ -879,6 +895,7 @@ public final class AnthropicApi {
 
 			/**
 			 * Get the value of the type.
+			 *
 			 * @return The value of the type.
 			 */
 			public String getValue() {
@@ -890,15 +907,15 @@ public final class AnthropicApi {
 		/**
 		 * The source of the media content. (Applicable for "image" types only)
 		 *
-		 * @param type The type of the media content. Only "base64" is supported at the
-		 * moment.
+		 * @param type      The type of the media content. Only "base64" is supported at the
+		 *                  moment.
 		 * @param mediaType The media type of the content. For example, "image/png" or
-		 * "image/jpeg".
-		 * @param data The base64-encoded data of the content.
+		 *                  "image/jpeg".
+		 * @param data      The base64-encoded data of the content.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		public record Source(
-		// @formatter:off
+				// @formatter:off
 			@JsonProperty("type") String type,
 			@JsonProperty("media_type") String mediaType,
 			@JsonProperty("data") String data,
@@ -907,8 +924,9 @@ public final class AnthropicApi {
 
 			/**
 			 * Create source
+			 *
 			 * @param mediaType The media type of the content.
-			 * @param data The content data.
+			 * @param data      The content data.
 			 */
 			public Source(String mediaType, String data) {
 				this("base64", mediaType, data, null);
@@ -929,13 +947,13 @@ public final class AnthropicApi {
 	/**
 	 * Tool description.
 	 *
-	 * @param name The name of the tool.
+	 * @param name        The name of the tool.
 	 * @param description A description of the tool.
 	 * @param inputSchema The input schema of the tool.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record Tool(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("name") String name,
 		@JsonProperty("description") String description,
 		@JsonProperty("input_schema") Map<String, Object> inputSchema) {
@@ -947,22 +965,22 @@ public final class AnthropicApi {
 	/**
 	 * Chat completion response object.
 	 *
-	 * @param id Unique object identifier. The format and length of IDs may change over
-	 * time.
-	 * @param type Object type. For Messages, this is always "message".
-	 * @param role Conversational role of the generated message. This will always be
-	 * "assistant".
-	 * @param content Content generated by the model. This is an array of content blocks.
-	 * @param model The model that handled the request.
-	 * @param stopReason The reason the model stopped generating tokens. This will be one
-	 * of "end_turn", "max_tokens", "stop_sequence", "tool_use", or "timeout".
+	 * @param id           Unique object identifier. The format and length of IDs may change over
+	 *                     time.
+	 * @param type         Object type. For Messages, this is always "message".
+	 * @param role         Conversational role of the generated message. This will always be
+	 *                     "assistant".
+	 * @param content      Content generated by the model. This is an array of content blocks.
+	 * @param model        The model that handled the request.
+	 * @param stopReason   The reason the model stopped generating tokens. This will be one
+	 *                     of "end_turn", "max_tokens", "stop_sequence", "tool_use", or "timeout".
 	 * @param stopSequence Which custom stop sequence was generated, if any.
-	 * @param usage Input and output token usage.
+	 * @param usage        Input and output token usage.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ChatCompletionResponse(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("id") String id,
 		@JsonProperty("type") String type,
 		@JsonProperty("role") Role role,
@@ -979,13 +997,13 @@ public final class AnthropicApi {
 	/**
 	 * Usage statistics.
 	 *
-	 * @param inputTokens The number of input tokens which were used.
+	 * @param inputTokens  The number of input tokens which were used.
 	 * @param outputTokens The number of output tokens which were used. completion).
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record Usage(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("input_tokens") Integer inputTokens,
 		@JsonProperty("output_tokens") Integer outputTokens) {
 		// @formatter:off
@@ -1132,14 +1150,14 @@ public final class AnthropicApi {
 	/**
 	 * Content block delta event.
 	 *
-	 * @param type The event type.
+	 * @param type  The event type.
 	 * @param index The index of the content block.
 	 * @param delta The content block delta body.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ContentBlockDeltaEvent(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("type") EventType type,
 		@JsonProperty("index") Integer index,
 		@JsonProperty("delta") ContentBlockDeltaBody delta) implements StreamEvent {
@@ -1210,13 +1228,13 @@ public final class AnthropicApi {
 	/**
 	 * Content block stop event.
 	 *
-	 * @param type The event type.
+	 * @param type  The event type.
 	 * @param index The index of the content block.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ContentBlockStopEvent(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("type") EventType type,
 		@JsonProperty("index") Integer index) implements StreamEvent {
 	}
@@ -1225,7 +1243,7 @@ public final class AnthropicApi {
 	/**
 	 * Message start event.
 	 *
-	 * @param type The event type.
+	 * @param type    The event type.
 	 * @param message The message body.
 	 */
 	@JsonInclude(Include.NON_NULL)
@@ -1239,14 +1257,14 @@ public final class AnthropicApi {
 	/**
 	 * Message delta event.
 	 *
-	 * @param type The event type.
+	 * @param type  The event type.
 	 * @param delta The message delta body.
 	 * @param usage The message delta usage.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record MessageDeltaEvent(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("type") EventType type,
 		@JsonProperty("delta") MessageDelta delta,
 		@JsonProperty("usage") MessageDeltaUsage usage) implements StreamEvent {
@@ -1282,7 +1300,7 @@ public final class AnthropicApi {
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record MessageStopEvent(
-	//@formatter:off
+			//@formatter:off
 		@JsonProperty("type") EventType type) implements StreamEvent {
 	}
 	// @formatter:on
@@ -1293,13 +1311,13 @@ public final class AnthropicApi {
 	/**
 	 * Error event.
 	 *
-	 * @param type The event type.
+	 * @param type  The event type.
 	 * @param error The error body.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ErrorEvent(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("type") EventType type,
 		@JsonProperty("error") Error error) implements StreamEvent {
 
@@ -1328,7 +1346,7 @@ public final class AnthropicApi {
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record PingEvent(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("type") EventType type) implements StreamEvent {
 	}
 	// @formatter:on

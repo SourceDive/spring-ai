@@ -41,10 +41,10 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Eddú Meléndez
  * @author Soby Chacko
- * @since 1.0.0
  * @see ContainerConnectionDetailsFactory
  * @see MongoConnectionDetails
  * @see MongoDBAtlasLocalContainer
+ * @since 1.0.0
  */
 class MongoDbAtlasLocalContainerConnectionDetailsFactory
 		extends ContainerConnectionDetailsFactory<MongoDBAtlasLocalContainer, MongoConnectionDetails> {

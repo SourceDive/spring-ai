@@ -41,10 +41,10 @@ import org.springframework.util.Assert;
  * MiniMax API. It provides methods to set and retrieve various options like model,
  * frequency penalty, max tokens, etc.
  *
- * @see ChatOptions
  * @author Geng Rong
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
+ * @see ChatOptions
  * @since 1.0.0 M1
  */
 @JsonInclude(Include.NON_NULL)
@@ -161,23 +161,23 @@ public class MiniMaxChatOptions implements ToolCallingChatOptions {
 
 	public static MiniMaxChatOptions fromOptions(MiniMaxChatOptions fromOptions) {
 		return builder().model(fromOptions.getModel())
-			.frequencyPenalty(fromOptions.getFrequencyPenalty())
-			.maxTokens(fromOptions.getMaxTokens())
-			.N(fromOptions.getN())
-			.presencePenalty(fromOptions.getPresencePenalty())
-			.responseFormat(fromOptions.getResponseFormat())
-			.seed(fromOptions.getSeed())
-			.stop(fromOptions.getStop())
-			.temperature(fromOptions.getTemperature())
-			.topP(fromOptions.getTopP())
-			.maskSensitiveInfo(fromOptions.getMaskSensitiveInfo())
-			.tools(fromOptions.getTools())
-			.toolChoice(fromOptions.getToolChoice())
-			.toolCallbacks(fromOptions.getToolCallbacks())
-			.toolNames(fromOptions.getToolNames())
-			.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
-			.toolContext(fromOptions.getToolContext())
-			.build();
+				.frequencyPenalty(fromOptions.getFrequencyPenalty())
+				.maxTokens(fromOptions.getMaxTokens())
+				.N(fromOptions.getN())
+				.presencePenalty(fromOptions.getPresencePenalty())
+				.responseFormat(fromOptions.getResponseFormat())
+				.seed(fromOptions.getSeed())
+				.stop(fromOptions.getStop())
+				.temperature(fromOptions.getTemperature())
+				.topP(fromOptions.getTopP())
+				.maskSensitiveInfo(fromOptions.getMaskSensitiveInfo())
+				.tools(fromOptions.getTools())
+				.toolChoice(fromOptions.getToolChoice())
+				.toolCallbacks(fromOptions.getToolCallbacks())
+				.toolNames(fromOptions.getToolNames())
+				.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
+				.toolContext(fromOptions.getToolContext())
+				.build();
 	}
 
 	@Override
@@ -400,112 +400,98 @@ public class MiniMaxChatOptions implements ToolCallingChatOptions {
 			if (other.model != null) {
 				return false;
 			}
-		}
-		else if (!this.model.equals(other.model)) {
+		} else if (!this.model.equals(other.model)) {
 			return false;
 		}
 		if (this.frequencyPenalty == null) {
 			if (other.frequencyPenalty != null) {
 				return false;
 			}
-		}
-		else if (!this.frequencyPenalty.equals(other.frequencyPenalty)) {
+		} else if (!this.frequencyPenalty.equals(other.frequencyPenalty)) {
 			return false;
 		}
 		if (this.maxTokens == null) {
 			if (other.maxTokens != null) {
 				return false;
 			}
-		}
-		else if (!this.maxTokens.equals(other.maxTokens)) {
+		} else if (!this.maxTokens.equals(other.maxTokens)) {
 			return false;
 		}
 		if (this.n == null) {
 			if (other.n != null) {
 				return false;
 			}
-		}
-		else if (!this.n.equals(other.n)) {
+		} else if (!this.n.equals(other.n)) {
 			return false;
 		}
 		if (this.presencePenalty == null) {
 			if (other.presencePenalty != null) {
 				return false;
 			}
-		}
-		else if (!this.presencePenalty.equals(other.presencePenalty)) {
+		} else if (!this.presencePenalty.equals(other.presencePenalty)) {
 			return false;
 		}
 		if (this.responseFormat == null) {
 			if (other.responseFormat != null) {
 				return false;
 			}
-		}
-		else if (!this.responseFormat.equals(other.responseFormat)) {
+		} else if (!this.responseFormat.equals(other.responseFormat)) {
 			return false;
 		}
 		if (this.seed == null) {
 			if (other.seed != null) {
 				return false;
 			}
-		}
-		else if (!this.seed.equals(other.seed)) {
+		} else if (!this.seed.equals(other.seed)) {
 			return false;
 		}
 		if (this.stop == null) {
 			if (other.stop != null) {
 				return false;
 			}
-		}
-		else if (!this.stop.equals(other.stop)) {
+		} else if (!this.stop.equals(other.stop)) {
 			return false;
 		}
 		if (this.temperature == null) {
 			if (other.temperature != null) {
 				return false;
 			}
-		}
-		else if (!this.temperature.equals(other.temperature)) {
+		} else if (!this.temperature.equals(other.temperature)) {
 			return false;
 		}
 		if (this.topP == null) {
 			if (other.topP != null) {
 				return false;
 			}
-		}
-		else if (!this.topP.equals(other.topP)) {
+		} else if (!this.topP.equals(other.topP)) {
 			return false;
 		}
 		if (this.maskSensitiveInfo == null) {
 			if (other.maskSensitiveInfo != null) {
 				return false;
 			}
-		}
-		else if (!this.maskSensitiveInfo.equals(other.maskSensitiveInfo)) {
+		} else if (!this.maskSensitiveInfo.equals(other.maskSensitiveInfo)) {
 			return false;
 		}
 		if (this.tools == null) {
 			if (other.tools != null) {
 				return false;
 			}
-		}
-		else if (!this.tools.equals(other.tools)) {
+		} else if (!this.tools.equals(other.tools)) {
 			return false;
 		}
 		if (this.toolChoice == null) {
 			if (other.toolChoice != null) {
 				return false;
 			}
-		}
-		else if (!this.toolChoice.equals(other.toolChoice)) {
+		} else if (!this.toolChoice.equals(other.toolChoice)) {
 			return false;
 		}
 		if (this.internalToolExecutionEnabled == null) {
 			if (other.internalToolExecutionEnabled != null) {
 				return false;
 			}
-		}
-		else if (!this.internalToolExecutionEnabled.equals(other.internalToolExecutionEnabled)) {
+		} else if (!this.internalToolExecutionEnabled.equals(other.internalToolExecutionEnabled)) {
 			return false;
 		}
 
@@ -513,8 +499,7 @@ public class MiniMaxChatOptions implements ToolCallingChatOptions {
 			if (other.toolNames != null) {
 				return false;
 			}
-		}
-		else if (!this.toolNames.equals(other.toolNames)) {
+		} else if (!this.toolNames.equals(other.toolNames)) {
 			return false;
 		}
 
@@ -522,8 +507,7 @@ public class MiniMaxChatOptions implements ToolCallingChatOptions {
 			if (other.toolCallbacks != null) {
 				return false;
 			}
-		}
-		else if (!this.toolCallbacks.equals(other.toolCallbacks)) {
+		} else if (!this.toolCallbacks.equals(other.toolCallbacks)) {
 			return false;
 		}
 
@@ -531,8 +515,7 @@ public class MiniMaxChatOptions implements ToolCallingChatOptions {
 			if (other.toolContext != null) {
 				return false;
 			}
-		}
-		else if (!this.toolContext.equals(other.toolContext)) {
+		} else if (!this.toolContext.equals(other.toolContext)) {
 			return false;
 		}
 
@@ -652,8 +635,7 @@ public class MiniMaxChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

@@ -112,12 +112,11 @@ public final class Neo4jChatMemoryRepositoryConfig {
 					this.sessionLabel);
 			// Index for index on Message nodes
 			String messageIndexCypher = String
-				.format("CREATE INDEX message_index_index IF NOT EXISTS FOR (n:%s) ON (n.index)", this.messageLabel);
+					.format("CREATE INDEX message_index_index IF NOT EXISTS FOR (n:%s) ON (n.index)", this.messageLabel);
 			session.run(sessionIndexCypher);
 			session.run(messageIndexCypher);
 			logger.info("Ensured Neo4j indexes for conversationId and message index.");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.warn("Failed to ensure Neo4j indexes for chat memory: {}", e.getMessage());
 		}
 	}

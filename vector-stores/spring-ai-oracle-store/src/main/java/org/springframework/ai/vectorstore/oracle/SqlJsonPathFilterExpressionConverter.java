@@ -45,8 +45,7 @@ public class SqlJsonPathFilterExpressionConverter extends AbstractFilterExpressi
 			context.append(" in ");
 			this.convertOperand(expression.right(), context);
 			context.append(" )");
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);

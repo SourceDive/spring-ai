@@ -53,10 +53,10 @@ import org.springframework.util.Assert;
  *
  * @author Christian Tzolov
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href="http://export.arxiv.org/abs/2407.21059">arXiv:2407.21059</a>
  * @see <a href="https://export.arxiv.org/abs/2312.10997">arXiv:2312.10997</a>
  * @see <a href="https://export.arxiv.org/abs/2410.20878">arXiv:2410.20878</a>
+ * @since 1.0.0
  */
 public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
@@ -82,10 +82,10 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 	private final int order;
 
 	private RetrievalAugmentationAdvisor(@Nullable List<QueryTransformer> queryTransformers,
-			@Nullable QueryExpander queryExpander, DocumentRetriever documentRetriever,
-			@Nullable DocumentJoiner documentJoiner, @Nullable List<DocumentPostProcessor> documentPostProcessors,
-			@Nullable QueryAugmenter queryAugmenter, @Nullable TaskExecutor taskExecutor, @Nullable Scheduler scheduler,
-			@Nullable Integer order) {
+	                                     @Nullable QueryExpander queryExpander, DocumentRetriever documentRetriever,
+	                                     @Nullable DocumentJoiner documentJoiner, @Nullable List<DocumentPostProcessor> documentPostProcessors,
+	                                     @Nullable QueryAugmenter queryAugmenter, @Nullable TaskExecutor taskExecutor, @Nullable Scheduler scheduler,
+	                                     @Nullable Integer order) {
 		Assert.notNull(documentRetriever, "documentRetriever cannot be null");
 		Assert.noNullElements(queryTransformers, "queryTransformers cannot contain null elements");
 		this.queryTransformers = queryTransformers != null ? queryTransformers : List.of();
@@ -109,10 +109,10 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
 		// 0. Create a query from the user text, parameters, and conversation history.
 		Query originalQuery = Query.builder()
-			.text(chatClientRequest.prompt().getUserMessage().getText())
-			.history(chatClientRequest.prompt().getInstructions())
-			.context(context)
-			.build();
+				.text(chatClientRequest.prompt().getUserMessage().getText())
+				.history(chatClientRequest.prompt().getInstructions())
+				.context(context)
+				.build();
 
 		// 1. Transform original user query based on a chain of query transformers.
 		Query transformedQuery = originalQuery;
@@ -126,11 +126,11 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
 		// 3. Get similar documents for each query.
 		Map<Query, List<List<Document>>> documentsForQuery = expandedQueries.stream()
-			.map(query -> CompletableFuture.supplyAsync(() -> getDocumentsForQuery(query), this.taskExecutor))
-			.toList()
-			.stream()
-			.map(CompletableFuture::join)
-			.collect(Collectors.toMap(Map.Entry::getKey, entry -> List.of(entry.getValue())));
+				.map(query -> CompletableFuture.supplyAsync(() -> getDocumentsForQuery(query), this.taskExecutor))
+				.toList()
+				.stream()
+				.map(CompletableFuture::join)
+				.collect(Collectors.toMap(Map.Entry::getKey, entry -> List.of(entry.getValue())));
 
 		// 4. Combine documents retrieved based on multiple queries and from multiple data
 		// sources.
@@ -147,9 +147,9 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
 		// 6. Update ChatClientRequest with augmented prompt.
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedQuery.text()))
-			.context(context)
-			.build();
+				.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedQuery.text()))
+				.context(context)
+				.build();
 	}
 
 	/**
@@ -166,15 +166,14 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 		ChatResponse.Builder chatResponseBuilder;
 		if (chatClientResponse.chatResponse() == null) {
 			chatResponseBuilder = ChatResponse.builder();
-		}
-		else {
+		} else {
 			chatResponseBuilder = ChatResponse.builder().from(chatClientResponse.chatResponse());
 		}
 		chatResponseBuilder.metadata(DOCUMENT_CONTEXT, chatClientResponse.context().get(DOCUMENT_CONTEXT));
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponseBuilder.build())
-			.context(chatClientResponse.context())
-			.build();
+				.chatResponse(chatResponseBuilder.build())
+				.context(chatClientResponse.context())
+				.build();
 	}
 
 	@Override

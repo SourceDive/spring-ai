@@ -24,14 +24,15 @@ public class BaseEmbeddingModelTest extends BaseOCIGenAITest {
 
 	/**
 	 * Create an OCIEmbeddingModel instance using a config file authentication provider.
+	 *
 	 * @return OCIEmbeddingModel instance
 	 */
 	public static OCIEmbeddingModel getEmbeddingModel() {
 		OCIEmbeddingOptions options = OCIEmbeddingOptions.builder()
-			.model(EMBEDDING_MODEL_V2)
-			.compartment(COMPARTMENT_ID)
-			.servingMode("on-demand")
-			.build();
+				.model(EMBEDDING_MODEL_V2)
+				.compartment(COMPARTMENT_ID)
+				.servingMode("on-demand")
+				.build();
 		return new OCIEmbeddingModel(getGenerativeAIClient(), options);
 	}
 

@@ -51,8 +51,8 @@ public class AnthropicChatModelAdditionalHttpHeadersIT {
 		// Use the additional headers to override the Api Key.
 		// Mind that you have to prefix the Api Key with the "Bearer " prefix.
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.httpHeaders(Map.of("x-api-key", System.getenv("ANTHROPIC_API_KEY")))
-			.build();
+				.httpHeaders(Map.of("x-api-key", System.getenv("ANTHROPIC_API_KEY")))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt("Tell me a joke", options));
 

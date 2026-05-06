@@ -50,8 +50,8 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 	@Container
 	@SuppressWarnings("resource")
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(PgVectorImage.DEFAULT_IMAGE)
-		.withUsername("postgres")
-		.withPassword("postgres");
+			.withUsername("postgres")
+			.withPassword("postgres");
 
 	@Autowired
 	protected org.springframework.ai.chat.model.ChatModel chatModel;
@@ -68,27 +68,27 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		// Create PgVectorStore
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536) // OpenAI default embedding size (adjust if needed)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536) // OpenAI default embedding size (adjust if needed)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		// Add a document to the store for recall
 		String conversationId = UUID.randomUUID().toString();
 		store.add(java.util.List
-			.of(new Document("Hello from memory", java.util.Map.of("conversationId", conversationId))));
+				.of(new Document("Hello from memory", java.util.Map.of("conversationId", conversationId))));
 
 		// Build ChatClient with VectorStoreChatMemoryAdvisor
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).build())
+				.build();
 
 		// Send a prompt
 		String answer = chatClient.prompt()
-			.user("Say hello")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("Say hello")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		assertThat(answer).containsIgnoringCase("hello");
 
@@ -103,9 +103,9 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
@@ -118,15 +118,15 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 				new Document("Dogs are loyal pets.", java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
+				.build();
 
 		// Send a semantically related query
 		String answer = chatClient.prompt()
-			.user("Where is the Eiffel Tower located?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("Where is the Eiffel Tower located?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		// Assert that the answer is based on the correct semantic memory
 		assertThat(answer).containsIgnoringCase("paris");
@@ -144,24 +144,24 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
 		store.add(java.util.List
-			.of(new Document("Automobiles are fast.", java.util.Map.of("conversationId", conversationId))));
+				.of(new Document("Automobiles are fast.", java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
+				.build();
 
 		String answer = chatClient.prompt()
-			.user("Tell me about cars.")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("Tell me about cars.")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 		assertThat(answer).satisfiesAnyOf(a -> assertThat(a).containsIgnoringCase("automobile"),
 				a -> assertThat(a).containsIgnoringCase("fast"));
 	}
@@ -175,9 +175,9 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
@@ -186,14 +186,14 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 				new Document("Bananas are yellow.", java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(2).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(2).build())
+				.build();
 
 		String answer = chatClient.prompt()
-			.user("What is the capital of Italy?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What is the capital of Italy?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 		assertThat(answer).containsIgnoringCase("rome");
 		assertThat(answer).doesNotContain("banana");
 	}
@@ -207,9 +207,9 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
@@ -220,14 +220,14 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 				new Document("Dogs are loyal pets.", java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
+				.build();
 
 		String answer = chatClient.prompt()
-			.user("What can you tell me about cats?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What can you tell me about cats?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 		assertThat(answer).containsIgnoringCase("cat");
 		assertThat(answer).doesNotContain("dog");
 	}
@@ -241,9 +241,9 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
@@ -251,14 +251,14 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 				java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
+				.build();
 
 		String answer = chatClient.prompt()
-			.user("Tell me about a fast animal leaping over another.")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("Tell me about a fast animal leaping over another.")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 		assertThat(answer).satisfiesAnyOf(a -> assertThat(a).containsIgnoringCase("fox"),
 				a -> assertThat(a).containsIgnoringCase("dog"));
 	}
@@ -272,9 +272,9 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
@@ -283,14 +283,14 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 				new Document("Bananas are yellow.", java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(2).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(2).build())
+				.build();
 
 		String answer = chatClient.prompt()
-			.user("What fruits are red?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What fruits are red?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 		assertThat(answer).containsIgnoringCase("apple");
 		assertThat(answer).containsIgnoringCase("strawber");
 		assertThat(answer).doesNotContain("banana");
@@ -305,24 +305,24 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = new OpenAiEmbeddingModel(OpenAiApi.builder().apiKey(apiKey).build());
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		PgVectorStore store = PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(1536)
-			.initializeSchema(true)
-			.build();
+				.dimensions(1536)
+				.initializeSchema(true)
+				.build();
 		store.afterPropertiesSet();
 
 		String conversationId = UUID.randomUUID().toString();
 		store.add(java.util.List
-			.of(new Document("The sun is a star.", java.util.Map.of("conversationId", conversationId))));
+				.of(new Document("The sun is a star.", java.util.Map.of("conversationId", conversationId))));
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
-			.build();
+				.defaultAdvisors(VectorStoreChatMemoryAdvisor.builder(store).defaultTopK(1).build())
+				.build();
 
 		String answer = chatClient.prompt()
-			.user("What is the capital of Spain?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What is the capital of Spain?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 		assertThat(answer).doesNotContain("sun");
 		assertThat(answer).doesNotContain("star");
 	}
@@ -355,9 +355,9 @@ public class PgVectorStoreVectorStoreChatMemoryAdvisorIT {
 		@Bean
 		public OpenAiChatModel openAiChatModel(OpenAiApi api) {
 			return OpenAiChatModel.builder()
-				.openAiApi(api)
-				.defaultOptions(OpenAiChatOptions.builder().model(OpenAiApi.ChatModel.GPT_4_O_MINI).build())
-				.build();
+					.openAiApi(api)
+					.defaultOptions(OpenAiChatOptions.builder().model(OpenAiApi.ChatModel.GPT_4_O_MINI).build())
+					.build();
 		}
 
 	}

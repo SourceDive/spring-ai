@@ -61,10 +61,10 @@ public class OpenAiEmbeddingModelObservationIT {
 	@Test
 	void observationForEmbeddingOperation() {
 		var options = OpenAiEmbeddingOptions.builder()
-			.model(OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue())
-			.dimensions(1536)
-			.encodingFormat("float")
-			.build();
+				.model(OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue())
+				.dimensions(1536)
+				.encodingFormat("float")
+				.build();
 
 		EmbeddingRequest embeddingRequest = new EmbeddingRequest(List.of("Here comes the sun"), options);
 
@@ -75,23 +75,23 @@ public class OpenAiEmbeddingModelObservationIT {
 		assertThat(responseMetadata).isNotNull();
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("embedding " + OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.EMBEDDING.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.OPENAI.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(), "1536")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("embedding " + OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.EMBEDDING.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.OPENAI.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						OpenAiApi.EmbeddingModel.TEXT_EMBEDDING_3_SMALL.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(), "1536")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -109,7 +109,7 @@ public class OpenAiEmbeddingModelObservationIT {
 
 		@Bean
 		public OpenAiEmbeddingModel openAiEmbeddingModel(OpenAiApi openAiApi,
-				TestObservationRegistry observationRegistry) {
+		                                                 TestObservationRegistry observationRegistry) {
 			return new OpenAiEmbeddingModel(openAiApi, MetadataMode.EMBED, OpenAiEmbeddingOptions.builder().build(),
 					RetryTemplate.defaultInstance(), observationRegistry);
 		}

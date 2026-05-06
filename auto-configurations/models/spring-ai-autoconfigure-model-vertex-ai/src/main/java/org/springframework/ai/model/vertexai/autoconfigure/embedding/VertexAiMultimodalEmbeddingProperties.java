@@ -34,8 +34,8 @@ public class VertexAiMultimodalEmbeddingProperties {
 	 * Vertex AI Text Embedding API options.
 	 */
 	private VertexAiMultimodalEmbeddingOptions options = VertexAiMultimodalEmbeddingOptions.builder()
-		.model(VertexAiMultimodalEmbeddingOptions.DEFAULT_MODEL_NAME)
-		.build();
+			.model(VertexAiMultimodalEmbeddingOptions.DEFAULT_MODEL_NAME)
+			.build();
 
 	public VertexAiMultimodalEmbeddingOptions getOptions() {
 		return this.options;

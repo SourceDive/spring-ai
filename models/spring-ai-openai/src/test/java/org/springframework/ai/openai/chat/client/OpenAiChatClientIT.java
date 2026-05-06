@@ -78,7 +78,7 @@ class OpenAiChatClientIT extends AbstractIT {
 		String REASON_QUESTION = """
 				What do these words have in common?
 				Freight Stone Often Canine.
-					""";
+				""";
 
 		// @formatter:off
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
@@ -95,7 +95,7 @@ class OpenAiChatClientIT extends AbstractIT {
 
 		logger.info("" + response);
 		assertThat(response.toLowerCase().replace("(", " ").replace(")", " ").replace("\"", " ").replace("\"", " "))
-			.contains(" eight", " one", " ten", " nine");
+				.contains(" eight", " one", " ten", " nine");
 
 	}
 
@@ -304,7 +304,7 @@ class OpenAiChatClientIT extends AbstractIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o" })
+	@ValueSource(strings = {"gpt-4o"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		// @formatter:off
@@ -321,7 +321,7 @@ class OpenAiChatClientIT extends AbstractIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o" })
+	@ValueSource(strings = {"gpt-4o"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		// TODO: add url method that wrapps the checked exception.
@@ -365,14 +365,14 @@ class OpenAiChatClientIT extends AbstractIT {
 	@Test
 	void multiModalityAudioResponse() {
 		ChatResponse response = ChatClient.create(this.chatModel)
-			.prompt("Tell me joke about Spring Framework")
-			.options(OpenAiChatOptions.builder()
-				.model(OpenAiApi.ChatModel.GPT_4_O_AUDIO_PREVIEW)
-				.outputAudio(new AudioParameters(AudioParameters.Voice.ALLOY, AudioParameters.AudioResponseFormat.WAV))
-				.outputModalities(List.of("text", "audio"))
-				.build())
-			.call()
-			.chatResponse();
+				.prompt("Tell me joke about Spring Framework")
+				.options(OpenAiChatOptions.builder()
+						.model(OpenAiApi.ChatModel.GPT_4_O_AUDIO_PREVIEW)
+						.outputAudio(new AudioParameters(AudioParameters.Voice.ALLOY, AudioParameters.AudioResponseFormat.WAV))
+						.outputModalities(List.of("text", "audio"))
+						.build())
+				.call()
+				.chatResponse();
 
 		assertThat(response).isNotNull();
 		assertThat(response.getResult().getOutput().getMedia().get(0).getDataAsByteArray()).isNotEmpty();

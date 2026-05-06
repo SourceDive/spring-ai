@@ -34,7 +34,7 @@ public class StabilityAiImagePropertiesTests {
 	public void chatPropertiesTest() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 		"spring.ai.stabilityai.image.api-key=API_KEY",
 				"spring.ai.stabilityai.image.base-url=ENDPOINT",
 				"spring.ai.stabilityai.image.options.n=10",
@@ -51,59 +51,59 @@ public class StabilityAiImagePropertiesTests {
 				"spring.ai.stabilityai.image.options.style-preset=neon-punk"
 				)
 			// @formatter:on
-			.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(StabilityAiImageProperties.class);
+				.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(StabilityAiImageProperties.class);
 
-				assertThat(chatProperties.getBaseUrl()).isEqualTo("ENDPOINT");
-				assertThat(chatProperties.getApiKey()).isEqualTo("API_KEY");
-				assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(chatProperties.getBaseUrl()).isEqualTo("ENDPOINT");
+					assertThat(chatProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
 
-				assertThat(chatProperties.getOptions().getWidth()).isEqualTo(512);
-				assertThat(chatProperties.getOptions().getHeight()).isEqualTo(256);
-				assertThat(chatProperties.getOptions().getResponseFormat()).isEqualTo("application/json");
-				assertThat(chatProperties.getOptions().getN()).isEqualTo(4);
-				assertThat(chatProperties.getOptions().getCfgScale()).isEqualTo(7);
-				assertThat(chatProperties.getOptions().getClipGuidancePreset()).isEqualTo("SIMPLE");
-				assertThat(chatProperties.getOptions().getSampler()).isEqualTo("K_EULER");
-				assertThat(chatProperties.getOptions().getSeed()).isEqualTo(0);
-				assertThat(chatProperties.getOptions().getSteps()).isEqualTo(30);
-				assertThat(chatProperties.getOptions().getStylePreset()).isEqualTo("neon-punk");
-			});
+					assertThat(chatProperties.getOptions().getWidth()).isEqualTo(512);
+					assertThat(chatProperties.getOptions().getHeight()).isEqualTo(256);
+					assertThat(chatProperties.getOptions().getResponseFormat()).isEqualTo("application/json");
+					assertThat(chatProperties.getOptions().getN()).isEqualTo(4);
+					assertThat(chatProperties.getOptions().getCfgScale()).isEqualTo(7);
+					assertThat(chatProperties.getOptions().getClipGuidancePreset()).isEqualTo("SIMPLE");
+					assertThat(chatProperties.getOptions().getSampler()).isEqualTo("K_EULER");
+					assertThat(chatProperties.getOptions().getSeed()).isEqualTo(0);
+					assertThat(chatProperties.getOptions().getSteps()).isEqualTo(30);
+					assertThat(chatProperties.getOptions().getStylePreset()).isEqualTo("neon-punk");
+				});
 	}
 
 	@Test
 	void stabilityImageActivation() {
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.stabilityai.image.api-key=API_KEY",
-					"spring.ai.stabilityai.image.base-url=ENDPOINT", "spring.ai.model.image=none")
-			.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(StabilityAiImageProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(StabilityAiImageModel.class)).isEmpty();
+				.withPropertyValues("spring.ai.stabilityai.image.api-key=API_KEY",
+						"spring.ai.stabilityai.image.base-url=ENDPOINT", "spring.ai.model.image=none")
+				.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(StabilityAiImageProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(StabilityAiImageModel.class)).isEmpty();
 
-			});
-
-		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.stabilityai.image.api-key=API_KEY",
-					"spring.ai.stabilityai.image.base-url=ENDPOINT")
-			.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(StabilityAiImageProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(StabilityAiImageModel.class)).isNotEmpty();
-
-			});
+				});
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.stabilityai.image.api-key=API_KEY",
-					"spring.ai.stabilityai.image.base-url=ENDPOINT", "spring.ai.model.image=stabilityai")
-			.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(StabilityAiImageProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(StabilityAiImageModel.class)).isNotEmpty();
+				.withPropertyValues("spring.ai.stabilityai.image.api-key=API_KEY",
+						"spring.ai.stabilityai.image.base-url=ENDPOINT")
+				.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(StabilityAiImageProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(StabilityAiImageModel.class)).isNotEmpty();
 
-			});
+				});
+
+		new ApplicationContextRunner()
+				.withPropertyValues("spring.ai.stabilityai.image.api-key=API_KEY",
+						"spring.ai.stabilityai.image.base-url=ENDPOINT", "spring.ai.model.image=stabilityai")
+				.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(StabilityAiImageProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(StabilityAiImageModel.class)).isNotEmpty();
+
+				});
 
 	}
 

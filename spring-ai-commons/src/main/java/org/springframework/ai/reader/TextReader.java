@@ -76,6 +76,7 @@ public class TextReader implements DocumentReader {
 
 	/**
 	 * Metadata associated with all documents created by the loader.
+	 *
 	 * @return Metadata to be assigned to the output Documents.
 	 */
 	public Map<String, Object> getCustomMetadata() {
@@ -95,8 +96,7 @@ public class TextReader implements DocumentReader {
 
 			return List.of(new Document(document, this.customMetadata));
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -114,8 +114,7 @@ public class TextReader implements DocumentReader {
 			if (uri != null) {
 				return uri.toString();
 			}
-		}
-		catch (IOException ignored) {
+		} catch (IOException ignored) {
 			// If getURI() throws an exception, we'll try the next method
 		}
 
@@ -125,8 +124,7 @@ public class TextReader implements DocumentReader {
 			if (url != null) {
 				return url.toString();
 			}
-		}
-		catch (IOException ignored) {
+		} catch (IOException ignored) {
 			// If getURL() throws an exception, we'll fall back to getDescription()
 		}
 

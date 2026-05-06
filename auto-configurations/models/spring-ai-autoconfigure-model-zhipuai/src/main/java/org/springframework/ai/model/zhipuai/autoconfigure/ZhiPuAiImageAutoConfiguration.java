@@ -41,18 +41,18 @@ import org.springframework.web.client.RestClient;
  * @author Geng Rong
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(ZhiPuAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.IMAGE_MODEL, havingValue = SpringAIModels.ZHIPUAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ ZhiPuAiConnectionProperties.class, ZhiPuAiImageProperties.class })
+@EnableConfigurationProperties({ZhiPuAiConnectionProperties.class, ZhiPuAiImageProperties.class})
 public class ZhiPuAiImageAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ZhiPuAiImageModel zhiPuAiImageModel(ZhiPuAiConnectionProperties commonProperties,
-			ZhiPuAiImageProperties imageProperties, RestClient.Builder restClientBuilder, RetryTemplate retryTemplate,
-			ResponseErrorHandler responseErrorHandler) {
+	                                           ZhiPuAiImageProperties imageProperties, RestClient.Builder restClientBuilder, RetryTemplate retryTemplate,
+	                                           ResponseErrorHandler responseErrorHandler) {
 
 		String apiKey = StringUtils.hasText(imageProperties.getApiKey()) ? imageProperties.getApiKey()
 				: commonProperties.getApiKey();

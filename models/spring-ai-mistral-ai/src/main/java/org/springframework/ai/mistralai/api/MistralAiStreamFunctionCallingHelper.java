@@ -34,7 +34,7 @@ import org.springframework.util.CollectionUtils;
 
 /**
  * Helper class to support Streaming function calling.
- *
+ * <p>
  * It can merge the streamed ChatCompletionChunk in case of function calling message.
  *
  * @author Christian Tzolov
@@ -44,8 +44,9 @@ public class MistralAiStreamFunctionCallingHelper {
 
 	/**
 	 * Merge the previous and current ChatCompletionChunk into a single one.
+	 *
 	 * @param previous the previous ChatCompletionChunk
-	 * @param current the current ChatCompletionChunk
+	 * @param current  the current ChatCompletionChunk
 	 * @return the merged ChatCompletionChunk
 	 */
 	public ChatCompletionChunk merge(ChatCompletionChunk previous, ChatCompletionChunk current) {
@@ -73,24 +74,24 @@ public class MistralAiStreamFunctionCallingHelper {
 		if (previous == null) {
 			if (current.delta() != null && current.delta().toolCalls() != null) {
 				Optional<String> id = current.delta()
-					.toolCalls()
-					.stream()
-					.map(ToolCall::id)
-					.filter(Objects::nonNull)
-					.findFirst();
+						.toolCalls()
+						.stream()
+						.map(ToolCall::id)
+						.filter(Objects::nonNull)
+						.findFirst();
 				if (id.isEmpty()) {
 					var newId = UUID.randomUUID().toString();
 
 					var toolCallsWithID = current.delta()
-						.toolCalls()
-						.stream()
-						.map(toolCall -> new ToolCall(newId, "function", toolCall.function(), toolCall.index()))
-						.toList();
+							.toolCalls()
+							.stream()
+							.map(toolCall -> new ToolCall(newId, "function", toolCall.function(), toolCall.index()))
+							.toList();
 
 					var role = current.delta().role() != null ? current.delta().role() : Role.ASSISTANT;
 					current = new ChunkChoice(
 							current.index(), new ChatCompletionMessage(current.delta().content(), role,
-									current.delta().name(), toolCallsWithID),
+							current.delta().name(), toolCallsWithID),
 							current.finishReason(), current.logprobs());
 				}
 			}
@@ -132,12 +133,10 @@ public class MistralAiStreamFunctionCallingHelper {
 					toolCalls.add(lastPreviousTooCall);
 				}
 				toolCalls.add(currentToolCall);
-			}
-			else {
+			} else {
 				toolCalls.add(merge(lastPreviousTooCall, currentToolCall));
 			}
-		}
-		else {
+		} else {
 			if (lastPreviousTooCall != null) {
 				toolCalls.add(lastPreviousTooCall);
 			}

@@ -72,8 +72,7 @@ public final class XmlHelper {
 		try {
 			FunctionCalls functionCalls = xmlMapper.readValue(xml, FunctionCalls.class);
 			return functionCalls;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -82,8 +81,7 @@ public final class XmlHelper {
 	public static String toXml(Object object) {
 		try {
 			return xmlMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return "";
 		}
@@ -108,7 +106,7 @@ public final class XmlHelper {
 		var toolDescription = new Tools.ToolDescription("getCurrentWeather",
 				"Get the weather in location. Return temperature in 30°F or 30°C format.",
 				List.of(new Tools.ToolDescription.Parameter("location", "string",
-						"The city and state e.g. San Francisco, CA"),
+								"The city and state e.g. San Francisco, CA"),
 						new Tools.ToolDescription.Parameter("unit", "enum", "Temperature unit")));
 
 		System.out.println(toXml(new Tools(List.of(toolDescription))));

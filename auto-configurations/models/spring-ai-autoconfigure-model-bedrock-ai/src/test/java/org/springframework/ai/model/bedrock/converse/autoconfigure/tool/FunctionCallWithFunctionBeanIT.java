@@ -47,65 +47,65 @@ class FunctionCallWithFunctionBeanIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithFunctionBeanIT.class);
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0")
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0")
+				.run(context -> {
 
-				BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
+					BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
 
-				var userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
+					var userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
-						ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
+							ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-				response = chatModel.call(new Prompt(List.of(userMessage),
-						ToolCallingChatOptions.builder().toolNames("weatherFunction3").build()));
+					response = chatModel.call(new Prompt(List.of(userMessage),
+							ToolCallingChatOptions.builder().toolNames("weatherFunction3").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 	@Test
 	void functionStreamTest() {
 
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0")
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0")
+				.run(context -> {
 
-				BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
+					BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
 
-				var userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
+					var userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
 
-				Flux<ChatResponse> responses = chatModel.stream(new Prompt(List.of(userMessage),
-						ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
+					Flux<ChatResponse> responses = chatModel.stream(new Prompt(List.of(userMessage),
+							ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
 
-				String content = responses.collectList()
-					.block()
-					.stream()
-					.filter(cr -> cr.getResult() != null)
-					.map(cr -> cr.getResult().getOutput().getText())
-					.collect(Collectors.joining());
+					String content = responses.collectList()
+							.block()
+							.stream()
+							.filter(cr -> cr.getResult() != null)
+							.map(cr -> cr.getResult().getOutput().getText())
+							.collect(Collectors.joining());
 
-				logger.info("Response: {}", content);
-				assertThat(content).contains("30", "10", "15");
+					logger.info("Response: {}", content);
+					assertThat(content).contains("30", "10", "15");
 
-			});
+				});
 	}
 
 	@Configuration

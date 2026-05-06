@@ -57,10 +57,10 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void customConfiguration() {
 		QdrantVectorStore vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("custom_collection")
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy())
-			.build();
+				.collectionName("custom_collection")
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy())
+				.build();
 
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("collectionName", "custom_collection");
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("initializeSchema", true);
@@ -70,30 +70,30 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void nullQdrantClientInConstructorShouldThrowException() {
 		assertThatThrownBy(() -> QdrantVectorStore.builder(null, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("EmbeddingModel must be configured");
+				.hasMessage("EmbeddingModel must be configured");
 	}
 
 	@Test
 	void nullEmbeddingModelShouldThrowException() {
 		assertThatThrownBy(() -> QdrantVectorStore.builder(this.qdrantClient, null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("EmbeddingModel must be configured");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("EmbeddingModel must be configured");
 	}
 
 	@Test
 	void emptyCollectionNameShouldThrowException() {
 		assertThatThrownBy(
 				() -> QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel).collectionName("").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("collectionName must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("collectionName must not be empty");
 	}
 
 	@Test
 	void nullBatchingStrategyShouldThrowException() {
 		assertThatThrownBy(
 				() -> QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel).batchingStrategy(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("BatchingStrategy must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("BatchingStrategy must not be null");
 	}
 
 }

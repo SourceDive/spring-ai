@@ -32,8 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class McpWebFluxServerAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpWebFluxServerAutoConfiguration.class,
-				JacksonAutoConfiguration.class, TestConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpWebFluxServerAutoConfiguration.class,
+					JacksonAutoConfiguration.class, TestConfiguration.class));
 
 	@Test
 	void shouldConfigureWebFluxTransportWithCustomObjectMapper() {
@@ -46,7 +46,7 @@ class McpWebFluxServerAutoConfigurationTests {
 
 			// Verify that the ObjectMapper is configured to ignore unknown properties
 			assertThat(objectMapper.getDeserializationConfig()
-				.isEnabled(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isFalse();
+					.isEnabled(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isFalse();
 
 			// Test with a JSON payload containing unknown fields
 			// CHECKSTYLE:OFF

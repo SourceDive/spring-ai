@@ -76,17 +76,18 @@ public class StTemplateRenderer implements TemplateRenderer {
 	/**
 	 * Constructs a new {@code StTemplateRenderer} with the specified delimiter tokens,
 	 * validation mode, and function validation flag.
+	 *
 	 * @param startDelimiterToken the character used to denote the start of a template
-	 * variable (e.g., '{')
-	 * @param endDelimiterToken the character used to denote the end of a template
-	 * variable (e.g., '}')
-	 * @param validationMode the mode to use for template variable validation; must not be
-	 * null
+	 *                            variable (e.g., '{')
+	 * @param endDelimiterToken   the character used to denote the end of a template
+	 *                            variable (e.g., '}')
+	 * @param validationMode      the mode to use for template variable validation; must not be
+	 *                            null
 	 * @param validateStFunctions whether to validate StringTemplate functions in the
-	 * template
+	 *                            template
 	 */
 	public StTemplateRenderer(char startDelimiterToken, char endDelimiterToken, ValidationMode validationMode,
-			boolean validateStFunctions) {
+	                          boolean validateStFunctions) {
 		Assert.notNull(validationMode, "validationMode cannot be null");
 		this.startDelimiterToken = startDelimiterToken;
 		this.endDelimiterToken = endDelimiterToken;
@@ -113,8 +114,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 	private ST createST(String template) {
 		try {
 			return new ST(template, this.startDelimiterToken, this.endDelimiterToken);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalArgumentException("The template string is not valid.", ex);
 		}
 	}
@@ -122,7 +122,8 @@ public class StTemplateRenderer implements TemplateRenderer {
 	/**
 	 * Validates that all required template variables are provided in the model. Returns
 	 * the set of missing variables for further handling or logging.
-	 * @param st the StringTemplate instance
+	 *
+	 * @param st                the StringTemplate instance
 	 * @param templateVariables the provided variables
 	 * @return set of missing variable names, or empty set if none are missing
 	 */
@@ -135,8 +136,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 		if (!missingVariables.isEmpty()) {
 			if (this.validationMode == ValidationMode.WARN) {
 				logger.warn(VALIDATION_MESSAGE.formatted(missingVariables));
-			}
-			else if (this.validationMode == ValidationMode.THROW) {
+			} else if (this.validationMode == ValidationMode.THROW) {
 				throw new IllegalStateException(VALIDATION_MESSAGE.formatted(missingVariables));
 			}
 		}
@@ -161,8 +161,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 						isInsideList = true;
 					}
 				}
-			}
-			else if (token.getType() == STLexer.RDELIM) {
+			} else if (token.getType() == STLexer.RDELIM) {
 				isInsideList = false;
 			}
 			// Only add IDs that are not function calls (i.e., not immediately followed by
@@ -204,6 +203,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 		/**
 		 * Sets the character used as the start delimiter for template expressions.
 		 * Default is '{'.
+		 *
 		 * @param startDelimiterToken The start delimiter character.
 		 * @return This builder instance for chaining.
 		 */
@@ -215,6 +215,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 		/**
 		 * Sets the character used as the end delimiter for template expressions. Default
 		 * is '}'.
+		 *
 		 * @param endDelimiterToken The end delimiter character.
 		 * @return This builder instance for chaining.
 		 */
@@ -227,6 +228,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 		 * Sets the validation mode to control behavior when the provided variables do not
 		 * match the variables required by the template. Default is
 		 * {@link ValidationMode#THROW}.
+		 *
 		 * @param validationMode The desired validation mode.
 		 * @return This builder instance for chaining.
 		 */
@@ -246,6 +248,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 		 * When disabled (default, false), these identifiers are treated like regular
 		 * variables and must be provided in the input map if validation is enabled
 		 * ({@link ValidationMode#WARN} or {@link ValidationMode#THROW}).
+		 *
 		 * @return This builder instance for chaining.
 		 */
 		public Builder validateStFunctions() {
@@ -256,6 +259,7 @@ public class StTemplateRenderer implements TemplateRenderer {
 		/**
 		 * Builds and returns a new {@link StTemplateRenderer} instance with the
 		 * configured settings.
+		 *
 		 * @return A configured {@link StTemplateRenderer}.
 		 */
 		public StTemplateRenderer build() {

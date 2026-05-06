@@ -49,16 +49,13 @@ class QdrantFilterExpressionConverter {
 		if (operand instanceof Expression expression) {
 			if (expression.type() == ExpressionType.NOT && expression.left() instanceof Group group) {
 				mustNotClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(group.content())));
-			}
-			else if (expression.type() == ExpressionType.AND) {
+			} else if (expression.type() == ExpressionType.AND) {
 				mustClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.left())));
 				mustClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.right())));
-			}
-			else if (expression.type() == ExpressionType.OR) {
+			} else if (expression.type() == ExpressionType.OR) {
 				shouldClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.left())));
 				shouldClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.right())));
-			}
-			else {
+			} else {
 				if (!(expression.right() instanceof Value)) {
 					throw new RuntimeException("Non AND/OR/NOT expression must have Value right argument!");
 				}
@@ -99,8 +96,7 @@ class QdrantFilterExpressionConverter {
 		String identifier = doKey(key);
 		if (value.value() instanceof String valueStr) {
 			return io.qdrant.client.ConditionFactory.matchKeyword(identifier, valueStr);
-		}
-		else if (value.value() instanceof Number valueNum) {
+		} else if (value.value() instanceof Number valueNum) {
 			long lValue = Long.parseLong(valueNum.toString());
 			return io.qdrant.client.ConditionFactory.match(identifier, lValue);
 		}
@@ -113,10 +109,9 @@ class QdrantFilterExpressionConverter {
 		String identifier = doKey(key);
 		if (value.value() instanceof String valueStr) {
 			return io.qdrant.client.ConditionFactory.filter(Filter.newBuilder()
-				.addMustNot(io.qdrant.client.ConditionFactory.matchKeyword(identifier, valueStr))
-				.build());
-		}
-		else if (value.value() instanceof Number valueNum) {
+					.addMustNot(io.qdrant.client.ConditionFactory.matchKeyword(identifier, valueStr))
+					.build());
+		} else if (value.value() instanceof Number valueNum) {
 			long lValue = Long.parseLong(valueNum.toString());
 			Condition condition = io.qdrant.client.ConditionFactory.match(identifier, lValue);
 			return io.qdrant.client.ConditionFactory.filter(Filter.newBuilder().addMustNot(condition).build());
@@ -178,8 +173,7 @@ class QdrantFilterExpressionConverter {
 					stringValues.add(valueObj.toString());
 				}
 				return io.qdrant.client.ConditionFactory.matchKeywords(identifier, stringValues);
-			}
-			else if (firstValue instanceof Number) {
+			} else if (firstValue instanceof Number) {
 				// If the first value is a number, then all values should be numbers
 				List<Long> longValues = new ArrayList<Long>();
 				for (Object valueObj : valueList) {
@@ -187,8 +181,7 @@ class QdrantFilterExpressionConverter {
 					longValues.add(longValue);
 				}
 				return io.qdrant.client.ConditionFactory.matchValues(identifier, longValues);
-			}
-			else {
+			} else {
 				throw new RuntimeException("Unsupported value in IN value list. Only supports String or Number");
 			}
 		}
@@ -209,8 +202,7 @@ class QdrantFilterExpressionConverter {
 					stringValues.add(valueObj.toString());
 				}
 				return io.qdrant.client.ConditionFactory.matchExceptKeywords(identifier, stringValues);
-			}
-			else if (firstValue instanceof Number) {
+			} else if (firstValue instanceof Number) {
 				// If the first value is a number, then all values should be numbers
 				List<Long> longValues = new ArrayList<Long>();
 				for (Object valueObj : valueList) {
@@ -218,8 +210,7 @@ class QdrantFilterExpressionConverter {
 					longValues.add(longValue);
 				}
 				return io.qdrant.client.ConditionFactory.matchExceptValues(identifier, longValues);
-			}
-			else {
+			} else {
 				throw new RuntimeException("Unsupported value in NIN value list. Only supports String or Number");
 			}
 		}

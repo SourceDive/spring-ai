@@ -42,7 +42,7 @@ public class EventParsingTests {
 	@Test
 	public void readEvents() throws IOException {
 		String json = new DefaultResourceLoader().getResource("classpath:/sample_events.json")
-			.getContentAsString(Charset.defaultCharset());
+				.getContentAsString(Charset.defaultCharset());
 
 		List<StreamEvent> events = new ObjectMapper().readerFor(new TypeReference<List<StreamEvent>>() {
 

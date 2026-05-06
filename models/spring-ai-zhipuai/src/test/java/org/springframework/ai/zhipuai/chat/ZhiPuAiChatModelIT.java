@@ -107,11 +107,11 @@ class ZhiPuAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 
@@ -128,9 +128,9 @@ class ZhiPuAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage(), ChatOptions.builder().build());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -149,10 +149,10 @@ class ZhiPuAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage(), ChatOptions.builder().build());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -172,9 +172,9 @@ class ZhiPuAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage(), ChatOptions.builder().build());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -192,9 +192,9 @@ class ZhiPuAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage(), ChatOptions.builder().build());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -215,19 +215,19 @@ class ZhiPuAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = Objects
-			.requireNonNull(this.streamingChatModel.stream(prompt).collectList().block())
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.requireNonNull(this.streamingChatModel.stream(prompt).collectList().block())
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -244,12 +244,12 @@ class ZhiPuAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = ZhiPuAiChatOptions.builder()
-			.model(ZhiPuAiApi.ChatModel.GLM_4.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(ZhiPuAiApi.ChatModel.GLM_4.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -269,22 +269,22 @@ class ZhiPuAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = ZhiPuAiChatOptions.builder()
-			.model(ZhiPuAiApi.ChatModel.GLM_4.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(ZhiPuAiApi.ChatModel.GLM_4.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = Objects.requireNonNull(response.collectList().block())
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).containsAnyOf("30.0", "30");
@@ -293,18 +293,18 @@ class ZhiPuAiChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "glm-4v" })
+	@ValueSource(strings = {"glm-4v"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel
-			.call(new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -312,19 +312,19 @@ class ZhiPuAiChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "glm-4v" })
+	@ValueSource(strings = {"glm-4v"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel
-			.call(new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), ZhiPuAiChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -335,23 +335,23 @@ class ZhiPuAiChatModelIT {
 	void streamingMultiModalityImageUrl() throws IOException {
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(List.of(userMessage),
 				ZhiPuAiChatOptions.builder().model(ZhiPuAiApi.ChatModel.GLM_4V.getValue()).build()));
 
 		String content = Objects.requireNonNull(response.collectList().block())
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 		assertThat(content).containsAnyOf("bananas", "apple", "bowl", "basket", "fruit stand");
 	}

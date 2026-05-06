@@ -32,7 +32,7 @@ class JdbcChatMemoryRepositoryRuntimeHints implements RuntimeHintsRegistrar {
 	@Override
 	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
 		hints.reflection()
-			.registerType(DataSource.class, hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_METHODS));
+				.registerType(DataSource.class, hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_METHODS));
 
 		hints.resources().registerPattern("org/springframework/ai/chat/memory/repository/jdbc/schema-*.sql");
 	}

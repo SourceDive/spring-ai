@@ -53,6 +53,7 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Returns the input class of a given Consumer class.
+	 *
 	 * @param consumerClass The consumer class.
 	 * @return The input class of the consumer.
 	 */
@@ -63,6 +64,7 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Returns the input class of a given function class.
+	 *
 	 * @param biFunctionClass The function class.
 	 * @return The input class of the function.
 	 */
@@ -72,6 +74,7 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Returns the input class of a given function class.
+	 *
 	 * @param functionClass The function class.
 	 * @return The input class of the function.
 	 */
@@ -81,6 +84,7 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Returns the output class of a given function class.
+	 *
 	 * @param functionClass The function class.
 	 * @return The output class of the function.
 	 */
@@ -90,6 +94,7 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Retrieves the class of a specific argument in a given function class.
+	 *
 	 * @param functionClass The function class.
 	 * @param argumentIndex The index of the argument whose class should be retrieved.
 	 * @return The class of the specified function argument.
@@ -102,12 +107,13 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Retrieves the class of a specific argument in a given function class.
+	 *
 	 * @param biFunctionClass The function class.
-	 * @param argumentIndex The index of the argument whose class should be retrieved.
+	 * @param argumentIndex   The index of the argument whose class should be retrieved.
 	 * @return The class of the specified function argument.
 	 */
 	public static Class<?> getBiFunctionArgumentClass(Class<? extends BiFunction<?, ?, ?>> biFunctionClass,
-			int argumentIndex) {
+	                                                  int argumentIndex) {
 		ResolvableType resolvableType = ResolvableType.forClass(biFunctionClass).as(BiFunction.class);
 		return (resolvableType == ResolvableType.NONE ? Object.class
 				: resolvableType.getGeneric(argumentIndex).toClass());
@@ -118,11 +124,12 @@ public final class TypeResolverHelper {
 	 * or by resolving the factory method (duplicating
 	 * {@code ConstructorResolver#resolveFactoryMethodIfPossible} logic as it is not
 	 * public).
+	 *
 	 * @param applicationContext The application context.
-	 * @param beanName The name of the bean to find a definition for.
+	 * @param beanName           The name of the bean to find a definition for.
 	 * @return The resolved type.
 	 * @throws IllegalArgumentException if the type of the bean definition is not
-	 * resolvable.
+	 *                                  resolvable.
 	 */
 	public static ResolvableType resolveBeanType(GenericApplicationContext applicationContext, String beanName) {
 		BeanDefinition beanDefinition = getBeanDefinition(applicationContext, beanName);
@@ -145,15 +152,14 @@ public final class TypeResolverHelper {
 	private static BeanDefinition getBeanDefinition(GenericApplicationContext applicationContext, String beanName) {
 		try {
 			return applicationContext.getBeanDefinition(beanName);
-		}
-		catch (NoSuchBeanDefinitionException ex) {
+		} catch (NoSuchBeanDefinitionException ex) {
 			throw new IllegalArgumentException(
 					"Functional bean with name " + beanName + " does not exist in the context.");
 		}
 	}
 
 	private static ResolvableType resolveRootBeanDefinitionType(GenericApplicationContext applicationContext,
-			RootBeanDefinition rootBeanDefinition) {
+	                                                            RootBeanDefinition rootBeanDefinition) {
 
 		Class<?> factoryClass;
 		boolean isStatic;
@@ -161,8 +167,7 @@ public final class TypeResolverHelper {
 		if (rootBeanDefinition.getFactoryBeanName() != null) {
 			factoryClass = applicationContext.getBeanFactory().getType(rootBeanDefinition.getFactoryBeanName());
 			isStatic = false;
-		}
-		else {
+		} else {
 			factoryClass = rootBeanDefinition.getBeanClass();
 			isStatic = true;
 		}
@@ -176,7 +181,7 @@ public final class TypeResolverHelper {
 	}
 
 	private static Method findUniqueFactoryMethod(Class<?> factoryClass, boolean isStatic,
-			RootBeanDefinition rootBeanDefinition) {
+	                                              RootBeanDefinition rootBeanDefinition) {
 		Method[] candidates = getCandidateMethods(factoryClass, rootBeanDefinition);
 		Method uniqueCandidate = null;
 
@@ -185,8 +190,7 @@ public final class TypeResolverHelper {
 					&& rootBeanDefinition.isFactoryMethod(candidate)) {
 				if (uniqueCandidate == null) {
 					uniqueCandidate = candidate;
-				}
-				else if (isParamMismatch(uniqueCandidate, candidate)) {
+				} else if (isParamMismatch(uniqueCandidate, candidate)) {
 					uniqueCandidate = null;
 					break;
 				}
@@ -197,13 +201,12 @@ public final class TypeResolverHelper {
 	}
 
 	private static ResolvableType resolveComponentBeanType(GenericApplicationContext applicationContext,
-			BeanDefinition beanDefinition, String beanName) {
+	                                                       BeanDefinition beanDefinition, String beanName) {
 		if (beanDefinition.getFactoryMethodName() == null && beanDefinition.getBeanClassName() != null) {
 			try {
 				return ResolvableType.forClass(
 						ClassUtils.forName(beanDefinition.getBeanClassName(), applicationContext.getClassLoader()));
-			}
-			catch (ClassNotFoundException ex) {
+			} catch (ClassNotFoundException ex) {
 				throw new IllegalArgumentException("Impossible to resolve the type of bean " + beanName, ex);
 			}
 		}
@@ -228,7 +231,8 @@ public final class TypeResolverHelper {
 
 	/**
 	 * Retrieves the type of a specific argument in a given function class.
-	 * @param functionType The function type.
+	 *
+	 * @param functionType  The function type.
 	 * @param argumentIndex The index of the argument whose type should be retrieved.
 	 * @return The type of the specified function argument.
 	 * @throws IllegalArgumentException if functionType is not a supported type
@@ -240,24 +244,18 @@ public final class TypeResolverHelper {
 
 		if (Function.class.isAssignableFrom(resolvableClass)) {
 			functionArgumentResolvableType = functionType.as(Function.class);
-		}
-		else if (BiFunction.class.isAssignableFrom(resolvableClass)) {
+		} else if (BiFunction.class.isAssignableFrom(resolvableClass)) {
 			functionArgumentResolvableType = functionType.as(BiFunction.class);
-		}
-		else if (Supplier.class.isAssignableFrom(resolvableClass)) {
+		} else if (Supplier.class.isAssignableFrom(resolvableClass)) {
 			functionArgumentResolvableType = functionType.as(Supplier.class);
-		}
-		else if (Consumer.class.isAssignableFrom(resolvableClass)) {
+		} else if (Consumer.class.isAssignableFrom(resolvableClass)) {
 			functionArgumentResolvableType = functionType.as(Consumer.class);
-		}
-		else if (KotlinDetector.isKotlinPresent()) {
+		} else if (KotlinDetector.isKotlinPresent()) {
 			if (KotlinDelegate.isKotlinFunction(resolvableClass)) {
 				functionArgumentResolvableType = KotlinDelegate.adaptToKotlinFunctionType(functionType);
-			}
-			else if (KotlinDelegate.isKotlinBiFunction(resolvableClass)) {
+			} else if (KotlinDelegate.isKotlinBiFunction(resolvableClass)) {
 				functionArgumentResolvableType = KotlinDelegate.adaptToKotlinBiFunctionType(functionType);
-			}
-			else if (KotlinDelegate.isKotlinSupplier(resolvableClass)) {
+			} else if (KotlinDelegate.isKotlinSupplier(resolvableClass)) {
 				functionArgumentResolvableType = KotlinDelegate.adaptToKotlinSupplierType(functionType);
 			}
 		}

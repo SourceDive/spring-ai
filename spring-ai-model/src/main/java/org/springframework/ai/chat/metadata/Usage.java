@@ -28,6 +28,7 @@ public interface Usage {
 
 	/**
 	 * Returns the number of tokens used in the {@literal prompt} of the AI request.
+	 *
 	 * @return an {@link Integer} with the number of tokens used in the {@literal prompt}
 	 * of the AI request.
 	 * @see #getCompletionTokens()
@@ -37,6 +38,7 @@ public interface Usage {
 	/**
 	 * Returns the number of tokens returned in the {@literal generation (aka completion)}
 	 * of the AI's response.
+	 *
 	 * @return an {@link Integer} with the number of tokens returned in the
 	 * {@literal generation (aka completion)} of the AI's response.
 	 * @see #getPromptTokens()
@@ -46,6 +48,7 @@ public interface Usage {
 	/**
 	 * Return the total number of tokens from both the {@literal prompt} of an AI request
 	 * and {@literal generation} of the AI's response.
+	 *
 	 * @return the total number of tokens from both the {@literal prompt} of an AI request
 	 * and {@literal generation} of the AI's response.
 	 * @see #getPromptTokens()
@@ -61,6 +64,7 @@ public interface Usage {
 
 	/**
 	 * Return the usage data from the underlying model API response.
+	 *
 	 * @return the object of type inferred by the API response.
 	 */
 	Object getNativeUsage();

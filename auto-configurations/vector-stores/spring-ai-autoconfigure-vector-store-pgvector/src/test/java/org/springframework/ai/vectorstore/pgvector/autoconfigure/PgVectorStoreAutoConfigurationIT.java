@@ -64,16 +64,16 @@ public class PgVectorStoreAutoConfigurationIT {
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("pgvector/pgvector:pg16");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(PgVectorStoreAutoConfiguration.class,
-				JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.pgvector.distanceType=COSINE_DISTANCE",
-				"spring.ai.vectorstore.pgvector.initialize-schema=true",
-				// JdbcTemplate configuration
-				String.format("spring.datasource.url=jdbc:postgresql://%s:%d/%s", postgresContainer.getHost(),
-						postgresContainer.getMappedPort(5432), postgresContainer.getDatabaseName()),
-				"spring.datasource.username=" + postgresContainer.getUsername(),
-				"spring.datasource.password=" + postgresContainer.getPassword());
+			.withConfiguration(AutoConfigurations.of(PgVectorStoreAutoConfiguration.class,
+					JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.pgvector.distanceType=COSINE_DISTANCE",
+					"spring.ai.vectorstore.pgvector.initialize-schema=true",
+					// JdbcTemplate configuration
+					String.format("spring.datasource.url=jdbc:postgresql://%s:%d/%s", postgresContainer.getHost(),
+							postgresContainer.getMappedPort(5432), postgresContainer.getDatabaseName()),
+					"spring.datasource.username=" + postgresContainer.getUsername(),
+					"spring.datasource.password=" + postgresContainer.getPassword());
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -84,14 +84,13 @@ public class PgVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private static boolean isFullyQualifiedTableExists(ApplicationContext context, String schemaName,
-			String tableName) {
+	                                                   String tableName) {
 		JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
 		String sql = "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = ? AND table_name = ?)";
 		return jdbcTemplate.queryForObject(sql, Boolean.class, schemaName, tableName);
@@ -107,7 +106,7 @@ public class PgVectorStoreAutoConfigurationIT {
 
 			assertThat(isFullyQualifiedTableExists(context, PgVectorStore.DEFAULT_SCHEMA_NAME,
 					PgVectorStore.DEFAULT_TABLE_NAME))
-				.isTrue();
+					.isTrue();
 
 			vectorStore.add(this.documents);
 
@@ -116,7 +115,7 @@ public class PgVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -140,28 +139,28 @@ public class PgVectorStoreAutoConfigurationIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "public:vector_store", "my_schema:my_table" })
+	@ValueSource(strings = {"public:vector_store", "my_schema:my_table"})
 	public void customSchemaNames(String schemaTableName) {
 		String schemaName = schemaTableName.split(":")[0];
 		String tableName = schemaTableName.split(":")[1];
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.pgvector.schema-name=" + schemaName,
-					"spring.ai.vectorstore.pgvector.table-name=" + tableName)
-			.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isTrue());
+				.withPropertyValues("spring.ai.vectorstore.pgvector.schema-name=" + schemaName,
+						"spring.ai.vectorstore.pgvector.table-name=" + tableName)
+				.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isTrue());
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "public:vector_store", "my_schema:my_table" })
+	@ValueSource(strings = {"public:vector_store", "my_schema:my_table"})
 	public void disableSchemaInitialization(String schemaTableName) {
 		String schemaName = schemaTableName.split(":")[0];
 		String tableName = schemaTableName.split(":")[1];
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.pgvector.schema-name=" + schemaName,
-					"spring.ai.vectorstore.pgvector.table-name=" + tableName,
-					"spring.ai.vectorstore.pgvector.initialize-schema=false")
-			.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isFalse());
+				.withPropertyValues("spring.ai.vectorstore.pgvector.schema-name=" + schemaName,
+						"spring.ai.vectorstore.pgvector.table-name=" + tableName,
+						"spring.ai.vectorstore.pgvector.initialize-schema=false")
+				.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isFalse());
 	}
 
 	@Test

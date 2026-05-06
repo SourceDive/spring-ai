@@ -50,23 +50,23 @@ import static org.springframework.ai.model.openai.autoconfigure.OpenAIAutoConfig
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(OpenAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OpenAiConnectionProperties.class, OpenAiEmbeddingProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OpenAiConnectionProperties.class, OpenAiEmbeddingProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class OpenAiEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiEmbeddingModel openAiEmbeddingModel(OpenAiConnectionProperties commonProperties,
-			OpenAiEmbeddingProperties embeddingProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, RetryTemplate retryTemplate,
-			ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                 OpenAiEmbeddingProperties embeddingProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                                 ObjectProvider<WebClient.Builder> webClientBuilderProvider, RetryTemplate retryTemplate,
+	                                                 ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                 ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var openAiApi = openAiApi(embeddingProperties, commonProperties,
 				restClientBuilderProvider.getIfAvailable(RestClient::builder),
@@ -82,22 +82,22 @@ public class OpenAiEmbeddingAutoConfiguration {
 	}
 
 	private OpenAiApi openAiApi(OpenAiEmbeddingProperties embeddingProperties,
-			OpenAiConnectionProperties commonProperties, RestClient.Builder restClientBuilder,
-			WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler, String modelType) {
+	                            OpenAiConnectionProperties commonProperties, RestClient.Builder restClientBuilder,
+	                            WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler, String modelType) {
 
 		OpenAIAutoConfigurationUtil.ResolvedConnectionProperties resolved = resolveConnectionProperties(
 				commonProperties, embeddingProperties, modelType);
 
 		return OpenAiApi.builder()
-			.baseUrl(resolved.baseUrl())
-			.apiKey(new SimpleApiKey(resolved.apiKey()))
-			.headers(resolved.headers())
-			.completionsPath(OpenAiChatProperties.DEFAULT_COMPLETIONS_PATH)
-			.embeddingsPath(embeddingProperties.getEmbeddingsPath())
-			.restClientBuilder(restClientBuilder)
-			.webClientBuilder(webClientBuilder)
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolved.baseUrl())
+				.apiKey(new SimpleApiKey(resolved.apiKey()))
+				.headers(resolved.headers())
+				.completionsPath(OpenAiChatProperties.DEFAULT_COMPLETIONS_PATH)
+				.embeddingsPath(embeddingProperties.getEmbeddingsPath())
+				.restClientBuilder(restClientBuilder)
+				.webClientBuilder(webClientBuilder)
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 	}
 
 }

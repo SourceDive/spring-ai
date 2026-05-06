@@ -67,8 +67,9 @@ public class SyncMcpToolCallback implements ToolCallback {
 
 	/**
 	 * Creates a new {@code SyncMcpToolCallback} instance.
+	 *
 	 * @param mcpClient the MCP client to use for tool execution
-	 * @param tool the MCP tool definition to adapt
+	 * @param tool      the MCP tool definition to adapt
 	 */
 	public SyncMcpToolCallback(McpSyncClient mcpClient, Tool tool) {
 		this.mcpClient = mcpClient;
@@ -85,15 +86,16 @@ public class SyncMcpToolCallback implements ToolCallback {
 	 * <li>The tool's description from the MCP definition</li>
 	 * <li>The input schema converted to JSON format</li>
 	 * </ul>
+	 *
 	 * @return the Spring AI tool definition
 	 */
 	@Override
 	public ToolDefinition getToolDefinition() {
 		return DefaultToolDefinition.builder()
-			.name(McpToolUtils.prefixedToolName(this.mcpClient.getClientInfo().name(), this.tool.name()))
-			.description(this.tool.description())
-			.inputSchema(ModelOptionsUtils.toJsonString(this.tool.inputSchema()))
-			.build();
+				.name(McpToolUtils.prefixedToolName(this.mcpClient.getClientInfo().name(), this.tool.name()))
+				.description(this.tool.description())
+				.inputSchema(ModelOptionsUtils.toJsonString(this.tool.inputSchema()))
+				.build();
 	}
 
 	/**
@@ -105,6 +107,7 @@ public class SyncMcpToolCallback implements ToolCallback {
 	 * <li>Calls the tool through the MCP client</li>
 	 * <li>Converts the tool's response content to a JSON string</li>
 	 * </ol>
+	 *
 	 * @param functionInput the tool input as a JSON string
 	 * @return the tool's response as a JSON string
 	 */

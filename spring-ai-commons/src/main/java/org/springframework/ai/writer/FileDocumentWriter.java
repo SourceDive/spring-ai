@@ -53,12 +53,13 @@ public class FileDocumentWriter implements DocumentWriter {
 
 	/**
 	 * Writes the content of a list of {@link Document}s into a file.
-	 * @param fileName The name of the file to write the documents to.
+	 *
+	 * @param fileName            The name of the file to write the documents to.
 	 * @param withDocumentMarkers Whether to include document markers in the output.
-	 * @param metadataMode Document content formatter mode. Specifies what document
-	 * content to be written to the file.
-	 * @param append if {@code true}, then data will be written to the end of the file
-	 * rather than the beginning.
+	 * @param metadataMode        Document content formatter mode. Specifies what document
+	 *                            content to be written to the file.
+	 * @param append              if {@code true}, then data will be written to the end of the file
+	 *                            rather than the beginning.
 	 */
 	public FileDocumentWriter(String fileName, boolean withDocumentMarkers, MetadataMode metadataMode, boolean append) {
 		Assert.hasText(fileName, "File name must have a text.");
@@ -85,8 +86,7 @@ public class FileDocumentWriter implements DocumentWriter {
 				writer.write(doc.getFormattedContent(this.metadataMode));
 				index++;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

@@ -42,43 +42,43 @@ class ChatCompletionRequestTests {
 	@Test
 	void whenToolRuntimeOptionsThenMergeWithDefaults() {
 		OpenAiChatOptions defaultOptions = OpenAiChatOptions.builder()
-			.model("DEFAULT_MODEL")
-			.internalToolExecutionEnabled(true)
-			.toolCallbacks(new TestToolCallback("tool1"), new TestToolCallback("tool2"))
-			.toolNames("tool1", "tool2")
-			.toolContext(Map.of("key1", "value1", "key2", "valueA"))
-			.build();
+				.model("DEFAULT_MODEL")
+				.internalToolExecutionEnabled(true)
+				.toolCallbacks(new TestToolCallback("tool1"), new TestToolCallback("tool2"))
+				.toolNames("tool1", "tool2")
+				.toolContext(Map.of("key1", "value1", "key2", "valueA"))
+				.build();
 
 		OpenAiChatModel chatModel = OpenAiChatModel.builder()
-			.openAiApi(OpenAiApi.builder().apiKey(new SimpleApiKey("TEST")).build())
-			.defaultOptions(defaultOptions)
-			.build();
+				.openAiApi(OpenAiApi.builder().apiKey(new SimpleApiKey("TEST")).build())
+				.defaultOptions(defaultOptions)
+				.build();
 
 		OpenAiChatOptions runtimeOptions = OpenAiChatOptions.builder()
-			.internalToolExecutionEnabled(false)
-			.toolCallbacks(new TestToolCallback("tool3"), new TestToolCallback("tool4"))
-			.toolNames("tool3")
-			.toolContext(Map.of("key2", "valueB"))
-			.build();
+				.internalToolExecutionEnabled(false)
+				.toolCallbacks(new TestToolCallback("tool3"), new TestToolCallback("tool4"))
+				.toolNames("tool3")
+				.toolContext(Map.of("key2", "valueB"))
+				.build();
 		Prompt prompt = chatModel.buildRequestPrompt(new Prompt("Test message content", runtimeOptions));
 
 		assertThat(((ToolCallingChatOptions) prompt.getOptions())).isNotNull();
 		assertThat(((ToolCallingChatOptions) prompt.getOptions()).getInternalToolExecutionEnabled()).isFalse();
 		assertThat(((ToolCallingChatOptions) prompt.getOptions()).getToolCallbacks()).hasSize(2);
 		assertThat(((ToolCallingChatOptions) prompt.getOptions()).getToolCallbacks()
-			.stream()
-			.map(toolCallback -> toolCallback.getToolDefinition().name())).containsExactlyInAnyOrder("tool3", "tool4");
+				.stream()
+				.map(toolCallback -> toolCallback.getToolDefinition().name())).containsExactlyInAnyOrder("tool3", "tool4");
 		assertThat(((ToolCallingChatOptions) prompt.getOptions()).getToolNames()).containsExactlyInAnyOrder("tool3");
 		assertThat(((ToolCallingChatOptions) prompt.getOptions()).getToolContext()).containsEntry("key1", "value1")
-			.containsEntry("key2", "valueB");
+				.containsEntry("key2", "valueB");
 	}
 
 	@Test
 	void createRequestWithChatOptions() {
 		var client = OpenAiChatModel.builder()
-			.openAiApi(OpenAiApi.builder().apiKey("TEST").build())
-			.defaultOptions(OpenAiChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
-			.build();
+				.openAiApi(OpenAiApi.builder().apiKey("TEST").build())
+				.defaultOptions(OpenAiChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
+				.build();
 
 		var prompt = client.buildRequestPrompt(new Prompt("Test message content"));
 
@@ -105,18 +105,18 @@ class ChatCompletionRequestTests {
 		final String TOOL_FUNCTION_NAME = "CurrentWeather";
 
 		var client = OpenAiChatModel.builder()
-			.openAiApi(OpenAiApi.builder().apiKey("TEST").build())
-			.defaultOptions(OpenAiChatOptions.builder().model("DEFAULT_MODEL").build())
-			.build();
+				.openAiApi(OpenAiApi.builder().apiKey("TEST").build())
+				.defaultOptions(OpenAiChatOptions.builder().model("DEFAULT_MODEL").build())
+				.build();
 
 		var prompt = client.buildRequestPrompt(new Prompt("Test message content",
 				OpenAiChatOptions.builder()
-					.model("PROMPT_MODEL")
-					.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-						.description("Get the weather in location")
-						.inputType(MockWeatherService.Request.class)
-						.build()))
-					.build()));
+						.model("PROMPT_MODEL")
+						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+								.description("Get the weather in location")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build()));
 
 		var request = client.createRequest(prompt, false);
 
@@ -133,15 +133,15 @@ class ChatCompletionRequestTests {
 		final String TOOL_FUNCTION_NAME = "CurrentWeather";
 
 		var client = OpenAiChatModel.builder()
-			.openAiApi(OpenAiApi.builder().apiKey("TEST").build())
-			.defaultOptions(OpenAiChatOptions.builder()
-				.model("DEFAULT_MODEL")
-				.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build())
-			.build();
+				.openAiApi(OpenAiApi.builder().apiKey("TEST").build())
+				.defaultOptions(OpenAiChatOptions.builder()
+						.model("DEFAULT_MODEL")
+						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+								.description("Get the weather in location")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build())
+				.build();
 
 		var prompt = client.buildRequestPrompt(new Prompt("Test message content"));
 

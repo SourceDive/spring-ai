@@ -56,9 +56,9 @@ public class OpenAiCompatibleChatModelIT {
 		Stream.Builder<ChatModel> builder = Stream.builder();
 
 		builder.add(OpenAiChatModel.builder()
-			.openAiApi(OpenAiApi.builder().apiKey(System.getenv("OPENAI_API_KEY")).build())
-			.defaultOptions(forModelName("gpt-3.5-turbo"))
-			.build());
+				.openAiApi(OpenAiApi.builder().apiKey(System.getenv("OPENAI_API_KEY")).build())
+				.defaultOptions(forModelName("gpt-3.5-turbo"))
+				.build());
 
 		// (26.01.2025) Disable because the Groq API is down. TODO: Re-enable when the API
 		// is back up.
@@ -70,12 +70,12 @@ public class OpenAiCompatibleChatModelIT {
 
 		if (System.getenv("OPEN_ROUTER_API_KEY") != null) {
 			builder.add(OpenAiChatModel.builder()
-				.openAiApi(OpenAiApi.builder()
-					.baseUrl("https://openrouter.ai/api")
-					.apiKey(System.getenv("OPEN_ROUTER_API_KEY"))
-					.build())
-				.defaultOptions(forModelName("meta-llama/llama-3-8b-instruct"))
-				.build());
+					.openAiApi(OpenAiApi.builder()
+							.baseUrl("https://openrouter.ai/api")
+							.apiKey(System.getenv("OPEN_ROUTER_API_KEY"))
+							.build())
+					.defaultOptions(forModelName("meta-llama/llama-3-8b-instruct"))
+					.build());
 		}
 
 		return builder.build();
@@ -101,11 +101,11 @@ public class OpenAiCompatibleChatModelIT {
 		assertThat(responses).hasSizeGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}

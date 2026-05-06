@@ -36,8 +36,9 @@ public final class PromptAssert {
 
 	/**
 	 * Assert that the given prompt template contains the required placeholders.
+	 *
 	 * @param promptTemplate the prompt template to check
-	 * @param placeholders the placeholders that must be present in the prompt template
+	 * @param placeholders   the placeholders that must be present in the prompt template
 	 */
 	public static void templateHasRequiredPlaceholders(PromptTemplate promptTemplate, String... placeholders) {
 		Assert.notNull(promptTemplate, "promptTemplate cannot be null");
@@ -52,7 +53,7 @@ public final class PromptAssert {
 
 		if (!missingPlaceholders.isEmpty()) {
 			throw new IllegalArgumentException("The following placeholders must be present in the prompt template: %s"
-				.formatted(String.join(",", missingPlaceholders)));
+					.formatted(String.join(",", missingPlaceholders)));
 		}
 	}
 

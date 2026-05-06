@@ -49,7 +49,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class AnthropicChatClientMethodInvokingFunctionCallbackIT {
 
 	private static final Logger logger = LoggerFactory
-		.getLogger(AnthropicChatClientMethodInvokingFunctionCallbackIT.class);
+			.getLogger(AnthropicChatClientMethodInvokingFunctionCallbackIT.class);
 
 	public static Map<String, Object> arguments = new ConcurrentHashMap<>();
 
@@ -259,7 +259,7 @@ class AnthropicChatClientMethodInvokingFunctionCallbackIT {
 		logger.info("Response: {}", response);
 
 		assertThat(arguments).containsEntry("roomName", "living room")
-			.containsEntry("color", TestFunctionClass.LightColor.RED);
+				.containsEntry("color", TestFunctionClass.LightColor.RED);
 	}
 
 	@Autowired
@@ -294,11 +294,9 @@ class AnthropicChatClientMethodInvokingFunctionCallbackIT {
 			double temperature = 0;
 			if (city.contains("Paris")) {
 				temperature = 15;
-			}
-			else if (city.contains("Tokyo")) {
+			} else if (city.contains("Tokyo")) {
 				temperature = 10;
-			}
-			else if (city.contains("San Francisco")) {
+			} else if (city.contains("San Francisco")) {
 				temperature = 30;
 			}
 

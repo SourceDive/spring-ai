@@ -56,8 +56,8 @@ public class StabilityAiImageModelIT {
 	void imageAsBase64Test() throws IOException {
 
 		StabilityAiImageOptions imageOptions = StabilityAiImageOptions.builder()
-			.stylePreset(StyleEnum.PHOTOGRAPHIC)
-			.build();
+				.stylePreset(StyleEnum.PHOTOGRAPHIC)
+				.build();
 
 		var instructions = """
 				A light cream colored mini golden doodle.

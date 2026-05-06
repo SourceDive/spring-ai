@@ -42,9 +42,9 @@ public class BedrockCohereEmbeddingProperties {
 
 	@NestedConfigurationProperty
 	private BedrockCohereEmbeddingOptions options = BedrockCohereEmbeddingOptions.builder()
-		.inputType(InputType.SEARCH_DOCUMENT)
-		.truncate(CohereEmbeddingRequest.Truncate.NONE)
-		.build();
+			.inputType(InputType.SEARCH_DOCUMENT)
+			.truncate(CohereEmbeddingRequest.Truncate.NONE)
+			.build();
 
 	public String getModel() {
 		return this.model;

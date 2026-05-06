@@ -58,13 +58,13 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 
 	private static final PromptTemplate DEFAULT_PROMPT_TEMPLATE = new PromptTemplate("""
 			{query}
-
+			
 			Context information is below, surrounded by ---------------------
-
+			
 			---------------------
 			{question_answer_context}
 			---------------------
-
+			
 			Given the context and provided history information and not prior knowledge,
 			reply to the user comment. If the answer is not in the context, inform
 			the user that you can't answer the question.
@@ -88,7 +88,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 	}
 
 	QuestionAnswerAdvisor(VectorStore vectorStore, SearchRequest searchRequest, @Nullable PromptTemplate promptTemplate,
-			@Nullable Scheduler scheduler, int order) {
+	                      @Nullable Scheduler scheduler, int order) {
 		Assert.notNull(vectorStore, "vectorStore cannot be null");
 		Assert.notNull(searchRequest, "searchRequest cannot be null");
 
@@ -112,9 +112,9 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 	public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
 		// 1. Search for similar documents in the vector store.
 		var searchRequestToUse = SearchRequest.from(this.searchRequest)
-			.query(chatClientRequest.prompt().getUserMessage().getText())
-			.filterExpression(doGetFilterExpression(chatClientRequest.context()))
-			.build();
+				.query(chatClientRequest.prompt().getUserMessage().getText())
+				.filterExpression(doGetFilterExpression(chatClientRequest.context()))
+				.build();
 
 		List<Document> documents = this.vectorStore.similaritySearch(searchRequestToUse);
 
@@ -128,13 +128,13 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 		// 3. Augment the user prompt with the document context.
 		UserMessage userMessage = chatClientRequest.prompt().getUserMessage();
 		String augmentedUserText = this.promptTemplate
-			.render(Map.of("query", userMessage.getText(), "question_answer_context", documentContext));
+				.render(Map.of("query", userMessage.getText(), "question_answer_context", documentContext));
 
 		// 4. Update ChatClientRequest with augmented prompt.
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
-			.context(context)
-			.build();
+				.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
+				.context(context)
+				.build();
 	}
 
 	@Override
@@ -142,15 +142,14 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 		ChatResponse.Builder chatResponseBuilder;
 		if (chatClientResponse.chatResponse() == null) {
 			chatResponseBuilder = ChatResponse.builder();
-		}
-		else {
+		} else {
 			chatResponseBuilder = ChatResponse.builder().from(chatClientResponse.chatResponse());
 		}
 		chatResponseBuilder.metadata(RETRIEVED_DOCUMENTS, chatClientResponse.context().get(RETRIEVED_DOCUMENTS));
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponseBuilder.build())
-			.context(chatClientResponse.context())
-			.build();
+				.chatResponse(chatResponseBuilder.build())
+				.context(chatClientResponse.context())
+				.build();
 	}
 
 	@Nullable

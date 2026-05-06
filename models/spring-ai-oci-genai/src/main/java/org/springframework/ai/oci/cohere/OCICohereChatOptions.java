@@ -120,19 +120,19 @@ public class OCICohereChatOptions implements ChatOptions {
 
 	public static OCICohereChatOptions fromOptions(OCICohereChatOptions fromOptions) {
 		return builder().model(fromOptions.model)
-			.maxTokens(fromOptions.maxTokens)
-			.compartment(fromOptions.compartment)
-			.servingMode(fromOptions.servingMode)
-			.preambleOverride(fromOptions.preambleOverride)
-			.temperature(fromOptions.temperature)
-			.topP(fromOptions.topP)
-			.topK(fromOptions.topK)
-			.stop(fromOptions.stop != null ? new ArrayList<>(fromOptions.stop) : null)
-			.frequencyPenalty(fromOptions.frequencyPenalty)
-			.presencePenalty(fromOptions.presencePenalty)
-			.documents(fromOptions.documents != null ? new ArrayList<>(fromOptions.documents) : null)
-			.tools(fromOptions.tools != null ? new ArrayList<>(fromOptions.tools) : null)
-			.build();
+				.maxTokens(fromOptions.maxTokens)
+				.compartment(fromOptions.compartment)
+				.servingMode(fromOptions.servingMode)
+				.preambleOverride(fromOptions.preambleOverride)
+				.temperature(fromOptions.temperature)
+				.topP(fromOptions.topP)
+				.topK(fromOptions.topK)
+				.stop(fromOptions.stop != null ? new ArrayList<>(fromOptions.stop) : null)
+				.frequencyPenalty(fromOptions.frequencyPenalty)
+				.presencePenalty(fromOptions.presencePenalty)
+				.documents(fromOptions.documents != null ? new ArrayList<>(fromOptions.documents) : null)
+				.tools(fromOptions.tools != null ? new ArrayList<>(fromOptions.tools) : null)
+				.build();
 	}
 
 	public static Builder builder() {

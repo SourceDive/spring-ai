@@ -62,7 +62,7 @@ public class MiniMaxChatOptionsTests {
 
 		// markSensitiveInfo is enabled by default
 		ChatResponse response = this.chatModel
-			.call(new Prompt(messages, MiniMaxChatOptions.builder().maskSensitiveInfo(true).build()));
+				.call(new Prompt(messages, MiniMaxChatOptions.builder().maskSensitiveInfo(true).build()));
 		String responseContent = response.getResult().getOutput().getText();
 
 		assertThat(responseContent).contains("133-**");
@@ -76,12 +76,12 @@ public class MiniMaxChatOptionsTests {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		MiniMaxChatOptions options = MiniMaxChatOptions.builder()
-			.model(org.springframework.ai.minimax.api.MiniMaxApi.ChatModel.ABAB_6_5_S_Chat.value)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(org.springframework.ai.minimax.api.MiniMaxApi.ChatModel.ABAB_6_5_S_Chat.value)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, options));
 		String responseContent = response.getResult().getOutput().getText();
@@ -95,22 +95,22 @@ public class MiniMaxChatOptionsTests {
 
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 		MiniMaxChatOptions options = MiniMaxChatOptions.builder()
-			.model(org.springframework.ai.minimax.api.MiniMaxApi.ChatModel.ABAB_6_5_S_Chat.value)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(org.springframework.ai.minimax.api.MiniMaxApi.ChatModel.ABAB_6_5_S_Chat.value)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, options));
 		String content = Objects.requireNonNull(response.collectList().block())
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(Objects::nonNull)
-			.collect(Collectors.joining());
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).contains("15");

@@ -31,15 +31,15 @@ class OpenAiImageOptionsTests {
 	@Test
 	void testBuilderWithAllFields() {
 		OpenAiImageOptions options = OpenAiImageOptions.builder()
-			.N(2)
-			.model("dall-e-3")
-			.quality("hd")
-			.responseFormat("url")
-			.width(1024)
-			.height(1024)
-			.style("vivid")
-			.user("test-user")
-			.build();
+				.N(2)
+				.model("dall-e-3")
+				.quality("hd")
+				.responseFormat("url")
+				.width(1024)
+				.height(1024)
+				.style("vivid")
+				.user("test-user")
+				.build();
 
 		assertThat(options.getN()).isEqualTo(2);
 		assertThat(options.getModel()).isEqualTo("dall-e-3");
@@ -55,15 +55,15 @@ class OpenAiImageOptionsTests {
 	@Test
 	void testCopy() {
 		OpenAiImageOptions original = OpenAiImageOptions.builder()
-			.N(3)
-			.model("dall-e-3")
-			.quality("standard")
-			.responseFormat("b64_json")
-			.width(1792)
-			.height(1024)
-			.style("natural")
-			.user("original-user")
-			.build();
+				.N(3)
+				.model("dall-e-3")
+				.quality("standard")
+				.responseFormat("b64_json")
+				.width(1792)
+				.height(1024)
+				.style("natural")
+				.user("original-user")
+				.build();
 
 		// Test fromOptions static method
 		OpenAiImageOptions copied = OpenAiImageOptions.fromOptions(original);
@@ -154,28 +154,28 @@ class OpenAiImageOptionsTests {
 	@Test
 	void testEqualsAndHashCode() {
 		OpenAiImageOptions options1 = OpenAiImageOptions.builder()
-			.N(2)
-			.model("dall-e-3")
-			.quality("hd")
-			.width(1024)
-			.height(1024)
-			.build();
+				.N(2)
+				.model("dall-e-3")
+				.quality("hd")
+				.width(1024)
+				.height(1024)
+				.build();
 
 		OpenAiImageOptions options2 = OpenAiImageOptions.builder()
-			.N(2)
-			.model("dall-e-3")
-			.quality("hd")
-			.width(1024)
-			.height(1024)
-			.build();
+				.N(2)
+				.model("dall-e-3")
+				.quality("hd")
+				.width(1024)
+				.height(1024)
+				.build();
 
 		OpenAiImageOptions options3 = OpenAiImageOptions.builder()
-			.N(3) // Different value
-			.model("dall-e-3")
-			.quality("hd")
-			.width(1024)
-			.height(1024)
-			.build();
+				.N(3) // Different value
+				.model("dall-e-3")
+				.quality("hd")
+				.width(1024)
+				.height(1024)
+				.build();
 
 		// Test equals
 		assertThat(options1).isEqualTo(options1); // Same instance
@@ -186,13 +186,13 @@ class OpenAiImageOptionsTests {
 
 		// Test hashCode
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode()); // Equal objects
-																		// have equal hash
-																		// codes
+		// have equal hash
+		// codes
 		assertThat(options1.hashCode()).isNotEqualTo(options3.hashCode()); // Different
-																			// objects
-																			// have
-																			// different
-																			// hash codes
+		// objects
+		// have
+		// different
+		// hash codes
 	}
 
 	@Test
@@ -209,15 +209,15 @@ class OpenAiImageOptionsTests {
 	void testFluentApiPattern() {
 		// Test the fluent API pattern by chaining method calls
 		OpenAiImageOptions options = OpenAiImageOptions.builder()
-			.N(1)
-			.model("dall-e-3")
-			.quality("hd")
-			.responseFormat("url")
-			.width(1024)
-			.height(1024)
-			.style("vivid")
-			.user("test-user")
-			.build();
+				.N(1)
+				.model("dall-e-3")
+				.quality("hd")
+				.responseFormat("url")
+				.width(1024)
+				.height(1024)
+				.style("vivid")
+				.user("test-user")
+				.build();
 
 		assertThat(options.getN()).isEqualTo(1);
 		assertThat(options.getModel()).isEqualTo("dall-e-3");

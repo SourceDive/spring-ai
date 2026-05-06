@@ -51,9 +51,9 @@ public class ZhiPuAiAutoConfigurationIT {
 	private static final Log logger = LogFactory.getLog(ZhiPuAiAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.zhipuai.apiKey=" + System.getenv("ZHIPU_AI_API_KEY"))
-		.withConfiguration(
-				AutoConfigurations.of(SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.zhipuai.apiKey=" + System.getenv("ZHIPU_AI_API_KEY"))
+			.withConfiguration(
+					AutoConfigurations.of(SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class));
 
 	@Test
 	void generate() {
@@ -70,12 +70,12 @@ public class ZhiPuAiAutoConfigurationIT {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(ZhiPuAiChatAutoConfiguration.class)).run(context -> {
 			ZhiPuAiChatModel chatModel = context.getBean(ZhiPuAiChatModel.class);
 			Flux<ChatResponse> responseFlux = chatModel
-				.stream(new Prompt(new UserMessage("Hello"), ChatOptions.builder().build()));
+					.stream(new Prompt(new UserMessage("Hello"), ChatOptions.builder().build()));
 			String response = responseFlux.collectList()
-				.block()
-				.stream()
-				.map(chatResponse -> chatResponse.getResults().get(0).getOutput().getText())
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(chatResponse -> chatResponse.getResults().get(0).getOutput().getText())
+					.collect(Collectors.joining());
 
 			assertThat(response).isNotEmpty();
 			logger.info("Response: " + response);
@@ -85,32 +85,32 @@ public class ZhiPuAiAutoConfigurationIT {
 	@Test
 	void embedding() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(ZhiPuAiEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				ZhiPuAiEmbeddingModel embeddingModel = context.getBean(ZhiPuAiEmbeddingModel.class);
+				.run(context -> {
+					ZhiPuAiEmbeddingModel embeddingModel = context.getBean(ZhiPuAiEmbeddingModel.class);
 
-				EmbeddingResponse embeddingResponse = embeddingModel
-					.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
-				assertThat(embeddingResponse.getResults()).hasSize(2);
-				assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
-				assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
-				assertThat(embeddingResponse.getResults().get(1).getOutput()).isNotEmpty();
-				assertThat(embeddingResponse.getResults().get(1).getIndex()).isEqualTo(1);
+					EmbeddingResponse embeddingResponse = embeddingModel
+							.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+					assertThat(embeddingResponse.getResults()).hasSize(2);
+					assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
+					assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
+					assertThat(embeddingResponse.getResults().get(1).getOutput()).isNotEmpty();
+					assertThat(embeddingResponse.getResults().get(1).getIndex()).isEqualTo(1);
 
-				assertThat(embeddingModel.dimensions()).isEqualTo(1024);
-			});
+					assertThat(embeddingModel.dimensions()).isEqualTo(1024);
+				});
 	}
 
 	@Test
 	void generateImage() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(ZhiPuAiImageAutoConfiguration.class))
-			.withPropertyValues("spring.ai.zhipuai.image.options.size=1024x1024")
-			.run(context -> {
-				ZhiPuAiImageModel ImageModel = context.getBean(ZhiPuAiImageModel.class);
-				ImageResponse imageResponse = ImageModel.call(new ImagePrompt("forest"));
-				assertThat(imageResponse.getResults()).hasSize(1);
-				assertThat(imageResponse.getResult().getOutput().getUrl()).isNotEmpty();
-				logger.info("Generated image: " + imageResponse.getResult().getOutput().getUrl());
-			});
+				.withPropertyValues("spring.ai.zhipuai.image.options.size=1024x1024")
+				.run(context -> {
+					ZhiPuAiImageModel ImageModel = context.getBean(ZhiPuAiImageModel.class);
+					ImageResponse imageResponse = ImageModel.call(new ImagePrompt("forest"));
+					assertThat(imageResponse.getResults()).hasSize(1);
+					assertThat(imageResponse.getResult().getOutput().getUrl()).isNotEmpty();
+					logger.info("Generated image: " + imageResponse.getResult().getOutput().getUrl());
+				});
 	}
 
 }

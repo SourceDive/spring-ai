@@ -43,15 +43,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.ai.vectorstore.chroma.collectionName=TestCollection",
-		"spring.ai.vectorstore.chroma.initialize-schema=true" })
+@TestPropertySource(properties = {"spring.ai.vectorstore.chroma.collectionName=TestCollection",
+		"spring.ai.vectorstore.chroma.initialize-schema=true"})
 class ChromaWithTokenContainerConnectionDetailsFactoryIT {
 
 	@Container
 	@ServiceConnection
 	static ChromaDBContainer chroma = new ChromaDBContainer(ChromaImage.DEFAULT_IMAGE)
-		.withEnv("CHROMA_SERVER_AUTHN_CREDENTIALS", "token")
-		.withEnv("CHROMA_SERVER_AUTHN_PROVIDER", "chromadb.auth.token_authn.TokenAuthenticationServerProvider");
+			.withEnv("CHROMA_SERVER_AUTHN_CREDENTIALS", "token")
+			.withEnv("CHROMA_SERVER_AUTHN_PROVIDER", "chromadb.auth.token_authn.TokenAuthenticationServerProvider");
 
 	@Autowired
 	private VectorStore vectorStore;
@@ -76,9 +76,9 @@ class ChromaWithTokenContainerConnectionDetailsFactoryIT {
 		assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 		results = this.vectorStore.similaritySearch(SearchRequest.from(request)
-			.similarityThresholdAll()
-			.filterExpression("country == 'Netherlands'")
-			.build());
+				.similarityThresholdAll()
+				.filterExpression("country == 'Netherlands'")
+				.build());
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 

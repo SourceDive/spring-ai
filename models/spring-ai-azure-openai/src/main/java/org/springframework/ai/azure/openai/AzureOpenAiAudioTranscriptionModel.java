@@ -66,8 +66,7 @@ public class AzureOpenAiAudioTranscriptionModel implements Model<AudioTranscript
 	private static byte[] toBytes(Resource resource) {
 		try {
 			return resource.getInputStream().readAllBytes();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IllegalArgumentException("Failed to read resource: " + resource, e);
 		}
 	}
@@ -114,11 +113,10 @@ public class AzureOpenAiAudioTranscriptionModel implements Model<AudioTranscript
 
 			AudioTranscription transcript = new AudioTranscription(structuredResponse.text());
 			AzureOpenAiAudioTranscriptionResponseMetadata metadata = AzureOpenAiAudioTranscriptionResponseMetadata
-				.from(structuredResponse);
+					.from(structuredResponse);
 
 			return new AudioTranscriptionResponse(transcript, metadata);
-		}
-		else {
+		} else {
 			Response<String> audioTranscription = this.openAIClient.getAudioTranscriptionTextWithResponse(
 					deploymentOrModelName, FILENAME_MARKER, audioTranscriptionOptions, null);
 			String text = audioTranscription.getValue();
@@ -191,8 +189,8 @@ public class AzureOpenAiAudioTranscriptionModel implements Model<AudioTranscript
 				Assert.isTrue(responseFormat == TranscriptResponseFormat.VERBOSE_JSON,
 						"response_format must be set to verbose_json to use timestamp granularities.");
 				List<AudioTranscriptionTimestampGranularity> granularity = granularityType.stream()
-					.map(GranularityType::getValue)
-					.toList();
+						.map(GranularityType::getValue)
+						.toList();
 				audioTranscriptionOptions.setTimestampGranularities(granularity);
 			}
 		}

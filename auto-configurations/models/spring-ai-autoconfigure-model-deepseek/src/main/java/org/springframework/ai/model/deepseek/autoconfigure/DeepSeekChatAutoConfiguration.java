@@ -51,39 +51,39 @@ import org.springframework.web.reactive.function.client.WebClient;
  *
  * @author Geng Rong
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 @ConditionalOnClass(DeepSeekApi.class)
-@EnableConfigurationProperties({ DeepSeekConnectionProperties.class, DeepSeekChatProperties.class })
+@EnableConfigurationProperties({DeepSeekConnectionProperties.class, DeepSeekChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.DEEPSEEK,
 		matchIfMissing = true)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 public class DeepSeekChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public DeepSeekChatModel deepSeekChatModel(DeepSeekConnectionProperties commonProperties,
-			DeepSeekChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> deepseekToolExecutionEligibilityPredicate) {
+	                                           DeepSeekChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                           ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
+	                                           RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
+	                                           ObjectProvider<ObservationRegistry> observationRegistry,
+	                                           ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                           ObjectProvider<ToolExecutionEligibilityPredicate> deepseekToolExecutionEligibilityPredicate) {
 
 		var deepSeekApi = deepSeekApi(chatProperties, commonProperties,
 				restClientBuilderProvider.getIfAvailable(RestClient::builder),
 				webClientBuilderProvider.getIfAvailable(WebClient::builder), responseErrorHandler);
 
 		var chatModel = DeepSeekChatModel.builder()
-			.deepSeekApi(deepSeekApi)
-			.defaultOptions(chatProperties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(deepseekToolExecutionEligibilityPredicate
-				.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.retryTemplate(retryTemplate)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.deepSeekApi(deepSeekApi)
+				.defaultOptions(chatProperties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(deepseekToolExecutionEligibilityPredicate
+						.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.retryTemplate(retryTemplate)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
@@ -91,8 +91,8 @@ public class DeepSeekChatAutoConfiguration {
 	}
 
 	private DeepSeekApi deepSeekApi(DeepSeekChatProperties chatProperties,
-			DeepSeekConnectionProperties commonProperties, RestClient.Builder restClientBuilder,
-			WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                                DeepSeekConnectionProperties commonProperties, RestClient.Builder restClientBuilder,
+	                                WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		String resolvedBaseUrl = StringUtils.hasText(chatProperties.getBaseUrl()) ? chatProperties.getBaseUrl()
 				: commonProperties.getBaseUrl();
@@ -103,14 +103,14 @@ public class DeepSeekChatAutoConfiguration {
 		Assert.hasText(resolvedApiKey, "DeepSeek API key must be set");
 
 		return DeepSeekApi.builder()
-			.baseUrl(resolvedBaseUrl)
-			.apiKey(new SimpleApiKey(resolvedApiKey))
-			.completionsPath(chatProperties.getCompletionsPath())
-			.betaPrefixPath(chatProperties.getBetaPrefixPath())
-			.restClientBuilder(restClientBuilder)
-			.webClientBuilder(webClientBuilder)
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolvedBaseUrl)
+				.apiKey(new SimpleApiKey(resolvedApiKey))
+				.completionsPath(chatProperties.getCompletionsPath())
+				.betaPrefixPath(chatProperties.getBetaPrefixPath())
+				.restClientBuilder(restClientBuilder)
+				.webClientBuilder(webClientBuilder)
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 	}
 
 }

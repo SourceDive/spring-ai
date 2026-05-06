@@ -66,7 +66,7 @@ class GemFireVectorStoreAutoConfigurationIT {
 
 	private static final String SIMILARITY_FUNCTION = "DOT_PRODUCT";
 
-	private static final String[] FIELDS = { "someField1", "someField2" };
+	private static final String[] FIELDS = {"someField1", "someField2"};
 
 	private static final int BUCKET_COUNT = 2;
 
@@ -79,17 +79,17 @@ class GemFireVectorStoreAutoConfigurationIT {
 	private static GemFireCluster gemFireCluster;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(GemFireVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.index-name=" + INDEX_NAME)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.beam-width=" + BEAM_WIDTH)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.max-connections=" + MAX_CONNECTIONS)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.vector-similarity-function=" + SIMILARITY_FUNCTION)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.buckets=" + BUCKET_COUNT)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.fields=someField1,someField2")
-		.withPropertyValues("spring.ai.vectorstore.gemfire.host=localhost")
-		.withPropertyValues("spring.ai.vectorstore.gemfire.port=" + HTTP_SERVICE_PORT)
-		.withPropertyValues("spring.ai.vectorstore.gemfire.initialize-schema=true");
+			.withConfiguration(AutoConfigurations.of(GemFireVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.index-name=" + INDEX_NAME)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.beam-width=" + BEAM_WIDTH)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.max-connections=" + MAX_CONNECTIONS)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.vector-similarity-function=" + SIMILARITY_FUNCTION)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.buckets=" + BUCKET_COUNT)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.fields=someField1,someField2")
+			.withPropertyValues("spring.ai.vectorstore.gemfire.host=localhost")
+			.withPropertyValues("spring.ai.vectorstore.gemfire.port=" + HTTP_SERVICE_PORT)
+			.withPropertyValues("spring.ai.vectorstore.gemfire.initialize-schema=true");
 
 	List<Document> documents = List.of(
 			new Document(ResourceUtils.getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -109,7 +109,7 @@ class GemFireVectorStoreAutoConfigurationIT {
 		gemFireCluster = new GemFireCluster("gemfire/gemfire-all:10.1-jdk17", LOCATOR_COUNT, SERVER_COUNT);
 		gemFireCluster.withConfiguration(GemFireCluster.SERVER_GLOB,
 				container -> container.withExposedPorts(HTTP_SERVICE_PORT)
-					.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
+						.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
 		gemFireCluster.withGemFireProperty(GemFireCluster.SERVER_GLOB, "http-service-port",
 				Integer.toString(HTTP_SERVICE_PORT));
 		gemFireCluster.acceptLicense().start();
@@ -153,12 +153,12 @@ class GemFireVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.ADD);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+							hasSize(1));
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.GEMFIRE,
 					VectorStoreObservationContext.Operation.QUERY);
@@ -179,8 +179,8 @@ class GemFireVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.DELETE);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+							hasSize(0));
 			observationRegistry.clear();
 		});
 	}
@@ -237,8 +237,7 @@ class GemFireVectorStoreAutoConfigurationIT {
 				}
 			}
 			return indexDetails;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return new HashMap<>();
 		}
 	}

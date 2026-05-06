@@ -61,9 +61,10 @@ public abstract class AbstractMessage implements Message {
 	/**
 	 * Create a new AbstractMessage with the given message type, text content, and
 	 * metadata.
+	 *
 	 * @param messageType the message type
 	 * @param textContent the text content
-	 * @param metadata the metadata
+	 * @param metadata    the metadata
 	 */
 	protected AbstractMessage(MessageType messageType, @Nullable String textContent, Map<String, Object> metadata) {
 		Assert.notNull(messageType, "Message type must not be null");
@@ -79,9 +80,10 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Create a new AbstractMessage with the given message type, resource, and metadata.
+	 *
 	 * @param messageType the message type
-	 * @param resource the resource
-	 * @param metadata the metadata
+	 * @param resource    the resource
+	 * @param metadata    the metadata
 	 */
 	protected AbstractMessage(MessageType messageType, Resource resource, Map<String, Object> metadata) {
 		Assert.notNull(messageType, "Message type must not be null");
@@ -89,8 +91,7 @@ public abstract class AbstractMessage implements Message {
 		Assert.notNull(metadata, "Metadata must not be null");
 		try (InputStream inputStream = resource.getInputStream()) {
 			this.textContent = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Failed to read resource", ex);
 		}
 		this.messageType = messageType;
@@ -100,6 +101,7 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Get the content of the message.
+	 *
 	 * @return the content of the message
 	 */
 	@Override
@@ -110,6 +112,7 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Get the metadata of the message.
+	 *
 	 * @return the metadata of the message
 	 */
 	@Override
@@ -119,6 +122,7 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Get the message type of the message.
+	 *
 	 * @return the message type of the message
 	 */
 	@Override

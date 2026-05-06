@@ -53,7 +53,7 @@ class AzureOpenAiEmbeddingModelIT {
 	void batchEmbedding() {
 		assertThat(this.embeddingModel).isNotNull();
 		EmbeddingResponse embeddingResponse = this.embeddingModel
-			.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+				.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 		assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
@@ -69,8 +69,8 @@ class AzureOpenAiEmbeddingModelIT {
 		@Bean
 		public OpenAIClient openAIClient() {
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(System.getenv("AZURE_OPENAI_API_KEY")))
-				.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
-				.buildClient();
+					.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+					.buildClient();
 		}
 
 		@Bean

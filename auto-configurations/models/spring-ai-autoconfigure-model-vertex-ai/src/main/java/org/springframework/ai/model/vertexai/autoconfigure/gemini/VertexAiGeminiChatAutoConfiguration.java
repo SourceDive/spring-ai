@@ -54,12 +54,12 @@ import org.springframework.util.StringUtils;
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
-@AutoConfiguration(after = { SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class })
-@ConditionalOnClass({ VertexAI.class, VertexAiGeminiChatModel.class })
+@AutoConfiguration(after = {SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class})
+@ConditionalOnClass({VertexAI.class, VertexAiGeminiChatModel.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.VERTEX_AI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ VertexAiGeminiChatProperties.class, VertexAiGeminiConnectionProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@EnableConfigurationProperties({VertexAiGeminiChatProperties.class, VertexAiGeminiConnectionProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 public class VertexAiGeminiChatAutoConfiguration {
 
 	@Bean
@@ -71,8 +71,8 @@ public class VertexAiGeminiChatAutoConfiguration {
 		Assert.notNull(connectionProperties.getTransport(), "Vertex AI transport must be set!");
 
 		var vertexAIBuilder = new VertexAI.Builder().setProjectId(connectionProperties.getProjectId())
-			.setLocation(connectionProperties.getLocation())
-			.setTransport(com.google.cloud.vertexai.Transport.valueOf(connectionProperties.getTransport().name()));
+				.setLocation(connectionProperties.getLocation())
+				.setTransport(com.google.cloud.vertexai.Transport.valueOf(connectionProperties.getTransport().name()));
 
 		if (StringUtils.hasText(connectionProperties.getApiEndpoint())) {
 			vertexAIBuilder.setApiEndpoint(connectionProperties.getApiEndpoint());
@@ -83,7 +83,7 @@ public class VertexAiGeminiChatAutoConfiguration {
 
 		if (connectionProperties.getCredentialsUri() != null) {
 			GoogleCredentials credentials = GoogleCredentials
-				.fromStream(connectionProperties.getCredentialsUri().getInputStream());
+					.fromStream(connectionProperties.getCredentialsUri().getInputStream());
 
 			vertexAIBuilder.setCredentials(credentials);
 		}
@@ -93,20 +93,20 @@ public class VertexAiGeminiChatAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public VertexAiGeminiChatModel vertexAiGeminiChat(VertexAI vertexAi, VertexAiGeminiChatProperties chatProperties,
-			ToolCallingManager toolCallingManager, ApplicationContext context, RetryTemplate retryTemplate,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> vertexAiGeminiToolExecutionEligibilityPredicate) {
+	                                                  ToolCallingManager toolCallingManager, ApplicationContext context, RetryTemplate retryTemplate,
+	                                                  ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                  ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                                  ObjectProvider<ToolExecutionEligibilityPredicate> vertexAiGeminiToolExecutionEligibilityPredicate) {
 
 		VertexAiGeminiChatModel chatModel = VertexAiGeminiChatModel.builder()
-			.vertexAI(vertexAi)
-			.defaultOptions(chatProperties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(vertexAiGeminiToolExecutionEligibilityPredicate
-				.getIfUnique(() -> new DefaultToolExecutionEligibilityPredicate()))
-			.retryTemplate(retryTemplate)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.vertexAI(vertexAi)
+				.defaultOptions(chatProperties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(vertexAiGeminiToolExecutionEligibilityPredicate
+						.getIfUnique(() -> new DefaultToolExecutionEligibilityPredicate()))
+				.retryTemplate(retryTemplate)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 

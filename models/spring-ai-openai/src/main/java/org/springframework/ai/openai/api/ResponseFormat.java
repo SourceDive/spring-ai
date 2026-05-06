@@ -29,12 +29,12 @@ import org.springframework.util.StringUtils;
 
 /**
  * An object specifying the format that the model must output.
- *
+ * <p>
  * Setting the type to JSON_SCHEMA, enables Structured Outputs which ensures the model
  * will match your supplied JSON schema. Learn more in the
  * <a href="https://platform.openai.com/docs/guides/structured-outputs"> Structured
  * Outputs guide.</a> <br/>
- *
+ * <p>
  * References: <a href=
  * "https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format">OpenAi
  * API - ResponseFormat</a>,

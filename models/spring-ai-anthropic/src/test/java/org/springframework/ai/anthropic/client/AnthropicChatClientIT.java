@@ -284,7 +284,7 @@ class AnthropicChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "claude-3-opus-latest", "claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest" })
+	@ValueSource(strings = {"claude-3-opus-latest", "claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		// @formatter:off
@@ -301,7 +301,7 @@ class AnthropicChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "claude-3-opus-latest", "claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest" })
+	@ValueSource(strings = {"claude-3-opus-latest", "claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		// TODO: add url method that wrapps the checked exception.

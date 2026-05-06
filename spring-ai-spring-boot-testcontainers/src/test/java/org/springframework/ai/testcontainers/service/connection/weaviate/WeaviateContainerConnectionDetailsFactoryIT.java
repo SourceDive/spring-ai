@@ -45,17 +45,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.ai.vectorstore.weaviate.filter-field.country=TEXT",
+@TestPropertySource(properties = {"spring.ai.vectorstore.weaviate.filter-field.country=TEXT",
 		"spring.ai.vectorstore.weaviate.filter-field.year=NUMBER",
 		"spring.ai.vectorstore.weaviate.filter-field.active=BOOLEAN",
 		"spring.ai.vectorstore.weaviate.filter-field.price=NUMBER",
-		"spring.ai.vectorstore.weaviate.initialize-schema=true" })
+		"spring.ai.vectorstore.weaviate.initialize-schema=true"})
 class WeaviateContainerConnectionDetailsFactoryIT {
 
 	@Container
 	@ServiceConnection
 	static WeaviateContainer weaviateContainer = new WeaviateContainer(WeaviateImage.DEFAULT_IMAGE)
-		.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
+			.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
 
 	@Autowired
 	private WeaviateVectorStoreProperties properties;
@@ -68,13 +68,13 @@ class WeaviateContainerConnectionDetailsFactoryIT {
 		assertThat(this.properties.getFilterField()).hasSize(4);
 
 		assertThat(this.properties.getFilterField().get("country"))
-			.isEqualTo(WeaviateVectorStore.MetadataField.Type.TEXT);
+				.isEqualTo(WeaviateVectorStore.MetadataField.Type.TEXT);
 		assertThat(this.properties.getFilterField().get("year"))
-			.isEqualTo(WeaviateVectorStore.MetadataField.Type.NUMBER);
+				.isEqualTo(WeaviateVectorStore.MetadataField.Type.NUMBER);
 		assertThat(this.properties.getFilterField().get("active"))
-			.isEqualTo(WeaviateVectorStore.MetadataField.Type.BOOLEAN);
+				.isEqualTo(WeaviateVectorStore.MetadataField.Type.BOOLEAN);
 		assertThat(this.properties.getFilterField().get("price"))
-			.isEqualTo(WeaviateVectorStore.MetadataField.Type.NUMBER);
+				.isEqualTo(WeaviateVectorStore.MetadataField.Type.NUMBER);
 
 		var bgDocument = new Document("The World is Big and Salvation Lurks Around the Corner",
 				Map.of("country", "Bulgaria", "price", 3.14, "active", true, "year", 2020));
@@ -94,16 +94,16 @@ class WeaviateContainerConnectionDetailsFactoryIT {
 		assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 		results = this.vectorStore.similaritySearch(SearchRequest.from(request)
-			.similarityThresholdAll()
-			.filterExpression("country == 'Netherlands'")
-			.build());
+				.similarityThresholdAll()
+				.filterExpression("country == 'Netherlands'")
+				.build());
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 		results = this.vectorStore.similaritySearch(SearchRequest.from(request)
-			.similarityThresholdAll()
-			.filterExpression("price > 1.57 && active == true")
-			.build());
+				.similarityThresholdAll()
+				.filterExpression("price > 1.57 && active == true")
+				.build());
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
@@ -112,9 +112,9 @@ class WeaviateContainerConnectionDetailsFactoryIT {
 		assertThat(results).hasSize(2);
 
 		results = this.vectorStore.similaritySearch(SearchRequest.from(request)
-			.similarityThresholdAll()
-			.filterExpression("year > 2020 && year <= 2023")
-			.build());
+				.similarityThresholdAll()
+				.filterExpression("year > 2020 && year <= 2023")
+				.build());
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 

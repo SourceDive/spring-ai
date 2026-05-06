@@ -86,7 +86,7 @@ public class SafeGuardAdvisor implements CallAdvisor, StreamAdvisor {
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		if (!CollectionUtils.isEmpty(this.sensitiveWords)
 				&& this.sensitiveWords.stream().anyMatch(w -> chatClientRequest.prompt().getContents().contains(w))) {
 			return Flux.just(createFailureResponse(chatClientRequest));
@@ -97,11 +97,11 @@ public class SafeGuardAdvisor implements CallAdvisor, StreamAdvisor {
 
 	private ChatClientResponse createFailureResponse(ChatClientRequest chatClientRequest) {
 		return ChatClientResponse.builder()
-			.chatResponse(ChatResponse.builder()
-				.generations(List.of(new Generation(new AssistantMessage(this.failureResponse))))
-				.build())
-			.context(Map.copyOf(chatClientRequest.context()))
-			.build();
+				.chatResponse(ChatResponse.builder()
+						.generations(List.of(new Generation(new AssistantMessage(this.failureResponse))))
+						.build())
+				.context(Map.copyOf(chatClientRequest.context()))
+				.build();
 	}
 
 	@Override

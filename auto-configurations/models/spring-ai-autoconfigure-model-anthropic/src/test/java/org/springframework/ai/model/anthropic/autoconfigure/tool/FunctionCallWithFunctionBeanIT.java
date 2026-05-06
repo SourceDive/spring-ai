@@ -48,60 +48,60 @@ class FunctionCallWithFunctionBeanIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithFunctionBeanIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.apiKey=" + System.getenv("ANTHROPIC_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(AnthropicChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.anthropic.apiKey=" + System.getenv("ANTHROPIC_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(AnthropicChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.anthropic.chat.options.model=" + AnthropicApi.ChatModel.CLAUDE_3_5_HAIKU.getValue())
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.anthropic.chat.options.model=" + AnthropicApi.ChatModel.CLAUDE_3_5_HAIKU.getValue())
+				.run(context -> {
 
-				AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
+					AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
 
-				var userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
+					var userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
-						AnthropicChatOptions.builder().toolNames("weatherFunction").build()));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
+							AnthropicChatOptions.builder().toolNames("weatherFunction").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-				response = chatModel.call(new Prompt(List.of(userMessage),
-						AnthropicChatOptions.builder().toolNames("weatherFunction3").build()));
+					response = chatModel.call(new Prompt(List.of(userMessage),
+							AnthropicChatOptions.builder().toolNames("weatherFunction3").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-			});
+				});
 	}
 
 	@Test
 	void functionCallWithPortableFunctionCallingOptions() {
 
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.anthropic.chat.options.model=" + AnthropicApi.ChatModel.CLAUDE_3_5_HAIKU.getValue())
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.anthropic.chat.options.model=" + AnthropicApi.ChatModel.CLAUDE_3_5_HAIKU.getValue())
+				.run(context -> {
 
-				AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
+					AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
 
-				var userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
+					var userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan? Return the temperature in Celsius.");
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
-						ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
+							ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 	@Configuration

@@ -35,9 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OllamaEmbeddingRequestTests {
 
 	OllamaEmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
-		.ollamaApi(OllamaApi.builder().build())
-		.defaultOptions(OllamaOptions.builder().model("DEFAULT_MODEL").mainGPU(11).useMMap(true).numGPU(1).build())
-		.build();
+			.ollamaApi(OllamaApi.builder().build())
+			.defaultOptions(OllamaOptions.builder().model("DEFAULT_MODEL").mainGPU(11).useMMap(true).numGPU(1).build())
+			.build();
 
 	@Test
 	public void ollamaEmbeddingRequestDefaultOptions() {
@@ -54,14 +54,14 @@ public class OllamaEmbeddingRequestTests {
 	@Test
 	public void ollamaEmbeddingRequestRequestOptions() {
 		var promptOptions = OllamaOptions.builder()//
-			.model("PROMPT_MODEL")//
-			.mainGPU(22)//
-			.useMMap(true)//
-			.numGPU(2)
-			.build();
+				.model("PROMPT_MODEL")//
+				.mainGPU(22)//
+				.useMMap(true)//
+				.numGPU(2)
+				.build();
 
 		var embeddingRequest = this.embeddingModel
-			.buildEmbeddingRequest(new EmbeddingRequest(List.of("Hello"), promptOptions));
+				.buildEmbeddingRequest(new EmbeddingRequest(List.of("Hello"), promptOptions));
 		var ollamaRequest = this.embeddingModel.ollamaEmbeddingRequest(embeddingRequest);
 
 		assertThat(ollamaRequest.model()).isEqualTo("PROMPT_MODEL");
@@ -76,7 +76,7 @@ public class OllamaEmbeddingRequestTests {
 		var promptOptions = OllamaOptions.builder().model("PROMPT_MODEL").keepAlive("-1m").build();
 
 		var embeddingRequest = this.embeddingModel
-			.buildEmbeddingRequest(new EmbeddingRequest(List.of("Hello"), promptOptions));
+				.buildEmbeddingRequest(new EmbeddingRequest(List.of("Hello"), promptOptions));
 		var ollamaRequest = this.embeddingModel.ollamaEmbeddingRequest(embeddingRequest);
 
 		assertThat(ollamaRequest.keepAlive()).isEqualTo(Duration.ofMinutes(-1));

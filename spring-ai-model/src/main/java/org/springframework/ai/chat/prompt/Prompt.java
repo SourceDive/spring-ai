@@ -130,6 +130,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 
 	/**
 	 * Get all user messages in the prompt.
+	 *
 	 * @return a list of all user messages in the prompt
 	 */
 	public List<UserMessage> getUserMessages() {
@@ -172,19 +173,15 @@ public class Prompt implements ModelRequest<List<Message>> {
 		this.messages.forEach(message -> {
 			if (message instanceof UserMessage userMessage) {
 				messagesCopy.add(userMessage.copy());
-			}
-			else if (message instanceof SystemMessage systemMessage) {
+			} else if (message instanceof SystemMessage systemMessage) {
 				messagesCopy.add(systemMessage.copy());
-			}
-			else if (message instanceof AssistantMessage assistantMessage) {
+			} else if (message instanceof AssistantMessage assistantMessage) {
 				messagesCopy.add(new AssistantMessage(assistantMessage.getText(), assistantMessage.getMetadata(),
 						assistantMessage.getToolCalls()));
-			}
-			else if (message instanceof ToolResponseMessage toolResponseMessage) {
+			} else if (message instanceof ToolResponseMessage toolResponseMessage) {
 				messagesCopy.add(new ToolResponseMessage(new ArrayList<>(toolResponseMessage.getResponses()),
 						new HashMap<>(toolResponseMessage.getMetadata())));
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Unsupported message type: " + message.getClass().getName());
 			}
 		});
@@ -195,6 +192,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the first system message in the prompt with the provided function. If no
 	 * system message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented system message.
 	 */
 	public Prompt augmentSystemMessage(Function<SystemMessage, SystemMessage> systemMessageAugmenter) {
@@ -219,6 +217,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the last system message in the prompt with the provided text. If no system
 	 * message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented system message.
 	 */
 	public Prompt augmentSystemMessage(String newSystemText) {
@@ -228,6 +227,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the last user message in the prompt with the provided function. If no user
 	 * message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented user message.
 	 */
 	public Prompt augmentUserMessage(Function<UserMessage, UserMessage> userMessageAugmenter) {
@@ -249,6 +249,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the last user message in the prompt with the provided text. If no user
 	 * message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented user message.
 	 */
 	public Prompt augmentUserMessage(String newUserText) {
@@ -303,8 +304,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 		public Prompt build() {
 			if (StringUtils.hasText(this.content) && !CollectionUtils.isEmpty(this.messages)) {
 				throw new IllegalArgumentException("content and messages cannot be set at the same time");
-			}
-			else if (StringUtils.hasText(this.content)) {
+			} else if (StringUtils.hasText(this.content)) {
 				this.messages = List.of(new UserMessage(this.content));
 			}
 			return new Prompt(this.messages, this.chatOptions);

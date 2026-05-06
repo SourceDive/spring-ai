@@ -58,11 +58,11 @@ public class QdrantVectorStoreAutoConfigurationIT {
 	static QdrantContainer qdrantContainer = new QdrantContainer("qdrant/qdrant:v1.9.2");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(QdrantVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.qdrant.port=" + qdrantContainer.getGrpcPort(),
-				"spring.ai.vectorstore.qdrant.initialize-schema=true",
-				"spring.ai.vectorstore.qdrant.host=" + qdrantContainer.getHost());
+			.withConfiguration(AutoConfigurations.of(QdrantVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.qdrant.port=" + qdrantContainer.getGrpcPort(),
+					"spring.ai.vectorstore.qdrant.initialize-schema=true",
+					"spring.ai.vectorstore.qdrant.host=" + qdrantContainer.getHost());
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -73,8 +73,7 @@ public class QdrantVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -93,7 +92,7 @@ public class QdrantVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);

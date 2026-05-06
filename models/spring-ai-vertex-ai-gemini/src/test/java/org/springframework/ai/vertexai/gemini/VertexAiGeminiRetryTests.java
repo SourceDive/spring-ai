@@ -72,10 +72,10 @@ public class VertexAiGeminiRetryTests {
 
 		this.chatModel = new TestVertexAiGeminiChatModel(this.vertexAI,
 				VertexAiGeminiChatOptions.builder()
-					.temperature(0.7)
-					.topP(1.0)
-					.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
-					.build(),
+						.temperature(0.7)
+						.topP(1.0)
+						.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
+						.build(),
 				this.retryTemplate);
 
 		this.chatModel.setMockGenerativeModel(this.mockGenerativeModel);
@@ -85,15 +85,15 @@ public class VertexAiGeminiRetryTests {
 	public void vertexAiGeminiChatTransientError() throws IOException {
 		// Create a mocked successful response
 		GenerateContentResponse mockedResponse = GenerateContentResponse.newBuilder()
-			.addCandidates(Candidate.newBuilder()
-				.setContent(Content.newBuilder().addParts(Part.newBuilder().setText("Response").build()).build())
-				.build())
-			.build();
+				.addCandidates(Candidate.newBuilder()
+						.setContent(Content.newBuilder().addParts(Part.newBuilder().setText("Response").build()).build())
+						.build())
+				.build();
 
 		given(this.mockGenerativeModel.generateContent(any(List.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(mockedResponse);
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(mockedResponse);
 
 		// Call the chat model
 		ChatResponse result = this.chatModel.call(new Prompt("test prompt"));
@@ -109,7 +109,7 @@ public class VertexAiGeminiRetryTests {
 	public void vertexAiGeminiChatNonTransientError() throws Exception {
 		// Set up the mock GenerativeModel to throw a non-transient RuntimeException
 		given(this.mockGenerativeModel.generateContent(any(List.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 
 		// Assert that a RuntimeException is thrown when calling the chat model
 		assertThrows(RuntimeException.class, () -> this.chatModel.call(new Prompt("test prompt")));
@@ -128,7 +128,7 @@ public class VertexAiGeminiRetryTests {
 
 		@Override
 		public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback,
-				Throwable throwable) {
+		                                             Throwable throwable) {
 			this.onErrorRetryCount = context.getRetryCount();
 		}
 

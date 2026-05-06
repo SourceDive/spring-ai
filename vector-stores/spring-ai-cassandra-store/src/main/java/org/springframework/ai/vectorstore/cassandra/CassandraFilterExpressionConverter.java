@@ -49,7 +49,7 @@ class CassandraFilterExpressionConverter extends AbstractFilterExpressionConvert
 	CassandraFilterExpressionConverter(Collection<ColumnMetadata> columns) {
 
 		this.columnsByName = columns.stream()
-			.collect(Collectors.toMap(c -> c.getName().asInternal(), Function.identity()));
+				.collect(Collectors.toMap(c -> c.getName().asInternal(), Function.identity()));
 	}
 
 	private static void doOperand(ExpressionType type, StringBuilder context) {
@@ -103,8 +103,7 @@ class CassandraFilterExpressionConverter extends AbstractFilterExpressionConvert
 		if (ExpressionType.IN.equals(expression.type())) {
 			Preconditions.checkArgument(v instanceof Collection);
 			doListValue(column, v, context);
-		}
-		else {
+		} else {
 			doValue(column, v, context);
 		}
 	}

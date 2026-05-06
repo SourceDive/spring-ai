@@ -40,10 +40,10 @@ public class AnthropicChatProperties {
 	 */
 	@NestedConfigurationProperty
 	private AnthropicChatOptions options = AnthropicChatOptions.builder()
-		.model(AnthropicChatModel.DEFAULT_MODEL_NAME)
-		.maxTokens(AnthropicChatModel.DEFAULT_MAX_TOKENS)
-		.temperature(AnthropicChatModel.DEFAULT_TEMPERATURE)
-		.build();
+			.model(AnthropicChatModel.DEFAULT_MODEL_NAME)
+			.maxTokens(AnthropicChatModel.DEFAULT_MAX_TOKENS)
+			.temperature(AnthropicChatModel.DEFAULT_TEMPERATURE)
+			.build();
 
 	public AnthropicChatOptions getOptions() {
 		return this.options;

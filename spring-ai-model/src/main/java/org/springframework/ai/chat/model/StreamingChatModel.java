@@ -31,14 +31,14 @@ public interface StreamingChatModel extends StreamingModel<Prompt, ChatResponse>
 		Prompt prompt = new Prompt(message);
 		return stream(prompt).map(response -> (response.getResult() == null || response.getResult().getOutput() == null
 				|| response.getResult().getOutput().getText() == null) ? ""
-						: response.getResult().getOutput().getText());
+				: response.getResult().getOutput().getText());
 	}
 
 	default Flux<String> stream(Message... messages) {
 		Prompt prompt = new Prompt(Arrays.asList(messages));
 		return stream(prompt).map(response -> (response.getResult() == null || response.getResult().getOutput() == null
 				|| response.getResult().getOutput().getText() == null) ? ""
-						: response.getResult().getOutput().getText());
+				: response.getResult().getOutput().getText());
 	}
 
 	@Override

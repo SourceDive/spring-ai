@@ -55,7 +55,7 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 	private final Scheduler scheduler;
 
 	private MessageChatMemoryAdvisor(ChatMemory chatMemory, String defaultConversationId, int order,
-			Scheduler scheduler) {
+	                                 Scheduler scheduler) {
 		Assert.notNull(chatMemory, "chatMemory cannot be null");
 		Assert.hasText(defaultConversationId, "defaultConversationId cannot be null or empty");
 		Assert.notNull(scheduler, "scheduler cannot be null");
@@ -88,8 +88,8 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		// 3. Create a new request with the advised messages.
 		ChatClientRequest processedChatClientRequest = chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().mutate().messages(processedMessages).build())
-			.build();
+				.prompt(chatClientRequest.prompt().mutate().messages(processedMessages).build())
+				.build();
 
 		// 4. Add the new user message to the conversation memory.
 		UserMessage userMessage = processedChatClientRequest.prompt().getUserMessage();
@@ -103,10 +103,10 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 		List<Message> assistantMessages = new ArrayList<>();
 		if (chatClientResponse.chatResponse() != null) {
 			assistantMessages = chatClientResponse.chatResponse()
-				.getResults()
-				.stream()
-				.map(g -> (Message) g.getOutput())
-				.toList();
+					.getResults()
+					.stream()
+					.map(g -> (Message) g.getOutput())
+					.toList();
 		}
 		this.chatMemory.add(this.getConversationId(chatClientResponse.context(), this.defaultConversationId),
 				assistantMessages);
@@ -115,17 +115,17 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		// Get the scheduler from BaseAdvisor
 		Scheduler scheduler = this.getScheduler();
 
 		// Process the request with the before method
 		return Mono.just(chatClientRequest)
-			.publishOn(scheduler)
-			.map(request -> this.before(request, streamAdvisorChain))
-			.flatMapMany(streamAdvisorChain::nextStream)
-			.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
-					response -> this.after(response, streamAdvisorChain)));
+				.publishOn(scheduler)
+				.map(request -> this.before(request, streamAdvisorChain))
+				.flatMapMany(streamAdvisorChain::nextStream)
+				.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
+						response -> this.after(response, streamAdvisorChain)));
 	}
 
 	public static Builder builder(ChatMemory chatMemory) {
@@ -148,6 +148,7 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Set the conversation id.
+		 *
 		 * @param conversationId the conversation id
 		 * @return the builder
 		 */
@@ -158,6 +159,7 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Set the order.
+		 *
 		 * @param order the order
 		 * @return the builder
 		 */
@@ -173,6 +175,7 @@ public final class MessageChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Build the advisor.
+		 *
 		 * @return the advisor
 		 */
 		public MessageChatMemoryAdvisor build() {

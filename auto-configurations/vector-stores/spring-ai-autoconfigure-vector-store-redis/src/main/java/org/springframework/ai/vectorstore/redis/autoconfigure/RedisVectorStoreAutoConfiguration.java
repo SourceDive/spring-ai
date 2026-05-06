@@ -48,7 +48,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
  * @author Jihoon Kim
  */
 @AutoConfiguration(after = RedisAutoConfiguration.class)
-@ConditionalOnClass({ JedisPooled.class, JedisConnectionFactory.class, RedisVectorStore.class, EmbeddingModel.class })
+@ConditionalOnClass({JedisPooled.class, JedisConnectionFactory.class, RedisVectorStore.class, EmbeddingModel.class})
 @ConditionalOnBean(JedisConnectionFactory.class)
 @EnableConfigurationProperties(RedisVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.REDIS,
@@ -64,19 +64,19 @@ public class RedisVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public RedisVectorStore vectorStore(EmbeddingModel embeddingModel, RedisVectorStoreProperties properties,
-			JedisConnectionFactory jedisConnectionFactory, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                    JedisConnectionFactory jedisConnectionFactory, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                    ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                    BatchingStrategy batchingStrategy) {
 
 		JedisPooled jedisPooled = this.jedisPooled(jedisConnectionFactory);
 		return RedisVectorStore.builder(jedisPooled, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.indexName(properties.getIndexName())
-			.prefix(properties.getPrefix())
-			.build();
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.indexName(properties.getIndexName())
+				.prefix(properties.getPrefix())
+				.build();
 	}
 
 	private JedisPooled jedisPooled(JedisConnectionFactory jedisConnectionFactory) {
@@ -85,11 +85,11 @@ public class RedisVectorStoreAutoConfiguration {
 		int port = jedisConnectionFactory.getPort();
 
 		JedisClientConfig clientConfig = DefaultJedisClientConfig.builder()
-			.ssl(jedisConnectionFactory.isUseSsl())
-			.clientName(jedisConnectionFactory.getClientName())
-			.timeoutMillis(jedisConnectionFactory.getTimeout())
-			.password(jedisConnectionFactory.getPassword())
-			.build();
+				.ssl(jedisConnectionFactory.isUseSsl())
+				.clientName(jedisConnectionFactory.getClientName())
+				.timeoutMillis(jedisConnectionFactory.getTimeout())
+				.password(jedisConnectionFactory.getPassword())
+				.build();
 
 		return new JedisPooled(new HostAndPort(host, port), clientConfig);
 	}

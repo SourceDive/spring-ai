@@ -37,7 +37,7 @@ class CassandraChatMemoryRepositoryPropertiesTest {
 		assertThat(props.getKeyspace()).isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_KEYSPACE_NAME);
 		assertThat(props.getTable()).isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_TABLE_NAME);
 		assertThat(props.getMessagesColumn())
-			.isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_MESSAGES_COLUMN_NAME);
+				.isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_MESSAGES_COLUMN_NAME);
 
 		assertThat(props.getTimeToLive()).isNull();
 		assertThat(props.isInitializeSchema()).isTrue();

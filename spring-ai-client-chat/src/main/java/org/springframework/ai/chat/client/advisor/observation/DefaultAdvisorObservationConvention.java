@@ -58,8 +58,8 @@ public class DefaultAdvisorObservationConvention implements AdvisorObservationCo
 	public String getContextualName(AdvisorObservationContext context) {
 		Assert.notNull(context, "context cannot be null");
 		return ParsingUtils.reConcatenateCamelCase(context.getAdvisorName(), "_")
-			.replace("_around_advisor", "")
-			.replace("_advisor", "");
+				.replace("_around_advisor", "")
+				.replace("_advisor", "");
 	}
 
 	// ------------------------

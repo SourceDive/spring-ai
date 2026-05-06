@@ -47,8 +47,8 @@ import org.springframework.ai.vectorstore.filter.Filter.Value;
  * var exp6 = b.and(b.and(b.eq("isOpen", true), b.gte("year", 2020)), b.in("country", "BG", "NL", "US"));
  *
  * }</pre>
- *
- *
+ * <p>
+ * <p>
  * This builder DSL mimics the common
  * <a href="https://www.baeldung.com/hibernate-criteria-queries">Criteria Queries</a>
  * syntax.
@@ -119,8 +119,7 @@ public class FilterExpressionBuilder {
 			if (this.expression instanceof Filter.Group group) {
 				// Remove the top-level grouping.
 				return group.content();
-			}
-			else if (this.expression instanceof Filter.Expression exp) {
+			} else if (this.expression instanceof Filter.Expression exp) {
 				return exp;
 			}
 			throw new RuntimeException("Invalid expression: " + this.expression);

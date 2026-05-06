@@ -52,14 +52,13 @@ public class MariaDBSchemaValidator {
 			// Query for a single integer value, if it exists, table exists
 			this.jdbcTemplate.queryForObject(sql, Integer.class);
 			return true;
-		}
-		catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			return false;
 		}
 	}
 
 	void validateTableSchema(String schemaName, String tableName, String idFieldName, String contentFieldName,
-			String metadataFieldName, String embeddingFieldName, int embeddingDimensions) {
+	                         String metadataFieldName, String embeddingFieldName, int embeddingDimensions) {
 
 		if (!isTableExists(schemaName, tableName)) {
 			throw new IllegalStateException(
@@ -71,8 +70,7 @@ public class MariaDBSchemaValidator {
 			// Query for a single integer value, if it exists, database support vector
 			this.jdbcTemplate.queryForObject("SELECT vec_distance_euclidean(x'0000803f', x'0000803f')", Integer.class,
 					schemaName, tableName);
-		}
-		catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			logger.error("Error while validating database vector support " + e.getMessage());
 			logger.error("Failed to validate that database supports VECTOR.\n" + "Run the following SQL commands:\n"
 					+ "   SELECT @@version; \nAnd ensure that version is >= 11.7.1");
@@ -112,13 +110,11 @@ public class MariaDBSchemaValidator {
 
 			if (expectedColumns.isEmpty()) {
 				logger.info("MariaDB VectorStore schema validation successful");
-			}
-			else {
+			} else {
 				throw new IllegalStateException("Missing fields " + expectedColumns);
 			}
 
-		}
-		catch (DataAccessException | IllegalStateException e) {
+		} catch (DataAccessException | IllegalStateException e) {
 			logger.error("Error while validating table schema" + e.getMessage());
 			logger.error("Failed to operate with the specified table in the database. To resolve this issue,"
 					+ " please ensure the following steps are completed:\n"
@@ -132,8 +128,8 @@ public class MariaDBSchemaValidator {
 									%s VECTOR(%d) NOT NULL,
 									VECTOR INDEX (%s)
 							) ENGINE=InnoDB""", schemaName == null ? tableName : schemaName + "." + tableName,
-							idFieldName, contentFieldName, metadataFieldName, embeddingFieldName, embeddingDimensions,
-							embeddingFieldName)
+					idFieldName, contentFieldName, metadataFieldName, embeddingFieldName, embeddingDimensions,
+					embeddingFieldName)
 					+ "\n" + "Please adjust these commands based on your specific configuration and the"
 					+ " capabilities of your vector database system.");
 			throw new IllegalStateException(e);
@@ -142,7 +138,8 @@ public class MariaDBSchemaValidator {
 
 	/**
 	 * Escaped identifier according to MariaDB requirement.
-	 * @param identifier identifier
+	 *
+	 * @param identifier  identifier
 	 * @param alwaysQuote indicate if identifier must be quoted even if not necessary.
 	 * @return return escaped identifier, quoted when necessary or indicated with
 	 * alwaysQuote.
@@ -158,9 +155,8 @@ public class MariaDBSchemaValidator {
 				return quotedId;
 			}
 			throw new IllegalArgumentException(String
-				.format("Identifier '%s' should only contain alphanumeric characters and underscores", quotedId));
-		}
-		catch (SQLException e) {
+					.format("Identifier '%s' should only contain alphanumeric characters and underscores", quotedId));
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

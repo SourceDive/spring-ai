@@ -43,9 +43,9 @@ public final class BedrockConverseChatModelMain {
 		var prompt = new Prompt("Tell me a joke?", ChatOptions.builder().model(modelId).build());
 
 		var chatModel = BedrockProxyChatModel.builder()
-			.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-			.region(Region.US_EAST_1)
-			.build();
+				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+				.region(Region.US_EAST_1)
+				.build();
 
 		var chatResponse = chatModel.call(prompt);
 		System.out.println(chatResponse);

@@ -78,12 +78,12 @@ class VectorStoreDocumentRetrieverIT {
 	@Test
 	void withBuildFilter() {
 		DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(this.pgVectorStore)
-			.similarityThreshold(0.50)
-			.topK(3)
-			.filterExpression(
-					new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Whispering Woods")))
-			.build();
+				.vectorStore(this.pgVectorStore)
+				.similarityThreshold(0.50)
+				.topK(3)
+				.filterExpression(
+						new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Whispering Woods")))
+				.build();
 
 		List<Document> retrievedDocuments = documentRetriever.retrieve(new Query("Who is Anacletus?"));
 
@@ -98,10 +98,10 @@ class VectorStoreDocumentRetrieverIT {
 	@Test
 	void withNoBuildFilter() {
 		DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(this.pgVectorStore)
-			.similarityThreshold(0.50)
-			.topK(3)
-			.build();
+				.vectorStore(this.pgVectorStore)
+				.similarityThreshold(0.50)
+				.topK(3)
+				.build();
 
 		List<Document> retrievedDocuments = documentRetriever.retrieve(new Query("Who is Anacletus?"));
 
@@ -114,15 +114,15 @@ class VectorStoreDocumentRetrieverIT {
 	@Test
 	void withRequestFilter() {
 		DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(this.pgVectorStore)
-			.similarityThreshold(0.50)
-			.topK(3)
-			.build();
+				.vectorStore(this.pgVectorStore)
+				.similarityThreshold(0.50)
+				.topK(3)
+				.build();
 
 		Query query = Query.builder()
-			.text("Who is Anacletus?")
-			.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Whispering Woods'"))
-			.build();
+				.text("Who is Anacletus?")
+				.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Whispering Woods'"))
+				.build();
 		List<Document> retrievedDocuments = documentRetriever.retrieve(query);
 
 		assertThat(retrievedDocuments).hasSize(2);

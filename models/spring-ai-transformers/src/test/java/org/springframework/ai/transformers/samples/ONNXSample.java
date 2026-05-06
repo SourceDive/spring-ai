@@ -44,17 +44,17 @@ public final class ONNXSample {
 	public static NDArray meanPooling(NDArray tokenEmbeddings, NDArray attentionMask) {
 
 		NDArray attentionMaskExpanded = attentionMask.expandDims(-1)
-			.broadcast(tokenEmbeddings.getShape())
-			.toType(DataType.FLOAT32, false);
+				.broadcast(tokenEmbeddings.getShape())
+				.toType(DataType.FLOAT32, false);
 
 		// Multiply token embeddings with expanded attention mask
 		NDArray weightedEmbeddings = tokenEmbeddings.mul(attentionMaskExpanded);
 
 		// Sum along the appropriate axis
-		NDArray sumEmbeddings = weightedEmbeddings.sum(new int[] { 1 });
+		NDArray sumEmbeddings = weightedEmbeddings.sum(new int[]{1});
 
 		// Clamp the attention mask sum to avoid division by zero
-		NDArray sumMask = attentionMaskExpanded.sum(new int[] { 1 }).clip(1e-9f, Float.MAX_VALUE);
+		NDArray sumMask = attentionMaskExpanded.sum(new int[]{1}).clip(1e-9f, Float.MAX_VALUE);
 
 		// Divide sum embeddings by sum mask
 		return sumEmbeddings.div(sumMask);
@@ -67,7 +67,7 @@ public final class ONNXSample {
 		var tokenizerResource = new DefaultResourceLoader().getResource(TOKENIZER_URI);
 		var modelResource = new DefaultResourceLoader().getResource(MODEL_URI);
 
-		String[] sentences = new String[] { "Hello world" };
+		String[] sentences = new String[]{"Hello world"};
 
 		// https://docs.djl.ai/extensions/tokenizers/index.html
 		HuggingFaceTokenizer tokenizer = HuggingFaceTokenizer.newInstance(tokenizerResource.getInputStream(), Map.of());

@@ -36,14 +36,14 @@ public class ToolCallingContentObservationFilter implements ObservationFilter {
 
 		String toolCallArguments = toolCallingObservationContext.getToolCallArguments();
 		toolCallingObservationContext
-			.addHighCardinalityKeyValue(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_ARGUMENTS
-				.withValue(toolCallArguments));
+				.addHighCardinalityKeyValue(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_ARGUMENTS
+						.withValue(toolCallArguments));
 
 		String toolCallResult = toolCallingObservationContext.getToolCallResult();
 		if (toolCallResult != null) {
 			toolCallingObservationContext
-				.addHighCardinalityKeyValue(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_RESULT
-					.withValue(toolCallResult));
+					.addHighCardinalityKeyValue(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_RESULT
+							.withValue(toolCallResult));
 		}
 
 		return toolCallingObservationContext;

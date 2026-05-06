@@ -128,9 +128,9 @@ class MistralAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -148,10 +148,10 @@ class MistralAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -171,9 +171,9 @@ class MistralAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -194,20 +194,20 @@ class MistralAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.streamingChatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -224,12 +224,12 @@ class MistralAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.SMALL.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MistralAiApi.ChatModel.SMALL.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -249,40 +249,40 @@ class MistralAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.SMALL.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MistralAiApi.ChatModel.SMALL.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).containsAnyOf("10.0", "10");
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "pixtral-large-latest" })
+	@ValueSource(strings = {"pixtral-large-latest"})
 	void multiModalityEmbeddedImage(String modelName) {
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel
-			.call(new Prompt(List.of(userMessage), ChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), ChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -290,18 +290,18 @@ class MistralAiChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "pixtral-large-latest" })
+	@ValueSource(strings = {"pixtral-large-latest"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel
-			.call(new Prompt(List.of(userMessage), ChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), ChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).contains("bananas", "apple");
@@ -311,24 +311,24 @@ class MistralAiChatModelIT {
 	@Test
 	void streamingMultiModalityImageUrl() throws IOException {
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(List.of(userMessage),
 				ChatOptions.builder().model(MistralAiApi.ChatModel.PIXTRAL_LARGE.getValue()).build()));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 		assertThat(content).containsAnyOf("bananas", "apple", "bowl", "basket", "fruit stand");
 	}
@@ -341,12 +341,12 @@ class MistralAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.SMALL.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MistralAiApi.ChatModel.SMALL.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(messages, promptOptions));
 		ChatResponse chatResponse = response.last().block();
@@ -387,9 +387,9 @@ class MistralAiChatModelIT {
 		String conversationId = UUID.randomUUID().toString();
 
 		ChatOptions chatOptions = ToolCallingChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(new MathTools()))
-			.internalToolExecutionEnabled(false)
-			.build();
+				.toolCallbacks(ToolCallbacks.from(new MathTools()))
+				.internalToolExecutionEnabled(false)
+				.build();
 		Prompt prompt = new Prompt(
 				List.of(new SystemMessage("You are a helpful assistant."), new UserMessage("What is 6 * 8?")),
 				chatOptions);
@@ -403,7 +403,7 @@ class MistralAiChatModelIT {
 			ToolExecutionResult toolExecutionResult = toolCallingManager.executeToolCalls(promptWithMemory,
 					chatResponse);
 			chatMemory.add(conversationId, toolExecutionResult.conversationHistory()
-				.get(toolExecutionResult.conversationHistory().size() - 1));
+					.get(toolExecutionResult.conversationHistory().size() - 1));
 			promptWithMemory = new Prompt(chatMemory.get(conversationId), chatOptions);
 			chatResponse = this.chatModel.call(promptWithMemory);
 			chatMemory.add(conversationId, chatResponse.getResult().getOutput());

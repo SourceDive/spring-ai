@@ -52,11 +52,11 @@ public class MiniMaxFunctionCallbackIT {
 	private final Logger logger = LoggerFactory.getLogger(MiniMaxFunctionCallbackIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.minimax.apiKey=" + System.getenv("MINIMAX_API_KEY"))
-		.withConfiguration(
-				AutoConfigurations.of(SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-						MiniMaxChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.minimax.apiKey=" + System.getenv("MINIMAX_API_KEY"))
+			.withConfiguration(
+					AutoConfigurations.of(SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+							MiniMaxChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
@@ -68,7 +68,7 @@ public class MiniMaxFunctionCallbackIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius.");
 
 			ChatResponse response = chatModel
-				.call(new Prompt(List.of(userMessage), MiniMaxChatOptions.builder().toolNames("WeatherInfo").build()));
+					.call(new Prompt(List.of(userMessage), MiniMaxChatOptions.builder().toolNames("WeatherInfo").build()));
 
 			logger.info("Response: {}", response);
 
@@ -90,13 +90,13 @@ public class MiniMaxFunctionCallbackIT {
 					new Prompt(List.of(userMessage), MiniMaxChatOptions.builder().toolNames("WeatherInfo").build()));
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).containsAnyOf("30.0", "30");
@@ -113,9 +113,9 @@ public class MiniMaxFunctionCallbackIT {
 		public FunctionToolCallback<MockWeatherService.Request, MockWeatherService.Response> weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description("Get the weather in location")
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

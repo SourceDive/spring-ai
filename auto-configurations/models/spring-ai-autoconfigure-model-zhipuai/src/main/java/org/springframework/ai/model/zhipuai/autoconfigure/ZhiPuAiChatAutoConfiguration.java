@@ -49,24 +49,24 @@ import org.springframework.web.client.RestClient;
  * @author Geng Rong
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class})
 @ConditionalOnClass(ZhiPuAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.ZHIPUAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ ZhiPuAiConnectionProperties.class, ZhiPuAiChatProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class })
+@EnableConfigurationProperties({ZhiPuAiConnectionProperties.class, ZhiPuAiChatProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class})
 public class ZhiPuAiChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ZhiPuAiChatModel zhiPuAiChatModel(ZhiPuAiConnectionProperties commonProperties,
-			ZhiPuAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention, ToolCallingManager toolCallingManager,
-			ObjectProvider<ToolExecutionEligibilityPredicate> toolExecutionEligibilityPredicate) {
+	                                         ZhiPuAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                         RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
+	                                         ObjectProvider<ObservationRegistry> observationRegistry,
+	                                         ObjectProvider<ChatModelObservationConvention> observationConvention, ToolCallingManager toolCallingManager,
+	                                         ObjectProvider<ToolExecutionEligibilityPredicate> toolExecutionEligibilityPredicate) {
 
 		var zhiPuAiApi = zhiPuAiApi(chatProperties.getBaseUrl(), commonProperties.getBaseUrl(),
 				chatProperties.getApiKey(), commonProperties.getApiKey(),
@@ -82,7 +82,7 @@ public class ZhiPuAiChatAutoConfiguration {
 	}
 
 	private ZhiPuAiApi zhiPuAiApi(String baseUrl, String commonBaseUrl, String apiKey, String commonApiKey,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                              RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		String resolvedBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;
 		Assert.hasText(resolvedBaseUrl, "ZhiPuAI base URL must be set");

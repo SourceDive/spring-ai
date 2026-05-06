@@ -33,7 +33,8 @@ public interface QueryAugmenter extends BiFunction<Query, List<Document>, Query>
 
 	/**
 	 * Augments the user query with contextual data.
-	 * @param query The user query to augment
+	 *
+	 * @param query     The user query to augment
 	 * @param documents The contextual data to use for augmentation
 	 * @return The augmented query
 	 */

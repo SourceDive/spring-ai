@@ -308,7 +308,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 			for (redis.clients.jedis.search.Document doc : searchResult.getDocuments()) {
 				String docId = doc.getId();
 				matchingIds.add(docId.replace(key(""), "")); // Remove the key prefix to
-																// get original ID
+				// get original ID
 			}
 
 			if (!matchingIds.isEmpty()) {
@@ -327,8 +327,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 				logger.debug("Deleted {} documents matching filter expression", matchingIds.size());
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter", e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -353,26 +352,26 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		returnFields.add(DISTANCE_FIELD_NAME);
 		var embedding = this.embeddingModel.embed(request.getQuery());
 		Query query = new Query(queryString).addParam(EMBEDDING_PARAM_NAME, RediSearchUtil.toByteArray(embedding))
-			.returnFields(returnFields.toArray(new String[0]))
-			.setSortBy(DISTANCE_FIELD_NAME, true)
-			.limit(0, request.getTopK())
-			.dialect(2);
+				.returnFields(returnFields.toArray(new String[0]))
+				.setSortBy(DISTANCE_FIELD_NAME, true)
+				.limit(0, request.getTopK())
+				.dialect(2);
 
 		SearchResult result = this.jedis.ftSearch(this.indexName, query);
 		return result.getDocuments()
-			.stream()
-			.filter(d -> similarityScore(d) >= request.getSimilarityThreshold())
-			.map(this::toDocument)
-			.toList();
+				.stream()
+				.filter(d -> similarityScore(d) >= request.getSimilarityThreshold())
+				.map(this::toDocument)
+				.toList();
 	}
 
 	private Document toDocument(redis.clients.jedis.search.Document doc) {
 		var id = doc.getId().substring(this.prefix.length());
 		var content = doc.hasProperty(this.contentFieldName) ? doc.getString(this.contentFieldName) : "";
 		Map<String, Object> metadata = this.metadataFields.stream()
-			.map(MetadataField::name)
-			.filter(doc::hasProperty)
-			.collect(Collectors.toMap(Function.identity(), doc::getString));
+				.map(MetadataField::name)
+				.filter(doc::hasProperty)
+				.collect(Collectors.toMap(Function.identity(), doc::getString));
 		metadata.put(DISTANCE_FIELD_NAME, 1 - similarityScore(doc));
 		metadata.put(DocumentMetadata.DISTANCE.value(), 1 - similarityScore(doc));
 		return Document.builder().id(id).text(content).metadata(metadata).score((double) similarityScore(doc)).build();
@@ -417,11 +416,11 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		List<SchemaField> fields = new ArrayList<>();
 		fields.add(TextField.of(jsonPath(this.contentFieldName)).as(this.contentFieldName).weight(1.0));
 		fields.add(VectorField.builder()
-			.fieldName(jsonPath(this.embeddingFieldName))
-			.algorithm(vectorAlgorithm())
-			.attributes(vectorAttrs)
-			.as(this.embeddingFieldName)
-			.build());
+				.fieldName(jsonPath(this.embeddingFieldName))
+				.algorithm(vectorAlgorithm())
+				.attributes(vectorAttrs)
+				.as(this.embeddingFieldName)
+				.build());
 
 		if (!CollectionUtils.isEmpty(this.metadataFields)) {
 			for (MetadataField field : this.metadataFields) {
@@ -457,10 +456,10 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.REDIS.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions())
-			.fieldName(this.embeddingFieldName)
-			.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions())
+				.fieldName(this.embeddingFieldName)
+				.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
 
 	}
 
@@ -523,6 +522,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis index name.
+		 *
 		 * @param indexName the index name to use
 		 * @return the builder instance
 		 */
@@ -535,6 +535,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis key prefix (default: "embedding:").
+		 *
 		 * @param prefix the prefix to use
 		 * @return the builder instance
 		 */
@@ -547,6 +548,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis content field name.
+		 *
 		 * @param fieldName the content field name to use
 		 * @return the builder instance
 		 */
@@ -559,6 +561,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis embedding field name.
+		 *
 		 * @param fieldName the embedding field name to use
 		 * @return the builder instance
 		 */
@@ -571,6 +574,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis vector algorithm.
+		 *
 		 * @param algorithm the vector algorithm to use
 		 * @return the builder instance
 		 */
@@ -583,6 +587,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata fields.
+		 *
 		 * @param fields the metadata fields to include
 		 * @return the builder instance
 		 */
@@ -592,6 +597,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata fields.
+		 *
 		 * @param fields the list of metadata fields to include
 		 * @return the builder instance
 		 */
@@ -604,6 +610,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */

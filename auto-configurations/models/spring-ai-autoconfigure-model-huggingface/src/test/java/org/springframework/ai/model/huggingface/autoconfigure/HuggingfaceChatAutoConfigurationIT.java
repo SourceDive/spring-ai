@@ -44,11 +44,11 @@ public class HuggingfaceChatAutoConfigurationIT {
 	private static final Log logger = LogFactory.getLog(HuggingfaceChatAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 			"spring.ai.huggingface.chat.api-key=" + System.getenv("HUGGINGFACE_API_KEY"),
 			"spring.ai.huggingface.chat.url=" + System.getenv("HUGGINGFACE_CHAT_URL"))
 			// @formatter:on
-		.withConfiguration(AutoConfigurations.of(HuggingfaceChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(HuggingfaceChatAutoConfiguration.class));
 
 	@Test
 	void generate() {
@@ -68,13 +68,13 @@ public class HuggingfaceChatAutoConfigurationIT {
 			Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
 
 			String response = responseFlux.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(response).isNotEmpty();
 			logger.info("Response: " + response);

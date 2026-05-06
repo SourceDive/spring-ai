@@ -50,24 +50,24 @@ import static org.hamcrest.Matchers.hasSize;
 class OpenSearchContainerConnectionDetailsFactoryIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withInitializer(new TestcontainersLifecycleApplicationContextInitializer())
-		.withConfiguration(AutoConfigurations.of(ServiceConnectionAutoConfiguration.class,
-				OpenSearchVectorStoreAutoConfiguration.class))
-		.withClassLoader(new FilteredClassLoader(Region.class, ApacheHttpClient.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.opensearch.aws.enabled=false",
-				"spring.ai.vectorstore.opensearch.initialize-schema=true",
-				OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".indexName=auto-spring-ai-document-index",
-				OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".mappingJson=" + """
-						{
-							"properties":{
-								"embedding":{
-									"type":"knn_vector",
-									"dimension":384
+			.withInitializer(new TestcontainersLifecycleApplicationContextInitializer())
+			.withConfiguration(AutoConfigurations.of(ServiceConnectionAutoConfiguration.class,
+					OpenSearchVectorStoreAutoConfiguration.class))
+			.withClassLoader(new FilteredClassLoader(Region.class, ApacheHttpClient.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.opensearch.aws.enabled=false",
+					"spring.ai.vectorstore.opensearch.initialize-schema=true",
+					OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".indexName=auto-spring-ai-document-index",
+					OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".mappingJson=" + """
+							{
+								"properties":{
+									"embedding":{
+										"type":"knn_vector",
+										"dimension":384
+									}
 								}
 							}
-						}
-						""");
+							""");
 
 	private final List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -81,9 +81,9 @@ class OpenSearchContainerConnectionDetailsFactoryIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(
 					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build());
@@ -100,9 +100,9 @@ class OpenSearchContainerConnectionDetailsFactoryIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -110,8 +110,7 @@ class OpenSearchContainerConnectionDetailsFactoryIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

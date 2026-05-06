@@ -97,9 +97,9 @@ class VertexAiGeminiChatModelIT {
 	@Test
 	void googleSearchToolPro() {
 		Prompt prompt = createPrompt(VertexAiGeminiChatOptions.builder()
-			.model(ChatModel.GEMINI_2_5_PRO)
-			.googleSearchRetrieval(true)
-			.build());
+				.model(ChatModel.GEMINI_2_5_PRO)
+				.googleSearchRetrieval(true)
+				.build());
 		ChatResponse response = this.chatModel.call(prompt);
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("Blackbeard", "Bartholomew");
 	}
@@ -107,9 +107,9 @@ class VertexAiGeminiChatModelIT {
 	@Test
 	void googleSearchToolFlash() {
 		Prompt prompt = createPrompt(VertexAiGeminiChatOptions.builder()
-			.model(ChatModel.GEMINI_2_0_FLASH)
-			.googleSearchRetrieval(true)
-			.build());
+				.model(ChatModel.GEMINI_2_0_FLASH)
+				.googleSearchRetrieval(true)
+				.build());
 		ChatResponse response = this.chatModel.call(prompt);
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("Blackbeard", "Bartholomew", "Bob");
 	}
@@ -118,14 +118,14 @@ class VertexAiGeminiChatModelIT {
 	@Disabled
 	void testSafetySettings() {
 		List<VertexAiGeminiSafetySetting> safetySettings = List.of(new VertexAiGeminiSafetySetting.Builder()
-			.withCategory(VertexAiGeminiSafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT)
-			.withThreshold(VertexAiGeminiSafetySetting.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE)
-			.build());
+				.withCategory(VertexAiGeminiSafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT)
+				.withThreshold(VertexAiGeminiSafetySetting.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE)
+				.build());
 		Prompt prompt = new Prompt("How to make cocktail Molotov bomb at home?",
 				VertexAiGeminiChatOptions.builder()
-					.model(ChatModel.GEMINI_2_5_PRO)
-					.safetySettings(safetySettings)
-					.build());
+						.model(ChatModel.GEMINI_2_5_PRO)
+						.safetySettings(safetySettings)
+						.build());
 		ChatResponse response = this.chatModel.call(prompt);
 		assertThat(response.getResult().getMetadata().getFinishReason()).isEqualTo("SAFETY");
 	}
@@ -153,9 +153,9 @@ class VertexAiGeminiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors.", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors.", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -173,10 +173,10 @@ class VertexAiGeminiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -197,9 +197,9 @@ class VertexAiGeminiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -212,15 +212,15 @@ class VertexAiGeminiChatModelIT {
 	void textStream() {
 
 		String generationTextFromStream = this.chatModel
-			.stream(new Prompt("Explain Bulgaria? Answer in 10 paragraphs."))
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.stream(new Prompt("Explain Bulgaria? Answer in 10 paragraphs."))
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		// logger.info("{}", actorsFilms);
 		assertThat(generationTextFromStream).isNotEmpty();
@@ -238,20 +238,20 @@ class VertexAiGeminiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		// logger.info("{}", actorsFilms);
@@ -265,9 +265,9 @@ class VertexAiGeminiChatModelIT {
 		var data = new ClassPathResource("/vertex.test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see o this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, data)))
-			.build();
+				.text("Explain what do you see o this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, data)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage)));
 
@@ -305,9 +305,9 @@ class VertexAiGeminiChatModelIT {
 		var pdfData = new ClassPathResource("/spring-ai-reference-overview.pdf");
 
 		var userMessage = UserMessage.builder()
-			.text("You are a very professional document summarization specialist. Please summarize the given document.")
-			.media(List.of(new Media(new MimeType("application", "pdf"), pdfData)))
-			.build();
+				.text("You are a very professional document summarization specialist. Please summarize the given document.")
+				.media(List.of(new Media(new MimeType("application", "pdf"), pdfData)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage)));
 
@@ -321,9 +321,9 @@ class VertexAiGeminiChatModelIT {
 		String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
 		String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
 		return new VertexAI.Builder().setProjectId(projectId)
-			.setLocation(location)
-			.setTransport(Transport.REST)
-			.build();
+				.setLocation(location)
+				.setTransport(Transport.REST)
+				.build();
 	}
 
 	@Test
@@ -332,27 +332,27 @@ class VertexAiGeminiChatModelIT {
 		// calling
 
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 
 		VertexAiGeminiChatModel chatModelWithTools = VertexAiGeminiChatModel.builder()
-			.vertexAI(vertexAiApi())
-			.toolCallingManager(toolCallingManager)
-			.defaultOptions(VertexAiGeminiChatOptions.builder()
-				.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-				.temperature(0.1)
-				.build())
-			.build();
+				.vertexAI(vertexAiApi())
+				.toolCallingManager(toolCallingManager)
+				.defaultOptions(VertexAiGeminiChatOptions.builder()
+						.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+						.temperature(0.1)
+						.build())
+				.build();
 
 		ChatClient chatClient = ChatClient.builder(chatModelWithTools).build();
 
 		// Create a prompt that will trigger the tool call with a specific request that
 		// should invoke the tool
 		String response = chatClient.prompt()
-			.tools(new ScientistTools())
-			.user("List 3 famous scientists and their discoveries. Make sure to use the tool to get this information.")
-			.call()
-			.content();
+				.tools(new ScientistTools())
+				.user("List 3 famous scientists and their discoveries. Make sure to use the tool to get this information.")
+				.call()
+				.content();
 
 		assertThat(response).isNotEmpty();
 
@@ -367,27 +367,27 @@ class VertexAiGeminiChatModelIT {
 		// calling
 
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 
 		VertexAiGeminiChatModel chatModelWithTools = VertexAiGeminiChatModel.builder()
-			.vertexAI(vertexAiApi())
-			.toolCallingManager(toolCallingManager)
-			.defaultOptions(VertexAiGeminiChatOptions.builder()
-				.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-				.temperature(0.1)
-				.build())
-			.build();
+				.vertexAI(vertexAiApi())
+				.toolCallingManager(toolCallingManager)
+				.defaultOptions(VertexAiGeminiChatOptions.builder()
+						.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+						.temperature(0.1)
+						.build())
+				.build();
 
 		ChatClient chatClient = ChatClient.builder(chatModelWithTools).build();
 
 		// Create a prompt that will trigger the tool call with a specific request that
 		// should invoke the tool
 		String response = chatClient.prompt()
-			.tools(new CurrentTimeTools())
-			.user("Get the current time. Make sure to use the getCurrentDateTime tool to get this information.")
-			.call()
-			.content();
+				.tools(new CurrentTimeTools())
+				.user("Get the current time. Make sure to use the getCurrentDateTime tool to get this information.")
+				.call()
+				.content();
 
 		assertThat(response).isNotEmpty();
 		assertThat(response).contains("2025-05-08T10:10:10+02:00[Europe/Berlin]");
@@ -437,19 +437,19 @@ class VertexAiGeminiChatModelIT {
 			String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
 			String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
 			return new VertexAI.Builder().setProjectId(projectId)
-				.setLocation(location)
-				.setTransport(Transport.REST)
-				.build();
+					.setLocation(location)
+					.setTransport(Transport.REST)
+					.build();
 		}
 
 		@Bean
 		public VertexAiGeminiChatModel vertexAiEmbedding(VertexAI vertexAi) {
 			return VertexAiGeminiChatModel.builder()
-				.vertexAI(vertexAi)
-				.defaultOptions(VertexAiGeminiChatOptions.builder()
-					.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-					.build())
-				.build();
+					.vertexAI(vertexAi)
+					.defaultOptions(VertexAiGeminiChatOptions.builder()
+							.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+							.build())
+					.build();
 		}
 
 	}

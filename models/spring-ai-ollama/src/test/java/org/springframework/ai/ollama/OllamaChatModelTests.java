@@ -56,10 +56,10 @@ class OllamaChatModelTests {
 	@Test
 	void buildOllamaChatModelWithDeprecatedConstructor() {
 		ChatModel chatModel = OllamaChatModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.defaultOptions(OllamaOptions.builder().model(OllamaModel.MISTRAL).build())
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.defaultOptions(OllamaOptions.builder().model(OllamaModel.MISTRAL).build())
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 		assertThat(chatModel).isNotNull();
 	}
 
@@ -81,10 +81,10 @@ class OllamaChatModelTests {
 	void buildOllamaChatModel() {
 		Exception exception = assertThrows(IllegalArgumentException.class,
 				() -> OllamaChatModel.builder()
-					.ollamaApi(this.ollamaApi)
-					.defaultOptions(OllamaOptions.builder().model(OllamaModel.LLAMA2).build())
-					.modelManagementOptions(null)
-					.build());
+						.ollamaApi(this.ollamaApi)
+						.defaultOptions(OllamaOptions.builder().model(OllamaModel.LLAMA2).build())
+						.modelManagementOptions(null)
+						.build());
 		assertEquals("modelManagementOptions must not be null", exception.getMessage());
 	}
 
@@ -127,13 +127,13 @@ class OllamaChatModelTests {
 				totalDuration, loadDuration, promptEvalCount, promptEvalDuration, evalCount, evalDuration);
 
 		ChatResponse previousChatResponse = ChatResponse.builder()
-			.generations(List.of())
-			.metadata(ChatResponseMetadata.builder()
-				.usage(new DefaultUsage(66, 99))
-				.keyValue("eval-duration", Duration.ofSeconds(2))
-				.keyValue("prompt-eval-duration", Duration.ofSeconds(2))
-				.build())
-			.build();
+				.generations(List.of())
+				.metadata(ChatResponseMetadata.builder()
+						.usage(new DefaultUsage(66, 99))
+						.keyValue("eval-duration", Duration.ofSeconds(2))
+						.keyValue("prompt-eval-duration", Duration.ofSeconds(2))
+						.build())
+				.build();
 
 		ChatResponseMetadata metadata = OllamaChatModel.from(response, previousChatResponse);
 

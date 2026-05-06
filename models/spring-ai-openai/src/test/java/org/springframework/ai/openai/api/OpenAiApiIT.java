@@ -82,8 +82,8 @@ public class OpenAiApiIT {
 		assertThat(response.getBody()).isNotNull();
 
 		OpenAiApi.Usage.CompletionTokenDetails completionTokenDetails = response.getBody()
-			.usage()
-			.completionTokenDetails();
+				.usage()
+				.completionTokenDetails();
 		assertThat(completionTokenDetails).isNotNull();
 		assertThat(completionTokenDetails.reasoningTokens()).isPositive();
 	}
@@ -91,7 +91,7 @@ public class OpenAiApiIT {
 	@Test
 	void embeddings() {
 		ResponseEntity<EmbeddingList<Embedding>> response = this.openAiApi
-			.embeddings(new OpenAiApi.EmbeddingRequest<String>("Hello world"));
+				.embeddings(new OpenAiApi.EmbeddingRequest<String>("Hello world"));
 
 		assertThat(response).isNotNull();
 		assertThat(response.getBody().data()).hasSize(1);
@@ -102,10 +102,10 @@ public class OpenAiApiIT {
 	void inputAudio() throws IOException {
 		var audioData = new ClassPathResource("speech1.mp3").getContentAsByteArray();
 		List<ChatCompletionMessage.MediaContent> content = List
-			.of(new ChatCompletionMessage.MediaContent("What is this recording about?"),
-					new ChatCompletionMessage.MediaContent(new ChatCompletionMessage.MediaContent.InputAudio(
-							Base64.getEncoder().encodeToString(audioData),
-							ChatCompletionMessage.MediaContent.InputAudio.Format.MP3)));
+				.of(new ChatCompletionMessage.MediaContent("What is this recording about?"),
+						new ChatCompletionMessage.MediaContent(new ChatCompletionMessage.MediaContent.InputAudio(
+								Base64.getEncoder().encodeToString(audioData),
+								ChatCompletionMessage.MediaContent.InputAudio.Format.MP3)));
 		ChatCompletionMessage chatCompletionMessage = new ChatCompletionMessage(content, Role.USER);
 		ChatCompletionRequest chatCompletionRequest = new ChatCompletionRequest(List.of(chatCompletionMessage),
 				OpenAiApi.ChatModel.GPT_4_O_AUDIO_PREVIEW.getValue(), 0.0);
@@ -139,7 +139,7 @@ public class OpenAiApiIT {
 
 		assertThat(response.getBody().choices().get(0).message().audioOutput().data()).isNotNull();
 		assertThat(response.getBody().choices().get(0).message().audioOutput().transcript())
-			.containsIgnoringCase("leviosa");
+				.containsIgnoringCase("leviosa");
 	}
 
 	@Test
@@ -153,8 +153,8 @@ public class OpenAiApiIT {
 				OpenAiApi.ChatModel.GPT_4_O_AUDIO_PREVIEW.getValue(), audioParameters, true);
 
 		assertThatThrownBy(() -> this.openAiApi.chatCompletionStream(chatCompletionRequest).collectList().block())
-			.isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("400 Bad Request from POST https://api.openai.com/v1/chat/completions");
+				.isInstanceOf(RuntimeException.class)
+				.hasMessageContaining("400 Bad Request from POST https://api.openai.com/v1/chat/completions");
 	}
 
 }

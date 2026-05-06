@@ -54,25 +54,25 @@ import org.springframework.web.reactive.function.client.WebClient;
  * @author Ilayaperumal Gopinathan
  * @since 0.8.1
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class })
-@EnableConfigurationProperties({ MistralAiCommonProperties.class, MistralAiChatProperties.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class})
+@EnableConfigurationProperties({MistralAiCommonProperties.class, MistralAiChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.MISTRAL,
 		matchIfMissing = true)
 @ConditionalOnClass(MistralAiApi.class)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 public class MistralAiChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MistralAiChatModel mistralAiChatModel(MistralAiCommonProperties commonProperties,
-			MistralAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> mistralAiToolExecutionEligibilityPredicate) {
+	                                             MistralAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                             ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
+	                                             RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
+	                                             ObjectProvider<ObservationRegistry> observationRegistry,
+	                                             ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                             ObjectProvider<ToolExecutionEligibilityPredicate> mistralAiToolExecutionEligibilityPredicate) {
 
 		var mistralAiApi = mistralAiApi(chatProperties.getApiKey(), commonProperties.getApiKey(),
 				chatProperties.getBaseUrl(), commonProperties.getBaseUrl(),
@@ -80,14 +80,14 @@ public class MistralAiChatAutoConfiguration {
 				webClientBuilderProvider.getIfAvailable(WebClient::builder), responseErrorHandler);
 
 		var chatModel = MistralAiChatModel.builder()
-			.mistralAiApi(mistralAiApi)
-			.defaultOptions(chatProperties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(mistralAiToolExecutionEligibilityPredicate
-				.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.retryTemplate(retryTemplate)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.mistralAiApi(mistralAiApi)
+				.defaultOptions(chatProperties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(mistralAiToolExecutionEligibilityPredicate
+						.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.retryTemplate(retryTemplate)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
@@ -95,8 +95,8 @@ public class MistralAiChatAutoConfiguration {
 	}
 
 	private MistralAiApi mistralAiApi(String apiKey, String commonApiKey, String baseUrl, String commonBaseUrl,
-			RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                                  RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+	                                  ResponseErrorHandler responseErrorHandler) {
 
 		var resolvedApiKey = StringUtils.hasText(apiKey) ? apiKey : commonApiKey;
 		var resoledBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;

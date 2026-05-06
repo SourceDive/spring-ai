@@ -38,6 +38,7 @@ public final class JsonSchemaConverter {
 
 	/**
 	 * Parses a JSON string into an ObjectNode.
+	 *
 	 * @param jsonString The JSON string to parse
 	 * @return ObjectNode containing the parsed JSON
 	 * @throws RuntimeException if the JSON string cannot be parsed
@@ -45,14 +46,14 @@ public final class JsonSchemaConverter {
 	public static ObjectNode fromJson(String jsonString) {
 		try {
 			return (ObjectNode) JsonParser.getObjectMapper().readTree(jsonString);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to parse JSON: " + jsonString, e);
 		}
 	}
 
 	/**
 	 * Converts a JSON Schema ObjectNode to OpenAPI schema format.
+	 *
 	 * @param jsonSchemaNode The input JSON Schema as ObjectNode
 	 * @return ObjectNode containing the OpenAPI schema
 	 * @throws IllegalArgumentException if jsonSchemaNode is null
@@ -70,14 +71,14 @@ public final class JsonSchemaConverter {
 			}
 
 			return openApiSchema;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to convert JSON Schema to OpenAPI format: " + e.getMessage(), e);
 		}
 	}
 
 	/**
 	 * Copies common properties from source to target node.
+	 *
 	 * @param source The source ObjectNode containing JSON Schema properties
 	 * @param target The target ObjectNode to copy properties to
 	 */
@@ -89,7 +90,7 @@ public final class JsonSchemaConverter {
 				"type", "format", "description", "default", "maximum", "minimum", "maxLength", "minLength", "pattern",
 				"enum", "multipleOf", "uniqueItems",
 				// OpenAPI specific properties
-				"example", "deprecated", "readOnly", "writeOnly", "nullable", "discriminator", "xml", "externalDocs" };
+				"example", "deprecated", "readOnly", "writeOnly", "nullable", "discriminator", "xml", "externalDocs"};
 
 		for (String prop : commonProperties) {
 			if (source.has(prop)) {
@@ -100,6 +101,7 @@ public final class JsonSchemaConverter {
 
 	/**
 	 * Handles JSON Schema specific attributes and converts them to OpenAPI format.
+	 *
 	 * @param source The source ObjectNode containing JSON Schema
 	 * @param target The target ObjectNode to store OpenAPI schema
 	 */
@@ -126,8 +128,7 @@ public final class JsonSchemaConverter {
 			JsonNode additionalProps = source.get("additionalProperties");
 			if (additionalProps.isBoolean()) {
 				target.put("additionalProperties", additionalProps.asBoolean());
-			}
-			else if (additionalProps.isObject()) {
+			} else if (additionalProps.isObject()) {
 				target.set("additionalProperties",
 						convertSchema((ObjectNode) additionalProps, JsonParser.getObjectMapper().getNodeFactory()));
 			}
@@ -142,7 +143,7 @@ public final class JsonSchemaConverter {
 		}
 
 		// Handle allOf, anyOf, oneOf
-		String[] combiners = { "allOf", "anyOf", "oneOf" };
+		String[] combiners = {"allOf", "anyOf", "oneOf"};
 		for (String combiner : combiners) {
 			if (source.has(combiner)) {
 				JsonNode combinerNode = source.get(combiner);
@@ -155,12 +156,13 @@ public final class JsonSchemaConverter {
 
 	/**
 	 * Recursively converts a JSON Schema node to OpenAPI format.
-	 * @param source The source ObjectNode containing JSON Schema
+	 *
+	 * @param source  The source ObjectNode containing JSON Schema
 	 * @param factory The JsonNodeFactory to create new nodes
 	 * @return The converted OpenAPI schema as ObjectNode
 	 */
 	private static ObjectNode convertSchema(ObjectNode source,
-			com.fasterxml.jackson.databind.node.JsonNodeFactory factory) {
+	                                        com.fasterxml.jackson.databind.node.JsonNodeFactory factory) {
 		Assert.notNull(source, "Source node must not be null");
 		Assert.notNull(factory, "JsonNodeFactory must not be null");
 

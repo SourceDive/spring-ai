@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HuggingfaceModelConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(HuggingfaceChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(HuggingfaceChatAutoConfiguration.class));
 
 	@Test
 	void chatModelActivation() {

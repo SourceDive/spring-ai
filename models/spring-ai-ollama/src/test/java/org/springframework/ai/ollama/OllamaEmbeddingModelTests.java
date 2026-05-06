@@ -57,28 +57,28 @@ public class OllamaEmbeddingModelTests {
 	public void options() {
 
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME",
-					List.of(new float[] { 1f, 2f, 3f }, new float[] { 4f, 5f, 6f }), 0L, 0L, 0))
-			.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME2",
-					List.of(new float[] { 7f, 8f, 9f }, new float[] { 10f, 11f, 12f }), 0L, 0L, 0));
+				.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME",
+						List.of(new float[]{1f, 2f, 3f}, new float[]{4f, 5f, 6f}), 0L, 0L, 0))
+				.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME2",
+						List.of(new float[]{7f, 8f, 9f}, new float[]{10f, 11f, 12f}), 0L, 0L, 0));
 
 		// Tests default options
 		var defaultOptions = OllamaOptions.builder().model("DEFAULT_MODEL").build();
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.defaultOptions(defaultOptions)
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.defaultOptions(defaultOptions)
+				.build();
 
 		EmbeddingResponse response = embeddingModel.call(
 				new EmbeddingRequest(List.of("Input1", "Input2", "Input3"), EmbeddingOptionsBuilder.builder().build()));
 
 		assertThat(response.getResults()).hasSize(2);
 		assertThat(response.getResults().get(0).getIndex()).isEqualTo(0);
-		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[] { 1f, 2f, 3f });
+		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[]{1f, 2f, 3f});
 		assertThat(response.getResults().get(0).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getResults().get(1).getIndex()).isEqualTo(1);
-		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[] { 4f, 5f, 6f });
+		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[]{4f, 5f, 6f});
 		assertThat(response.getResults().get(1).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getMetadata().getModel()).isEqualTo("RESPONSE_MODEL_NAME");
 
@@ -90,20 +90,20 @@ public class OllamaEmbeddingModelTests {
 
 		// Tests runtime options
 		var runtimeOptions = OllamaOptions.builder()
-			.model("RUNTIME_MODEL")
-			.keepAlive("10m")
-			.truncate(false)
-			.mainGPU(666)
-			.build();
+				.model("RUNTIME_MODEL")
+				.keepAlive("10m")
+				.truncate(false)
+				.mainGPU(666)
+				.build();
 
 		response = embeddingModel.call(new EmbeddingRequest(List.of("Input4", "Input5", "Input6"), runtimeOptions));
 
 		assertThat(response.getResults()).hasSize(2);
 		assertThat(response.getResults().get(0).getIndex()).isEqualTo(0);
-		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[] { 7f, 8f, 9f });
+		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[]{7f, 8f, 9f});
 		assertThat(response.getResults().get(0).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getResults().get(1).getIndex()).isEqualTo(1);
-		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[] { 10f, 11f, 12f });
+		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[]{10f, 11f, 12f});
 		assertThat(response.getResults().get(1).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getMetadata().getModel()).isEqualTo("RESPONSE_MODEL_NAME2");
 

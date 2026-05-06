@@ -39,13 +39,13 @@ public class TranscriptionRequestTests {
 		var client = new OpenAiAudioTranscriptionModel(
 				OpenAiAudioApi.builder().apiKey(new SimpleApiKey("TEST")).build(),
 				OpenAiAudioTranscriptionOptions.builder()
-					.model("DEFAULT_MODEL")
-					.responseFormat(TranscriptResponseFormat.TEXT)
-					.language("en")
-					.prompt("Prompt1")
-					.granularityType(GranularityType.WORD)
-					.temperature(66.6f)
-					.build());
+						.model("DEFAULT_MODEL")
+						.responseFormat(TranscriptResponseFormat.TEXT)
+						.language("en")
+						.prompt("Prompt1")
+						.granularityType(GranularityType.WORD)
+						.temperature(66.6f)
+						.build());
 
 		var request = client.createRequest(
 				new AudioTranscriptionPrompt(new DefaultResourceLoader().getResource("classpath:/test.png")));
@@ -64,24 +64,24 @@ public class TranscriptionRequestTests {
 		var client = new OpenAiAudioTranscriptionModel(
 				OpenAiAudioApi.builder().apiKey(new SimpleApiKey("TEST")).build(),
 				OpenAiAudioTranscriptionOptions.builder()
-					.model("DEFAULT_MODEL")
-					.responseFormat(TranscriptResponseFormat.TEXT)
-					.language("en")
-					.prompt("Prompt1")
-					.granularityType(GranularityType.WORD)
-					.temperature(66.6f)
-					.build());
+						.model("DEFAULT_MODEL")
+						.responseFormat(TranscriptResponseFormat.TEXT)
+						.language("en")
+						.prompt("Prompt1")
+						.granularityType(GranularityType.WORD)
+						.temperature(66.6f)
+						.build());
 
 		var request = client
-			.createRequest(new AudioTranscriptionPrompt(new DefaultResourceLoader().getResource("classpath:/test.png"),
-					OpenAiAudioTranscriptionOptions.builder()
-						.model("RUNTIME_MODEL")
-						.responseFormat(TranscriptResponseFormat.JSON)
-						.language("bg")
-						.prompt("Prompt2")
-						.granularityType(GranularityType.SEGMENT)
-						.temperature(99.9f)
-						.build()));
+				.createRequest(new AudioTranscriptionPrompt(new DefaultResourceLoader().getResource("classpath:/test.png"),
+						OpenAiAudioTranscriptionOptions.builder()
+								.model("RUNTIME_MODEL")
+								.responseFormat(TranscriptResponseFormat.JSON)
+								.language("bg")
+								.prompt("Prompt2")
+								.granularityType(GranularityType.SEGMENT)
+								.temperature(99.9f)
+								.build()));
 
 		assertThat(request.model()).isEqualTo("RUNTIME_MODEL");
 		assertThat(request.responseFormat()).isEqualByComparingTo(TranscriptResponseFormat.JSON);

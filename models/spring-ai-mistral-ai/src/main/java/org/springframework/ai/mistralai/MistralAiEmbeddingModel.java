@@ -44,9 +44,9 @@ import org.springframework.util.Assert;
 /**
  * Provides the Mistral AI Embedding Model.
  *
- * @see AbstractEmbeddingModel
  * @author Ricken Bazolo
  * @author Thomas Vitale
+ * @see AbstractEmbeddingModel
  * @since 1.0.0
  */
 public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
@@ -88,12 +88,12 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 	}
 
 	public MistralAiEmbeddingModel(MistralAiApi mistralAiApi, MetadataMode metadataMode,
-			MistralAiEmbeddingOptions options, RetryTemplate retryTemplate) {
+	                               MistralAiEmbeddingOptions options, RetryTemplate retryTemplate) {
 		this(mistralAiApi, metadataMode, options, retryTemplate, ObservationRegistry.NOOP);
 	}
 
 	public MistralAiEmbeddingModel(MistralAiApi mistralAiApi, MetadataMode metadataMode,
-			MistralAiEmbeddingOptions options, RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	                               MistralAiEmbeddingOptions options, RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		Assert.notNull(mistralAiApi, "mistralAiApi must not be null");
 		Assert.notNull(metadataMode, "metadataMode must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -116,36 +116,36 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 		var apiRequest = createRequest(embeddingRequest);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(MistralAiApi.PROVIDER_NAME)
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider(MistralAiApi.PROVIDER_NAME)
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				var apiEmbeddingResponse = this.retryTemplate
-					.execute(ctx -> this.mistralAiApi.embeddings(apiRequest).getBody());
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					var apiEmbeddingResponse = this.retryTemplate
+							.execute(ctx -> this.mistralAiApi.embeddings(apiRequest).getBody());
 
-				if (apiEmbeddingResponse == null) {
-					logger.warn("No embeddings returned for request: {}", request);
-					return new EmbeddingResponse(List.of());
-				}
+					if (apiEmbeddingResponse == null) {
+						logger.warn("No embeddings returned for request: {}", request);
+						return new EmbeddingResponse(List.of());
+					}
 
-				var metadata = new EmbeddingResponseMetadata(apiEmbeddingResponse.model(),
-						getDefaultUsage(apiEmbeddingResponse.usage()));
+					var metadata = new EmbeddingResponseMetadata(apiEmbeddingResponse.model(),
+							getDefaultUsage(apiEmbeddingResponse.usage()));
 
-				var embeddings = apiEmbeddingResponse.data()
-					.stream()
-					.map(e -> new Embedding(e.embedding(), e.index()))
-					.toList();
+					var embeddings = apiEmbeddingResponse.data()
+							.stream()
+							.map(e -> new Embedding(e.embedding(), e.index()))
+							.toList();
 
-				var embeddingResponse = new EmbeddingResponse(embeddings, metadata);
+					var embeddingResponse = new EmbeddingResponse(embeddings, metadata);
 
-				observationContext.setResponse(embeddingResponse);
+					observationContext.setResponse(embeddingResponse);
 
-				return embeddingResponse;
-			});
+					return embeddingResponse;
+				});
 	}
 
 	private EmbeddingRequest buildEmbeddingRequest(EmbeddingRequest embeddingRequest) {
@@ -181,6 +181,7 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(EmbeddingModelObservationConvention observationConvention) {

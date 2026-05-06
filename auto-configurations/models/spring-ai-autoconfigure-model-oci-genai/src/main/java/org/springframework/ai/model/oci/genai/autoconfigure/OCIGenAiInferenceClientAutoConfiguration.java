@@ -53,10 +53,10 @@ public class OCIGenAiInferenceClientAutoConfiguration {
 	public GenerativeAiInferenceClient generativeAiInferenceClient(OCIConnectionProperties properties)
 			throws IOException {
 		ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-			.retryConfiguration(RetryConfiguration.SDK_DEFAULT_RETRY_CONFIGURATION)
-			.build();
+				.retryConfiguration(RetryConfiguration.SDK_DEFAULT_RETRY_CONFIGURATION)
+				.build();
 		GenerativeAiInferenceClient.Builder builder = GenerativeAiInferenceClient.builder()
-			.configuration(clientConfiguration);
+				.configuration(clientConfiguration);
 		if (StringUtils.hasText(properties.getRegion())) {
 			builder.region(Region.valueOf(properties.getRegion()));
 		}
@@ -73,13 +73,13 @@ public class OCIGenAiInferenceClientAutoConfiguration {
 			case INSTANCE_PRINCIPAL -> InstancePrincipalsAuthenticationDetailsProvider.builder().build();
 			case WORKLOAD_IDENTITY -> OkeWorkloadIdentityAuthenticationDetailsProvider.builder().build();
 			case SIMPLE -> SimpleAuthenticationDetailsProvider.builder()
-				.userId(properties.getUserId())
-				.tenantId(properties.getTenantId())
-				.fingerprint(properties.getFingerprint())
-				.privateKeySupplier(new SimplePrivateKeySupplier(properties.getPrivateKey()))
-				.passPhrase(properties.getPassPhrase())
-				.region(Region.valueOf(properties.getRegion()))
-				.build();
+					.userId(properties.getUserId())
+					.tenantId(properties.getTenantId())
+					.fingerprint(properties.getFingerprint())
+					.privateKeySupplier(new SimplePrivateKeySupplier(properties.getPrivateKey()))
+					.passPhrase(properties.getPassPhrase())
+					.region(Region.valueOf(properties.getRegion()))
+					.build();
 		};
 	}
 

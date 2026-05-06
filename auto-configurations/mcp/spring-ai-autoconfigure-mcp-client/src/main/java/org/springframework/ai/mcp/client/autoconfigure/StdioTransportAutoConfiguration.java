@@ -52,8 +52,8 @@ import org.springframework.context.annotation.Bean;
  * @see McpStdioClientProperties
  */
 @AutoConfiguration
-@ConditionalOnClass({ McpSchema.class })
-@EnableConfigurationProperties({ McpStdioClientProperties.class, McpClientCommonProperties.class })
+@ConditionalOnClass({McpSchema.class})
+@EnableConfigurationProperties({McpStdioClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 public class StdioTransportAutoConfiguration {
@@ -67,6 +67,7 @@ public class StdioTransportAutoConfiguration {
 	 * <li>Server-specific parameters from properties
 	 * <li>Unique connection name for identification
 	 * </ul>
+	 *
 	 * @param stdioProperties the stdio client properties containing server configurations
 	 * @return list of named MCP transports
 	 */

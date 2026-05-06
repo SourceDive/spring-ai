@@ -45,8 +45,8 @@ public class AzureOpenAiRuntimeHints implements RuntimeHintsRegistrar {
 
 		// Register all com.azure.ai.openai.models.* classes
 		AiRuntimeHints
-			.findClassesInPackage(ChatChoice.class.getPackageName(), (metadataReader, metadataReaderFactory) -> true)
-			.forEach(clazz -> hints.reflection().registerType(clazz, mcs));
+				.findClassesInPackage(ChatChoice.class.getPackageName(), (metadataReader, metadataReaderFactory) -> true)
+				.forEach(clazz -> hints.reflection().registerType(clazz, mcs));
 
 		hints.proxies().registerJdkProxy(com.azure.ai.openai.implementation.OpenAIClientImpl.OpenAIClientService.class);
 
@@ -55,8 +55,7 @@ public class AzureOpenAiRuntimeHints implements RuntimeHintsRegistrar {
 			for (var resourceMatch : resolver.getResources("/azure-ai-openai.properties")) {
 				hints.resources().registerResource(resourceMatch);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

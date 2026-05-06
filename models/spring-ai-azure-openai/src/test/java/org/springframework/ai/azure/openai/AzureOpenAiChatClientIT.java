@@ -117,12 +117,12 @@ public class AzureOpenAiChatClientIT {
 
 		// Streaming call
 		String stitchedResponseFromStream = this.chatClient.prompt(prompt)
-			.stream()
-			.content()
-			.collectList()
-			.block()
-			.stream()
-			.collect(Collectors.joining());
+				.stream()
+				.content()
+				.collectList()
+				.block()
+				.stream()
+				.collect(Collectors.joining());
 		String streamingStatesData = extractStatesData(stitchedResponseFromStream);
 		String formattedStreamingResponse = formatResponse(streamingStatesData);
 
@@ -154,18 +154,18 @@ public class AzureOpenAiChatClientIT {
 		@Bean
 		public OpenAIClientBuilder openAIClient() {
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(System.getenv("AZURE_OPENAI_API_KEY")))
-				.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
-				.serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
-				.httpLogOptions(new HttpLogOptions()
-					.setLogLevel(com.azure.core.http.policy.HttpLogDetailLevel.BODY_AND_HEADERS));
+					.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+					.serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
+					.httpLogOptions(new HttpLogOptions()
+							.setLogLevel(com.azure.core.http.policy.HttpLogDetailLevel.BODY_AND_HEADERS));
 		}
 
 		@Bean
 		public AzureOpenAiChatModel azureOpenAiChatModel(OpenAIClientBuilder openAIClientBuilder) {
 			return AzureOpenAiChatModel.builder()
-				.openAIClientBuilder(openAIClientBuilder)
-				.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName("gpt-4o").maxTokens(1000).build())
-				.build();
+					.openAIClientBuilder(openAIClientBuilder)
+					.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName("gpt-4o").maxTokens(1000).build())
+					.build();
 		}
 
 		@Bean

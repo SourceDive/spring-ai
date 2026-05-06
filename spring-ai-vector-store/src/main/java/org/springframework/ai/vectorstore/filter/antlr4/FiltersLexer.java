@@ -33,7 +33,7 @@ import org.antlr.v4.runtime.atn.LexerATNSimulator;
 import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
 
-@SuppressWarnings({ "all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape" })
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class FiltersLexer extends Lexer {
 
 	public static final int WHERE = 1, DOT = 2, COMMA = 3, LEFT_SQUARE_BRACKETS = 4, RIGHT_SQUARE_BRACKETS = 5,
@@ -213,9 +213,9 @@ public class FiltersLexer extends Lexer {
 
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
-	public static String[] channelNames = { "DEFAULT_TOKEN_CHANNEL", "HIDDEN" };
+	public static String[] channelNames = {"DEFAULT_TOKEN_CHANNEL", "HIDDEN"};
 
-	public static String[] modeNames = { "DEFAULT_MODE" };
+	public static String[] modeNames = {"DEFAULT_MODE"};
 
 	public FiltersLexer(CharStream input) {
 		super(input);
@@ -223,22 +223,22 @@ public class FiltersLexer extends Lexer {
 	}
 
 	private static String[] makeRuleNames() {
-		return new String[] { "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
+		return new String[]{"WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
 				"LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "EQUALS", "MINUS", "PLUS", "GT", "GE", "LT", "LE", "NE", "AND",
 				"OR", "IN", "NIN", "NOT", "BOOLEAN_VALUE", "QUOTED_STRING", "INTEGER_VALUE", "DECIMAL_VALUE",
-				"IDENTIFIER", "DECIMAL_DIGITS", "DIGIT", "LETTER", "WS" };
+				"IDENTIFIER", "DECIMAL_DIGITS", "DIGIT", "LETTER", "WS"};
 	}
 
 	private static String[] makeLiteralNames() {
-		return new String[] { null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'", "'>='",
-				"'<'", "'<='", "'!='" };
+		return new String[]{null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'", "'>='",
+				"'<'", "'<='", "'!='"};
 	}
 
 	private static String[] makeSymbolicNames() {
-		return new String[] { null, "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
+		return new String[]{null, "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
 				"LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "EQUALS", "MINUS", "PLUS", "GT", "GE", "LT", "LE", "NE", "AND",
 				"OR", "IN", "NIN", "NOT", "BOOLEAN_VALUE", "QUOTED_STRING", "INTEGER_VALUE", "DECIMAL_VALUE",
-				"IDENTIFIER", "WS" };
+				"IDENTIFIER", "WS"};
 	}
 
 	@Override

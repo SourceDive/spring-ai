@@ -59,11 +59,11 @@ public class AzureOpenAiEmbeddingModelObservationIT {
 	@Test
 	void observationForEmbeddingOperation() {
 		var options = AzureOpenAiEmbeddingOptions.builder()
-			.deploymentName("text-embedding-ada-002")
-			// should not send dimension value?
-			// https://github.com/SciPhi-AI/R2R/issues/354
-			// .withDimensions(1536)
-			.build();
+				.deploymentName("text-embedding-ada-002")
+				// should not send dimension value?
+				// https://github.com/SciPhi-AI/R2R/issues/354
+				// .withDimensions(1536)
+				.build();
 
 		EmbeddingRequest embeddingRequest = new EmbeddingRequest(List.of("Here comes the sun"), options);
 
@@ -74,22 +74,22 @@ public class AzureOpenAiEmbeddingModelObservationIT {
 		assertThat(responseMetadata).isNotNull();
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("embedding " + "text-embedding-ada-002")
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.EMBEDDING.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.AZURE_OPENAI.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(), "text-embedding-ada-002")
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(),
-			// "1536")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("embedding " + "text-embedding-ada-002")
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.EMBEDDING.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.AZURE_OPENAI.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(), "text-embedding-ada-002")
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(),
+				// "1536")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -103,13 +103,13 @@ public class AzureOpenAiEmbeddingModelObservationIT {
 		@Bean
 		public OpenAIClient openAIClient() {
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(System.getenv("AZURE_OPENAI_API_KEY")))
-				.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
-				.buildClient();
+					.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+					.buildClient();
 		}
 
 		@Bean
 		public AzureOpenAiEmbeddingModel azureEmbeddingModel(OpenAIClient openAIClient,
-				TestObservationRegistry observationRegistry) {
+		                                                     TestObservationRegistry observationRegistry) {
 			return new AzureOpenAiEmbeddingModel(openAIClient, MetadataMode.EMBED,
 					AzureOpenAiEmbeddingOptions.builder().deploymentName("text-embedding-ada-002").build(),
 					observationRegistry);

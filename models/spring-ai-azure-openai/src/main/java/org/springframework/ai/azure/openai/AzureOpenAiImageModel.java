@@ -76,10 +76,10 @@ public class AzureOpenAiImageModel implements ImageModel {
 		this.openAIClient = microsoftOpenAiClient;
 		this.defaultOptions = options;
 		this.objectMapper = JsonMapper.builder()
-			.addModules(JacksonUtils.instantiateAvailableModules())
-			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-			.build();
+				.addModules(JacksonUtils.instantiateAvailableModules())
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+				.build();
 	}
 
 	public AzureOpenAiImageOptions getDefaultOptions() {
@@ -114,14 +114,14 @@ public class AzureOpenAiImageModel implements ImageModel {
 	private String toPrettyJson(Object object) {
 		try {
 			return this.objectMapper.writeValueAsString(object);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			return "JsonProcessingException:" + e + " [" + object.toString() + "]";
 		}
 	}
 
 	/**
 	 * Return the deployment-name if provided or use the model name.
+	 *
 	 * @param prompt the image prompt
 	 * @return Return the deployment-name if provided or use the model name.
 	 */
@@ -153,7 +153,7 @@ public class AzureOpenAiImageModel implements ImageModel {
 
 		if (prompt.getInstructions().size() > 1) {
 			throw new RuntimeException(java.lang.String
-				.format("implementation support 1 image instruction only, found %s", prompt.getInstructions().size()));
+					.format("implementation support 1 image instruction only, found %s", prompt.getInstructions().size()));
 		}
 		if (prompt.getInstructions().isEmpty()) {
 			throw new RuntimeException("please provide image instruction, current is empty");
@@ -192,11 +192,11 @@ public class AzureOpenAiImageModel implements ImageModel {
 			if (runtimeImageOptions instanceof AzureOpenAiImageOptions runtimeAzureOpenAiImageOptions) {
 				if (runtimeAzureOpenAiImageOptions.getQuality() != null) {
 					imageGenerationOptions
-						.setQuality(ImageGenerationQuality.fromString(runtimeAzureOpenAiImageOptions.getQuality()));
+							.setQuality(ImageGenerationQuality.fromString(runtimeAzureOpenAiImageOptions.getQuality()));
 				}
 				if (runtimeAzureOpenAiImageOptions.getStyle() != null) {
 					imageGenerationOptions
-						.setStyle(ImageGenerationStyle.fromString(runtimeAzureOpenAiImageOptions.getStyle()));
+							.setStyle(ImageGenerationStyle.fromString(runtimeAzureOpenAiImageOptions.getStyle()));
 				}
 				if (runtimeAzureOpenAiImageOptions.getUser() != null) {
 					imageGenerationOptions.setUser(runtimeAzureOpenAiImageOptions.getUser());

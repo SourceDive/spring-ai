@@ -34,7 +34,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 
 	/**
 	 * The number of images to be generated.
-	 *
+	 * <p>
 	 * Defaults to 1 if not explicitly set, indicating a single image will be generated.
 	 *
 	 * <p>
@@ -56,7 +56,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	/**
 	 * The engine/model to use in Stability AI The model is passed in the URL as a path
 	 * parameter
-	 *
+	 * <p>
 	 * The default value is stable-diffusion-v1-6
 	 */
 	private String model = StabilityAiApi.DEFAULT_IMAGE_MODEL;
@@ -166,7 +166,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * detail in clip guidance.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * <p>
 	 * Defaults to {@code NONE} if no specific preset is configured.
 	 *
 	 */
@@ -206,7 +206,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * diffusion quality.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * <p>
 	 * An appropriate sampler is automatically selected if this value is omitted.
 	 *
 	 */
@@ -224,7 +224,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * <p>
 	 * Valid range of values: 0 to 4294967295.
 	 * </p>
-	 *
+	 * <p>
 	 * Default is 0, which indicates that a random seed will be used.
 	 */
 	@JsonProperty("seed")
@@ -241,7 +241,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * <p>
 	 * Valid range of values: 10 to 50.
 	 * </p>
-	 *
+	 * <p>
 	 * Defaults to 30 if not explicitly set.
 	 */
 	@JsonProperty("steps")

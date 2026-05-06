@@ -51,51 +51,51 @@ import org.springframework.web.reactive.function.client.WebClient;
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class })
-@EnableConfigurationProperties({ AnthropicChatProperties.class, AnthropicConnectionProperties.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class})
+@EnableConfigurationProperties({AnthropicChatProperties.class, AnthropicConnectionProperties.class})
 @ConditionalOnClass(AnthropicApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.ANTHROPIC,
 		matchIfMissing = true)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class})
 public class AnthropicChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public AnthropicApi anthropicApi(AnthropicConnectionProperties connectionProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
+	                                 ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                 ObjectProvider<WebClient.Builder> webClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
 
 		return AnthropicApi.builder()
-			.baseUrl(connectionProperties.getBaseUrl())
-			.completionsPath(connectionProperties.getCompletionsPath())
-			.apiKey(connectionProperties.getApiKey())
-			.anthropicVersion(connectionProperties.getVersion())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
-			.responseErrorHandler(responseErrorHandler)
-			.anthropicBetaFeatures(connectionProperties.getBetaVersion())
-			.build();
+				.baseUrl(connectionProperties.getBaseUrl())
+				.completionsPath(connectionProperties.getCompletionsPath())
+				.apiKey(connectionProperties.getApiKey())
+				.anthropicVersion(connectionProperties.getVersion())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
+				.responseErrorHandler(responseErrorHandler)
+				.anthropicBetaFeatures(connectionProperties.getBetaVersion())
+				.build();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public AnthropicChatModel anthropicChatModel(AnthropicApi anthropicApi, AnthropicChatProperties chatProperties,
-			RetryTemplate retryTemplate, ToolCallingManager toolCallingManager,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> anthropicToolExecutionEligibilityPredicate) {
+	                                             RetryTemplate retryTemplate, ToolCallingManager toolCallingManager,
+	                                             ObjectProvider<ObservationRegistry> observationRegistry,
+	                                             ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                             ObjectProvider<ToolExecutionEligibilityPredicate> anthropicToolExecutionEligibilityPredicate) {
 
 		var chatModel = AnthropicChatModel.builder()
-			.anthropicApi(anthropicApi)
-			.defaultOptions(chatProperties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(anthropicToolExecutionEligibilityPredicate
-				.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.retryTemplate(retryTemplate)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.anthropicApi(anthropicApi)
+				.defaultOptions(chatProperties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(anthropicToolExecutionEligibilityPredicate
+						.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.retryTemplate(retryTemplate)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 

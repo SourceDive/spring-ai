@@ -49,13 +49,13 @@ public class OllamaChatAutoConfigurationIT extends BaseOllamaIT {
 	private static final String MODEL_NAME = OllamaModel.LLAMA3_2.getName();
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 				"spring.ai.ollama.baseUrl=" + getBaseUrl(),
 				"spring.ai.ollama.chat.options.model=" + MODEL_NAME,
 				"spring.ai.ollama.chat.options.temperature=0.5",
 				"spring.ai.ollama.chat.options.topK=10")
 				// @formatter:on
-		.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class));
 
 	private final UserMessage userMessage = new UserMessage("What's the capital of Denmark?");
 
@@ -85,11 +85,11 @@ public class OllamaChatAutoConfigurationIT extends BaseOllamaIT {
 			assertThat(responses.size()).isGreaterThan(1);
 
 			String stitchedResponseContent = responses.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(stitchedResponseContent).contains("Copenhagen");
 		});
@@ -98,18 +98,18 @@ public class OllamaChatAutoConfigurationIT extends BaseOllamaIT {
 	@Test
 	public void chatCompletionWithPull() {
 		this.contextRunner.withPropertyValues("spring.ai.ollama.init.pull-model-strategy=when_missing")
-			.withPropertyValues("spring.ai.ollama.chat.options.model=tinyllama")
-			.run(context -> {
-				var model = "tinyllama";
-				OllamaApi ollamaApi = context.getBean(OllamaApi.class);
-				var modelManager = new OllamaModelManager(ollamaApi);
-				assertThat(modelManager.isModelAvailable(model)).isTrue();
+				.withPropertyValues("spring.ai.ollama.chat.options.model=tinyllama")
+				.run(context -> {
+					var model = "tinyllama";
+					OllamaApi ollamaApi = context.getBean(OllamaApi.class);
+					var modelManager = new OllamaModelManager(ollamaApi);
+					assertThat(modelManager.isModelAvailable(model)).isTrue();
 
-				OllamaChatModel chatModel = context.getBean(OllamaChatModel.class);
-				ChatResponse response = chatModel.call(new Prompt(this.userMessage));
-				assertThat(response.getResult().getOutput().getText()).contains("Copenhagen");
-				modelManager.deleteModel(model);
-			});
+					OllamaChatModel chatModel = context.getBean(OllamaChatModel.class);
+					ChatResponse response = chatModel.call(new Prompt(this.userMessage));
+					assertThat(response.getResult().getOutput().getText()).contains("Copenhagen");
+					modelManager.deleteModel(model);
+				});
 	}
 
 	@Test

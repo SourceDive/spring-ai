@@ -54,7 +54,7 @@ public class AssistantMessage extends AbstractMessage implements MediaContent {
 	}
 
 	public AssistantMessage(String content, Map<String, Object> properties, List<ToolCall> toolCalls,
-			List<Media> media) {
+	                        List<Media> media) {
 		super(MessageType.ASSISTANT, content, properties);
 		Assert.notNull(toolCalls, "Tool calls must not be null");
 		Assert.notNull(media, "Media must not be null");

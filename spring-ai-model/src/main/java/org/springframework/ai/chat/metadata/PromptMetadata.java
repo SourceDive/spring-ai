@@ -35,6 +35,7 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 	/**
 	 * Factory method used to create empty {@link PromptMetadata} when the information is
 	 * not supplied by the AI provider.
+	 *
 	 * @return empty {@link PromptMetadata}.
 	 */
 	static PromptMetadata empty() {
@@ -44,8 +45,9 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 	/**
 	 * Factory method used to create a new {@link PromptMetadata} composed of an array of
 	 * {@link PromptFilterMetadata}.
+	 *
 	 * @param array array of {@link PromptFilterMetadata} used to compose the
-	 * {@link PromptMetadata}.
+	 *              {@link PromptMetadata}.
 	 * @return a new {@link PromptMetadata} composed of an array of
 	 * {@link PromptFilterMetadata}.
 	 */
@@ -56,8 +58,9 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 	/**
 	 * Factory method used to create a new {@link PromptMetadata} composed of an
 	 * {@link Iterable} of {@link PromptFilterMetadata}.
+	 *
 	 * @param iterable {@link Iterable} of {@link PromptFilterMetadata} used to compose
-	 * the {@link PromptMetadata}.
+	 *                 the {@link PromptMetadata}.
 	 * @return a new {@link PromptMetadata} composed of an {@link Iterable} of
 	 * {@link PromptFilterMetadata}.
 	 */
@@ -68,8 +71,9 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 
 	/**
 	 * Returns an {@link Optional} {@link PromptFilterMetadata} at the given index.
+	 *
 	 * @param promptIndex index of the {@link PromptFilterMetadata} contained in this
-	 * {@link PromptMetadata}.
+	 *                    {@link PromptMetadata}.
 	 * @return {@link Optional} {@link PromptFilterMetadata} at the given index.
 	 * @throws IllegalArgumentException if the prompt index is less than 0.
 	 */
@@ -78,8 +82,8 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 		Assert.isTrue(promptIndex > -1, "Prompt index [%d] must be greater than equal to 0".formatted(promptIndex));
 
 		return StreamSupport.stream(this.spliterator(), false)
-			.filter(promptFilterMetadata -> promptFilterMetadata.getPromptIndex() == promptIndex)
-			.findFirst();
+				.filter(promptFilterMetadata -> promptFilterMetadata.getPromptIndex() == promptIndex)
+				.findFirst();
 	}
 
 	/**
@@ -91,10 +95,11 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 		/**
 		 * Factory method used to construct a new {@link PromptFilterMetadata} with the
 		 * given prompt index and content filter metadata.
-		 * @param promptIndex index of the prompt filter metadata contained in the AI
-		 * response.
+		 *
+		 * @param promptIndex           index of the prompt filter metadata contained in the AI
+		 *                              response.
 		 * @param contentFilterMetadata underlying AI provider metadata for filtering
-		 * applied to prompt content.
+		 *                              applied to prompt content.
 		 * @return a new instance of {@link PromptFilterMetadata} with the given prompt
 		 * index and content filter metadata.
 		 */
@@ -117,6 +122,7 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 
 		/**
 		 * Index of the prompt filter metadata contained in the AI response.
+		 *
 		 * @return an {@link Integer index} fo the prompt filter metadata contained in the
 		 * AI response.
 		 */
@@ -125,8 +131,9 @@ public interface PromptMetadata extends Iterable<PromptMetadata.PromptFilterMeta
 		/**
 		 * Returns the underlying AI provider metadata for filtering applied to prompt
 		 * content.
+		 *
 		 * @param <T> {@link Class Type} used to cast the filtered content metadata into
-		 * the AI provider-specific type.
+		 *            the AI provider-specific type.
 		 * @return the underlying AI provider metadata for filtering applied to prompt
 		 * content.
 		 */

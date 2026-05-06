@@ -56,8 +56,8 @@ public class MilvusFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("metadata[\"genre\"] == \"drama\" && metadata[\"year\"] >= 2020");
 	}
 
@@ -73,9 +73,9 @@ public class MilvusFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo(
 				"metadata[\"year\"] >= 2020 || metadata[\"country\"] == \"BG\" && metadata[\"city\"] != \"Sofia\"");
 	}
@@ -107,8 +107,8 @@ public class MilvusFilterExpressionConverterTests {
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo("metadata[\"temperature\"] >= -15.6 && metadata[\"temperature\"] <= 20.13");
 	}
@@ -116,7 +116,7 @@ public class MilvusFilterExpressionConverterTests {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"country 1 2 3\"] == \"BG\"");
 
 		vectorExpr = this.converter.convertExpression(new Expression(EQ, new Key("'country 1 2 3'"), new Value("BG")));
@@ -152,7 +152,7 @@ public class MilvusFilterExpressionConverterTests {
 						new Expression(LT, new Key("temperature"), new Value(25))),
 				new Expression(LTE, new Key("humidity"), new Value(80))));
 		assertThat(vectorExpr)
-			.isEqualTo("metadata[\"price\"] > 1000 && metadata[\"temperature\"] < 25 && metadata[\"humidity\"] <= 80");
+				.isEqualTo("metadata[\"price\"] > 1000 && metadata[\"temperature\"] < 25 && metadata[\"humidity\"] <= 80");
 	}
 
 }

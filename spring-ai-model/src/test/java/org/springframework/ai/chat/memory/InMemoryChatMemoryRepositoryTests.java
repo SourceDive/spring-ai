@@ -101,45 +101,45 @@ public class InMemoryChatMemoryRepositoryTests {
 		this.chatMemoryRepository.saveAll(conversationId, secondMessages);
 
 		assertThat(this.chatMemoryRepository.findByConversationId(conversationId))
-			.containsExactlyElementsOf(secondMessages);
+				.containsExactlyElementsOf(secondMessages);
 	}
 
 	@Test
 	void nullConversationIdNotAllowed() {
 		assertThatThrownBy(() -> this.chatMemoryRepository.saveAll(null, List.of(new UserMessage("Hello"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("conversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("conversationId cannot be null or empty");
 
 		assertThatThrownBy(() -> this.chatMemoryRepository.findByConversationId(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("conversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("conversationId cannot be null or empty");
 
 		assertThatThrownBy(() -> this.chatMemoryRepository.deleteByConversationId(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("conversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("conversationId cannot be null or empty");
 	}
 
 	@Test
 	void emptyConversationIdNotAllowed() {
 		assertThatThrownBy(() -> this.chatMemoryRepository.saveAll("", List.of(new UserMessage("Hello"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("conversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("conversationId cannot be null or empty");
 
 		assertThatThrownBy(() -> this.chatMemoryRepository.findByConversationId(""))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("conversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("conversationId cannot be null or empty");
 
 		assertThatThrownBy(() -> this.chatMemoryRepository.deleteByConversationId(""))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("conversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("conversationId cannot be null or empty");
 	}
 
 	@Test
 	void nullMessagesNotAllowed() {
 		String conversationId = UUID.randomUUID().toString();
 		assertThatThrownBy(() -> this.chatMemoryRepository.saveAll(conversationId, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("messages cannot be null");
 	}
 
 	@Test
@@ -149,8 +149,8 @@ public class InMemoryChatMemoryRepositoryTests {
 		messagesWithNull.add(null);
 
 		assertThatThrownBy(() -> this.chatMemoryRepository.saveAll(conversationId, messagesWithNull))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("messages cannot contain null elements");
 	}
 
 }

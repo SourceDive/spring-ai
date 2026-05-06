@@ -48,6 +48,7 @@ public abstract class AiRuntimeHints {
 	/**
 	 * Finds classes in a package that are annotated with JsonInclude or have Jackson
 	 * annotations.
+	 *
 	 * @param packageName The name of the package to search for annotated classes.
 	 * @return A set of TypeReference objects representing the annotated classes found.
 	 */
@@ -58,8 +59,7 @@ public abstract class AiRuntimeHints {
 				var clazz = Class.forName(metadataReader.getClassMetadata().getClassName());
 				return annotationTypeFilter.match(metadataReader, metadataReaderFactory)
 						|| !discoverJacksonAnnotatedTypesFromRootType(clazz).isEmpty();
-			}
-			catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 		};
@@ -70,6 +70,7 @@ public abstract class AiRuntimeHints {
 	/**
 	 * Finds classes in a package that are annotated with JsonInclude or have Jackson
 	 * annotations.
+	 *
 	 * @param packageClass The class in the package to search for annotated classes.
 	 * @return A set of TypeReference objects representing the annotated classes found.
 	 */
@@ -79,23 +80,24 @@ public abstract class AiRuntimeHints {
 
 	/**
 	 * Finds all classes in the specified package that match the given type filter.
+	 *
 	 * @param packageName The name of the package to scan for classes.
-	 * @param typeFilter The type filter used to filter the scanned classes.
+	 * @param typeFilter  The type filter used to filter the scanned classes.
 	 * @return A set of TypeReference objects representing the found classes.
 	 */
 	public static Set<TypeReference> findClassesInPackage(String packageName, TypeFilter typeFilter) {
 		var classPathScanningCandidateComponentProvider = new ClassPathScanningCandidateComponentProvider(false);
 		classPathScanningCandidateComponentProvider.addIncludeFilter(typeFilter);
 		return classPathScanningCandidateComponentProvider//
-			.findCandidateComponents(packageName)//
-			.stream()//
-			.map(bd -> TypeReference.of(Objects.requireNonNull(bd.getBeanClassName())))//
-			.peek(tr -> {
-				if (log.isDebugEnabled()) {
-					log.debug("registering [{}]", tr.getName());
-				}
-			})
-			.collect(Collectors.toUnmodifiableSet());
+				.findCandidateComponents(packageName)//
+				.stream()//
+				.map(bd -> TypeReference.of(Objects.requireNonNull(bd.getBeanClassName())))//
+				.peek(tr -> {
+					if (log.isDebugEnabled()) {
+						log.debug("registering [{}]", tr.getName());
+					}
+				})
+				.collect(Collectors.toUnmodifiableSet());
 	}
 
 	private static boolean hasJacksonAnnotations(Class<?> type) {

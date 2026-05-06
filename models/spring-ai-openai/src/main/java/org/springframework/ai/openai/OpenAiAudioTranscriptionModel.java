@@ -58,23 +58,25 @@ public class OpenAiAudioTranscriptionModel implements Model<AudioTranscriptionPr
 	/**
 	 * OpenAiAudioTranscriptionModel is a client class used to interact with the OpenAI
 	 * Audio Transcription API.
+	 *
 	 * @param audioApi The OpenAiAudioApi instance to be used for making API calls.
 	 */
 	public OpenAiAudioTranscriptionModel(OpenAiAudioApi audioApi) {
 		this(audioApi,
 				OpenAiAudioTranscriptionOptions.builder()
-					.model(OpenAiAudioApi.WhisperModel.WHISPER_1.getValue())
-					.responseFormat(OpenAiAudioApi.TranscriptResponseFormat.JSON)
-					.temperature(0.7f)
-					.build());
+						.model(OpenAiAudioApi.WhisperModel.WHISPER_1.getValue())
+						.responseFormat(OpenAiAudioApi.TranscriptResponseFormat.JSON)
+						.temperature(0.7f)
+						.build());
 	}
 
 	/**
 	 * OpenAiAudioTranscriptionModel is a client class used to interact with the OpenAI
 	 * Audio Transcription API.
+	 *
 	 * @param audioApi The OpenAiAudioApi instance to be used for making API calls.
-	 * @param options The OpenAiAudioTranscriptionOptions instance for configuring the
-	 * audio transcription.
+	 * @param options  The OpenAiAudioTranscriptionOptions instance for configuring the
+	 *                 audio transcription.
 	 */
 	public OpenAiAudioTranscriptionModel(OpenAiAudioApi audioApi, OpenAiAudioTranscriptionOptions options) {
 		this(audioApi, options, RetryUtils.DEFAULT_RETRY_TEMPLATE);
@@ -83,13 +85,14 @@ public class OpenAiAudioTranscriptionModel implements Model<AudioTranscriptionPr
 	/**
 	 * OpenAiAudioTranscriptionModel is a client class used to interact with the OpenAI
 	 * Audio Transcription API.
-	 * @param audioApi The OpenAiAudioApi instance to be used for making API calls.
-	 * @param options The OpenAiAudioTranscriptionOptions instance for configuring the
-	 * audio transcription.
+	 *
+	 * @param audioApi      The OpenAiAudioApi instance to be used for making API calls.
+	 * @param options       The OpenAiAudioTranscriptionOptions instance for configuring the
+	 *                      audio transcription.
 	 * @param retryTemplate The RetryTemplate instance for retrying failed API calls.
 	 */
 	public OpenAiAudioTranscriptionModel(OpenAiAudioApi audioApi, OpenAiAudioTranscriptionOptions options,
-			RetryTemplate retryTemplate) {
+	                                     RetryTemplate retryTemplate) {
 		Assert.notNull(audioApi, "OpenAiAudioApi must not be null");
 		Assert.notNull(options, "OpenAiTranscriptionOptions must not be null");
 		Assert.notNull(retryTemplate, "RetryTemplate must not be null");
@@ -113,7 +116,7 @@ public class OpenAiAudioTranscriptionModel implements Model<AudioTranscriptionPr
 		if (request.responseFormat().isJsonType()) {
 
 			ResponseEntity<StructuredResponse> transcriptionEntity = this.retryTemplate
-				.execute(ctx -> this.audioApi.createTranscription(request, StructuredResponse.class));
+					.execute(ctx -> this.audioApi.createTranscription(request, StructuredResponse.class));
 
 			var transcription = transcriptionEntity.getBody();
 
@@ -128,13 +131,12 @@ public class OpenAiAudioTranscriptionModel implements Model<AudioTranscriptionPr
 
 			return new AudioTranscriptionResponse(transcript,
 					OpenAiAudioTranscriptionResponseMetadata.from(transcriptionEntity.getBody())
-						.withRateLimit(rateLimits));
+							.withRateLimit(rateLimits));
 
-		}
-		else {
+		} else {
 
 			ResponseEntity<String> transcriptionEntity = this.retryTemplate
-				.execute(ctx -> this.audioApi.createTranscription(request, String.class));
+					.execute(ctx -> this.audioApi.createTranscription(request, String.class));
 
 			var transcription = transcriptionEntity.getBody();
 
@@ -149,7 +151,7 @@ public class OpenAiAudioTranscriptionModel implements Model<AudioTranscriptionPr
 
 			return new AudioTranscriptionResponse(transcript,
 					OpenAiAudioTranscriptionResponseMetadata.from(transcriptionEntity.getBody())
-						.withRateLimit(rateLimits));
+							.withRateLimit(rateLimits));
 		}
 	}
 
@@ -160,35 +162,33 @@ public class OpenAiAudioTranscriptionModel implements Model<AudioTranscriptionPr
 		if (transcriptionPrompt.getOptions() != null) {
 			if (transcriptionPrompt.getOptions() instanceof OpenAiAudioTranscriptionOptions runtimeOptions) {
 				options = this.merge(runtimeOptions, options);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Prompt options are not of type TranscriptionOptions: "
 						+ transcriptionPrompt.getOptions().getClass().getSimpleName());
 			}
 		}
 
 		return OpenAiAudioApi.TranscriptionRequest.builder()
-			.file(toBytes(transcriptionPrompt.getInstructions()))
-			.responseFormat(options.getResponseFormat())
-			.prompt(options.getPrompt())
-			.temperature(options.getTemperature())
-			.language(options.getLanguage())
-			.model(options.getModel())
-			.granularityType(options.getGranularityType())
-			.build();
+				.file(toBytes(transcriptionPrompt.getInstructions()))
+				.responseFormat(options.getResponseFormat())
+				.prompt(options.getPrompt())
+				.temperature(options.getTemperature())
+				.language(options.getLanguage())
+				.model(options.getModel())
+				.granularityType(options.getGranularityType())
+				.build();
 	}
 
 	private byte[] toBytes(Resource resource) {
 		try {
 			return resource.getInputStream().readAllBytes();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to read resource: " + resource, e);
 		}
 	}
 
 	private OpenAiAudioTranscriptionOptions merge(OpenAiAudioTranscriptionOptions source,
-			OpenAiAudioTranscriptionOptions target) {
+	                                              OpenAiAudioTranscriptionOptions target) {
 
 		if (source == null) {
 			source = new OpenAiAudioTranscriptionOptions();

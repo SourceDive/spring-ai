@@ -69,7 +69,7 @@ public class SpringBeanToolCallbackResolver implements ToolCallbackResolver {
 	private final SchemaType schemaType;
 
 	public SpringBeanToolCallbackResolver(GenericApplicationContext applicationContext,
-			@Nullable SchemaType schemaType) {
+	                                      @Nullable SchemaType schemaType) {
 		Assert.notNull(applicationContext, "applicationContext cannot be null");
 
 		this.applicationContext = applicationContext;
@@ -101,8 +101,7 @@ public class SpringBeanToolCallbackResolver implements ToolCallbackResolver {
 			toolCallbacksCache.put(toolName, resolvedToolCallback);
 
 			return resolvedToolCallback;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.debug("ToolCallback resolution failed from Spring application context", e);
 			return null;
 		}
@@ -127,58 +126,58 @@ public class SpringBeanToolCallbackResolver implements ToolCallbackResolver {
 	}
 
 	private ToolCallback buildToolCallback(String toolName, ResolvableType toolType, ResolvableType toolInputType,
-			String toolDescription, Object bean) {
+	                                       String toolDescription, Object bean) {
 		if (KotlinDetector.isKotlinPresent()) {
 			if (KotlinDelegate.isKotlinFunction(toolType.toClass())) {
 				return FunctionToolCallback.builder(toolName, KotlinDelegate.wrapKotlinFunction(bean))
-					.description(toolDescription)
-					.inputSchema(generateSchema(toolInputType))
-					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-					.build();
+						.description(toolDescription)
+						.inputSchema(generateSchema(toolInputType))
+						.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+						.build();
 			}
 			if (KotlinDelegate.isKotlinBiFunction(toolType.toClass())) {
 				return FunctionToolCallback.builder(toolName, KotlinDelegate.wrapKotlinBiFunction(bean))
-					.description(toolDescription)
-					.inputSchema(generateSchema(toolInputType))
-					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-					.build();
+						.description(toolDescription)
+						.inputSchema(generateSchema(toolInputType))
+						.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+						.build();
 			}
 			if (KotlinDelegate.isKotlinSupplier(toolType.toClass())) {
 				return FunctionToolCallback.builder(toolName, KotlinDelegate.wrapKotlinSupplier(bean))
-					.description(toolDescription)
-					.inputSchema(generateSchema(toolInputType))
-					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-					.build();
+						.description(toolDescription)
+						.inputSchema(generateSchema(toolInputType))
+						.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+						.build();
 			}
 		}
 
 		if (bean instanceof Function<?, ?> function) {
 			return FunctionToolCallback.builder(toolName, function)
-				.description(toolDescription)
-				.inputSchema(generateSchema(toolInputType))
-				.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-				.build();
+					.description(toolDescription)
+					.inputSchema(generateSchema(toolInputType))
+					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+					.build();
 		}
 		if (bean instanceof BiFunction<?, ?, ?>) {
 			return FunctionToolCallback.builder(toolName, (BiFunction<?, ToolContext, ?>) bean)
-				.description(toolDescription)
-				.inputSchema(generateSchema(toolInputType))
-				.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-				.build();
+					.description(toolDescription)
+					.inputSchema(generateSchema(toolInputType))
+					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+					.build();
 		}
 		if (bean instanceof Supplier<?> supplier) {
 			return FunctionToolCallback.builder(toolName, supplier)
-				.description(toolDescription)
-				.inputSchema(generateSchema(toolInputType))
-				.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-				.build();
+					.description(toolDescription)
+					.inputSchema(generateSchema(toolInputType))
+					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+					.build();
 		}
 		if (bean instanceof Consumer<?> consumer) {
 			return FunctionToolCallback.builder(toolName, consumer)
-				.description(toolDescription)
-				.inputSchema(generateSchema(toolInputType))
-				.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
-				.build();
+					.description(toolDescription)
+					.inputSchema(generateSchema(toolInputType))
+					.inputType(ParameterizedTypeReference.forType(toolInputType.getType()))
+					.build();
 		}
 
 		throw new IllegalStateException(

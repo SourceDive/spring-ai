@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BedrockConverseModelConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class));
 
 	@Test
 	void chatModelActivation() {

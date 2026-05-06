@@ -30,22 +30,22 @@ public abstract class ResourceUtils {
 
 	/**
 	 * Retrieves the content of a resource as a UTF-8 encoded string.
-	 *
+	 * <p>
 	 * This method uses Spring's DefaultResourceLoader to load the resource from the given
 	 * URI and then reads its content as a string using UTF-8 encoding. If an IOException
 	 * occurs during reading, it is wrapped in a RuntimeException.
+	 *
 	 * @param uri The URI of the resource to be read. This can be any URI supported by
-	 * Spring's ResourceLoader, such as "classpath:", "file:", or "http:".
+	 *            Spring's ResourceLoader, such as "classpath:", "file:", or "http:".
 	 * @return The content of the resource as a string.
 	 * @throws RuntimeException If an error occurs while reading the resource. This
-	 * exception wraps the original IOException.
+	 *                          exception wraps the original IOException.
 	 */
 	public static String getText(String uri) {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

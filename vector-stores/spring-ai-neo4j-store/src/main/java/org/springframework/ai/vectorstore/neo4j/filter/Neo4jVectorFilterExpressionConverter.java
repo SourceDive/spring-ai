@@ -36,8 +36,7 @@ public class Neo4jVectorFilterExpressionConverter extends AbstractFilterExpressi
 			// shift the "<left> not in <right>" into "not <left> in <right>"
 			this.doNot(new Expression(Filter.ExpressionType.NOT,
 					new Expression(Filter.ExpressionType.IN, expression.left(), expression.right())), context);
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(this.getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);

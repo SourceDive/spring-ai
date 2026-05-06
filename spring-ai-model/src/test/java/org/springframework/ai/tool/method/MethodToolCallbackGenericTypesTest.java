@@ -40,17 +40,17 @@ class MethodToolCallbackGenericTypesTest {
 
 		// Create a tool definition
 		ToolDefinition toolDefinition = DefaultToolDefinition.builder()
-			.name("processStringList")
-			.description("Process a list of strings")
-			.inputSchema("{}")
-			.build();
+				.name("processStringList")
+				.description("Process a list of strings")
+				.inputSchema("{}")
+				.build();
 
 		// Create a MethodToolCallback
 		MethodToolCallback callback = MethodToolCallback.builder()
-			.toolDefinition(toolDefinition)
-			.toolMethod(method)
-			.toolObject(testObject)
-			.build();
+				.toolDefinition(toolDefinition)
+				.toolMethod(method)
+				.toolObject(testObject)
+				.build();
 
 		// Create a JSON input with a list of strings
 		String toolInput = """
@@ -74,17 +74,17 @@ class MethodToolCallbackGenericTypesTest {
 
 		// Create a tool definition
 		ToolDefinition toolDefinition = DefaultToolDefinition.builder()
-			.name("processStringIntMap")
-			.description("Process a map of string to integer")
-			.inputSchema("{}")
-			.build();
+				.name("processStringIntMap")
+				.description("Process a map of string to integer")
+				.inputSchema("{}")
+				.build();
 
 		// Create a MethodToolCallback
 		MethodToolCallback callback = MethodToolCallback.builder()
-			.toolDefinition(toolDefinition)
-			.toolMethod(method)
-			.toolObject(testObject)
-			.build();
+				.toolDefinition(toolDefinition)
+				.toolMethod(method)
+				.toolObject(testObject)
+				.build();
 
 		// Create a JSON input with a map of string to integer
 		String toolInput = """
@@ -108,17 +108,17 @@ class MethodToolCallbackGenericTypesTest {
 
 		// Create a tool definition
 		ToolDefinition toolDefinition = DefaultToolDefinition.builder()
-			.name("processListOfMaps")
-			.description("Process a list of maps")
-			.inputSchema("{}")
-			.build();
+				.name("processListOfMaps")
+				.description("Process a list of maps")
+				.inputSchema("{}")
+				.build();
 
 		// Create a MethodToolCallback
 		MethodToolCallback callback = MethodToolCallback.builder()
-			.toolDefinition(toolDefinition)
-			.toolMethod(method)
-			.toolObject(testObject)
-			.build();
+				.toolDefinition(toolDefinition)
+				.toolMethod(method)
+				.toolObject(testObject)
+				.build();
 
 		// Create a JSON input with a list of maps
 		String toolInput = """

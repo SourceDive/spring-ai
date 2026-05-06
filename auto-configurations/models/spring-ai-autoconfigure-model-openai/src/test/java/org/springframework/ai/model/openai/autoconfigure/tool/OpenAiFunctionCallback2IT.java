@@ -42,10 +42,10 @@ public class OpenAiFunctionCallback2IT {
 	private final Logger logger = LoggerFactory.getLogger(OpenAiFunctionCallback2IT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"),
-				"spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName())
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"),
+					"spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName())
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
@@ -97,9 +97,9 @@ public class OpenAiFunctionCallback2IT {
 		public ToolCallback weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description("Get the weather in location")
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

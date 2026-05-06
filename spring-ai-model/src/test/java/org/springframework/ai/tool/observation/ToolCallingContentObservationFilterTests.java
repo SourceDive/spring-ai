@@ -44,34 +44,34 @@ class ToolCallingContentObservationFilterTests {
 	@Test
 	void augmentContext() {
 		var originalContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("input")
-			.toolCallResult("result")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("input")
+				.toolCallResult("result")
+				.build();
 		var augmentedContext = this.observationFilter.map(originalContext);
 
 		assertThat(augmentedContext.getHighCardinalityKeyValues()).contains(KeyValue
-			.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_ARGUMENTS.asString(), "input"));
+				.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_ARGUMENTS.asString(), "input"));
 		assertThat(augmentedContext.getHighCardinalityKeyValues()).contains(KeyValue
-			.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_RESULT.asString(), "result"));
+				.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_RESULT.asString(), "result"));
 	}
 
 	@Test
 	void augmentContextWhenNullResult() {
 		var originalContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("input")
-			.toolCallResult("result")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("input")
+				.toolCallResult("result")
+				.build();
 		var augmentedContext = this.observationFilter.map(originalContext);
 
 		assertThat(augmentedContext.getHighCardinalityKeyValues()).contains(KeyValue
-			.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_ARGUMENTS.asString(), "input"));
+				.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_ARGUMENTS.asString(), "input"));
 		assertThat(augmentedContext.getHighCardinalityKeyValues()
-			.stream()
-			.filter(kv -> kv.getKey()
-				.equals(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_RESULT.name())))
-			.isEmpty();
+				.stream()
+				.filter(kv -> kv.getKey()
+						.equals(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_CALL_RESULT.name())))
+				.isEmpty();
 	}
 
 }

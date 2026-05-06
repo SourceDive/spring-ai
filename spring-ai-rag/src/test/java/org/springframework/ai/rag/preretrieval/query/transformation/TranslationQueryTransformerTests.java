@@ -34,42 +34,42 @@ class TranslationQueryTransformerTests {
 	@Test
 	void whenChatClientBuilderIsNullThenThrow() {
 		assertThatThrownBy(() -> TranslationQueryTransformer.builder().chatClientBuilder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatClientBuilder cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("chatClientBuilder cannot be null");
 	}
 
 	@Test
 	void whenQueryIsNullThenThrow() {
 		QueryTransformer queryTransformer = TranslationQueryTransformer.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.targetLanguage("italian")
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.targetLanguage("italian")
+				.build();
 		assertThatThrownBy(() -> queryTransformer.transform(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("query cannot be null");
+				.hasMessageContaining("query cannot be null");
 	}
 
 	@Test
 	void whenPromptHasMissingTargetLanguagePlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("Translate {query}");
 		assertThatThrownBy(() -> TranslationQueryTransformer.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.targetLanguage("italian")
-			.promptTemplate(customPromptTemplate)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("targetLanguage");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.targetLanguage("italian")
+				.promptTemplate(customPromptTemplate)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("targetLanguage");
 	}
 
 	@Test
 	void whenPromptHasMissingQueryPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("Translate to {targetLanguage}");
 		assertThatThrownBy(() -> TranslationQueryTransformer.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.targetLanguage("italian")
-			.promptTemplate(customPromptTemplate)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("query");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.targetLanguage("italian")
+				.promptTemplate(customPromptTemplate)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("query");
 	}
 
 }

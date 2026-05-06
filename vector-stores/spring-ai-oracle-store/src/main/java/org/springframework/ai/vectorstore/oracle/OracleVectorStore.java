@@ -99,9 +99,9 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 	private static final Logger logger = LoggerFactory.getLogger(OracleVectorStore.class);
 
 	private static final Map<OracleVectorStoreDistanceType, VectorStoreSimilarityMetric> SIMILARITY_TYPE_MAPPING = Map
-		.of(OracleVectorStoreDistanceType.COSINE, VectorStoreSimilarityMetric.COSINE,
-				OracleVectorStoreDistanceType.EUCLIDEAN, VectorStoreSimilarityMetric.EUCLIDEAN,
-				OracleVectorStoreDistanceType.DOT, VectorStoreSimilarityMetric.DOT);
+			.of(OracleVectorStoreDistanceType.COSINE, VectorStoreSimilarityMetric.COSINE,
+					OracleVectorStoreDistanceType.EUCLIDEAN, VectorStoreSimilarityMetric.EUCLIDEAN,
+					OracleVectorStoreDistanceType.DOT, VectorStoreSimilarityMetric.DOT);
 
 	public final FilterExpressionConverter filterExpressionConverter = new SqlJsonPathFilterExpressionConverter();
 
@@ -144,6 +144,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 	/**
 	 * Protected constructor that accepts a builder instance. This is the preferred way to
 	 * create new OracleVectorStore instances.
+	 *
 	 * @param builder the configured builder instance
 	 */
 	protected OracleVectorStore(Builder builder) {
@@ -197,15 +198,16 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 	private String getIngestStatement() {
 		return String
-			.format("""
-					merge into %s target using (values(?, ?, ?, ?)) source (id, content, metadata, embedding) on (target.id = source.id)
-					when matched then update set target.content = source.content, target.metadata = source.metadata, target.embedding = source.embedding
-					when not matched then insert (target.id, target.content, target.metadata, target.embedding) values (source.id, source.content, source.metadata, source.embedding)""",
-					this.tableName);
+				.format("""
+								merge into %s target using (values(?, ?, ?, ?)) source (id, content, metadata, embedding) on (target.id = source.id)
+								when matched then update set target.content = source.content, target.metadata = source.metadata, target.embedding = source.embedding
+								when not matched then insert (target.id, target.content, target.metadata, target.embedding) values (source.id, source.content, source.metadata, source.embedding)""",
+						this.tableName);
 	}
 
 	/**
 	 * Bind binary JSON from the client.
+	 *
 	 * @param m map of metadata
 	 * @return the binary JSON ready to be inserted
 	 */
@@ -217,17 +219,13 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 				final Object o = m.get(key);
 				if (o instanceof String) {
 					gen.write(key, (String) o);
-				}
-				else if (o instanceof Integer) {
+				} else if (o instanceof Integer) {
 					gen.write(key, (Integer) o);
-				}
-				else if (o instanceof Float) {
+				} else if (o instanceof Float) {
 					gen.write(key, (Float) o);
-				}
-				else if (o instanceof Double) {
+				} else if (o instanceof Double) {
 					gen.write(key, (Double) o);
-				}
-				else if (o instanceof Boolean) {
+				} else if (o instanceof Boolean) {
 					gen.write(key, (Boolean) o);
 				}
 			}
@@ -240,6 +238,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 	/**
 	 * Converts a list of Double values into an Oracle VECTOR object ready to be inserted.
 	 * Optionally normalize the vector beforehand (see forcedNormalization).
+	 *
 	 * @param floatList
 	 * @return
 	 * @throws SQLException
@@ -260,6 +259,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 	/**
 	 * Normalize a vector if requested.
+	 *
 	 * @param v vector to normalize
 	 * @return the vector normalized
 	 */
@@ -286,11 +286,11 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 	@Override
 	public void doDelete(final List<String> idList) {
 		final String sql = String.format("delete from %s where id=?", this.tableName);
-		final int[] argTypes = { Types.VARCHAR };
+		final int[] argTypes = {Types.VARCHAR};
 
 		final List<Object[]> batchArgs = new ArrayList<>();
 		for (String id : idList) {
-			batchArgs.add(new Object[] { id });
+			batchArgs.add(new Object[]{id});
 		}
 
 		final int[] deleteCounts = this.jdbcTemplate.batchUpdate(sql, batchArgs, argTypes);
@@ -318,8 +318,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 			int deletedCount = this.jdbcTemplate.update(sql);
 			logger.debug("Deleted " + deletedCount + " documents matching filter expression");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter: {}", e.getMessage(), e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -359,39 +358,38 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 				}
 
 				final String sql = this.searchAccuracy == DEFAULT_SEARCH_ACCURACY ? String.format("""
-						select id, content, metadata, embedding, %sVECTOR_DISTANCE(embedding, ?, %s)%s as distance
-						from %s
-						%sorder by distance
-						fetch first %d rows only""",
+								select id, content, metadata, embedding, %sVECTOR_DISTANCE(embedding, ?, %s)%s as distance
+								from %s
+								%sorder by distance
+								fetch first %d rows only""",
 						this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? "(1+" : "",
 						this.distanceType.name(),
 						this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? ")/2" : "",
 						this.tableName, jsonPathFilter, request.getTopK())
 						: String.format(
-								"""
-										select id, content, metadata, embedding, %sVECTOR_DISTANCE(embedding, ?, %s)%s as distance
-										from %s
-										%sorder by distance
-										fetch APPROXIMATE first %d rows only WITH TARGET ACCURACY %d""",
-								this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? "(1+" : "",
-								this.distanceType.name(),
-								this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? ")/2" : "",
-								this.tableName, jsonPathFilter, request.getTopK(), this.searchAccuracy);
+						"""
+								select id, content, metadata, embedding, %sVECTOR_DISTANCE(embedding, ?, %s)%s as distance
+								from %s
+								%sorder by distance
+								fetch APPROXIMATE first %d rows only WITH TARGET ACCURACY %d""",
+						this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? "(1+" : "",
+						this.distanceType.name(),
+						this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? ")/2" : "",
+						this.tableName, jsonPathFilter, request.getTopK(), this.searchAccuracy);
 
 				logger.debug("SQL query: " + sql);
 
 				return this.jdbcTemplate.query(sql, new DocumentRowMapper(), embeddingVector);
-			}
-			else if (request.getSimilarityThreshold() == SIMILARITY_THRESHOLD_EXACT_MATCH) {
+			} else if (request.getSimilarityThreshold() == SIMILARITY_THRESHOLD_EXACT_MATCH) {
 				if (StringUtils.hasText(nativeFilterExpression)) {
 					jsonPathFilter = String.format("where JSON_EXISTS( metadata, '%s' )\n", nativeFilterExpression);
 				}
 
 				final String sql = String.format("""
-						select id, content, metadata, embedding, %sVECTOR_DISTANCE(embedding, ?, %s)%s as distance
-						from %s
-						%sorder by distance
-						fetch EXACT first %d rows only""",
+								select id, content, metadata, embedding, %sVECTOR_DISTANCE(embedding, ?, %s)%s as distance
+								from %s
+								%sorder by distance
+								fetch EXACT first %d rows only""",
 						this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? "(1+" : "",
 						this.distanceType.name(),
 						this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT ? ")/2" : "",
@@ -400,8 +398,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 				logger.debug("SQL query: " + sql);
 
 				return this.jdbcTemplate.query(sql, new DocumentRowMapper(), embeddingVector);
-			}
-			else {
+			} else {
 				if (!this.forcedNormalization || (this.distanceType != OracleVectorStoreDistanceType.COSINE
 						&& this.distanceType != OracleVectorStore.OracleVectorStoreDistanceType.DOT)) {
 					throw new RuntimeException(
@@ -417,49 +414,48 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 				final String sql = this.distanceType == OracleVectorStore.OracleVectorStoreDistanceType.DOT
 						? (this.searchAccuracy == DEFAULT_SEARCH_ACCURACY
-								? String.format(
-										"""
-												select id, content, metadata, embedding, (1+VECTOR_DISTANCE(embedding, ?, DOT))/2 as distance
-												from %s
-												where VECTOR_DISTANCE(embedding, ?, DOT) <= ?%s
-												order by distance
-												fetch first %d rows only""",
-										this.tableName, jsonPathFilter, request.getTopK())
-								: String.format(
-										"""
-												select id, content, metadata, embedding, (1+VECTOR_DISTANCE(embedding, ?, DOT))/2 as distance
-												from %s
-												where VECTOR_DISTANCE(embedding, ?, DOT) <= ?%s
-												order by distance
-												fetch APPROXIMATE first %d rows only WITH TARGET ACCURACY %d""",
-										this.tableName, jsonPathFilter, request.getTopK(), this.searchAccuracy)
+						   ? String.format(
+						"""
+								select id, content, metadata, embedding, (1+VECTOR_DISTANCE(embedding, ?, DOT))/2 as distance
+								from %s
+								where VECTOR_DISTANCE(embedding, ?, DOT) <= ?%s
+								order by distance
+								fetch first %d rows only""",
+						this.tableName, jsonPathFilter, request.getTopK())
+						   : String.format(
+						"""
+								select id, content, metadata, embedding, (1+VECTOR_DISTANCE(embedding, ?, DOT))/2 as distance
+								from %s
+								where VECTOR_DISTANCE(embedding, ?, DOT) <= ?%s
+								order by distance
+								fetch APPROXIMATE first %d rows only WITH TARGET ACCURACY %d""",
+						this.tableName, jsonPathFilter, request.getTopK(), this.searchAccuracy)
 
-						)
+				)
 						: (this.searchAccuracy == DEFAULT_SEARCH_ACCURACY
-								? String.format(
-										"""
-												select id, content, metadata, embedding, VECTOR_DISTANCE(embedding, ?, COSINE) as distance
-												from %s
-												where VECTOR_DISTANCE(embedding, ?, COSINE) <= ?%s
-												order by distance
-												fetch first %d rows only""",
-										this.tableName, jsonPathFilter, request.getTopK())
-								: String.format(
-										"""
-												select id, content, metadata, embedding, VECTOR_DISTANCE(embedding, ?, COSINE) as distance
-												from %s
-												where VECTOR_DISTANCE(embedding, ?, COSINE) <= ?%s
-												order by distance
-												fetch APPROXIMATE first %d rows only WITH TARGET ACCURACY %d""",
-										this.tableName, jsonPathFilter, request.getTopK(), this.searchAccuracy));
+						   ? String.format(
+						"""
+								select id, content, metadata, embedding, VECTOR_DISTANCE(embedding, ?, COSINE) as distance
+								from %s
+								where VECTOR_DISTANCE(embedding, ?, COSINE) <= ?%s
+								order by distance
+								fetch first %d rows only""",
+						this.tableName, jsonPathFilter, request.getTopK())
+						   : String.format(
+						"""
+								select id, content, metadata, embedding, VECTOR_DISTANCE(embedding, ?, COSINE) as distance
+								from %s
+								where VECTOR_DISTANCE(embedding, ?, COSINE) <= ?%s
+								order by distance
+								fetch APPROXIMATE first %d rows only WITH TARGET ACCURACY %d""",
+						this.tableName, jsonPathFilter, request.getTopK(), this.searchAccuracy));
 
 				logger.debug("SQL query: " + sql);
 
 				return this.jdbcTemplate.query(sql, new DocumentRowMapper(), embeddingVector, embeddingVector,
 						distance);
 			}
-		}
-		catch (SQLException sqle) {
+		} catch (SQLException sqle) {
 			throw new RuntimeException(sqle);
 		}
 	}
@@ -473,31 +469,31 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 			}
 
 			this.jdbcTemplate.execute(String.format("""
-					create table if not exists %s (
-						id        varchar2(36) default sys_guid() primary key,
-						content   clob not null,
-						metadata  json not null,
-						embedding vector(%s,FLOAT64) annotations(Distance '%s', IndexType '%s')
-					)""", this.tableName, this.dimensions == DEFAULT_DIMENSIONS ? "*" : String.valueOf(this.dimensions),
+							create table if not exists %s (
+								id        varchar2(36) default sys_guid() primary key,
+								content   clob not null,
+								metadata  json not null,
+								embedding vector(%s,FLOAT64) annotations(Distance '%s', IndexType '%s')
+							)""", this.tableName, this.dimensions == DEFAULT_DIMENSIONS ? "*" : String.valueOf(this.dimensions),
 					this.distanceType.name(), this.indexType.name()));
 
 			if (logger.isDebugEnabled()) {
 				this.jdbcTemplate.execute(String.format("""
-						create table if not exists debug (
-						id varchar2(36) default sys_guid() primary key,
-						embedding vector(%s,FLOAT64) annotations(Distance '%s')
-						)""", this.dimensions == DEFAULT_DIMENSIONS ? "*" : String.valueOf(this.dimensions),
+								create table if not exists debug (
+								id varchar2(36) default sys_guid() primary key,
+								embedding vector(%s,FLOAT64) annotations(Distance '%s')
+								)""", this.dimensions == DEFAULT_DIMENSIONS ? "*" : String.valueOf(this.dimensions),
 						this.distanceType.name()));
 			}
 
 			switch (this.indexType) {
 				case IVF:
 					this.jdbcTemplate.execute(String.format("""
-							create vector index if not exists vector_index_%s on %s (embedding)
-							organization neighbor partitions
-									distance %s
-									with target accuracy %d
-									parameters (type IVF, neighbor partitions 10)""", this.tableName, this.tableName,
+									create vector index if not exists vector_index_%s on %s (embedding)
+									organization neighbor partitions
+											distance %s
+											with target accuracy %d
+											parameters (type IVF, neighbor partitions 10)""", this.tableName, this.tableName,
 							this.distanceType.name(),
 							this.searchAccuracy == DEFAULT_SEARCH_ACCURACY ? 95 : this.searchAccuracy));
 					break;
@@ -522,9 +518,9 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.ORACLE.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName(this.getTableName())
-			.similarityMetric(getSimilarityMetric());
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName(this.getTableName())
+				.similarityMetric(getSimilarityMetric());
 	}
 
 	@Override
@@ -579,7 +575,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 		 * enhance search efficiency by narrowing the search area through the use of
 		 * neighbor partitions or clusters.
 		 * </p>
-		 *
+		 * <p>
 		 * * @see <a href=
 		 * "https://docs.oracle.com/en/database/oracle/oracle-database/23/vecse/understand-inverted-file-flat-vector-indexes.html">Oracle
 		 * Database documentation</a>
@@ -633,11 +629,11 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 			metadata.put(DocumentMetadata.DISTANCE.value(), rs.getDouble(5));
 
 			return Document.builder()
-				.id(rs.getString(1))
-				.text(rs.getString(2))
-				.metadata(metadata)
-				.score(1 - rs.getDouble(5))
-				.build();
+					.id(rs.getString(1))
+					.text(rs.getString(2))
+					.metadata(metadata)
+					.score(1 - rs.getDouble(5))
+					.build();
 		}
 
 		private Map<String, Object> getMap(OracleJsonValue value) {
@@ -694,7 +690,8 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the JdbcTemplate to be used for database operations.
-		 * @param jdbcTemplate the JdbcTemplate instance
+		 *
+		 * @param jdbcTemplate   the JdbcTemplate instance
 		 * @param embeddingModel the Embedding Model to be used
 		 */
 		public Builder(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
@@ -705,6 +702,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the table name for vector storage.
+		 *
 		 * @param tableName the name of the table to use
 		 * @return the builder instance
 		 */
@@ -717,6 +715,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the vector index type.
+		 *
 		 * @param indexType the index type to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if indexType is null
@@ -729,6 +728,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the distance type for vector similarity calculations.
+		 *
 		 * @param distanceType the distance type to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if distanceType is null
@@ -741,6 +741,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the number of dimensions for the vector space.
+		 *
 		 * @param dimensions the number of dimensions (must be between 1 and 65535)
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if dimensions is not within valid range
@@ -756,6 +757,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the search accuracy parameter.
+		 *
 		 * @param searchAccuracy the search accuracy value (must be between 1 and 100)
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if searchAccuracy is not within valid range
@@ -771,6 +773,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to initialize the database schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -781,8 +784,9 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to remove existing vector store table before initialization.
+		 *
 		 * @param removeExistingVectorStoreTable true to remove existing table, false
-		 * otherwise
+		 *                                       otherwise
 		 * @return the builder instance
 		 */
 		public Builder removeExistingVectorStoreTable(boolean removeExistingVectorStoreTable) {
@@ -792,6 +796,7 @@ public class OracleVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to force vector normalization.
+		 *
 		 * @param forcedNormalization true to force normalization, false otherwise
 		 * @return the builder instance
 		 */

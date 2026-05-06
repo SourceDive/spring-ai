@@ -25,9 +25,9 @@ import reactor.core.publisher.Flux;
  * requests and responses, enhancing flexibility and adaptability across different AI
  * model implementations.
  *
- * @param <TReq> the generic type of the request to the AI model
+ * @param <TReq>      the generic type of the request to the AI model
  * @param <TResChunk> the generic type of a single item in the streaming response from the
- * AI model
+ *                    AI model
  * @author Christian Tzolov
  * @since 0.8.0
  */
@@ -35,6 +35,7 @@ public interface StreamingModel<TReq extends ModelRequest<?>, TResChunk extends 
 
 	/**
 	 * Executes a method call to the AI model.
+	 *
 	 * @param request the request object to be sent to the AI model
 	 * @return the streaming response from the AI model
 	 */

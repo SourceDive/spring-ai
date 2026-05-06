@@ -53,8 +53,7 @@ public class OpenSearchAiSearchFilterExpressionConverter extends AbstractFilterE
 			this.convertOperand(expression.left(), context);
 			this.convertOperand(expression.right(), context);
 			context.append(")");
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
@@ -110,8 +109,7 @@ public class OpenSearchAiSearchFilterExpressionConverter extends AbstractFilterE
 					this.doAddValueRangeSpitter(filterValue, context);
 				}
 			}
-		}
-		else {
+		} else {
 			this.doSingleValue(filterValue.value(), context);
 		}
 	}
@@ -120,22 +118,18 @@ public class OpenSearchAiSearchFilterExpressionConverter extends AbstractFilterE
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			context.append(this.dateFormat.format(date));
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			if (DATE_FORMAT_PATTERN.matcher(text).matches()) {
 				try {
 					Date date = this.dateFormat.parse(text);
 					context.append(this.dateFormat.format(date));
-				}
-				catch (ParseException e) {
+				} catch (ParseException e) {
 					throw new IllegalArgumentException("Invalid date type:" + text, e);
 				}
-			}
-			else {
+			} else {
 				context.append(text);
 			}
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}

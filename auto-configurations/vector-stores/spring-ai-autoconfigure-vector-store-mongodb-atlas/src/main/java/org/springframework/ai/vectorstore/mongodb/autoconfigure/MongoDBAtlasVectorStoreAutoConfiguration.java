@@ -51,7 +51,7 @@ import org.springframework.util.MimeType;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ MongoDBAtlasVectorStore.class, EmbeddingModel.class, MongoTemplate.class })
+@ConditionalOnClass({MongoDBAtlasVectorStore.class, EmbeddingModel.class, MongoTemplate.class})
 @EnableConfigurationProperties(MongoDBAtlasVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.MONGODB_ATLAS,
 		matchIfMissing = true)
@@ -66,15 +66,15 @@ public class MongoDBAtlasVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	MongoDBAtlasVectorStore vectorStore(MongoTemplate mongoTemplate, EmbeddingModel embeddingModel,
-			MongoDBAtlasVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                    MongoDBAtlasVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                    ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                    BatchingStrategy batchingStrategy) {
 
 		MongoDBAtlasVectorStore.Builder builder = MongoDBAtlasVectorStore.builder(mongoTemplate, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy);
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy);
 
 		PropertyMapper mapper = PropertyMapper.get();
 		mapper.from(properties::getCollectionName).whenHasText().to(builder::collectionName);

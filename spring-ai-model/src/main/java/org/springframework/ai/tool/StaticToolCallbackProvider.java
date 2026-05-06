@@ -43,9 +43,9 @@ import org.springframework.util.Assert;
  * }</pre>
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see ToolCallbackProvider
  * @see ToolCallback
+ * @since 1.0.0
  */
 public class StaticToolCallbackProvider implements ToolCallbackProvider {
 
@@ -54,8 +54,9 @@ public class StaticToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Constructs a new StaticToolCallbackProvider with the specified array of function
 	 * callbacks.
+	 *
 	 * @param toolCallbacks the array of function callbacks to be provided by this
-	 * provider. Must not be null, though an empty array is permitted.
+	 *                      provider. Must not be null, though an empty array is permitted.
 	 * @throws IllegalArgumentException if the toolCallbacks array is null
 	 */
 	public StaticToolCallbackProvider(ToolCallback... toolCallbacks) {
@@ -66,10 +67,11 @@ public class StaticToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Constructs a new StaticToolCallbackProvider with the specified list of function
 	 * callbacks. The list is converted to an array internally.
+	 *
 	 * @param toolCallbacks the list of function callbacks to be provided by this
-	 * provider. Must not be null and must not contain null elements.
+	 *                      provider. Must not be null and must not contain null elements.
 	 * @throws IllegalArgumentException if the toolCallbacks list is null or contains null
-	 * elements
+	 *                                  elements
 	 */
 	public StaticToolCallbackProvider(List<? extends ToolCallback> toolCallbacks) {
 		Assert.noNullElements(toolCallbacks, "toolCallbacks cannot contain null elements");
@@ -78,6 +80,7 @@ public class StaticToolCallbackProvider implements ToolCallbackProvider {
 
 	/**
 	 * Returns the array of function callbacks held by this provider.
+	 *
 	 * @return an array containing all function callbacks provided during construction.
 	 * The returned array is a direct reference to the internal array, as the callbacks
 	 * are expected to be immutable.

@@ -94,8 +94,7 @@ public final class URLValidator {
 			}
 
 			return true;
-		}
-		catch (MalformedURLException | URISyntaxException e) {
+		} catch (MalformedURLException | URISyntaxException e) {
 			return false;
 		}
 	}

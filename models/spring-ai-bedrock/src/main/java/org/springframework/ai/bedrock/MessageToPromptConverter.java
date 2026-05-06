@@ -65,15 +65,15 @@ public final class MessageToPromptConverter {
 	public String toPrompt(List<Message> messages) {
 
 		final String systemMessages = messages.stream()
-			.filter(message -> message.getMessageType() == MessageType.SYSTEM)
-			.map(Message::getText)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.filter(message -> message.getMessageType() == MessageType.SYSTEM)
+				.map(Message::getText)
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		final String userMessages = messages.stream()
-			.filter(message -> message.getMessageType() == MessageType.USER
-					|| message.getMessageType() == MessageType.ASSISTANT)
-			.map(this::messageToString)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.filter(message -> message.getMessageType() == MessageType.USER
+						|| message.getMessageType() == MessageType.ASSISTANT)
+				.map(this::messageToString)
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		// Related to: https://github.com/spring-projects/spring-ai/issues/404
 		return systemMessages + this.lineSeparator + this.lineSeparator + userMessages + this.lineSeparator

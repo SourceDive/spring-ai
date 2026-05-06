@@ -64,8 +64,9 @@ public class AsyncMcpToolCallback implements ToolCallback {
 
 	/**
 	 * Creates a new {@code AsyncMcpToolCallback} instance.
+	 *
 	 * @param mcpClient the MCP client to use for tool execution
-	 * @param tool the MCP tool definition to adapt
+	 * @param tool      the MCP tool definition to adapt
 	 */
 	public AsyncMcpToolCallback(McpAsyncClient mcpClient, Tool tool) {
 		this.asyncMcpClient = mcpClient;
@@ -81,15 +82,16 @@ public class AsyncMcpToolCallback implements ToolCallback {
 	 * <li>The tool's description from the MCP definition</li>
 	 * <li>The input schema converted to JSON format</li>
 	 * </ul>
+	 *
 	 * @return the Spring AI tool definition
 	 */
 	@Override
 	public ToolDefinition getToolDefinition() {
 		return DefaultToolDefinition.builder()
-			.name(McpToolUtils.prefixedToolName(this.asyncMcpClient.getClientInfo().name(), this.tool.name()))
-			.description(this.tool.description())
-			.inputSchema(ModelOptionsUtils.toJsonString(this.tool.inputSchema()))
-			.build();
+				.name(McpToolUtils.prefixedToolName(this.asyncMcpClient.getClientInfo().name(), this.tool.name()))
+				.description(this.tool.description())
+				.inputSchema(ModelOptionsUtils.toJsonString(this.tool.inputSchema()))
+				.build();
 	}
 
 	/**
@@ -101,6 +103,7 @@ public class AsyncMcpToolCallback implements ToolCallback {
 	 * <li>Calls the tool through the MCP client asynchronously</li>
 	 * <li>Converts the tool's response content to a JSON string</li>
 	 * </ol>
+	 *
 	 * @param functionInput the tool input as a JSON string
 	 * @return the tool's response as a JSON string
 	 */

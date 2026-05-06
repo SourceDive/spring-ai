@@ -43,7 +43,7 @@ import org.springframework.util.StringUtils;
  * @author Manuel Andreo Garcia
  * @author Ilayaperumal Gopinathan
  */
-@ConditionalOnClass({ OpenAIClientBuilder.class })
+@ConditionalOnClass({OpenAIClientBuilder.class})
 @EnableConfigurationProperties(AzureOpenAiConnectionProperties.class)
 public class AzureOpenAiClientBuilderConfiguration {
 
@@ -52,7 +52,7 @@ public class AzureOpenAiClientBuilderConfiguration {
 	@Bean
 	@ConditionalOnMissingBean // ({ OpenAIClient.class, TokenCredential.class })
 	public OpenAIClientBuilder openAIClientBuilder(AzureOpenAiConnectionProperties connectionProperties,
-			ObjectProvider<AzureOpenAIClientBuilderCustomizer> customizers) {
+	                                               ObjectProvider<AzureOpenAIClientBuilderCustomizer> customizers) {
 
 		final OpenAIClientBuilder clientBuilder;
 
@@ -60,17 +60,17 @@ public class AzureOpenAiClientBuilderConfiguration {
 		// used as OpenAI model name.
 		if (StringUtils.hasText(connectionProperties.getOpenAiApiKey())) {
 			clientBuilder = new OpenAIClientBuilder().endpoint("https://api.openai.com/v1")
-				.credential(new KeyCredential(connectionProperties.getOpenAiApiKey()))
-				.clientOptions(new ClientOptions().setApplicationId(APPLICATION_ID));
+					.credential(new KeyCredential(connectionProperties.getOpenAiApiKey()))
+					.clientOptions(new ClientOptions().setApplicationId(APPLICATION_ID));
 			applyOpenAIClientBuilderCustomizers(clientBuilder, customizers);
 			return clientBuilder;
 		}
 
 		Map<String, String> customHeaders = connectionProperties.getCustomHeaders();
 		List<Header> headers = customHeaders.entrySet()
-			.stream()
-			.map(entry -> new Header(entry.getKey(), entry.getValue()))
-			.collect(Collectors.toList());
+				.stream()
+				.map(entry -> new Header(entry.getKey(), entry.getValue()))
+				.collect(Collectors.toList());
 		ClientOptions clientOptions = new ClientOptions().setApplicationId(APPLICATION_ID).setHeaders(headers);
 
 		Assert.hasText(connectionProperties.getEndpoint(), "Endpoint must not be empty");
@@ -78,21 +78,20 @@ public class AzureOpenAiClientBuilderConfiguration {
 		if (!StringUtils.hasText(connectionProperties.getApiKey())) {
 			// Entra ID configuration, as the API key is not set
 			clientBuilder = new OpenAIClientBuilder().endpoint(connectionProperties.getEndpoint())
-				.credential(new DefaultAzureCredentialBuilder().build())
-				.clientOptions(clientOptions);
-		}
-		else {
+					.credential(new DefaultAzureCredentialBuilder().build())
+					.clientOptions(clientOptions);
+		} else {
 			// Azure OpenAI configuration using API key and endpoint
 			clientBuilder = new OpenAIClientBuilder().endpoint(connectionProperties.getEndpoint())
-				.credential(new AzureKeyCredential(connectionProperties.getApiKey()))
-				.clientOptions(clientOptions);
+					.credential(new AzureKeyCredential(connectionProperties.getApiKey()))
+					.clientOptions(clientOptions);
 		}
 		applyOpenAIClientBuilderCustomizers(clientBuilder, customizers);
 		return clientBuilder;
 	}
 
 	private void applyOpenAIClientBuilderCustomizers(OpenAIClientBuilder clientBuilder,
-			ObjectProvider<AzureOpenAIClientBuilderCustomizer> customizers) {
+	                                                 ObjectProvider<AzureOpenAIClientBuilderCustomizer> customizers) {
 		customizers.orderedStream().forEach(customizer -> customizer.customize(clientBuilder));
 	}
 

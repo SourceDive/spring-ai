@@ -46,6 +46,7 @@ public class StabilityAiApi {
 
 	/**
 	 * Create a new StabilityAI API.
+	 *
 	 * @param apiKey StabilityAI apiKey.
 	 */
 	public StabilityAiApi(String apiKey) {
@@ -62,9 +63,10 @@ public class StabilityAiApi {
 
 	/**
 	 * Create a new StabilityAI API.
-	 * @param apiKey StabilityAI apiKey.
-	 * @param model StabilityAI model.
-	 * @param baseUrl api base URL.
+	 *
+	 * @param apiKey            StabilityAI apiKey.
+	 * @param model             StabilityAI model.
+	 * @param baseUrl           api base URL.
 	 * @param restClientBuilder RestClient builder.
 	 */
 	public StabilityAiApi(String apiKey, String model, String baseUrl, RestClient.Builder restClientBuilder) {
@@ -81,27 +83,29 @@ public class StabilityAiApi {
 		};
 
 		this.restClient = restClientBuilder.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER)
-			.build();
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER)
+				.build();
 	}
 
 	public GenerateImageResponse generateImage(GenerateImageRequest request) {
 		Assert.notNull(request, "The request body can not be null.");
 		return this.restClient.post()
-			.uri("/generation/{model}/text-to-image", this.model)
-			.body(request)
-			.retrieve()
-			.body(GenerateImageResponse.class);
+				.uri("/generation/{model}/text-to-image", this.model)
+				.body(request)
+				.retrieve()
+				.body(GenerateImageResponse.class);
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record GenerateImageRequest(@JsonProperty("text_prompts") List<TextPrompts> textPrompts,
-			@JsonProperty("height") Integer height, @JsonProperty("width") Integer width,
-			@JsonProperty("cfg_scale") Float cfgScale, @JsonProperty("clip_guidance_preset") String clipGuidancePreset,
-			@JsonProperty("sampler") String sampler, @JsonProperty("samples") Integer samples,
-			@JsonProperty("seed") Long seed, @JsonProperty("steps") Integer steps,
-			@JsonProperty("style_preset") String stylePreset) {
+	                                   @JsonProperty("height") Integer height, @JsonProperty("width") Integer width,
+	                                   @JsonProperty("cfg_scale") Float cfgScale,
+	                                   @JsonProperty("clip_guidance_preset") String clipGuidancePreset,
+	                                   @JsonProperty("sampler") String sampler,
+	                                   @JsonProperty("samples") Integer samples,
+	                                   @JsonProperty("seed") Long seed, @JsonProperty("steps") Integer steps,
+	                                   @JsonProperty("style_preset") String stylePreset) {
 
 		public static Builder builder() {
 			return new Builder();
@@ -200,12 +204,12 @@ public class StabilityAiApi {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record GenerateImageResponse(@JsonProperty("result") String result,
-			@JsonProperty("artifacts") List<Artifacts> artifacts) {
+	                                    @JsonProperty("artifacts") List<Artifacts> artifacts) {
 
 		@JsonInclude(JsonInclude.Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record Artifacts(@JsonProperty("seed") long seed, @JsonProperty("base64") String base64,
-				@JsonProperty("finishReason") String finishReason) {
+		                        @JsonProperty("finishReason") String finishReason) {
 
 		}
 

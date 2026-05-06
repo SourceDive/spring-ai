@@ -56,7 +56,7 @@ public class TokenTextSplitterTest {
 
 		// Doc 1
 		assertThat(chunks.get(0).getText())
-			.isEqualTo("In the end, writing arises when man realizes that memory is not enough.");
+				.isEqualTo("In the end, writing arises when man realizes that memory is not enough.");
 		// Doc 2
 		assertThat(chunks.get(1).getText()).isEqualTo(
 				"The most oppressive thing about the labyrinth is that you are constantly being forced to choose. It isn’t the lack of an exit, but the abundance of exits that is so disorienting.");
@@ -83,12 +83,12 @@ public class TokenTextSplitterTest {
 		doc2.setContentFormatter(contentFormatter2);
 
 		var tokenTextSplitter = TokenTextSplitter.builder()
-			.withChunkSize(10)
-			.withMinChunkSizeChars(5)
-			.withMinChunkLengthToEmbed(3)
-			.withMaxNumChunks(50)
-			.withKeepSeparator(true)
-			.build();
+				.withChunkSize(10)
+				.withMinChunkSizeChars(5)
+				.withMinChunkLengthToEmbed(3)
+				.withMaxNumChunks(50)
+				.withKeepSeparator(true)
+				.build();
 
 		var chunks = tokenTextSplitter.apply(List.of(doc1, doc2));
 

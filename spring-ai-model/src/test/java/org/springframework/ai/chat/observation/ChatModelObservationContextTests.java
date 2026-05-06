@@ -33,9 +33,9 @@ class ChatModelObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}

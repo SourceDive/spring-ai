@@ -67,16 +67,13 @@ class TextLine {
 
 		if (!this.indexIsInBounds(index)) {
 			return -1;
-		}
-		else {
+		} else {
 			if (isCharacterPartOfPreviousWord && !isCharacterAtTheBeginningOfNewLine) {
 				index = this.findMinimumIndexWithSpaceCharacterFromIndex(index);
-			}
-			else if (isCharacterCloseToPreviousWord) {
+			} else if (isCharacterCloseToPreviousWord) {
 				if (this.line[index] != SPACE_CHARACTER) {
 					index = index + 1;
-				}
-				else {
+				} else {
 					index = this.findMinimumIndexWithSpaceCharacterFromIndex(index) + 1;
 				}
 			}

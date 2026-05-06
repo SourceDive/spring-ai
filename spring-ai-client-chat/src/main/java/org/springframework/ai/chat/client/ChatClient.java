@@ -45,7 +45,7 @@ import org.springframework.util.MimeType;
 
 /**
  * Client to perform stateless requests to an AI Model, using a fluent API.
- *
+ * <p>
  * Use {@link ChatClient#builder(ChatModel)} to prepare an instance.
  *
  * @author Mark Pollack
@@ -66,7 +66,7 @@ public interface ChatClient {
 	}
 
 	static ChatClient create(ChatModel chatModel, ObservationRegistry observationRegistry,
-			@Nullable ChatClientObservationConvention observationConvention) {
+	                         @Nullable ChatClientObservationConvention observationConvention) {
 		Assert.notNull(chatModel, "chatModel cannot be null");
 		Assert.notNull(observationRegistry, "observationRegistry cannot be null");
 		return builder(chatModel, observationRegistry, observationConvention).build();
@@ -77,7 +77,7 @@ public interface ChatClient {
 	}
 
 	static Builder builder(ChatModel chatModel, ObservationRegistry observationRegistry,
-			@Nullable ChatClientObservationConvention customObservationConvention) {
+	                       @Nullable ChatClientObservationConvention customObservationConvention) {
 		Assert.notNull(chatModel, "chatModel cannot be null");
 		Assert.notNull(observationRegistry, "observationRegistry cannot be null");
 		return new DefaultChatClientBuilder(chatModel, observationRegistry, customObservationConvention);

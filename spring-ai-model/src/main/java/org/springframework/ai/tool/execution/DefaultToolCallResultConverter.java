@@ -51,14 +51,12 @@ public final class DefaultToolCallResultConverter implements ToolCallResultConve
 			final var buf = new ByteArrayOutputStream(1024 * 4);
 			try {
 				ImageIO.write((RenderedImage) result, "PNG", buf);
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				return "Failed to convert tool result to a base64 image: " + e.getMessage();
 			}
 			final var imgB64 = Base64.getEncoder().encodeToString(buf.toByteArray());
 			return JsonParser.toJson(Map.of("mimeType", "image/png", "data", imgB64));
-		}
-		else {
+		} else {
 			logger.debug("Converting tool result to JSON.");
 			return JsonParser.toJson(result);
 		}

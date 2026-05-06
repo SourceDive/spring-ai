@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SseWebFluxTransportAutoConfigurationTests {
 
 	private final ApplicationContextRunner applicationContext = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(SseWebFluxTransportAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(SseWebFluxTransportAutoConfiguration.class));
 
 	@Test
 	void webFluxClientTransportsPresentIfWebFluxSseClientTransportPresent() {
@@ -51,15 +51,15 @@ public class SseWebFluxTransportAutoConfigurationTests {
 	@Test
 	void webFluxClientTransportsNotPresentIfMissingWebFluxSseClientTransportNotPresent() {
 		this.applicationContext
-			.withClassLoader(
-					new FilteredClassLoader("io.modelcontextprotocol.client.transport.WebFluxSseClientTransport"))
-			.run(context -> assertThat(context.containsBean("webFluxClientTransports")).isFalse());
+				.withClassLoader(
+						new FilteredClassLoader("io.modelcontextprotocol.client.transport.WebFluxSseClientTransport"))
+				.run(context -> assertThat(context.containsBean("webFluxClientTransports")).isFalse());
 	}
 
 	@Test
 	void webFluxClientTransportsNotPresentIfMcpClientDisabled() {
 		this.applicationContext.withPropertyValues("spring.ai.mcp.client.enabled", "false")
-			.run(context -> assertThat(context.containsBean("webFluxClientTransports")).isFalse());
+				.run(context -> assertThat(context.containsBean("webFluxClientTransports")).isFalse());
 	}
 
 	@Test
@@ -73,107 +73,106 @@ public class SseWebFluxTransportAutoConfigurationTests {
 	@Test
 	void singleConnectionCreatesOneTransport() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).name()).isEqualTo("server1");
-				assertThat(transports.get(0).transport()).isInstanceOf(WebFluxSseClientTransport.class);
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).name()).isEqualTo("server1");
+					assertThat(transports.get(0).transport()).isInstanceOf(WebFluxSseClientTransport.class);
+				});
 	}
 
 	@Test
 	void multipleConnectionsCreateMultipleTransports() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(2);
-				assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
-				assertThat(transports).extracting("transport")
-					.allMatch(transport -> transport instanceof WebFluxSseClientTransport);
-				for (NamedClientMcpTransport transport : transports) {
-					assertThat(transport.transport()).isInstanceOf(WebFluxSseClientTransport.class);
-					assertThat(getSseEndpoint((WebFluxSseClientTransport) transport.transport())).isEqualTo("/sse");
-				}
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(2);
+					assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
+					assertThat(transports).extracting("transport")
+							.allMatch(transport -> transport instanceof WebFluxSseClientTransport);
+					for (NamedClientMcpTransport transport : transports) {
+						assertThat(transport.transport()).isInstanceOf(WebFluxSseClientTransport.class);
+						assertThat(getSseEndpoint((WebFluxSseClientTransport) transport.transport())).isEqualTo("/sse");
+					}
+				});
 	}
 
 	@Test
 	void customSseEndpointIsRespected() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/custom-sse")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).name()).isEqualTo("server1");
-				assertThat(transports.get(0).transport()).isInstanceOf(WebFluxSseClientTransport.class);
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/custom-sse")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).name()).isEqualTo("server1");
+					assertThat(transports.get(0).transport()).isInstanceOf(WebFluxSseClientTransport.class);
 
-				assertThat(getSseEndpoint((WebFluxSseClientTransport) transports.get(0).transport()))
-					.isEqualTo("/custom-sse");
-			});
+					assertThat(getSseEndpoint((WebFluxSseClientTransport) transports.get(0).transport()))
+							.isEqualTo("/custom-sse");
+				});
 	}
 
 	@Test
 	void customWebClientBuilderIsUsed() {
 		this.applicationContext.withUserConfiguration(CustomWebClientConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				assertThat(context.getBean(WebClient.Builder.class)).isNotNull();
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(1);
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					assertThat(context.getBean(WebClient.Builder.class)).isNotNull();
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(1);
+				});
 	}
 
 	@Test
 	void customObjectMapperIsUsed() {
 		this.applicationContext.withUserConfiguration(CustomObjectMapperConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				assertThat(context.getBean(ObjectMapper.class)).isNotNull();
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(1);
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					assertThat(context.getBean(ObjectMapper.class)).isNotNull();
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(1);
+				});
 	}
 
 	@Test
 	void defaultSseEndpointIsUsedWhenNotSpecified() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).name()).isEqualTo("server1");
-				assertThat(transports.get(0).transport()).isInstanceOf(WebFluxSseClientTransport.class);
-				// Default SSE endpoint is "/sse" as specified in the configuration class
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).name()).isEqualTo("server1");
+					assertThat(transports.get(0).transport()).isInstanceOf(WebFluxSseClientTransport.class);
+					// Default SSE endpoint is "/sse" as specified in the configuration class
+				});
 	}
 
 	@Test
 	void mixedConnectionsWithAndWithoutCustomSseEndpoint() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/custom-sse",
-					"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
-				assertThat(transports).hasSize(2);
-				assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
-				assertThat(transports).extracting("transport")
-					.allMatch(transport -> transport instanceof WebFluxSseClientTransport);
-				for (NamedClientMcpTransport transport : transports) {
-					assertThat(transport.transport()).isInstanceOf(WebFluxSseClientTransport.class);
-					if (transport.name().equals("server1")) {
-						assertThat(getSseEndpoint((WebFluxSseClientTransport) transport.transport()))
-							.isEqualTo("/custom-sse");
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/custom-sse",
+						"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("webFluxClientTransports", List.class);
+					assertThat(transports).hasSize(2);
+					assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
+					assertThat(transports).extracting("transport")
+							.allMatch(transport -> transport instanceof WebFluxSseClientTransport);
+					for (NamedClientMcpTransport transport : transports) {
+						assertThat(transport.transport()).isInstanceOf(WebFluxSseClientTransport.class);
+						if (transport.name().equals("server1")) {
+							assertThat(getSseEndpoint((WebFluxSseClientTransport) transport.transport()))
+									.isEqualTo("/custom-sse");
+						} else {
+							assertThat(getSseEndpoint((WebFluxSseClientTransport) transport.transport())).isEqualTo("/sse");
+						}
 					}
-					else {
-						assertThat(getSseEndpoint((WebFluxSseClientTransport) transport.transport())).isEqualTo("/sse");
-					}
-				}
-			});
+				});
 	}
 
 	private String getSseEndpoint(WebFluxSseClientTransport transport) {

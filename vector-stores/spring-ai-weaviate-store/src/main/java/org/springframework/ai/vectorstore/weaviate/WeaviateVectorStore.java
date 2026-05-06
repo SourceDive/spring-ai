@@ -63,7 +63,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * A vector store implementation that stores and retrieves vectors in a Weaviate database.
- *
+ * <p>
  * Note: You can assign arbitrary metadata fields with your Documents. Later will be
  * persisted and managed as Document fields. But only the metadata keys listed in
  * {@link WeaviateVectorStore#filterMetadataFields} can be used for similarity search
@@ -182,15 +182,15 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 		searchWeaviateFieldList.add(Field.builder().name(CONTENT_FIELD_NAME).build());
 		searchWeaviateFieldList.add(Field.builder().name(METADATA_FIELD_NAME).build());
 		searchWeaviateFieldList.addAll(this.filterMetadataFields.stream()
-			.map(mf -> Field.builder().name(METADATA_FIELD_PREFIX + mf.name()).build())
-			.toList());
+				.map(mf -> Field.builder().name(METADATA_FIELD_PREFIX + mf.name()).build())
+				.toList());
 		searchWeaviateFieldList.add(Field.builder()
-			.name(ADDITIONAL_FIELD_NAME)
-			// https://weaviate.io/developers/weaviate/api/graphql/get#additional-properties--metadata
-			.fields(Field.builder().name(ADDITIONAL_ID_FIELD_NAME).build(),
-					Field.builder().name(ADDITIONAL_CERTAINTY_FIELD_NAME).build(),
-					Field.builder().name(ADDITIONAL_VECTOR_FIELD_NAME).build())
-			.build());
+				.name(ADDITIONAL_FIELD_NAME)
+				// https://weaviate.io/developers/weaviate/api/graphql/get#additional-properties--metadata
+				.fields(Field.builder().name(ADDITIONAL_ID_FIELD_NAME).build(),
+						Field.builder().name(ADDITIONAL_CERTAINTY_FIELD_NAME).build(),
+						Field.builder().name(ADDITIONAL_VECTOR_FIELD_NAME).build())
+				.build());
 
 		return searchWeaviateFieldList.toArray(new Field[0]);
 	}
@@ -206,23 +206,23 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 				this.batchingStrategy);
 
 		List<WeaviateObject> weaviateObjects = documents.stream()
-			.map(document -> toWeaviateObject(document, documents, embeddings))
-			.toList();
+				.map(document -> toWeaviateObject(document, documents, embeddings))
+				.toList();
 
 		Result<ObjectGetResponse[]> response = this.weaviateClient.batch()
-			.objectsBatcher()
-			.withObjects(weaviateObjects.toArray(new WeaviateObject[0]))
-			.withConsistencyLevel(this.consistencyLevel.name())
-			.run();
+				.objectsBatcher()
+				.withObjects(weaviateObjects.toArray(new WeaviateObject[0]))
+				.withConsistencyLevel(this.consistencyLevel.name())
+				.run();
 
 		List<String> errorMessages = new ArrayList<>();
 
 		if (response.hasErrors()) {
 			errorMessages.add(response.getError()
-				.getMessages()
-				.stream()
-				.map(WeaviateErrorMessage::getMessage)
-				.collect(Collectors.joining(System.lineSeparator())));
+					.getMessages()
+					.stream()
+					.map(WeaviateErrorMessage::getMessage)
+					.collect(Collectors.joining(System.lineSeparator())));
 			throw new RuntimeException("Failed to add documents because: \n" + errorMessages);
 		}
 
@@ -231,9 +231,9 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 				if (r.getResult() != null && r.getResult().getErrors() != null) {
 					var error = r.getResult().getErrors();
 					errorMessages.add(error.getError()
-						.stream()
-						.map(ObjectsGetResponseAO2Result.ErrorItem::getMessage)
-						.collect(Collectors.joining(System.lineSeparator())));
+							.stream()
+							.map(ObjectsGetResponseAO2Result.ErrorItem::getMessage)
+							.collect(Collectors.joining(System.lineSeparator())));
 				}
 			}
 		}
@@ -251,8 +251,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 		try {
 			String metadataString = this.objectMapper.writeValueAsString(document.getMetadata());
 			fields.put(METADATA_FIELD_NAME, metadataString);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Failed to serialize the Document metadata: " + document.getText());
 		}
 
@@ -265,33 +264,33 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 		}
 
 		return WeaviateObject.builder()
-			.className(this.weaviateObjectClass)
-			.id(document.getId())
-			.vector(EmbeddingUtils.toFloatArray(embeddings.get(documents.indexOf(document))))
-			.properties(fields)
-			.build();
+				.className(this.weaviateObjectClass)
+				.id(document.getId())
+				.vector(EmbeddingUtils.toFloatArray(embeddings.get(documents.indexOf(document))))
+				.properties(fields)
+				.build();
 	}
 
 	@Override
 	public void doDelete(List<String> documentIds) {
 
 		Result<BatchDeleteResponse> result = this.weaviateClient.batch()
-			.objectsBatchDeleter()
-			.withClassName(this.weaviateObjectClass)
-			.withConsistencyLevel(this.consistencyLevel.name())
-			.withWhere(WhereFilter.builder()
-				.path("id")
-				.operator(Operator.ContainsAny)
-				.valueString(documentIds.toArray(new String[0]))
-				.build())
-			.run();
+				.objectsBatchDeleter()
+				.withClassName(this.weaviateObjectClass)
+				.withConsistencyLevel(this.consistencyLevel.name())
+				.withWhere(WhereFilter.builder()
+						.path("id")
+						.operator(Operator.ContainsAny)
+						.valueString(documentIds.toArray(new String[0]))
+						.build())
+				.run();
 
 		if (result.hasErrors()) {
 			String errorMessages = result.getError()
-				.getMessages()
-				.stream()
-				.map(WeaviateErrorMessage::getMessage)
-				.collect(Collectors.joining(","));
+					.getMessages()
+					.stream()
+					.map(WeaviateErrorMessage::getMessage)
+					.collect(Collectors.joining(","));
 			throw new RuntimeException("Failed to delete documents because: \n" + errorMessages);
 		}
 	}
@@ -304,11 +303,11 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 			// Use similarity search with empty query to find documents matching the
 			// filter
 			SearchRequest searchRequest = SearchRequest.builder()
-				.query("") // empty query since we only want filter matches
-				.filterExpression(filterExpression)
-				.topK(10000) // large enough to get all matches
-				.similarityThresholdAll()
-				.build();
+					.query("") // empty query since we only want filter matches
+					.filterExpression(filterExpression)
+					.topK(10000) // large enough to get all matches
+					.similarityThresholdAll()
+					.build();
 
 			List<Document> matchingDocs = similaritySearch(searchRequest);
 
@@ -318,12 +317,10 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 				delete(idsToDelete);
 
 				logger.debug("Deleted {} documents matching filter expression", idsToDelete.size());
-			}
-			else {
+			} else {
 				logger.debug("No documents found matching filter expression");
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter", e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -337,14 +334,14 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 		GetBuilder.GetBuilderBuilder builder = GetBuilder.builder();
 
 		GetBuilderBuilder queryBuilder = builder.className(this.weaviateObjectClass)
-			.withNearVectorFilter(NearVectorArgument.builder()
-				.vector(EmbeddingUtils.toFloatArray(embedding))
-				.certainty((float) request.getSimilarityThreshold())
-				.build())
-			.limit(request.getTopK())
-			.withWhereFilter(WhereArgument.builder().build()) // adds an empty 'where:{}'
-			// placeholder.
-			.fields(Fields.builder().fields(this.weaviateSimilaritySearchFields).build());
+				.withNearVectorFilter(NearVectorArgument.builder()
+						.vector(EmbeddingUtils.toFloatArray(embedding))
+						.certainty((float) request.getSimilarityThreshold())
+						.build())
+				.limit(request.getTopK())
+				.withWhereFilter(WhereArgument.builder().build()) // adds an empty 'where:{}'
+				// placeholder.
+				.fields(Fields.builder().fields(this.weaviateSimilaritySearchFields).build());
 
 		String graphQLQuery = queryBuilder.build().buildQuery();
 
@@ -352,8 +349,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 			// replace the empty 'where:{}' placeholder with real filter.
 			String filter = this.filterExpressionConverter.convertExpression(request.getFilterExpression());
 			graphQLQuery = graphQLQuery.replace("where:{}", String.format("where:{%s}", filter));
-		}
-		else {
+		} else {
 			// remove the empty 'where:{}' placeholder.
 			graphQLQuery = graphQLQuery.replace("where:{}", "");
 		}
@@ -362,24 +358,24 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		if (result.hasErrors()) {
 			throw new IllegalArgumentException(result.getError()
-				.getMessages()
-				.stream()
-				.map(WeaviateErrorMessage::getMessage)
-				.collect(Collectors.joining(System.lineSeparator())));
+					.getMessages()
+					.stream()
+					.map(WeaviateErrorMessage::getMessage)
+					.collect(Collectors.joining(System.lineSeparator())));
 		}
 
 		GraphQLError[] errors = result.getResult().getErrors();
 		if (errors != null && errors.length > 0) {
 			throw new IllegalArgumentException(Arrays.stream(errors)
-				.map(GraphQLError::getMessage)
-				.collect(Collectors.joining(System.lineSeparator())));
+					.map(GraphQLError::getMessage)
+					.collect(Collectors.joining(System.lineSeparator())));
 		}
 
 		@SuppressWarnings("unchecked")
 		Optional<Map.Entry<String, Map<?, ?>>> resGetPart = ((Map<String, Map<?, ?>>) result.getResult().getData())
-			.entrySet()
-			.stream()
-			.findFirst();
+				.entrySet()
+				.stream()
+				.findFirst();
 		if (!resGetPart.isPresent()) {
 			return List.of();
 		}
@@ -412,8 +408,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 			if (StringUtils.hasText(metadataJson)) {
 				metadata.putAll(this.objectMapper.readValue(metadataJson, Map.class));
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
@@ -433,8 +428,8 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.WEAVIATE.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName(this.weaviateObjectClass);
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName(this.weaviateObjectClass);
 	}
 
 	@Override
@@ -483,6 +478,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Creates a metadata field of type TEXT.
+		 *
 		 * @param name the name of the field
 		 * @return a new MetadataField instance of type TEXT
 		 * @throws IllegalArgumentException if name is null or empty
@@ -494,6 +490,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Creates a metadata field of type NUMBER.
+		 *
 		 * @param name the name of the field
 		 * @return a new MetadataField instance of type NUMBER
 		 * @throws IllegalArgumentException if name is null or empty
@@ -505,6 +502,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Creates a metadata field of type BOOLEAN.
+		 *
 		 * @param name the name of the field
 		 * @return a new MetadataField instance of type BOOLEAN
 		 * @throws IllegalArgumentException if name is null or empty
@@ -536,8 +534,9 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Constructs a new WeaviateBuilder instance.
+		 *
 		 * @param weaviateClient The Weaviate client instance used for database
-		 * operations. Must not be null.
+		 *                       operations. Must not be null.
 		 * @param embeddingModel The embedding model used for vector transformations.
 		 * @throws IllegalArgumentException if weaviateClient is null
 		 */
@@ -549,6 +548,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Configures the Weaviate object class.
+		 *
 		 * @param objectClass the object class to use
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if objectClass is null or empty
@@ -561,6 +561,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Configures the consistency level for Weaviate operations.
+		 *
 		 * @param consistencyLevel the consistency level to use
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if consistencyLevel is null
@@ -573,6 +574,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Configures the filterable metadata fields.
+		 *
 		 * @param filterMetadataFields list of metadata fields that can be used in filters
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if filterMetadataFields is null
@@ -586,6 +588,7 @@ public class WeaviateVectorStore extends AbstractObservationVectorStore {
 		/**
 		 * Builds and returns a new WeaviateVectorStore instance with the configured
 		 * settings.
+		 *
 		 * @return a new WeaviateVectorStore instance
 		 * @throws IllegalStateException if the builder configuration is invalid
 		 */

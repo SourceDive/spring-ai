@@ -51,35 +51,35 @@ import static org.springframework.ai.model.openai.autoconfigure.OpenAIAutoConfig
  * @author Ilayaperumal Gopinathan
  * @author lambochen
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(OpenAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.IMAGE_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OpenAiConnectionProperties.class, OpenAiImageProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OpenAiConnectionProperties.class, OpenAiImageProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class OpenAiImageAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiImageModel openAiImageModel(OpenAiConnectionProperties commonProperties,
-			OpenAiImageProperties imageProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ImageModelObservationConvention> observationConvention) {
+	                                         OpenAiImageProperties imageProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                         RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
+	                                         ObjectProvider<ObservationRegistry> observationRegistry,
+	                                         ObjectProvider<ImageModelObservationConvention> observationConvention) {
 
 		OpenAIAutoConfigurationUtil.ResolvedConnectionProperties resolved = resolveConnectionProperties(
 				commonProperties, imageProperties, "image");
 
 		var openAiImageApi = OpenAiImageApi.builder()
-			.baseUrl(resolved.baseUrl())
-			.apiKey(new SimpleApiKey(resolved.apiKey()))
-			.headers(resolved.headers())
-			.imagesPath(imageProperties.getImagesPath())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolved.baseUrl())
+				.apiKey(new SimpleApiKey(resolved.apiKey()))
+				.headers(resolved.headers())
+				.imagesPath(imageProperties.getImagesPath())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 		var imageModel = new OpenAiImageModel(openAiImageApi, imageProperties.getOptions(), retryTemplate,
 				observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP));
 

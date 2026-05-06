@@ -58,8 +58,7 @@ public class OpenAiApiToolFunctionCallIT {
 	private static <T> T fromJson(String json, Class<T> targetClass) {
 		try {
 			return new ObjectMapper().readValue(json, targetClass);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -75,29 +74,29 @@ public class OpenAiApiToolFunctionCallIT {
 		var functionTool = new OpenAiApi.FunctionTool(OpenAiApi.FunctionTool.Type.FUNCTION,
 				new OpenAiApi.FunctionTool.Function("Get the weather in location. Return temperature in Celsius.",
 						"getCurrentWeather", ModelOptionsUtils.jsonToMap("""
-								{
-									"type": "object",
-									"properties": {
-										"location": {
-											"type": "string",
-											"description": "The city and state e.g. San Francisco, CA"
-										},
-										"lat": {
-											"type": "number",
-											"description": "The city latitude"
-										},
-										"lon": {
-											"type": "number",
-											"description": "The city longitude"
-										},
-										"unit": {
-											"type": "string",
-											"enum": ["C", "F"]
-										}
-									},
-									"required": ["location", "lat", "lon", "unit"]
+						{
+							"type": "object",
+							"properties": {
+								"location": {
+									"type": "string",
+									"description": "The city and state e.g. San Francisco, CA"
+								},
+								"lat": {
+									"type": "number",
+									"description": "The city latitude"
+								},
+								"lon": {
+									"type": "number",
+									"description": "The city longitude"
+								},
+								"unit": {
+									"type": "string",
+									"enum": ["C", "F"]
 								}
-								"""), null));
+							},
+							"required": ["location", "lat", "lon", "unit"]
+						}
+						"""), null));
 
 		List<ChatCompletionMessage> messages = new ArrayList<>(List.of(message));
 
@@ -137,7 +136,7 @@ public class OpenAiApiToolFunctionCallIT {
 		var functionResponseRequest = new ChatCompletionRequest(messages, "gpt-4o", 0.5);
 
 		ResponseEntity<ChatCompletion> chatCompletion2 = this.completionApi
-			.chatCompletionEntity(functionResponseRequest);
+				.chatCompletionEntity(functionResponseRequest);
 
 		logger.info("Final response: " + chatCompletion2.getBody());
 
@@ -145,11 +144,11 @@ public class OpenAiApiToolFunctionCallIT {
 
 		assertThat(chatCompletion2.getBody().choices().get(0).message().role()).isEqualTo(Role.ASSISTANT);
 		assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("San Francisco")
-			.containsAnyOf("30.0°C", "30°C");
+				.containsAnyOf("30.0°C", "30°C");
 		assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("Tokyo")
-			.containsAnyOf("10.0°C", "10°C");
+				.containsAnyOf("10.0°C", "10°C");
 		assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("Paris")
-			.containsAnyOf("15.0°C", "15°C");
+				.containsAnyOf("15.0°C", "15°C");
 	}
 
 }

@@ -46,8 +46,7 @@ public class JdkSha256HexIdGenerator implements IdGenerator {
 		this.charset = charset;
 		try {
 			this.messageDigest = MessageDigest.getInstance(algorithm);
-		}
-		catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -79,8 +78,7 @@ public class JdkSha256HexIdGenerator implements IdGenerator {
 				out.writeObject(content);
 			}
 			return byteOut.toByteArray();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to serialize", e);
 		}
 	}
@@ -88,8 +86,7 @@ public class JdkSha256HexIdGenerator implements IdGenerator {
 	MessageDigest getMessageDigest() {
 		try {
 			return (MessageDigest) this.messageDigest.clone();
-		}
-		catch (CloneNotSupportedException e) {
+		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("Unsupported clone for MessageDigest.", e);
 		}
 	}

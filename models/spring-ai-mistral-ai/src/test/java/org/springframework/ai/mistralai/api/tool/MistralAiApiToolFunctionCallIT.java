@@ -58,8 +58,7 @@ public class MistralAiApiToolFunctionCallIT {
 	private static <T> T fromJson(String json, Class<T> targetClass) {
 		try {
 			return new ObjectMapper().readValue(json, targetClass);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -108,7 +107,7 @@ public class MistralAiApiToolFunctionCallIT {
 				List.of(functionTool), ToolChoice.AUTO);
 
 		System.out
-			.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(chatCompletionRequest));
+				.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(chatCompletionRequest));
 
 		ResponseEntity<ChatCompletion> chatCompletion = this.completionApi.chatCompletionEntity(chatCompletionRequest);
 
@@ -144,7 +143,7 @@ public class MistralAiApiToolFunctionCallIT {
 			var functionResponseRequest = new ChatCompletionRequest(messages, MISTRAL_AI_CHAT_MODEL, 0.8);
 
 			ResponseEntity<ChatCompletion> chatCompletion2 = this.completionApi
-				.chatCompletionEntity(functionResponseRequest);
+					.chatCompletionEntity(functionResponseRequest);
 
 			logger.info("Final response: " + chatCompletion2.getBody());
 
@@ -152,11 +151,11 @@ public class MistralAiApiToolFunctionCallIT {
 
 			assertThat(chatCompletion2.getBody().choices().get(0).message().role()).isEqualTo(Role.ASSISTANT);
 			assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("San Francisco")
-				.containsAnyOf("30.0", "30");
+					.containsAnyOf("30.0", "30");
 			assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("Tokyo")
-				.containsAnyOf("10.0", "10");
+					.containsAnyOf("10.0", "10");
 			assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("Paris")
-				.containsAnyOf("15.0", "15");
+					.containsAnyOf("15.0", "15");
 		}
 
 	}

@@ -52,9 +52,9 @@ public class WeaviateFilterExpressionConverterTests {
 		FilterExpressionConverter converter = new WeaviateFilterExpressionConverter(List.of());
 
 		assertThatThrownBy(() -> converter.convertExpression(new Expression(EQ, new Key("country"), new Value("BG"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Not allowed filter identifier name: country. Consider adding it to WeaviateVectorStore#filterMetadataKeys.");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Not allowed filter identifier name: country. Consider adding it to WeaviateVectorStore#filterMetadataKeys.");
 	}
 
 	@Test
@@ -103,8 +103,8 @@ public class WeaviateFilterExpressionConverterTests {
 
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(format(vectorExpr)).isEqualTo("""
 				operator:And
 				operands:[{path:["meta_genre"]
@@ -144,9 +144,9 @@ public class WeaviateFilterExpressionConverterTests {
 
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(format(vectorExpr)).isEqualTo("""
 				operator:Or
 				operands:[{path:["meta_year"]
@@ -235,8 +235,8 @@ public class WeaviateFilterExpressionConverterTests {
 
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(format(vectorExpr)).isEqualTo("""
 				operator:And
@@ -254,7 +254,7 @@ public class WeaviateFilterExpressionConverterTests {
 		FilterExpressionConverter converter = new WeaviateFilterExpressionConverter(List.of("country 1 2 3"));
 
 		String vectorExpr = converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(format(vectorExpr)).isEqualTo("""
 				path:["meta_country 1 2 3"]
 				operator:Equal

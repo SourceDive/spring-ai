@@ -44,7 +44,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-@SuppressWarnings({ "all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue" })
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class FiltersParser extends Parser {
 
 	public static final int WHERE = 1, DOT = 2, COMMA = 3, LEFT_SQUARE_BRACKETS = 4, RIGHT_SQUARE_BRACKETS = 5,
@@ -162,19 +162,19 @@ public class FiltersParser extends Parser {
 	}
 
 	private static String[] makeRuleNames() {
-		return new String[] { "where", "booleanExpression", "constantArray", "compare", "identifier", "constant" };
+		return new String[]{"where", "booleanExpression", "constantArray", "compare", "identifier", "constant"};
 	}
 
 	private static String[] makeLiteralNames() {
-		return new String[] { null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'", "'>='",
-				"'<'", "'<='", "'!='" };
+		return new String[]{null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'", "'>='",
+				"'<'", "'<='", "'!='"};
 	}
 
 	private static String[] makeSymbolicNames() {
-		return new String[] { null, "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
+		return new String[]{null, "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
 				"LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "EQUALS", "MINUS", "PLUS", "GT", "GE", "LT", "LE", "NE", "AND",
 				"OR", "IN", "NIN", "NOT", "BOOLEAN_VALUE", "QUOTED_STRING", "INTEGER_VALUE", "DECIMAL_VALUE",
-				"IDENTIFIER", "WS" };
+				"IDENTIFIER", "WS"};
 	}
 
 	@Override
@@ -222,13 +222,11 @@ public class FiltersParser extends Parser {
 				setState(14);
 				match(EOF);
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -264,7 +262,7 @@ public class FiltersParser extends Parser {
 						setState(19);
 						constant();
 					}
-						break;
+					break;
 					case 2: {
 						_localctx = new InExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -276,7 +274,7 @@ public class FiltersParser extends Parser {
 						setState(23);
 						constantArray();
 					}
-						break;
+					break;
 					case 3: {
 						_localctx = new NinExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -292,19 +290,19 @@ public class FiltersParser extends Parser {
 								setState(27);
 								match(IN);
 							}
-								break;
+							break;
 							case NIN: {
 								setState(28);
 								match(NIN);
 							}
-								break;
+							break;
 							default:
 								throw new NoViableAltException(this);
 						}
 						setState(31);
 						constantArray();
 					}
-						break;
+					break;
 					case 4: {
 						_localctx = new GroupExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -316,7 +314,7 @@ public class FiltersParser extends Parser {
 						setState(35);
 						match(RIGHT_PARENTHESIS);
 					}
-						break;
+					break;
 					case 5: {
 						_localctx = new NotExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -326,7 +324,7 @@ public class FiltersParser extends Parser {
 						setState(38);
 						booleanExpression(1);
 					}
-						break;
+					break;
 				}
 				_ctx.stop = _input.LT(-1);
 				setState(49);
@@ -356,7 +354,7 @@ public class FiltersParser extends Parser {
 									setState(43);
 									((AndExpressionContext) _localctx).right = booleanExpression(5);
 								}
-									break;
+								break;
 								case 2: {
 									_localctx = new OrExpressionContext(
 											new BooleanExpressionContext(_parentctx, _parentState));
@@ -371,7 +369,7 @@ public class FiltersParser extends Parser {
 									setState(46);
 									((OrExpressionContext) _localctx).right = booleanExpression(4);
 								}
-									break;
+								break;
 							}
 						}
 					}
@@ -380,13 +378,11 @@ public class FiltersParser extends Parser {
 					_alt = getInterpreter().adaptivePredict(_input, 3, _ctx);
 				}
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			unrollRecursionContexts(_parentctx);
 		}
 		return _localctx;
@@ -422,13 +418,11 @@ public class FiltersParser extends Parser {
 				setState(61);
 				match(RIGHT_SQUARE_BRACKETS);
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -445,8 +439,7 @@ public class FiltersParser extends Parser {
 				_la = _input.LA(1);
 				if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 63744L) != 0))) {
 					_errHandler.recoverInline(this);
-				}
-				else {
+				} else {
 					if (_input.LA(1) == Token.EOF) {
 						matchedEOF = true;
 					}
@@ -454,13 +447,11 @@ public class FiltersParser extends Parser {
 					consume();
 				}
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -474,7 +465,8 @@ public class FiltersParser extends Parser {
 			_errHandler.sync(this);
 			switch (getInterpreter().adaptivePredict(_input, 5, _ctx)) {
 				case 1:
-					enterOuterAlt(_localctx, 1); {
+					enterOuterAlt(_localctx, 1);
+				{
 					setState(65);
 					match(IDENTIFIER);
 					setState(66);
@@ -482,27 +474,27 @@ public class FiltersParser extends Parser {
 					setState(67);
 					match(IDENTIFIER);
 				}
-					break;
+				break;
 				case 2:
-					enterOuterAlt(_localctx, 2); {
+					enterOuterAlt(_localctx, 2);
+				{
 					setState(68);
 					match(IDENTIFIER);
 				}
-					break;
+				break;
 				case 3:
-					enterOuterAlt(_localctx, 3); {
+					enterOuterAlt(_localctx, 3);
+				{
 					setState(69);
 					match(QUOTED_STRING);
 				}
-					break;
+				break;
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -519,7 +511,8 @@ public class FiltersParser extends Parser {
 			switch (getInterpreter().adaptivePredict(_input, 9, _ctx)) {
 				case 1:
 					_localctx = new IntegerConstantContext(_localctx);
-					enterOuterAlt(_localctx, 1); {
+					enterOuterAlt(_localctx, 1);
+				{
 					setState(73);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -529,8 +522,7 @@ public class FiltersParser extends Parser {
 							_la = _input.LA(1);
 							if (!(_la == MINUS || _la == PLUS)) {
 								_errHandler.recoverInline(this);
-							}
-							else {
+							} else {
 								if (_input.LA(1) == Token.EOF) {
 									matchedEOF = true;
 								}
@@ -543,10 +535,11 @@ public class FiltersParser extends Parser {
 					setState(75);
 					match(INTEGER_VALUE);
 				}
-					break;
+				break;
 				case 2:
 					_localctx = new DecimalConstantContext(_localctx);
-					enterOuterAlt(_localctx, 2); {
+					enterOuterAlt(_localctx, 2);
+				{
 					setState(77);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -556,8 +549,7 @@ public class FiltersParser extends Parser {
 							_la = _input.LA(1);
 							if (!(_la == MINUS || _la == PLUS)) {
 								_errHandler.recoverInline(this);
-							}
-							else {
+							} else {
 								if (_input.LA(1) == Token.EOF) {
 									matchedEOF = true;
 								}
@@ -570,10 +562,11 @@ public class FiltersParser extends Parser {
 					setState(79);
 					match(DECIMAL_VALUE);
 				}
-					break;
+				break;
 				case 3:
 					_localctx = new TextConstantContext(_localctx);
-					enterOuterAlt(_localctx, 3); {
+					enterOuterAlt(_localctx, 3);
+				{
 					setState(81);
 					_errHandler.sync(this);
 					_alt = 1;
@@ -585,7 +578,7 @@ public class FiltersParser extends Parser {
 									match(QUOTED_STRING);
 								}
 							}
-								break;
+							break;
 							default:
 								throw new NoViableAltException(this);
 						}
@@ -595,22 +588,21 @@ public class FiltersParser extends Parser {
 					}
 					while (_alt != 2 && _alt != org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER);
 				}
-					break;
+				break;
 				case 4:
 					_localctx = new BooleanConstantContext(_localctx);
-					enterOuterAlt(_localctx, 4); {
+					enterOuterAlt(_localctx, 4);
+				{
 					setState(85);
 					match(BOOLEAN_VALUE);
 				}
-					break;
+				break;
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -676,8 +668,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitWhere(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -750,8 +741,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitNinExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -801,8 +791,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitAndExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -846,8 +835,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitInExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -887,8 +875,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitNotExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -932,8 +919,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitCompareExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -983,8 +969,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitOrExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1028,8 +1013,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitGroupExpression(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1090,8 +1074,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitConstantArray(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1152,8 +1135,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitCompare(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1206,8 +1188,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitIdentifier(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1272,8 +1253,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitDecimalConstant(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1313,8 +1293,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitTextConstant(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1350,8 +1329,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitBooleanConstant(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}
@@ -1395,8 +1373,7 @@ public class FiltersParser extends Parser {
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if (visitor instanceof FiltersVisitor) {
 				return ((FiltersVisitor<? extends T>) visitor).visitIntegerConstant(this);
-			}
-			else {
+			} else {
 				return visitor.visitChildren(this);
 			}
 		}

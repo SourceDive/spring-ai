@@ -24,10 +24,10 @@ import org.springframework.ai.chat.metadata.RateLimit;
  * {@link RateLimit} implementation for {@literal OpenAI}.
  *
  * @author John Blum
- * @since 0.7.0
  * @see <a href=
  * "https://platform.openai.com/docs/guides/rate-limits/rate-limits-in-headers">Rate
  * limits in headers</a>
+ * @since 0.7.0
  */
 public class OpenAiRateLimit implements RateLimit {
 
@@ -46,7 +46,7 @@ public class OpenAiRateLimit implements RateLimit {
 	private final Duration tokensReset;
 
 	public OpenAiRateLimit(Long requestsLimit, Long requestsRemaining, Duration requestsReset, Long tokensLimit,
-			Long tokensRemaining, Duration tokensReset) {
+	                       Long tokensRemaining, Duration tokensReset) {
 
 		this.requestsLimit = requestsLimit;
 		this.requestsRemaining = requestsRemaining;

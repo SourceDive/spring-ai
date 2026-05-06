@@ -44,11 +44,11 @@ import org.springframework.util.Assert;
  * @author Christian Tzolov
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
- * @since 0.8.0
  * @see <a href=
  * "https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">Ollama
  * Valid Parameters and Values</a>
  * @see <a href="https://github.com/ollama/ollama/blob/main/api/types.go">Ollama Types</a>
+ * @since 0.8.0
  */
 @JsonInclude(Include.NON_NULL)
 public class OllamaOptions implements ToolCallingChatOptions, EmbeddingOptions {
@@ -1032,8 +1032,7 @@ public class OllamaOptions implements ToolCallingChatOptions, EmbeddingOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

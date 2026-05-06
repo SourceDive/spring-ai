@@ -165,23 +165,23 @@ public class MistralAiChatOptions implements ToolCallingChatOptions {
 
 	public static MistralAiChatOptions fromOptions(MistralAiChatOptions fromOptions) {
 		return builder().model(fromOptions.getModel())
-			.maxTokens(fromOptions.getMaxTokens())
-			.safePrompt(fromOptions.getSafePrompt())
-			.randomSeed(fromOptions.getRandomSeed())
-			.temperature(fromOptions.getTemperature())
-			.topP(fromOptions.getTopP())
-			.responseFormat(fromOptions.getResponseFormat())
-			.stop(fromOptions.getStop())
-			.frequencyPenalty(fromOptions.getFrequencyPenalty())
-			.presencePenalty(fromOptions.getPresencePenalty())
-			.n(fromOptions.getN())
-			.tools(fromOptions.getTools())
-			.toolChoice(fromOptions.getToolChoice())
-			.toolCallbacks(fromOptions.getToolCallbacks())
-			.toolNames(fromOptions.getToolNames())
-			.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
-			.toolContext(fromOptions.getToolContext())
-			.build();
+				.maxTokens(fromOptions.getMaxTokens())
+				.safePrompt(fromOptions.getSafePrompt())
+				.randomSeed(fromOptions.getRandomSeed())
+				.temperature(fromOptions.getTemperature())
+				.topP(fromOptions.getTopP())
+				.responseFormat(fromOptions.getResponseFormat())
+				.stop(fromOptions.getStop())
+				.frequencyPenalty(fromOptions.getFrequencyPenalty())
+				.presencePenalty(fromOptions.getPresencePenalty())
+				.n(fromOptions.getN())
+				.tools(fromOptions.getTools())
+				.toolChoice(fromOptions.getToolChoice())
+				.toolCallbacks(fromOptions.getToolCallbacks())
+				.toolNames(fromOptions.getToolNames())
+				.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
+				.toolContext(fromOptions.getToolContext())
+				.build();
 	}
 
 	@Override
@@ -508,8 +508,7 @@ public class MistralAiChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

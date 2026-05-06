@@ -57,7 +57,7 @@ public class HanaCloudVectorStoreIT {
 	private static final Logger logger = LoggerFactory.getLogger(HanaCloudVectorStoreIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(HanaTestApplication.class);
+			.withUserConfiguration(HanaTestApplication.class);
 
 	@Test
 	public void vectorStoreTest() {
@@ -89,12 +89,12 @@ public class HanaCloudVectorStoreIT {
 
 		@Bean
 		public VectorStore hanaCloudVectorStore(CricketWorldCupRepository cricketWorldCupRepository,
-				EmbeddingModel embeddingModel) {
+		                                        EmbeddingModel embeddingModel) {
 
 			return HanaCloudVectorStore.builder(cricketWorldCupRepository, embeddingModel)
-				.tableName("CRICKET_WORLD_CUP")
-				.topK(1)
-				.build();
+					.tableName("CRICKET_WORLD_CUP")
+					.topK(1)
+					.build();
 		}
 
 		@Bean

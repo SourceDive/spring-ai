@@ -34,9 +34,9 @@ public class ChatCompletionRequestTests {
 	public void createRequestWithChatOptions() {
 
 		var client = AnthropicChatModel.builder()
-			.anthropicApi(AnthropicApi.builder().apiKey("TEST").build())
-			.defaultOptions(AnthropicChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
-			.build();
+				.anthropicApi(AnthropicApi.builder().apiKey("TEST").build())
+				.defaultOptions(AnthropicChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
+				.build();
 
 		var prompt = client.buildRequestPrompt(new Prompt("Test message content"));
 

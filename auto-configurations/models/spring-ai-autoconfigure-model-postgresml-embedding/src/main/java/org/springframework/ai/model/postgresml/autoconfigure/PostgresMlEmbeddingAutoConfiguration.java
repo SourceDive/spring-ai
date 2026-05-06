@@ -44,7 +44,7 @@ public class PostgresMlEmbeddingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PostgresMlEmbeddingModel postgresMlEmbeddingModel(JdbcTemplate jdbcTemplate,
-			PostgresMlEmbeddingProperties embeddingProperties) {
+	                                                         PostgresMlEmbeddingProperties embeddingProperties) {
 
 		return new PostgresMlEmbeddingModel(jdbcTemplate, embeddingProperties.getOptions(),
 				embeddingProperties.isCreateExtension());

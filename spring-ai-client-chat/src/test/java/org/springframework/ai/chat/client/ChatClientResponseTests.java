@@ -34,11 +34,11 @@ class ChatClientResponseTests {
 	@Test
 	void whenContextIsNullThenThrow() {
 		assertThatThrownBy(() -> new ChatClientResponse(null, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.hasMessage("context cannot be null");
 
 		assertThatThrownBy(() -> ChatClientResponse.builder().chatResponse(null).context(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("context cannot be null");
 	}
 
 	@Test
@@ -46,7 +46,7 @@ class ChatClientResponseTests {
 		Map<String, Object> context = new HashMap<>();
 		context.put(null, "something");
 		assertThatThrownBy(() -> new ChatClientResponse(null, context)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context keys cannot be null");
+				.hasMessage("context keys cannot be null");
 	}
 
 	@Test

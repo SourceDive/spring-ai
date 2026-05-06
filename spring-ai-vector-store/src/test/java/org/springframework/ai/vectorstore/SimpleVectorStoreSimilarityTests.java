@@ -35,7 +35,7 @@ public class SimpleVectorStoreSimilarityTests {
 	public void testSimilarity() {
 		Map<String, Object> metadata = new HashMap<>();
 		metadata.put("foo", "bar");
-		float[] testEmbedding = new float[] { 1.0f, 2.0f, 3.0f };
+		float[] testEmbedding = new float[]{1.0f, 2.0f, 3.0f};
 
 		SimpleVectorStoreContent storeContent = new SimpleVectorStoreContent("1", "hello, how are you?", metadata,
 				testEmbedding);

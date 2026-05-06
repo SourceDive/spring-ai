@@ -47,12 +47,12 @@ public class DeepSeekAssistantMessage extends AssistantMessage {
 	}
 
 	public DeepSeekAssistantMessage(String content, String reasoningContent, Map<String, Object> properties,
-			List<ToolCall> toolCalls) {
+	                                List<ToolCall> toolCalls) {
 		this(content, reasoningContent, properties, toolCalls, List.of());
 	}
 
 	public DeepSeekAssistantMessage(String content, String reasoningContent, Map<String, Object> properties,
-			List<ToolCall> toolCalls, List<Media> media) {
+	                                List<ToolCall> toolCalls, List<Media> media) {
 		super(content, properties, toolCalls, media);
 		this.reasoningContent = reasoningContent;
 	}

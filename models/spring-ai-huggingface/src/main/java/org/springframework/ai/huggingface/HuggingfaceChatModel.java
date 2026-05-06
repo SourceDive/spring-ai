@@ -72,6 +72,7 @@ public class HuggingfaceChatModel implements ChatModel {
 
 	/**
 	 * Constructs a new HuggingfaceChatModel with the specified API token and base path.
+	 *
 	 * @param apiToken The API token for HuggingFace.
 	 * @param basePath The base path for API requests.
 	 */
@@ -84,6 +85,7 @@ public class HuggingfaceChatModel implements ChatModel {
 
 	/**
 	 * Generate text based on the provided prompt.
+	 *
 	 * @param prompt The input prompt based on which text is to be generated.
 	 * @return ChatResponse containing the generated text and other related details.
 	 */
@@ -112,6 +114,7 @@ public class HuggingfaceChatModel implements ChatModel {
 
 	/**
 	 * Gets the maximum number of new tokens to be generated.
+	 *
 	 * @return The maximum number of new tokens.
 	 */
 	public int getMaxNewTokens() {
@@ -120,6 +123,7 @@ public class HuggingfaceChatModel implements ChatModel {
 
 	/**
 	 * Sets the maximum number of new tokens to be generated.
+	 *
 	 * @param maxNewTokens The maximum number of new tokens.
 	 */
 	public void setMaxNewTokens(int maxNewTokens) {

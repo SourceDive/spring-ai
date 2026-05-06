@@ -55,15 +55,15 @@ public interface BaseAdvisor extends CallAdvisor, StreamAdvisor {
 
 	@Override
 	default Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                              StreamAdvisorChain streamAdvisorChain) {
 		Assert.notNull(chatClientRequest, "chatClientRequest cannot be null");
 		Assert.notNull(streamAdvisorChain, "streamAdvisorChain cannot be null");
 		Assert.notNull(getScheduler(), "scheduler cannot be null");
 
 		Flux<ChatClientResponse> chatClientResponseFlux = Mono.just(chatClientRequest)
-			.publishOn(getScheduler())
-			.map(request -> this.before(request, streamAdvisorChain))
-			.flatMapMany(streamAdvisorChain::nextStream);
+				.publishOn(getScheduler())
+				.map(request -> this.before(request, streamAdvisorChain))
+				.flatMapMany(streamAdvisorChain::nextStream);
 
 		return chatClientResponseFlux.map(response -> {
 			if (AdvisorUtils.onFinishReason().test(response)) {

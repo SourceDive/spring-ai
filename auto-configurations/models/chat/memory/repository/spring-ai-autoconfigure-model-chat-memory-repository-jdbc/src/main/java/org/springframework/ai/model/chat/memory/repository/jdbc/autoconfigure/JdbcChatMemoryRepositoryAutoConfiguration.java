@@ -38,7 +38,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 1.0.0
  */
 @AutoConfiguration(after = JdbcTemplateAutoConfiguration.class, before = ChatMemoryAutoConfiguration.class)
-@ConditionalOnClass({ JdbcChatMemoryRepository.class, DataSource.class, JdbcTemplate.class })
+@ConditionalOnClass({JdbcChatMemoryRepository.class, DataSource.class, JdbcTemplate.class})
 @EnableConfigurationProperties(JdbcChatMemoryRepositoryProperties.class)
 public class JdbcChatMemoryRepositoryAutoConfiguration {
 
@@ -53,7 +53,7 @@ public class JdbcChatMemoryRepositoryAutoConfiguration {
 	@ConditionalOnMissingBean
 	@Conditional(OnJdbcChatMemoryRepositoryDatasourceInitializationCondition.class)
 	JdbcChatMemoryRepositorySchemaInitializer jdbcChatMemoryScriptDatabaseInitializer(DataSource dataSource,
-			JdbcChatMemoryRepositoryProperties properties) {
+	                                                                                  JdbcChatMemoryRepositoryProperties properties) {
 		return new JdbcChatMemoryRepositorySchemaInitializer(dataSource, properties);
 	}
 

@@ -38,8 +38,8 @@ import org.springframework.web.client.RestClient;
 /**
  * OpenAI Image API.
  *
- * @see <a href= "https://platform.openai.com/docs/api-reference/images">Images</a>
  * @author lambochen
+ * @see <a href= "https://platform.openai.com/docs/api-reference/images">Images</a>
  */
 public class OpenAiImageApi {
 
@@ -59,7 +59,7 @@ public class OpenAiImageApi {
 	 * @param responseErrorHandler the response error handler to use.
 	 */
 	public OpenAiImageApi(String baseUrl, ApiKey apiKey, MultiValueMap<String, String> headers, String imagesPath,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                      RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		// @formatter:off
 		this.restClient = restClientBuilder.baseUrl(baseUrl)
@@ -82,10 +82,10 @@ public class OpenAiImageApi {
 		Assert.hasLength(openAiImageRequest.prompt(), "Prompt cannot be empty.");
 
 		return this.restClient.post()
-			.uri(this.imagesPath)
-			.body(openAiImageRequest)
-			.retrieve()
-			.toEntity(OpenAiImageResponse.class);
+				.uri(this.imagesPath)
+				.body(openAiImageRequest)
+				.retrieve()
+				.toEntity(OpenAiImageResponse.class);
 	}
 
 	public static Builder builder() {
@@ -150,7 +150,7 @@ public class OpenAiImageApi {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record Data(@JsonProperty("url") String url, @JsonProperty("b64_json") String b64Json,
-			@JsonProperty("revised_prompt") String revisedPrompt) {
+	                   @JsonProperty("revised_prompt") String revisedPrompt) {
 
 	}
 

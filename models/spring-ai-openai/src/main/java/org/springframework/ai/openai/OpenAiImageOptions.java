@@ -114,6 +114,7 @@ public class OpenAiImageOptions implements ImageOptions {
 
 	/**
 	 * Create a new OpenAiImageOptions instance from an existing one.
+	 *
 	 * @param fromOptions The options to copy from
 	 * @return A new OpenAiImageOptions instance
 	 */
@@ -170,16 +171,14 @@ public class OpenAiImageOptions implements ImageOptions {
 	public Integer getWidth() {
 		if (this.width != null) {
 			return this.width;
-		}
-		else if (this.size != null) {
+		} else if (this.size != null) {
 			try {
 				String[] dimensions = this.size.split("x");
 				if (dimensions.length != 2) {
 					return null;
 				}
 				return Integer.parseInt(dimensions[0]);
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				return null;
 			}
 		}
@@ -197,16 +196,14 @@ public class OpenAiImageOptions implements ImageOptions {
 	public Integer getHeight() {
 		if (this.height != null) {
 			return this.height;
-		}
-		else if (this.size != null) {
+		} else if (this.size != null) {
 			try {
 				String[] dimensions = this.size.split("x");
 				if (dimensions.length != 2) {
 					return null;
 				}
 				return Integer.parseInt(dimensions[1]);
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				return null;
 			}
 		}
@@ -255,8 +252,7 @@ public class OpenAiImageOptions implements ImageOptions {
 					this.width = Integer.parseInt(dimensions[0]);
 					this.height = Integer.parseInt(dimensions[1]);
 				}
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				// If parsing fails, leave width and height unchanged
 			}
 		}
@@ -293,6 +289,7 @@ public class OpenAiImageOptions implements ImageOptions {
 
 	/**
 	 * Create a copy of this options instance.
+	 *
 	 * @return A new instance with the same options
 	 */
 	public OpenAiImageOptions copy() {

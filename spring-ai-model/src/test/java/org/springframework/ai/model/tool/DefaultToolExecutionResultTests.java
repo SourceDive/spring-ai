@@ -35,8 +35,8 @@ class DefaultToolExecutionResultTests {
 	@Test
 	void whenConversationHistoryIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultToolExecutionResult.builder().conversationHistory(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("conversationHistory cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("conversationHistory cannot be null");
 	}
 
 	@Test
@@ -44,17 +44,17 @@ class DefaultToolExecutionResultTests {
 		var history = new ArrayList<Message>();
 		history.add(null);
 		assertThatThrownBy(() -> DefaultToolExecutionResult.builder().conversationHistory(history).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("conversationHistory cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("conversationHistory cannot contain null elements");
 	}
 
 	@Test
 	void builder() {
 		var conversationHistory = new ArrayList<Message>();
 		var result = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(true)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(true)
+				.build();
 		assertThat(result.conversationHistory()).isEqualTo(conversationHistory);
 		assertThat(result.returnDirect()).isTrue();
 	}

@@ -58,14 +58,14 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 	private static final PromptTemplate DEFAULT_SYSTEM_PROMPT_TEMPLATE = new PromptTemplate("""
 			{instructions}
-
+			
 			Use the conversation memory from the MEMORY section to provide accurate answers.
-
+			
 			---------------------
 			MEMORY:
 			{memory}
 			---------------------
-
+			
 			""");
 
 	private final PromptTemplate systemPromptTemplate;
@@ -79,7 +79,7 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 	private final ChatMemory chatMemory;
 
 	private PromptChatMemoryAdvisor(ChatMemory chatMemory, String defaultConversationId, int order, Scheduler scheduler,
-			PromptTemplate systemPromptTemplate) {
+	                                PromptTemplate systemPromptTemplate) {
 		Assert.notNull(chatMemory, "chatMemory cannot be null");
 		Assert.hasText(defaultConversationId, "defaultConversationId cannot be null or empty");
 		Assert.notNull(scheduler, "scheduler cannot be null");
@@ -115,19 +115,19 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		// 2. Process memory messages as a string.
 		String memory = memoryMessages.stream()
-			.filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
-			.map(m -> m.getMessageType() + ":" + m.getText())
-			.collect(Collectors.joining(System.lineSeparator()));
+				.filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
+				.map(m -> m.getMessageType() + ":" + m.getText())
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		// 3. Augment the system message.
 		SystemMessage systemMessage = chatClientRequest.prompt().getSystemMessage();
 		String augmentedSystemText = this.systemPromptTemplate
-			.render(Map.of("instructions", systemMessage.getText(), "memory", memory));
+				.render(Map.of("instructions", systemMessage.getText(), "memory", memory));
 
 		// 4. Create a new request with the augmented system message.
 		ChatClientRequest processedChatClientRequest = chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentSystemMessage(augmentedSystemText))
-			.build();
+				.prompt(chatClientRequest.prompt().augmentSystemMessage(augmentedSystemText))
+				.build();
 
 		// 5. Add all user messages from the current prompt to memory (after system
 		// message is generated)
@@ -143,10 +143,10 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 		List<Message> assistantMessages = new ArrayList<>();
 		if (chatClientResponse.chatResponse() != null) {
 			assistantMessages = chatClientResponse.chatResponse()
-				.getResults()
-				.stream()
-				.map(g -> (Message) g.getOutput())
-				.toList();
+					.getResults()
+					.stream()
+					.map(g -> (Message) g.getOutput())
+					.toList();
 		}
 		// Handle streaming case where we have a single result
 		else if (chatClientResponse.chatResponse() != null && chatClientResponse.chatResponse().getResult() != null
@@ -161,7 +161,7 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 					this.getConversationId(chatClientResponse.context(), this.defaultConversationId),
 					assistantMessages);
 			List<Message> memoryMessages = this.chatMemory
-				.get(this.getConversationId(chatClientResponse.context(), this.defaultConversationId));
+					.get(this.getConversationId(chatClientResponse.context(), this.defaultConversationId));
 			logger.debug("[PromptChatMemoryAdvisor.after] Memory after ASSISTANT add for conversationId={}: {}",
 					this.getConversationId(chatClientResponse.context(), this.defaultConversationId), memoryMessages);
 		}
@@ -170,17 +170,17 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		// Get the scheduler from BaseAdvisor
 		Scheduler scheduler = this.getScheduler();
 
 		// Process the request with the before method
 		return Mono.just(chatClientRequest)
-			.publishOn(scheduler)
-			.map(request -> this.before(request, streamAdvisorChain))
-			.flatMapMany(streamAdvisorChain::nextStream)
-			.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
-					response -> this.after(response, streamAdvisorChain)));
+				.publishOn(scheduler)
+				.map(request -> this.before(request, streamAdvisorChain))
+				.flatMapMany(streamAdvisorChain::nextStream)
+				.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
+						response -> this.after(response, streamAdvisorChain)));
 	}
 
 	/**
@@ -204,6 +204,7 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Set the system prompt template.
+		 *
 		 * @param systemPromptTemplate the system prompt template
 		 * @return the builder
 		 */
@@ -214,6 +215,7 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Set the conversation id.
+		 *
 		 * @param conversationId the conversation id
 		 * @return the builder
 		 */
@@ -229,6 +231,7 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Set the order.
+		 *
 		 * @param order the order
 		 * @return the builder
 		 */
@@ -239,6 +242,7 @@ public final class PromptChatMemoryAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Build the advisor.
+		 *
 		 * @return the advisor
 		 */
 		public PromptChatMemoryAdvisor build() {

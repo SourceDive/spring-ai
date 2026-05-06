@@ -50,17 +50,17 @@ public class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	public void chat() {
 		var request = ChatRequest.builder(MODEL)
-			.stream(false)
-			.messages(List.of(
-					Message.builder(Role.SYSTEM)
-						.content("You are geography teacher. You are talking to a student.")
-						.build(),
-					Message.builder(Role.USER)
-						.content("What is the capital of Bulgaria and what is the size? "
-								+ "What it the national anthem?")
-						.build()))
-			.options(OllamaOptions.builder().temperature(0.9).build())
-			.build();
+				.stream(false)
+				.messages(List.of(
+						Message.builder(Role.SYSTEM)
+								.content("You are geography teacher. You are talking to a student.")
+								.build(),
+						Message.builder(Role.USER)
+								.content("What is the capital of Bulgaria and what is the size? "
+										+ "What it the national anthem?")
+								.build()))
+				.options(OllamaOptions.builder().temperature(0.9).build())
+				.build();
 
 		ChatResponse response = getOllamaApi().chat(request);
 
@@ -76,12 +76,12 @@ public class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	public void streamingChat() {
 		var request = ChatRequest.builder(MODEL)
-			.stream(true)
-			.messages(List.of(Message.builder(Role.USER)
-				.content("What is the capital of Bulgaria and what is the size? " + "What it the national anthem?")
-				.build()))
-			.options(OllamaOptions.builder().temperature(0.9).build().toMap())
-			.build();
+				.stream(true)
+				.messages(List.of(Message.builder(Role.USER)
+						.content("What is the capital of Bulgaria and what is the size? " + "What it the national anthem?")
+						.build()))
+				.options(OllamaOptions.builder().temperature(0.9).build().toMap())
+				.build();
 
 		Flux<ChatResponse> response = getOllamaApi().streamingChat(request);
 
@@ -90,9 +90,9 @@ public class OllamaApiIT extends BaseOllamaIT {
 
 		assertThat(responses).isNotNull();
 		assertThat(responses.stream()
-			.filter(r -> r.message() != null)
-			.map(r -> r.message().content())
-			.collect(Collectors.joining(System.lineSeparator()))).contains("Sofia");
+				.filter(r -> r.message() != null)
+				.map(r -> r.message().content())
+				.collect(Collectors.joining(System.lineSeparator()))).contains("Sofia");
 
 		ChatResponse lastResponse = responses.get(responses.size() - 1);
 		assertThat(lastResponse.message().content()).isEmpty();

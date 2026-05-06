@@ -52,20 +52,20 @@ public final class ContextualQueryAugmenter implements QueryAugmenter {
 
 	private static final PromptTemplate DEFAULT_PROMPT_TEMPLATE = new PromptTemplate("""
 			Context information is below.
-
+			
 			---------------------
 			{context}
 			---------------------
-
+			
 			Given the context information and no prior knowledge, answer the query.
-
+			
 			Follow these rules:
-
+			
 			1. If the answer is not in the context, just say that you don't know.
 			2. Avoid statements like "Based on the context..." or "The provided information...".
-
+			
 			Query: {query}
-
+			
 			Answer:
 			""");
 
@@ -80,8 +80,8 @@ public final class ContextualQueryAugmenter implements QueryAugmenter {
 	 * Default document formatter that just joins document text with newlines
 	 */
 	private static final Function<List<Document>, String> DEFAULT_DOCUMENT_FORMATTER = documents -> documents.stream()
-		.map(Document::getText)
-		.collect(Collectors.joining(System.lineSeparator()));
+			.map(Document::getText)
+			.collect(Collectors.joining(System.lineSeparator()));
 
 	private final PromptTemplate promptTemplate;
 
@@ -92,8 +92,8 @@ public final class ContextualQueryAugmenter implements QueryAugmenter {
 	private final Function<List<Document>, String> documentFormatter;
 
 	public ContextualQueryAugmenter(@Nullable PromptTemplate promptTemplate,
-			@Nullable PromptTemplate emptyContextPromptTemplate, @Nullable Boolean allowEmptyContext,
-			@Nullable Function<List<Document>, String> documentFormatter) {
+	                                @Nullable PromptTemplate emptyContextPromptTemplate, @Nullable Boolean allowEmptyContext,
+	                                @Nullable Function<List<Document>, String> documentFormatter) {
 		this.promptTemplate = promptTemplate != null ? promptTemplate : DEFAULT_PROMPT_TEMPLATE;
 		this.emptyContextPromptTemplate = emptyContextPromptTemplate != null ? emptyContextPromptTemplate
 				: DEFAULT_EMPTY_CONTEXT_PROMPT_TEMPLATE;

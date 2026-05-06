@@ -46,72 +46,72 @@ public class FunctionCallbackInPromptIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallbackInPromptIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName(),
-					"spring.ai.openai.chat.options.temperature=0.1")
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName(),
+						"spring.ai.openai.chat.options.temperature=0.1")
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, Tokyo, and Paris?");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, Tokyo, and Paris?");
 
-				var promptOptions = OpenAiChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = OpenAiChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 	@Test
 	void streamingFunctionCallTest() {
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName(),
-					"spring.ai.openai.chat.options.temperature=0.5")
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName(),
+						"spring.ai.openai.chat.options.temperature=0.5")
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, Tokyo, and Paris?");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, Tokyo, and Paris?");
 
-				var promptOptions = OpenAiChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = OpenAiChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				Flux<ChatResponse> response = chatModel.stream(new Prompt(List.of(userMessage), promptOptions));
+					Flux<ChatResponse> response = chatModel.stream(new Prompt(List.of(userMessage), promptOptions));
 
-				String content = response.collectList()
-					.block()
-					.stream()
-					.map(ChatResponse::getResults)
-					.flatMap(List::stream)
-					.map(Generation::getOutput)
-					.map(AssistantMessage::getText)
-					.collect(Collectors.joining());
-				logger.info("Response: {}", content);
+					String content = response.collectList()
+							.block()
+							.stream()
+							.map(ChatResponse::getResults)
+							.flatMap(List::stream)
+							.map(Generation::getOutput)
+							.map(AssistantMessage::getText)
+							.collect(Collectors.joining());
+					logger.info("Response: {}", content);
 
-				assertThat(content).contains("30", "10", "15");
-			});
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 }

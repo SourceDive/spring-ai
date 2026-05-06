@@ -53,17 +53,17 @@ public class StabilityAiApiIT {
 	void generateImage() throws IOException {
 
 		List<StabilityAiApi.GenerateImageRequest.TextPrompts> textPrompts = List
-			.of(new StabilityAiApi.GenerateImageRequest.TextPrompts(
-					"A light cream colored mini golden doodle holding a sign that says 'Heading to BARCADE !'", 0.5f));
+				.of(new StabilityAiApi.GenerateImageRequest.TextPrompts(
+						"A light cream colored mini golden doodle holding a sign that says 'Heading to BARCADE !'", 0.5f));
 		var builder = StabilityAiApi.GenerateImageRequest.builder()
-			.textPrompts(textPrompts)
-			.height(1024)
-			.width(1024)
-			.cfgScale(7f)
-			.samples(1)
-			.seed(123L)
-			.steps(30)
-			.stylePreset("photographic");
+				.textPrompts(textPrompts)
+				.height(1024)
+				.width(1024)
+				.cfgScale(7f)
+				.samples(1)
+				.seed(123L)
+				.steps(30)
+				.stylePreset("photographic");
 		StabilityAiApi.GenerateImageRequest request = builder.build();
 		StabilityAiApi.GenerateImageResponse response = this.stabilityAiApi.generateImage(request);
 

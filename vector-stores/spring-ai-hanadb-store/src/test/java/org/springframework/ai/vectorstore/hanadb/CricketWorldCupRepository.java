@@ -43,10 +43,10 @@ public class CricketWorldCupRepository implements HanaVectorRepository<CricketWo
 				""", tableName);
 
 		this.entityManager.createNativeQuery(sql)
-			.setParameter("_id", id)
-			.setParameter("embedding", embedding)
-			.setParameter("content", content)
-			.executeUpdate();
+				.setParameter("_id", id)
+				.setParameter("embedding", embedding)
+				.setParameter("content", content)
+				.executeUpdate();
 	}
 
 	@Override
@@ -77,9 +77,9 @@ public class CricketWorldCupRepository implements HanaVectorRepository<CricketWo
 				""", tableName);
 
 		return this.entityManager.createNativeQuery(sql, CricketWorldCup.class)
-			.setParameter("topK", topK)
-			.setParameter("queryEmbedding", queryEmbedding)
-			.getResultList();
+				.setParameter("topK", topK)
+				.setParameter("queryEmbedding", queryEmbedding)
+				.getResultList();
 	}
 
 }

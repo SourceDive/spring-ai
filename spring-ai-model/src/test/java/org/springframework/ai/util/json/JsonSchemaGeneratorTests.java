@@ -654,7 +654,7 @@ class JsonSchemaGeneratorTests {
 	@Test
 	void throwExceptionWhenTypeIsNull() {
 		assertThatThrownBy(() -> JsonSchemaGenerator.generateForType(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.hasMessage("type cannot be null");
 	}
 
 	static class TestMethods {
@@ -705,19 +705,19 @@ class JsonSchemaGeneratorTests {
 	}
 
 	record AnnotatedPerson(@ToolParam int id, @ToolParam String name,
-			@ToolParam(required = false, description = "The email of the person") String email) {
+	                       @ToolParam(required = false, description = "The email of the person") String email) {
 
 	}
 
 	record JacksonPerson(@JsonProperty(required = true) int id, @JsonProperty(required = true) String name,
-			@JsonProperty String email) {
+	                     @JsonProperty String email) {
 
 	}
 
 	record OpenApiPerson(@Schema(requiredMode = Schema.RequiredMode.REQUIRED) int id,
-			@Schema(requiredMode = Schema.RequiredMode.REQUIRED) String name,
-			@Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED,
-					description = "The email of the person") String email) {
+	                     @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String name,
+	                     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+								 description = "The email of the person") String email) {
 
 	}
 

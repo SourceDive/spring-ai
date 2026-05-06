@@ -59,14 +59,13 @@ public class BasicEvaluationTest {
 		logger.info("Question: " + question);
 		logger.info("Answer:" + answer);
 		PromptTemplate userPromptTemplate = PromptTemplate.builder()
-			.resource(this.userEvaluatorResource)
-			.variables(Map.of("question", question, "answer", answer))
-			.build();
+				.resource(this.userEvaluatorResource)
+				.variables(Map.of("question", question, "answer", answer))
+				.build();
 		SystemMessage systemMessage;
 		if (factBased) {
 			systemMessage = new SystemMessage(this.qaEvaluatorFactBasedAnswerResource);
-		}
-		else {
+		} else {
 			systemMessage = new SystemMessage(this.qaEvaluatorAccurateAnswerResource);
 		}
 		Message userMessage = userPromptTemplate.createMessage();
@@ -78,8 +77,7 @@ public class BasicEvaluationTest {
 			prompt = new Prompt(List.of(userMessage, notRelatedSystemMessage));
 			String reasonForFailure = this.openAiChatModel.call(prompt).getResult().getOutput().getText();
 			fail(reasonForFailure);
-		}
-		else {
+		} else {
 			logger.info("Answer is related to question.");
 			assertThat(yesOrNo).isEqualTo("YES");
 		}

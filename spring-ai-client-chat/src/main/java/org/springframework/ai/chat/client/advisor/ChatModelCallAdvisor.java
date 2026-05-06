@@ -53,9 +53,9 @@ public final class ChatModelCallAdvisor implements CallAdvisor {
 
 		ChatResponse chatResponse = this.chatModel.call(formattedChatClientRequest.prompt());
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponse)
-			.context(Map.copyOf(formattedChatClientRequest.context()))
-			.build();
+				.chatResponse(chatResponse)
+				.context(Map.copyOf(formattedChatClientRequest.context()))
+				.build();
 	}
 
 	private static ChatClientRequest augmentWithFormatInstructions(ChatClientRequest chatClientRequest) {
@@ -66,14 +66,14 @@ public final class ChatModelCallAdvisor implements CallAdvisor {
 		}
 
 		Prompt augmentedPrompt = chatClientRequest.prompt()
-			.augmentUserMessage(userMessage -> userMessage.mutate()
-				.text(userMessage.getText() + System.lineSeparator() + outputFormat)
-				.build());
+				.augmentUserMessage(userMessage -> userMessage.mutate()
+						.text(userMessage.getText() + System.lineSeparator() + outputFormat)
+						.build());
 
 		return ChatClientRequest.builder()
-			.prompt(augmentedPrompt)
-			.context(Map.copyOf(chatClientRequest.context()))
-			.build();
+				.prompt(augmentedPrompt)
+				.context(Map.copyOf(chatClientRequest.context()))
+				.build();
 	}
 
 	@Override

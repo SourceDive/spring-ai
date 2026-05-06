@@ -33,6 +33,7 @@ public interface QueryExpander extends Function<Query, List<Query>> {
 
 	/**
 	 * Expands the given query into a list of queries.
+	 *
 	 * @param query The original query to be expanded
 	 * @return A list of expanded queries
 	 */

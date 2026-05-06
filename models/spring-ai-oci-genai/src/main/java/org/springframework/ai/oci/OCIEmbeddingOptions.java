@@ -53,6 +53,7 @@ public class OCIEmbeddingOptions implements EmbeddingOptions {
 
 	/**
 	 * Not used by OCI GenAI.
+	 *
 	 * @return null
 	 */
 	@Override

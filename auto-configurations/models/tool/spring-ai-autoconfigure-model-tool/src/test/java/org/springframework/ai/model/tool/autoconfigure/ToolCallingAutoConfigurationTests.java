@@ -55,76 +55,76 @@ class ToolCallingAutoConfigurationTests {
 	@Test
 	void beansAreCreated() {
 		new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				var toolCallbackResolver = context.getBean(ToolCallbackResolver.class);
-				assertThat(toolCallbackResolver).isInstanceOf(DelegatingToolCallbackResolver.class);
+				.run(context -> {
+					var toolCallbackResolver = context.getBean(ToolCallbackResolver.class);
+					assertThat(toolCallbackResolver).isInstanceOf(DelegatingToolCallbackResolver.class);
 
-				var toolExecutionExceptionProcessor = context.getBean(ToolExecutionExceptionProcessor.class);
-				assertThat(toolExecutionExceptionProcessor).isInstanceOf(DefaultToolExecutionExceptionProcessor.class);
+					var toolExecutionExceptionProcessor = context.getBean(ToolExecutionExceptionProcessor.class);
+					assertThat(toolExecutionExceptionProcessor).isInstanceOf(DefaultToolExecutionExceptionProcessor.class);
 
-				var toolCallingManager = context.getBean(ToolCallingManager.class);
-				assertThat(toolCallingManager).isInstanceOf(DefaultToolCallingManager.class);
-			});
+					var toolCallingManager = context.getBean(ToolCallingManager.class);
+					assertThat(toolCallingManager).isInstanceOf(DefaultToolCallingManager.class);
+				});
 	}
 
 	@Test
 	void resolveMultipleFunctionAndToolCallbacks() {
 		new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class))
-			.withUserConfiguration(Config.class)
-			.run(context -> {
-				var toolCallbackResolver = context.getBean(ToolCallbackResolver.class);
-				assertThat(toolCallbackResolver).isInstanceOf(DelegatingToolCallbackResolver.class);
+				.withUserConfiguration(Config.class)
+				.run(context -> {
+					var toolCallbackResolver = context.getBean(ToolCallbackResolver.class);
+					assertThat(toolCallbackResolver).isInstanceOf(DelegatingToolCallbackResolver.class);
 
-				assertThat(toolCallbackResolver.resolve("getForecast")).isNotNull();
-				assertThat(toolCallbackResolver.resolve("getForecast").getToolDefinition().name())
-					.isEqualTo("getForecast");
+					assertThat(toolCallbackResolver.resolve("getForecast")).isNotNull();
+					assertThat(toolCallbackResolver.resolve("getForecast").getToolDefinition().name())
+							.isEqualTo("getForecast");
 
-				assertThat(toolCallbackResolver.resolve("getAlert")).isNotNull();
-				assertThat(toolCallbackResolver.resolve("getAlert").getToolDefinition().name()).isEqualTo("getAlert");
+					assertThat(toolCallbackResolver.resolve("getAlert")).isNotNull();
+					assertThat(toolCallbackResolver.resolve("getAlert").getToolDefinition().name()).isEqualTo("getAlert");
 
-				assertThat(toolCallbackResolver.resolve("weatherFunction1")).isNotNull();
-				assertThat(toolCallbackResolver.resolve("weatherFunction1").getToolDefinition().name())
-					.isEqualTo("weatherFunction1");
+					assertThat(toolCallbackResolver.resolve("weatherFunction1")).isNotNull();
+					assertThat(toolCallbackResolver.resolve("weatherFunction1").getToolDefinition().name())
+							.isEqualTo("weatherFunction1");
 
-				assertThat(toolCallbackResolver.resolve("getCurrentWeather3")).isNotNull();
-				assertThat(toolCallbackResolver.resolve("getCurrentWeather3").getToolDefinition().name())
-					.isEqualTo("getCurrentWeather3");
+					assertThat(toolCallbackResolver.resolve("getCurrentWeather3")).isNotNull();
+					assertThat(toolCallbackResolver.resolve("getCurrentWeather3").getToolDefinition().name())
+							.isEqualTo("getCurrentWeather3");
 
-				assertThat(toolCallbackResolver.resolve("getCurrentWeather4")).isNotNull();
-				assertThat(toolCallbackResolver.resolve("getCurrentWeather4").getToolDefinition().name())
-					.isEqualTo("getCurrentWeather4");
+					assertThat(toolCallbackResolver.resolve("getCurrentWeather4")).isNotNull();
+					assertThat(toolCallbackResolver.resolve("getCurrentWeather4").getToolDefinition().name())
+							.isEqualTo("getCurrentWeather4");
 
-				assertThat(toolCallbackResolver.resolve("getCurrentWeather5")).isNotNull();
-				assertThat(toolCallbackResolver.resolve("getCurrentWeather5").getToolDefinition().name())
-					.isEqualTo("getCurrentWeather5");
-			});
+					assertThat(toolCallbackResolver.resolve("getCurrentWeather5")).isNotNull();
+					assertThat(toolCallbackResolver.resolve("getCurrentWeather5").getToolDefinition().name())
+							.isEqualTo("getCurrentWeather5");
+				});
 	}
 
 	@Test
 	void resolveMissingToolCallbacks() {
 		new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class))
-			.withUserConfiguration(Config.class)
-			.run(context -> {
-				var toolCallbackResolver = context.getBean(ToolCallbackResolver.class);
-				assertThat(toolCallbackResolver).isInstanceOf(DelegatingToolCallbackResolver.class);
+				.withUserConfiguration(Config.class)
+				.run(context -> {
+					var toolCallbackResolver = context.getBean(ToolCallbackResolver.class);
+					assertThat(toolCallbackResolver).isInstanceOf(DelegatingToolCallbackResolver.class);
 
-				assertThat(toolCallbackResolver.resolve("NonExisting")).isNull();
-			});
+					assertThat(toolCallbackResolver.resolve("NonExisting")).isNull();
+				});
 	}
 
 	@Test
 	void observationFilterDefault() {
 		new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class))
-			.withUserConfiguration(Config.class)
-			.run(context -> assertThat(context).doesNotHaveBean(ToolCallingContentObservationFilter.class));
+				.withUserConfiguration(Config.class)
+				.run(context -> assertThat(context).doesNotHaveBean(ToolCallingContentObservationFilter.class));
 	}
 
 	@Test
 	void observationFilterEnabled() {
 		new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.tools.observations.include-content=true")
-			.withUserConfiguration(Config.class)
-			.run(context -> assertThat(context).hasSingleBean(ToolCallingContentObservationFilter.class));
+				.withPropertyValues("spring.ai.tools.observations.include-content=true")
+				.withUserConfiguration(Config.class)
+				.run(context -> assertThat(context).hasSingleBean(ToolCallingContentObservationFilter.class));
 	}
 
 	static class WeatherService {
@@ -166,26 +166,26 @@ class ToolCallingAutoConfigurationTests {
 		@Bean
 		public ToolCallback functionCallbacks3() {
 			return FunctionToolCallback.builder("getCurrentWeather3", (Request request) -> "15.0°C")
-				.description("Gets the weather in location")
-				.inputType(Request.class)
-				.build();
+					.description("Gets the weather in location")
+					.inputType(Request.class)
+					.build();
 		}
 
 		@Bean
 		public ToolCallback functionCallbacks4() {
 			return FunctionToolCallback.builder("getCurrentWeather4", (Request request) -> "15.0°C")
-				.description("Gets the weather in location")
-				.inputType(Request.class)
-				.build();
+					.description("Gets the weather in location")
+					.inputType(Request.class)
+					.build();
 
 		}
 
 		@Bean
 		public ToolCallback toolCallbacks5() {
 			return FunctionToolCallback.builder("getCurrentWeather5", (Request request) -> "15.0°C")
-				.description("Gets the weather in location")
-				.inputType(Request.class)
-				.build();
+					.description("Gets the weather in location")
+					.inputType(Request.class)
+					.build();
 
 		}
 
@@ -193,9 +193,9 @@ class ToolCallingAutoConfigurationTests {
 		public ToolCallbackProvider blabla() {
 			return new StaticToolCallbackProvider(
 					FunctionToolCallback.builder("getCurrentWeather5", (Request request) -> "15.0°C")
-						.description("Gets the weather in location")
-						.inputType(Request.class)
-						.build());
+							.description("Gets the weather in location")
+							.inputType(Request.class)
+							.build());
 
 		}
 
@@ -203,10 +203,10 @@ class ToolCallingAutoConfigurationTests {
 		public ToolCallback toolCallbacks6() {
 			var toolMethod = ReflectionUtils.findMethod(WeatherService.class, "getAlert", String.class);
 			return MethodToolCallback.builder()
-				.toolDefinition(ToolDefinitions.builder(toolMethod).build())
-				.toolMethod(toolMethod)
-				.toolObject(new WeatherService())
-				.build();
+					.toolDefinition(ToolDefinitions.builder(toolMethod).build())
+					.toolMethod(toolMethod)
+					.toolObject(new WeatherService())
+					.build();
 		}
 
 		public record Request(String location) {

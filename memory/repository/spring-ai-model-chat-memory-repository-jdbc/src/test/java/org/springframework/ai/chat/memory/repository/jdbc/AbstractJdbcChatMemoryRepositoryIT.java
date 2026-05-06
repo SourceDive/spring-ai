@@ -66,7 +66,7 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 	protected JdbcTemplate jdbcTemplate;
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM"})
 	void saveMessagesSingleMessage(String content, MessageType messageType) {
 		String conversationId = UUID.randomUUID().toString();
 		var message = switch (messageType) {
@@ -82,9 +82,9 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 
 		// Use dialect to get the appropriate SQL query
 		JdbcChatMemoryRepositoryDialect dialect = JdbcChatMemoryRepositoryDialect
-			.from(this.jdbcTemplate.getDataSource());
+				.from(this.jdbcTemplate.getDataSource());
 		String selectSql = dialect.getSelectMessagesSql()
-			.replace("content, type", "conversation_id, content, type, timestamp");
+				.replace("content, type", "conversation_id, content, type, timestamp");
 		var result = this.jdbcTemplate.queryForMap(selectSql, conversationId);
 
 		assertThat(result.size()).isEqualTo(4);
@@ -107,9 +107,9 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 
 		// Use dialect to get the appropriate SQL query
 		JdbcChatMemoryRepositoryDialect dialect = JdbcChatMemoryRepositoryDialect
-			.from(this.jdbcTemplate.getDataSource());
+				.from(this.jdbcTemplate.getDataSource());
 		String selectSql = dialect.getSelectMessagesSql()
-			.replace("content, type", "conversation_id, content, type, timestamp");
+				.replace("content, type", "conversation_id, content, type, timestamp");
 		var results = this.jdbcTemplate.queryForList(selectSql, conversationId);
 
 		assertThat(results).hasSize(messages.size());
@@ -196,7 +196,7 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 	/**
 	 * Base configuration for all integration tests.
 	 */
-	@ImportAutoConfiguration({ DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class })
+	@ImportAutoConfiguration({DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class})
 	static class TestConfiguration {
 
 		@Bean

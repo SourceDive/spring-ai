@@ -44,7 +44,7 @@ import org.springframework.util.MimeTypeUtils;
  * <li>video/mpegps
  * <li>video/flv
  * </ul>
- *
+ * <p>
  * https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini
  *
  * @author Christian Tzolov
@@ -76,8 +76,7 @@ public abstract class MimeTypeDetector {
 	public static MimeType getMimeType(Resource resource) {
 		try {
 			return getMimeType(resource.getURI());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IllegalArgumentException(
 					String.format("Unable to detect the MIME type of '%s'. Please provide it explicitly.",
 							resource.getFilename()),

@@ -81,7 +81,7 @@ public class MessageTypeContentTests {
 	public void systemMessageSimpleContentType() {
 
 		given(this.openAiApi.chatCompletionEntity(this.pomptCaptor.capture(), this.headersCaptor.capture()))
-			.willReturn(Mockito.mock(ResponseEntity.class));
+				.willReturn(Mockito.mock(ResponseEntity.class));
 
 		this.chatModel.call(new Prompt(List.of(new SystemMessage("test message"))));
 
@@ -93,7 +93,7 @@ public class MessageTypeContentTests {
 	public void userMessageSimpleContentType() {
 
 		given(this.openAiApi.chatCompletionEntity(this.pomptCaptor.capture(), this.headersCaptor.capture()))
-			.willReturn(Mockito.mock(ResponseEntity.class));
+				.willReturn(Mockito.mock(ResponseEntity.class));
 
 		this.chatModel.call(new Prompt(List.of(new UserMessage("test message"))));
 
@@ -104,7 +104,7 @@ public class MessageTypeContentTests {
 	public void streamUserMessageSimpleContentType() {
 
 		given(this.openAiApi.chatCompletionStream(this.pomptCaptor.capture(), this.headersCaptor.capture()))
-			.willReturn(this.fluxResponse);
+				.willReturn(this.fluxResponse);
 
 		this.chatModel.stream(new Prompt(List.of(new UserMessage("test message")))).subscribe();
 
@@ -124,13 +124,13 @@ public class MessageTypeContentTests {
 	public void userMessageWithMediaType() throws MalformedURLException {
 
 		given(this.openAiApi.chatCompletionEntity(this.pomptCaptor.capture(), this.headersCaptor.capture()))
-			.willReturn(Mockito.mock(ResponseEntity.class));
+				.willReturn(Mockito.mock(ResponseEntity.class));
 
 		URI mediaUri = URI.create("http://test");
 		this.chatModel.call(new Prompt(List.of(UserMessage.builder()
-			.text("test message")
-			.media(List.of(Media.builder().mimeType(MimeTypeUtils.IMAGE_JPEG).data(mediaUri).build()))
-			.build())));
+				.text("test message")
+				.media(List.of(Media.builder().mimeType(MimeTypeUtils.IMAGE_JPEG).data(mediaUri).build()))
+				.build())));
 
 		validateComplexContent(this.pomptCaptor.getValue());
 	}
@@ -139,13 +139,13 @@ public class MessageTypeContentTests {
 	public void streamUserMessageWithMediaType() throws MalformedURLException {
 
 		given(this.openAiApi.chatCompletionStream(this.pomptCaptor.capture(), this.headersCaptor.capture()))
-			.willReturn(this.fluxResponse);
+				.willReturn(this.fluxResponse);
 
 		URI mediaUrl = URI.create("http://test");
 		this.chatModel.stream(new Prompt(List.of(UserMessage.builder()
-			.text("test message")
-			.media(List.of(Media.builder().mimeType(MimeTypeUtils.IMAGE_JPEG).data(mediaUrl).build()))
-			.build()))).subscribe();
+				.text("test message")
+				.media(List.of(Media.builder().mimeType(MimeTypeUtils.IMAGE_JPEG).data(mediaUrl).build()))
+				.build()))).subscribe();
 
 		validateComplexContent(this.pomptCaptor.getValue());
 	}
@@ -158,7 +158,7 @@ public class MessageTypeContentTests {
 
 		// Note: apparently the ArgumentCaptor converts the MediaContent into Map<String,
 		// Object>
-		@SuppressWarnings({ "unused", "unchecked" })
+		@SuppressWarnings({"unused", "unchecked"})
 		List<Map<String, Object>> mediaContents = (List<Map<String, Object>>) userMessage.rawContent();
 
 		assertThat(mediaContents).hasSize(2);

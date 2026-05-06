@@ -49,7 +49,7 @@ public class ChatClientObservationContext extends Observation.Context {
 	private final boolean stream;
 
 	ChatClientObservationContext(ChatClientRequest chatClientRequest, List<? extends Advisor> advisors,
-			boolean isStream) {
+	                             boolean isStream) {
 		Assert.notNull(chatClientRequest, "chatClientRequest cannot be null");
 		Assert.notNull(advisors, "advisors cannot be null");
 		Assert.noNullElements(advisors, "advisors cannot contain null elements");

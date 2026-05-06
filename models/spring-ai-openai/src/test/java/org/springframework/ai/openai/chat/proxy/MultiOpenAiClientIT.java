@@ -51,27 +51,27 @@ class MultiOpenAiClientIT {
 	void multiClientFlow() {
 		// Derive a new OpenAiApi for Groq (Llama3)
 		OpenAiApi groqApi = this.baseOpenAiApi.mutate()
-			.baseUrl("https://api.groq.com/openai")
-			.apiKey(System.getenv("GROQ_API_KEY"))
-			.build();
+				.baseUrl("https://api.groq.com/openai")
+				.apiKey(System.getenv("GROQ_API_KEY"))
+				.build();
 
 		// Derive a new OpenAiApi for OpenAI GPT-4
 		OpenAiApi gpt4Api = this.baseOpenAiApi.mutate()
-			.baseUrl("https://api.openai.com")
-			.apiKey(System.getenv("OPENAI_API_KEY"))
-			.build();
+				.baseUrl("https://api.openai.com")
+				.apiKey(System.getenv("OPENAI_API_KEY"))
+				.build();
 
 		// Derive a new OpenAiChatModel for Groq
 		OpenAiChatModel groqModel = this.baseChatModel.mutate()
-			.openAiApi(groqApi)
-			.defaultOptions(OpenAiChatOptions.builder().model("llama3-70b-8192").temperature(0.5).build())
-			.build();
+				.openAiApi(groqApi)
+				.defaultOptions(OpenAiChatOptions.builder().model("llama3-70b-8192").temperature(0.5).build())
+				.build();
 
 		// Derive a new OpenAiChatModel for GPT-4
 		OpenAiChatModel gpt4Model = this.baseChatModel.mutate()
-			.openAiApi(gpt4Api)
-			.defaultOptions(OpenAiChatOptions.builder().model("gpt-4").temperature(0.7).build())
-			.build();
+				.openAiApi(gpt4Api)
+				.defaultOptions(OpenAiChatOptions.builder().model("gpt-4").temperature(0.7).build())
+				.build();
 
 		// Simple prompt for both models
 		String prompt = "What is the capital of France?";

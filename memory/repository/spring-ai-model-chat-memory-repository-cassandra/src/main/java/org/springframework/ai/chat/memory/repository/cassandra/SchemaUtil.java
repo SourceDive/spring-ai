@@ -43,8 +43,7 @@ public final class SchemaUtil {
 			logger.warn("Waiting for cluster schema agreement, sleeping 10s…");
 			try {
 				Thread.sleep(Duration.ofSeconds(10).toMillis());
-			}
-			catch (InterruptedException ex) {
+			} catch (InterruptedException ex) {
 				Thread.currentThread().interrupt();
 				throw new IllegalStateException(ex);
 			}
@@ -57,9 +56,9 @@ public final class SchemaUtil {
 	public static void ensureKeyspaceExists(CqlSession session, String keyspaceName) {
 		if (session.getMetadata().getKeyspace(keyspaceName).isEmpty()) {
 			SimpleStatement keyspaceStmt = SchemaBuilder.createKeyspace(keyspaceName)
-				.ifNotExists()
-				.withSimpleStrategy(1)
-				.build();
+					.ifNotExists()
+					.withSimpleStrategy(1)
+					.build();
 
 			logger.debug("Executing {}", keyspaceStmt.getQuery());
 			session.execute(keyspaceStmt);

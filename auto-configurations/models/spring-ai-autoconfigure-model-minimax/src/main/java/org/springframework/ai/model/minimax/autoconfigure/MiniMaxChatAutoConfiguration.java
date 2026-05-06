@@ -49,24 +49,24 @@ import org.springframework.web.client.RestClient;
  * @author Geng Rong
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class})
 @ConditionalOnClass(MiniMaxApi.class)
-@EnableConfigurationProperties({ MiniMaxConnectionProperties.class, MiniMaxChatProperties.class })
+@EnableConfigurationProperties({MiniMaxConnectionProperties.class, MiniMaxChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.MINIMAX,
 		matchIfMissing = true)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class})
 public class MiniMaxChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MiniMaxChatModel miniMaxChatModel(MiniMaxConnectionProperties commonProperties,
-			MiniMaxChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
-			ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> openAiToolExecutionEligibilityPredicate) {
+	                                         MiniMaxChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                         ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
+	                                         ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                         ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                         ObjectProvider<ToolExecutionEligibilityPredicate> openAiToolExecutionEligibilityPredicate) {
 
 		var miniMaxApi = miniMaxApi(chatProperties.getBaseUrl(), commonProperties.getBaseUrl(),
 				chatProperties.getApiKey(), commonProperties.getApiKey(),
@@ -81,7 +81,7 @@ public class MiniMaxChatAutoConfiguration {
 	}
 
 	private MiniMaxApi miniMaxApi(String baseUrl, String commonBaseUrl, String apiKey, String commonApiKey,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                              RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		String resolvedBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;
 		Assert.hasText(resolvedBaseUrl, "MiniMax base URL must be set");

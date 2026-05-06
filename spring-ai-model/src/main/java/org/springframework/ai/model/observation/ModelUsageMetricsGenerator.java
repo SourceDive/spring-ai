@@ -47,29 +47,29 @@ public final class ModelUsageMetricsGenerator {
 
 		if (usage.getPromptTokens() != null) {
 			Counter.builder(AiObservationMetricNames.TOKEN_USAGE.value())
-				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-				.description(DESCRIPTION)
-				.tags(createTags(context))
-				.register(meterRegistry)
-				.increment(usage.getPromptTokens());
+					.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+					.description(DESCRIPTION)
+					.tags(createTags(context))
+					.register(meterRegistry)
+					.increment(usage.getPromptTokens());
 		}
 
 		if (usage.getCompletionTokens() != null) {
 			Counter.builder(AiObservationMetricNames.TOKEN_USAGE.value())
-				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
-				.description(DESCRIPTION)
-				.tags(createTags(context))
-				.register(meterRegistry)
-				.increment(usage.getCompletionTokens());
+					.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
+					.description(DESCRIPTION)
+					.tags(createTags(context))
+					.register(meterRegistry)
+					.increment(usage.getCompletionTokens());
 		}
 
 		if (usage.getTotalTokens() != null) {
 			Counter.builder(AiObservationMetricNames.TOKEN_USAGE.value())
-				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-				.description(DESCRIPTION)
-				.tags(createTags(context))
-				.register(meterRegistry)
-				.increment(usage.getTotalTokens());
+					.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+					.description(DESCRIPTION)
+					.tags(createTags(context))
+					.register(meterRegistry)
+					.increment(usage.getTotalTokens());
 		}
 
 	}

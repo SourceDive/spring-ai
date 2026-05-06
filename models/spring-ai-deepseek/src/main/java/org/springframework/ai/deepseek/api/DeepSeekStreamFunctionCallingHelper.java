@@ -100,12 +100,10 @@ public class DeepSeekStreamFunctionCallingHelper {
 					toolCalls.add(lastPreviousTooCall);
 				}
 				toolCalls.add(currentToolCall);
-			}
-			else {
+			} else {
 				toolCalls.add(merge(lastPreviousTooCall, currentToolCall));
 			}
-		}
-		else {
+		} else {
 			if (lastPreviousTooCall != null) {
 				toolCalls.add(lastPreviousTooCall);
 			}

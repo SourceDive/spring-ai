@@ -31,6 +31,7 @@ public class SpeechMessage {
 
 	/**
 	 * Constructs a new {@link SpeechMessage} object with the given text.
+	 *
 	 * @param text the text to be converted to speech
 	 */
 	public SpeechMessage(String text) {
@@ -39,6 +40,7 @@ public class SpeechMessage {
 
 	/**
 	 * Returns the text of this speech message.
+	 *
 	 * @return the text of this speech message
 	 */
 	public String getText() {
@@ -47,6 +49,7 @@ public class SpeechMessage {
 
 	/**
 	 * Sets the text of this speech message.
+	 *
 	 * @param text the new text for this speech message
 	 */
 	public void setText(String text) {

@@ -50,58 +50,58 @@ class CassandraChatMemoryRepositoryAutoConfigurationIT {
 	static CassandraContainer cassandraContainer = new CassandraContainer(DEFAULT_IMAGE_NAME.withTag("5.0"));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(CassandraChatMemoryRepositoryAutoConfiguration.class,
-				CassandraAutoConfiguration.class))
-		.withPropertyValues("spring.ai.chat.memory.repository.cassandra.keyspace=test_autoconfigure");
+			.withConfiguration(AutoConfigurations.of(CassandraChatMemoryRepositoryAutoConfiguration.class,
+					CassandraAutoConfiguration.class))
+			.withPropertyValues("spring.ai.chat.memory.repository.cassandra.keyspace=test_autoconfigure");
 
 	@Test
 	void addAndGet() {
 		this.contextRunner.withPropertyValues("spring.cassandra.contactPoints=" + getContactPointHost())
-			.withPropertyValues("spring.cassandra.port=" + getContactPointPort())
-			.withPropertyValues("spring.cassandra.localDatacenter=" + cassandraContainer.getLocalDatacenter())
-			.withPropertyValues("spring.ai.chat.memory.repository.cassandra.time-to-live=" + getTimeToLive())
-			.run(context -> {
-				CassandraChatMemoryRepository memory = context.getBean(CassandraChatMemoryRepository.class);
+				.withPropertyValues("spring.cassandra.port=" + getContactPointPort())
+				.withPropertyValues("spring.cassandra.localDatacenter=" + cassandraContainer.getLocalDatacenter())
+				.withPropertyValues("spring.ai.chat.memory.repository.cassandra.time-to-live=" + getTimeToLive())
+				.run(context -> {
+					CassandraChatMemoryRepository memory = context.getBean(CassandraChatMemoryRepository.class);
 
-				String sessionId = UUIDs.timeBased().toString();
-				assertThat(memory.findByConversationId(sessionId)).isEmpty();
+					String sessionId = UUIDs.timeBased().toString();
+					assertThat(memory.findByConversationId(sessionId)).isEmpty();
 
-				memory.saveAll(sessionId, List.of(new UserMessage("test question")));
+					memory.saveAll(sessionId, List.of(new UserMessage("test question")));
 
-				assertThat(memory.findByConversationId(sessionId)).hasSize(1);
-				assertThat(memory.findByConversationId(sessionId).get(0).getMessageType()).isEqualTo(MessageType.USER);
-				assertThat(memory.findByConversationId(sessionId).get(0).getText()).isEqualTo("test question");
+					assertThat(memory.findByConversationId(sessionId)).hasSize(1);
+					assertThat(memory.findByConversationId(sessionId).get(0).getMessageType()).isEqualTo(MessageType.USER);
+					assertThat(memory.findByConversationId(sessionId).get(0).getText()).isEqualTo("test question");
 
-				memory.deleteByConversationId(sessionId);
-				assertThat(memory.findByConversationId(sessionId)).isEmpty();
+					memory.deleteByConversationId(sessionId);
+					assertThat(memory.findByConversationId(sessionId)).isEmpty();
 
-				memory.saveAll(sessionId,
-						List.of(new UserMessage("test question"), new AssistantMessage("test answer")));
+					memory.saveAll(sessionId,
+							List.of(new UserMessage("test question"), new AssistantMessage("test answer")));
 
-				assertThat(memory.findByConversationId(sessionId)).hasSize(2);
-				assertThat(memory.findByConversationId(sessionId).get(1).getMessageType())
-					.isEqualTo(MessageType.ASSISTANT);
-				assertThat(memory.findByConversationId(sessionId).get(1).getText()).isEqualTo("test answer");
-				assertThat(memory.findByConversationId(sessionId).get(0).getMessageType()).isEqualTo(MessageType.USER);
-				assertThat(memory.findByConversationId(sessionId).get(0).getText()).isEqualTo("test question");
+					assertThat(memory.findByConversationId(sessionId)).hasSize(2);
+					assertThat(memory.findByConversationId(sessionId).get(1).getMessageType())
+							.isEqualTo(MessageType.ASSISTANT);
+					assertThat(memory.findByConversationId(sessionId).get(1).getText()).isEqualTo("test answer");
+					assertThat(memory.findByConversationId(sessionId).get(0).getMessageType()).isEqualTo(MessageType.USER);
+					assertThat(memory.findByConversationId(sessionId).get(0).getText()).isEqualTo("test question");
 
-				CassandraChatMemoryRepositoryProperties properties = context
-					.getBean(CassandraChatMemoryRepositoryProperties.class);
-				assertThat(properties.getTimeToLive()).isEqualTo(getTimeToLive());
-			});
+					CassandraChatMemoryRepositoryProperties properties = context
+							.getBean(CassandraChatMemoryRepositoryProperties.class);
+					assertThat(properties.getTimeToLive()).isEqualTo(getTimeToLive());
+				});
 	}
 
 	@Test
 	void compareTimeToLive_ISO8601Format() {
 		this.contextRunner.withPropertyValues("spring.cassandra.contactPoints=" + getContactPointHost())
-			.withPropertyValues("spring.cassandra.port=" + getContactPointPort())
-			.withPropertyValues("spring.cassandra.localDatacenter=" + cassandraContainer.getLocalDatacenter())
-			.withPropertyValues("spring.ai.chat.memory.repository.cassandra.time-to-live=" + getTimeToLiveString())
-			.run(context -> {
-				CassandraChatMemoryRepositoryProperties properties = context
-					.getBean(CassandraChatMemoryRepositoryProperties.class);
-				assertThat(properties.getTimeToLive()).isEqualTo(Duration.parse(getTimeToLiveString()));
-			});
+				.withPropertyValues("spring.cassandra.port=" + getContactPointPort())
+				.withPropertyValues("spring.cassandra.localDatacenter=" + cassandraContainer.getLocalDatacenter())
+				.withPropertyValues("spring.ai.chat.memory.repository.cassandra.time-to-live=" + getTimeToLiveString())
+				.run(context -> {
+					CassandraChatMemoryRepositoryProperties properties = context
+							.getBean(CassandraChatMemoryRepositoryProperties.class);
+					assertThat(properties.getTimeToLive()).isEqualTo(Duration.parse(getTimeToLiveString()));
+				});
 	}
 
 	private String getContactPointHost() {

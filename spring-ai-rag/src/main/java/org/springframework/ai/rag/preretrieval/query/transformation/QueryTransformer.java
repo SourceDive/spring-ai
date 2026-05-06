@@ -32,6 +32,7 @@ public interface QueryTransformer extends Function<Query, Query> {
 
 	/**
 	 * Transforms the given query according to the implemented strategy.
+	 *
 	 * @param query The original query to transform
 	 * @return The transformed query
 	 */

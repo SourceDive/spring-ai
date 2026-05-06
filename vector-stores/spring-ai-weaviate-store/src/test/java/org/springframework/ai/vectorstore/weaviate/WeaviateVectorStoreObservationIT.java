@@ -59,10 +59,10 @@ public class WeaviateVectorStoreObservationIT {
 
 	@Container
 	static WeaviateContainer weaviateContainer = new WeaviateContainer(WeaviateImage.DEFAULT_IMAGE)
-		.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
+			.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(Config.class);
+			.withUserConfiguration(Config.class);
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -73,8 +73,7 @@ public class WeaviateVectorStoreObservationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -91,61 +90,61 @@ public class WeaviateVectorStoreObservationIT {
 			vectorStore.add(this.documents);
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.WEAVIATE.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.WEAVIATE.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), "SpringAiWeaviate")
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.WEAVIATE.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.WEAVIATE.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), "SpringAiWeaviate")
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
 
 			assertThat(results).isNotEmpty();
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.WEAVIATE.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.WEAVIATE.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.WEAVIATE.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.WEAVIATE.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
 
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
-						"What is Great Depression")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), "SpringAiWeaviate")
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
-						"0.0")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
+							"What is Great Depression")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), "SpringAiWeaviate")
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
+							"0.0")
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			// vectorStore.delete(documents.stream().map(Document::getId).toList());
 
@@ -167,10 +166,10 @@ public class WeaviateVectorStoreObservationIT {
 					new io.weaviate.client.Config("http", weaviateContainer.getHttpHostAddress()));
 
 			return WeaviateVectorStore.builder(weaviateClient, embeddingModel)
-				.consistencyLevel(WeaviateVectorStore.ConsistentLevel.ONE)
-				.observationRegistry(observationRegistry)
-				.batchingStrategy(new TokenCountBatchingStrategy())
-				.build();
+					.consistencyLevel(WeaviateVectorStore.ConsistentLevel.ONE)
+					.observationRegistry(observationRegistry)
+					.batchingStrategy(new TokenCountBatchingStrategy())
+					.build();
 		}
 
 		@Bean

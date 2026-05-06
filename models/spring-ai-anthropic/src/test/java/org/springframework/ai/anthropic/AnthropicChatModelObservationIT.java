@@ -69,13 +69,13 @@ public class AnthropicChatModelObservationIT {
 	@Test
 	void observationForChatOperation() {
 		var options = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
-			.maxTokens(2048)
-			.stopSequences(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topK(1)
-			.topP(1.0)
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
+				.maxTokens(2048)
+				.stopSequences(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topK(1)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -91,13 +91,13 @@ public class AnthropicChatModelObservationIT {
 	@Test
 	void observationForStreamingChatOperation() {
 		var options = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
-			.maxTokens(2048)
-			.stopSequences(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topK(1)
-			.topP(1.0)
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
+				.maxTokens(2048)
+				.stopSequences(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topK(1)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -108,10 +108,10 @@ public class AnthropicChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(3);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.filter(r -> r.getResult() != null)
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.filter(r -> r.getResult() != null)
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -124,34 +124,34 @@ public class AnthropicChatModelObservationIT {
 
 	private void validate(ChatResponseMetadata responseMetadata, String finishReasons) {
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("chat " + AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.ANTHROPIC.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_K.asString(), "1")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_ID.asString(), responseMetadata.getId())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(), finishReasons)
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("chat " + AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.ANTHROPIC.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						AnthropicApi.ChatModel.CLAUDE_3_HAIKU.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_K.asString(), "1")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_ID.asString(), responseMetadata.getId())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(), finishReasons)
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -169,7 +169,7 @@ public class AnthropicChatModelObservationIT {
 
 		@Bean
 		public AnthropicChatModel anthropicChatModel(AnthropicApi anthropicApi,
-				TestObservationRegistry observationRegistry) {
+		                                             TestObservationRegistry observationRegistry) {
 			return new AnthropicChatModel(anthropicApi, AnthropicChatOptions.builder().build(),
 					ToolCallingManager.builder().build(), RetryTemplate.defaultInstance(), observationRegistry);
 		}

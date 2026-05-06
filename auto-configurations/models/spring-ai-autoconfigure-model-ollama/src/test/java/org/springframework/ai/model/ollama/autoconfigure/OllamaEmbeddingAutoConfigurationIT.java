@@ -43,10 +43,10 @@ public class OllamaEmbeddingAutoConfigurationIT extends BaseOllamaIT {
 	private static final String MODEL_NAME = OllamaModel.NOMIC_EMBED_TEXT.getName();
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.ollama.embedding.options.model=" + MODEL_NAME,
-				"spring.ai.ollama.base-url=" + getBaseUrl())
-		.withConfiguration(
-				AutoConfigurations.of(RestClientAutoConfiguration.class, OllamaEmbeddingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.ollama.embedding.options.model=" + MODEL_NAME,
+					"spring.ai.ollama.base-url=" + getBaseUrl())
+			.withConfiguration(
+					AutoConfigurations.of(RestClientAutoConfiguration.class, OllamaEmbeddingAutoConfiguration.class));
 
 	@BeforeAll
 	public static void beforeAll() throws IOException, InterruptedException {
@@ -68,18 +68,18 @@ public class OllamaEmbeddingAutoConfigurationIT extends BaseOllamaIT {
 	@Test
 	public void embeddingWithPull() {
 		this.contextRunner.withPropertyValues("spring.ai.ollama.init.pull-model-strategy=when_missing")
-			.withPropertyValues("spring.ai.ollama.embedding.options.model=all-minilm")
-			.run(context -> {
-				var model = "all-minilm";
-				OllamaApi ollamaApi = context.getBean(OllamaApi.class);
-				var modelManager = new OllamaModelManager(ollamaApi);
-				assertThat(modelManager.isModelAvailable(model)).isTrue();
+				.withPropertyValues("spring.ai.ollama.embedding.options.model=all-minilm")
+				.run(context -> {
+					var model = "all-minilm";
+					OllamaApi ollamaApi = context.getBean(OllamaApi.class);
+					var modelManager = new OllamaModelManager(ollamaApi);
+					assertThat(modelManager.isModelAvailable(model)).isTrue();
 
-				OllamaEmbeddingModel embeddingModel = context.getBean(OllamaEmbeddingModel.class);
-				EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of("Hello World"));
-				assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
-				modelManager.deleteModel(model);
-			});
+					OllamaEmbeddingModel embeddingModel = context.getBean(OllamaEmbeddingModel.class);
+					EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of("Hello World"));
+					assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
+					modelManager.deleteModel(model);
+				});
 	}
 
 	@Test

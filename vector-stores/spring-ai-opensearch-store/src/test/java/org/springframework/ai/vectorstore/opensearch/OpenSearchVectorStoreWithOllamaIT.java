@@ -91,9 +91,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 	private static void ensureModelIsPresent(final String model) {
 		final OllamaApi api = OllamaApi.builder().baseUrl(OLLAMA_LOCAL_URL).build();
 		final var modelManagementOptions = ModelManagementOptions.builder()
-			.maxRetries(DEFAULT_MAX_RETRIES)
-			.timeout(DEFAULT_TIMEOUT)
-			.build();
+				.maxRetries(DEFAULT_MAX_RETRIES)
+				.timeout(DEFAULT_TIMEOUT)
+				.build();
 		final var ollamaModelManager = new OllamaModelManager(api, modelManagementOptions);
 		ollamaModelManager.pullModel(model, PullModelStrategy.WHEN_MISSING);
 	}
@@ -102,8 +102,7 @@ class OpenSearchVectorStoreWithOllamaIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -124,7 +123,7 @@ class OpenSearchVectorStoreWithOllamaIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l1", "l2", "linf" })
+	@ValueSource(strings = {DEFAULT, "l1", "l2", "linf"})
 	public void addAndSearchTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -137,9 +136,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(
 					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build());
@@ -156,9 +155,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -170,11 +169,10 @@ class OpenSearchVectorStoreWithOllamaIT {
 		public OpenSearchVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			try {
 				OpenSearchClient openSearchClient = new OpenSearchClient(ApacheHttpClient5TransportBuilder
-					.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
-					.build());
+						.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
+						.build());
 				return OpenSearchVectorStore.builder(openSearchClient, embeddingModel).initializeSchema(true).build();
-			}
-			catch (URISyntaxException e) {
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -184,15 +182,14 @@ class OpenSearchVectorStoreWithOllamaIT {
 		public OpenSearchVectorStore anotherVectorStore(EmbeddingModel embeddingModel) {
 			try {
 				OpenSearchClient openSearchClient = new OpenSearchClient(ApacheHttpClient5TransportBuilder
-					.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
-					.build());
+						.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
+						.build());
 				return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-					.index("another_index")
-					.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
-					.initializeSchema(true)
-					.build();
-			}
-			catch (URISyntaxException e) {
+						.index("another_index")
+						.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
+						.initializeSchema(true)
+						.build();
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -200,14 +197,14 @@ class OpenSearchVectorStoreWithOllamaIT {
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return OllamaEmbeddingModel.builder()
-				.ollamaApi(OllamaApi.builder().build())
-				.defaultOptions(OllamaOptions.builder()
-					.model(OllamaModel.MXBAI_EMBED_LARGE)
-					.mainGPU(11)
-					.useMMap(true)
-					.numGPU(1)
-					.build())
-				.build();
+					.ollamaApi(OllamaApi.builder().build())
+					.defaultOptions(OllamaOptions.builder()
+							.model(OllamaModel.MXBAI_EMBED_LARGE)
+							.mainGPU(11)
+							.useMMap(true)
+							.numGPU(1)
+							.build())
+					.build();
 		}
 
 	}

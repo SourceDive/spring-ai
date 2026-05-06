@@ -61,8 +61,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 0.8.1
  */
 @Testcontainers
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "MISTRAL_AI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "MISTRAL_AI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")})
 public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 
 	private static final String COLLECTION_NAME = "test_collection";
@@ -73,8 +73,8 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 	static QdrantContainer qdrantContainer = new QdrantContainer(QdrantImage.DEFAULT_IMAGE);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
 
 	List<Document> documents = List.of(
 			new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!",
@@ -93,9 +93,9 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 		QdrantClient client = new QdrantClient(QdrantGrpcClient.newBuilder(host, port, false).build());
 
 		client
-			.createCollectionAsync(COLLECTION_NAME,
-					VectorParams.newBuilder().setDistance(Distance.Cosine).setSize(EMBEDDING_DIMENSION).build())
-			.get();
+				.createCollectionAsync(COLLECTION_NAME,
+						VectorParams.newBuilder().setDistance(Distance.Cosine).setSize(EMBEDDING_DIMENSION).build())
+				.get();
 
 		client.close();
 	}
@@ -117,7 +117,7 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -130,7 +130,7 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 			assertThat(results2).hasSize(0);
 		});
 	}
@@ -155,37 +155,37 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Bulgaria'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Bulgaria'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Netherlands'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Netherlands'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country == 'Netherlands')")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("NOT(country == 'Netherlands')")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("number in [3, 5, 12]")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("number in [3, 5, 12]")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("number nin [3, 5, 12]")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("number nin [3, 5, 12]")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
@@ -207,7 +207,7 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(document));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -246,7 +246,7 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 
 			var request = SearchRequest.builder().query("Great").topK(5).build();
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.from(request).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.from(request).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -255,7 +255,7 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.from(request).similarityThreshold(similarityThreshold).build());
+					.similaritySearch(SearchRequest.from(request).similarityThreshold(similarityThreshold).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -293,13 +293,13 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(complexFilter);
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder("A", "B");
+					.containsExactlyInAnyOrder("A", "B");
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("priority")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(1L, 1L);
+					.containsExactlyInAnyOrder(1L, 1L);
 
 			vectorStore.delete(List.of(doc1.getId(), doc3.getId()));
 		});
@@ -328,9 +328,9 @@ public class QdrantVectorStoreIT extends BaseVectorStoreTests {
 		@Bean
 		public VectorStore qdrantVectorStore(EmbeddingModel embeddingModel, QdrantClient qdrantClient) {
 			return QdrantVectorStore.builder(qdrantClient, embeddingModel)
-				.collectionName(COLLECTION_NAME)
-				.initializeSchema(true)
-				.build();
+					.collectionName(COLLECTION_NAME)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

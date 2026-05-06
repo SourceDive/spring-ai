@@ -51,7 +51,7 @@ public class TokenCountBatchingStrategyTests {
 		String contentAsString = resource.getContentAsString(StandardCharsets.UTF_8);
 		TokenCountBatchingStrategy tokenCountBatchingStrategy = new TokenCountBatchingStrategy();
 		assertThatThrownBy(() -> tokenCountBatchingStrategy.batch(List.of(new Document(contentAsString))))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }

@@ -78,12 +78,14 @@ public interface ToolCallingChatOptions extends ChatOptions {
 
 	/**
 	 * Get the configured tool context.
+	 *
 	 * @return the tool context map.
 	 */
 	Map<String, Object> getToolContext();
 
 	/**
 	 * Set the tool context values as map.
+	 *
 	 * @param toolContext as map
 	 */
 	void setToolContext(Map<String, Object> toolContext);
@@ -101,9 +103,8 @@ public interface ToolCallingChatOptions extends ChatOptions {
 		if (chatOptions instanceof ToolCallingChatOptions toolCallingChatOptions
 				&& toolCallingChatOptions.getInternalToolExecutionEnabled() != null) {
 			internalToolExecutionEnabled = Boolean.TRUE
-				.equals(toolCallingChatOptions.getInternalToolExecutionEnabled());
-		}
-		else {
+					.equals(toolCallingChatOptions.getInternalToolExecutionEnabled());
+		} else {
 			internalToolExecutionEnabled = DEFAULT_TOOL_EXECUTION_ENABLED;
 		}
 		return internalToolExecutionEnabled;
@@ -119,7 +120,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 	}
 
 	static List<ToolCallback> mergeToolCallbacks(List<ToolCallback> runtimeToolCallbacks,
-			List<ToolCallback> defaultToolCallbacks) {
+	                                             List<ToolCallback> defaultToolCallbacks) {
 		Assert.notNull(runtimeToolCallbacks, "runtimeToolCallbacks cannot be null");
 		Assert.notNull(defaultToolCallbacks, "defaultToolCallbacks cannot be null");
 		if (CollectionUtils.isEmpty(runtimeToolCallbacks)) {
@@ -129,7 +130,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 	}
 
 	static Map<String, Object> mergeToolContext(Map<String, Object> runtimeToolContext,
-			Map<String, Object> defaultToolContext) {
+	                                            Map<String, Object> defaultToolContext) {
 		Assert.notNull(runtimeToolContext, "runtimeToolContext cannot be null");
 		Assert.noNullElements(runtimeToolContext.keySet(), "runtimeToolContext keys cannot be null");
 		Assert.notNull(defaultToolContext, "defaultToolContext cannot be null");
@@ -143,7 +144,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 		List<String> duplicateToolNames = ToolUtils.getDuplicateToolNames(toolCallbacks);
 		if (!duplicateToolNames.isEmpty()) {
 			throw new IllegalStateException("Multiple tools with the same name (%s) found in ToolCallingChatOptions"
-				.formatted(String.join(", ", duplicateToolNames)));
+					.formatted(String.join(", ", duplicateToolNames)));
 		}
 	}
 
@@ -180,6 +181,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 
 		/**
 		 * Add a {@link Map} of context values into tool context.
+		 *
 		 * @param context the map representing the tool context.
 		 * @return the {@link ToolCallingChatOptions} Builder.
 		 */
@@ -187,7 +189,8 @@ public interface ToolCallingChatOptions extends ChatOptions {
 
 		/**
 		 * Add a specific key/value pair to the tool context.
-		 * @param key the key to use.
+		 *
+		 * @param key   the key to use.
 		 * @param value the corresponding value.
 		 * @return the {@link ToolCallingChatOptions} Builder.
 		 */

@@ -31,7 +31,7 @@ import org.springframework.ai.tool.execution.ToolCallResultConverter;
  * @author Thomas Vitale
  * @since 1.0.0
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Tool {

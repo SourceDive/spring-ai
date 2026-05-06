@@ -47,9 +47,10 @@ public class CohereEmbeddingBedrockApi
 	/**
 	 * Create a new CohereEmbeddingBedrockApi instance using the default credentials
 	 * provider chain, the default object mapper, default temperature and topP values.
+	 *
 	 * @param modelId The model id to use. See the {@link CohereEmbeddingModel} for the
-	 * supported models.
-	 * @param region The AWS region to use.
+	 *                supported models.
+	 * @param region  The AWS region to use.
 	 */
 	public CohereEmbeddingBedrockApi(String modelId, String region) {
 		super(modelId, region);
@@ -58,24 +59,26 @@ public class CohereEmbeddingBedrockApi
 	/**
 	 * Create a new CohereEmbeddingBedrockApi instance using the provided credentials
 	 * provider, region and object mapper.
-	 * @param modelId The model id to use. See the {@link CohereEmbeddingModel} for the
-	 * supported models.
+	 *
+	 * @param modelId             The model id to use. See the {@link CohereEmbeddingModel} for the
+	 *                            supported models.
 	 * @param credentialsProvider The credentials provider to connect to AWS.
-	 * @param region The AWS region to use.
-	 * @param objectMapper The object mapper to use for JSON serialization and
-	 * deserialization.
+	 * @param region              The AWS region to use.
+	 * @param objectMapper        The object mapper to use for JSON serialization and
+	 *                            deserialization.
 	 */
 	public CohereEmbeddingBedrockApi(String modelId, AwsCredentialsProvider credentialsProvider, String region,
-			ObjectMapper objectMapper) {
+	                                 ObjectMapper objectMapper) {
 		super(modelId, credentialsProvider, region, objectMapper);
 	}
 
 	/**
 	 * Create a new CohereEmbeddingBedrockApi instance using the default credentials
 	 * provider chain, the default object mapper, default temperature and topP values.
+	 *
 	 * @param modelId The model id to use. See the {@link CohereEmbeddingModel} for the
-	 * supported models.
-	 * @param region The AWS region to use.
+	 *                supported models.
+	 * @param region  The AWS region to use.
 	 * @param timeout The timeout to use.
 	 */
 	public CohereEmbeddingBedrockApi(String modelId, String region, Duration timeout) {
@@ -85,32 +88,34 @@ public class CohereEmbeddingBedrockApi
 	/**
 	 * Create a new CohereEmbeddingBedrockApi instance using the provided credentials
 	 * provider, region and object mapper.
-	 * @param modelId The model id to use. See the {@link CohereEmbeddingModel} for the
-	 * supported models.
+	 *
+	 * @param modelId             The model id to use. See the {@link CohereEmbeddingModel} for the
+	 *                            supported models.
 	 * @param credentialsProvider The credentials provider to connect to AWS.
-	 * @param region The AWS region to use.
-	 * @param objectMapper The object mapper to use for JSON serialization and
-	 * deserialization.
-	 * @param timeout The timeout to use.
+	 * @param region              The AWS region to use.
+	 * @param objectMapper        The object mapper to use for JSON serialization and
+	 *                            deserialization.
+	 * @param timeout             The timeout to use.
 	 */
 	public CohereEmbeddingBedrockApi(String modelId, AwsCredentialsProvider credentialsProvider, String region,
-			ObjectMapper objectMapper, Duration timeout) {
+	                                 ObjectMapper objectMapper, Duration timeout) {
 		super(modelId, credentialsProvider, region, objectMapper, timeout);
 	}
 
 	/**
 	 * Create a new CohereEmbeddingBedrockApi instance using the provided credentials
 	 * provider, region and object mapper.
-	 * @param modelId The model id to use. See the {@link CohereEmbeddingModel} for the
-	 * supported models.
+	 *
+	 * @param modelId             The model id to use. See the {@link CohereEmbeddingModel} for the
+	 *                            supported models.
 	 * @param credentialsProvider The credentials provider to connect to AWS.
-	 * @param region The AWS region to use.
-	 * @param objectMapper The object mapper to use for JSON serialization and
-	 * deserialization.
-	 * @param timeout The timeout to use.
+	 * @param region              The AWS region to use.
+	 * @param objectMapper        The object mapper to use for JSON serialization and
+	 *                            deserialization.
+	 * @param timeout             The timeout to use.
 	 */
 	public CohereEmbeddingBedrockApi(String modelId, AwsCredentialsProvider credentialsProvider, Region region,
-			ObjectMapper objectMapper, Duration timeout) {
+	                                 ObjectMapper objectMapper, Duration timeout) {
 		super(modelId, credentialsProvider, region, objectMapper, timeout);
 	}
 
@@ -152,20 +157,21 @@ public class CohereEmbeddingBedrockApi
 	/**
 	 * The Cohere Embed model request.
 	 *
-	 * @param texts An array of strings for the model to embed. For optimal performance,
-	 * we recommend reducing the length of each text to less than 512 tokens. 1 token is
-	 * about 4 characters.
+	 * @param texts     An array of strings for the model to embed. For optimal performance,
+	 *                  we recommend reducing the length of each text to less than 512 tokens. 1 token is
+	 *                  about 4 characters.
 	 * @param inputType Prepends special tokens to differentiate each type from one
-	 * another. You should not mix different types together, except when mixing types for
-	 * search and retrieval. In this case, embed your corpus with the search_document type
-	 * and embedded queries with type search_query type.
-	 * @param truncate Specifies how the API handles inputs longer than the maximum token
-	 * length. If you specify LEFT or RIGHT, the model discards the input until the
-	 * remaining input is exactly the maximum input token length for the model.
+	 *                  another. You should not mix different types together, except when mixing types for
+	 *                  search and retrieval. In this case, embed your corpus with the search_document type
+	 *                  and embedded queries with type search_query type.
+	 * @param truncate  Specifies how the API handles inputs longer than the maximum token
+	 *                  length. If you specify LEFT or RIGHT, the model discards the input until the
+	 *                  remaining input is exactly the maximum input token length for the model.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record CohereEmbeddingRequest(@JsonProperty("texts") List<String> texts,
-			@JsonProperty("input_type") InputType inputType, @JsonProperty("truncate") Truncate truncate) {
+	                                     @JsonProperty("input_type") InputType inputType,
+	                                     @JsonProperty("truncate") Truncate truncate) {
 
 		/**
 		 * Cohere Embedding API input types.
@@ -223,24 +229,25 @@ public class CohereEmbeddingBedrockApi
 	/**
 	 * Cohere Embedding response.
 	 *
-	 * @param id An identifier for the response.
-	 * @param embeddings An array of embeddings, where each embedding is an array of
-	 * floats with 1024 elements. The length of the embeddings array will be the same as
-	 * the length of the original texts array.
-	 * @param texts An array containing the text entries for which embeddings were
-	 * returned.
-	 * @param responseType The type of the response. The value is always embeddings.
+	 * @param id                             An identifier for the response.
+	 * @param embeddings                     An array of embeddings, where each embedding is an array of
+	 *                                       floats with 1024 elements. The length of the embeddings array will be the same as
+	 *                                       the length of the original texts array.
+	 * @param texts                          An array containing the text entries for which embeddings were
+	 *                                       returned.
+	 * @param responseType                   The type of the response. The value is always embeddings.
 	 * @param amazonBedrockInvocationMetrics Bedrock invocation metrics. Currently bedrock
-	 * doesn't return invocationMetrics for the cohere embedding model.
+	 *                                       doesn't return invocationMetrics for the cohere embedding model.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record CohereEmbeddingResponse(@JsonProperty("id") String id,
-			@JsonProperty("embeddings") List<float[]> embeddings, @JsonProperty("texts") List<String> texts,
-			@JsonProperty("response_type") String responseType,
-			// For future use: Currently bedrock doesn't return invocationMetrics for the
-			// cohere embedding model.
-			@JsonProperty("amazon-bedrock-invocationMetrics") AmazonBedrockInvocationMetrics amazonBedrockInvocationMetrics) {
+	                                      @JsonProperty("embeddings") List<float[]> embeddings,
+	                                      @JsonProperty("texts") List<String> texts,
+	                                      @JsonProperty("response_type") String responseType,
+	                                      // For future use: Currently bedrock doesn't return invocationMetrics for the
+	                                      // cohere embedding model.
+	                                      @JsonProperty("amazon-bedrock-invocationMetrics") AmazonBedrockInvocationMetrics amazonBedrockInvocationMetrics) {
 	}
 
 }

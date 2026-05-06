@@ -67,7 +67,7 @@ public class FilterExpressionTextParserTests {
 		// genre in ["comedy", "documentary", "drama"]
 		Expression exp = this.parser.parse("genre in ['comedy', 'documentary', 'drama']");
 		assertThat(exp)
-			.isEqualTo(new Expression(IN, new Key("genre"), new Value(List.of("comedy", "documentary", "drama"))));
+				.isEqualTo(new Expression(IN, new Key("genre"), new Value(List.of("comedy", "documentary", "drama"))));
 
 		assertThat(this.parser.getCache().get("WHERE " + "genre in ['comedy', 'documentary', 'drama']")).isEqualTo(exp);
 	}
@@ -81,7 +81,7 @@ public class FilterExpressionTextParserTests {
 						new Expression(NE, new Key("city"), new Value("Sofia")))));
 
 		assertThat(this.parser.getCache().get("WHERE " + "year >= 2020 OR country == \"BG\" AND city != \"Sofia\""))
-			.isEqualTo(exp);
+				.isEqualTo(exp);
 	}
 
 	@Test
@@ -95,8 +95,8 @@ public class FilterExpressionTextParserTests {
 				new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv")))));
 
 		assertThat(this.parser.getCache()
-			.get("WHERE " + "(year >= 2020 OR country == \"BG\") AND city NIN [\"Sofia\", \"Plovdiv\"]"))
-			.isEqualTo(exp);
+				.get("WHERE " + "(year >= 2020 OR country == \"BG\") AND city NIN [\"Sofia\", \"Plovdiv\"]"))
+				.isEqualTo(exp);
 	}
 
 	@Test
@@ -109,14 +109,14 @@ public class FilterExpressionTextParserTests {
 						new Expression(GTE, new Key("year"), new Value(2020))),
 				new Expression(IN, new Key("country"), new Value(List.of("BG", "NL", "US")))));
 		assertThat(this.parser.getCache()
-			.get("WHERE " + "isOpen == true AND year >= 2020 AND country IN [\"BG\", \"NL\", \"US\"]")).isEqualTo(exp);
+				.get("WHERE " + "isOpen == true AND year >= 2020 AND country IN [\"BG\", \"NL\", \"US\"]")).isEqualTo(exp);
 	}
 
 	@Test
 	public void tesNot() {
 		// NOT(isOpen == true AND year >= 2020 AND country IN ["BG", "NL", "US"])
 		Expression exp = this.parser
-			.parse("not(isOpen == true AND year >= 2020 AND country IN [\"BG\", \"NL\", \"US\"])");
+				.parse("not(isOpen == true AND year >= 2020 AND country IN [\"BG\", \"NL\", \"US\"])");
 
 		assertThat(exp).isEqualTo(new Expression(NOT,
 				new Group(new Expression(AND,
@@ -126,8 +126,8 @@ public class FilterExpressionTextParserTests {
 				null));
 
 		assertThat(this.parser.getCache()
-			.get("WHERE " + "not(isOpen == true AND year >= 2020 AND country IN [\"BG\", \"NL\", \"US\"])"))
-			.isEqualTo(exp);
+				.get("WHERE " + "not(isOpen == true AND year >= 2020 AND country IN [\"BG\", \"NL\", \"US\"])"))
+				.isEqualTo(exp);
 	}
 
 	@Test
@@ -152,7 +152,7 @@ public class FilterExpressionTextParserTests {
 	public void tesNestedNot() {
 		// NOT(isOpen == true AND year >= 2020 AND NOT(country IN ["BG", "NL", "US"]))
 		Expression exp = this.parser
-			.parse("not(isOpen == true AND year >= 2020 AND NOT(country IN [\"BG\", \"NL\", \"US\"]))");
+				.parse("not(isOpen == true AND year >= 2020 AND NOT(country IN [\"BG\", \"NL\", \"US\"]))");
 
 		assertThat(exp).isEqualTo(new Expression(NOT,
 				new Group(new Expression(AND,
@@ -164,8 +164,8 @@ public class FilterExpressionTextParserTests {
 				null));
 
 		assertThat(this.parser.getCache()
-			.get("WHERE " + "not(isOpen == true AND year >= 2020 AND NOT(country IN [\"BG\", \"NL\", \"US\"]))"))
-			.isEqualTo(exp);
+				.get("WHERE " + "not(isOpen == true AND year >= 2020 AND NOT(country IN [\"BG\", \"NL\", \"US\"]))"))
+				.isEqualTo(exp);
 	}
 
 	@Test

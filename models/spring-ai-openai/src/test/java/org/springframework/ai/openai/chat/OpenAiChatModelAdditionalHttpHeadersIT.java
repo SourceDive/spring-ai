@@ -50,13 +50,13 @@ public class OpenAiChatModelAdditionalHttpHeadersIT {
 	void additionalApiKeyHeader() {
 
 		assertThatThrownBy(() -> this.openAiChatModel.call("Tell me a joke"))
-			.isInstanceOf(NonTransientAiException.class);
+				.isInstanceOf(NonTransientAiException.class);
 
 		// Use the additional headers to override the Api Key.
 		// Mind that you have to prefix the Api Key with the "Bearer " prefix.
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.httpHeaders(Map.of("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY")))
-			.build();
+				.httpHeaders(Map.of("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY")))
+				.build();
 
 		ChatResponse response = this.openAiChatModel.call(new Prompt("Tell me a joke", options));
 

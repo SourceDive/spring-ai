@@ -47,14 +47,14 @@ class CompressionQueryTransformerIT {
 	@Test
 	void whenTransformerWithDefaults() {
 		Query query = Query.builder()
-			.text("And what is its second largest city?")
-			.history(new UserMessage("What is the capital of Denmark?"),
-					new AssistantMessage("Copenhagen is the capital of Denmark."))
-			.build();
+				.text("And what is its second largest city?")
+				.history(new UserMessage("What is the capital of Denmark?"),
+						new AssistantMessage("Copenhagen is the capital of Denmark."))
+				.build();
 
 		QueryTransformer queryTransformer = CompressionQueryTransformer.builder()
-			.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-			.build();
+				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+				.build();
 
 		Query transformedQuery = queryTransformer.apply(query);
 

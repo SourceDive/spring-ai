@@ -52,8 +52,7 @@ public class MiniMaxApiToolFunctionCallIT {
 	private static <T> T fromJson(String json, Class<T> targetClass) {
 		try {
 			return new ObjectMapper().readValue(json, targetClass);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -138,8 +137,8 @@ public class MiniMaxApiToolFunctionCallIT {
 
 		assertThat(chatCompletion2.getBody().choices().get(0).message().role()).isEqualTo(Role.ASSISTANT);
 		assertThat(chatCompletion2.getBody().choices().get(0).message().content()).contains("San Francisco")
-			.containsAnyOf("30.0°C", "30°C", "30.0")
-			.containsAnyOf("°C", "Celsius");
+				.containsAnyOf("30.0°C", "30°C", "30.0")
+				.containsAnyOf("°C", "Celsius");
 	}
 
 	@SuppressWarnings("null")

@@ -38,8 +38,8 @@ public class MessageChatMemoryAdvisorTests {
 	@Test
 	void whenChatMemoryIsNullThenThrow() {
 		assertThatThrownBy(() -> MessageChatMemoryAdvisor.builder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatMemory cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("chatMemory cannot be null");
 	}
 
 	@Test
@@ -47,8 +47,8 @@ public class MessageChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> MessageChatMemoryAdvisor.builder(chatMemory).conversationId(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("defaultConversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("defaultConversationId cannot be null or empty");
 	}
 
 	@Test
@@ -56,8 +56,8 @@ public class MessageChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> MessageChatMemoryAdvisor.builder(chatMemory).conversationId(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("defaultConversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("defaultConversationId cannot be null or empty");
 	}
 
 	@Test
@@ -65,26 +65,26 @@ public class MessageChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> MessageChatMemoryAdvisor.builder(chatMemory).scheduler(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("scheduler cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("scheduler cannot be null");
 	}
 
 	@Test
 	void testBuilderMethodChaining() {
 		// Create a chat memory
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Test builder method chaining with methods from AbstractBuilder
 		String customConversationId = "test-conversation-id";
 		int customOrder = 42;
 
 		MessageChatMemoryAdvisor advisor = MessageChatMemoryAdvisor.builder(chatMemory)
-			.conversationId(customConversationId)
-			.order(customOrder)
-			.scheduler(Schedulers.immediate())
-			.build();
+				.conversationId(customConversationId)
+				.order(customOrder)
+				.scheduler(Schedulers.immediate())
+				.build();
 
 		// Verify the advisor was built with the correct properties
 		assertThat(advisor).isNotNull();
@@ -97,8 +97,8 @@ public class MessageChatMemoryAdvisorTests {
 	void testDefaultValues() {
 		// Create a chat memory
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor with default values
 		MessageChatMemoryAdvisor advisor = MessageChatMemoryAdvisor.builder(chatMemory).build();

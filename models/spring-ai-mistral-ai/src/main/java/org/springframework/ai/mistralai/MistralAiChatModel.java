@@ -124,15 +124,15 @@ public class MistralAiChatModel implements ChatModel {
 	private ChatModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
 	public MistralAiChatModel(MistralAiApi mistralAiApi, MistralAiChatOptions defaultOptions,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                          ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
+	                          ObservationRegistry observationRegistry) {
 		this(mistralAiApi, defaultOptions, toolCallingManager, retryTemplate, observationRegistry,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
 	public MistralAiChatModel(MistralAiApi mistralAiApi, MistralAiChatOptions defaultOptions,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	                          ToolCallingManager toolCallingManager, RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
+	                          ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 		Assert.notNull(mistralAiApi, "mistralAiApi cannot be null");
 		Assert.notNull(defaultOptions, "defaultOptions cannot be null");
 		Assert.notNull(toolCallingManager, "toolCallingManager cannot be null");
@@ -151,21 +151,21 @@ public class MistralAiChatModel implements ChatModel {
 		Assert.notNull(result, "Mistral AI ChatCompletion must not be null");
 		DefaultUsage usage = getDefaultUsage(result.usage());
 		return ChatResponseMetadata.builder()
-			.id(result.id())
-			.model(result.model())
-			.usage(usage)
-			.keyValue("created", result.created())
-			.build();
+				.id(result.id())
+				.model(result.model())
+				.usage(usage)
+				.keyValue("created", result.created())
+				.build();
 	}
 
 	public static ChatResponseMetadata from(MistralAiApi.ChatCompletion result, Usage usage) {
 		Assert.notNull(result, "Mistral AI ChatCompletion must not be null");
 		return ChatResponseMetadata.builder()
-			.id(result.id())
-			.model(result.model())
-			.usage(usage)
-			.keyValue("created", result.created())
-			.build();
+				.id(result.id())
+				.model(result.model())
+				.usage(usage)
+				.keyValue("created", result.created())
+				.build();
 	}
 
 	private static DefaultUsage getDefaultUsage(MistralAiApi.Usage usage) {
@@ -185,56 +185,55 @@ public class MistralAiChatModel implements ChatModel {
 		MistralAiApi.ChatCompletionRequest request = createRequest(prompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(MistralAiApi.PROVIDER_NAME)
-			.build();
+				.prompt(prompt)
+				.provider(MistralAiApi.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ResponseEntity<ChatCompletion> completionEntity = this.retryTemplate
-					.execute(ctx -> this.mistralAiApi.chatCompletionEntity(request));
+					ResponseEntity<ChatCompletion> completionEntity = this.retryTemplate
+							.execute(ctx -> this.mistralAiApi.chatCompletionEntity(request));
 
-				ChatCompletion chatCompletion = completionEntity.getBody();
+					ChatCompletion chatCompletion = completionEntity.getBody();
 
-				if (chatCompletion == null) {
-					logger.warn("No chat completion returned for prompt: {}", prompt);
-					return new ChatResponse(List.of());
-				}
+					if (chatCompletion == null) {
+						logger.warn("No chat completion returned for prompt: {}", prompt);
+						return new ChatResponse(List.of());
+					}
 
-				List<Generation> generations = chatCompletion.choices().stream().map(choice -> {
-			// @formatter:off
+					List<Generation> generations = chatCompletion.choices().stream().map(choice -> {
+						// @formatter:off
 					Map<String, Object> metadata = Map.of(
 							"id", chatCompletion.id() != null ? chatCompletion.id() : "",
 							"index", choice.index(),
 							"role", choice.message().role() != null ? choice.message().role().name() : "",
 							"finishReason", choice.finishReason() != null ? choice.finishReason().name() : "");
 					// @formatter:on
-					return buildGeneration(choice, metadata);
-				}).toList();
+						return buildGeneration(choice, metadata);
+					}).toList();
 
-				DefaultUsage usage = getDefaultUsage(completionEntity.getBody().usage());
-				Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(usage, previousChatResponse);
-				ChatResponse chatResponse = new ChatResponse(generations,
-						from(completionEntity.getBody(), cumulativeUsage));
+					DefaultUsage usage = getDefaultUsage(completionEntity.getBody().usage());
+					Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(usage, previousChatResponse);
+					ChatResponse chatResponse = new ChatResponse(generations,
+							from(completionEntity.getBody(), cumulativeUsage));
 
-				observationContext.setResponse(chatResponse);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
-			});
+					return chatResponse;
+				});
 
 		if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(prompt.getOptions(), response)) {
 			var toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, response);
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the client.
 				return ChatResponse.builder()
-					.from(response)
-					.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-					.build();
-			}
-			else {
+						.from(response)
+						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+						.build();
+			} else {
 				// Send the tool execution result back to the model.
 				return this.internalCall(new Prompt(toolExecutionResult.conversationHistory(), prompt.getOptions()),
 						response);
@@ -257,9 +256,9 @@ public class MistralAiChatModel implements ChatModel {
 			var request = createRequest(prompt, true);
 
 			ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(MistralAiApi.PROVIDER_NAME)
-				.build();
+					.prompt(prompt)
+					.provider(MistralAiApi.PROVIDER_NAME)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -268,7 +267,7 @@ public class MistralAiChatModel implements ChatModel {
 			observation.parentObservation(contextView.getOrDefault(ObservationThreadLocalAccessor.KEY, null)).start();
 
 			Flux<ChatCompletionChunk> completionChunks = this.retryTemplate
-				.execute(ctx -> this.mistralAiApi.chatCompletionStream(request));
+					.execute(ctx -> this.mistralAiApi.chatCompletionStream(request));
 
 			// For chunked responses, only the first chunk contains the choice role.
 			// The rest of the chunks with same ID share the same role.
@@ -277,12 +276,12 @@ public class MistralAiChatModel implements ChatModel {
 			// Convert the ChatCompletionChunk into a ChatCompletion to be able to reuse
 			// the function call handling logic.
 			Flux<ChatResponse> chatResponse = completionChunks.map(this::toChatCompletion)
-				.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
-					try {
-						@SuppressWarnings("null")
-						String id = chatCompletion2.id();
+					.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
+						try {
+							@SuppressWarnings("null")
+							String id = chatCompletion2.id();
 
-				// @formatter:off
+							// @formatter:off
 							List<Generation> generations = chatCompletion2.choices().stream().map(choice -> {
 								if (choice.message().role() != null) {
 									roleMap.putIfAbsent(id, choice.message().role().name());
@@ -296,20 +295,18 @@ public class MistralAiChatModel implements ChatModel {
 							}).toList();
 							// @formatter:on
 
-						if (chatCompletion2.usage() != null) {
-							DefaultUsage usage = getDefaultUsage(chatCompletion2.usage());
-							Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(usage, previousChatResponse);
-							return new ChatResponse(generations, from(chatCompletion2, cumulativeUsage));
+							if (chatCompletion2.usage() != null) {
+								DefaultUsage usage = getDefaultUsage(chatCompletion2.usage());
+								Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(usage, previousChatResponse);
+								return new ChatResponse(generations, from(chatCompletion2, cumulativeUsage));
+							} else {
+								return new ChatResponse(generations);
+							}
+						} catch (Exception e) {
+							logger.error("Error processing chat completion", e);
+							return new ChatResponse(List.of());
 						}
-						else {
-							return new ChatResponse(generations);
-						}
-					}
-					catch (Exception e) {
-						logger.error("Error processing chat completion", e);
-						return new ChatResponse(List.of());
-					}
-				}));
+					}));
 
 			// @formatter:off
 			Flux<ChatResponse> chatResponseFlux = chatResponse.flatMap(response -> {
@@ -348,11 +345,11 @@ public class MistralAiChatModel implements ChatModel {
 	private Generation buildGeneration(Choice choice, Map<String, Object> metadata) {
 		List<AssistantMessage.ToolCall> toolCalls = choice.message().toolCalls() == null ? List.of()
 				: choice.message()
-					.toolCalls()
-					.stream()
-					.map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
-							toolCall.function().name(), toolCall.function().arguments()))
-					.toList();
+				  .toolCalls()
+				  .stream()
+				  .map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
+						  toolCall.function().name(), toolCall.function().arguments()))
+				  .toList();
 
 		var assistantMessage = new AssistantMessage(choice.message().content(), metadata, toolCalls);
 		String finishReason = (choice.finishReason() != null ? choice.finishReason().name() : "");
@@ -362,9 +359,9 @@ public class MistralAiChatModel implements ChatModel {
 
 	private ChatCompletion toChatCompletion(ChatCompletionChunk chunk) {
 		List<Choice> choices = chunk.choices()
-			.stream()
-			.map(cc -> new Choice(cc.index(), cc.delta(), cc.finishReason(), cc.logprobs()))
-			.toList();
+				.stream()
+				.map(cc -> new Choice(cc.index(), cc.delta(), cc.finishReason(), cc.logprobs()))
+				.toList();
 
 		return new ChatCompletion(chunk.id(), "chat.completion", chunk.created(), chunk.model(), choices,
 				chunk.usage());
@@ -377,8 +374,7 @@ public class MistralAiChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
 						MistralAiChatOptions.class);
-			}
-			else {
+			} else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						MistralAiChatOptions.class);
 			}
@@ -400,8 +396,7 @@ public class MistralAiChatModel implements ChatModel {
 					this.defaultOptions.getToolCallbacks()));
 			requestOptions.setToolContext(ToolCallingChatOptions.mergeToolContext(runtimeOptions.getToolContext(),
 					this.defaultOptions.getToolContext()));
-		}
-		else {
+		} else {
 			requestOptions.setInternalToolExecutionEnabled(this.defaultOptions.getInternalToolExecutionEnabled());
 			requestOptions.setToolNames(this.defaultOptions.getToolNames());
 			requestOptions.setToolCallbacks(this.defaultOptions.getToolCallbacks());
@@ -431,13 +426,11 @@ public class MistralAiChatModel implements ChatModel {
 				}
 
 				return List
-					.of(new MistralAiApi.ChatCompletionMessage(content, MistralAiApi.ChatCompletionMessage.Role.USER));
-			}
-			else if (message instanceof SystemMessage systemMessage) {
+						.of(new MistralAiApi.ChatCompletionMessage(content, MistralAiApi.ChatCompletionMessage.Role.USER));
+			} else if (message instanceof SystemMessage systemMessage) {
 				return List.of(new MistralAiApi.ChatCompletionMessage(systemMessage.getText(),
 						MistralAiApi.ChatCompletionMessage.Role.SYSTEM));
-			}
-			else if (message instanceof AssistantMessage assistantMessage) {
+			} else if (message instanceof AssistantMessage assistantMessage) {
 				List<ToolCall> toolCalls = null;
 				if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
 					toolCalls = assistantMessage.getToolCalls().stream().map(toolCall -> {
@@ -448,18 +441,16 @@ public class MistralAiChatModel implements ChatModel {
 
 				return List.of(new MistralAiApi.ChatCompletionMessage(assistantMessage.getText(),
 						MistralAiApi.ChatCompletionMessage.Role.ASSISTANT, null, toolCalls, null));
-			}
-			else if (message instanceof ToolResponseMessage toolResponseMessage) {
+			} else if (message instanceof ToolResponseMessage toolResponseMessage) {
 				toolResponseMessage.getResponses()
-					.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
+						.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
 
 				return toolResponseMessage.getResponses()
-					.stream()
-					.map(toolResponse -> new MistralAiApi.ChatCompletionMessage(toolResponse.responseData(),
-							MistralAiApi.ChatCompletionMessage.Role.TOOL, toolResponse.name(), null, toolResponse.id()))
-					.toList();
-			}
-			else {
+						.stream()
+						.map(toolResponse -> new MistralAiApi.ChatCompletionMessage(toolResponse.responseData(),
+								MistralAiApi.ChatCompletionMessage.Role.TOOL, toolResponse.name(), null, toolResponse.id()))
+						.toList();
+			} else {
 				throw new IllegalStateException("Unexpected message type: " + message);
 			}
 		}).flatMap(List::stream).toList();
@@ -490,12 +481,10 @@ public class MistralAiChatModel implements ChatModel {
 			// Assume the bytes are an image. So, convert the bytes to a base64 encoded
 			// following the prefix pattern.
 			return String.format("data:%s;base64,%s", mimeType.toString(), Base64.getEncoder().encodeToString(bytes));
-		}
-		else if (mediaContentData instanceof String text) {
+		} else if (mediaContentData instanceof String text) {
 			// Assume the text is a URLs or a base64 encoded image prefixed by the user.
 			return text;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(
 					"Unsupported media data type: " + mediaContentData.getClass().getSimpleName());
 		}
@@ -516,6 +505,7 @@ public class MistralAiChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -532,11 +522,11 @@ public class MistralAiChatModel implements ChatModel {
 		private MistralAiApi mistralAiApi;
 
 		private MistralAiChatOptions defaultOptions = MistralAiChatOptions.builder()
-			.temperature(0.7)
-			.topP(1.0)
-			.safePrompt(false)
-			.model(MistralAiApi.ChatModel.SMALL.getValue())
-			.build();
+				.temperature(0.7)
+				.topP(1.0)
+				.safePrompt(false)
+				.model(MistralAiApi.ChatModel.SMALL.getValue())
+				.build();
 
 		private ToolCallingManager toolCallingManager;
 

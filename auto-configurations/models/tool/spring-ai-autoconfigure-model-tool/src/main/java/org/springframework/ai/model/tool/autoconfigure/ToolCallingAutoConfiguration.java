@@ -61,7 +61,7 @@ public class ToolCallingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	ToolCallbackResolver toolCallbackResolver(GenericApplicationContext applicationContext,
-			List<ToolCallback> toolCallbacks, List<ToolCallbackProvider> tcbProviders) {
+	                                          List<ToolCallback> toolCallbacks, List<ToolCallbackProvider> tcbProviders) {
 
 		List<ToolCallback> allFunctionAndToolCallbacks = new ArrayList<>(toolCallbacks);
 		tcbProviders.stream().map(pr -> List.of(pr.getToolCallbacks())).forEach(allFunctionAndToolCallbacks::addAll);
@@ -69,8 +69,8 @@ public class ToolCallingAutoConfiguration {
 		var staticToolCallbackResolver = new StaticToolCallbackResolver(allFunctionAndToolCallbacks);
 
 		var springBeanToolCallbackResolver = SpringBeanToolCallbackResolver.builder()
-			.applicationContext(applicationContext)
-			.build();
+				.applicationContext(applicationContext)
+				.build();
 
 		return new DelegatingToolCallbackResolver(List.of(staticToolCallbackResolver, springBeanToolCallbackResolver));
 	}
@@ -84,14 +84,14 @@ public class ToolCallingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	ToolCallingManager toolCallingManager(ToolCallbackResolver toolCallbackResolver,
-			ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ToolCallingObservationConvention> observationConvention) {
+	                                      ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
+	                                      ObjectProvider<ObservationRegistry> observationRegistry,
+	                                      ObjectProvider<ToolCallingObservationConvention> observationConvention) {
 		var toolCallingManager = ToolCallingManager.builder()
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.toolCallbackResolver(toolCallbackResolver)
-			.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
-			.build();
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.toolCallbackResolver(toolCallbackResolver)
+				.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
+				.build();
 
 		observationConvention.ifAvailable(toolCallingManager::setObservationConvention);
 

@@ -36,11 +36,11 @@ class VectorSearchAggregationTest {
 
 		var vectorSearchDocument = new Document("$vectorSearch",
 				new Document("queryVector", List.of(1.0f, 2.0f, 3.0f)).append("path", "embedding")
-					.append("numCandidates", 10)
-					.append("index", "vector_store")
-					.append("limit", 10));
+						.append("numCandidates", 10)
+						.append("index", "vector_store")
+						.append("limit", 10));
 		var expected = new Document().append("aggregate", "vector_store")
-			.append("pipeline", List.of(vectorSearchDocument));
+				.append("pipeline", List.of(vectorSearchDocument));
 		assertEquals(expected, document);
 	}
 
@@ -53,12 +53,12 @@ class VectorSearchAggregationTest {
 
 		var vectorSearchDocument = new Document("$vectorSearch",
 				new Document("queryVector", List.of(1.0f, 2.0f, 3.0f)).append("path", "embedding")
-					.append("numCandidates", 10)
-					.append("index", "vector_store")
-					.append("filter", new Document("metadata.country", new Document().append("$eq", "BG")))
-					.append("limit", 10));
+						.append("numCandidates", 10)
+						.append("index", "vector_store")
+						.append("filter", new Document("metadata.country", new Document().append("$eq", "BG")))
+						.append("limit", 10));
 		var expected = new Document().append("aggregate", "vector_store")
-			.append("pipeline", List.of(vectorSearchDocument));
+				.append("pipeline", List.of(vectorSearchDocument));
 		assertEquals(expected, document);
 	}
 

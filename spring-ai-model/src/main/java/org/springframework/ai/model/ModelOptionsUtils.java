@@ -66,11 +66,11 @@ import org.springframework.util.ObjectUtils;
 public abstract class ModelOptionsUtils {
 
 	public static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
-		.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-		.addModules(JacksonUtils.instantiateAvailableModules())
-		.build()
-		.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+			.addModules(JacksonUtils.instantiateAvailableModules())
+			.build()
+			.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
 
 	private static final List<String> BEAN_MERGE_FIELD_EXCISIONS = List.of("class");
 
@@ -85,6 +85,7 @@ public abstract class ModelOptionsUtils {
 	/**
 	 * Converts the given JSON string to a Map of String and Object using the default
 	 * ObjectMapper.
+	 *
 	 * @param json the JSON string to convert to a Map.
 	 * @return the converted Map.
 	 */
@@ -95,22 +96,23 @@ public abstract class ModelOptionsUtils {
 	/**
 	 * Converts the given JSON string to a Map of String and Object using a custom
 	 * ObjectMapper.
-	 * @param json the JSON string to convert to a Map.
+	 *
+	 * @param json         the JSON string to convert to a Map.
 	 * @param objectMapper the ObjectMapper to use for deserialization.
 	 * @return the converted Map.
 	 */
 	public static Map<String, Object> jsonToMap(String json, ObjectMapper objectMapper) {
 		try {
 			return objectMapper.readValue(json, MAP_TYPE_REF);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Converts the given JSON string to an Object of the given type.
-	 * @param <T> the type of the object to return.
+	 *
+	 * @param <T>  the type of the object to return.
 	 * @param json the JSON string to convert to an object.
 	 * @param type the type of the object to return.
 	 * @return Object instance of the given type.
@@ -118,36 +120,35 @@ public abstract class ModelOptionsUtils {
 	public static <T> T jsonToObject(String json, Class<T> type) {
 		try {
 			return OBJECT_MAPPER.readValue(json, type);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to json: " + json, e);
 		}
 	}
 
 	/**
 	 * Converts the given object to a JSON string.
+	 *
 	 * @param object the object to convert to a JSON string.
 	 * @return the JSON string.
 	 */
 	public static String toJsonString(Object object) {
 		try {
 			return OBJECT_MAPPER.writeValueAsString(object);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Converts the given object to a JSON string.
+	 *
 	 * @param object the object to convert to a JSON string.
 	 * @return the JSON string.
 	 */
 	public static String toJsonStringPrettyPrinter(Object object) {
 		try {
 			return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -159,10 +160,11 @@ public abstract class ModelOptionsUtils {
 	 * source null values are ignored. If the acceptedFieldNames is not empty, only the
 	 * fields with the given names are merged and returned. If the acceptedFieldNames is
 	 * empty, use the {@code @JsonProperty} names, inferred from the provided clazz.
-	 * @param <T> they type of the class to return.
-	 * @param source the source object to merge.
-	 * @param target the target object to merge into.
-	 * @param clazz the class to return.
+	 *
+	 * @param <T>                they type of the class to return.
+	 * @param source             the source object to merge.
+	 * @param target             the target object to merge into.
+	 * @param clazz              the class to return.
 	 * @param acceptedFieldNames the list of field names accepted for the target object.
 	 * @return the merged object represented by the given class.
 	 */
@@ -184,14 +186,14 @@ public abstract class ModelOptionsUtils {
 		Map<String, Object> targetMap = ModelOptionsUtils.objectToMap(target);
 
 		targetMap.putAll(sourceMap.entrySet()
-			.stream()
-			.filter(e -> e.getValue() != null)
-			.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())));
+				.stream()
+				.filter(e -> e.getValue() != null)
+				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue())));
 
 		targetMap = targetMap.entrySet()
-			.stream()
-			.filter(e -> requestFieldNames.contains(e.getKey()))
-			.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+				.stream()
+				.filter(e -> requestFieldNames.contains(e.getKey()))
+				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
 
 		return ModelOptionsUtils.mapToClass(targetMap, clazz);
 	}
@@ -202,10 +204,11 @@ public abstract class ModelOptionsUtils {
 	 * The source non-null values override the target values with the same field name. The
 	 * source null values are ignored. Returns the only field names that match the
 	 * {@code @JsonProperty} names, inferred from the provided clazz.
-	 * @param <T> they type of the class to return.
+	 *
+	 * @param <T>    they type of the class to return.
 	 * @param source the source object to merge.
 	 * @param target the target object to merge into.
-	 * @param clazz the class to return.
+	 * @param clazz  the class to return.
 	 * @return the merged object represented by the given class.
 	 */
 	public static <T> T merge(Object source, Object target, Class<T> clazz) {
@@ -214,6 +217,7 @@ public abstract class ModelOptionsUtils {
 
 	/**
 	 * Converts the given object to a Map.
+	 *
 	 * @param source the object to convert to a Map.
 	 * @return the converted Map.
 	 */
@@ -225,36 +229,36 @@ public abstract class ModelOptionsUtils {
 			String json = OBJECT_MAPPER.writeValueAsString(source);
 			return OBJECT_MAPPER.readValue(json, new TypeReference<Map<String, Object>>() {
 
-			})
-				.entrySet()
-				.stream()
-				.filter(e -> e.getValue() != null)
-				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
-		}
-		catch (JsonProcessingException e) {
+					})
+					.entrySet()
+					.stream()
+					.filter(e -> e.getValue() != null)
+					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Converts the given Map to the given class.
-	 * @param <T> the type of the class to return.
+	 *
+	 * @param <T>    the type of the class to return.
 	 * @param source the Map to convert to the given class.
-	 * @param clazz the class to convert the Map to.
+	 * @param clazz  the class to convert the Map to.
 	 * @return the converted class.
 	 */
 	public static <T> T mapToClass(Map<String, Object> source, Class<T> clazz) {
 		try {
 			String json = OBJECT_MAPPER.writeValueAsString(source);
 			return OBJECT_MAPPER.readValue(json, clazz);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Returns the list of name values of the {@link JsonProperty} annotations.
+	 *
 	 * @param clazz the class that contains fields annotated with {@link JsonProperty}.
 	 * @return the list of values of the {@link JsonProperty} annotations.
 	 */
@@ -273,18 +277,19 @@ public abstract class ModelOptionsUtils {
 	/**
 	 * Returns a new instance of the targetBeanClazz that copies the bean values from the
 	 * sourceBean instance.
-	 * @param sourceBean the source bean to copy the values from.
+	 *
+	 * @param sourceBean           the source bean to copy the values from.
 	 * @param sourceInterfaceClazz the source interface class. Only the fields with the
-	 * same name as the interface methods are copied. This allow the source object to be a
-	 * subclass of the source interface with additional, non-interface fields.
-	 * @param targetBeanClazz the target class, a subclass of the ChatOptions, to convert
-	 * into.
-	 * @param <T> the target class type.
+	 *                             same name as the interface methods are copied. This allow the source object to be a
+	 *                             subclass of the source interface with additional, non-interface fields.
+	 * @param targetBeanClazz      the target class, a subclass of the ChatOptions, to convert
+	 *                             into.
+	 * @param <T>                  the target class type.
 	 * @return a new instance of the targetBeanClazz with the values from the sourceBean
 	 * instance.
 	 */
 	public static <I, S extends I, T extends S> T copyToTarget(S sourceBean, Class<I> sourceInterfaceClazz,
-			Class<T> targetBeanClazz) {
+	                                                           Class<T> targetBeanClazz) {
 
 		Assert.notNull(sourceInterfaceClazz, "SourceOptionsClazz must not be null");
 		Assert.notNull(targetBeanClazz, "TargetOptionsClazz must not be null");
@@ -303,8 +308,7 @@ public abstract class ModelOptionsUtils {
 			ModelOptionsUtils.mergeBeans(sourceBean, targetOptions, sourceInterfaceClazz, true);
 
 			return targetOptions;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(
 					"Failed to convert the " + sourceInterfaceClazz.getName() + " into " + targetBeanClazz.getName(),
 					e);
@@ -314,19 +318,20 @@ public abstract class ModelOptionsUtils {
 	/**
 	 * Merges the source object into the target object. The source null values are
 	 * ignored. Only objects with Getter and Setter methods are supported.
-	 * @param <T> the type of the source and target object.
-	 * @param source the source object to merge.
-	 * @param target the target object to merge into.
-	 * @param sourceInterfaceClazz the source interface class. Only the fields with the
-	 * same name as the interface methods are merged. This allow the source object to be a
-	 * subclass of the source interface with additional, non-interface fields.
+	 *
+	 * @param <T>                         the type of the source and target object.
+	 * @param source                      the source object to merge.
+	 * @param target                      the target object to merge into.
+	 * @param sourceInterfaceClazz        the source interface class. Only the fields with the
+	 *                                    same name as the interface methods are merged. This allow the source object to be a
+	 *                                    subclass of the source interface with additional, non-interface fields.
 	 * @param overrideNonNullTargetValues if true, the source non-null values override the
-	 * target values with the same field name. If false, the source non-null values are
-	 * ignored.
+	 *                                    target values with the same field name. If false, the source non-null values are
+	 *                                    ignored.
 	 * @return the merged target object.
 	 */
 	public static <I, S extends I, T extends S> T mergeBeans(S source, T target, Class<I> sourceInterfaceClazz,
-			boolean overrideNonNullTargetValues) {
+	                                                         boolean overrideNonNullTargetValues) {
 		Assert.notNull(source, "Source object must not be null");
 		Assert.notNull(target, "Target object must not be null");
 
@@ -363,7 +368,8 @@ public abstract class ModelOptionsUtils {
 
 	/**
 	 * Generates JSON Schema (version 2020_12) for the given class.
-	 * @param inputType the input {@link Type} to generate JSON Schema from.
+	 *
+	 * @param inputType             the input {@link Type} to generate JSON Schema from.
 	 * @param toUpperCaseTypeValues if true, the type values are converted to upper case.
 	 * @return the generated JSON Schema as a String.
 	 */
@@ -376,10 +382,10 @@ public abstract class ModelOptionsUtils {
 
 			SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12,
 					OptionPreset.PLAIN_JSON)
-				.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-				.with(Option.PLAIN_DEFINITION_KEYS)
-				.with(swaggerModule)
-				.with(jacksonModule);
+					.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+					.with(Option.PLAIN_DEFINITION_KEYS)
+					.with(swaggerModule)
+					.with(jacksonModule);
 
 			if (KotlinDetector.isKotlinReflectPresent()) {
 				configBuilder.with(new KotlinModule());
@@ -413,21 +419,18 @@ public abstract class ModelOptionsUtils {
 				JsonNode value = entry.getValue();
 				if (value.isObject()) {
 					toUpperCaseTypeValues((ObjectNode) value);
-				}
-				else if (value.isArray()) {
+				} else if (value.isArray()) {
 					((ArrayNode) value).elements().forEachRemaining(element -> {
 						if (element.isObject() || element.isArray()) {
 							toUpperCaseTypeValues((ObjectNode) element);
 						}
 					});
-				}
-				else if (value.isTextual() && entry.getKey().equals("type")) {
+				} else if (value.isTextual() && entry.getKey().equals("type")) {
 					String oldValue = ((ObjectNode) node).get("type").asText();
 					((ObjectNode) node).put("type", oldValue.toUpperCase());
 				}
 			});
-		}
-		else if (node.isArray()) {
+		} else if (node.isArray()) {
 			node.elements().forEachRemaining(element -> {
 				if (element.isObject() || element.isArray()) {
 					toUpperCaseTypeValues((ObjectNode) element);

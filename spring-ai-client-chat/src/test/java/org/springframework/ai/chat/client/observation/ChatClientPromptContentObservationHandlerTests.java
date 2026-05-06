@@ -51,16 +51,16 @@ class ChatClientPromptContentObservationHandlerTests {
 	@Test
 	void whenSupportedObservationContextThenReturnTrue() {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
+				.build();
 		assertThat(this.observationHandler.supportsContext(context)).isTrue();
 	}
 
 	@Test
 	void whenEmptyPromptThenOutputNothing(CapturedOutput output) {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.c.c.o.ChatClientPromptContentObservationHandler -- Chat Client Prompt Content:
@@ -71,8 +71,8 @@ class ChatClientPromptContentObservationHandlerTests {
 	@Test
 	void whenPromptWithTextThenOutputIt(CapturedOutput output) {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt("supercalifragilisticexpialidocious")).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt("supercalifragilisticexpialidocious")).build())
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.c.c.o.ChatClientPromptContentObservationHandler -- Chat Client Prompt Content:
@@ -83,11 +83,11 @@ class ChatClientPromptContentObservationHandlerTests {
 	@Test
 	void whenPromptWithMessagesThenOutputIt(CapturedOutput output) {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder()
-				.prompt(new Prompt(List.of(new SystemMessage("you're a chimney sweep"),
-						new UserMessage("supercalifragilisticexpialidocious"))))
-				.build())
-			.build();
+				.request(ChatClientRequest.builder()
+						.prompt(new Prompt(List.of(new SystemMessage("you're a chimney sweep"),
+								new UserMessage("supercalifragilisticexpialidocious"))))
+						.build())
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.c.c.o.ChatClientPromptContentObservationHandler -- Chat Client Prompt Content:

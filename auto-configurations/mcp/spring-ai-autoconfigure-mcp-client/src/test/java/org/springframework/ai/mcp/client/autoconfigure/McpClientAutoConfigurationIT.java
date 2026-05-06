@@ -65,21 +65,21 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void asyncConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.type=ASYNC", "spring.ai.mcp.client.name=test-client",
-					"spring.ai.mcp.client.version=2.0.0", "spring.ai.mcp.client.request-timeout=60s",
-					"spring.ai.mcp.client.initialized=false")
-			.withUserConfiguration(TestTransportConfiguration.class)
-			.run(context -> {
-				List<McpAsyncClient> clients = context.getBean("mcpAsyncClients", List.class);
-				assertThat(clients).hasSize(1);
+				.withPropertyValues("spring.ai.mcp.client.type=ASYNC", "spring.ai.mcp.client.name=test-client",
+						"spring.ai.mcp.client.version=2.0.0", "spring.ai.mcp.client.request-timeout=60s",
+						"spring.ai.mcp.client.initialized=false")
+				.withUserConfiguration(TestTransportConfiguration.class)
+				.run(context -> {
+					List<McpAsyncClient> clients = context.getBean("mcpAsyncClients", List.class);
+					assertThat(clients).hasSize(1);
 
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.getName()).isEqualTo("test-client");
-				assertThat(properties.getVersion()).isEqualTo("2.0.0");
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(60));
-				assertThat(properties.isInitialized()).isFalse();
-			});
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.getName()).isEqualTo("test-client");
+					assertThat(properties.getVersion()).isEqualTo("2.0.0");
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(60));
+					assertThat(properties.isInitialized()).isFalse();
+				});
 	}
 
 	@Test
@@ -103,11 +103,11 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void clientCustomization() {
 		this.contextRunner.withUserConfiguration(TestTransportConfiguration.class, CustomizerConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(McpSyncClientConfigurer.class);
-				List<McpSyncClient> clients = context.getBean("mcpSyncClients", List.class);
-				assertThat(clients).hasSize(1);
-			});
+				.run(context -> {
+					assertThat(context).hasSingleBean(McpSyncClientConfigurer.class);
+					List<McpSyncClient> clients = context.getBean("mcpSyncClients", List.class);
+					assertThat(clients).hasSize(1);
+				});
 	}
 
 	@Test
@@ -122,8 +122,8 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void closeableWrappersCreation() {
 		this.contextRunner.withUserConfiguration(TestTransportConfiguration.class)
-			.run(context -> assertThat(context)
-				.hasSingleBean(McpClientAutoConfiguration.CloseableMcpSyncClients.class));
+				.run(context -> assertThat(context)
+						.hasSingleBean(McpClientAutoConfiguration.CloseableMcpSyncClients.class));
 	}
 
 	@Configuration
@@ -152,7 +152,8 @@ public class McpClientAutoConfigurationIT {
 		@Bean
 		McpSyncClientCustomizer testCustomizer() {
 			return (name, spec) -> {
-				/* no-op */ };
+				/* no-op */
+			};
 		}
 
 	}

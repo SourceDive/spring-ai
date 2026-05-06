@@ -79,7 +79,7 @@ class OllamaContainerConnectionDetailsFactoryIT {
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ImportAutoConfiguration({ RestClientAutoConfiguration.class, OllamaEmbeddingAutoConfiguration.class })
+	@ImportAutoConfiguration({RestClientAutoConfiguration.class, OllamaEmbeddingAutoConfiguration.class})
 	static class Config {
 
 	}

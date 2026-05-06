@@ -208,8 +208,8 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 				this.batchingStrategy);
 
 		var rows = documents.stream()
-			.map(document -> documentToRecord(document, embeddings.get(documents.indexOf(document))))
-			.toList();
+				.map(document -> documentToRecord(document, embeddings.get(documents.indexOf(document))))
+				.toList();
 
 		try (var session = this.driver.session()) {
 			var statement = """
@@ -220,8 +220,8 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 						CALL db.create.setNodeVectorProperty(u, $embeddingProperty, row[$embeddingProperty])
 					""".formatted(this.label, this.idProperty);
 			session
-				.executeWrite(tx -> tx.run(statement, Map.of("rows", rows, "embeddingProperty", this.embeddingProperty))
-					.consume());
+					.executeWrite(tx -> tx.run(statement, Map.of("rows", rows, "embeddingProperty", this.embeddingProperty))
+							.consume());
 		}
 	}
 
@@ -233,12 +233,12 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 			// Those queries with internal, cypher based transaction management cannot be
 			// run with executeWrite
 			session
-				.run("""
-						MATCH (n:%s) WHERE n.%s IN $ids
-						CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF $transactionSize ROWS
-						""".formatted(this.label, this.idProperty),
-						Map.of("ids", idList, "transactionSize", DEFAULT_TRANSACTION_SIZE))
-				.consume();
+					.run("""
+									MATCH (n:%s) WHERE n.%s IN $ids
+									CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF $transactionSize ROWS
+									""".formatted(this.label, this.idProperty),
+							Map.of("ids", idList, "transactionSize", DEFAULT_TRANSACTION_SIZE))
+					.consume();
 		}
 	}
 
@@ -258,8 +258,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 			var summary = session.run(cypher, Map.of("transactionSize", DEFAULT_TRANSACTION_SIZE)).consume();
 
 			logger.debug("Deleted {} nodes matching filter expression", summary.counters().nodesDeleted());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete nodes by filter: {}", e.getMessage(), e);
 			throw new IllegalStateException("Failed to delete nodes by filter", e);
 		}
@@ -276,7 +275,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 			StringBuilder condition = new StringBuilder("score >= $threshold");
 			if (request.hasFilterExpression()) {
 				condition.append(" AND ")
-					.append(this.filterExpressionConverter.convertExpression(request.getFilterExpression()));
+						.append(this.filterExpressionConverter.convertExpression(request.getFilterExpression()));
 			}
 			String query = """
 					CALL db.index.vector.queryNodes($indexName, $numberOfNearestNeighbours, $embeddingValue)
@@ -285,10 +284,10 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 					RETURN node, score""".formatted(condition);
 
 			return session.executeRead(tx -> tx
-				.run(query,
-						Map.of("indexName", this.indexNameNotSanitized, "numberOfNearestNeighbours", request.getTopK(),
-								"embeddingValue", embedding, "threshold", request.getSimilarityThreshold()))
-				.list(this::recordToDocument));
+					.run(query,
+							Map.of("indexName", this.indexNameNotSanitized, "numberOfNearestNeighbours", request.getTopK(),
+									"embeddingValue", embedding, "threshold", request.getSimilarityThreshold()))
+					.list(this::recordToDocument));
 		}
 	}
 
@@ -303,7 +302,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 			session.executeWriteWithoutResult(tx -> {
 				tx.run("CREATE CONSTRAINT %s IF NOT EXISTS FOR (n:%s) REQUIRE n.%s IS UNIQUE"
-					.formatted(this.constraintName, this.label, this.idProperty)).consume();
+						.formatted(this.constraintName, this.label, this.idProperty)).consume();
 
 				var statement = """
 						CREATE VECTOR INDEX %s IF NOT EXISTS FOR (n:%s) ON (n.%s)
@@ -349,20 +348,20 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 		});
 
 		return Document.builder()
-			.id(node.get(this.idProperty).asString())
-			.text(node.get(this.textProperty).asString())
-			.metadata(Map.copyOf(metaData))
-			.score((double) score)
-			.build();
+				.id(node.get(this.idProperty).asString())
+				.text(node.get(this.textProperty).asString())
+				.metadata(Map.copyOf(metaData))
+				.score((double) score)
+				.build();
 	}
 
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.NEO4J.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions())
-			.similarityMetric(getSimilarityMetric());
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions())
+				.similarityMetric(getSimilarityMetric());
 	}
 
 	private String getSimilarityMetric() {
@@ -431,6 +430,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 		/**
 		 * Sets the database name. When provided and not blank, creates a session config
 		 * for that database.
+		 *
 		 * @param databaseName the database name to use
 		 * @return the builder instance
 		 */
@@ -443,6 +443,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the session configuration directly.
+		 *
 		 * @param sessionConfig the session configuration to use
 		 * @return the builder instance
 		 */
@@ -453,6 +454,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the embedding dimension. Must be positive.
+		 *
 		 * @param dimension the dimension of the embedding
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if dimension is less than 1
@@ -465,6 +467,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the distance type for index storage and queries.
+		 *
 		 * @param distanceType the distance type to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if distanceType is null
@@ -477,6 +480,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the label for document nodes.
+		 *
 		 * @param label the label to use
 		 * @return the builder instance
 		 */
@@ -489,6 +493,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the property name for storing embeddings.
+		 *
 		 * @param embeddingProperty the property name to use
 		 * @return the builder instance
 		 */
@@ -501,6 +506,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the name of the vector index.
+		 *
 		 * @param indexName the index name to use
 		 * @return the builder instance
 		 */
@@ -513,6 +519,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the property name for document IDs.
+		 *
 		 * @param idProperty the property name to use
 		 * @return the builder instance
 		 */
@@ -525,6 +532,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the property name for text-content.
+		 *
 		 * @param textProperty the text property to use
 		 * @return the builder instance
 		 */
@@ -537,6 +545,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the name of the unique constraint.
+		 *
 		 * @param constraintName the constraint name to use
 		 * @return the builder instance
 		 */
@@ -549,6 +558,7 @@ public class Neo4jVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */

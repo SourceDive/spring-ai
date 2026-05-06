@@ -54,7 +54,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	private VectorStore vectorStore;
 
@@ -69,14 +69,14 @@ public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 		// Create a sample document
 		Document document1 = new Document(UUID.randomUUID().toString(), "Sample content1", Map.of("key1", "value1"));
 		assertThatThrownBy(() -> this.vectorStore.add(List.of(document1))).isInstanceOf(Exception.class)
-			.hasMessageContaining("Partition key 'country' not found in document metadata.");
+				.hasMessageContaining("Partition key 'country' not found in document metadata.");
 
 		Document document2 = new Document(UUID.randomUUID().toString(), "Sample content1", Map.of("country", "UK"));
 		this.vectorStore.add(List.of(document2));
 
 		// Perform a similarity search
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Sample content1").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("Sample content1").topK(1).build());
 
 		// Verify the search results
 		assertThat(results).isNotEmpty();
@@ -87,7 +87,7 @@ public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 
 		// Perform a similarity search again
 		List<Document> results2 = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Sample content").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("Sample content").topK(1).build());
 
 		// Verify the search results
 		assertThat(results2).isEmpty();
@@ -130,10 +130,10 @@ public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 		this.vectorStore.add(List.of(document1, document2, document3, document4));
 		FilterExpressionBuilder b = new FilterExpressionBuilder();
 		List<Document> results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("The World")
-			.topK(10)
-			.filterExpression((b.in("country", "UK", "NL")).build())
-			.build());
+				.query("The World")
+				.topK(10)
+				.filterExpression((b.in("country", "UK", "NL")).build())
+				.build());
 
 		assertThat(results).hasSize(2);
 		assertThat(results).extracting(Document::getId).containsExactlyInAnyOrder("1", "2");
@@ -144,20 +144,20 @@ public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 		}
 
 		List<Document> results2 = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("The World")
-			.topK(10)
-			.filterExpression(
-					b.and(b.or(b.gte("year", 2021), b.eq("country", "NL")), b.ne("city", "Amsterdam")).build())
-			.build());
+				.query("The World")
+				.topK(10)
+				.filterExpression(
+						b.and(b.or(b.gte("year", 2021), b.eq("country", "NL")), b.ne("city", "Amsterdam")).build())
+				.build());
 
 		assertThat(results2).hasSize(1);
 		assertThat(results2).extracting(Document::getId).containsExactlyInAnyOrder("1");
 
 		List<Document> results3 = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("The World")
-			.topK(10)
-			.filterExpression(b.and(b.eq("country", "US"), b.eq("year", 2020)).build())
-			.build());
+				.query("The World")
+				.topK(10)
+				.filterExpression(b.and(b.eq("country", "US"), b.eq("year", 2020)).build())
+				.build());
 
 		assertThat(results3).hasSize(1);
 		assertThat(results3).extracting(Document::getId).containsExactlyInAnyOrder("4");
@@ -166,7 +166,7 @@ public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 
 		// Perform a similarity search again
 		List<Document> results4 = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("The World").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("The World").topK(1).build());
 
 		// Verify the search results
 		assertThat(results4).isEmpty();
@@ -187,24 +187,24 @@ public class CosmosDBVectorStoreWithMetadataPartitionKeyIT {
 
 		@Bean
 		public VectorStore vectorStore(CosmosAsyncClient cosmosClient, EmbeddingModel embeddingModel,
-				VectorStoreObservationConvention convention) {
+		                               VectorStoreObservationConvention convention) {
 			return CosmosDBVectorStore.builder(cosmosClient, embeddingModel)
-				.databaseName("test-database")
-				.containerName("test-container-metadata-partition-key")
-				.metadataFields(List.of("country", "year", "city"))
-				.partitionKeyPath("/metadata/country")
-				.vectorStoreThroughput(1000)
-				.customObservationConvention(convention)
-				.build();
+					.databaseName("test-database")
+					.containerName("test-container-metadata-partition-key")
+					.metadataFields(List.of("country", "year", "city"))
+					.partitionKeyPath("/metadata/country")
+					.vectorStoreThroughput(1000)
+					.customObservationConvention(convention)
+					.build();
 		}
 
 		@Bean
 		public CosmosAsyncClient cosmosClient() {
 			return new CosmosClientBuilder().endpoint(System.getenv("AZURE_COSMOSDB_ENDPOINT"))
-				.credential(new DefaultAzureCredentialBuilder().build())
-				.userAgentSuffix("SpringAI-CDBNoSQL-VectorStore")
-				.gatewayMode()
-				.buildAsyncClient();
+					.credential(new DefaultAzureCredentialBuilder().build())
+					.userAgentSuffix("SpringAI-CDBNoSQL-VectorStore")
+					.gatewayMode()
+					.buildAsyncClient();
 		}
 
 		@Bean

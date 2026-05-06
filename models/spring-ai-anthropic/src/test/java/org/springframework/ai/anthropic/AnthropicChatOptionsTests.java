@@ -35,31 +35,31 @@ class AnthropicChatOptionsTests {
 	@Test
 	void testBuilderWithAllFields() {
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.model("test-model")
-			.maxTokens(100)
-			.stopSequences(List.of("stop1", "stop2"))
-			.temperature(0.7)
-			.topP(0.8)
-			.topK(50)
-			.metadata(new Metadata("userId_123"))
-			.build();
+				.model("test-model")
+				.maxTokens(100)
+				.stopSequences(List.of("stop1", "stop2"))
+				.temperature(0.7)
+				.topP(0.8)
+				.topK(50)
+				.metadata(new Metadata("userId_123"))
+				.build();
 
 		assertThat(options).extracting("model", "maxTokens", "stopSequences", "temperature", "topP", "topK", "metadata")
-			.containsExactly("test-model", 100, List.of("stop1", "stop2"), 0.7, 0.8, 50, new Metadata("userId_123"));
+				.containsExactly("test-model", 100, List.of("stop1", "stop2"), 0.7, 0.8, 50, new Metadata("userId_123"));
 	}
 
 	@Test
 	void testCopy() {
 		AnthropicChatOptions original = AnthropicChatOptions.builder()
-			.model("test-model")
-			.maxTokens(100)
-			.stopSequences(List.of("stop1", "stop2"))
-			.temperature(0.7)
-			.topP(0.8)
-			.topK(50)
-			.metadata(new Metadata("userId_123"))
-			.toolContext(Map.of("key1", "value1"))
-			.build();
+				.model("test-model")
+				.maxTokens(100)
+				.stopSequences(List.of("stop1", "stop2"))
+				.temperature(0.7)
+				.topP(0.8)
+				.topK(50)
+				.metadata(new Metadata("userId_123"))
+				.toolContext(Map.of("key1", "value1"))
+				.build();
 
 		AnthropicChatOptions copied = original.copy();
 

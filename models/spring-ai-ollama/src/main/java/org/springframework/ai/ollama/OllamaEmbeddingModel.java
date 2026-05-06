@@ -78,7 +78,7 @@ public class OllamaEmbeddingModel extends AbstractEmbeddingModel {
 	private EmbeddingModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
 	public OllamaEmbeddingModel(OllamaApi ollamaApi, OllamaOptions defaultOptions,
-			ObservationRegistry observationRegistry, ModelManagementOptions modelManagementOptions) {
+	                            ObservationRegistry observationRegistry, ModelManagementOptions modelManagementOptions) {
 		Assert.notNull(ollamaApi, "ollamaApi must not be null");
 		Assert.notNull(defaultOptions, "options must not be null");
 		Assert.notNull(observationRegistry, "observationRegistry must not be null");
@@ -112,32 +112,32 @@ public class OllamaEmbeddingModel extends AbstractEmbeddingModel {
 		OllamaApi.EmbeddingsRequest ollamaEmbeddingRequest = ollamaEmbeddingRequest(embeddingRequest);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(request)
-			.provider(OllamaApiConstants.PROVIDER_NAME)
-			.build();
+				.embeddingRequest(request)
+				.provider(OllamaApiConstants.PROVIDER_NAME)
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				EmbeddingsResponse response = this.ollamaApi.embed(ollamaEmbeddingRequest);
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					EmbeddingsResponse response = this.ollamaApi.embed(ollamaEmbeddingRequest);
 
-				AtomicInteger indexCounter = new AtomicInteger(0);
+					AtomicInteger indexCounter = new AtomicInteger(0);
 
-				List<Embedding> embeddings = response.embeddings()
-					.stream()
-					.map(e -> new Embedding(e, indexCounter.getAndIncrement()))
-					.toList();
+					List<Embedding> embeddings = response.embeddings()
+							.stream()
+							.map(e -> new Embedding(e, indexCounter.getAndIncrement()))
+							.toList();
 
-				EmbeddingResponseMetadata embeddingResponseMetadata = new EmbeddingResponseMetadata(response.model(),
-						getDefaultUsage(response));
+					EmbeddingResponseMetadata embeddingResponseMetadata = new EmbeddingResponseMetadata(response.model(),
+							getDefaultUsage(response));
 
-				EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, embeddingResponseMetadata);
+					EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, embeddingResponseMetadata);
 
-				observationContext.setResponse(embeddingResponse);
+					observationContext.setResponse(embeddingResponse);
 
-				return embeddingResponse;
-			});
+					return embeddingResponse;
+				});
 	}
 
 	private DefaultUsage getDefaultUsage(OllamaApi.EmbeddingsResponse response) {
@@ -185,6 +185,7 @@ public class OllamaEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(EmbeddingModelObservationConvention observationConvention) {
@@ -215,8 +216,7 @@ public class OllamaEmbeddingModel extends AbstractEmbeddingModel {
 					case "h" -> Duration.ofHours(value);
 					default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
 				};
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Invalid duration format: " + input);
 			}
 		}
@@ -228,8 +228,8 @@ public class OllamaEmbeddingModel extends AbstractEmbeddingModel {
 		private OllamaApi ollamaApi;
 
 		private OllamaOptions defaultOptions = OllamaOptions.builder()
-			.model(OllamaModel.MXBAI_EMBED_LARGE.id())
-			.build();
+				.model(OllamaModel.MXBAI_EMBED_LARGE.id())
+				.build();
 
 		private ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
 

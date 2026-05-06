@@ -45,28 +45,28 @@ import static org.mockito.Mockito.mock;
 class ChatClientObservationAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ChatClientAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ChatClientAutoConfiguration.class));
 
 	@Test
 	void promptContentHandlerNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void promptContentHandlerWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void promptContentHandlerEnabledNoTracer(CapturedOutput output) {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
-			.run(context -> assertThat(context).hasSingleBean(ChatClientPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
+				.run(context -> assertThat(context).hasSingleBean(ChatClientPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 		assertThat(output).contains(
 				"You have enabled logging out the ChatClient prompt content with the risk of exposing sensitive or private information. Please, be careful!");
 	}
@@ -74,9 +74,9 @@ class ChatClientObservationAutoConfigurationTests {
 	@Test
 	void promptContentHandlerEnabledWithTracer(CapturedOutput output) {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
-			.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
-				.hasSingleBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
+				.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
+						.hasSingleBean(TracingAwareLoggingObservationHandler.class));
 		assertThat(output).contains(
 				"You have enabled logging out the ChatClient prompt content with the risk of exposing sensitive or private information. Please, be careful!");
 	}
@@ -84,51 +84,51 @@ class ChatClientObservationAutoConfigurationTests {
 	@Test
 	void promptContentHandlerDisabledNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=false")
-			.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=false")
+				.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void promptContentHandlerDisabledWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=false")
-			.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=false")
+				.run(context -> assertThat(context).doesNotHaveBean(ChatClientPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customChatClientPromptContentObservationHandlerNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withUserConfiguration(CustomChatClientPromptContentObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
-			.run(context -> assertThat(context).hasSingleBean(ChatClientPromptContentObservationHandler.class)
-				.hasBean("customChatClientPromptContentObservationHandler")
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withUserConfiguration(CustomChatClientPromptContentObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
+				.run(context -> assertThat(context).hasSingleBean(ChatClientPromptContentObservationHandler.class)
+						.hasBean("customChatClientPromptContentObservationHandler")
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customChatClientPromptContentObservationHandlerWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withUserConfiguration(CustomChatClientPromptContentObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
-			.run(context -> assertThat(context).hasSingleBean(ChatClientPromptContentObservationHandler.class)
-				.hasBean("customChatClientPromptContentObservationHandler")
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withUserConfiguration(CustomChatClientPromptContentObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
+				.run(context -> assertThat(context).hasSingleBean(ChatClientPromptContentObservationHandler.class)
+						.hasBean("customChatClientPromptContentObservationHandler")
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customTracingAwareLoggingObservationHandler() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withUserConfiguration(CustomTracingAwareLoggingObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
-			.run(context -> {
-				assertThat(context).hasSingleBean(TracingAwareLoggingObservationHandler.class)
-					.hasBean("chatClientPromptContentObservationHandler")
-					.doesNotHaveBean(ChatClientPromptContentObservationHandler.class);
-				assertThat(context.getBean(TracingAwareLoggingObservationHandler.class))
-					.isSameAs(CustomTracingAwareLoggingObservationHandlerConfiguration.handlerInstance);
-			});
+				.withUserConfiguration(CustomTracingAwareLoggingObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.chat.client.observations.log-prompt=true")
+				.run(context -> {
+					assertThat(context).hasSingleBean(TracingAwareLoggingObservationHandler.class)
+							.hasBean("chatClientPromptContentObservationHandler")
+							.doesNotHaveBean(ChatClientPromptContentObservationHandler.class);
+					assertThat(context.getBean(TracingAwareLoggingObservationHandler.class))
+							.isSameAs(CustomTracingAwareLoggingObservationHandlerConfiguration.handlerInstance);
+				});
 	}
 
 	@Configuration(proxyBeanMethods = false)

@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class McpClientCommonPropertiesTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestConfiguration.class);
+			.withUserConfiguration(TestConfiguration.class);
 
 	@Test
 	void defaultValues() {
@@ -53,20 +53,20 @@ class McpClientCommonPropertiesTests {
 	@Test
 	void customValues() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.name=custom-client",
-					"spring.ai.mcp.client.version=2.0.0", "spring.ai.mcp.client.initialized=false",
-					"spring.ai.mcp.client.request-timeout=30s", "spring.ai.mcp.client.type=ASYNC",
-					"spring.ai.mcp.client.root-change-notification=false")
-			.run(context -> {
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.isEnabled()).isFalse();
-				assertThat(properties.getName()).isEqualTo("custom-client");
-				assertThat(properties.getVersion()).isEqualTo("2.0.0");
-				assertThat(properties.isInitialized()).isFalse();
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(30));
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
-				assertThat(properties.isRootChangeNotification()).isFalse();
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.name=custom-client",
+						"spring.ai.mcp.client.version=2.0.0", "spring.ai.mcp.client.initialized=false",
+						"spring.ai.mcp.client.request-timeout=30s", "spring.ai.mcp.client.type=ASYNC",
+						"spring.ai.mcp.client.root-change-notification=false")
+				.run(context -> {
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.isEnabled()).isFalse();
+					assertThat(properties.getName()).isEqualTo("custom-client");
+					assertThat(properties.getVersion()).isEqualTo("2.0.0");
+					assertThat(properties.isInitialized()).isFalse();
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(30));
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
+					assertThat(properties.isRootChangeNotification()).isFalse();
+				});
 	}
 
 	@Test
@@ -122,20 +122,20 @@ class McpClientCommonPropertiesTests {
 	@Test
 	void propertiesFileBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.name=test-mcp-client",
-					"spring.ai.mcp.client.version=0.5.0", "spring.ai.mcp.client.initialized=false",
-					"spring.ai.mcp.client.request-timeout=45s", "spring.ai.mcp.client.type=ASYNC",
-					"spring.ai.mcp.client.root-change-notification=false")
-			.run(context -> {
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.isEnabled()).isFalse();
-				assertThat(properties.getName()).isEqualTo("test-mcp-client");
-				assertThat(properties.getVersion()).isEqualTo("0.5.0");
-				assertThat(properties.isInitialized()).isFalse();
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(45));
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
-				assertThat(properties.isRootChangeNotification()).isFalse();
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.name=test-mcp-client",
+						"spring.ai.mcp.client.version=0.5.0", "spring.ai.mcp.client.initialized=false",
+						"spring.ai.mcp.client.request-timeout=45s", "spring.ai.mcp.client.type=ASYNC",
+						"spring.ai.mcp.client.root-change-notification=false")
+				.run(context -> {
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.isEnabled()).isFalse();
+					assertThat(properties.getName()).isEqualTo("test-mcp-client");
+					assertThat(properties.getVersion()).isEqualTo("0.5.0");
+					assertThat(properties.isInitialized()).isFalse();
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(45));
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
+					assertThat(properties.isRootChangeNotification()).isFalse();
+				});
 	}
 
 	@Test
@@ -162,20 +162,20 @@ class McpClientCommonPropertiesTests {
 	@Test
 	void yamlConfigurationBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.name=test-mcp-client-yaml",
-					"spring.ai.mcp.client.version=0.6.0", "spring.ai.mcp.client.initialized=false",
-					"spring.ai.mcp.client.request-timeout=60s", "spring.ai.mcp.client.type=ASYNC",
-					"spring.ai.mcp.client.root-change-notification=false")
-			.run(context -> {
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.isEnabled()).isFalse();
-				assertThat(properties.getName()).isEqualTo("test-mcp-client-yaml");
-				assertThat(properties.getVersion()).isEqualTo("0.6.0");
-				assertThat(properties.isInitialized()).isFalse();
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(60));
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
-				assertThat(properties.isRootChangeNotification()).isFalse();
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.name=test-mcp-client-yaml",
+						"spring.ai.mcp.client.version=0.6.0", "spring.ai.mcp.client.initialized=false",
+						"spring.ai.mcp.client.request-timeout=60s", "spring.ai.mcp.client.type=ASYNC",
+						"spring.ai.mcp.client.root-change-notification=false")
+				.run(context -> {
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.isEnabled()).isFalse();
+					assertThat(properties.getName()).isEqualTo("test-mcp-client-yaml");
+					assertThat(properties.getVersion()).isEqualTo("0.6.0");
+					assertThat(properties.isInitialized()).isFalse();
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(60));
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
+					assertThat(properties.isRootChangeNotification()).isFalse();
+				});
 	}
 
 	@Test
@@ -186,7 +186,7 @@ class McpClientCommonPropertiesTests {
 	@Test
 	void clientTypeEnumValues() {
 		assertThat(McpClientCommonProperties.ClientType.values())
-			.containsExactly(McpClientCommonProperties.ClientType.SYNC, McpClientCommonProperties.ClientType.ASYNC);
+				.containsExactly(McpClientCommonProperties.ClientType.SYNC, McpClientCommonProperties.ClientType.ASYNC);
 	}
 
 	@Test
@@ -267,18 +267,18 @@ class McpClientCommonPropertiesTests {
 	@Test
 	void customNameAndVersion() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.name=custom-mcp-client", "spring.ai.mcp.client.version=2.5.0")
-			.run(context -> {
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.getName()).isEqualTo("custom-mcp-client");
-				assertThat(properties.getVersion()).isEqualTo("2.5.0");
-				// Other properties should still have their default values
-				assertThat(properties.isEnabled()).isTrue();
-				assertThat(properties.isInitialized()).isTrue();
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(20));
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.SYNC);
-				assertThat(properties.isRootChangeNotification()).isTrue();
-			});
+				.withPropertyValues("spring.ai.mcp.client.name=custom-mcp-client", "spring.ai.mcp.client.version=2.5.0")
+				.run(context -> {
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.getName()).isEqualTo("custom-mcp-client");
+					assertThat(properties.getVersion()).isEqualTo("2.5.0");
+					// Other properties should still have their default values
+					assertThat(properties.isEnabled()).isTrue();
+					assertThat(properties.isInitialized()).isTrue();
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(20));
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.SYNC);
+					assertThat(properties.isRootChangeNotification()).isTrue();
+				});
 	}
 
 	@Configuration

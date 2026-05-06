@@ -78,8 +78,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 			List<TextPosition> textList = charactersByArticle.get(i);
 			try {
 				this.sortTextPositionList(textList);
-			}
-			catch (java.lang.IllegalArgumentException e) {
+			} catch (java.lang.IllegalArgumentException e) {
 				System.err.println(e);
 			}
 			this.iterateThroughTextList(textList.iterator());
@@ -117,8 +116,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 				this.setPreviousTextPosition(textPosition);
 				firstCharacterOfLineFound = true;
 			}
-		}
-		else {
+		} else {
 			this.addNewLine(); // white line
 		}
 	}
@@ -131,8 +129,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 			int numberOfNewLines = this.getNumberOfNewLinesFromPreviousTextPosition(textPosition);
 			if (numberOfNewLines == 0) {
 				textPositionList.add(textPosition);
-			}
-			else {
+			} else {
 				this.writeTextPositionList(textPositionList);
 				this.createNewEmptyNewLines(numberOfNewLines);
 				textPositionList.add(textPosition);
@@ -172,8 +169,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 				System.out.println(height + " " + numberOfLines);
 			}
 			return numberOfLines;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}

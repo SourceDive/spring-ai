@@ -51,7 +51,7 @@ class BedrockRuntimeHintsTests {
 
 		// Check a few more specific ones
 		assertThat(registeredTypes.contains(TypeReference.of(AbstractBedrockApi.AmazonBedrockInvocationMetrics.class)))
-			.isTrue();
+				.isTrue();
 		assertThat(registeredTypes.contains(TypeReference.of(CohereEmbeddingBedrockApi.class))).isTrue();
 		assertThat(registeredTypes.contains(TypeReference.of(BedrockCohereEmbeddingOptions.class))).isTrue();
 		assertThat(registeredTypes.contains(TypeReference.of(BedrockTitanEmbeddingOptions.class))).isTrue();

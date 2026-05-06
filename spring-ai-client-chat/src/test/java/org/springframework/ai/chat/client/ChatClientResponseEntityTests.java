@@ -65,11 +65,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, MyBean> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about John")
-			.call()
-			.responseEntity(MyBean.class);
+				.build()
+				.prompt()
+				.user("Tell me about John")
+				.call()
+				.responseEntity(MyBean.class);
 
 		assertThat(responseEntity.getResponse()).isEqualTo(chatResponse);
 		assertThat(responseEntity.getResponse().getMetadata().get("key1").toString()).isEqualTo("value1");
@@ -94,13 +94,13 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, List<MyBean>> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about them")
-			.call()
-			.responseEntity(new ParameterizedTypeReference<List<MyBean>>() {
+				.build()
+				.prompt()
+				.user("Tell me about them")
+				.call()
+				.responseEntity(new ParameterizedTypeReference<List<MyBean>>() {
 
-			});
+				});
 
 		assertThat(responseEntity.getResponse()).isEqualTo(chatResponse);
 		assertThat(responseEntity.getEntity().get(0)).isEqualTo(new MyBean("Max", 10));
@@ -121,11 +121,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, Map<String, Object>> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about Max")
-			.call()
-			.responseEntity(new MapOutputConverter());
+				.build()
+				.prompt()
+				.user("Tell me about Max")
+				.call()
+				.responseEntity(new MapOutputConverter());
 
 		assertThat(responseEntity.getResponse()).isEqualTo(chatResponse);
 		assertThat(responseEntity.getEntity().get("name")).isEqualTo("Max");

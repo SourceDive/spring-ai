@@ -57,10 +57,10 @@ class WeaviateVectorStoreBuilderTests {
 		WeaviateClient weaviateClient = new WeaviateClient(new Config("http", "localhost:8080"));
 
 		WeaviateVectorStore vectorStore = WeaviateVectorStore.builder(weaviateClient, this.embeddingModel)
-			.objectClass("CustomClass")
-			.consistencyLevel(ConsistentLevel.QUORUM)
-			.filterMetadataFields(List.of(MetadataField.text("country"), MetadataField.number("year")))
-			.build();
+				.objectClass("CustomClass")
+				.consistencyLevel(ConsistentLevel.QUORUM)
+				.filterMetadataFields(List.of(MetadataField.text("country"), MetadataField.number("year")))
+				.build();
 
 		assertThat(vectorStore).isNotNull();
 	}
@@ -68,8 +68,8 @@ class WeaviateVectorStoreBuilderTests {
 	@Test
 	void shouldFailWithoutWeaviateClient() {
 		assertThatThrownBy(() -> WeaviateVectorStore.builder(null, this.embeddingModel).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("WeaviateClient must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("WeaviateClient must not be null");
 	}
 
 	@Test
@@ -77,8 +77,8 @@ class WeaviateVectorStoreBuilderTests {
 		WeaviateClient weaviateClient = new WeaviateClient(new Config("http", "localhost:8080"));
 
 		assertThatThrownBy(() -> WeaviateVectorStore.builder(weaviateClient, null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("EmbeddingModel must be configured");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("EmbeddingModel must be configured");
 	}
 
 	@Test
@@ -87,8 +87,8 @@ class WeaviateVectorStoreBuilderTests {
 
 		assertThatThrownBy(
 				() -> WeaviateVectorStore.builder(weaviateClient, this.embeddingModel).objectClass("").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("objectClass must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("objectClass must not be empty");
 	}
 
 	@Test
@@ -97,8 +97,8 @@ class WeaviateVectorStoreBuilderTests {
 
 		assertThatThrownBy(
 				() -> WeaviateVectorStore.builder(weaviateClient, this.embeddingModel).consistencyLevel(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("consistencyLevel must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("consistencyLevel must not be null");
 	}
 
 	@Test
@@ -106,20 +106,20 @@ class WeaviateVectorStoreBuilderTests {
 		WeaviateClient weaviateClient = new WeaviateClient(new Config("http", "localhost:8080"));
 
 		assertThatThrownBy(() -> WeaviateVectorStore.builder(weaviateClient, this.embeddingModel)
-			.filterMetadataFields(null)
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("filterMetadataFields must not be null");
+				.filterMetadataFields(null)
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("filterMetadataFields must not be null");
 	}
 
 	@Test
 	void shouldCreateMetadataFieldsWithValidation() {
 		assertThatThrownBy(() -> MetadataField.text("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Text field must not be empty");
+				.hasMessage("Text field must not be empty");
 
 		assertThatThrownBy(() -> MetadataField.number("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Number field must not be empty");
+				.hasMessage("Number field must not be empty");
 
 		assertThatThrownBy(() -> MetadataField.bool("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Boolean field name must not be empty");
+				.hasMessage("Boolean field name must not be empty");
 
 		MetadataField textField = MetadataField.text("validName");
 		assertThat(textField.name()).isEqualTo("validName");

@@ -23,10 +23,10 @@ import org.springframework.core.Ordered;
  *
  * @author Christian Tzolov
  * @author Dariusz Jedrzejczyk
- * @since 1.0.0
  * @see CallAdvisor
  * @see StreamAdvisor
  * @see BaseAdvisor
+ * @since 1.0.0
  */
 public interface Advisor extends Ordered {
 
@@ -40,6 +40,7 @@ public interface Advisor extends Ordered {
 
 	/**
 	 * Return the name of the advisor.
+	 *
 	 * @return the advisor name.
 	 */
 	String getName();

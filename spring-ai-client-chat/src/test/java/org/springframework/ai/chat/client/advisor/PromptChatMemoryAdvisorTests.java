@@ -39,8 +39,8 @@ public class PromptChatMemoryAdvisorTests {
 	@Test
 	void whenChatMemoryIsNullThenThrow() {
 		assertThatThrownBy(() -> PromptChatMemoryAdvisor.builder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatMemory cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("chatMemory cannot be null");
 	}
 
 	@Test
@@ -48,8 +48,8 @@ public class PromptChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> PromptChatMemoryAdvisor.builder(chatMemory).conversationId(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("defaultConversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("defaultConversationId cannot be null or empty");
 	}
 
 	@Test
@@ -57,8 +57,8 @@ public class PromptChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> PromptChatMemoryAdvisor.builder(chatMemory).conversationId(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("defaultConversationId cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("defaultConversationId cannot be null or empty");
 	}
 
 	@Test
@@ -66,8 +66,8 @@ public class PromptChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> PromptChatMemoryAdvisor.builder(chatMemory).scheduler(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("scheduler cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("scheduler cannot be null");
 	}
 
 	@Test
@@ -75,16 +75,16 @@ public class PromptChatMemoryAdvisorTests {
 		ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
 
 		assertThatThrownBy(() -> PromptChatMemoryAdvisor.builder(chatMemory).systemPromptTemplate(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("systemPromptTemplate cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("systemPromptTemplate cannot be null");
 	}
 
 	@Test
 	void testBuilderMethodChaining() {
 		// Create a chat memory
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Test builder method chaining with methods from AbstractBuilder and
 		// PromptChatMemoryAdvisor.Builder
@@ -93,10 +93,10 @@ public class PromptChatMemoryAdvisorTests {
 		String customSystemPrompt = "Custom system prompt with {instructions} and {memory}";
 
 		PromptChatMemoryAdvisor advisor = PromptChatMemoryAdvisor.builder(chatMemory)
-			.conversationId(customConversationId) // From AbstractBuilder
-			.order(customOrder) // From AbstractBuilder
-			.scheduler(Schedulers.immediate()) // From AbstractBuilder
-			.build();
+				.conversationId(customConversationId) // From AbstractBuilder
+				.order(customOrder) // From AbstractBuilder
+				.scheduler(Schedulers.immediate()) // From AbstractBuilder
+				.build();
 
 		// Verify the advisor was built with the correct properties
 		assertThat(advisor).isNotNull();
@@ -107,17 +107,17 @@ public class PromptChatMemoryAdvisorTests {
 	void testSystemPromptTemplateChaining() {
 		// Create a chat memory
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Test chaining with systemPromptTemplate method
 		PromptTemplate customTemplate = new PromptTemplate("Custom template with {instructions} and {memory}");
 
 		PromptChatMemoryAdvisor advisor = PromptChatMemoryAdvisor.builder(chatMemory)
-			.conversationId("custom-id")
-			.systemPromptTemplate(customTemplate)
-			.order(100)
-			.build();
+				.conversationId("custom-id")
+				.systemPromptTemplate(customTemplate)
+				.order(100)
+				.build();
 
 		assertThat(advisor).isNotNull();
 		assertThat(advisor.getOrder()).isEqualTo(100);
@@ -127,8 +127,8 @@ public class PromptChatMemoryAdvisorTests {
 	void testDefaultValues() {
 		// Create a chat memory
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor with default values
 		PromptChatMemoryAdvisor advisor = PromptChatMemoryAdvisor.builder(chatMemory).build();

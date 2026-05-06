@@ -65,11 +65,11 @@ class BedrockTitanEmbeddingModelIT {
 	void imageEmbedding() throws IOException {
 
 		byte[] image = new DefaultResourceLoader().getResource("classpath:/spring_framework.png")
-			.getContentAsByteArray();
+				.getContentAsByteArray();
 
 		EmbeddingResponse embeddingResponse = this.embeddingModel
-			.call(new EmbeddingRequest(List.of(Base64.getEncoder().encodeToString(image)),
-					BedrockTitanEmbeddingOptions.builder().withInputType(InputType.IMAGE).build()));
+				.call(new EmbeddingRequest(List.of(Base64.getEncoder().encodeToString(image)),
+						BedrockTitanEmbeddingOptions.builder().withInputType(InputType.IMAGE).build()));
 		assertThat(embeddingResponse.getResults()).hasSize(1);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 		assertThat(this.embeddingModel.dimensions()).isEqualTo(1024);
@@ -92,7 +92,7 @@ class BedrockTitanEmbeddingModelIT {
 
 		@Bean
 		public BedrockTitanEmbeddingModel titanEmbedding(TitanEmbeddingBedrockApi titanEmbeddingApi,
-				TestObservationRegistry observationRegistry) {
+		                                                 TestObservationRegistry observationRegistry) {
 			return new BedrockTitanEmbeddingModel(titanEmbeddingApi, observationRegistry);
 		}
 

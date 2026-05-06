@@ -42,35 +42,35 @@ public class FunctionCallWithPromptFunctionIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithPromptFunctionIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.apiKey=" + System.getenv("ANTHROPIC_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(AnthropicChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.anthropic.apiKey=" + System.getenv("ANTHROPIC_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(AnthropicChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.anthropic.chat.options.model=" + AnthropicApi.ChatModel.CLAUDE_3_5_HAIKU.getValue())
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.anthropic.chat.options.model=" + AnthropicApi.ChatModel.CLAUDE_3_5_HAIKU.getValue())
+				.run(context -> {
 
-				AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
+					AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris and in Tokyo? Return the temperature in Celsius.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris and in Tokyo? Return the temperature in Celsius.");
 
-				var promptOptions = AnthropicChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = AnthropicChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 }

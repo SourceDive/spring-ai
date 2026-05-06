@@ -59,9 +59,9 @@ public class MistralAiEmbeddingModelObservationIT {
 	@Test
 	void observationForEmbeddingOperation() {
 		var options = MistralAiEmbeddingOptions.builder()
-			.withModel(MistralAiApi.EmbeddingModel.EMBED.getValue())
-			.withEncodingFormat("float")
-			.build();
+				.withModel(MistralAiApi.EmbeddingModel.EMBED.getValue())
+				.withEncodingFormat("float")
+				.build();
 
 		EmbeddingRequest embeddingRequest = new EmbeddingRequest(List.of("Here comes the sun"), options);
 
@@ -72,23 +72,23 @@ public class MistralAiEmbeddingModelObservationIT {
 		assertThat(responseMetadata).isNotNull();
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("embedding " + MistralAiApi.EmbeddingModel.EMBED.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.EMBEDDING.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.MISTRAL_AI.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					MistralAiApi.EmbeddingModel.EMBED.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("embedding " + MistralAiApi.EmbeddingModel.EMBED.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.EMBEDDING.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.MISTRAL_AI.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						MistralAiApi.EmbeddingModel.EMBED.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -106,7 +106,7 @@ public class MistralAiEmbeddingModelObservationIT {
 
 		@Bean
 		public MistralAiEmbeddingModel openAiEmbeddingModel(MistralAiApi mistralAiApi,
-				TestObservationRegistry observationRegistry) {
+		                                                    TestObservationRegistry observationRegistry) {
 			return new MistralAiEmbeddingModel(mistralAiApi, MetadataMode.EMBED,
 					MistralAiEmbeddingOptions.builder().build(), RetryTemplate.defaultInstance(), observationRegistry);
 		}

@@ -34,8 +34,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 
 /**
+ *
  */
-@AutoConfiguration(after = { McpClientAutoConfiguration.class })
+@AutoConfiguration(after = {McpClientAutoConfiguration.class})
 @EnableConfigurationProperties(McpClientCommonProperties.class)
 @Conditional(McpToolCallbackAutoConfiguration.McpToolCallbackAutoConfigurationCondition.class)
 public class McpToolCallbackAutoConfiguration {
@@ -46,6 +47,7 @@ public class McpToolCallbackAutoConfiguration {
 	 * <p>
 	 * These callbacks enable integration with Spring AI's tool execution framework,
 	 * allowing MCP tools to be used as part of AI interactions.
+	 *
 	 * @param syncMcpClients provider of MCP sync clients
 	 * @return list of tool callbacks for MCP integration
 	 */

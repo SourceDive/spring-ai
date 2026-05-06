@@ -65,12 +65,12 @@ public class BedrockNovaChatClientIT {
 	void pdfMultiModalityTest() throws IOException {
 
 		String response = ChatClient.create(this.chatModel)
-			.prompt()
-			.user(u -> u.text(
-					"You are a very professional document summarization specialist. Please summarize the given document.")
-				.media(Media.Format.DOC_PDF, new ClassPathResource("/spring-ai-reference-overview.pdf")))
-			.call()
-			.content();
+				.prompt()
+				.user(u -> u.text(
+								"You are a very professional document summarization specialist. Please summarize the given document.")
+						.media(Media.Format.DOC_PDF, new ClassPathResource("/spring-ai-reference-overview.pdf")))
+				.call()
+				.content();
 
 		logger.info(response);
 		assertThat(response).containsAnyOf("Spring AI", "portable API");
@@ -80,11 +80,11 @@ public class BedrockNovaChatClientIT {
 	void imageMultiModalityTest() throws IOException {
 
 		String response = ChatClient.create(this.chatModel)
-			.prompt()
-			.user(u -> u.text("Explain what do you see on this picture?")
-				.media(Media.Format.IMAGE_PNG, new ClassPathResource("/test.png")))
-			.call()
-			.content();
+				.prompt()
+				.user(u -> u.text("Explain what do you see on this picture?")
+						.media(Media.Format.IMAGE_PNG, new ClassPathResource("/test.png")))
+				.call()
+				.content();
 
 		logger.info(response);
 		assertThat(response).containsAnyOf("bananas", "apple", "bowl", "basket", "fruit stand");
@@ -100,11 +100,11 @@ public class BedrockNovaChatClientIT {
 				"hatchling", "hatchlings");
 
 		String response = ChatClient.create(this.chatModel)
-			.prompt()
-			.user(u -> u.text("Explain what do you see in this video?")
-				.media(Media.Format.VIDEO_MP4, new ClassPathResource("/test.video.mp4")))
-			.call()
-			.content();
+				.prompt()
+				.user(u -> u.text("Explain what do you see in this video?")
+						.media(Media.Format.VIDEO_MP4, new ClassPathResource("/test.video.mp4")))
+				.call()
+				.content();
 
 		logger.info(response);
 
@@ -113,11 +113,11 @@ public class BedrockNovaChatClientIT {
 
 		// Test for presence of young/small descriptors
 		boolean hasYoungDescriptor = youngDescriptors.stream()
-			.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
+				.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
 
 		// Test for presence of bird/chicken descriptors
 		boolean hasBirdDescriptor = birdDescriptors.stream()
-			.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
+				.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
 
 		// Additional semantic checks
 		boolean describesMovement = lowerResponse.contains("mov") || lowerResponse.contains("walk")
@@ -177,10 +177,10 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		String response = chatClient.prompt()
-			.tools(new DummyWeatherForecastTools())
-			.user("Get current weather in Amsterdam")
-			.call()
-			.content();
+				.tools(new DummyWeatherForecastTools())
+				.user("Get current weather in Amsterdam")
+				.call()
+				.content();
 
 		assertThat(response).isNotEmpty();
 		assertThat(response).contains("20 degrees");
@@ -192,17 +192,17 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		Flux<ChatResponse> responses = chatClient.prompt()
-			.tools(new DummyWeatherForecastTools())
-			.user("Get current weather in Amsterdam")
-			.stream()
-			.chatResponse();
+				.tools(new DummyWeatherForecastTools())
+				.user("Get current weather in Amsterdam")
+				.stream()
+				.chatResponse();
 
 		String content = responses.collectList()
-			.block()
-			.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 
 		assertThat(content).contains("20 degrees");
 	}
@@ -214,13 +214,13 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		WeatherService.Response response = chatClient.prompt()
-			.toolCallbacks(FunctionToolCallback.builder("weather", new WeatherService())
-				.description("Get the current weather")
-				.inputType(Void.class)
-				.build())
-			.user("Get current weather in Amsterdam")
-			.call()
-			.entity(WeatherService.Response.class);
+				.toolCallbacks(FunctionToolCallback.builder("weather", new WeatherService())
+						.description("Get the current weather")
+						.inputType(Void.class)
+						.build())
+				.user("Get current weather in Amsterdam")
+				.call()
+				.entity(WeatherService.Response.class);
 
 		assertThat(response).isNotNull();
 		assertThat(response.temp()).isEqualTo(30.0);
@@ -232,20 +232,20 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		Flux<ChatResponse> responses = chatClient.prompt()
-			.toolCallbacks(FunctionToolCallback.builder("weather", new WeatherService())
-				.description("Get the current weather")
-				.inputType(Void.class)
-				.build())
-			.user("Get current weather in Amsterdam")
-			.stream()
-			.chatResponse();
+				.toolCallbacks(FunctionToolCallback.builder("weather", new WeatherService())
+						.description("Get the current weather")
+						.inputType(Void.class)
+						.build())
+				.user("Get current weather in Amsterdam")
+				.stream()
+				.chatResponse();
 
 		String content = responses.collectList()
-			.block()
-			.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 
 		assertThat(content).contains("30.0");
 	}
@@ -259,11 +259,11 @@ public class BedrockNovaChatClientIT {
 			String modelId = "amazon.nova-pro-v1:0";
 
 			return BedrockProxyChatModel.builder()
-				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-				.region(Region.US_EAST_1)
-				.timeout(Duration.ofSeconds(120))
-				.defaultOptions(ToolCallingChatOptions.builder().model(modelId).build())
-				.build();
+					.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+					.region(Region.US_EAST_1)
+					.timeout(Duration.ofSeconds(120))
+					.defaultOptions(ToolCallingChatOptions.builder().model(modelId).build())
+					.build();
 		}
 
 	}

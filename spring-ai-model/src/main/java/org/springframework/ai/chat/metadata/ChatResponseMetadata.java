@@ -56,6 +56,7 @@ public class ChatResponseMetadata extends AbstractResponseMetadata implements Re
 
 	/**
 	 * A unique identifier for the chat completion operation.
+	 *
 	 * @return unique operation identifier.
 	 */
 	public String getId() {
@@ -64,6 +65,7 @@ public class ChatResponseMetadata extends AbstractResponseMetadata implements Re
 
 	/**
 	 * The model that handled the request.
+	 *
 	 * @return the model that handled the request.
 	 */
 	public String getModel() {
@@ -72,6 +74,7 @@ public class ChatResponseMetadata extends AbstractResponseMetadata implements Re
 
 	/**
 	 * Returns AI provider specific metadata on rate limits.
+	 *
 	 * @return AI provider specific metadata on rate limits.
 	 * @see RateLimit
 	 */
@@ -81,6 +84,7 @@ public class ChatResponseMetadata extends AbstractResponseMetadata implements Re
 
 	/**
 	 * Returns AI provider specific metadata on API usage.
+	 *
 	 * @return AI provider specific metadata on API usage.
 	 * @see Usage
 	 */
@@ -90,6 +94,7 @@ public class ChatResponseMetadata extends AbstractResponseMetadata implements Re
 
 	/**
 	 * Returns the prompt metadata gathered by the AI during request processing.
+	 *
 	 * @return the prompt metadata.
 	 */
 	public PromptMetadata getPromptMetadata() {
@@ -138,8 +143,7 @@ public class ChatResponseMetadata extends AbstractResponseMetadata implements Re
 			}
 			if (value != null) {
 				this.chatResponseMetadata.map.put(key, value);
-			}
-			else {
+			} else {
 				logger.debug("Ignore null value for key [{}]", key);
 			}
 			return this;

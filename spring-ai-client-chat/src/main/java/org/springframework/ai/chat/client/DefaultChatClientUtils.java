@@ -61,11 +61,11 @@ final class DefaultChatClientUtils {
 		if (StringUtils.hasText(processedSystemText)) {
 			if (!CollectionUtils.isEmpty(inputRequest.getSystemParams())) {
 				processedSystemText = PromptTemplate.builder()
-					.template(processedSystemText)
-					.variables(inputRequest.getSystemParams())
-					.renderer(inputRequest.getTemplateRenderer())
-					.build()
-					.render();
+						.template(processedSystemText)
+						.variables(inputRequest.getSystemParams())
+						.renderer(inputRequest.getTemplateRenderer())
+						.build()
+						.render();
 			}
 			processedMessages.add(new SystemMessage(processedSystemText));
 		}
@@ -80,11 +80,11 @@ final class DefaultChatClientUtils {
 		if (StringUtils.hasText(processedUserText)) {
 			if (!CollectionUtils.isEmpty(inputRequest.getUserParams())) {
 				processedUserText = PromptTemplate.builder()
-					.template(processedUserText)
-					.variables(inputRequest.getUserParams())
-					.renderer(inputRequest.getTemplateRenderer())
-					.build()
-					.render();
+						.template(processedUserText)
+						.variables(inputRequest.getUserParams())
+						.renderer(inputRequest.getTemplateRenderer())
+						.build()
+						.render();
 			}
 			processedMessages.add(UserMessage.builder().text(processedUserText).media(inputRequest.getMedia()).build());
 		}
@@ -97,12 +97,12 @@ final class DefaultChatClientUtils {
 		if (processedChatOptions instanceof ToolCallingChatOptions toolCallingChatOptions) {
 			if (!inputRequest.getToolNames().isEmpty()) {
 				Set<String> toolNames = ToolCallingChatOptions
-					.mergeToolNames(new HashSet<>(inputRequest.getToolNames()), toolCallingChatOptions.getToolNames());
+						.mergeToolNames(new HashSet<>(inputRequest.getToolNames()), toolCallingChatOptions.getToolNames());
 				toolCallingChatOptions.setToolNames(toolNames);
 			}
 			if (!inputRequest.getToolCallbacks().isEmpty()) {
 				List<ToolCallback> toolCallbacks = ToolCallingChatOptions
-					.mergeToolCallbacks(inputRequest.getToolCallbacks(), toolCallingChatOptions.getToolCallbacks());
+						.mergeToolCallbacks(inputRequest.getToolCallbacks(), toolCallingChatOptions.getToolCallbacks());
 				ToolCallingChatOptions.validateToolCallbacks(toolCallbacks);
 				toolCallingChatOptions.setToolCallbacks(toolCallbacks);
 			}
@@ -118,9 +118,9 @@ final class DefaultChatClientUtils {
 		 */
 
 		return ChatClientRequest.builder()
-			.prompt(Prompt.builder().messages(processedMessages).chatOptions(processedChatOptions).build())
-			.context(new ConcurrentHashMap<>(inputRequest.getAdvisorParams()))
-			.build();
+				.prompt(Prompt.builder().messages(processedMessages).chatOptions(processedChatOptions).build())
+				.context(new ConcurrentHashMap<>(inputRequest.getAdvisorParams()))
+				.build();
 	}
 
 }

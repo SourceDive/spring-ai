@@ -44,20 +44,20 @@ import org.springframework.web.client.RestClient;
  * @author Geng Rong
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(ZhiPuAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.ZHIPUAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ ZhiPuAiConnectionProperties.class, ZhiPuAiEmbeddingProperties.class })
+@EnableConfigurationProperties({ZhiPuAiConnectionProperties.class, ZhiPuAiEmbeddingProperties.class})
 public class ZhiPuAiEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ZhiPuAiEmbeddingModel zhiPuAiEmbeddingModel(ZhiPuAiConnectionProperties commonProperties,
-			ZhiPuAiEmbeddingProperties embeddingProperties, RestClient.Builder restClientBuilder,
-			RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                   ZhiPuAiEmbeddingProperties embeddingProperties, RestClient.Builder restClientBuilder,
+	                                                   RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
+	                                                   ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                   ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var zhiPuAiApi = zhiPuAiApi(embeddingProperties.getBaseUrl(), commonProperties.getBaseUrl(),
 				embeddingProperties.getApiKey(), commonProperties.getApiKey(), restClientBuilder, responseErrorHandler);
@@ -72,7 +72,7 @@ public class ZhiPuAiEmbeddingAutoConfiguration {
 	}
 
 	private ZhiPuAiApi zhiPuAiApi(String baseUrl, String commonBaseUrl, String apiKey, String commonApiKey,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                              RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		String resolvedBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;
 		Assert.hasText(resolvedBaseUrl, "ZhiPuAI base URL must be set");

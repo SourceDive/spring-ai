@@ -34,7 +34,8 @@ public final class UsageCalculator {
 	/**
 	 * Accumulate usage tokens from the previous chat response to the current usage
 	 * tokens.
-	 * @param currentUsage the current usage.
+	 *
+	 * @param currentUsage         the current usage.
 	 * @param previousChatResponse the previous chat response.
 	 * @return accumulated usage.
 	 */
@@ -43,8 +44,7 @@ public final class UsageCalculator {
 		if (previousChatResponse != null && previousChatResponse.getMetadata() != null
 				&& previousChatResponse.getMetadata().getUsage() != null) {
 			usageFromPreviousChatResponse = previousChatResponse.getMetadata().getUsage();
-		}
-		else {
+		} else {
 			// Return the current usage when the previous chat response usage is empty or
 			// null.
 			return currentUsage;
@@ -68,14 +68,14 @@ public final class UsageCalculator {
 	/**
 	 * Check if the {@link Usage} is empty. Returns true when the {@link Usage} is null.
 	 * Returns true when the {@link Usage} has zero tokens.
+	 *
 	 * @param usage the usage to check against.
 	 * @return the boolean value to represent if it is empty.
 	 */
 	public static boolean isEmpty(Usage usage) {
 		if (usage == null) {
 			return true;
-		}
-		else if (usage != null && usage.getTotalTokens() == 0L) {
+		} else if (usage != null && usage.getTotalTokens() == 0L) {
 			return true;
 		}
 		return false;

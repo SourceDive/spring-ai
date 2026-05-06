@@ -56,15 +56,15 @@ public class OpenAiApiBuilderTests {
 		ResponseErrorHandler errorHandler = mock(ResponseErrorHandler.class);
 
 		OpenAiApi api = OpenAiApi.builder()
-			.apiKey(TEST_API_KEY)
-			.baseUrl(TEST_BASE_URL)
-			.headers(headers)
-			.completionsPath(TEST_COMPLETIONS_PATH)
-			.embeddingsPath(TEST_EMBEDDINGS_PATH)
-			.restClientBuilder(restClientBuilder)
-			.webClientBuilder(webClientBuilder)
-			.responseErrorHandler(errorHandler)
-			.build();
+				.apiKey(TEST_API_KEY)
+				.baseUrl(TEST_BASE_URL)
+				.headers(headers)
+				.completionsPath(TEST_COMPLETIONS_PATH)
+				.embeddingsPath(TEST_EMBEDDINGS_PATH)
+				.restClientBuilder(restClientBuilder)
+				.webClientBuilder(webClientBuilder)
+				.responseErrorHandler(errorHandler)
+				.build();
 
 		assertThat(api).isNotNull();
 	}
@@ -81,65 +81,65 @@ public class OpenAiApiBuilderTests {
 	@Test
 	void testMissingApiKey() {
 		assertThatThrownBy(() -> OpenAiApi.builder().build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("apiKey must be set");
+				.hasMessageContaining("apiKey must be set");
 	}
 
 	@Test
 	void testInvalidBaseUrl() {
 		assertThatThrownBy(() -> OpenAiApi.builder().baseUrl("").build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("baseUrl cannot be null or empty");
+				.hasMessageContaining("baseUrl cannot be null or empty");
 
 		assertThatThrownBy(() -> OpenAiApi.builder().baseUrl(null).build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("baseUrl cannot be null or empty");
+				.hasMessageContaining("baseUrl cannot be null or empty");
 	}
 
 	@Test
 	void testInvalidHeaders() {
 		assertThatThrownBy(() -> OpenAiApi.builder().headers(null).build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("headers cannot be null");
+				.hasMessageContaining("headers cannot be null");
 	}
 
 	@Test
 	void testInvalidCompletionsPath() {
 		assertThatThrownBy(() -> OpenAiApi.builder().completionsPath("").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("completionsPath cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("completionsPath cannot be null or empty");
 
 		assertThatThrownBy(() -> OpenAiApi.builder().completionsPath(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("completionsPath cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("completionsPath cannot be null or empty");
 	}
 
 	@Test
 	void testInvalidEmbeddingsPath() {
 		assertThatThrownBy(() -> OpenAiApi.builder().embeddingsPath("").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("embeddingsPath cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("embeddingsPath cannot be null or empty");
 
 		assertThatThrownBy(() -> OpenAiApi.builder().embeddingsPath(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("embeddingsPath cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("embeddingsPath cannot be null or empty");
 	}
 
 	@Test
 	void testInvalidRestClientBuilder() {
 		assertThatThrownBy(() -> OpenAiApi.builder().restClientBuilder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("restClientBuilder cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("restClientBuilder cannot be null");
 	}
 
 	@Test
 	void testInvalidWebClientBuilder() {
 		assertThatThrownBy(() -> OpenAiApi.builder().webClientBuilder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("webClientBuilder cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("webClientBuilder cannot be null");
 	}
 
 	@Test
 	void testInvalidResponseErrorHandler() {
 		assertThatThrownBy(() -> OpenAiApi.builder().responseErrorHandler(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("responseErrorHandler cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("responseErrorHandler cannot be null");
 	}
 
 }

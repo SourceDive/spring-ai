@@ -22,10 +22,10 @@ package org.springframework.ai.observation.conventions;
  *
  * @author Christian Tzolov
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href=
  * "https://github.com/open-telemetry/semantic-conventions/tree/main/docs/database">DB
  * Semantic Conventions</a>.
+ * @since 1.0.0
  */
 public enum VectorStoreProvider {
 
@@ -145,6 +145,7 @@ public enum VectorStoreProvider {
 
 	/**
 	 * Return the value of the vector store provider.
+	 *
 	 * @return the value of the vector store provider
 	 */
 	public String value() {

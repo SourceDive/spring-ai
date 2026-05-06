@@ -41,19 +41,19 @@ import org.springframework.context.annotation.Bean;
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
-@AutoConfiguration(after = { SpringAiRetryAutoConfiguration.class })
-@ConditionalOnClass({ VertexAI.class, VertexAiMultimodalEmbeddingModel.class })
+@AutoConfiguration(after = {SpringAiRetryAutoConfiguration.class})
+@ConditionalOnClass({VertexAI.class, VertexAiMultimodalEmbeddingModel.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.MULTI_MODAL_EMBEDDING_MODEL,
 		havingValue = SpringAIModels.VERTEX_AI, matchIfMissing = true)
 @EnableConfigurationProperties(VertexAiMultimodalEmbeddingProperties.class)
 @ImportAutoConfiguration(
-		classes = { SpringAiRetryAutoConfiguration.class, VertexAiEmbeddingConnectionAutoConfiguration.class })
+		classes = {SpringAiRetryAutoConfiguration.class, VertexAiEmbeddingConnectionAutoConfiguration.class})
 public class VertexAiMultiModalEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public VertexAiMultimodalEmbeddingModel multimodalEmbedding(VertexAiEmbeddingConnectionDetails connectionDetails,
-			VertexAiMultimodalEmbeddingProperties multimodalEmbeddingProperties) throws IOException {
+	                                                            VertexAiMultimodalEmbeddingProperties multimodalEmbeddingProperties) throws IOException {
 
 		return new VertexAiMultimodalEmbeddingModel(connectionDetails, multimodalEmbeddingProperties.getOptions());
 	}

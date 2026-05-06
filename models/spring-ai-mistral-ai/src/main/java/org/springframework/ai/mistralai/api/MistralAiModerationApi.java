@@ -46,7 +46,7 @@ public class MistralAiModerationApi {
 	}
 
 	public MistralAiModerationApi(String baseUrl, String mistralAiApiKey, RestClient.Builder restClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                              ResponseErrorHandler responseErrorHandler) {
 
 		Consumer<HttpHeaders> jsonContentHeaders = headers -> {
 			headers.setBearerAuth(mistralAiApiKey);
@@ -54,9 +54,9 @@ public class MistralAiModerationApi {
 		};
 
 		this.restClient = restClientBuilder.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 	}
 
 	public ResponseEntity<MistralAiModerationResponse> moderate(MistralAiModerationRequest mistralAiModerationRequest) {
@@ -65,10 +65,10 @@ public class MistralAiModerationApi {
 		Assert.notNull(mistralAiModerationRequest.model(), "Model cannot be null.");
 
 		return this.restClient.post()
-			.uri("v1/moderations")
-			.body(mistralAiModerationRequest)
-			.retrieve()
-			.toEntity(MistralAiModerationResponse.class);
+				.uri("v1/moderations")
+				.body(mistralAiModerationRequest)
+				.retrieve()
+				.toEntity(MistralAiModerationResponse.class);
 	}
 
 	public enum Model {

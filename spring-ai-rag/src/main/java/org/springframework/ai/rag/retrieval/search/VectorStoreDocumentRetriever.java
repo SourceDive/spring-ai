@@ -69,7 +69,7 @@ public final class VectorStoreDocumentRetriever implements DocumentRetriever {
 	private final Supplier<Filter.Expression> filterExpression;
 
 	public VectorStoreDocumentRetriever(VectorStore vectorStore, @Nullable Double similarityThreshold,
-			@Nullable Integer topK, @Nullable Supplier<Filter.Expression> filterExpression) {
+	                                    @Nullable Integer topK, @Nullable Supplier<Filter.Expression> filterExpression) {
 		Assert.notNull(vectorStore, "vectorStore cannot be null");
 		Assert.isTrue(similarityThreshold == null || similarityThreshold >= 0.0,
 				"similarityThreshold must be equal to or greater than 0.0");
@@ -86,11 +86,11 @@ public final class VectorStoreDocumentRetriever implements DocumentRetriever {
 		Assert.notNull(query, "query cannot be null");
 		var requestFilterExpression = computeRequestFilterExpression(query);
 		var searchRequest = SearchRequest.builder()
-			.query(query.text())
-			.filterExpression(requestFilterExpression)
-			.similarityThreshold(this.similarityThreshold)
-			.topK(this.topK)
-			.build();
+				.query(query.text())
+				.filterExpression(requestFilterExpression)
+				.similarityThreshold(this.similarityThreshold)
+				.topK(this.topK)
+				.build();
 		return this.vectorStore.similaritySearch(searchRequest);
 	}
 
@@ -103,6 +103,7 @@ public final class VectorStoreDocumentRetriever implements DocumentRetriever {
 	 * <p>
 	 * If no filter expression is provided in the context, the default filter expression
 	 * configured for this retriever is used.
+	 *
 	 * @param query the query containing potential context with filter expression
 	 * @return the filter expression to use for the request
 	 */
@@ -111,8 +112,7 @@ public final class VectorStoreDocumentRetriever implements DocumentRetriever {
 		if (contextFilterExpression != null) {
 			if (contextFilterExpression instanceof Filter.Expression) {
 				return (Filter.Expression) contextFilterExpression;
-			}
-			else if (StringUtils.hasText(contextFilterExpression.toString())) {
+			} else if (StringUtils.hasText(contextFilterExpression.toString())) {
 				return new FilterExpressionTextParser().parse(contextFilterExpression.toString());
 			}
 		}

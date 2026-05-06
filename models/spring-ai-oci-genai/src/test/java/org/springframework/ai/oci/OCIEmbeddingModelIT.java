@@ -52,7 +52,7 @@ class OCIEmbeddingModelIT extends BaseEmbeddingModelTest {
 	@Test
 	void callWithOptions() {
 		EmbeddingResponse response = this.embeddingModel
-			.call(new EmbeddingRequest(this.content, OCIEmbeddingOptions.builder().model(EMBEDDING_MODEL_V3).build()));
+				.call(new EmbeddingRequest(this.content, OCIEmbeddingOptions.builder().model(EMBEDDING_MODEL_V3).build()));
 		assertThat(response).isNotNull();
 		assertThat(response.getResults()).hasSize(2);
 		assertThat(response.getMetadata().getModel()).isEqualTo(EMBEDDING_MODEL_V3);

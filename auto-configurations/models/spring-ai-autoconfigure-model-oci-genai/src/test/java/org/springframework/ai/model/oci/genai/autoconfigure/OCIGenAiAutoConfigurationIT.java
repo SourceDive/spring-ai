@@ -45,7 +45,7 @@ public class OCIGenAiAutoConfigurationIT {
 	private final String CHAT_MODEL_ID = System.getenv(OCI_CHAT_MODEL_ID_KEY);
 
 	private final ApplicationContextRunner embeddingContextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+			// @formatter:off
 				"spring.ai.oci.genai.authenticationType=file",
 				"spring.ai.oci.genai.file=" + this.CONFIG_FILE,
 				"spring.ai.oci.genai.embedding.compartment=" + this.COMPARTMENT_ID,
@@ -55,7 +55,7 @@ public class OCIGenAiAutoConfigurationIT {
 	).withConfiguration(AutoConfigurations.of(OCIGenAiEmbeddingAutoConfiguration.class));
 
 	private final ApplicationContextRunner cohereChatContextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+			// @formatter:off
 			"spring.ai.oci.genai.authenticationType=file",
 			"spring.ai.oci.genai.file=" + this.CONFIG_FILE,
 			"spring.ai.oci.genai.cohere.chat.options.compartment=" + this.COMPARTMENT_ID,
@@ -70,7 +70,7 @@ public class OCIGenAiAutoConfigurationIT {
 			OCIEmbeddingModel embeddingModel = context.getBean(OCIEmbeddingModel.class);
 			assertThat(embeddingModel).isNotNull();
 			EmbeddingResponse response = embeddingModel
-				.call(new EmbeddingRequest(List.of("There are 50 states in the USA", "Canada has 10 provinces"), null));
+					.call(new EmbeddingRequest(List.of("There are 50 states in the USA", "Canada has 10 provinces"), null));
 			assertThat(response).isNotNull();
 			assertThat(response.getResults()).hasSize(2);
 		});

@@ -52,7 +52,7 @@ import org.springframework.util.CollectionUtils;
  * // Get all available tools
  * ToolCallback[] tools = provider.getToolCallbacks();
  * }</pre>
- *
+ * <p>
  * Example usage with multiple clients:
  *
  * <pre>{@code
@@ -67,10 +67,10 @@ import org.springframework.util.CollectionUtils;
  * }</pre>
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see ToolCallbackProvider
  * @see AsyncMcpToolCallback
  * @see McpAsyncClient
+ * @since 1.0.0
  */
 public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 
@@ -81,6 +81,7 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code AsyncMcpToolCallbackProvider} instance with a list of MCP
 	 * clients.
+	 *
 	 * @param mcpClients the list of MCP clients to use for discovering tools
 	 * @param toolFilter a filter to apply to each discovered tool
 	 */
@@ -94,9 +95,10 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code AsyncMcpToolCallbackProvider} instance with a list of MCP
 	 * clients.
+	 *
 	 * @param mcpClients the list of MCP clients to use for discovering tools. Each client
-	 * typically connects to a different MCP server, allowing tool discovery from multiple
-	 * sources.
+	 *                   typically connects to a different MCP server, allowing tool discovery from multiple
+	 *                   sources.
 	 * @throws IllegalArgumentException if mcpClients is null
 	 */
 	public AsyncMcpToolCallbackProvider(List<McpAsyncClient> mcpClients) {
@@ -106,6 +108,7 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code AsyncMcpToolCallbackProvider} instance with one or more MCP
 	 * clients.
+	 *
 	 * @param mcpClients the MCP clients to use for discovering tools
 	 * @param toolFilter a filter to apply to each discovered tool
 	 */
@@ -116,6 +119,7 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code AsyncMcpToolCallbackProvider} instance with one or more MCP
 	 * clients.
+	 *
 	 * @param mcpClients the MCP clients to use for discovering tools
 	 */
 	public AsyncMcpToolCallbackProvider(McpAsyncClient... mcpClients) {
@@ -134,6 +138,7 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	 * <p>
 	 * Note: While the underlying tool discovery is asynchronous, this method blocks until
 	 * all tools are discovered from all servers.
+	 *
 	 * @return an array of tool callbacks, one for each discovered tool
 	 * @throws IllegalStateException if duplicate tool names are found
 	 */
@@ -145,12 +150,12 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 		for (McpAsyncClient mcpClient : this.mcpClients) {
 
 			ToolCallback[] toolCallbacks = mcpClient.listTools()
-				.map(response -> response.tools()
-					.stream()
-					.filter(tool -> this.toolFilter.test(mcpClient, tool))
-					.map(tool -> new AsyncMcpToolCallback(mcpClient, tool))
-					.toArray(ToolCallback[]::new))
-				.block();
+					.map(response -> response.tools()
+							.stream()
+							.filter(tool -> this.toolFilter.test(mcpClient, tool))
+							.map(tool -> new AsyncMcpToolCallback(mcpClient, tool))
+							.toArray(ToolCallback[]::new))
+					.block();
 
 			validateToolCallbacks(toolCallbacks);
 
@@ -165,6 +170,7 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	 * <p>
 	 * This method ensures that each tool has a unique name, which is required for proper
 	 * tool resolution and execution.
+	 *
 	 * @param toolCallbacks the tool callbacks to validate
 	 * @throws IllegalStateException if duplicate tool names are found
 	 */
@@ -192,6 +198,7 @@ public class AsyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	 * Unlike {@link #getToolCallbacks()}, this method provides a fully reactive way to
 	 * work with tool callbacks, making it suitable for non-blocking applications. Any
 	 * errors during tool discovery will be propagated through the returned Flux.
+	 *
 	 * @param mcpClients the list of MCP clients to create callbacks from
 	 * @return a Flux of tool callbacks from all provided clients
 	 */

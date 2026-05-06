@@ -61,8 +61,7 @@ public class OpenAiChatModelResponseFormatIT {
 	public static boolean isValidJson(String json) {
 		try {
 			MAPPER.readTree(json);
-		}
-		catch (JacksonException e) {
+		} catch (JacksonException e) {
 			return false;
 		}
 		return true;
@@ -82,8 +81,8 @@ public class OpenAiChatModelResponseFormatIT {
 
 		Prompt prompt = new Prompt("List 8 planets. Use JSON response",
 				OpenAiChatOptions.builder()
-					.responseFormat(ResponseFormat.builder().type(ResponseFormat.Type.JSON_OBJECT).build())
-					.build());
+						.responseFormat(ResponseFormat.builder().type(ResponseFormat.Type.JSON_OBJECT).build())
+						.build());
 
 		ChatResponse response = this.openAiChatModel.call(prompt);
 
@@ -124,9 +123,9 @@ public class OpenAiChatModelResponseFormatIT {
 
 		Prompt prompt = new Prompt("how can I solve 8x + 7 = -23",
 				OpenAiChatOptions.builder()
-					.model(ChatModel.GPT_4_O_MINI)
-					.responseFormat(new ResponseFormat(ResponseFormat.Type.JSON_SCHEMA, jsonSchema))
-					.build());
+						.model(ChatModel.GPT_4_O_MINI)
+						.responseFormat(new ResponseFormat(ResponseFormat.Type.JSON_SCHEMA, jsonSchema))
+						.build());
 
 		ChatResponse response = this.openAiChatModel.call(prompt);
 
@@ -185,15 +184,15 @@ public class OpenAiChatModelResponseFormatIT {
 	@Test
 	void jsonSchemaBeanConverter() throws JsonMappingException, JsonProcessingException {
 
-		@JsonPropertyOrder({ "steps", "final_answer" })
+		@JsonPropertyOrder({"steps", "final_answer"})
 		record MathReasoning(@JsonProperty(required = true, value = "steps") Steps steps,
-				@JsonProperty(required = true, value = "final_answer") String finalAnswer) {
+		                     @JsonProperty(required = true, value = "final_answer") String finalAnswer) {
 
 			record Steps(@JsonProperty(required = true, value = "items") Items[] items) {
 
-				@JsonPropertyOrder({ "output", "explanation" })
+				@JsonPropertyOrder({"output", "explanation"})
 				record Items(@JsonProperty(required = true, value = "explanation") String explanation,
-						@JsonProperty(required = true, value = "output") String output) {
+				             @JsonProperty(required = true, value = "output") String output) {
 
 				}
 
@@ -248,9 +247,9 @@ public class OpenAiChatModelResponseFormatIT {
 
 		Prompt prompt = new Prompt("how can I solve 8x + 7 = -23",
 				OpenAiChatOptions.builder()
-					.model(ChatModel.GPT_4_O_MINI)
-					.responseFormat(new ResponseFormat(ResponseFormat.Type.JSON_SCHEMA, jsonSchema1))
-					.build());
+						.model(ChatModel.GPT_4_O_MINI)
+						.responseFormat(new ResponseFormat(ResponseFormat.Type.JSON_SCHEMA, jsonSchema1))
+						.build());
 
 		ChatResponse response = this.openAiChatModel.call(prompt);
 

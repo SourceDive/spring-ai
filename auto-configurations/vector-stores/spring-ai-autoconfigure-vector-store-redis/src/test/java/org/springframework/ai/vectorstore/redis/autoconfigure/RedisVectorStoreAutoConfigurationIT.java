@@ -58,12 +58,12 @@ class RedisVectorStoreAutoConfigurationIT {
 			RedisStackContainer.DEFAULT_IMAGE_NAME.withTag(RedisStackContainer.DEFAULT_TAG));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(RedisAutoConfiguration.class, RedisVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.data.redis.url=" + redisContainer.getRedisURI())
-		.withPropertyValues("spring.ai.vectorstore.redis.initialize-schema=true")
-		.withPropertyValues("spring.ai.vectorstore.redis.index=myIdx")
-		.withPropertyValues("spring.ai.vectorstore.redis.prefix=doc:");
+			.withConfiguration(AutoConfigurations.of(RedisAutoConfiguration.class, RedisVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.data.redis.url=" + redisContainer.getRedisURI())
+			.withPropertyValues("spring.ai.vectorstore.redis.initialize-schema=true")
+			.withPropertyValues("spring.ai.vectorstore.redis.index=myIdx")
+			.withPropertyValues("spring.ai.vectorstore.redis.prefix=doc:");
 
 	List<Document> documents = List.of(
 			new Document(ResourceUtils.getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -83,7 +83,7 @@ class RedisVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);

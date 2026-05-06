@@ -70,16 +70,16 @@ public class MariaDBStoreObservationIT {
 	@Container
 	@SuppressWarnings("resource")
 	static MariaDBContainer<?> mariadbContainer = new MariaDBContainer<>(MariaDBImage.DEFAULT_IMAGE)
-		.withUsername("mariadb")
-		.withPassword("mariadbpwd")
-		.withDatabaseName(schemaName);
+			.withUsername("mariadb")
+			.withPassword("mariadbpwd")
+			.withDatabaseName(schemaName);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("test.spring.ai.vectorstore.mariadb.distanceType=COSINE",
-				// JdbcTemplate configuration
-				"app.datasource.url=" + mariadbContainer.getJdbcUrl(), "app.datasource.username=mariadb",
-				"app.datasource.password=mariadbpwd", "app.datasource.type=com.zaxxer.hikari.HikariDataSource");
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("test.spring.ai.vectorstore.mariadb.distanceType=COSINE",
+					// JdbcTemplate configuration
+					"app.datasource.url=" + mariadbContainer.getJdbcUrl(), "app.datasource.username=mariadb",
+					"app.datasource.password=mariadbpwd", "app.datasource.type=com.zaxxer.hikari.HikariDataSource");
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -90,8 +90,7 @@ public class MariaDBStoreObservationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -107,65 +106,65 @@ public class MariaDBStoreObservationIT {
 			vectorStore.add(this.documents);
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.MARIADB.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.MARIADB.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
-						MariaDBVectorStore.DEFAULT_TABLE_NAME)
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_NAMESPACE.asString(), schemaName)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
-						VectorStoreSimilarityMetric.COSINE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.MARIADB.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.MARIADB.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
+							MariaDBVectorStore.DEFAULT_TABLE_NAME)
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_NAMESPACE.asString(), schemaName)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
+							VectorStoreSimilarityMetric.COSINE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
 
 			assertThat(results).isNotEmpty();
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.MARIADB.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.MARIADB.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
-						"What is Great Depression")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
-						MariaDBVectorStore.DEFAULT_TABLE_NAME)
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_NAMESPACE.asString(), schemaName)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
-						VectorStoreSimilarityMetric.COSINE.value())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
-						"0.0")
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.MARIADB.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.MARIADB.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
+							"What is Great Depression")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
+							MariaDBVectorStore.DEFAULT_TABLE_NAME)
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_NAMESPACE.asString(), schemaName)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
+							VectorStoreSimilarityMetric.COSINE.value())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
+							"0.0")
+					.hasBeenStarted()
+					.hasBeenStopped();
 		});
 	}
 
 	@SpringBootConfiguration
-	@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
+	@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 	static class Config {
 
 		@Bean
@@ -175,13 +174,13 @@ public class MariaDBStoreObservationIT {
 
 		@Bean
 		public VectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel,
-				ObservationRegistry observationRegistry) {
+		                               ObservationRegistry observationRegistry) {
 			return MariaDBVectorStore.builder(jdbcTemplate, embeddingModel)
-				.schemaName(schemaName)
-				.distanceType(MariaDBVectorStore.MariaDBDistanceType.COSINE)
-				.observationRegistry(observationRegistry)
-				.initializeSchema(true)
-				.build();
+					.schemaName(schemaName)
+					.distanceType(MariaDBVectorStore.MariaDBDistanceType.COSINE)
+					.observationRegistry(observationRegistry)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

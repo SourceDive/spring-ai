@@ -135,21 +135,21 @@ public class ZhiPuAiChatOptions implements ToolCallingChatOptions {
 
 	public static ZhiPuAiChatOptions fromOptions(ZhiPuAiChatOptions fromOptions) {
 		return ZhiPuAiChatOptions.builder()
-			.model(fromOptions.getModel())
-			.maxTokens(fromOptions.getMaxTokens())
-			.stop(fromOptions.getStop())
-			.temperature(fromOptions.getTemperature())
-			.topP(fromOptions.getTopP())
-			.tools(fromOptions.getTools())
-			.toolChoice(fromOptions.getToolChoice())
-			.user(fromOptions.getUser())
-			.requestId(fromOptions.getRequestId())
-			.doSample(fromOptions.getDoSample())
-			.toolCallbacks(fromOptions.getToolCallbacks())
-			.toolNames(fromOptions.getToolNames())
-			.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
-			.toolContext(fromOptions.getToolContext())
-			.build();
+				.model(fromOptions.getModel())
+				.maxTokens(fromOptions.getMaxTokens())
+				.stop(fromOptions.getStop())
+				.temperature(fromOptions.getTemperature())
+				.topP(fromOptions.getTopP())
+				.tools(fromOptions.getTools())
+				.toolChoice(fromOptions.getToolChoice())
+				.user(fromOptions.getUser())
+				.requestId(fromOptions.getRequestId())
+				.doSample(fromOptions.getDoSample())
+				.toolCallbacks(fromOptions.getToolCallbacks())
+				.toolNames(fromOptions.getToolNames())
+				.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
+				.toolContext(fromOptions.getToolContext())
+				.build();
 	}
 
 	@Override
@@ -353,96 +353,84 @@ public class ZhiPuAiChatOptions implements ToolCallingChatOptions {
 			if (other.model != null) {
 				return false;
 			}
-		}
-		else if (!this.model.equals(other.model)) {
+		} else if (!this.model.equals(other.model)) {
 			return false;
 		}
 		if (this.maxTokens == null) {
 			if (other.maxTokens != null) {
 				return false;
 			}
-		}
-		else if (!this.maxTokens.equals(other.maxTokens)) {
+		} else if (!this.maxTokens.equals(other.maxTokens)) {
 			return false;
 		}
 		if (this.stop == null) {
 			if (other.stop != null) {
 				return false;
 			}
-		}
-		else if (!this.stop.equals(other.stop)) {
+		} else if (!this.stop.equals(other.stop)) {
 			return false;
 		}
 		if (this.temperature == null) {
 			if (other.temperature != null) {
 				return false;
 			}
-		}
-		else if (!this.temperature.equals(other.temperature)) {
+		} else if (!this.temperature.equals(other.temperature)) {
 			return false;
 		}
 		if (this.topP == null) {
 			if (other.topP != null) {
 				return false;
 			}
-		}
-		else if (!this.topP.equals(other.topP)) {
+		} else if (!this.topP.equals(other.topP)) {
 			return false;
 		}
 		if (this.tools == null) {
 			if (other.tools != null) {
 				return false;
 			}
-		}
-		else if (!this.tools.equals(other.tools)) {
+		} else if (!this.tools.equals(other.tools)) {
 			return false;
 		}
 		if (this.toolChoice == null) {
 			if (other.toolChoice != null) {
 				return false;
 			}
-		}
-		else if (!this.toolChoice.equals(other.toolChoice)) {
+		} else if (!this.toolChoice.equals(other.toolChoice)) {
 			return false;
 		}
 		if (this.user == null) {
 			if (other.user != null) {
 				return false;
 			}
-		}
-		else if (!this.user.equals(other.user)) {
+		} else if (!this.user.equals(other.user)) {
 			return false;
 		}
 		if (this.requestId == null) {
 			if (other.requestId != null) {
 				return false;
 			}
-		}
-		else if (!this.requestId.equals(other.requestId)) {
+		} else if (!this.requestId.equals(other.requestId)) {
 			return false;
 		}
 		if (this.doSample == null) {
 			if (other.doSample != null) {
 				return false;
 			}
-		}
-		else if (!this.doSample.equals(other.doSample)) {
+		} else if (!this.doSample.equals(other.doSample)) {
 			return false;
 		}
 		if (this.internalToolExecutionEnabled == null) {
 			if (other.internalToolExecutionEnabled != null) {
 				return false;
 			}
-		}
-		else if (!this.internalToolExecutionEnabled.equals(other.internalToolExecutionEnabled)) {
+		} else if (!this.internalToolExecutionEnabled.equals(other.internalToolExecutionEnabled)) {
 			return false;
 		}
 		if (this.toolContext == null) {
 			if (other.toolContext != null) {
 				return false;
 			}
-		}
-		else if (!this.toolContext.equals(other.toolContext)) {
+		} else if (!this.toolContext.equals(other.toolContext)) {
 			return false;
 		}
 		return true;
@@ -458,10 +446,10 @@ public class ZhiPuAiChatOptions implements ToolCallingChatOptions {
 
 		// Merge chat-specific options
 		builder.model(options.getModel() != null ? options.getModel() : this.getModel())
-			.maxTokens(options.getMaxTokens() != null ? options.getMaxTokens() : this.getMaxTokens())
-			.stop(options.getStopSequences() != null ? options.getStopSequences() : this.getStopSequences())
-			.temperature(options.getTemperature() != null ? options.getTemperature() : this.getTemperature())
-			.topP(options.getTopP() != null ? options.getTopP() : this.getTopP());
+				.maxTokens(options.getMaxTokens() != null ? options.getMaxTokens() : this.getMaxTokens())
+				.stop(options.getStopSequences() != null ? options.getStopSequences() : this.getStopSequences())
+				.temperature(options.getTemperature() != null ? options.getTemperature() : this.getTemperature())
+				.topP(options.getTopP() != null ? options.getTopP() : this.getTopP());
 
 		// Try to get tool-specific properties if options is a ToolCallingChatOptions
 		if (options instanceof ToolCallingChatOptions toolCallingChatOptions) {
@@ -495,8 +483,7 @@ public class ZhiPuAiChatOptions implements ToolCallingChatOptions {
 				context.putAll(toolCallingChatOptions.getToolContext());
 			}
 			builder.toolContext(context);
-		}
-		else {
+		} else {
 			builder.internalToolExecutionEnabled(this.internalToolExecutionEnabled);
 			builder.toolNames(this.toolNames != null ? new HashSet<>(this.toolNames) : null);
 			builder.toolCallbacks(this.toolCallbacks != null ? new ArrayList<>(this.toolCallbacks) : null);
@@ -505,10 +492,10 @@ public class ZhiPuAiChatOptions implements ToolCallingChatOptions {
 
 		// Preserve ZhiPuAi-specific properties
 		builder.tools(this.tools)
-			.toolChoice(this.toolChoice)
-			.user(this.user)
-			.requestId(this.requestId)
-			.doSample(this.doSample);
+				.toolChoice(this.toolChoice)
+				.user(this.user)
+				.requestId(this.requestId)
+				.doSample(this.doSample);
 
 		return builder.build();
 	}
@@ -606,8 +593,7 @@ public class ZhiPuAiChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

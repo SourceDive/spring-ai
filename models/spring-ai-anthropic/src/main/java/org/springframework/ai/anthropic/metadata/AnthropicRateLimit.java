@@ -43,7 +43,7 @@ public class AnthropicRateLimit implements RateLimit {
 	private final Duration tokensReset;
 
 	public AnthropicRateLimit(Long requestsLimit, Long requestsRemaining, Duration requestsReset, Long tokensLimit,
-			Long tokensRemaining, Duration tokensReset) {
+	                          Long tokensRemaining, Duration tokensReset) {
 
 		this.requestsLimit = requestsLimit;
 		this.requestsRemaining = requestsRemaining;

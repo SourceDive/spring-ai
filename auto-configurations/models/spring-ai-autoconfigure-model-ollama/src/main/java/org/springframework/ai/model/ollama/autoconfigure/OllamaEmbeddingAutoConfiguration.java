@@ -49,27 +49,27 @@ import org.springframework.context.annotation.Bean;
 @ConditionalOnClass(OllamaEmbeddingModel.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.OLLAMA,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OllamaEmbeddingProperties.class, OllamaInitializationProperties.class })
-@ImportAutoConfiguration(classes = { OllamaApiAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OllamaEmbeddingProperties.class, OllamaInitializationProperties.class})
+@ImportAutoConfiguration(classes = {OllamaApiAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class OllamaEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OllamaEmbeddingModel ollamaEmbeddingModel(OllamaApi ollamaApi, OllamaEmbeddingProperties properties,
-			OllamaInitializationProperties initProperties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                 OllamaInitializationProperties initProperties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                 ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 		var embeddingModelPullStrategy = initProperties.getEmbedding().isInclude()
 				? initProperties.getPullModelStrategy() : PullModelStrategy.NEVER;
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(ollamaApi)
-			.defaultOptions(properties.getOptions())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.modelManagementOptions(new ModelManagementOptions(embeddingModelPullStrategy,
-					initProperties.getEmbedding().getAdditionalModels(), initProperties.getTimeout(),
-					initProperties.getMaxRetries()))
-			.build();
+				.ollamaApi(ollamaApi)
+				.defaultOptions(properties.getOptions())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.modelManagementOptions(new ModelManagementOptions(embeddingModelPullStrategy,
+						initProperties.getEmbedding().getAdditionalModels(), initProperties.getTimeout(),
+						initProperties.getMaxRetries()))
+				.build();
 
 		observationConvention.ifAvailable(embeddingModel::setObservationConvention);
 

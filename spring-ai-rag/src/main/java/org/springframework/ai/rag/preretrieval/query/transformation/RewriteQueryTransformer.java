@@ -35,8 +35,8 @@ import org.springframework.util.StringUtils;
  * irrelevant information that may affect the quality of the search results.
  *
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href="https://arxiv.org/pdf/2305.14283">arXiv:2305.14283</a>
+ * @since 1.0.0
  */
 public class RewriteQueryTransformer implements QueryTransformer {
 
@@ -45,10 +45,10 @@ public class RewriteQueryTransformer implements QueryTransformer {
 	private static final PromptTemplate DEFAULT_PROMPT_TEMPLATE = new PromptTemplate("""
 			Given a user query, rewrite it to provide better results when querying a {target}.
 			Remove any irrelevant information, and ensure the query is concise and specific.
-
+			
 			Original query:
 			{query}
-
+			
 			Rewritten query:
 			""");
 
@@ -61,7 +61,7 @@ public class RewriteQueryTransformer implements QueryTransformer {
 	private final String targetSearchSystem;
 
 	public RewriteQueryTransformer(ChatClient.Builder chatClientBuilder, @Nullable PromptTemplate promptTemplate,
-			@Nullable String targetSearchSystem) {
+	                               @Nullable String targetSearchSystem) {
 		Assert.notNull(chatClientBuilder, "chatClientBuilder cannot be null");
 
 		this.chatClient = chatClientBuilder.build();
@@ -78,11 +78,11 @@ public class RewriteQueryTransformer implements QueryTransformer {
 		logger.debug("Rewriting query to optimize for querying a {}.", this.targetSearchSystem);
 
 		var rewrittenQueryText = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("target", this.targetSearchSystem)
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("target", this.targetSearchSystem)
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (!StringUtils.hasText(rewrittenQueryText)) {
 			logger.warn("Query rewrite result is null/empty. Returning the input query unchanged.");

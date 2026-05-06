@@ -41,8 +41,9 @@ public class DefaultChatGenerationMetadata implements ChatGenerationMetadata {
 
 	/**
 	 * Create a new {@link DefaultChatGenerationMetadata} instance.
-	 * @param metadata the metadata map, must not be null
-	 * @param finishReason the finish reason, may be null
+	 *
+	 * @param metadata       the metadata map, must not be null
+	 * @param finishReason   the finish reason, may be null
 	 * @param contentFilters the content filters, must not be null
 	 * @throws IllegalArgumentException if metadata or contentFilters is null
 	 */

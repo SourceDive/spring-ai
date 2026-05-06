@@ -82,12 +82,12 @@ public final class MessageWindowChatMemory implements ChatMemory {
 
 		Set<Message> memoryMessagesSet = new HashSet<>(memoryMessages);
 		boolean hasNewSystemMessage = newMessages.stream()
-			.filter(SystemMessage.class::isInstance)
-			.anyMatch(message -> !memoryMessagesSet.contains(message));
+				.filter(SystemMessage.class::isInstance)
+				.anyMatch(message -> !memoryMessagesSet.contains(message));
 
 		memoryMessages.stream()
-			.filter(message -> !(hasNewSystemMessage && message instanceof SystemMessage))
-			.forEach(processedMessages::add);
+				.filter(message -> !(hasNewSystemMessage && message instanceof SystemMessage))
+				.forEach(processedMessages::add);
 
 		processedMessages.addAll(newMessages);
 
@@ -102,8 +102,7 @@ public final class MessageWindowChatMemory implements ChatMemory {
 		for (Message message : processedMessages) {
 			if (message instanceof SystemMessage || removed >= messagesToRemove) {
 				trimmedMessages.add(message);
-			}
-			else {
+			} else {
 				removed++;
 			}
 		}

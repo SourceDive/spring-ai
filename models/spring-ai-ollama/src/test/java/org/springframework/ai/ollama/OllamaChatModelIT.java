@@ -81,10 +81,10 @@ class OllamaChatModelIT extends BaseOllamaIT {
 		assertThat(modelManager.isModelAvailable(ADDITIONAL_MODEL)).isTrue();
 
 		String joke = ChatClient.create(this.chatModel)
-			.prompt("Tell me a joke")
-			.options(OllamaOptions.builder().model(ADDITIONAL_MODEL).build())
-			.call()
-			.content();
+				.prompt("Tell me a joke")
+				.options(OllamaOptions.builder().model(ADDITIONAL_MODEL).build())
+				.call()
+				.content();
 
 		assertThat(joke).isNotEmpty();
 
@@ -164,9 +164,9 @@ class OllamaChatModelIT extends BaseOllamaIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors.", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors.", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -185,9 +185,9 @@ class OllamaChatModelIT extends BaseOllamaIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		Generation generation = this.chatModel.call(prompt).getResult();
@@ -209,9 +209,9 @@ class OllamaChatModelIT extends BaseOllamaIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -230,20 +230,20 @@ class OllamaChatModelIT extends BaseOllamaIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 
@@ -262,9 +262,9 @@ class OllamaChatModelIT extends BaseOllamaIT {
 		Map<String, Object> model = Map.of("country", "denmark");
 		var prompt = userPromptTemplate.create(model,
 				OllamaOptions.builder()
-					.model(OllamaModel.LLAMA3_2.getName())
-					.format(outputConverter.getJsonSchemaMap())
-					.build());
+						.model(OllamaModel.LLAMA3_2.getName())
+						.format(outputConverter.getJsonSchemaMap())
+						.build());
 
 		var chatResponse = this.chatModel.call(prompt);
 
@@ -303,9 +303,9 @@ class OllamaChatModelIT extends BaseOllamaIT {
 		String conversationId = UUID.randomUUID().toString();
 
 		ChatOptions chatOptions = ToolCallingChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(new MathTools()))
-			.internalToolExecutionEnabled(false)
-			.build();
+				.toolCallbacks(ToolCallbacks.from(new MathTools()))
+				.internalToolExecutionEnabled(false)
+				.build();
 		Prompt prompt = new Prompt(
 				List.of(new SystemMessage("You are a helpful assistant."), new UserMessage("What is 6 * 8?")),
 				chatOptions);
@@ -319,7 +319,7 @@ class OllamaChatModelIT extends BaseOllamaIT {
 			ToolExecutionResult toolExecutionResult = toolCallingManager.executeToolCalls(promptWithMemory,
 					chatResponse);
 			chatMemory.add(conversationId, toolExecutionResult.conversationHistory()
-				.get(toolExecutionResult.conversationHistory().size() - 1));
+					.get(toolExecutionResult.conversationHistory().size() - 1));
 			promptWithMemory = new Prompt(chatMemory.get(conversationId), chatOptions);
 			chatResponse = this.chatModel.call(promptWithMemory);
 			chatMemory.add(conversationId, chatResponse.getResult().getOutput());
@@ -347,7 +347,7 @@ class OllamaChatModelIT extends BaseOllamaIT {
 	}
 
 	record CountryInfo(@JsonProperty(required = true) String name, @JsonProperty(required = true) String capital,
-			@JsonProperty(required = true) List<String> languages) {
+	                   @JsonProperty(required = true) List<String> languages) {
 	}
 
 	record ActorsFilmsRecord(String actor, List<String> movies) {
@@ -365,13 +365,13 @@ class OllamaChatModelIT extends BaseOllamaIT {
 		@Bean
 		public OllamaChatModel ollamaChat(OllamaApi ollamaApi) {
 			return OllamaChatModel.builder()
-				.ollamaApi(ollamaApi)
-				.defaultOptions(OllamaOptions.builder().model(MODEL).temperature(0.9).build())
-				.modelManagementOptions(ModelManagementOptions.builder()
-					.pullModelStrategy(PullModelStrategy.WHEN_MISSING)
-					.additionalModels(List.of(ADDITIONAL_MODEL))
-					.build())
-				.build();
+					.ollamaApi(ollamaApi)
+					.defaultOptions(OllamaOptions.builder().model(MODEL).temperature(0.9).build())
+					.modelManagementOptions(ModelManagementOptions.builder()
+							.pullModelStrategy(PullModelStrategy.WHEN_MISSING)
+							.additionalModels(List.of(ADDITIONAL_MODEL))
+							.build())
+					.build();
 		}
 
 	}

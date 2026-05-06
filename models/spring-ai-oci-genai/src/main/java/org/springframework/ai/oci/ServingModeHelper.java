@@ -33,9 +33,10 @@ public final class ServingModeHelper {
 
 	/**
 	 * Retrieves a specific type of ServingMode based on the provided serving mode string.
+	 *
 	 * @param servingMode The serving mode as a string. Supported options are 'dedicated'
-	 * and 'on-demand'.
-	 * @param model The model identifier to be used with the serving mode.
+	 *                    and 'on-demand'.
+	 * @param model       The model identifier to be used with the serving mode.
 	 * @return A ServingMode instance configured according to the provided parameters.
 	 * @throws IllegalArgumentException If the specified serving mode is not supported.
 	 */

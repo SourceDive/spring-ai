@@ -63,6 +63,7 @@ public final class FilterHelper {
 	 * 	NOT(a IN [...]) = a NIN [...]
 	 * 	NOT(a NIN [...]) = a IN [...]
 	 * </pre>
+	 *
 	 * @param operand Filter expression to negate.
 	 * @return Returns an negation of the input expression.
 	 */
@@ -74,8 +75,7 @@ public final class FilterHelper {
 				inEx = inEx2.content();
 			}
 			return new Filter.Group((Expression) inEx);
-		}
-		else if (operand instanceof Filter.Expression exp) {
+		} else if (operand instanceof Filter.Expression exp) {
 			switch (exp.type()) {
 				case NOT: // NOT(NOT(a)) = a
 					return negate(exp.left());
@@ -96,8 +96,7 @@ public final class FilterHelper {
 				default:
 					throw new IllegalArgumentException("Unknown expression type: " + exp.type());
 			}
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Can not negate operand of type: " + operand.getClass());
 		}
 	}
@@ -105,23 +104,24 @@ public final class FilterHelper {
 	/**
 	 * Expands the IN into a semantically equivalent boolean expressions of ORs of EQs.
 	 * Useful for providers that don't provide native IN support.
-	 *
+	 * <p>
 	 * For example the <pre>
 	 * foo IN ["bar1", "bar2", "bar3"]
 	 * </pre>
-	 *
+	 * <p>
 	 * expression is equivalent to
 	 *
 	 * <pre>
 	 * {@code foo == "bar1" || foo == "bar2" || foo == "bar3" (e.g. OR(foo EQ "bar1" OR(foo EQ "bar2" OR(foo EQ "bar3")))}
 	 * </pre>
-	 * @param exp input IN expression.
-	 * @param context Output native expression.
+	 *
+	 * @param exp                       input IN expression.
+	 * @param context                   Output native expression.
 	 * @param filterExpressionConverter {@link FilterExpressionConverter} used to compose
-	 * the OR and EQ expanded expressions.
+	 *                                  the OR and EQ expanded expressions.
 	 */
 	public static void expandIn(Expression exp, StringBuilder context,
-			FilterExpressionConverter filterExpressionConverter) {
+	                            FilterExpressionConverter filterExpressionConverter) {
 		Assert.isTrue(exp.type() == ExpressionType.IN, "Expected IN expressions but was: " + exp.type());
 		expandInNinExpressions(ExpressionType.OR, ExpressionType.EQ, exp, context, filterExpressionConverter);
 	}
@@ -130,32 +130,33 @@ public final class FilterHelper {
 	 *
 	 * Expands the NIN (e.g. NOT IN) into a semantically equivalent boolean expressions of
 	 * ANDs of NEs. Useful for providers that don't provide native NIN support.<br/>
-	 *
+	 * <p>
 	 * For example the
 	 *
 	 * <pre>
 	 * foo NIN ["bar1", "bar2", "bar3"] (or foo NOT IN ["bar1", "bar2", "bar3"])
 	 * </pre>
-	 *
+	 * <p>
 	 * express is equivalent to
 	 *
 	 * <pre>
 	 * {@code foo != "bar1" && foo != "bar2" && foo != "bar3" (e.g. AND(foo NE "bar1" AND( foo NE "bar2" OR(foo NE "bar3"))) )}
 	 * </pre>
-	 * @param exp input NIN expression.
-	 * @param context Output native expression.
+	 *
+	 * @param exp                       input NIN expression.
+	 * @param context                   Output native expression.
 	 * @param filterExpressionConverter {@link FilterExpressionConverter} used to compose
-	 * the AND and NE expanded expressions.
+	 *                                  the AND and NE expanded expressions.
 	 */
 	public static void expandNin(Expression exp, StringBuilder context,
-			FilterExpressionConverter filterExpressionConverter) {
+	                             FilterExpressionConverter filterExpressionConverter) {
 		Assert.isTrue(exp.type() == ExpressionType.NIN, "Expected NIN expressions but was: " + exp.type());
 		expandInNinExpressions(ExpressionType.AND, ExpressionType.NE, exp, context, filterExpressionConverter);
 	}
 
 	private static void expandInNinExpressions(Filter.ExpressionType outerExpressionType,
-			Filter.ExpressionType innerExpressionType, Expression exp, StringBuilder context,
-			FilterExpressionConverter expressionConverter) {
+	                                           Filter.ExpressionType innerExpressionType, Expression exp, StringBuilder context,
+	                                           FilterExpressionConverter expressionConverter) {
 		if (exp.right() instanceof Filter.Value value) {
 			if (value.value() instanceof List list) {
 				// 1. foo IN ["bar1", "bar2", "bar3"] is equivalent to foo == "bar1" ||
@@ -170,15 +171,13 @@ public final class FilterHelper {
 					eqExprs.add(new Filter.Expression(innerExpressionType, exp.left(), new Filter.Value(o)));
 				}
 				context.append(expressionConverter.convertExpression(aggregate(outerExpressionType, eqExprs)));
-			}
-			else {
+			} else {
 				// 1. foo IN ["bar"] is equivalent to foo == "BAR"
 				// 2. foo NIN ["bar"] is equivalent to foo != "BAR"
 				context.append(expressionConverter
-					.convertExpression(new Filter.Expression(innerExpressionType, exp.left(), exp.right())));
+						.convertExpression(new Filter.Expression(innerExpressionType, exp.left(), exp.right())));
 			}
-		}
-		else {
+		} else {
 			throw new IllegalStateException(
 					"Filter IN right expression should be of Filter.Value type but was " + exp.right().getClass());
 		}
@@ -187,12 +186,13 @@ public final class FilterHelper {
 	/**
 	 * Recursively aggregates a list of expression into a binary tree with 'aggregateType'
 	 * join nodes.
+	 *
 	 * @param aggregateType type all tree splits.
-	 * @param expressions list of expressions to aggregate.
+	 * @param expressions   list of expressions to aggregate.
 	 * @return Returns a binary tree expression.
 	 */
 	private static Filter.Expression aggregate(Filter.ExpressionType aggregateType,
-			List<Filter.Expression> expressions) {
+	                                           List<Filter.Expression> expressions) {
 
 		if (expressions.size() == 1) {
 			return expressions.get(0);

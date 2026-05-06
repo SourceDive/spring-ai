@@ -95,7 +95,7 @@ public class OpenAiModerationModel implements ModerationModel {
 			}
 
 			ResponseEntity<OpenAiModerationApi.OpenAiModerationResponse> moderationResponseEntity = this.openAiModerationApi
-				.createModeration(moderationRequest);
+					.createModeration(moderationRequest);
 
 			return convertResponse(moderationResponseEntity, moderationRequest);
 		});
@@ -118,55 +118,56 @@ public class OpenAiModerationModel implements ModerationModel {
 				CategoryScores categoryScores = null;
 				if (result.categories() != null) {
 					categories = Categories.builder()
-						.sexual(result.categories().sexual())
-						.hate(result.categories().hate())
-						.harassment(result.categories().harassment())
-						.selfHarm(result.categories().selfHarm())
-						.sexualMinors(result.categories().sexualMinors())
-						.hateThreatening(result.categories().hateThreatening())
-						.violenceGraphic(result.categories().violenceGraphic())
-						.selfHarmIntent(result.categories().selfHarmIntent())
-						.selfHarmInstructions(result.categories().selfHarmInstructions())
-						.harassmentThreatening(result.categories().harassmentThreatening())
-						.violence(result.categories().violence())
-						.build();
+							.sexual(result.categories().sexual())
+							.hate(result.categories().hate())
+							.harassment(result.categories().harassment())
+							.selfHarm(result.categories().selfHarm())
+							.sexualMinors(result.categories().sexualMinors())
+							.hateThreatening(result.categories().hateThreatening())
+							.violenceGraphic(result.categories().violenceGraphic())
+							.selfHarmIntent(result.categories().selfHarmIntent())
+							.selfHarmInstructions(result.categories().selfHarmInstructions())
+							.harassmentThreatening(result.categories().harassmentThreatening())
+							.violence(result.categories().violence())
+							.build();
 				}
 				if (result.categoryScores() != null) {
 					categoryScores = CategoryScores.builder()
-						.hate(result.categoryScores().hate())
-						.hateThreatening(result.categoryScores().hateThreatening())
-						.harassment(result.categoryScores().harassment())
-						.harassmentThreatening(result.categoryScores().harassmentThreatening())
-						.selfHarm(result.categoryScores().selfHarm())
-						.selfHarmIntent(result.categoryScores().selfHarmIntent())
-						.selfHarmInstructions(result.categoryScores().selfHarmInstructions())
-						.sexual(result.categoryScores().sexual())
-						.sexualMinors(result.categoryScores().sexualMinors())
-						.violence(result.categoryScores().violence())
-						.violenceGraphic(result.categoryScores().violenceGraphic())
-						.build();
+							.hate(result.categoryScores().hate())
+							.hateThreatening(result.categoryScores().hateThreatening())
+							.harassment(result.categoryScores().harassment())
+							.harassmentThreatening(result.categoryScores().harassmentThreatening())
+							.selfHarm(result.categoryScores().selfHarm())
+							.selfHarmIntent(result.categoryScores().selfHarmIntent())
+							.selfHarmInstructions(result.categoryScores().selfHarmInstructions())
+							.sexual(result.categoryScores().sexual())
+							.sexualMinors(result.categoryScores().sexualMinors())
+							.violence(result.categoryScores().violence())
+							.violenceGraphic(result.categoryScores().violenceGraphic())
+							.build();
 				}
 				ModerationResult moderationResult = ModerationResult.builder()
-					.categories(categories)
-					.categoryScores(categoryScores)
-					.flagged(result.flagged())
-					.build();
+						.categories(categories)
+						.categoryScores(categoryScores)
+						.flagged(result.flagged())
+						.build();
 				moderationResults.add(moderationResult);
 			}
 
 		}
 
 		Moderation moderation = Moderation.builder()
-			.id(moderationApiResponse.id())
-			.model(moderationApiResponse.model())
-			.results(moderationResults)
-			.build();
+				.id(moderationApiResponse.id())
+				.model(moderationApiResponse.model())
+				.results(moderationResults)
+				.build();
 
 		return new ModerationResponse(new Generation(moderation));
 	}
 
 	/**
 	 * Convert the {@link ModerationOptions} into {@link OpenAiModerationOptions}.
+	 *
 	 * @return the converted {@link OpenAiModerationOptions}.
 	 */
 	private OpenAiModerationOptions toOpenAiModerationOptions(ModerationOptions runtimeModerationOptions) {

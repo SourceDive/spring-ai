@@ -39,7 +39,7 @@ class OCIGenAIAutoConfigurationTest {
 		Path tmp = tempDir.resolve("my-key.pem");
 		createPrivateKey(tmp);
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+				// @formatter:off
 				"spring.ai.oci.genai.authenticationType=simple",
 				"spring.ai.oci.genai.userId=my-user",
 				"spring.ai.oci.genai.tenantId=my-tenant",

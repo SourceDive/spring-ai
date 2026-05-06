@@ -47,7 +47,7 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration(after = CassandraAutoConfiguration.class)
-@ConditionalOnClass({ CassandraVectorStore.class, CqlSession.class })
+@ConditionalOnClass({CassandraVectorStore.class, CqlSession.class})
 @EnableConfigurationProperties(CassandraVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.CASSANDRA,
 		matchIfMissing = true)
@@ -62,23 +62,23 @@ public class CassandraVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public CassandraVectorStore vectorStore(EmbeddingModel embeddingModel, CassandraVectorStoreProperties properties,
-			CqlSession cqlSession, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                        CqlSession cqlSession, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                        ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                        BatchingStrategy batchingStrategy) {
 
 		return CassandraVectorStore.builder(embeddingModel)
-			.session(cqlSession)
-			.keyspace(properties.getKeyspace())
-			.table(properties.getTable())
-			.contentColumnName(properties.getContentColumnName())
-			.embeddingColumnName(properties.getEmbeddingColumnName())
-			.indexName(properties.getIndexName())
-			.fixedThreadPoolExecutorSize(properties.getFixedThreadPoolExecutorSize())
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.session(cqlSession)
+				.keyspace(properties.getKeyspace())
+				.table(properties.getTable())
+				.contentColumnName(properties.getContentColumnName())
+				.embeddingColumnName(properties.getEmbeddingColumnName())
+				.indexName(properties.getIndexName())
+				.fixedThreadPoolExecutorSize(properties.getFixedThreadPoolExecutorSize())
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 	@Bean
@@ -86,15 +86,15 @@ public class CassandraVectorStoreAutoConfiguration {
 		// this replaces spring-ai-cassandra-*.jar!application.conf
 		// as spring-boot autoconfigure will not resolve the default driver configs
 		return builder -> builder.startProfile(CassandraVectorStore.DRIVER_PROFILE_UPDATES)
-			.withString(DefaultDriverOption.REQUEST_CONSISTENCY, "LOCAL_QUORUM")
-			.withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(1))
-			.withBoolean(DefaultDriverOption.REQUEST_DEFAULT_IDEMPOTENCE, true)
-			.endProfile()
-			.startProfile(CassandraVectorStore.DRIVER_PROFILE_SEARCH)
-			.withString(DefaultDriverOption.REQUEST_CONSISTENCY, "LOCAL_ONE")
-			.withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(10))
-			.withBoolean(DefaultDriverOption.REQUEST_DEFAULT_IDEMPOTENCE, true)
-			.endProfile();
+				.withString(DefaultDriverOption.REQUEST_CONSISTENCY, "LOCAL_QUORUM")
+				.withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(1))
+				.withBoolean(DefaultDriverOption.REQUEST_DEFAULT_IDEMPOTENCE, true)
+				.endProfile()
+				.startProfile(CassandraVectorStore.DRIVER_PROFILE_SEARCH)
+				.withString(DefaultDriverOption.REQUEST_CONSISTENCY, "LOCAL_ONE")
+				.withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(10))
+				.withBoolean(DefaultDriverOption.REQUEST_DEFAULT_IDEMPOTENCE, true)
+				.endProfile();
 	}
 
 }

@@ -76,18 +76,18 @@ public class OpenAiPaymentTransactionIT {
 	ChatClient chatClient;
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "paymentStatus", "paymentStatuses" })
+	@ValueSource(strings = {"paymentStatus", "paymentStatuses"})
 	public void transactionPaymentStatuses(String functionName) {
 		List<TransactionStatusResponse> content = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.toolNames(functionName)
-			.user("""
-					What is the status of my payment transactions 001, 002 and 003?
-					""")
-			.call()
-			.entity(new ParameterizedTypeReference<List<TransactionStatusResponse>>() {
+				.advisors(new SimpleLoggerAdvisor())
+				.toolNames(functionName)
+				.user("""
+						What is the status of my payment transactions 001, 002 and 003?
+						""")
+				.call()
+				.entity(new ParameterizedTypeReference<List<TransactionStatusResponse>>() {
 
-			});
+				});
 
 		logger.info("" + content);
 
@@ -102,7 +102,7 @@ public class OpenAiPaymentTransactionIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "paymentStatus", "paymentStatuses" })
+	@ValueSource(strings = {"paymentStatus", "paymentStatuses"})
 	public void streamingPaymentStatuses(String functionName) {
 
 		var converter = new BeanOutputConverter<>(new ParameterizedTypeReference<List<TransactionStatusResponse>>() {
@@ -110,15 +110,15 @@ public class OpenAiPaymentTransactionIT {
 		});
 
 		Flux<String> flux = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.toolNames(functionName)
-			.user(u -> u.text("""
-					What is the status of my payment transactions 001, 002 and 003?
-
-					{format}
-					""").param("format", converter.getFormat()))
-			.stream()
-			.content();
+				.advisors(new SimpleLoggerAdvisor())
+				.toolNames(functionName)
+				.user(u -> u.text("""
+						What is the status of my payment transactions 001, 002 and 003?
+						
+						{format}
+						""").param("format", converter.getFormat()))
+				.stream()
+				.content();
 
 		String content = flux.collectList().block().stream().collect(Collectors.joining());
 
@@ -189,29 +189,29 @@ public class OpenAiPaymentTransactionIT {
 		@Bean
 		public OpenAiChatModel openAiClient(OpenAiApi openAiApi, ToolCallingManager toolCallingManager) {
 			return OpenAiChatModel.builder()
-				.openAiApi(openAiApi)
-				.toolCallingManager(toolCallingManager)
-				.defaultOptions(
-						OpenAiChatOptions.builder().model(ChatModel.GPT_4_O_MINI.getName()).temperature(0.1).build())
-				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-				.build();
+					.openAiApi(openAiApi)
+					.toolCallingManager(toolCallingManager)
+					.defaultOptions(
+							OpenAiChatOptions.builder().model(ChatModel.GPT_4_O_MINI.getName()).temperature(0.1).build())
+					.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+					.build();
 		}
 
 		@Bean
 		@ConditionalOnMissingBean
 		ToolCallbackResolver toolCallbackResolver(GenericApplicationContext applicationContext,
-				List<ToolCallback> toolCallback, List<ToolCallbackProvider> tcbProviders) {
+		                                          List<ToolCallback> toolCallback, List<ToolCallbackProvider> tcbProviders) {
 
 			List<ToolCallback> allFunctionAndToolCallbacks = new ArrayList<>(toolCallback);
 			tcbProviders.stream()
-				.map(pr -> List.of(pr.getToolCallbacks()))
-				.forEach(allFunctionAndToolCallbacks::addAll);
+					.map(pr -> List.of(pr.getToolCallbacks()))
+					.forEach(allFunctionAndToolCallbacks::addAll);
 
 			var staticToolCallbackResolver = new StaticToolCallbackResolver(allFunctionAndToolCallbacks);
 
 			var springBeanToolCallbackResolver = SpringBeanToolCallbackResolver.builder()
-				.applicationContext(applicationContext)
-				.build();
+					.applicationContext(applicationContext)
+					.build();
 
 			return new DelegatingToolCallbackResolver(
 					List.of(staticToolCallbackResolver, springBeanToolCallbackResolver));
@@ -226,13 +226,13 @@ public class OpenAiPaymentTransactionIT {
 		@Bean
 		@ConditionalOnMissingBean
 		ToolCallingManager toolCallingManager(ToolCallbackResolver toolCallbackResolver,
-				ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
-				ObjectProvider<ObservationRegistry> observationRegistry) {
+		                                      ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
+		                                      ObjectProvider<ObservationRegistry> observationRegistry) {
 			return ToolCallingManager.builder()
-				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-				.toolCallbackResolver(toolCallbackResolver)
-				.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
-				.build();
+					.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+					.toolCallbackResolver(toolCallbackResolver)
+					.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
+					.build();
 		}
 
 	}

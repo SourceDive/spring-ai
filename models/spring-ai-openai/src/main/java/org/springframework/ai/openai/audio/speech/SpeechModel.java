@@ -31,6 +31,7 @@ public interface SpeechModel extends Model<SpeechPrompt, SpeechResponse> {
 
 	/**
 	 * Generates spoken audio from the provided text message.
+	 *
 	 * @param message the text message to be converted to audio
 	 * @return the resulting audio bytes
 	 */
@@ -42,6 +43,7 @@ public interface SpeechModel extends Model<SpeechPrompt, SpeechResponse> {
 	/**
 	 * Sends a speech request to the OpenAI TTS API and returns the resulting speech
 	 * response.
+	 *
 	 * @param request the speech prompt containing the input text and other parameters
 	 * @return the speech response containing the generated audio
 	 */

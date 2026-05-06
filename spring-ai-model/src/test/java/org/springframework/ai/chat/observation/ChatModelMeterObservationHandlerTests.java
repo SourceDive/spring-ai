@@ -59,16 +59,16 @@ class ChatModelMeterObservationHandlerTests {
 		this.meterRegistry = new SimpleMeterRegistry();
 		this.observationRegistry = ObservationRegistry.create();
 		this.observationRegistry.observationConfig()
-			.observationHandler(new ChatModelMeterObservationHandler(this.meterRegistry));
+				.observationHandler(new ChatModelMeterObservationHandler(this.meterRegistry));
 	}
 
 	@Test
 	void shouldCreateAllMetersDuringAnObservation() {
 		var observationContext = generateObservationContext();
 		var observation = Observation
-			.createNotStarted(new DefaultChatModelObservationConvention(), () -> observationContext,
-					this.observationRegistry)
-			.start();
+				.createNotStarted(new DefaultChatModelObservationConvention(), () -> observationContext,
+						this.observationRegistry)
+				.start();
 
 		observationContext.setResponse(new ChatResponse(List.of(new Generation(new AssistantMessage("test"))),
 				ChatResponseMetadata.builder().model("mistral-42").usage(new TestUsage()).build()));
@@ -77,27 +77,27 @@ class ChatModelMeterObservationHandlerTests {
 
 		assertThat(this.meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(3);
 		assertThat(this.meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(), AiOperationType.CHAT.value())
-			.tag(LowCardinalityKeyNames.AI_PROVIDER.asString(), "superprovider")
-			.tag(LowCardinalityKeyNames.REQUEST_MODEL.asString(), "mistral")
-			.tag(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), "mistral-42")
-			.meters()).hasSize(3);
+				.tag(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(), AiOperationType.CHAT.value())
+				.tag(LowCardinalityKeyNames.AI_PROVIDER.asString(), "superprovider")
+				.tag(LowCardinalityKeyNames.REQUEST_MODEL.asString(), "mistral")
+				.tag(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), "mistral-42")
+				.meters()).hasSize(3);
 		assertThat(this.meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-			.meters()).hasSize(1);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+				.meters()).hasSize(1);
 		assertThat(this.meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
-			.meters()).hasSize(1);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
+				.meters()).hasSize(1);
 		assertThat(this.meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.meters()).hasSize(1);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.meters()).hasSize(1);
 	}
 
 	private ChatModelObservationContext generateObservationContext() {
 		return ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 	}
 
 	private Prompt generatePrompt(ChatOptions chatOptions) {

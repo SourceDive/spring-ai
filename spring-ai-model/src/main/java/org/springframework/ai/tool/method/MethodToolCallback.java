@@ -66,7 +66,7 @@ public final class MethodToolCallback implements ToolCallback {
 	private final ToolCallResultConverter toolCallResultConverter;
 
 	public MethodToolCallback(ToolDefinition toolDefinition, @Nullable ToolMetadata toolMetadata, Method toolMethod,
-			@Nullable Object toolObject, @Nullable ToolCallResultConverter toolCallResultConverter) {
+	                          @Nullable Object toolObject, @Nullable ToolCallResultConverter toolCallResultConverter) {
 		Assert.notNull(toolDefinition, "toolDefinition cannot be null");
 		Assert.notNull(toolMethod, "toolMethod cannot be null");
 		Assert.isTrue(Modifier.isStatic(toolMethod.getModifiers()) || toolObject != null,
@@ -118,7 +118,7 @@ public final class MethodToolCallback implements ToolCallback {
 	private void validateToolContextSupport(@Nullable ToolContext toolContext) {
 		var isNonEmptyToolContextProvided = toolContext != null && !CollectionUtils.isEmpty(toolContext.getContext());
 		var isToolContextAcceptedByMethod = Stream.of(this.toolMethod.getParameterTypes())
-			.anyMatch(type -> ClassUtils.isAssignable(type, ToolContext.class));
+				.anyMatch(type -> ClassUtils.isAssignable(type, ToolContext.class));
 		if (isToolContextAcceptedByMethod && !isNonEmptyToolContextProvided) {
 			throw new IllegalArgumentException("ToolContext is required by the method as an argument");
 		}
@@ -164,11 +164,9 @@ public final class MethodToolCallback implements ToolCallback {
 		Object result;
 		try {
 			result = this.toolMethod.invoke(this.toolObject, methodArguments);
-		}
-		catch (IllegalAccessException ex) {
+		} catch (IllegalAccessException ex) {
 			throw new IllegalStateException("Could not access method: " + ex.getMessage(), ex);
-		}
-		catch (InvocationTargetException ex) {
+		} catch (InvocationTargetException ex) {
 			throw new ToolExecutionException(this.toolDefinition, ex.getCause());
 		}
 		return result;

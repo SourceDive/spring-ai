@@ -85,15 +85,15 @@ import org.springframework.util.Assert;
  * The CassandraVectorStore is for managing and querying vector data in an Apache
  * Cassandra db. It offers functionalities like adding, deleting, and performing
  * similarity searches on documents.
- *
+ * <p>
  * The store utilizes CQL to index and search vector data. It allows for custom metadata
  * fields in the documents to be stored alongside the vector and content data.
- *
+ * <p>
  * This class requires a CassandraVectorStore#CassandraBuilder configuration object for
  * initialization, which includes settings like connection details, index name, column
  * names, etc. It also requires an EmbeddingModel to convert documents into embeddings
  * before storing them.
- *
+ * <p>
  * A schema matching the configuration is automatically created if it doesn't exist.
  * Missing columns and indexes in existing tables will also be automatically created.
  * Disable this with the CassandraBuilder#initializeSchema(boolean) method().
@@ -144,15 +144,15 @@ import org.springframework.util.Assert;
  *     .batchingStrategy(new TokenCountBatchingStrategy())
  *     .build();
  * }</pre>
- *
+ * <p>
  * This class is designed to work with brand new tables that it creates for you, or on top
  * of existing Cassandra tables. The latter is appropriate when wanting to keep data in
  * place, creating embeddings next to it, and performing vector similarity searches
  * in-situ.
- *
+ * <p>
  * Instances of this class are not dynamic against server-side schema changes. If you
  * change the schema server-side you need a new CassandraVectorStore instance.
- *
+ * <p>
  * When adding documents with the method {@link #add(List<Document>)} it first calls
  * embeddingModel to create the embeddings. This is slow. Configure
  * {@link Builder#fixedThreadPoolExecutorSize(int)} accordingly to improve performance so
@@ -241,10 +241,10 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 		this.deleteStmt = prepareDeleteStatement();
 
 		TableMetadata cassandraMetadata = this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace())
-			.get()
-			.getTable(this.schema.table())
-			.get();
+				.getKeyspace(this.schema.keyspace())
+				.get()
+				.getTable(this.schema.table())
+				.get();
 
 		this.similarity = getIndexSimilarity(cassandraMetadata);
 		this.similarityStmt = similaritySearchStatement();
@@ -285,14 +285,14 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 				}
 
 				builder = builder.setString(this.schema.content(), d.getText())
-					.setVector(this.schema.embedding(),
-							CqlVector.newInstance(EmbeddingUtils.toList(embeddings.get(documents.indexOf(d)))),
-							Float.class);
+						.setVector(this.schema.embedding(),
+								CqlVector.newInstance(EmbeddingUtils.toList(embeddings.get(documents.indexOf(d)))),
+								Float.class);
 
 				for (var metadataColumn : this.schema.metadataColumns()
-					.stream()
-					.filter(mc -> d.getMetadata().containsKey(mc.name()))
-					.toList()) {
+						.stream()
+						.filter(mc -> d.getMetadata().containsKey(mc.name()))
+						.toList()) {
 
 					builder = builder.set(metadataColumn.name(), d.getMetadata().get(metadataColumn.name()),
 							metadataColumn.javaType());
@@ -327,11 +327,11 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 			// https://stackoverflow.com/questions/70953262/unable-to-delete-multiple-rows-getting-some-partition-key-parts-are-missing-i
 			// Needs more research into this matter.
 			SearchRequest searchRequest = SearchRequest.builder()
-				.query("") // empty query since we only want filter matches
-				.filterExpression(filterExpression)
-				.topK(1000) // large enough to get all matches
-				.similarityThresholdAll()
-				.build();
+					.query("") // empty query since we only want filter matches
+					.filterExpression(filterExpression)
+					.topK(1000) // large enough to get all matches
+					.similarityThresholdAll()
+					.build();
 
 			List<Document> matchingDocs = similaritySearch(searchRequest);
 
@@ -341,8 +341,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 				delete(idsToDelete);
 				logger.debug("Deleted {} documents matching filter expression", idsToDelete.size());
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter", e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -381,11 +380,11 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 				}
 			}
 			Document doc = Document.builder()
-				.id(getDocumentId(row))
-				.text(row.getString(this.schema.content()))
-				.metadata(docFields)
-				.score((double) score)
-				.build();
+					.id(getDocumentId(row))
+					.text(row.getString(this.schema.content()))
+					.metadata(docFields)
+					.score((double) score)
+					.build();
 
 			documents.add(doc);
 		}
@@ -406,7 +405,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 		}
 
 		return Similarity
-			.valueOf(indexMetadata.get().getOptions().getOrDefault("similarity_function", "COSINE").toUpperCase());
+				.valueOf(indexMetadata.get().getOptions().getOrDefault("similarity_function", "COSINE").toUpperCase());
 
 	}
 
@@ -428,10 +427,10 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		// metadata fields that are not configured as metadata columns are not added
 		Set<String> fieldsThatAreColumns = new HashSet<>(this.schema.metadataColumns()
-			.stream()
-			.map(mc -> mc.name())
-			.filter(mc -> metadataFields.contains(mc))
-			.toList());
+				.stream()
+				.map(mc -> mc.name())
+				.filter(mc -> metadataFields.contains(mc))
+				.toList());
 
 		return this.addStmts.computeIfAbsent(fieldsThatAreColumns, fields -> {
 
@@ -446,7 +445,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 			}
 
 			stmt = stmt.value(this.schema.content(), QueryBuilder.bindMarker(this.schema.content()))
-				.value(this.schema.embedding(), QueryBuilder.bindMarker(this.schema.embedding()));
+					.value(this.schema.embedding(), QueryBuilder.bindMarker(this.schema.embedding()));
 
 			for (String metadataField : fields) {
 				stmt = stmt.value(metadataField, QueryBuilder.bindMarker(metadataField));
@@ -466,10 +465,10 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 		ids.deleteCharAt(ids.length() - 1);
 
 		String similarityFunction = new StringBuilder("similarity_").append(this.similarity.toString().toLowerCase())
-			.append('(')
-			.append(this.schema.embedding())
-			.append(",?)")
-			.toString();
+				.append('(')
+				.append(this.schema.embedding())
+				.append(",?)")
+				.toString();
 
 		StringBuilder extraSelectFields = new StringBuilder();
 		for (var m : this.schema.metadataColumns()) {
@@ -499,10 +498,10 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.CASSANDRA.value(), operationName)
-			.collectionName(this.schema.table())
-			.dimensions(this.embeddingModel.dimensions())
-			.namespace(this.schema.keyspace())
-			.similarityMetric(getSimilarityMetric());
+				.collectionName(this.schema.table())
+				.dimensions(this.embeddingModel.dimensions())
+				.namespace(this.schema.keyspace())
+				.similarityMetric(getSimilarityMetric());
 	}
 
 	private String getSimilarityMetric() {
@@ -537,8 +536,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 			ensureTableColumnsExist(vectorDimension);
 			ensureIndexesExists();
 			SchemaUtil.checkSchemaAgreement(this.session);
-		}
-		else {
+		} else {
 			checkSchemaValid(vectorDimension);
 		}
 	}
@@ -549,16 +547,16 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 				"keyspace %s does not exist", this.schema.keyspace);
 
 		Preconditions.checkState(this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace)
-			.get()
-			.getTable(this.schema.table)
-			.isPresent(), "table %s does not exist", this.schema.table);
+				.getKeyspace(this.schema.keyspace)
+				.get()
+				.getTable(this.schema.table)
+				.isPresent(), "table %s does not exist", this.schema.table);
 
 		TableMetadata tableMetadata = this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace)
-			.get()
-			.getTable(this.schema.table)
-			.get();
+				.getKeyspace(this.schema.keyspace)
+				.get()
+				.getTable(this.schema.table)
+				.get();
 
 		Preconditions.checkState(tableMetadata.getIndex(this.schema.index()).isPresent(), "index %s does not exist",
 				this.schema.index());
@@ -588,31 +586,31 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 	private void ensureIndexesExists() {
 
 		SimpleStatement indexStmt = SchemaBuilder.createIndex(this.schema.index)
-			.ifNotExists()
-			.custom("StorageAttachedIndex")
-			.onTable(this.schema.keyspace, this.schema.table)
-			.andColumn(this.schema.embedding)
-			.build();
+				.ifNotExists()
+				.custom("StorageAttachedIndex")
+				.onTable(this.schema.keyspace, this.schema.table)
+				.andColumn(this.schema.embedding)
+				.build();
 
 		logger.debug("Executing {}", indexStmt.getQuery());
 		this.session.execute(indexStmt);
 
 		Stream
-			.concat(this.schema.partitionKeys.stream(),
-					Stream.concat(this.schema.clusteringKeys.stream(), this.schema.metadataColumns.stream()))
-			.filter(cs -> cs.indexed())
-			.forEach(metadata -> {
+				.concat(this.schema.partitionKeys.stream(),
+						Stream.concat(this.schema.clusteringKeys.stream(), this.schema.metadataColumns.stream()))
+				.filter(cs -> cs.indexed())
+				.forEach(metadata -> {
 
-				SimpleStatement indexStatement = SchemaBuilder.createIndex(String.format("%s_idx", metadata.name()))
-					.ifNotExists()
-					.custom("StorageAttachedIndex")
-					.onTable(this.schema.keyspace, this.schema.table)
-					.andColumn(metadata.name())
-					.build();
+					SimpleStatement indexStatement = SchemaBuilder.createIndex(String.format("%s_idx", metadata.name()))
+							.ifNotExists()
+							.custom("StorageAttachedIndex")
+							.onTable(this.schema.keyspace, this.schema.table)
+							.andColumn(metadata.name())
+							.build();
 
-				logger.debug("Executing {}", indexStatement.getQuery());
-				this.session.execute(indexStatement);
-			});
+					logger.debug("Executing {}", indexStatement.getQuery());
+					this.session.execute(indexStatement);
+				});
 	}
 
 	private void ensureTableExists(int vectorDimension) {
@@ -621,7 +619,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 			CreateTable createTable = null;
 
 			CreateTableStart createTableStart = SchemaBuilder.createTable(this.schema.keyspace, this.schema.table)
-				.ifNotExists();
+					.ifNotExists();
 
 			for (SchemaColumn partitionKey : this.schema.partitionKeys) {
 				createTable = (null != createTable ? createTable : createTableStart).withPartitionKey(partitionKey.name,
@@ -644,10 +642,10 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 			StringBuilder tableStmt = new StringBuilder(createTable.asCql());
 			tableStmt.setLength(tableStmt.length() - 1);
 			tableStmt.append(',')
-				.append(this.schema.embedding)
-				.append(" vector<float,")
-				.append(vectorDimension)
-				.append(">)");
+					.append(this.schema.embedding)
+					.append(" vector<float,")
+					.append(vectorDimension)
+					.append(">)");
 			logger.debug("Executing {}", tableStmt.toString());
 			this.session.execute(tableStmt.toString());
 		}
@@ -656,10 +654,10 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 	private void ensureTableColumnsExist(int vectorDimension) {
 
 		TableMetadata tableMetadata = this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace)
-			.get()
-			.getTable(this.schema.table)
-			.get();
+				.getKeyspace(this.schema.keyspace)
+				.get()
+				.getTable(this.schema.table)
+				.get();
 
 		Set<SchemaColumn> newColumns = new HashSet<>();
 		boolean addContent = tableMetadata.getColumn(this.schema.content).isEmpty();
@@ -672,8 +670,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 				Preconditions.checkArgument(column.get().getType().equals(metadata.type()),
 						"Cannot change type on metadata column %s from %s to %s", metadata.name(),
 						column.get().getType(), metadata.type());
-			}
-			else {
+			} else {
 				newColumns.add(metadata);
 			}
 		}
@@ -691,20 +688,18 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 				StringBuilder alterTableStmt = new StringBuilder(((BuildableQuery) alterTable).asCql());
 				if (newColumns.isEmpty() && !addContent) {
 					alterTableStmt.append(" ADD (");
-				}
-				else {
+				} else {
 					alterTableStmt.setLength(alterTableStmt.length() - 1);
 					alterTableStmt.append(',');
 				}
 				alterTableStmt.append(this.schema.embedding)
-					.append(" vector<float,")
-					.append(vectorDimension)
-					.append(">)");
+						.append(" vector<float,")
+						.append(vectorDimension)
+						.append(">)");
 
 				logger.debug("Executing {}", alterTableStmt.toString());
 				this.session.execute(alterTableStmt.toString());
-			}
-			else {
+			} else {
 				SimpleStatement stmt = ((AlterTableAddColumnEnd) alterTable).build();
 				logger.debug("Executing {}", stmt.getQuery());
 				this.session.execute(stmt);
@@ -737,7 +732,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 	/**
 	 * Given a string document id, return the value for each primary key column.
-	 *
+	 * <p>
 	 * It is a requirement that an empty {@code List<Object>} returns an example formatted
 	 * id
 	 */
@@ -745,13 +740,15 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 	}
 
-	/** Given a list of primary key column values, return the document id. */
+	/**
+	 * Given a list of primary key column values, return the document id.
+	 */
 	public interface PrimaryKeyTranslator extends Function<List<Object>, String> {
 
 	}
 
 	record Schema(String keyspace, String table, List<SchemaColumn> partitionKeys, List<SchemaColumn> clusteringKeys,
-			String content, String embedding, String index, Set<SchemaColumn> metadataColumns) {
+	              String content, String embedding, String index, Set<SchemaColumn> metadataColumns) {
 
 	}
 
@@ -778,13 +775,13 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 	/**
 	 * Builder for the Cassandra vector store.
-	 *
+	 * <p>
 	 * All metadata columns configured to the store will be fetched and added to all
 	 * queried documents.
-	 *
+	 * <p>
 	 * To filter expression search against a metadata column configure it with
 	 * SchemaColumnTags.INDEXED
-	 *
+	 * <p>
 	 * The Cassandra Java Driver is configured via the application.conf resource found in
 	 * the classpath. See
 	 * https://github.com/apache/cassandra-java-driver/tree/4.x/manual/core/configuration
@@ -836,6 +833,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the CQL session.
+		 *
 		 * @param session the CQL session to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if session is null
@@ -860,6 +858,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the keyspace name.
+		 *
 		 * @param keyspace the keyspace name
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if keyspace is null or empty
@@ -872,6 +871,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Adds a contact point to the session builder.
+		 *
 		 * @param contactPoint the contact point to add
 		 * @return the builder instance
 		 * @throws IllegalStateException if session is already set
@@ -887,6 +887,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the local datacenter for the session builder.
+		 *
 		 * @param localDatacenter the local datacenter name
 		 * @return the builder instance
 		 * @throws IllegalStateException if session is already set
@@ -902,6 +903,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the table name.
+		 *
 		 * @param table the table name
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if table is null or empty
@@ -914,6 +916,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the partition keys.
+		 *
 		 * @param partitionKeys the partition keys
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if partitionKeys is null or empty
@@ -926,6 +929,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the clustering keys.
+		 *
 		 * @param clusteringKeys the clustering keys
 		 * @return the builder instance
 		 */
@@ -936,6 +940,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the index name.
+		 *
 		 * @param indexName the index name
 		 * @return the builder instance
 		 */
@@ -946,6 +951,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -956,6 +962,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the filter expression converter.
+		 *
 		 * @param converter the filter expression converter to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if converter is null
@@ -968,6 +975,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the document ID translator.
+		 *
 		 * @param translator the document ID translator to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if translator is null
@@ -1013,6 +1021,7 @@ public class CassandraVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the primary key translator.
+		 *
 		 * @param translator the primary key translator to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if translator is null

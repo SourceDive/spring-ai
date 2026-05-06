@@ -35,23 +35,23 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration(after = Neo4jAutoConfiguration.class, before = ChatMemoryAutoConfiguration.class)
-@ConditionalOnClass({ Neo4jChatMemoryRepository.class, Driver.class })
+@ConditionalOnClass({Neo4jChatMemoryRepository.class, Driver.class})
 @EnableConfigurationProperties(Neo4jChatMemoryRepositoryProperties.class)
 public class Neo4jChatMemoryRepositoryAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public Neo4jChatMemoryRepository neo4jChatMemoryRepository(Neo4jChatMemoryRepositoryProperties properties,
-			Driver driver) {
+	                                                           Driver driver) {
 
 		var builder = Neo4jChatMemoryRepositoryConfig.builder()
-			.withMediaLabel(properties.getMediaLabel())
-			.withMessageLabel(properties.getMessageLabel())
-			.withMetadataLabel(properties.getMetadataLabel())
-			.withSessionLabel(properties.getSessionLabel())
-			.withToolCallLabel(properties.getToolCallLabel())
-			.withToolResponseLabel(properties.getToolResponseLabel())
-			.withDriver(driver);
+				.withMediaLabel(properties.getMediaLabel())
+				.withMessageLabel(properties.getMessageLabel())
+				.withMetadataLabel(properties.getMetadataLabel())
+				.withSessionLabel(properties.getSessionLabel())
+				.withToolCallLabel(properties.getToolCallLabel())
+				.withToolResponseLabel(properties.getToolResponseLabel())
+				.withDriver(driver);
 
 		return new Neo4jChatMemoryRepository(builder.build());
 	}

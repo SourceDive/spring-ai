@@ -43,7 +43,7 @@ public class OllamaBindingsPropertiesProcessor implements BindingsPropertiesProc
 		}
 
 		bindings.filterBindings(TYPE)
-			.forEach(binding -> properties.put("spring.ai.ollama.base-url", binding.getSecret().get("uri")));
+				.forEach(binding -> properties.put("spring.ai.ollama.base-url", binding.getSecret().get("uri")));
 	}
 
 }

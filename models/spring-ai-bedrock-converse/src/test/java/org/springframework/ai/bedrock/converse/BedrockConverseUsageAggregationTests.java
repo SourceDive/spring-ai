@@ -59,23 +59,23 @@ public class BedrockConverseUsageAggregationTests {
 	@BeforeEach
 	public void beforeEach() {
 		this.chatModel = BedrockProxyChatModel.builder()
-			.bedrockRuntimeClient(this.bedrockRuntimeClient)
-			.bedrockRuntimeAsyncClient(this.bedrockRuntimeAsyncClient)
-			.build();
+				.bedrockRuntimeClient(this.bedrockRuntimeClient)
+				.bedrockRuntimeAsyncClient(this.bedrockRuntimeAsyncClient)
+				.build();
 	}
 
 	@Test
 	public void call() {
 		ConverseResponse converseResponse = ConverseResponse.builder()
 
-			.output(ConverseOutput.builder()
-				.message(Message.builder()
-					.role(ConversationRole.ASSISTANT)
-					.content(ContentBlock.fromText("Response Content Block"))
-					.build())
-				.build())
-			.usage(TokenUsage.builder().inputTokens(16).outputTokens(14).totalTokens(30).build())
-			.build();
+				.output(ConverseOutput.builder()
+						.message(Message.builder()
+								.role(ConversationRole.ASSISTANT)
+								.content(ContentBlock.fromText("Response Content Block"))
+								.build())
+						.build())
+				.usage(TokenUsage.builder().inputTokens(16).outputTokens(14).totalTokens(30).build())
+				.build();
 
 		given(this.bedrockRuntimeClient.converse(isA(ConverseRequest.class))).willReturn(converseResponse);
 
@@ -93,61 +93,61 @@ public class BedrockConverseUsageAggregationTests {
 	public void callWithToolUse() {
 
 		ConverseResponse converseResponseToolUse = ConverseResponse.builder()
-			.output(ConverseOutput.builder()
-				.message(Message.builder()
-					.role(ConversationRole.ASSISTANT)
-					.content(ContentBlock.fromText(
-							"Certainly! I'd be happy to check the current weather in Paris for you, with the temperature in Celsius. To get this information, I'll use the getCurrentWeather function. Let me fetch that for you right away."),
-							ContentBlock.fromToolUse(ToolUseBlock.builder()
-								.toolUseId("tooluse_2SZuiUDkRbeGysun8O2Wag")
-								.name("getCurrentWeather")
-								.input(MapDocument.mapBuilder()
-									.putString("location", "Paris, France")
-									.putString("unit", "C")
-									.build())
-								.build()))
+				.output(ConverseOutput.builder()
+						.message(Message.builder()
+								.role(ConversationRole.ASSISTANT)
+								.content(ContentBlock.fromText(
+												"Certainly! I'd be happy to check the current weather in Paris for you, with the temperature in Celsius. To get this information, I'll use the getCurrentWeather function. Let me fetch that for you right away."),
+										ContentBlock.fromToolUse(ToolUseBlock.builder()
+												.toolUseId("tooluse_2SZuiUDkRbeGysun8O2Wag")
+												.name("getCurrentWeather")
+												.input(MapDocument.mapBuilder()
+														.putString("location", "Paris, France")
+														.putString("unit", "C")
+														.build())
+												.build()))
 
-					.build())
-				.build())
-			.usage(TokenUsage.builder().inputTokens(445).outputTokens(119).totalTokens(564).build())
-			.stopReason(StopReason.TOOL_USE)
-			.metrics(ConverseMetrics.builder().latencyMs(3435L).build())
-			.build();
+								.build())
+						.build())
+				.usage(TokenUsage.builder().inputTokens(445).outputTokens(119).totalTokens(564).build())
+				.stopReason(StopReason.TOOL_USE)
+				.metrics(ConverseMetrics.builder().latencyMs(3435L).build())
+				.build();
 
 		ConverseResponse converseResponseFinal = ConverseResponse.builder()
-			.output(ConverseOutput.builder()
-				.message(Message.builder()
-					.role(ConversationRole.ASSISTANT)
-					.content(ContentBlock.fromText(
-							"""
-									Based on the information from the weather tool, the current temperature in Paris, France is 15.0°C (Celsius).
-
-									Please note that weather conditions can change throughout the day, so this temperature represents the current
-									reading at the time of the request. If you need more detailed information about the weather in Paris, such as
-									humidity, wind speed, or forecast for the coming days, please let me know, and I'll be happy to provide more
-									details if that information is available through our weather service.
-									"""))
-					.build())
-				.build())
-			.usage(TokenUsage.builder().inputTokens(540).outputTokens(106).totalTokens(646).build())
-			.stopReason(StopReason.END_TURN)
-			.metrics(ConverseMetrics.builder().latencyMs(3435L).build())
-			.build();
+				.output(ConverseOutput.builder()
+						.message(Message.builder()
+								.role(ConversationRole.ASSISTANT)
+								.content(ContentBlock.fromText(
+										"""
+												Based on the information from the weather tool, the current temperature in Paris, France is 15.0°C (Celsius).
+												
+												Please note that weather conditions can change throughout the day, so this temperature represents the current
+												reading at the time of the request. If you need more detailed information about the weather in Paris, such as
+												humidity, wind speed, or forecast for the coming days, please let me know, and I'll be happy to provide more
+												details if that information is available through our weather service.
+												"""))
+								.build())
+						.build())
+				.usage(TokenUsage.builder().inputTokens(540).outputTokens(106).totalTokens(646).build())
+				.stopReason(StopReason.END_TURN)
+				.metrics(ConverseMetrics.builder().latencyMs(3435L).build())
+				.build();
 
 		given(this.bedrockRuntimeClient.converse(isA(ConverseRequest.class))).willReturn(converseResponseToolUse)
-			.willReturn(converseResponseFinal);
+				.willReturn(converseResponseFinal);
 
 		ToolCallback toolCallback = FunctionToolCallback.builder("getCurrentWeather", (Request request) -> "15.0°C")
-			.description("Gets the weather in location")
-			.inputType(Request.class)
-			.build();
+				.description("Gets the weather in location")
+				.inputType(Request.class)
+				.build();
 
 		var result = this.chatModel.call(new Prompt("What is the weather in Paris?",
 				ToolCallingChatOptions.builder().toolCallbacks(toolCallback).build()));
 
 		assertThat(result).isNotNull();
 		assertThat(result.getResult().getOutput().getText())
-			.isSameAs(converseResponseFinal.output().message().content().get(0).text());
+				.isSameAs(converseResponseFinal.output().message().content().get(0).text());
 
 		assertThat(result.getMetadata().getUsage().getPromptTokens()).isEqualTo(445 + 540);
 		assertThat(result.getMetadata().getUsage().getCompletionTokens()).isEqualTo(119 + 106);

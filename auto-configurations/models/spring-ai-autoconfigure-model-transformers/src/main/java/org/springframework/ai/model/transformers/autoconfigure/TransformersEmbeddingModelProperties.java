@@ -41,7 +41,7 @@ public class TransformersEmbeddingModelProperties {
 
 	public static final String DEFAULT_CACHE_DIRECTORY = new File(System.getProperty("java.io.tmpdir"),
 			"spring-ai-onnx-generative")
-		.getAbsolutePath();
+			.getAbsolutePath();
 
 	@NestedConfigurationProperty
 	private final Tokenizer tokenizer = new Tokenizer();
@@ -172,7 +172,7 @@ public class TransformersEmbeddingModelProperties {
 		/**
 		 * Run on a GPU or with another provider (optional).
 		 * https://onnxruntime.ai/docs/get-started/with-java.html#run-on-a-gpu-or-with-another-provider-optional
-		 *
+		 * <p>
 		 * The GPU device ID to execute on. Only applicable if >= 0. Ignored otherwise.
 		 */
 		private int gpuDeviceId = -1;

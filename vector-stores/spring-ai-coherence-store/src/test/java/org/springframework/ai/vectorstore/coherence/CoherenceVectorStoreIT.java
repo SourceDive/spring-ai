@@ -73,9 +73,9 @@ public class CoherenceVectorStoreIT {
 
 	@RegisterExtension
 	static CoherenceClusterExtension cluster = new CoherenceClusterExtension()
-		.with(ClusterName.of("CoherenceVectorStoreIT"), WellKnownAddress.loopback(), LocalHost.only(),
-				IPv4Preferred.autoDetect(), SystemProperty.of("coherence.serializer", "pof"))
-		.include(3, CoherenceClusterMember.class, DisplayName.of("storage"), RoleName.of("storage"), testLogs);
+			.with(ClusterName.of("CoherenceVectorStoreIT"), WellKnownAddress.loopback(), LocalHost.only(),
+					IPv4Preferred.autoDetect(), SystemProperty.of("coherence.serializer", "pof"))
+			.include(3, CoherenceClusterMember.class, DisplayName.of("storage"), RoleName.of("storage"), testLogs);
 
 	final List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -85,16 +85,15 @@ public class CoherenceVectorStoreIT {
 	public static String getText(final String uri) {
 		try {
 			return new DefaultResourceLoader().getResource(uri).getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestClient.class)
-		.withPropertyValues("test.spring.ai.vectorstore.coherence.distanceType=COSINE",
-				"test.spring.ai.vectorstore.coherence.indexType=NONE");
+			.withUserConfiguration(TestClient.class)
+			.withPropertyValues("test.spring.ai.vectorstore.coherence.distanceType=COSINE",
+					"test.spring.ai.vectorstore.coherence.indexType=NONE");
 
 	private static void truncateMap(ApplicationContext context, String mapName) {
 		Session session = context.getBean(Session.class);
@@ -116,107 +115,106 @@ public class CoherenceVectorStoreIT {
 	@MethodSource("distanceAndIndex")
 	public void addAndSearch(CoherenceVectorStore.DistanceType distanceType, CoherenceVectorStore.IndexType indexType) {
 		this.contextRunner.withPropertyValues("test.spring.ai.vectorstore.coherence.distanceType=" + distanceType)
-			.withPropertyValues("test.spring.ai.vectorstore.coherence.indexType=" + indexType)
-			.run(context -> {
+				.withPropertyValues("test.spring.ai.vectorstore.coherence.indexType=" + indexType)
+				.run(context -> {
 
-				VectorStore vectorStore = context.getBean(VectorStore.class);
+					VectorStore vectorStore = context.getBean(VectorStore.class);
 
-				vectorStore.add(this.documents);
+					vectorStore.add(this.documents);
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(2).getId());
-				assertThat(resultDoc.getMetadata()).containsKeys("meta2", DocumentMetadata.DISTANCE.value());
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(2).getId());
+					assertThat(resultDoc.getMetadata()).containsKeys("meta2", DocumentMetadata.DISTANCE.value());
 
-				// Remove all documents from the store
-				vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
+					// Remove all documents from the store
+					vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
-				List<Document> results2 = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build());
-				assertThat(results2).hasSize(0);
+					List<Document> results2 = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build());
+					assertThat(results2).hasSize(0);
 
-				truncateMap(context, ((CoherenceVectorStore) vectorStore).getMapName());
-			});
+					truncateMap(context, ((CoherenceVectorStore) vectorStore).getMapName());
+				});
 	}
 
 	@ParameterizedTest(name = "Distance {0}, Index {1} : {displayName}")
 	@MethodSource("distanceAndIndex")
 	public void searchWithFilters(CoherenceVectorStore.DistanceType distanceType,
-			CoherenceVectorStore.IndexType indexType) {
+	                              CoherenceVectorStore.IndexType indexType) {
 		this.contextRunner.withPropertyValues("test.spring.ai.vectorstore.coherence.distanceType=" + distanceType)
-			.withPropertyValues("test.spring.ai.vectorstore.coherence.indexType=" + indexType)
-			.run(context -> {
+				.withPropertyValues("test.spring.ai.vectorstore.coherence.indexType=" + indexType)
+				.run(context -> {
 
-				VectorStore vectorStore = context.getBean(VectorStore.class);
+					VectorStore vectorStore = context.getBean(VectorStore.class);
 
-				var bgDocument = new Document("The World is Big and Salvation Lurks Around the Corner",
-						Map.of("country", "BG", "year", 2020, "foo bar 1", "bar.foo"));
-				var nlDocument = new Document("The World is Big and Salvation Lurks Around the Corner",
-						Map.of("country", "NL"));
-				var bgDocument2 = new Document("The World is Big and Salvation Lurks Around the Corner",
-						Map.of("country", "BG", "year", 2023));
+					var bgDocument = new Document("The World is Big and Salvation Lurks Around the Corner",
+							Map.of("country", "BG", "year", 2020, "foo bar 1", "bar.foo"));
+					var nlDocument = new Document("The World is Big and Salvation Lurks Around the Corner",
+							Map.of("country", "NL"));
+					var bgDocument2 = new Document("The World is Big and Salvation Lurks Around the Corner",
+							Map.of("country", "BG", "year", 2023));
 
-				vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
+					vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
-				SearchRequest searchRequest = SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.build();
+					SearchRequest searchRequest = SearchRequest.builder()
+							.query("The World")
+							.topK(5)
+							.similarityThresholdAll()
+							.build();
 
-				List<Document> results = vectorStore.similaritySearch(searchRequest);
+					List<Document> results = vectorStore.similaritySearch(searchRequest);
 
-				assertThat(results).hasSize(3);
+					assertThat(results).hasSize(3);
 
-				results = vectorStore
-					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'NL'").build());
+					results = vectorStore
+							.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'NL'").build());
 
-				assertThat(results).hasSize(1);
-				assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
+					assertThat(results).hasSize(1);
+					assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
-				results = vectorStore
-					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'BG'").build());
+					results = vectorStore
+							.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'BG'").build());
 
-				assertThat(results).hasSize(2);
-				assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
-				assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
+					assertThat(results).hasSize(2);
+					assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
+					assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
-				results = vectorStore.similaritySearch(
-						SearchRequest.from(searchRequest).filterExpression("country == 'BG' && year == 2020").build());
+					results = vectorStore.similaritySearch(
+							SearchRequest.from(searchRequest).filterExpression("country == 'BG' && year == 2020").build());
 
-				assertThat(results).hasSize(1);
-				assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
+					assertThat(results).hasSize(1);
+					assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
-				results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-					.filterExpression("(country == 'BG' && year == 2020) || (country == 'NL')")
-					.build());
+					results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
+							.filterExpression("(country == 'BG' && year == 2020) || (country == 'NL')")
+							.build());
 
-				assertThat(results).hasSize(2);
-				assertThat(results.get(0).getId()).isIn(bgDocument.getId(), nlDocument.getId());
-				assertThat(results.get(1).getId()).isIn(bgDocument.getId(), nlDocument.getId());
+					assertThat(results).hasSize(2);
+					assertThat(results.get(0).getId()).isIn(bgDocument.getId(), nlDocument.getId());
+					assertThat(results.get(1).getId()).isIn(bgDocument.getId(), nlDocument.getId());
 
-				results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-					.filterExpression("NOT((country == 'BG' && year == 2020) || (country == 'NL'))")
-					.build());
+					results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
+							.filterExpression("NOT((country == 'BG' && year == 2020) || (country == 'NL'))")
+							.build());
 
-				assertThat(results).hasSize(1);
-				assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
+					assertThat(results).hasSize(1);
+					assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
 
-				try {
-					vectorStore
-						.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == NL").build());
-					Assert.fail("Invalid filter expression should have been cached!");
-				}
-				catch (FilterExpressionTextParser.FilterExpressionParseException e) {
-					assertThat(e.getMessage()).contains("Line: 1:17, Error: no viable alternative at input 'NL'");
-				}
+					try {
+						vectorStore
+								.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == NL").build());
+						Assert.fail("Invalid filter expression should have been cached!");
+					} catch (FilterExpressionTextParser.FilterExpressionParseException e) {
+						assertThat(e.getMessage()).contains("Line: 1:17, Error: no viable alternative at input 'NL'");
+					}
 
-				// Remove all documents from the store
-				truncateMap(context, ((CoherenceVectorStore) vectorStore).getMapName());
-			});
+					// Remove all documents from the store
+					truncateMap(context, ((CoherenceVectorStore) vectorStore).getMapName());
+				});
 	}
 
 	@Test
@@ -230,7 +228,7 @@ public class CoherenceVectorStoreIT {
 			vectorStore.add(List.of(document));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -276,10 +274,10 @@ public class CoherenceVectorStoreIT {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Time Shelter")
-				.topK(5)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Time Shelter")
+					.topK(5)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			// Debug: print all returned document IDs and metadata
 			for (Document doc : results) {
@@ -313,7 +311,7 @@ public class CoherenceVectorStoreIT {
 
 			// Query that matches the first document, which has meta1
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("spring ai").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("spring ai").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -323,8 +321,8 @@ public class CoherenceVectorStoreIT {
 
 	private static boolean isSortedByDistance(final List<Document> documents) {
 		final List<Double> distances = documents.stream()
-			.map(doc -> (Double) doc.getMetadata().get(DocumentMetadata.DISTANCE.value()))
-			.toList();
+				.map(doc -> (Double) doc.getMetadata().get(DocumentMetadata.DISTANCE.value()))
+				.toList();
 
 		if (CollectionUtils.isEmpty(distances) || distances.size() == 1) {
 			return true;
@@ -356,11 +354,11 @@ public class CoherenceVectorStoreIT {
 		@Bean
 		public VectorStore vectorStore(EmbeddingModel embeddingModel, Session session) {
 			return CoherenceVectorStore.builder(session, embeddingModel)
-				.distanceType(this.distanceType)
-				.indexType(this.indexType)
-				.forcedNormalization(this.distanceType == CoherenceVectorStore.DistanceType.COSINE
-						|| this.distanceType == CoherenceVectorStore.DistanceType.IP)
-				.build();
+					.distanceType(this.distanceType)
+					.indexType(this.indexType)
+					.forcedNormalization(this.distanceType == CoherenceVectorStore.DistanceType.COSINE
+							|| this.distanceType == CoherenceVectorStore.DistanceType.IP)
+					.build();
 		}
 
 		@Bean
@@ -379,8 +377,7 @@ public class CoherenceVectorStoreIT {
 				TransformersEmbeddingModel tem = new TransformersEmbeddingModel();
 				tem.afterPropertiesSet();
 				return tem;
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException("Failed initializing embedding model", e);
 			}
 		}

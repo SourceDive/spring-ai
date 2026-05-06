@@ -44,9 +44,9 @@ import org.springframework.web.client.RestClient;
  * @author Geng Rong
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(MiniMaxApi.class)
-@EnableConfigurationProperties({ MiniMaxConnectionProperties.class, MiniMaxEmbeddingProperties.class })
+@EnableConfigurationProperties({MiniMaxConnectionProperties.class, MiniMaxEmbeddingProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.MINIMAX,
 		matchIfMissing = true)
 public class MiniMaxEmbeddingAutoConfiguration {
@@ -54,10 +54,10 @@ public class MiniMaxEmbeddingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MiniMaxEmbeddingModel miniMaxEmbeddingModel(MiniMaxConnectionProperties commonProperties,
-			MiniMaxEmbeddingProperties embeddingProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, RetryTemplate retryTemplate,
-			ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                   MiniMaxEmbeddingProperties embeddingProperties,
+	                                                   ObjectProvider<RestClient.Builder> restClientBuilderProvider, RetryTemplate retryTemplate,
+	                                                   ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                   ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var miniMaxApi = miniMaxApi(embeddingProperties.getBaseUrl(), commonProperties.getBaseUrl(),
 				embeddingProperties.getApiKey(), commonProperties.getApiKey(),
@@ -73,7 +73,7 @@ public class MiniMaxEmbeddingAutoConfiguration {
 	}
 
 	private MiniMaxApi miniMaxApi(String baseUrl, String commonBaseUrl, String apiKey, String commonApiKey,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                              RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		String resolvedBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;
 		Assert.hasText(resolvedBaseUrl, "MiniMax base URL must be set");

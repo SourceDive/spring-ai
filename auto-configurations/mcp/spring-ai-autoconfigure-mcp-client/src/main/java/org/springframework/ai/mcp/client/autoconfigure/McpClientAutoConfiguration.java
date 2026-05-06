@@ -98,9 +98,9 @@ import org.springframework.util.CollectionUtils;
  * @see SseHttpClientTransportAutoConfiguration
  * @see SseWebFluxTransportAutoConfiguration
  */
-@AutoConfiguration(after = { StdioTransportAutoConfiguration.class, SseHttpClientTransportAutoConfiguration.class,
-		SseWebFluxTransportAutoConfiguration.class })
-@ConditionalOnClass({ McpSchema.class })
+@AutoConfiguration(after = {StdioTransportAutoConfiguration.class, SseHttpClientTransportAutoConfiguration.class,
+		SseWebFluxTransportAutoConfiguration.class})
+@ConditionalOnClass({McpSchema.class})
 @EnableConfigurationProperties(McpClientCommonProperties.class)
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
@@ -109,9 +109,10 @@ public class McpClientAutoConfiguration {
 	/**
 	 * Create a dynamic client name based on the client name and the name of the server
 	 * connection.
-	 * @param clientName the client name as defined by the configuration
+	 *
+	 * @param clientName           the client name as defined by the configuration
 	 * @param serverConnectionName the name of the server connection being used by the
-	 * client
+	 *                             client
 	 * @return the connected client name
 	 */
 	private String connectedClientName(String clientName, String serverConnectionName) {
@@ -133,17 +134,18 @@ public class McpClientAutoConfiguration {
 	 * <p>
 	 * If initialization is enabled in properties, the clients are automatically
 	 * initialized.
+	 *
 	 * @param mcpSyncClientConfigurer the configurer for customizing client creation
-	 * @param commonProperties common MCP client properties
-	 * @param transportsProvider provider of named MCP transports
+	 * @param commonProperties        common MCP client properties
+	 * @param transportsProvider      provider of named MCP transports
 	 * @return list of configured MCP sync clients
 	 */
 	@Bean
 	@ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "type", havingValue = "SYNC",
 			matchIfMissing = true)
 	public List<McpSyncClient> mcpSyncClients(McpSyncClientConfigurer mcpSyncClientConfigurer,
-			McpClientCommonProperties commonProperties,
-			ObjectProvider<List<NamedClientMcpTransport>> transportsProvider) {
+	                                          McpClientCommonProperties commonProperties,
+	                                          ObjectProvider<List<NamedClientMcpTransport>> transportsProvider) {
 
 		List<McpSyncClient> mcpSyncClients = new ArrayList<>();
 
@@ -157,8 +159,8 @@ public class McpClientAutoConfiguration {
 						commonProperties.getVersion());
 
 				McpClient.SyncSpec spec = McpClient.sync(namedTransport.transport())
-					.clientInfo(clientInfo)
-					.requestTimeout(commonProperties.getRequestTimeout());
+						.clientInfo(clientInfo)
+						.requestTimeout(commonProperties.getRequestTimeout());
 
 				spec = mcpSyncClientConfigurer.configure(namedTransport.name(), spec);
 
@@ -177,6 +179,7 @@ public class McpClientAutoConfiguration {
 
 	/**
 	 * Creates a closeable wrapper for MCP sync clients to ensure proper resource cleanup.
+	 *
 	 * @param clients the list of MCP sync clients to manage
 	 * @return a closeable wrapper for the clients
 	 */
@@ -193,6 +196,7 @@ public class McpClientAutoConfiguration {
 	 * <p>
 	 * This configurer aggregates all available {@link McpSyncClientCustomizer} instances
 	 * to allow for customization of MCP sync client creation.
+	 *
 	 * @param customizerProvider provider of MCP sync client customizers
 	 * @return the configured MCP sync client configurer
 	 */
@@ -209,8 +213,8 @@ public class McpClientAutoConfiguration {
 	@Bean
 	@ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "type", havingValue = "ASYNC")
 	public List<McpAsyncClient> mcpAsyncClients(McpAsyncClientConfigurer mcpAsyncClientConfigurer,
-			McpClientCommonProperties commonProperties,
-			ObjectProvider<List<NamedClientMcpTransport>> transportsProvider) {
+	                                            McpClientCommonProperties commonProperties,
+	                                            ObjectProvider<List<NamedClientMcpTransport>> transportsProvider) {
 
 		List<McpAsyncClient> mcpAsyncClients = new ArrayList<>();
 
@@ -224,8 +228,8 @@ public class McpClientAutoConfiguration {
 						commonProperties.getVersion());
 
 				McpClient.AsyncSpec spec = McpClient.async(namedTransport.transport())
-					.clientInfo(clientInfo)
-					.requestTimeout(commonProperties.getRequestTimeout());
+						.clientInfo(clientInfo)
+						.requestTimeout(commonProperties.getRequestTimeout());
 
 				spec = mcpAsyncClientConfigurer.configure(namedTransport.name(), spec);
 

@@ -316,14 +316,14 @@ public class AzureOpenAiAudioTranscriptionOptions implements AudioTranscriptionO
 	 *
 	 * @param language The language of the transcribed text.
 	 * @param duration The duration of the audio in seconds.
-	 * @param text The transcribed text.
-	 * @param words The extracted words and their timestamps.
+	 * @param text     The transcribed text.
+	 * @param words    The extracted words and their timestamps.
 	 * @param segments The segments of the transcribed text and their corresponding
-	 * details.
+	 *                 details.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record StructuredResponse(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("language") String language,
 		@JsonProperty("duration") Float duration,
 		@JsonProperty("text") String text,
@@ -334,13 +334,13 @@ public class AzureOpenAiAudioTranscriptionOptions implements AudioTranscriptionO
 		/**
 		 * Extracted word and it's corresponding timestamps.
 		 *
-		 * @param word The text content of the word.
+		 * @param word  The text content of the word.
 		 * @param start The start time of the word in seconds.
-		 * @param end The end time of the word in seconds.
+		 * @param end   The end time of the word in seconds.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		public record Word(
-		// @formatter:off
+				// @formatter:off
 			@JsonProperty("word") String word,
 			@JsonProperty("start") Float start,
 			@JsonProperty("end") Float end) {
@@ -350,23 +350,23 @@ public class AzureOpenAiAudioTranscriptionOptions implements AudioTranscriptionO
 		/**
 		 * Segment of the transcribed text and its corresponding details.
 		 *
-		 * @param id Unique identifier of the segment.
-		 * @param seek Seek offset of the segment.
-		 * @param start Start time of the segment in seconds.
-		 * @param end End time of the segment in seconds.
-		 * @param text The text content of the segment.
-		 * @param tokens Array of token IDs for the text content.
-		 * @param temperature Temperature parameter used for generating the segment.
-		 * @param avgLogprob Average logprob of the segment. If the value is lower than
-		 * -1, consider the logprobs failed.
+		 * @param id               Unique identifier of the segment.
+		 * @param seek             Seek offset of the segment.
+		 * @param start            Start time of the segment in seconds.
+		 * @param end              End time of the segment in seconds.
+		 * @param text             The text content of the segment.
+		 * @param tokens           Array of token IDs for the text content.
+		 * @param temperature      Temperature parameter used for generating the segment.
+		 * @param avgLogprob       Average logprob of the segment. If the value is lower than
+		 *                         -1, consider the logprobs failed.
 		 * @param compressionRatio Compression ratio of the segment. If the value is
-		 * greater than 2.4, consider the compression failed.
-		 * @param noSpeechProb Probability of no speech in the segment. If the value is
-		 * higher than 1.0 and the avg_logprob is below -1, consider this segment silent.
+		 *                         greater than 2.4, consider the compression failed.
+		 * @param noSpeechProb     Probability of no speech in the segment. If the value is
+		 *                         higher than 1.0 and the avg_logprob is below -1, consider this segment silent.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		public record Segment(
-		// @formatter:off
+				// @formatter:off
 				@JsonProperty("id") Integer id,
 				@JsonProperty("seek") Integer seek,
 				@JsonProperty("start") Float start,

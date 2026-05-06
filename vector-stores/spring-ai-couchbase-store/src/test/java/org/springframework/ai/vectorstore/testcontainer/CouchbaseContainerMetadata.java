@@ -34,8 +34,8 @@ public final class CouchbaseContainerMetadata {
 	public static final BucketDefinition bucketDefinition = new BucketDefinition(BUCKET_NAME);
 
 	public static final DockerImageName COUCHBASE_IMAGE_ENTERPRISE = DockerImageName.parse("couchbase:enterprise")
-		.asCompatibleSubstituteFor("couchbase/server")
-		.withTag("enterprise-7.6.1");
+			.asCompatibleSubstituteFor("couchbase/server")
+			.withTag("enterprise-7.6.1");
 
 	private CouchbaseContainerMetadata() {
 		// Avoids instantiation

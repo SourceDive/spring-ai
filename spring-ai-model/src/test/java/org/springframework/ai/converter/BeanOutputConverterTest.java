@@ -138,7 +138,7 @@ class BeanOutputConverterTest {
 
 	}
 
-	@JsonPropertyOrder({ "string_property", "foo_property", "bar_property" })
+	@JsonPropertyOrder({"string_property", "foo_property", "bar_property"})
 	record TestClassWithJsonPropertyOrder(
 			@JsonProperty("string_property") @JsonPropertyDescription("string_property_description") String someString,
 
@@ -164,8 +164,8 @@ class BeanOutputConverterTest {
 			assertThat(BeanOutputConverterTest.this.logAppender.list).hasSize(1);
 			final var loggingEvent = BeanOutputConverterTest.this.logAppender.list.get(0);
 			assertThat(loggingEvent.getFormattedMessage())
-				.isEqualTo("Could not parse the given text to the desired target type: \"{invalid json\" into "
-						+ TestClass.class);
+					.isEqualTo("Could not parse the given text to the desired target type: \"{invalid json\" into "
+							+ TestClass.class);
 
 			assertThat(loggingEvent.getMarkerList()).contains(SENSITIVE_DATA_MARKER);
 		}
@@ -233,7 +233,7 @@ class BeanOutputConverterTest {
 
 					});
 			List<TestClassWithJsonAnnotations> testClass = converter
-				.convert("[{ \"string_property\": \"some value\" }]");
+					.convert("[{ \"string_property\": \"some value\" }]");
 			assertThat(testClass).hasSize(1);
 			assertThat(testClass.get(0).getSomeString()).isEqualTo("some value");
 		}
@@ -248,24 +248,24 @@ class BeanOutputConverterTest {
 		void formatClassType() {
 			var converter = new BeanOutputConverter<>(TestClass.class);
 			TextBlockAssertion.assertThat(converter.getFormat())
-				.isEqualTo(
-						"""
-								Your response should be in JSON format.
-								Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
-								Do not include markdown code blocks in your response.
-								Remove the ```json markdown from the output.
-								Here is the JSON Schema instance your output must adhere to:
-								```{
-								  "$schema" : "https://json-schema.org/draft/2020-12/schema",
-								  "type" : "object",
-								  "properties" : {
-								    "someString" : {
-								      "type" : "string"
-								    }
-								  },
-								  "additionalProperties" : false
-								}```
-								""");
+					.isEqualTo(
+							"""
+									Your response should be in JSON format.
+									Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+									Do not include markdown code blocks in your response.
+									Remove the ```json markdown from the output.
+									Here is the JSON Schema instance your output must adhere to:
+									```{
+									  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+									  "type" : "object",
+									  "properties" : {
+									    "someString" : {
+									      "type" : "string"
+									    }
+									  },
+									  "additionalProperties" : false
+									}```
+									""");
 		}
 
 		@Test
@@ -274,24 +274,24 @@ class BeanOutputConverterTest {
 
 			});
 			TextBlockAssertion.assertThat(converter.getFormat())
-				.isEqualTo(
-						"""
-								Your response should be in JSON format.
-								Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
-								Do not include markdown code blocks in your response.
-								Remove the ```json markdown from the output.
-								Here is the JSON Schema instance your output must adhere to:
-								```{
-								  "$schema" : "https://json-schema.org/draft/2020-12/schema",
-								  "type" : "object",
-								  "properties" : {
-								    "someString" : {
-								      "type" : "string"
-								    }
-								  },
-								  "additionalProperties" : false
-								}```
-								""");
+					.isEqualTo(
+							"""
+									Your response should be in JSON format.
+									Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+									Do not include markdown code blocks in your response.
+									Remove the ```json markdown from the output.
+									Here is the JSON Schema instance your output must adhere to:
+									```{
+									  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+									  "type" : "object",
+									  "properties" : {
+									    "someString" : {
+									      "type" : "string"
+									    }
+									  },
+									  "additionalProperties" : false
+									}```
+									""");
 		}
 
 		@Test
@@ -300,27 +300,27 @@ class BeanOutputConverterTest {
 
 			});
 			TextBlockAssertion.assertThat(converter.getFormat())
-				.isEqualTo(
-						"""
-								Your response should be in JSON format.
-								Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
-								Do not include markdown code blocks in your response.
-								Remove the ```json markdown from the output.
-								Here is the JSON Schema instance your output must adhere to:
-								```{
-								  "$schema" : "https://json-schema.org/draft/2020-12/schema",
-								  "type" : "array",
-								  "items" : {
-								    "type" : "object",
-								    "properties" : {
-								      "someString" : {
-								        "type" : "string"
-								      }
-								    },
-								    "additionalProperties" : false
-								  }
-								}```
-								""");
+					.isEqualTo(
+							"""
+									Your response should be in JSON format.
+									Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+									Do not include markdown code blocks in your response.
+									Remove the ```json markdown from the output.
+									Here is the JSON Schema instance your output must adhere to:
+									```{
+									  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+									  "type" : "array",
+									  "items" : {
+									    "type" : "object",
+									    "properties" : {
+									      "someString" : {
+									        "type" : "string"
+									      }
+									    },
+									    "additionalProperties" : false
+									  }
+									}```
+									""");
 		}
 
 		@Test

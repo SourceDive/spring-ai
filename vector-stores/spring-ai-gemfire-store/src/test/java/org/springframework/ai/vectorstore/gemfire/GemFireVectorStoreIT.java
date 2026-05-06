@@ -68,7 +68,7 @@ public class GemFireVectorStoreIT {
 	private static GemFireCluster gemFireCluster;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -88,7 +88,7 @@ public class GemFireVectorStoreIT {
 		gemFireCluster = new GemFireCluster(GemFireImage.DEFAULT_IMAGE, LOCATOR_COUNT, SERVER_COUNT);
 		gemFireCluster.withConfiguration(GemFireCluster.SERVER_GLOB,
 				container -> container.withExposedPorts(HTTP_SERVICE_PORT)
-					.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
+						.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
 		gemFireCluster.withGemFireProperty(GemFireCluster.SERVER_GLOB, "http-service-port",
 				Integer.toString(HTTP_SERVICE_PORT));
 		gemFireCluster.acceptLicense().start();
@@ -101,8 +101,7 @@ public class GemFireVectorStoreIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -114,9 +113,9 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(this.documents);
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(3).build()), hasSize(0));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(3).build()), hasSize(0));
 		});
 	}
 
@@ -127,12 +126,12 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great Depression").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(5).build());
 			Document resultDoc = results.get(0);
 			assertThat(resultDoc.getId()).isEqualTo(this.documents.get(2).getId());
 			assertThat(resultDoc.getText()).contains("The Great Depression (1929–1939)" + " was an economic shock");
@@ -152,9 +151,9 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(List.of(document));
 			SearchRequest springSearchRequest = SearchRequest.builder().query("Spring").topK(5).build();
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
 			List<Document> results = vectorStore.similaritySearch(springSearchRequest);
 			Document resultDoc = results.get(0);
 			assertThat(resultDoc.getId()).isEqualTo(document.getId());
@@ -187,23 +186,23 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(5).similarityThresholdAll().build()),
-						hasSize(3));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(5).similarityThresholdAll().build()),
+							hasSize(3));
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 			assertThat(scores).hasSize(3);
 
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Depression")
-				.topK(5)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Depression")
+					.topK(5)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			assertThat(results).hasSize(1);
 
@@ -223,11 +222,11 @@ public class GemFireVectorStoreIT {
 		@Bean
 		public GemFireVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			return GemFireVectorStore.builder(embeddingModel)
-				.host("localhost")
-				.port(HTTP_SERVICE_PORT)
-				.indexName(INDEX_NAME)
-				.initializeSchema(true)
-				.build();
+					.host("localhost")
+					.port(HTTP_SERVICE_PORT)
+					.indexName(INDEX_NAME)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

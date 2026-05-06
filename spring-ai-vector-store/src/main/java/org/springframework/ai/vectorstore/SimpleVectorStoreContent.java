@@ -50,19 +50,21 @@ public final class SimpleVectorStoreContent implements Content {
 	/**
 	 * Creates a new instance with the given content, empty metadata, and embedding
 	 * vector.
-	 * @param text the content text, must not be null
+	 *
+	 * @param text      the content text, must not be null
 	 * @param embedding the embedding vector, must not be null
 	 */
 	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-	public SimpleVectorStoreContent(@JsonProperty("text") @JsonAlias({ "content" }) String text,
-			@JsonProperty("embedding") float[] embedding) {
+	public SimpleVectorStoreContent(@JsonProperty("text") @JsonAlias({"content"}) String text,
+	                                @JsonProperty("embedding") float[] embedding) {
 		this(text, new HashMap<>(), embedding);
 	}
 
 	/**
 	 * Creates a new instance with the given content, metadata, and embedding vector.
-	 * @param text the content text, must not be null
-	 * @param metadata the metadata map, must not be null
+	 *
+	 * @param text      the content text, must not be null
+	 * @param metadata  the metadata map, must not be null
 	 * @param embedding the embedding vector, must not be null
 	 */
 	public SimpleVectorStoreContent(String text, Map<String, Object> metadata, float[] embedding) {
@@ -72,21 +74,23 @@ public final class SimpleVectorStoreContent implements Content {
 	/**
 	 * Creates a new instance with the given content, metadata, custom ID generator, and
 	 * embedding vector.
-	 * @param text the content text, must not be null
-	 * @param metadata the metadata map, must not be null
+	 *
+	 * @param text        the content text, must not be null
+	 * @param metadata    the metadata map, must not be null
 	 * @param idGenerator the ID generator to use, must not be null
-	 * @param embedding the embedding vector, must not be null
+	 * @param embedding   the embedding vector, must not be null
 	 */
 	public SimpleVectorStoreContent(String text, Map<String, Object> metadata, IdGenerator idGenerator,
-			float[] embedding) {
+	                                float[] embedding) {
 		this(idGenerator.generateId(text, metadata), text, metadata, embedding);
 	}
 
 	/**
 	 * Creates a new instance with all fields specified.
-	 * @param id the unique identifier, must not be empty
-	 * @param text the content text, must not be null
-	 * @param metadata the metadata map, must not be null
+	 *
+	 * @param id        the unique identifier, must not be empty
+	 * @param text      the content text, must not be null
+	 * @param metadata  the metadata map, must not be null
 	 * @param embedding the embedding vector, must not be null
 	 * @throws IllegalArgumentException if any parameter is null or if id is empty
 	 */
@@ -119,6 +123,7 @@ public final class SimpleVectorStoreContent implements Content {
 
 	/**
 	 * Returns a defensive copy of the embedding vector.
+	 *
 	 * @return a new array containing the embedding vector
 	 */
 	public float[] getEmbedding() {

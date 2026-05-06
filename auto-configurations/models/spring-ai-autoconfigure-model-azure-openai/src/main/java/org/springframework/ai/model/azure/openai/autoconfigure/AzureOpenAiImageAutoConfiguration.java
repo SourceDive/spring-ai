@@ -48,7 +48,7 @@ public class AzureOpenAiImageAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public AzureOpenAiImageModel azureOpenAiImageModel(OpenAIClientBuilder openAIClientBuilder,
-			AzureOpenAiImageOptionsProperties imageProperties) {
+	                                                   AzureOpenAiImageOptionsProperties imageProperties) {
 
 		return new AzureOpenAiImageModel(openAIClientBuilder.buildClient(), imageProperties.getOptions());
 	}

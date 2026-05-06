@@ -47,8 +47,8 @@ import org.springframework.context.annotation.Bean;
  * @author Soby Chacko
  */
 @AutoConfiguration
-@ConditionalOnClass({ TypesenseVectorStore.class, EmbeddingModel.class })
-@EnableConfigurationProperties({ TypesenseServiceClientProperties.class, TypesenseVectorStoreProperties.class })
+@ConditionalOnClass({TypesenseVectorStore.class, EmbeddingModel.class})
+@EnableConfigurationProperties({TypesenseServiceClientProperties.class, TypesenseVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.TYPESENSE,
 		matchIfMissing = true)
 public class TypesenseVectorStoreAutoConfiguration {
@@ -69,18 +69,18 @@ public class TypesenseVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public TypesenseVectorStore vectorStore(Client typesenseClient, EmbeddingModel embeddingModel,
-			TypesenseVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                        TypesenseVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                        ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                        BatchingStrategy batchingStrategy) {
 
 		return TypesenseVectorStore.builder(typesenseClient, embeddingModel)
-			.collectionName(properties.getCollectionName())
-			.embeddingDimension(properties.getEmbeddingDimension())
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.collectionName(properties.getCollectionName())
+				.embeddingDimension(properties.getEmbeddingDimension())
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 	@Bean

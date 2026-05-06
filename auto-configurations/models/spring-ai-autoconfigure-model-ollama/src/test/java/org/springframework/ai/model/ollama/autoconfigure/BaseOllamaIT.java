@@ -37,6 +37,7 @@ public abstract class BaseOllamaIT {
 		System.out.println("OLLAMA_AUTOCONF_TESTS_ENABLED=" + System.getenv("OLLAMA_AUTOCONF_TESTS_ENABLED"));
 		System.out.println("System property=" + System.getProperty("OLLAMA_AUTOCONF_TESTS_ENABLED"));
 	}
+
 	private static final String OLLAMA_LOCAL_URL = "http://localhost:11434";
 
 	private static final Duration DEFAULT_TIMEOUT = Duration.ofMinutes(10);
@@ -46,7 +47,7 @@ public abstract class BaseOllamaIT {
 	// Environment variable to control whether to create a new container or use existing
 	// Ollama instance
 	private static final boolean SKIP_CONTAINER_CREATION = Boolean
-		.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
+			.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
 
 	private static OllamaContainer ollamaContainer;
 
@@ -56,6 +57,7 @@ public abstract class BaseOllamaIT {
 	 * Initialize the Ollama API with the specified model. When OLLAMA_WITH_REUSE=true
 	 * (default), uses TestContainers withReuse feature. When OLLAMA_WITH_REUSE=false,
 	 * connects to local Ollama instance.
+	 *
 	 * @param model the Ollama model to initialize (must not be null or empty)
 	 * @return configured OllamaApi instance
 	 * @throws IllegalArgumentException if model is null or empty
@@ -75,6 +77,7 @@ public abstract class BaseOllamaIT {
 
 	/**
 	 * Get the initialized OllamaApi instance.
+	 *
 	 * @return the OllamaApi instance
 	 * @throws IllegalStateException if called before initialization
 	 */
@@ -105,9 +108,9 @@ public abstract class BaseOllamaIT {
 
 	private static void ensureModelIsPresent(final OllamaApi ollamaApi, final String model) {
 		final var modelManagementOptions = ModelManagementOptions.builder()
-			.maxRetries(DEFAULT_MAX_RETRIES)
-			.timeout(DEFAULT_TIMEOUT)
-			.build();
+				.maxRetries(DEFAULT_MAX_RETRIES)
+				.timeout(DEFAULT_TIMEOUT)
+				.build();
 		final var ollamaModelManager = new OllamaModelManager(ollamaApi, modelManagementOptions);
 		ollamaModelManager.pullModel(model, PullModelStrategy.WHEN_MISSING);
 	}

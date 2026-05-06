@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OllamaBindingsPropertiesProcessorTests {
 
 	private final Bindings bindings = new Bindings(new Binding("test-name", Paths.get("test-path"),
-	// @formatter:off
+			// @formatter:off
 			Map.of(
 				Binding.TYPE, OllamaBindingsPropertiesProcessor.TYPE,
 				"uri", "https://example.net/ollama:11434"

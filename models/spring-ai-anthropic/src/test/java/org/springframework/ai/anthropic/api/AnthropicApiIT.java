@@ -46,21 +46,21 @@ public class AnthropicApiIT {
 
 	List<AnthropicApi.Tool> tools = List.of(new AnthropicApi.Tool("getCurrentWeather",
 			"Get the weather in location. Return temperature in 30°F or 30°C format.", ModelOptionsUtils.jsonToMap("""
-					{
-						"type": "object",
-						"properties": {
-							"location": {
-								"type": "string",
-								"description": "The city and state e.g. San Francisco, CA"
-							},
-							"unit": {
-								"type": "string",
-								"enum": ["C", "F"]
-							}
-						},
-						"required": ["location", "unit"]
+			{
+				"type": "object",
+				"properties": {
+					"location": {
+						"type": "string",
+						"description": "The city and state e.g. San Francisco, CA"
+					},
+					"unit": {
+						"type": "string",
+						"enum": ["C", "F"]
 					}
-					""")));
+				},
+				"required": ["location", "unit"]
+			}
+			""")));
 
 	@Test
 	void chatCompletionEntity() {
@@ -68,8 +68,8 @@ public class AnthropicApiIT {
 		AnthropicMessage chatCompletionMessage = new AnthropicMessage(List.of(new ContentBlock("Tell me a Joke?")),
 				Role.USER);
 		ResponseEntity<ChatCompletionResponse> response = this.anthropicApi
-			.chatCompletionEntity(new ChatCompletionRequest(AnthropicApi.ChatModel.CLAUDE_3_OPUS.getValue(),
-					List.of(chatCompletionMessage), null, 100, 0.8, false));
+				.chatCompletionEntity(new ChatCompletionRequest(AnthropicApi.ChatModel.CLAUDE_3_OPUS.getValue(),
+						List.of(chatCompletionMessage), null, 100, 0.8, false));
 
 		System.out.println(response);
 		assertThat(response).isNotNull();
@@ -82,12 +82,12 @@ public class AnthropicApiIT {
 				Role.USER);
 
 		ChatCompletionRequest request = ChatCompletionRequest.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_7_SONNET.getValue())
-			.messages(List.of(chatCompletionMessage))
-			.maxTokens(8192)
-			.temperature(1.0) // temperature should be set to 1 when thinking is enabled
-			.thinking(new ChatCompletionRequest.ThinkingConfig(AnthropicApi.ThinkingType.ENABLED, 2048))
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_7_SONNET.getValue())
+				.messages(List.of(chatCompletionMessage))
+				.maxTokens(8192)
+				.temperature(1.0) // temperature should be set to 1 when thinking is enabled
+				.thinking(new ChatCompletionRequest.ThinkingConfig(AnthropicApi.ThinkingType.ENABLED, 2048))
+				.build();
 
 		ResponseEntity<ChatCompletionResponse> response = this.anthropicApi.chatCompletionEntity(request);
 
@@ -137,22 +137,22 @@ public class AnthropicApiIT {
 		messageConversation.add(chatCompletionMessage);
 
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS)
-			.messages(messageConversation)
-			.maxTokens(1500)
-			.stream(true)
-			.temperature(0.8)
-			.tools(this.tools)
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS)
+				.messages(messageConversation)
+				.maxTokens(1500)
+				.stream(true)
+				.temperature(0.8)
+				.tools(this.tools)
+				.build();
 
 		List<ChatCompletionResponse> responses = this.anthropicApi.chatCompletionStream(chatCompletionRequest)
-			.collectList()
-			.block();
+				.collectList()
+				.block();
 
 		// Check that tool uses response returned only once
 		List<ChatCompletionResponse> toolCompletionResponses = responses.stream()
-			.filter(r -> r.stopReason() != null && r.stopReason().equals(ContentBlock.Type.TOOL_USE.value))
-			.toList();
+				.filter(r -> r.stopReason() != null && r.stopReason().equals(ContentBlock.Type.TOOL_USE.value))
+				.toList();
 		assertThat(toolCompletionResponses).size().isEqualTo(1);
 		List<ContentBlock> toolContentBlocks = toolCompletionResponses.get(0).content();
 		assertThat(toolContentBlocks).size().isEqualTo(1);
@@ -162,8 +162,8 @@ public class AnthropicApiIT {
 
 		// Check that message stop response also returned
 		List<ChatCompletionResponse> messageStopEvents = responses.stream()
-			.filter(r -> r.type().equals(AnthropicApi.EventType.MESSAGE_STOP.name()))
-			.toList();
+				.filter(r -> r.type().equals(AnthropicApi.EventType.MESSAGE_STOP.name()))
+				.toList();
 		assertThat(messageStopEvents).size().isEqualTo(1);
 	}
 
@@ -179,9 +179,9 @@ public class AnthropicApiIT {
 		assertThat(response).isNotNull();
 
 		assertThatThrownBy(() -> response.collectList().block()).isInstanceOf(RuntimeException.class)
-			.hasMessageStartingWith("Response exception, Status: [")
-			.hasMessageContaining(
-					"{\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"}}");
+				.hasMessageStartingWith("Response exception, Status: [")
+				.hasMessageContaining(
+						"{\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"}}");
 	}
 
 }

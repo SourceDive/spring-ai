@@ -41,7 +41,7 @@ class MessageUtilsTests {
 	@Test
 	void readResourceWhenNull() {
 		assertThatThrownBy(() -> MessageUtils.readResource(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.hasMessageContaining("resource cannot be null");
 	}
 
 	@Test
@@ -53,8 +53,8 @@ class MessageUtilsTests {
 	@Test
 	void readResourceWithCharsetWhenNull() {
 		assertThatThrownBy(() -> MessageUtils.readResource(new ClassPathResource("prompt-user.txt"), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("charset cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("charset cannot be null");
 	}
 
 }

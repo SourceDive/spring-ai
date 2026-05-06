@@ -39,24 +39,24 @@ class DefaultToolCallingObservationConventionTests {
 	@Test
 	void shouldHaveName() {
 		assertThat(this.observationConvention.getName())
-			.isEqualTo(DefaultToolCallingObservationConvention.DEFAULT_NAME);
+				.isEqualTo(DefaultToolCallingObservationConvention.DEFAULT_NAME);
 	}
 
 	@Test
 	void contextualName() {
 		ToolCallingObservationContext observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("input")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("input")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("tool_call toolA");
 	}
 
 	@Test
 	void supportsOnlyChatModelObservationContext() {
 		ToolCallingObservationContext observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("input")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("input")
+				.build();
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
 	}
@@ -64,9 +64,9 @@ class DefaultToolCallingObservationConventionTests {
 	@Test
 	void shouldHaveLowCardinalityKeyValues() {
 		ToolCallingObservationContext observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("input")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("input")
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(ToolCallingObservationDocumentation.LowCardinalityKeyNames.TOOL_DEFINITION_NAME.asString(),
 						"toolA"),
@@ -86,13 +86,13 @@ class DefaultToolCallingObservationConventionTests {
 				}
 				""";
 		ToolCallingObservationContext observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments(toolCallInput)
-			.toolCallResult("Mission accomplished!")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments(toolCallInput)
+				.toolCallResult("Mission accomplished!")
+				.build();
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_DEFINITION_DESCRIPTION
-					.asString(), "description"),
+						.asString(), "description"),
 				KeyValue.of(
 						ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_DEFINITION_SCHEMA.asString(),
 						"{}"));

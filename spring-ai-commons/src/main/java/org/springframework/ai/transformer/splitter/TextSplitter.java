@@ -74,7 +74,7 @@ public abstract class TextSplitter implements DocumentTransformer {
 	}
 
 	private List<Document> createDocuments(List<String> texts, List<ContentFormatter> formatters,
-			List<Map<String, Object>> metadataList) {
+	                                       List<Map<String, Object>> metadataList) {
 
 		// Process the data in a column oriented way and recreate the Document
 		List<Document> documents = new ArrayList<>();
@@ -89,9 +89,9 @@ public abstract class TextSplitter implements DocumentTransformer {
 			for (String chunk : chunks) {
 				// only primitive values are in here -
 				Map<String, Object> metadataCopy = metadata.entrySet()
-					.stream()
-					.filter(e -> e.getKey() != null && e.getValue() != null)
-					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+						.stream()
+						.filter(e -> e.getKey() != null && e.getValue() != null)
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 				Document newDoc = new Document(chunk, metadataCopy);
 
 				if (this.copyContentFormatter) {

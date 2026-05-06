@@ -32,7 +32,7 @@ public class TestVertexAiTextEmbeddingModel extends VertexAiTextEmbeddingModel {
 	private PredictRequest.Builder mockPredictRequestBuilder;
 
 	public TestVertexAiTextEmbeddingModel(VertexAiEmbeddingConnectionDetails connectionDetails,
-			VertexAiTextEmbeddingOptions defaultEmbeddingOptions, RetryTemplate retryTemplate) {
+	                                      VertexAiTextEmbeddingOptions defaultEmbeddingOptions, RetryTemplate retryTemplate) {
 		super(connectionDetails, defaultEmbeddingOptions, retryTemplate);
 	}
 
@@ -62,7 +62,7 @@ public class TestVertexAiTextEmbeddingModel extends VertexAiTextEmbeddingModel {
 
 	@Override
 	protected PredictRequest.Builder getPredictRequestBuilder(EmbeddingRequest request, EndpointName endpointName,
-			VertexAiTextEmbeddingOptions finalOptions) {
+	                                                          VertexAiTextEmbeddingOptions finalOptions) {
 		if (this.mockPredictRequestBuilder != null) {
 			return this.mockPredictRequestBuilder;
 		}

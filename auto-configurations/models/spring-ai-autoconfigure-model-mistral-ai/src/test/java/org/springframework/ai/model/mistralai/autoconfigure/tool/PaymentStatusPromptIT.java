@@ -50,35 +50,35 @@ public class PaymentStatusPromptIT {
 	private final Logger logger = LoggerFactory.getLogger(WeatherServicePromptIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mistralai.apiKey=" + System.getenv("MISTRAL_AI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mistralai.apiKey=" + System.getenv("MISTRAL_AI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mistralai.chat.options.model=" + MistralAiApi.ChatModel.SMALL.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.mistralai.chat.options.model=" + MistralAiApi.ChatModel.SMALL.getValue())
+				.run(context -> {
 
-				MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
+					MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage("What's the status of my transaction with id T1001?");
+					UserMessage userMessage = new UserMessage("What's the status of my transaction with id T1001?");
 
-				var promptOptions = MistralAiChatOptions.builder()
-					.toolCallbacks(List.of(FunctionToolCallback
-						.builder("retrievePaymentStatus",
-								(Transaction transaction) -> new Status(DATA.get(transaction).status()))
-						.description("Get payment status of a transaction")
-						.inputType(Transaction.class)
-						.build()))
-					.build();
+					var promptOptions = MistralAiChatOptions.builder()
+							.toolCallbacks(List.of(FunctionToolCallback
+									.builder("retrievePaymentStatus",
+											(Transaction transaction) -> new Status(DATA.get(transaction).status()))
+									.description("Get payment status of a transaction")
+									.inputType(Transaction.class)
+									.build()))
+							.build();
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
-			});
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
+				});
 	}
 
 	public record Transaction(@JsonProperty(required = true, value = "transaction_id") String id) {

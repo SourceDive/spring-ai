@@ -37,11 +37,9 @@ public class PgVectorFilterExpressionConverter extends AbstractFilterExpressionC
 	protected void doExpression(Expression expression, StringBuilder context) {
 		if (expression.type() == Filter.ExpressionType.IN) {
 			handleIn(expression, context);
-		}
-		else if (expression.type() == Filter.ExpressionType.NIN) {
+		} else if (expression.type() == Filter.ExpressionType.NIN) {
 			handleNotIn(expression, context);
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);

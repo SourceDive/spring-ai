@@ -73,7 +73,7 @@ class DefaultChatClientTests {
 	@Test
 	void whenChatClientRequestIsNullThenThrow() {
 		assertThatThrownBy(() -> new DefaultChatClient(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("defaultChatClientRequest cannot be null");
+				.hasMessage("defaultChatClientRequest cannot be null");
 	}
 
 	// ChatClient
@@ -89,14 +89,14 @@ class DefaultChatClientTests {
 	void whenPromptContentIsEmptyThenThrow() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		assertThatThrownBy(() -> chatClient.prompt("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("content cannot be null or empty");
+				.hasMessage("content cannot be null or empty");
 	}
 
 	@Test
 	void whenPromptContentThenReturn() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec spec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		assertThat(spec.getMessages()).hasSize(1);
 		assertThat(spec.getMessages().get(0).getText()).isEqualTo("my question");
 	}
@@ -106,7 +106,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		Prompt prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec spec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt(prompt);
+				.prompt(prompt);
 		assertThat(spec.getMessages()).hasSize(2);
 		assertThat(spec.getMessages().get(0).getText()).isEqualTo("instructions");
 		assertThat(spec.getMessages().get(1).getText()).isEqualTo("my question");
@@ -119,7 +119,7 @@ class DefaultChatClientTests {
 		ChatOptions chatOptions = ChatOptions.builder().build();
 		Prompt prompt = new Prompt(List.of(), chatOptions);
 		DefaultChatClient.DefaultChatClientRequestSpec spec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt(prompt);
+				.prompt(prompt);
 		assertThat(spec.getMessages()).isEmpty();
 		assertThat(spec.getChatOptions()).isEqualTo(chatOptions);
 	}
@@ -128,14 +128,14 @@ class DefaultChatClientTests {
 	void whenMutateChatClientRequest() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec spec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt()
-			.user("my question");
+				.prompt()
+				.user("my question");
 
 		ChatClient.Builder newChatClientBuilder = spec.mutate();
 		newChatClientBuilder.defaultUser("another question");
 		ChatClient newChatClient = newChatClientBuilder.build();
 		DefaultChatClient.DefaultChatClientRequestSpec newSpec = (DefaultChatClient.DefaultChatClientRequestSpec) newChatClient
-			.prompt();
+				.prompt();
 
 		assertThat(spec.getUserText()).isEqualTo("my question");
 		assertThat(newSpec.getUserText()).isEqualTo("another question");
@@ -156,14 +156,14 @@ class DefaultChatClientTests {
 	void whenUserMediaIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.media((Media[]) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("media cannot be null");
+				.hasMessage("media cannot be null");
 	}
 
 	@Test
 	void whenUserMediaContainsNullElementsThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.media(null, (Media) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("media cannot contain null elements");
+				.hasMessage("media cannot contain null elements");
 	}
 
 	@Test
@@ -171,7 +171,7 @@ class DefaultChatClientTests {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		URI mediaUri = URI.create("http://example.com/image.png");
 		spec = (DefaultChatClient.DefaultPromptUserSpec) spec
-			.media(Media.builder().mimeType(MimeTypeUtils.IMAGE_PNG).data(mediaUri).build());
+				.media(Media.builder().mimeType(MimeTypeUtils.IMAGE_PNG).data(mediaUri).build());
 		assertThat(spec.media()).hasSize(1);
 		assertThat(spec.media().get(0).getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_PNG);
 		assertThat(spec.media().get(0).getData()).isEqualTo(mediaUri.toString());
@@ -182,15 +182,15 @@ class DefaultChatClientTests {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		URL mediaUrl = URI.create("http://example.com/image.png").toURL();
 		assertThatThrownBy(() -> spec.media(null, mediaUrl)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("mimeType cannot be null");
+				.hasMessage("mimeType cannot be null");
 	}
 
 	@Test
 	void whenUserMediaUrlIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.media(MimeTypeUtils.IMAGE_PNG, (URL) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("url cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("url cannot be null");
 	}
 
 	@Test
@@ -207,16 +207,16 @@ class DefaultChatClientTests {
 	void whenUserMediaMimeTypeIsNullWithResourceThenThrow() throws MalformedURLException {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.media(null, new ClassPathResource("image.png")))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("mimeType cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("mimeType cannot be null");
 	}
 
 	@Test
 	void whenUserMediaResourceIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.media(MimeTypeUtils.IMAGE_PNG, (Resource) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("resource cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("resource cannot be null");
 	}
 
 	@Test
@@ -233,14 +233,14 @@ class DefaultChatClientTests {
 	void whenUserTextStringIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.text((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
 	void whenUserTextStringIsEmptyThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.text("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
@@ -254,7 +254,7 @@ class DefaultChatClientTests {
 	void whenUserTextResourceIsNullWithCharsetThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.text(null, Charset.defaultCharset())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -262,7 +262,7 @@ class DefaultChatClientTests {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		Resource textResource = new ClassPathResource("user-prompt.txt");
 		assertThatThrownBy(() -> spec.text(textResource, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("charset cannot be null");
+				.hasMessage("charset cannot be null");
 	}
 
 	@Test
@@ -277,7 +277,7 @@ class DefaultChatClientTests {
 	void whenUserTextResourceIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.text((Resource) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -292,21 +292,21 @@ class DefaultChatClientTests {
 	void whenUserParamKeyIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.param(null, "value")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("key cannot be null or empty");
+				.hasMessage("key cannot be null or empty");
 	}
 
 	@Test
 	void whenUserParamKeyIsEmptyThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.param("", "value")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("key cannot be null or empty");
+				.hasMessage("key cannot be null or empty");
 	}
 
 	@Test
 	void whenUserParamValueIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.param("key", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("value cannot be null");
+				.hasMessage("value cannot be null");
 	}
 
 	@Test
@@ -320,7 +320,7 @@ class DefaultChatClientTests {
 	void whenUserParamsIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptUserSpec spec = new DefaultChatClient.DefaultPromptUserSpec();
 		assertThatThrownBy(() -> spec.params(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("params cannot be null");
+				.hasMessage("params cannot be null");
 	}
 
 	@Test
@@ -329,7 +329,7 @@ class DefaultChatClientTests {
 		Map<String, Object> params = new HashMap<>();
 		params.put(null, "value");
 		assertThatThrownBy(() -> spec.params(params)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("param keys cannot contain null elements");
+				.hasMessage("param keys cannot contain null elements");
 	}
 
 	@Test
@@ -338,7 +338,7 @@ class DefaultChatClientTests {
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", null);
 		assertThatThrownBy(() -> spec.params(params)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("param values cannot contain null elements");
+				.hasMessage("param values cannot contain null elements");
 	}
 
 	@Test
@@ -362,14 +362,14 @@ class DefaultChatClientTests {
 	void whenSystemTextStringIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.text((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
 	void whenSystemTextStringIsEmptyThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.text("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
@@ -383,7 +383,7 @@ class DefaultChatClientTests {
 	void whenSystemTextResourceIsNullWithCharsetThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.text(null, Charset.defaultCharset())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -391,7 +391,7 @@ class DefaultChatClientTests {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		Resource textResource = new ClassPathResource("system-prompt.txt");
 		assertThatThrownBy(() -> spec.text(textResource, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("charset cannot be null");
+				.hasMessage("charset cannot be null");
 	}
 
 	@Test
@@ -406,7 +406,7 @@ class DefaultChatClientTests {
 	void whenSystemTextResourceIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.text((Resource) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -421,21 +421,21 @@ class DefaultChatClientTests {
 	void whenSystemParamKeyIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.param(null, "value")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("key cannot be null or empty");
+				.hasMessage("key cannot be null or empty");
 	}
 
 	@Test
 	void whenSystemParamKeyIsEmptyThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.param("", "value")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("key cannot be null or empty");
+				.hasMessage("key cannot be null or empty");
 	}
 
 	@Test
 	void whenSystemParamValueIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.param("key", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("value cannot be null");
+				.hasMessage("value cannot be null");
 	}
 
 	@Test
@@ -449,7 +449,7 @@ class DefaultChatClientTests {
 	void whenSystemParamsIsNullThenThrow() {
 		DefaultChatClient.DefaultPromptSystemSpec spec = new DefaultChatClient.DefaultPromptSystemSpec();
 		assertThatThrownBy(() -> spec.params(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("params cannot be null");
+				.hasMessage("params cannot be null");
 	}
 
 	@Test
@@ -458,7 +458,7 @@ class DefaultChatClientTests {
 		Map<String, Object> params = new HashMap<>();
 		params.put(null, "value");
 		assertThatThrownBy(() -> spec.params(params)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("param keys cannot contain null elements");
+				.hasMessage("param keys cannot contain null elements");
 	}
 
 	@Test
@@ -467,7 +467,7 @@ class DefaultChatClientTests {
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", null);
 		assertThatThrownBy(() -> spec.params(params)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("param values cannot contain null elements");
+				.hasMessage("param values cannot contain null elements");
 	}
 
 	@Test
@@ -491,21 +491,21 @@ class DefaultChatClientTests {
 	void whenAdvisorParamKeyIsNullThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.param(null, "value")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("key cannot be null or empty");
+				.hasMessage("key cannot be null or empty");
 	}
 
 	@Test
 	void whenAdvisorParamKeyIsEmptyThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.param("", "value")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("key cannot be null or empty");
+				.hasMessage("key cannot be null or empty");
 	}
 
 	@Test
 	void whenAdvisorParamValueIsNullThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.param("key", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("value cannot be null");
+				.hasMessage("value cannot be null");
 	}
 
 	@Test
@@ -519,7 +519,7 @@ class DefaultChatClientTests {
 	void whenAdvisorParamsIsNullThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.params(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("params cannot be null");
+				.hasMessage("params cannot be null");
 	}
 
 	@Test
@@ -528,7 +528,7 @@ class DefaultChatClientTests {
 		Map<String, Object> params = new HashMap<>();
 		params.put(null, "value");
 		assertThatThrownBy(() -> spec.params(params)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("param keys cannot contain null elements");
+				.hasMessage("param keys cannot contain null elements");
 	}
 
 	@Test
@@ -537,7 +537,7 @@ class DefaultChatClientTests {
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", null);
 		assertThatThrownBy(() -> spec.params(params)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("param values cannot contain null elements");
+				.hasMessage("param values cannot contain null elements");
 	}
 
 	@Test
@@ -551,14 +551,14 @@ class DefaultChatClientTests {
 	void whenAdvisorsIsNullThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.advisors((Advisor[]) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot be null");
+				.hasMessage("advisors cannot be null");
 	}
 
 	@Test
 	void whenAdvisorsContainsNullElementsThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.advisors(null, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot contain null elements");
+				.hasMessage("advisors cannot contain null elements");
 	}
 
 	@Test
@@ -574,7 +574,7 @@ class DefaultChatClientTests {
 	void whenAdvisorListIsNullThenThrow() {
 		DefaultChatClient.DefaultAdvisorSpec spec = new DefaultChatClient.DefaultAdvisorSpec();
 		assertThatThrownBy(() -> spec.advisors((List<Advisor>) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot be null");
+				.hasMessage("advisors cannot be null");
 	}
 
 	@Test
@@ -583,7 +583,7 @@ class DefaultChatClientTests {
 		List<Advisor> advisors = new ArrayList<>();
 		advisors.add(null);
 		assertThatThrownBy(() -> spec.advisors(advisors)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot contain null elements");
+				.hasMessage("advisors cannot contain null elements");
 	}
 
 	@Test
@@ -601,9 +601,9 @@ class DefaultChatClientTests {
 	void buildCallResponseSpec() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("question");
+				.prompt("question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 		assertThat(spec).isNotNull();
 	}
 
@@ -611,32 +611,32 @@ class DefaultChatClientTests {
 	void buildCallResponseSpecWithNullRequest() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultCallResponseSpec(null, mock(BaseAdvisorChain.class),
 				mock(ObservationRegistry.class), mock(ChatClientObservationConvention.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatClientRequest cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("chatClientRequest cannot be null");
 	}
 
 	@Test
 	void buildCallResponseSpecWithNullAdvisorChain() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultCallResponseSpec(mock(ChatClientRequest.class), null,
 				mock(ObservationRegistry.class), mock(ChatClientObservationConvention.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisorChain cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("advisorChain cannot be null");
 	}
 
 	@Test
 	void buildCallResponseSpecWithNullObservationRegistry() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultCallResponseSpec(mock(ChatClientRequest.class),
 				mock(BaseAdvisorChain.class), null, mock(ChatClientObservationConvention.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	@Test
 	void buildCallResponseSpecWithNullObservationConvention() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultCallResponseSpec(mock(ChatClientRequest.class),
 				mock(BaseAdvisorChain.class), mock(ObservationRegistry.class), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationConvention cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationConvention cannot be null");
 	}
 
 	@Test
@@ -644,13 +644,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ChatClientResponse chatClientResponse = spec.chatClientResponse();
 		assertThat(chatClientResponse).isNotNull();
@@ -669,13 +669,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ChatResponse chatResponse = spec.chatResponse();
 		assertThat(chatResponse).isNotNull();
@@ -691,14 +691,14 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		Prompt prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt(prompt);
+				.prompt(prompt);
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ChatResponse chatResponse = spec.chatResponse();
 		assertThat(chatResponse).isNotNull();
@@ -715,15 +715,15 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		Prompt prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt(prompt)
-			.user("another question");
+				.prompt(prompt)
+				.user("another question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ChatResponse chatResponse = spec.chatResponse();
 		assertThat(chatResponse).isNotNull();
@@ -741,16 +741,16 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		List<Message> messages = List.of(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt()
-			.user("another question")
-			.messages(messages);
+				.prompt()
+				.user("another question")
+				.messages(messages);
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ChatResponse chatResponse = spec.chatResponse();
 		assertThat(chatResponse).isNotNull();
@@ -771,9 +771,9 @@ class DefaultChatClientTests {
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ChatResponse chatResponse = spec.chatResponse();
 		assertThat(chatResponse).isNull();
@@ -784,13 +784,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		String content = spec.content();
 		assertThat(content).isNull();
@@ -800,13 +800,13 @@ class DefaultChatClientTests {
 	void whenResponseEntityWithParameterizedTypeIsNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		assertThatThrownBy(() -> spec.responseEntity((ParameterizedTypeReference<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("type cannot be null");
 	}
 
 	@Test
@@ -814,17 +814,17 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ResponseEntity<ChatResponse, List<String>> responseEntity = spec
-			.responseEntity(new ParameterizedTypeReference<>() {
-			});
+				.responseEntity(new ParameterizedTypeReference<>() {
+				});
 		assertThat(responseEntity).isNotNull();
 		assertThat(responseEntity.response()).isNotNull();
 		assertThat(responseEntity.entity()).isNull();
@@ -835,23 +835,23 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
-					[
-						{ "name": "James Bond" },
-						{ "name": "Ethan Hunt" },
-						{ "name": "Jason Bourne" }
-					]
-					""")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
+						[
+							{ "name": "James Bond" },
+							{ "name": "Ethan Hunt" },
+							{ "name": "Jason Bourne" }
+						]
+						""")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ResponseEntity<ChatResponse, List<Person>> responseEntity = spec
-			.responseEntity(new ParameterizedTypeReference<>() {
-			});
+				.responseEntity(new ParameterizedTypeReference<>() {
+				});
 		assertThat(responseEntity.response()).isNotNull();
 		assertThat(responseEntity.entity()).hasSize(3);
 	}
@@ -860,13 +860,13 @@ class DefaultChatClientTests {
 	void whenResponseEntityWithConverterIsNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		assertThatThrownBy(() -> spec.responseEntity((StructuredOutputConverter<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("structuredOutputConverter cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("structuredOutputConverter cannot be null");
 	}
 
 	@Test
@@ -874,16 +874,16 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ResponseEntity<ChatResponse, List<String>> responseEntity = spec
-			.responseEntity(new ListOutputConverter(new DefaultConversionService()));
+				.responseEntity(new ListOutputConverter(new DefaultConversionService()));
 		assertThat(responseEntity.response()).isNotNull();
 		assertThat(responseEntity.entity()).isNull();
 	}
@@ -893,18 +893,18 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
-					James Bond, Ethan Hunt, Jason Bourne
-					""")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
+						James Bond, Ethan Hunt, Jason Bourne
+						""")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ResponseEntity<ChatResponse, List<String>> responseEntity = spec
-			.responseEntity(new ListOutputConverter(new DefaultConversionService()));
+				.responseEntity(new ListOutputConverter(new DefaultConversionService()));
 		assertThat(responseEntity.response()).isNotNull();
 		assertThat(responseEntity.entity()).hasSize(3);
 	}
@@ -913,12 +913,12 @@ class DefaultChatClientTests {
 	void whenResponseEntityWithTypeIsNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		assertThatThrownBy(() -> spec.responseEntity((Class) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.hasMessage("type cannot be null");
 	}
 
 	@Test
@@ -926,13 +926,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ResponseEntity<ChatResponse, String> responseEntity = spec.responseEntity(String.class);
 		assertThat(responseEntity.response()).isNotNull();
@@ -944,15 +944,15 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
-					{ "name": "James Bond" }
-					""")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
+						{ "name": "James Bond" }
+						""")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		ResponseEntity<ChatResponse, Person> responseEntity = spec.responseEntity(Person.class);
 		assertThat(responseEntity.response()).isNotNull();
@@ -964,13 +964,13 @@ class DefaultChatClientTests {
 	void whenEntityWithParameterizedTypeIsNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		assertThatThrownBy(() -> spec.entity((ParameterizedTypeReference<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("type cannot be null");
 	}
 
 	@Test
@@ -978,13 +978,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		List<String> entity = spec.entity(new ParameterizedTypeReference<>() {
 		});
@@ -996,19 +996,19 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
-					[
-						{ "name": "James Bond" },
-						{ "name": "Ethan Hunt" },
-						{ "name": "Jason Bourne" }
-					]
-					""")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
+						[
+							{ "name": "James Bond" },
+							{ "name": "Ethan Hunt" },
+							{ "name": "Jason Bourne" }
+						]
+						""")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		List<Person> entity = spec.entity(new ParameterizedTypeReference<>() {
 		});
@@ -1019,22 +1019,22 @@ class DefaultChatClientTests {
 	void whenEntityWithConverterIsNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		assertThatThrownBy(() -> spec.entity((StructuredOutputConverter<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("structuredOutputConverter cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("structuredOutputConverter cannot be null");
 	}
 
 	@Test
 	void whenEntityWithConverterAndChatResponseContentNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		List<String> entity = spec.entity(new ListOutputConverter(new DefaultConversionService()));
 		assertThat(entity).isNull();
@@ -1045,15 +1045,15 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
-					James Bond, Ethan Hunt, Jason Bourne
-					""")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
+						James Bond, Ethan Hunt, Jason Bourne
+						""")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		List<String> entity = spec.entity(new ListOutputConverter(new DefaultConversionService()));
 		assertThat(entity).hasSize(3);
@@ -1063,12 +1063,12 @@ class DefaultChatClientTests {
 	void whenEntityWithTypeIsNull() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		assertThatThrownBy(() -> spec.entity((Class<?>) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.hasMessage("type cannot be null");
 	}
 
 	@Test
@@ -1076,13 +1076,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(null)))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		String entity = spec.entity(String.class);
 		assertThat(entity).isNull();
@@ -1093,15 +1093,15 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
-					{ "name": "James Bond" }
-					""")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("""
+						{ "name": "James Bond" }
+						""")))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultCallResponseSpec spec = (DefaultChatClient.DefaultCallResponseSpec) chatClientRequestSpec
-			.call();
+				.call();
 
 		Person entity = spec.entity(Person.class);
 		assertThat(entity).isNotNull();
@@ -1114,9 +1114,9 @@ class DefaultChatClientTests {
 	void buildStreamResponseSpec() {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("question");
+				.prompt("question");
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 		assertThat(spec).isNotNull();
 	}
 
@@ -1124,32 +1124,32 @@ class DefaultChatClientTests {
 	void buildStreamResponseSpecWithNullRequest() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultStreamResponseSpec(null, mock(BaseAdvisorChain.class),
 				mock(ObservationRegistry.class), mock(ChatClientObservationConvention.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatClientRequest cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("chatClientRequest cannot be null");
 	}
 
 	@Test
 	void buildStreamResponseSpecWithNullAdvisorChain() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultStreamResponseSpec(mock(ChatClientRequest.class), null,
 				mock(ObservationRegistry.class), mock(ChatClientObservationConvention.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisorChain cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("advisorChain cannot be null");
 	}
 
 	@Test
 	void buildStreamResponseSpecWithNullObservationRegistry() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultStreamResponseSpec(mock(ChatClientRequest.class),
 				mock(BaseAdvisorChain.class), null, mock(ChatClientObservationConvention.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	@Test
 	void buildStreamResponseSpecWithNullObservationConvention() {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultStreamResponseSpec(mock(ChatClientRequest.class),
 				mock(BaseAdvisorChain.class), mock(ObservationRegistry.class), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationConvention cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationConvention cannot be null");
 	}
 
 	@Test
@@ -1157,13 +1157,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.stream(promptCaptor.capture()))
-			.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
+				.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 
 		ChatClientResponse chatClientResponse = spec.chatClientResponse().blockLast();
 		assertThat(chatClientResponse).isNotNull();
@@ -1182,13 +1182,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.stream(promptCaptor.capture()))
-			.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
+				.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 
 		ChatResponse chatResponse = spec.chatResponse().blockLast();
 		assertThat(chatResponse).isNotNull();
@@ -1204,14 +1204,14 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.stream(promptCaptor.capture()))
-			.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
+				.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		Prompt prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt(prompt);
+				.prompt(prompt);
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 
 		ChatResponse chatResponse = spec.chatResponse().blockLast();
 		assertThat(chatResponse).isNotNull();
@@ -1228,15 +1228,15 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.stream(promptCaptor.capture()))
-			.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
+				.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		Prompt prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt(prompt)
-			.user("another question");
+				.prompt(prompt)
+				.user("another question");
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 
 		ChatResponse chatResponse = spec.chatResponse().blockLast();
 		assertThat(chatResponse).isNotNull();
@@ -1254,17 +1254,17 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.stream(promptCaptor.capture()))
-			.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
+				.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage("response"))))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		List<Message> messages = List.of(new SystemMessage("instructions"), new UserMessage("my question"));
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt()
-			.user("another question")
-			.messages(messages);
+				.prompt()
+				.user("another question")
+				.messages(messages);
 
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 
 		ChatResponse chatResponse = spec.chatResponse().blockLast();
 		assertThat(chatResponse).isNotNull();
@@ -1282,13 +1282,13 @@ class DefaultChatClientTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.stream(promptCaptor.capture()))
-			.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage(null))))));
+				.willReturn(Flux.just(new ChatResponse(List.of(new Generation(new AssistantMessage(null))))));
 
 		ChatClient chatClient = new DefaultChatClientBuilder(chatModel).build();
 		DefaultChatClient.DefaultChatClientRequestSpec chatClientRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) chatClient
-			.prompt("my question");
+				.prompt("my question");
 		DefaultChatClient.DefaultStreamResponseSpec spec = (DefaultChatClient.DefaultStreamResponseSpec) chatClientRequestSpec
-			.stream();
+				.stream();
 
 		String content = spec.content().blockLast();
 		assertThat(content).isNull();
@@ -1310,8 +1310,8 @@ class DefaultChatClientTests {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultChatClientRequestSpec(null, null, Map.of(), null,
 				Map.of(), List.of(), List.of(), List.of(), List.of(), null, List.of(), Map.of(),
 				ObservationRegistry.NOOP, null, Map.of(), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatModel cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("chatModel cannot be null");
 	}
 
 	@Test
@@ -1319,8 +1319,8 @@ class DefaultChatClientTests {
 		assertThatThrownBy(() -> new DefaultChatClient.DefaultChatClientRequestSpec(mock(ChatModel.class), null,
 				Map.of(), null, Map.of(), List.of(), List.of(), List.of(), List.of(), null, List.of(), Map.of(), null,
 				null, Map.of(), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	@Test
@@ -1328,8 +1328,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.advisors((Consumer<ChatClient.AdvisorSpec>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("consumer cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("consumer cannot be null");
 	}
 
 	@Test
@@ -1348,7 +1348,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.advisors((Advisor) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot contain null elements");
+				.hasMessage("advisors cannot contain null elements");
 	}
 
 	@Test
@@ -1366,7 +1366,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.advisors((List<Advisor>) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot be null");
+				.hasMessage("advisors cannot be null");
 	}
 
 	@Test
@@ -1376,7 +1376,7 @@ class DefaultChatClientTests {
 		List<Advisor> advisors = new ArrayList<>();
 		advisors.add(null);
 		assertThatThrownBy(() -> spec.advisors(advisors)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("advisors cannot contain null elements");
+				.hasMessage("advisors cannot contain null elements");
 	}
 
 	@Test
@@ -1394,7 +1394,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.messages((Message) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("messages cannot contain null elements");
+				.hasMessage("messages cannot contain null elements");
 	}
 
 	@Test
@@ -1412,7 +1412,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.messages((List<Message>) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("messages cannot be null");
+				.hasMessage("messages cannot be null");
 	}
 
 	@Test
@@ -1422,7 +1422,7 @@ class DefaultChatClientTests {
 		List<Message> messages = new ArrayList<>();
 		messages.add(null);
 		assertThatThrownBy(() -> spec.messages(messages)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("messages cannot contain null elements");
+				.hasMessage("messages cannot contain null elements");
 	}
 
 	@Test
@@ -1440,7 +1440,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.options(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("options cannot be null");
+				.hasMessage("options cannot be null");
 	}
 
 	@Test
@@ -1458,7 +1458,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolNames("myTool", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolNames cannot contain null elements");
+				.hasMessage("toolNames cannot contain null elements");
 	}
 
 	@Test
@@ -1476,8 +1476,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(mock(ToolCallback.class), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolCallbacks cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("toolCallbacks cannot contain null elements");
 	}
 
 	@Test
@@ -1495,9 +1495,9 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(FunctionToolCallback.builder(null, input -> "hello")
-			.description("description")
-			.inputType(String.class)
-			.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("name cannot be null or empty");
+				.description("description")
+				.inputType(String.class)
+				.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("name cannot be null or empty");
 	}
 
 	@Test
@@ -1505,9 +1505,9 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(FunctionToolCallback.builder("", input -> "hello")
-			.description("description")
-			.inputType(String.class)
-			.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("name cannot be null or empty");
+				.description("description")
+				.inputType(String.class)
+				.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("name cannot be null or empty");
 	}
 
 	@Test
@@ -1516,9 +1516,9 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(FunctionToolCallback.builder("name", input -> "hello")
-			.description(null)
-			.inputType(String.class)
-			.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("Description must not be empty");
+				.description(null)
+				.inputType(String.class)
+				.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("Description must not be empty");
 	}
 
 	@Test
@@ -1528,8 +1528,8 @@ class DefaultChatClientTests {
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(
 				FunctionToolCallback.builder("name", input -> "hello").description("").inputType(String.class).build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Description must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Description must not be empty");
 	}
 
 	@Test
@@ -1537,12 +1537,12 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		spec = spec.toolCallbacks(FunctionToolCallback.builder("name", input -> "hello")
-			.inputType(String.class)
-			.description("description")
-			.build());
+				.inputType(String.class)
+				.description("description")
+				.build());
 		DefaultChatClient.DefaultChatClientRequestSpec defaultSpec = (DefaultChatClient.DefaultChatClientRequestSpec) spec;
 		assertThat(defaultSpec.getToolCallbacks())
-			.anyMatch(callback -> callback.getToolDefinition().name().equals("name"));
+				.anyMatch(callback -> callback.getToolDefinition().name().equals("name"));
 	}
 
 	@Test
@@ -1550,12 +1550,12 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		spec = spec.toolCallbacks(FunctionToolCallback.builder("name", input -> "hello")
-			.inputType(String.class)
-			.description("description")
-			.build());
+				.inputType(String.class)
+				.description("description")
+				.build());
 		DefaultChatClient.DefaultChatClientRequestSpec defaultSpec = (DefaultChatClient.DefaultChatClientRequestSpec) spec;
 		assertThat(defaultSpec.getToolCallbacks())
-			.anyMatch(callback -> callback.getToolDefinition().name().equals("name"));
+				.anyMatch(callback -> callback.getToolDefinition().name().equals("name"));
 	}
 
 	@Test
@@ -1564,8 +1564,8 @@ class DefaultChatClientTests {
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(
 				FunctionToolCallback.builder(null, (input, ctx) -> "hello").description("description").build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("name cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("name cannot be null or empty");
 	}
 
 	@Test
@@ -1574,8 +1574,8 @@ class DefaultChatClientTests {
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(
 				FunctionToolCallback.builder("", (input, ctx) -> "hello").description("description").build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("name cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("name cannot be null or empty");
 	}
 
 	@Test
@@ -1584,9 +1584,9 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(FunctionToolCallback.builder("name", (input, ctx) -> "hello")
-			.inputType(String.class)
-			.description(null)
-			.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("Description must not be empty");
+				.inputType(String.class)
+				.description(null)
+				.build())).isInstanceOf(IllegalArgumentException.class).hasMessage("Description must not be empty");
 	}
 
 	@Test
@@ -1595,9 +1595,9 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec
-			.toolCallbacks(FunctionToolCallback.builder("name", (input, ctx) -> "hello").description("").build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Description must not be empty");
+				.toolCallbacks(FunctionToolCallback.builder("name", (input, ctx) -> "hello").description("").build()))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Description must not be empty");
 	}
 
 	@Test
@@ -1605,12 +1605,12 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		spec = spec.toolCallbacks(FunctionToolCallback.builder("name", (input, ctx) -> "hello")
-			.description("description")
-			.inputType(String.class)
-			.build());
+				.description("description")
+				.inputType(String.class)
+				.build());
 		DefaultChatClient.DefaultChatClientRequestSpec defaultSpec = (DefaultChatClient.DefaultChatClientRequestSpec) spec;
 		assertThat(defaultSpec.getToolCallbacks())
-			.anyMatch(callback -> callback.getToolDefinition().name().equals("name"));
+				.anyMatch(callback -> callback.getToolDefinition().name().equals("name"));
 	}
 
 	@Test
@@ -1618,7 +1618,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolNames("myFunction", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolNames cannot contain null elements");
+				.hasMessage("toolNames cannot contain null elements");
 	}
 
 	@Test
@@ -1636,8 +1636,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolCallbacks(mock(FunctionToolCallback.class), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolCallbacks cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("toolCallbacks cannot contain null elements");
 	}
 
 	@Test
@@ -1655,7 +1655,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.toolContext(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolContext cannot be null");
+				.hasMessage("toolContext cannot be null");
 	}
 
 	@Test
@@ -1665,7 +1665,7 @@ class DefaultChatClientTests {
 		Map<String, Object> toolContext = new HashMap<>();
 		toolContext.put(null, "value");
 		assertThatThrownBy(() -> spec.toolContext(toolContext)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolContext keys cannot contain null elements");
+				.hasMessage("toolContext keys cannot contain null elements");
 	}
 
 	@Test
@@ -1675,7 +1675,7 @@ class DefaultChatClientTests {
 		Map<String, Object> toolContext = new HashMap<>();
 		toolContext.put("key", null);
 		assertThatThrownBy(() -> spec.toolContext(toolContext)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolContext values cannot contain null elements");
+				.hasMessage("toolContext values cannot contain null elements");
 	}
 
 	@Test
@@ -1693,7 +1693,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.system((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
@@ -1701,7 +1701,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.system("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
@@ -1718,8 +1718,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.system(null, Charset.defaultCharset()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -1727,8 +1727,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.system(new ClassPathResource("system-prompt.txt"), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("charset cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("charset cannot be null");
 	}
 
 	@Test
@@ -1745,7 +1745,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.system((Resource) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -1762,8 +1762,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.system((Consumer<ChatClient.PromptSystemSpec>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("consumer cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("consumer cannot be null");
 	}
 
 	@Test
@@ -1801,7 +1801,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.user((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
@@ -1809,7 +1809,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.user("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null or empty");
+				.hasMessage("text cannot be null or empty");
 	}
 
 	@Test
@@ -1826,7 +1826,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.user(null, Charset.defaultCharset())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -1834,8 +1834,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.user(new ClassPathResource("user-prompt.txt"), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("charset cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("charset cannot be null");
 	}
 
 	@Test
@@ -1852,7 +1852,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.user((Resource) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
@@ -1869,8 +1869,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		assertThatThrownBy(() -> spec.user((Consumer<ChatClient.PromptUserSpec>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("consumer cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("consumer cannot be null");
 	}
 
 	@Test
@@ -1878,8 +1878,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt();
 		spec = spec.user(user -> user.text("my question about {topic}")
-			.param("topic", "AI")
-			.media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("tabby-cat.png")));
+				.param("topic", "AI")
+				.media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("tabby-cat.png")));
 		DefaultChatClient.DefaultChatClientRequestSpec defaultSpec = (DefaultChatClient.DefaultChatClientRequestSpec) spec;
 		assertThat(defaultSpec.getUserText()).isEqualTo("my question about {topic}");
 		assertThat(defaultSpec.getUserParams()).containsEntry("topic", "AI");
@@ -1891,8 +1891,8 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt().user("my question");
 		spec = spec.user(user -> user.text("my question about {topic}")
-			.param("topic", "AI")
-			.media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("tabby-cat.png")));
+				.param("topic", "AI")
+				.media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("tabby-cat.png")));
 		DefaultChatClient.DefaultChatClientRequestSpec defaultSpec = (DefaultChatClient.DefaultChatClientRequestSpec) spec;
 		assertThat(defaultSpec.getUserText()).isEqualTo("my question about {topic}");
 		assertThat(defaultSpec.getUserParams()).containsEntry("topic", "AI");
@@ -1904,7 +1904,7 @@ class DefaultChatClientTests {
 		ChatClient chatClient = new DefaultChatClientBuilder(mock(ChatModel.class)).build();
 		ChatClient.ChatClientRequestSpec spec = chatClient.prompt().user("my question about {topic}");
 		spec = spec.user(user -> user.param("topic", "AI")
-			.media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("tabby-cat.png")));
+				.media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("tabby-cat.png")));
 		DefaultChatClient.DefaultChatClientRequestSpec defaultSpec = (DefaultChatClient.DefaultChatClientRequestSpec) spec;
 		assertThat(defaultSpec.getUserText()).isEqualTo("my question about {topic}");
 		assertThat(defaultSpec.getUserParams()).containsEntry("topic", "AI");

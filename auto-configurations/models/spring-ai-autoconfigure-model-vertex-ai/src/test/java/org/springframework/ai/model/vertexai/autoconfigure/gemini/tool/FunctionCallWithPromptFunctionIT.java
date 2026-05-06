@@ -42,53 +42,53 @@ public class FunctionCallWithPromptFunctionIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithPromptFunctionIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.vertex.ai.gemini.project-id=" + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"),
-				"spring.ai.vertex.ai.gemini.location=" + System.getenv("VERTEX_AI_GEMINI_LOCATION"))
-		.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.vertex.ai.gemini.project-id=" + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"),
+					"spring.ai.vertex.ai.gemini.location=" + System.getenv("VERTEX_AI_GEMINI_LOCATION"))
+			.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vertex.ai.gemini.chat.options.model="
-					+ VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.vertex.ai.gemini.chat.options.model="
+						+ VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
+				.run(context -> {
 
-				VertexAiGeminiChatModel chatModel = context.getBean(VertexAiGeminiChatModel.class);
+					VertexAiGeminiChatModel chatModel = context.getBean(VertexAiGeminiChatModel.class);
 
-				// var systemMessage = new SystemMessage("""
-				// Use Multi-turn function calling.
-				// Answer for all listed locations.
-				// If the information was not fetched call the function again. Repeat at
-				// most 3 times.
-				// """);
-				var userMessage = new UserMessage("""
-						What's the weather like in San Francisco, Paris and in Tokyo?
-						Return the temperature in Celsius.
-						""");
+					// var systemMessage = new SystemMessage("""
+					// Use Multi-turn function calling.
+					// Answer for all listed locations.
+					// If the information was not fetched call the function again. Repeat at
+					// most 3 times.
+					// """);
+					var userMessage = new UserMessage("""
+							What's the weather like in San Francisco, Paris and in Tokyo?
+							Return the temperature in Celsius.
+							""");
 
-				var promptOptions = VertexAiGeminiChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = VertexAiGeminiChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-				// Verify that no function call is made.
-				response = chatModel
-					.call(new Prompt(List.of(userMessage), VertexAiGeminiChatOptions.builder().build()));
+					// Verify that no function call is made.
+					response = chatModel
+							.call(new Prompt(List.of(userMessage), VertexAiGeminiChatOptions.builder().build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).doesNotContain("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).doesNotContain("30", "10", "15");
 
-			});
+				});
 	}
 
 }

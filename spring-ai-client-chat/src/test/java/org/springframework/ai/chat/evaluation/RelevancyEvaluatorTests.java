@@ -34,11 +34,11 @@ class RelevancyEvaluatorTests {
 	@Test
 	void whenChatClientBuilderIsNullThenThrow() {
 		assertThatThrownBy(() -> new RelevancyEvaluator(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatClientBuilder cannot be null");
+				.hasMessageContaining("chatClientBuilder cannot be null");
 
 		assertThatThrownBy(() -> RelevancyEvaluator.builder().chatClientBuilder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatClientBuilder cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("chatClientBuilder cannot be null");
 	}
 
 	@Test
@@ -47,9 +47,9 @@ class RelevancyEvaluatorTests {
 		assertThat(evaluator).isNotNull();
 
 		evaluator = RelevancyEvaluator.builder()
-			.chatClientBuilder(ChatClient.builder(mock(ChatModel.class)))
-			.promptTemplate(null)
-			.build();
+				.chatClientBuilder(ChatClient.builder(mock(ChatModel.class)))
+				.promptTemplate(null)
+				.build();
 		assertThat(evaluator).isNotNull();
 	}
 

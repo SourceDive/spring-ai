@@ -47,7 +47,7 @@ public final class SpringAiSchemaModule implements Module {
 
 	public SpringAiSchemaModule(Option... options) {
 		this.requiredByDefault = Stream.of(options)
-			.noneMatch(option -> option == Option.PROPERTY_REQUIRED_FALSE_BY_DEFAULT);
+				.noneMatch(option -> option == Option.PROPERTY_REQUIRED_FALSE_BY_DEFAULT);
 	}
 
 	@Override

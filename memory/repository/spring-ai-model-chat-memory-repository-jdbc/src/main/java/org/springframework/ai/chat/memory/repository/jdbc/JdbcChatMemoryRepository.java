@@ -67,7 +67,7 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 	private static final Logger logger = LoggerFactory.getLogger(JdbcChatMemoryRepository.class);
 
 	private JdbcChatMemoryRepository(JdbcTemplate jdbcTemplate, JdbcChatMemoryRepositoryDialect dialect,
-			PlatformTransactionManager txManager) {
+	                                 PlatformTransactionManager txManager) {
 		Assert.notNull(jdbcTemplate, "jdbcTemplate cannot be null");
 		Assert.notNull(dialect, "dialect cannot be null");
 		this.jdbcTemplate = jdbcTemplate;
@@ -112,7 +112,7 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 	}
 
 	private record AddBatchPreparedStatement(String conversationId, List<Message> messages,
-			AtomicLong instantSeq) implements BatchPreparedStatementSetter {
+	                                         AtomicLong instantSeq) implements BatchPreparedStatementSetter {
 
 		private AddBatchPreparedStatement(String conversationId, List<Message> messages) {
 			this(conversationId, messages, new AtomicLong(Instant.now().toEpochMilli()));
@@ -221,12 +221,10 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 			if (this.dialect == null) {
 				try {
 					return JdbcChatMemoryRepositoryDialect.from(dataSource);
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					throw new IllegalStateException("Could not detect dialect from datasource", ex);
 				}
-			}
-			else {
+			} else {
 				warnIfDialectMismatch(dataSource, this.dialect);
 				return this.dialect;
 			}
@@ -243,8 +241,7 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 					logger.warn("Explicitly set dialect {} will be used instead of detected dialect {} from datasource",
 							explicitDialect.getClass().getSimpleName(), detected.getClass().getSimpleName());
 				}
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				logger.debug("Could not detect dialect from datasource", ex);
 			}
 		}

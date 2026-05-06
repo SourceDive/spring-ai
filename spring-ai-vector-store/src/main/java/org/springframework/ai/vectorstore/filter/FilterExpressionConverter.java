@@ -27,6 +27,7 @@ public interface FilterExpressionConverter {
 
 	/**
 	 * Convert the given {@link Filter.Expression} into a {@link String} representation.
+	 *
 	 * @param expression the expression to convert
 	 * @return the converted expression
 	 */

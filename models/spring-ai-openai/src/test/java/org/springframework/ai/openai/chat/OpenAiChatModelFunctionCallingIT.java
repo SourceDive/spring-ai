@@ -82,12 +82,12 @@ class OpenAiChatModelFunctionCallingIT {
 	@Test
 	void functionCallTest() {
 		functionCallTest(OpenAiChatOptions.builder()
-			.model(OpenAiApi.ChatModel.GPT_4_O.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build());
+				.model(OpenAiApi.ChatModel.GPT_4_O.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build());
 	}
 
 	@Test
@@ -103,11 +103,9 @@ class OpenAiChatModelFunctionCallingIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -117,13 +115,13 @@ class OpenAiChatModelFunctionCallingIT {
 		};
 
 		functionCallTest(OpenAiChatOptions.builder()
-			.model(OpenAiApi.ChatModel.GPT_4_O.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", biFunction)
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.toolContext(Map.of("sessionId", "123"))
-			.build());
+				.model(OpenAiApi.ChatModel.GPT_4_O.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", biFunction)
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.toolContext(Map.of("sessionId", "123"))
+				.build());
 	}
 
 	void functionCallTest(OpenAiChatOptions promptOptions) {
@@ -143,12 +141,12 @@ class OpenAiChatModelFunctionCallingIT {
 	void streamFunctionCallTest() {
 
 		streamFunctionCallTest(OpenAiChatOptions.builder()
-			.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				// .responseConverter(response -> "" + response.temp() + response.unit())
-				.build())))
-			.build());
+				.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						// .responseConverter(response -> "" + response.temp() + response.unit())
+						.build())))
+				.build());
 	}
 
 	@Test
@@ -164,11 +162,9 @@ class OpenAiChatModelFunctionCallingIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -178,12 +174,12 @@ class OpenAiChatModelFunctionCallingIT {
 		};
 
 		OpenAiChatOptions promptOptions = OpenAiChatOptions.builder()
-			.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", biFunction)
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build())))
-			.toolContext(Map.of("sessionId", "123"))
-			.build();
+				.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", biFunction)
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build())))
+				.toolContext(Map.of("sessionId", "123"))
+				.build();
 
 		streamFunctionCallTest(promptOptions);
 	}
@@ -197,13 +193,13 @@ class OpenAiChatModelFunctionCallingIT {
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).contains("30", "10", "15");

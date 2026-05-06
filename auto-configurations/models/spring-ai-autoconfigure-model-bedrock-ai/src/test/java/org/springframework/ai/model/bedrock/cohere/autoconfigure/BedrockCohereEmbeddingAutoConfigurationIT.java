@@ -43,11 +43,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BedrockCohereEmbeddingAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withPropertyValues("spring.ai.model.embedding=bedrock-cohere",
-				"spring.ai.bedrock.cohere.embedding.model=" + CohereEmbeddingModel.COHERE_EMBED_MULTILINGUAL_V3.id(),
-				"spring.ai.bedrock.cohere.embedding.options.inputType=SEARCH_DOCUMENT",
-				"spring.ai.bedrock.cohere.embedding.options.truncate=NONE")
-		.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.model.embedding=bedrock-cohere",
+					"spring.ai.bedrock.cohere.embedding.model=" + CohereEmbeddingModel.COHERE_EMBED_MULTILINGUAL_V3.id(),
+					"spring.ai.bedrock.cohere.embedding.options.inputType=SEARCH_DOCUMENT",
+					"spring.ai.bedrock.cohere.embedding.options.truncate=NONE")
+			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class));
 
 	@Test
 	public void singleEmbedding() {
@@ -69,7 +69,7 @@ public class BedrockCohereEmbeddingAutoConfigurationIT {
 
 			assertThat(embeddingModel).isNotNull();
 			EmbeddingResponse embeddingResponse = embeddingModel
-				.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+					.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
 			assertThat(embeddingResponse.getResults()).hasSize(2);
 			assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 			assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
@@ -85,55 +85,55 @@ public class BedrockCohereEmbeddingAutoConfigurationIT {
 	public void propertiesTest() {
 
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withPropertyValues("spring.ai.model.embedding=bedrock-cohere",
-					"spring.ai.bedrock.aws.access-key=ACCESS_KEY", "spring.ai.bedrock.aws.secret-key=SECRET_KEY",
-					"spring.ai.bedrock.aws.region=" + Region.US_EAST_1.id(),
-					"spring.ai.bedrock.cohere.embedding.model=MODEL_XYZ",
-					"spring.ai.bedrock.cohere.embedding.options.inputType=CLASSIFICATION",
-					"spring.ai.bedrock.cohere.embedding.options.truncate=START")
-			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var properties = context.getBean(BedrockCohereEmbeddingProperties.class);
-				var awsProperties = context.getBean(BedrockAwsConnectionProperties.class);
+				.withPropertyValues("spring.ai.model.embedding=bedrock-cohere",
+						"spring.ai.bedrock.aws.access-key=ACCESS_KEY", "spring.ai.bedrock.aws.secret-key=SECRET_KEY",
+						"spring.ai.bedrock.aws.region=" + Region.US_EAST_1.id(),
+						"spring.ai.bedrock.cohere.embedding.model=MODEL_XYZ",
+						"spring.ai.bedrock.cohere.embedding.options.inputType=CLASSIFICATION",
+						"spring.ai.bedrock.cohere.embedding.options.truncate=START")
+				.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var properties = context.getBean(BedrockCohereEmbeddingProperties.class);
+					var awsProperties = context.getBean(BedrockAwsConnectionProperties.class);
 
-				assertThat(awsProperties.getRegion()).isEqualTo(Region.US_EAST_1.id());
-				assertThat(properties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(awsProperties.getRegion()).isEqualTo(Region.US_EAST_1.id());
+					assertThat(properties.getModel()).isEqualTo("MODEL_XYZ");
 
-				assertThat(properties.getOptions().getInputType()).isEqualTo(InputType.CLASSIFICATION);
-				assertThat(properties.getOptions().getTruncate()).isEqualTo(CohereEmbeddingRequest.Truncate.START);
+					assertThat(properties.getOptions().getInputType()).isEqualTo(InputType.CLASSIFICATION);
+					assertThat(properties.getOptions().getTruncate()).isEqualTo(CohereEmbeddingRequest.Truncate.START);
 
-				assertThat(awsProperties.getAccessKey()).isEqualTo("ACCESS_KEY");
-				assertThat(awsProperties.getSecretKey()).isEqualTo("SECRET_KEY");
-			});
+					assertThat(awsProperties.getAccessKey()).isEqualTo("ACCESS_KEY");
+					assertThat(awsProperties.getSecretKey()).isEqualTo("SECRET_KEY");
+				});
 	}
 
 	@Test
 	public void embeddingActivation() {
 
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty();
+				});
 
 		// Explicitly enable the embedding auto-configuration.
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withPropertyValues("spring.ai.model.embedding=bedrock-cohere")
-			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=bedrock-cohere")
+				.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty();
+				});
 
 		// Explicitly disable the embedding auto-configuration.
 		BedrockTestUtils.getContextRunnerWithUserConfiguration()
-			.withPropertyValues("spring.ai.model.embedding=none")
-			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=none")
+				.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isEmpty();
+				});
 	}
 
 }

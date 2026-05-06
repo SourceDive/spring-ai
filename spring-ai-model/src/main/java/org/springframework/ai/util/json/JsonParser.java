@@ -37,10 +37,10 @@ import org.springframework.util.ClassUtils;
 public final class JsonParser {
 
 	private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
-		.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-		.addModules(JacksonUtils.instantiateAvailableModules())
-		.build();
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+			.addModules(JacksonUtils.instantiateAvailableModules())
+			.build();
 
 	private JsonParser() {
 	}
@@ -62,8 +62,7 @@ public final class JsonParser {
 
 		try {
 			return OBJECT_MAPPER.readValue(json, type);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new IllegalStateException("Conversion from JSON to %s failed".formatted(type.getName()), ex);
 		}
 	}
@@ -77,8 +76,7 @@ public final class JsonParser {
 
 		try {
 			return OBJECT_MAPPER.readValue(json, OBJECT_MAPPER.constructType(type));
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new IllegalStateException("Conversion from JSON to %s failed".formatted(type.getTypeName()), ex);
 		}
 	}
@@ -92,8 +90,7 @@ public final class JsonParser {
 
 		try {
 			return OBJECT_MAPPER.readValue(json, type);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new IllegalStateException("Conversion from JSON to %s failed".formatted(type.getType().getTypeName()),
 					ex);
 		}
@@ -105,8 +102,7 @@ public final class JsonParser {
 	public static String toJson(@Nullable Object object) {
 		try {
 			return OBJECT_MAPPER.writeValueAsString(object);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new IllegalStateException("Conversion from Object to JSON failed", ex);
 		}
 	}
@@ -115,7 +111,7 @@ public final class JsonParser {
 	 * Convert a Java Object to a typed Object. Based on the implementation in
 	 * MethodToolCallback.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static Object toTypedObject(Object value, Class<?> type) {
 		Assert.notNull(value, "value cannot be null");
 		Assert.notNull(type, "type cannot be null");
@@ -124,31 +120,23 @@ public final class JsonParser {
 
 		if (javaType == String.class) {
 			return value.toString();
-		}
-		else if (javaType == Byte.class) {
+		} else if (javaType == Byte.class) {
 			return Byte.parseByte(value.toString());
-		}
-		else if (javaType == Integer.class) {
+		} else if (javaType == Integer.class) {
 			BigDecimal bigDecimal = new BigDecimal(value.toString());
 			return bigDecimal.intValueExact();
-		}
-		else if (javaType == Short.class) {
+		} else if (javaType == Short.class) {
 			return Short.parseShort(value.toString());
-		}
-		else if (javaType == Long.class) {
+		} else if (javaType == Long.class) {
 			BigDecimal bigDecimal = new BigDecimal(value.toString());
 			return bigDecimal.longValueExact();
-		}
-		else if (javaType == Double.class) {
+		} else if (javaType == Double.class) {
 			return Double.parseDouble(value.toString());
-		}
-		else if (javaType == Float.class) {
+		} else if (javaType == Float.class) {
 			return Float.parseFloat(value.toString());
-		}
-		else if (javaType == Boolean.class) {
+		} else if (javaType == Boolean.class) {
 			return Boolean.parseBoolean(value.toString());
-		}
-		else if (javaType.isEnum()) {
+		} else if (javaType.isEnum()) {
 			return Enum.valueOf((Class<Enum>) javaType, value.toString());
 		}
 

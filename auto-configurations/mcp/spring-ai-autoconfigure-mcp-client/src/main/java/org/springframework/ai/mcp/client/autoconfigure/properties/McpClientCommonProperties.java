@@ -180,7 +180,7 @@ public class McpClientCommonProperties {
 	 * callbacks in the MCP client.
 	 *
 	 * @param enabled A boolean flag indicating whether the tool callback is enabled. If
-	 * true, the tool callback is active; otherwise, it is disabled.
+	 *                true, the tool callback is active; otherwise, it is disabled.
 	 */
 	public static class Toolcallback {
 

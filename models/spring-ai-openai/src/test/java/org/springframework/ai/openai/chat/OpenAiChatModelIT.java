@@ -154,16 +154,16 @@ public class OpenAiChatModelIT extends AbstractIT {
 		ChatClient chatClient = ChatClient.builder(this.openAiChatModel).build();
 
 		Flux<ChatResponse> chatResponseFlux = chatClient.prompt(prompt)
-			.stream()
-			.chatResponse()
-			.doOnNext(chatResponse -> {
-				String responseContent = chatResponse.getResults().get(0).getOutput().getText();
-				answer.append(responseContent);
-			})
-			.doOnComplete(() -> {
-				logger.info(answer.toString());
-				latch.countDown();
-			});
+				.stream()
+				.chatResponse()
+				.doOnNext(chatResponse -> {
+					String responseContent = chatResponse.getResults().get(0).getOutput().getText();
+					answer.append(responseContent);
+				})
+				.doOnComplete(() -> {
+					logger.info(answer.toString());
+					latch.countDown();
+				});
 		chatResponseFlux.subscribe();
 		assertThat(latch.await(120, TimeUnit.SECONDS)).isTrue();
 		assertThat(answer).contains("1st ");
@@ -180,13 +180,13 @@ public class OpenAiChatModelIT extends AbstractIT {
 		ChatClient chatClient = ChatClient.builder(this.openAiChatModel).build();
 
 		Flux<String> chatResponseFlux = chatClient.prompt(prompt)
-			.stream()
-			.content()
-			.doOnNext(answer::append)
-			.doOnComplete(() -> {
-				logger.info(answer.toString());
-				latch.countDown();
-			});
+				.stream()
+				.content()
+				.doOnNext(answer::append)
+				.doOnComplete(() -> {
+					logger.info(answer.toString());
+					latch.countDown();
+				});
 		chatResponseFlux.subscribe();
 		assertThat(latch.await(120, TimeUnit.SECONDS)).isTrue();
 		assertThat(answer).contains("1st ");
@@ -205,11 +205,11 @@ public class OpenAiChatModelIT extends AbstractIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 
@@ -247,9 +247,9 @@ public class OpenAiChatModelIT extends AbstractIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -268,9 +268,9 @@ public class OpenAiChatModelIT extends AbstractIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "numbers from 1 to 9 under they key name 'numbers'", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "numbers from 1 to 9 under they key name 'numbers'", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -290,9 +290,9 @@ public class OpenAiChatModelIT extends AbstractIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -310,9 +310,9 @@ public class OpenAiChatModelIT extends AbstractIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -333,20 +333,20 @@ public class OpenAiChatModelIT extends AbstractIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.streamingChatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -362,12 +362,12 @@ public class OpenAiChatModelIT extends AbstractIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			.model(OpenAiApi.ChatModel.GPT_4_O.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(OpenAiApi.ChatModel.GPT_4_O.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -384,23 +384,23 @@ public class OpenAiChatModelIT extends AbstractIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			// .withModel(OpenAiApi.ChatModel.GPT_4_TURBO_PREVIEW.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				// .withModel(OpenAiApi.ChatModel.GPT_4_TURBO_PREVIEW.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).containsAnyOf("30.0", "30");
@@ -416,12 +416,12 @@ public class OpenAiChatModelIT extends AbstractIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			// .withModel(OpenAiApi.ChatModel.GPT_4_TURBO_PREVIEW.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				// .withModel(OpenAiApi.ChatModel.GPT_4_TURBO_PREVIEW.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse chatResponse = this.chatModel.call(new Prompt(messages, promptOptions));
 		logger.info("Response: {}", chatResponse);
@@ -444,13 +444,13 @@ public class OpenAiChatModelIT extends AbstractIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			// .withModel(OpenAiApi.ChatModel.GPT_4_TURBO_PREVIEW.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.streamUsage(true)
-			.build();
+				// .withModel(OpenAiApi.ChatModel.GPT_4_TURBO_PREVIEW.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.streamUsage(true)
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(messages, promptOptions));
 		Usage usage = response.last().block().getMetadata().getUsage();
@@ -465,18 +465,18 @@ public class OpenAiChatModelIT extends AbstractIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o" })
+	@ValueSource(strings = {"gpt-4o"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel
-			.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -484,19 +484,19 @@ public class OpenAiChatModelIT extends AbstractIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o" })
+	@ValueSource(strings = {"gpt-4o"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel
-			.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -507,39 +507,39 @@ public class OpenAiChatModelIT extends AbstractIT {
 	void streamingMultiModalityImageUrl() throws IOException {
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.streamingChatModel.stream(new Prompt(List.of(userMessage),
 				OpenAiChatOptions.builder().model(OpenAiApi.ChatModel.GPT_4_O.getValue()).build()));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 		assertThat(content).containsAnyOf("bananas", "apple", "bowl", "basket", "fruit stand");
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o-audio-preview" })
+	@ValueSource(strings = {"gpt-4o-audio-preview"})
 	void multiModalityOutputAudio(String modelName) throws IOException {
 		var userMessage = new UserMessage("Tell me joke about Spring Framework");
 
 		ChatResponse response = this.chatModel.call(new Prompt(List.of(userMessage),
 				OpenAiChatOptions.builder()
-					.model(modelName)
-					.outputModalities(List.of("text", "audio"))
-					.outputAudio(new AudioParameters(Voice.ALLOY, AudioResponseFormat.WAV))
-					.build()));
+						.model(modelName)
+						.outputModalities(List.of("text", "audio"))
+						.outputAudio(new AudioParameters(Voice.ALLOY, AudioResponseFormat.WAV))
+						.build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).isNotEmpty();
@@ -550,34 +550,34 @@ public class OpenAiChatModelIT extends AbstractIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o-audio-preview" })
+	@ValueSource(strings = {"gpt-4o-audio-preview"})
 	void streamingMultiModalityOutputAudio(String modelName) throws IOException {
 		// var audioResource = new ClassPathResource("speech1.mp3");
 		var userMessage = new UserMessage("Tell me joke about Spring Framework");
 
 		assertThatThrownBy(() -> this.chatModel
-			.stream(new Prompt(List.of(userMessage),
-					OpenAiChatOptions.builder()
-						.model(modelName)
-						.outputModalities(List.of("text", "audio"))
-						.outputAudio(new AudioParameters(Voice.ALLOY, AudioResponseFormat.WAV))
-						.build()))
-			.collectList()
-			.block()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Audio parameters are not supported for streaming requests.");
+				.stream(new Prompt(List.of(userMessage),
+						OpenAiChatOptions.builder()
+								.model(modelName)
+								.outputModalities(List.of("text", "audio"))
+								.outputAudio(new AudioParameters(Voice.ALLOY, AudioResponseFormat.WAV))
+								.build()))
+				.collectList()
+				.block()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Audio parameters are not supported for streaming requests.");
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o-audio-preview" })
+	@ValueSource(strings = {"gpt-4o-audio-preview"})
 	void multiModalityInputAudio(String modelName) {
 		var audioResource = new ClassPathResource("speech1.mp3");
 		var userMessage = UserMessage.builder()
-			.text("What is this recording about?")
-			.media(List.of(new Media(MimeTypeUtils.parseMimeType("audio/mp3"), audioResource)))
-			.build();
+				.text("What is this recording about?")
+				.media(List.of(new Media(MimeTypeUtils.parseMimeType("audio/mp3"), audioResource)))
+				.build();
 
 		ChatResponse response = this.chatModel
-			.call(new Prompt(List.of(userMessage), ChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), ChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("hobbits");
@@ -585,25 +585,25 @@ public class OpenAiChatModelIT extends AbstractIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o-audio-preview" })
+	@ValueSource(strings = {"gpt-4o-audio-preview"})
 	void streamingMultiModalityInputAudio(String modelName) {
 		var audioResource = new ClassPathResource("speech1.mp3");
 		var userMessage = UserMessage.builder()
-			.text("What is this recording about?")
-			.media(List.of(new Media(MimeTypeUtils.parseMimeType("audio/mp3"), audioResource)))
-			.build();
+				.text("What is this recording about?")
+				.media(List.of(new Media(MimeTypeUtils.parseMimeType("audio/mp3"), audioResource)))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel
-			.stream(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
+				.stream(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 		assertThat(content).containsIgnoringCase("hobbits");
 	}
@@ -666,9 +666,9 @@ public class OpenAiChatModelIT extends AbstractIT {
 		String conversationId = UUID.randomUUID().toString();
 
 		ChatOptions chatOptions = ToolCallingChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(new MathTools()))
-			.internalToolExecutionEnabled(false)
-			.build();
+				.toolCallbacks(ToolCallbacks.from(new MathTools()))
+				.internalToolExecutionEnabled(false)
+				.build();
 		Prompt prompt = new Prompt(
 				List.of(new SystemMessage("You are a helpful assistant."), new UserMessage("What is 6 * 8?")),
 				chatOptions);
@@ -682,7 +682,7 @@ public class OpenAiChatModelIT extends AbstractIT {
 			ToolExecutionResult toolExecutionResult = toolCallingManager.executeToolCalls(promptWithMemory,
 					chatResponse);
 			chatMemory.add(conversationId, toolExecutionResult.conversationHistory()
-				.get(toolExecutionResult.conversationHistory().size() - 1));
+					.get(toolExecutionResult.conversationHistory().size() - 1));
 			promptWithMemory = new Prompt(chatMemory.get(conversationId), chatOptions);
 			chatResponse = this.chatModel.call(promptWithMemory);
 			chatMemory.add(conversationId, chatResponse.getResult().getOutput());
@@ -705,13 +705,13 @@ public class OpenAiChatModelIT extends AbstractIT {
 		UserMessage userMessage = new UserMessage("What is the latest news on the Mars rover?");
 
 		var promptOptions = OpenAiChatOptions.builder()
-			.model(OpenAiApi.ChatModel.GPT_4_O_SEARCH_PREVIEW.getValue())
-			.webSearchOptions(new OpenAiApi.ChatCompletionRequest.WebSearchOptions(
-					OpenAiApi.ChatCompletionRequest.WebSearchOptions.SearchContextSize.MEDIUM,
-					new OpenAiApi.ChatCompletionRequest.WebSearchOptions.UserLocation("approximate",
-							new OpenAiApi.ChatCompletionRequest.WebSearchOptions.UserLocation.Approximate(
-									"San Francisco", "US", "California", "America/Los_Angeles"))))
-			.build();
+				.model(OpenAiApi.ChatModel.GPT_4_O_SEARCH_PREVIEW.getValue())
+				.webSearchOptions(new OpenAiApi.ChatCompletionRequest.WebSearchOptions(
+						OpenAiApi.ChatCompletionRequest.WebSearchOptions.SearchContextSize.MEDIUM,
+						new OpenAiApi.ChatCompletionRequest.WebSearchOptions.UserLocation("approximate",
+								new OpenAiApi.ChatCompletionRequest.WebSearchOptions.UserLocation.Approximate(
+										"San Francisco", "US", "California", "America/Los_Angeles"))))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
@@ -734,11 +734,11 @@ public class OpenAiChatModelIT extends AbstractIT {
 		UserMessage userMessage = new UserMessage("What is the weather in San Francisco?");
 
 		var promptOptions = OpenAiChatOptions.builder()
-			.model(OpenAiApi.ChatModel.GPT_4_O_SEARCH_PREVIEW.getValue())
-			.build();
+				.model(OpenAiApi.ChatModel.GPT_4_O_SEARCH_PREVIEW.getValue())
+				.build();
 
 		Flux<ChatResponse> responseFlux = this.streamingChatModel
-			.stream(new Prompt(List.of(userMessage), promptOptions));
+				.stream(new Prompt(List.of(userMessage), promptOptions));
 
 		// Collect all streamed ChatResponses into a list.
 		List<ChatResponse> responses = responseFlux.collectList().block();
@@ -758,11 +758,11 @@ public class OpenAiChatModelIT extends AbstractIT {
 
 		// For debugging, log fullContent
 		String fullContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Full Content: {}", fullContent);
 	}
 

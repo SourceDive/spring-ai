@@ -61,13 +61,13 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OllamaOptions.builder()
-			.model(MODEL)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MODEL)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -84,24 +84,24 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OllamaOptions.builder()
-			.model(MODEL)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MODEL)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).contains("30", "10", "15");
@@ -118,9 +118,9 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		@Bean
 		public OllamaChatModel ollamaChat(OllamaApi ollamaApi) {
 			return OllamaChatModel.builder()
-				.ollamaApi(ollamaApi)
-				.defaultOptions(OllamaOptions.builder().model(MODEL).temperature(0.9).build())
-				.build();
+					.ollamaApi(ollamaApi)
+					.defaultOptions(OllamaOptions.builder().model(MODEL).temperature(0.9).build())
+					.build();
 		}
 
 	}

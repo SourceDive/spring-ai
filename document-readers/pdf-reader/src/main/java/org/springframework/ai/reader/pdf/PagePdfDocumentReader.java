@@ -83,8 +83,7 @@ public class PagePdfDocumentReader implements DocumentReader {
 
 			this.resourceFileName = pdfResource.getFilename();
 			this.config = config;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -157,8 +156,7 @@ public class PagePdfDocumentReader implements DocumentReader {
 			logger.info("Processing {} pages", totalPages);
 			return readDocuments;
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

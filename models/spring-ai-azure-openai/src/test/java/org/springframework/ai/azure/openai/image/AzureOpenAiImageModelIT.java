@@ -44,8 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * NOTE: use deployment ID dall-e-3
  */
 @SpringBootTest(classes = AzureOpenAiImageModelIT.TestConfiguration.class)
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_IMAGE_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_IMAGE_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_IMAGE_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_IMAGE_ENDPOINT", matches = ".+")})
 public class AzureOpenAiImageModelIT {
 
 	@Autowired
@@ -94,8 +94,8 @@ public class AzureOpenAiImageModelIT {
 			// System.out.println("Endpoint: " + endpoint);
 
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(apiKey))
-				.endpoint(endpoint)
-				.buildClient();
+					.endpoint(endpoint)
+					.buildClient();
 		}
 
 		@Bean

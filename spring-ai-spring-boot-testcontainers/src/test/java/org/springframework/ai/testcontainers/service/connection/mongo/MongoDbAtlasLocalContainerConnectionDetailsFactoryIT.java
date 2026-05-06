@@ -47,10 +47,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.data.mongodb.database=simpleaidb",
+@TestPropertySource(properties = {"spring.data.mongodb.database=simpleaidb",
 		"spring.ai.vectorstore.mongodb.initialize-schema=true",
 		"spring.ai.vectorstore.mongodb.collection-name=test_collection",
-		"spring.ai.vectorstore.mongodb.index-name=text_index" })
+		"spring.ai.vectorstore.mongodb.index-name=text_index"})
 @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
 class MongoDbAtlasLocalContainerConnectionDetailsFactoryIT {
 
@@ -76,7 +76,7 @@ class MongoDbAtlasLocalContainerConnectionDetailsFactoryIT {
 		Thread.sleep(5000); // Await a second for the document to be indexed
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 
 		assertThat(results).hasSize(1);
 		Document resultDoc = results.get(0);
@@ -89,13 +89,13 @@ class MongoDbAtlasLocalContainerConnectionDetailsFactoryIT {
 		this.vectorStore.delete(documents.stream().map(Document::getId).collect(Collectors.toList()));
 
 		List<Document> results2 = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 		assertThat(results2).isEmpty();
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ImportAutoConfiguration({ MongoAutoConfiguration.class, MongoDataAutoConfiguration.class,
-			MongoDBAtlasVectorStoreAutoConfiguration.class })
+	@ImportAutoConfiguration({MongoAutoConfiguration.class, MongoDataAutoConfiguration.class,
+			MongoDBAtlasVectorStoreAutoConfiguration.class})
 	static class Config {
 
 		@Bean

@@ -78,8 +78,7 @@ public final class ToolUtils {
 		var type = tool.resultConverter();
 		try {
 			return type.getDeclaredConstructor().newInstance();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to instantiate ToolCallResultConverter: " + type, e);
 		}
 	}
@@ -87,13 +86,13 @@ public final class ToolUtils {
 	public static List<String> getDuplicateToolNames(List<ToolCallback> toolCallbacks) {
 		Assert.notNull(toolCallbacks, "toolCallbacks cannot be null");
 		return toolCallbacks.stream()
-			.collect(Collectors.groupingBy(toolCallback -> toolCallback.getToolDefinition().name(),
-					Collectors.counting()))
-			.entrySet()
-			.stream()
-			.filter(entry -> entry.getValue() > 1)
-			.map(Map.Entry::getKey)
-			.collect(Collectors.toList());
+				.collect(Collectors.groupingBy(toolCallback -> toolCallback.getToolDefinition().name(),
+						Collectors.counting()))
+				.entrySet()
+				.stream()
+				.filter(entry -> entry.getValue() > 1)
+				.map(Map.Entry::getKey)
+				.collect(Collectors.toList());
 	}
 
 	public static List<String> getDuplicateToolNames(ToolCallback... toolCallbacks) {

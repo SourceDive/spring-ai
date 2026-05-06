@@ -34,13 +34,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BedrockCohereModelConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
-		.withBean(ObjectMapper.class, ObjectMapper::new);
+			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
+			.withBean(ObjectMapper.class, ObjectMapper::new);
 
 	@Test
 	void embeddingModelActivation() {
 		this.contextRunner
-			.run(context -> assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty());
+				.run(context -> assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty());
 
 		this.contextRunner.withPropertyValues("spring.ai.model.embedding=none").run(context -> {
 			assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isEmpty();

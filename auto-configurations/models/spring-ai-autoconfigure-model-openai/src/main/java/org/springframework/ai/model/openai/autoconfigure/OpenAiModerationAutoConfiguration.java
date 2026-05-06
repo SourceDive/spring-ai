@@ -47,34 +47,34 @@ import static org.springframework.ai.model.openai.autoconfigure.OpenAIAutoConfig
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(OpenAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.MODERATION_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OpenAiConnectionProperties.class, OpenAiModerationProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OpenAiConnectionProperties.class, OpenAiModerationProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class OpenAiModerationAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiModerationModel openAiModerationModel(OpenAiConnectionProperties commonProperties,
-			OpenAiModerationProperties moderationProperties, RetryTemplate retryTemplate,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
+	                                                   OpenAiModerationProperties moderationProperties, RetryTemplate retryTemplate,
+	                                                   ObjectProvider<RestClient.Builder> restClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
 
 		OpenAIAutoConfigurationUtil.ResolvedConnectionProperties resolved = resolveConnectionProperties(
 				commonProperties, moderationProperties, "moderation");
 
 		var openAiModerationApi = OpenAiModerationApi.builder()
-			.baseUrl(resolved.baseUrl())
-			.apiKey(new SimpleApiKey(resolved.apiKey()))
-			.headers(resolved.headers())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolved.baseUrl())
+				.apiKey(new SimpleApiKey(resolved.apiKey()))
+				.headers(resolved.headers())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 		return new OpenAiModerationModel(openAiModerationApi, retryTemplate)
-			.withDefaultOptions(moderationProperties.getOptions());
+				.withDefaultOptions(moderationProperties.getOptions());
 	}
 
 }

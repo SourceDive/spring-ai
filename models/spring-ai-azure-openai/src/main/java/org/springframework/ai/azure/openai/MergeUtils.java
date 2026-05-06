@@ -51,14 +51,14 @@ import org.springframework.util.CollectionUtils;
  */
 public final class MergeUtils {
 
-	private static final Class<?>[] CHAT_COMPLETIONS_CONSTRUCTOR_ARG_TYPES = new Class<?>[] { String.class,
-			OffsetDateTime.class, List.class };
+	private static final Class<?>[] CHAT_COMPLETIONS_CONSTRUCTOR_ARG_TYPES = new Class<?>[]{String.class,
+			OffsetDateTime.class, List.class};
 
-	private static final Class<?>[] chatChoiceConstructorArgumentTypes = new Class<?>[] {
-			ChatChoiceLogProbabilityInfo.class, int.class, CompletionsFinishReason.class };
+	private static final Class<?>[] chatChoiceConstructorArgumentTypes = new Class<?>[]{
+			ChatChoiceLogProbabilityInfo.class, int.class, CompletionsFinishReason.class};
 
-	private static final Class<?>[] chatResponseMessageConstructorArgumentTypes = new Class<?>[] { ChatRole.class,
-			String.class, String.class };
+	private static final Class<?>[] chatResponseMessageConstructorArgumentTypes = new Class<?>[]{ChatRole.class,
+			String.class, String.class};
 
 	private MergeUtils() {
 
@@ -67,11 +67,12 @@ public final class MergeUtils {
 	/**
 	 * Create a new instance of the given class using the constructor at the given index.
 	 * Can be used to create instances with private constructors.
-	 * @param <T> the type of the class to be created.
+	 *
+	 * @param <T>           the type of the class to be created.
 	 * @param argumentTypes the list of constructor argument types. Used to select the
-	 * right constructor.
-	 * @param clazz the class to create an instance of.
-	 * @param args the arguments to pass to the constructor.
+	 *                      right constructor.
+	 * @param clazz         the class to create an instance of.
+	 * @param args          the arguments to pass to the constructor.
 	 * @return a new instance of the given class.
 	 */
 	private static <T> T newInstance(Class<?>[] argumentTypes, Class<T> clazz, Object... args) {
@@ -79,25 +80,24 @@ public final class MergeUtils {
 			Constructor<T> constructor = clazz.getDeclaredConstructor(argumentTypes);
 			constructor.setAccessible(true);
 			return constructor.newInstance(args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Set the value of a private field in the given class instance.
+	 *
 	 * @param classInstance the class instance to set the field on.
-	 * @param fieldName the name of the field to set.
-	 * @param fieldValue the value to set the field to.
+	 * @param fieldName     the name of the field to set.
+	 * @param fieldValue    the value to set the field to.
 	 */
 	private static void setField(Object classInstance, String fieldName, Object fieldValue) {
 		try {
 			Field field = classInstance.getClass().getDeclaredField(fieldName);
 			field.setAccessible(true);
 			field.set(classInstance, fieldValue);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -121,7 +121,8 @@ public final class MergeUtils {
 
 	/**
 	 * Merge two ChatCompletions instances into a single ChatCompletions instance.
-	 * @param left the left ChatCompletions instance.
+	 *
+	 * @param left  the left ChatCompletions instance.
 	 * @param right the right ChatCompletions instance.
 	 * @return a merged ChatCompletions instance.
 	 */
@@ -139,12 +140,10 @@ public final class MergeUtils {
 		List<ChatChoice> choices = null;
 		if (right.getChoices() == null) {
 			choices = left.getChoices();
-		}
-		else {
+		} else {
 			if (CollectionUtils.isEmpty(left.getChoices())) {
 				choices = right.getChoices();
-			}
-			else {
+			} else {
 				choices = List.of(mergeChatChoice(left.getChoices().get(0), right.getChoices().get(0)));
 			}
 		}
@@ -173,7 +172,8 @@ public final class MergeUtils {
 
 	/**
 	 * Merge two ChatChoice instances into a single ChatChoice instance.
-	 * @param left the left ChatChoice instance to merge.
+	 *
+	 * @param left  the left ChatChoice instance to merge.
 	 * @param right the right ChatChoice instance to merge.
 	 * @return a merged ChatChoice instance.
 	 */
@@ -192,8 +192,7 @@ public final class MergeUtils {
 		ChatResponseMessage message = null;
 		if (left.getMessage() == null) {
 			message = right.getMessage();
-		}
-		else {
+		} else {
 			message = mergeChatResponseMessage(left.getMessage(), right.getMessage());
 		}
 
@@ -202,8 +201,7 @@ public final class MergeUtils {
 		ChatResponseMessage delta = null;
 		if (left.getDelta() == null) {
 			delta = right.getDelta();
-		}
-		else {
+		} else {
 			delta = mergeChatResponseMessage(left.getDelta(), right.getDelta());
 		}
 		setField(instance, "delta", delta);
@@ -220,7 +218,8 @@ public final class MergeUtils {
 
 	/**
 	 * Merge two ChatResponseMessage instances into a single ChatResponseMessage instance.
-	 * @param left the left ChatResponseMessage instance to merge.
+	 *
+	 * @param left  the left ChatResponseMessage instance to merge.
 	 * @param right the right ChatResponseMessage instance to merge.
 	 * @return a merged ChatResponseMessage instance.
 	 */
@@ -230,11 +229,9 @@ public final class MergeUtils {
 		String content = null;
 		if (left.getContent() != null && right.getContent() != null) {
 			content = left.getContent().concat(right.getContent());
-		}
-		else if (left.getContent() == null) {
+		} else if (left.getContent() == null) {
 			content = right.getContent();
-		}
-		else {
+		} else {
 			content = left.getContent();
 		}
 
@@ -248,11 +245,9 @@ public final class MergeUtils {
 			if (right.getToolCalls() != null) {
 				toolCalls.addAll(right.getToolCalls());
 			}
-		}
-		else if (right.getToolCalls() == null) {
+		} else if (right.getToolCalls() == null) {
 			toolCalls.addAll(left.getToolCalls());
-		}
-		else {
+		} else {
 			toolCalls.addAll(left.getToolCalls());
 			final var lastToolIndex = toolCalls.size() - 1;
 			ChatCompletionsToolCall lastTool = toolCalls.get(lastToolIndex);
@@ -262,8 +257,7 @@ public final class MergeUtils {
 
 				toolCalls.remove(lastToolIndex);
 				toolCalls.add(lastTool);
-			}
-			else {
+			} else {
 				toolCalls.add(right.getToolCalls().get(0));
 			}
 		}
@@ -274,8 +268,7 @@ public final class MergeUtils {
 
 		if (left.getFunctionCall() == null) {
 			functionCall = right.getFunctionCall();
-		}
-		else {
+		} else {
 			functionCall = MergeUtils.mergeFunctionCall(left.getFunctionCall(), right.getFunctionCall());
 		}
 
@@ -290,12 +283,13 @@ public final class MergeUtils {
 	/**
 	 * Merge two ChatCompletionsToolCall instances into a single ChatCompletionsToolCall
 	 * instance.
-	 * @param left the left ChatCompletionsToolCall instance to merge.
+	 *
+	 * @param left  the left ChatCompletionsToolCall instance to merge.
 	 * @param right the right ChatCompletionsToolCall instance to merge.
 	 * @return a merged ChatCompletionsToolCall instance.
 	 */
 	private static ChatCompletionsToolCall mergeChatCompletionsToolCall(ChatCompletionsToolCall left,
-			ChatCompletionsToolCall right) {
+	                                                                    ChatCompletionsToolCall right) {
 		Assert.isTrue(Objects.equals(left.getType(), right.getType()),
 				"Cannot merge different type of AccessibleChatCompletionsToolCall");
 		if (!"function".equals(left.getType())) {
@@ -311,7 +305,8 @@ public final class MergeUtils {
 
 	/**
 	 * Merge two FunctionCall instances into a single FunctionCall instance.
-	 * @param left the left, input FunctionCall instance.
+	 *
+	 * @param left  the left, input FunctionCall instance.
 	 * @param right the right, input FunctionCall instance.
 	 * @return a merged FunctionCall instance.
 	 */
@@ -320,11 +315,9 @@ public final class MergeUtils {
 		String arguments = null;
 		if (left.getArguments() != null && right.getArguments() != null) {
 			arguments = left.getArguments() + right.getArguments();
-		}
-		else if (left.getArguments() == null) {
+		} else if (left.getArguments() == null) {
 			arguments = right.getArguments();
-		}
-		else {
+		} else {
 			arguments = left.getArguments();
 		}
 		return new FunctionCall(name, arguments);

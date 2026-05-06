@@ -45,11 +45,11 @@ public class MistralAiChatProperties extends MistralAiParentProperties {
 
 	@NestedConfigurationProperty
 	private MistralAiChatOptions options = MistralAiChatOptions.builder()
-		.model(DEFAULT_CHAT_MODEL)
-		.temperature(DEFAULT_TEMPERATURE)
-		.safePrompt(!IS_ENABLED)
-		.topP(DEFAULT_TOP_P)
-		.build();
+			.model(DEFAULT_CHAT_MODEL)
+			.temperature(DEFAULT_TEMPERATURE)
+			.safePrompt(!IS_ENABLED)
+			.topP(DEFAULT_TOP_P)
+			.build();
 
 	public MistralAiChatProperties() {
 		super.setBaseUrl(MistralAiCommonProperties.DEFAULT_BASE_URL);

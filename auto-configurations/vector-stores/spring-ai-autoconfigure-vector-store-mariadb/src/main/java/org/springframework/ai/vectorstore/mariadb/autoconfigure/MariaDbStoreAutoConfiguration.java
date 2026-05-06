@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 1.0.0
  */
 @AutoConfiguration(after = JdbcTemplateAutoConfiguration.class)
-@ConditionalOnClass({ MariaDBVectorStore.class, DataSource.class, JdbcTemplate.class })
+@ConditionalOnClass({MariaDBVectorStore.class, DataSource.class, JdbcTemplate.class})
 @EnableConfigurationProperties(org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.MARIADB,
 		matchIfMissing = true)
@@ -56,30 +56,30 @@ public class MariaDbStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MariaDBVectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel,
-			org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreProperties properties,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                      org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreProperties properties,
+	                                      ObjectProvider<ObservationRegistry> observationRegistry,
+	                                      ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                      BatchingStrategy batchingStrategy) {
 
 		var initializeSchema = properties.isInitializeSchema();
 
 		return MariaDBVectorStore.builder(jdbcTemplate, embeddingModel)
-			.schemaName(properties.getSchemaName())
-			.vectorTableName(properties.getTableName())
-			.schemaValidation(properties.isSchemaValidation())
-			.dimensions(properties.getDimensions())
-			.distanceType(properties.getDistanceType())
-			.contentFieldName(properties.getContentFieldName())
-			.embeddingFieldName(properties.getEmbeddingFieldName())
-			.idFieldName(properties.getIdFieldName())
-			.metadataFieldName(properties.getMetadataFieldName())
-			.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
-			.initializeSchema(initializeSchema)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.maxDocumentBatchSize(properties.getMaxDocumentBatchSize())
-			.build();
+				.schemaName(properties.getSchemaName())
+				.vectorTableName(properties.getTableName())
+				.schemaValidation(properties.isSchemaValidation())
+				.dimensions(properties.getDimensions())
+				.distanceType(properties.getDistanceType())
+				.contentFieldName(properties.getContentFieldName())
+				.embeddingFieldName(properties.getEmbeddingFieldName())
+				.idFieldName(properties.getIdFieldName())
+				.metadataFieldName(properties.getMetadataFieldName())
+				.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
+				.initializeSchema(initializeSchema)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.maxDocumentBatchSize(properties.getMaxDocumentBatchSize())
+				.build();
 	}
 
 }

@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * Represents a request processed by a {@link ChatClient} that ultimately is used to build
  * a {@link Prompt} to be sent to an AI model.
  *
- * @param prompt The prompt to be sent to the AI model
+ * @param prompt  The prompt to be sent to the AI model
  * @param context The contextual data through the execution chain
  * @author Thomas Vitale
  * @since 1.0.0

@@ -55,12 +55,13 @@ public class OpenAiModerationApi {
 
 	/**
 	 * Create a new OpenAI Moderation API with the provided base URL.
-	 * @param baseUrl the base URL for the OpenAI API.
-	 * @param apiKey OpenAI apiKey.
+	 *
+	 * @param baseUrl           the base URL for the OpenAI API.
+	 * @param apiKey            OpenAI apiKey.
 	 * @param restClientBuilder the rest client builder to use.
 	 */
 	public OpenAiModerationApi(String baseUrl, ApiKey apiKey, MultiValueMap<String, String> headers,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                           RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		this.objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -78,10 +79,10 @@ public class OpenAiModerationApi {
 		Assert.hasLength(openAiModerationRequest.prompt(), "Prompt cannot be empty.");
 
 		return this.restClient.post()
-			.uri("v1/moderations")
-			.body(openAiModerationRequest)
-			.retrieve()
-			.toEntity(OpenAiModerationResponse.class);
+				.uri("v1/moderations")
+				.body(openAiModerationRequest)
+				.retrieve()
+				.toEntity(OpenAiModerationResponse.class);
 	}
 
 	public static Builder builder() {
@@ -156,7 +157,7 @@ public class OpenAiModerationApi {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record Data(@JsonProperty("url") String url, @JsonProperty("b64_json") String b64Json,
-			@JsonProperty("revised_prompt") String revisedPrompt) {
+	                   @JsonProperty("revised_prompt") String revisedPrompt) {
 
 	}
 

@@ -91,8 +91,8 @@ public class ResourceCacheServiceTests {
 		assertThat(cachedResource2).isNotEqualTo(cachedResource1);
 
 		assertThat(Files.list(this.tempDir.toPath()).count()).isEqualTo(1)
-			.describedAs(
-					"As both resources come from the same parent segments they should be cached in a single common parent.");
+				.describedAs(
+						"As both resources come from the same parent segments they should be cached in a single common parent.");
 		assertThat(Files.list(Files.list(this.tempDir.toPath()).iterator().next()).count()).isEqualTo(2);
 
 	}

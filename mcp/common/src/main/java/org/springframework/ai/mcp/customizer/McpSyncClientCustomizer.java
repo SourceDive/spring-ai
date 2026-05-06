@@ -27,8 +27,8 @@ import io.modelcontextprotocol.client.McpClient;
  * <p>
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see io.modelcontextprotocol.client.McpClient.SyncSpec
+ * @since 1.0.0
  */
 public interface McpSyncClientCustomizer {
 
@@ -37,6 +37,7 @@ public interface McpSyncClientCustomizer {
 	 * <p>
 	 * This method is called for each sync MCP client being created, allowing for
 	 * client-specific customizations based on the client's name and specification.
+	 *
 	 * @param name the name of the MCP client being customized
 	 * @param spec the sync specification to customize
 	 */

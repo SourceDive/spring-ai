@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties for OpenAI audio speech.
- *
+ * <p>
  * Default values for required options are model = tts_1, response format = mp3, voice =
  * alloy, and speed = 1.
  *
@@ -46,11 +46,11 @@ public class OpenAiAudioSpeechProperties extends OpenAiParentProperties {
 
 	@NestedConfigurationProperty
 	private OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-		.model(DEFAULT_SPEECH_MODEL)
-		.responseFormat(DEFAULT_RESPONSE_FORMAT)
-		.voice(VOICE)
-		.speed(SPEED)
-		.build();
+			.model(DEFAULT_SPEECH_MODEL)
+			.responseFormat(DEFAULT_RESPONSE_FORMAT)
+			.voice(VOICE)
+			.speed(SPEED)
+			.build();
 
 	public OpenAiAudioSpeechOptions getOptions() {
 		return this.options;

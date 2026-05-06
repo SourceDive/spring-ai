@@ -42,18 +42,18 @@ public class VertexAiModelConfigurationTests {
 	void chatModelActivation() {
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(VertexAiGeminiChatProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(VertexAiGeminiChatModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(VertexAiGeminiChatProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(VertexAiGeminiChatModel.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=vertexai")
-			.run(context -> {
-				assertThat(context.getBeansOfType(VertexAiGeminiChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(VertexAiGeminiChatModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=vertexai")
+				.run(context -> {
+					assertThat(context.getBeansOfType(VertexAiGeminiChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(VertexAiGeminiChatModel.class)).isNotEmpty();
+				});
 	}
 
 }

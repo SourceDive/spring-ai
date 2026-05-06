@@ -58,32 +58,32 @@ class PaymentStatusBeanOpenAiIT {
 	private final Logger logger = LoggerFactory.getLogger(PaymentStatusBeanIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("MISTRAL_AI_API_KEY"),
-				"spring.ai.openai.chat.base-url=https://api.mistral.ai")
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("MISTRAL_AI_API_KEY"),
+					"spring.ai.openai.chat.base-url=https://api.mistral.ai")
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.options.model=" + MistralAiApi.ChatModel.SMALL.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.options.model=" + MistralAiApi.ChatModel.SMALL.getValue())
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				ChatResponse response = chatModel
-					.call(new Prompt(List.of(new UserMessage("What's the status of my transaction with id T1001?")),
-							OpenAiChatOptions.builder()
-								.toolNames("retrievePaymentStatus")
-								.toolNames("retrievePaymentDate")
-								.build()));
+					ChatResponse response = chatModel
+							.call(new Prompt(List.of(new UserMessage("What's the status of my transaction with id T1001?")),
+									OpenAiChatOptions.builder()
+											.toolNames("retrievePaymentStatus")
+											.toolNames("retrievePaymentDate")
+											.build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
-			});
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
+				});
 	}
 
 	record StatusDate(String status, String date) {

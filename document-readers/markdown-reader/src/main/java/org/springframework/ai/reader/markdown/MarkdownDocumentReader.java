@@ -67,6 +67,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance.
+	 *
 	 * @param markdownResource the resource to read
 	 */
 	public MarkdownDocumentReader(String markdownResource) {
@@ -75,8 +76,9 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance.
+	 *
 	 * @param markdownResource the resource to read
-	 * @param config the configuration to use
+	 * @param config           the configuration to use
 	 */
 	public MarkdownDocumentReader(String markdownResource, MarkdownDocumentReaderConfig config) {
 		this(new DefaultResourceLoader().getResource(markdownResource), config);
@@ -84,6 +86,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance.
+	 *
 	 * @param markdownResource the resource to read
 	 */
 	public MarkdownDocumentReader(Resource markdownResource, MarkdownDocumentReaderConfig config) {
@@ -94,6 +97,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 	/**
 	 * Extracts and returns a list of documents from the resource.
+	 *
 	 * @return List of extracted {@link Document}
 	 */
 	@Override
@@ -105,8 +109,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 			node.accept(documentVisitor);
 
 			return documentVisitor.getDocuments();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -207,9 +210,8 @@ public class MarkdownDocumentReader implements DocumentReader {
 		public void visit(Text text) {
 			if (text.getParent() instanceof Heading heading) {
 				this.currentDocumentBuilder.metadata("category", "header_%d".formatted(heading.getLevel()))
-					.metadata("title", text.getLiteral());
-			}
-			else {
+						.metadata("title", text.getLiteral());
+			} else {
 				this.currentParagraphs.add(text.getLiteral());
 			}
 

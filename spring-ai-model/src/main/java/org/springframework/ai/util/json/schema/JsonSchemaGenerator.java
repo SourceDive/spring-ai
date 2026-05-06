@@ -96,18 +96,18 @@ public final class JsonSchemaGenerator {
 
 		SchemaGeneratorConfigBuilder schemaGeneratorConfigBuilder = new SchemaGeneratorConfigBuilder(
 				SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON)
-			.with(jacksonModule)
-			.with(openApiModule)
-			.with(springAiSchemaModule)
-			.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-			.with(Option.PLAIN_DEFINITION_KEYS);
+				.with(jacksonModule)
+				.with(openApiModule)
+				.with(springAiSchemaModule)
+				.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+				.with(Option.PLAIN_DEFINITION_KEYS);
 
 		SchemaGeneratorConfig typeSchemaGeneratorConfig = schemaGeneratorConfigBuilder.build();
 		TYPE_SCHEMA_GENERATOR = new SchemaGenerator(typeSchemaGeneratorConfig);
 
 		SchemaGeneratorConfig subtypeSchemaGeneratorConfig = schemaGeneratorConfigBuilder
-			.without(Option.SCHEMA_VERSION_INDICATOR)
-			.build();
+				.without(Option.SCHEMA_VERSION_INDICATOR)
+				.build();
 		SUBTYPE_SCHEMA_GENERATOR = new SchemaGenerator(subtypeSchemaGeneratorConfig);
 	}
 
@@ -170,7 +170,7 @@ public final class JsonSchemaGenerator {
 
 	private static void processSchemaOptions(SchemaOption[] schemaOptions, ObjectNode schema) {
 		if (Stream.of(schemaOptions)
-			.noneMatch(option -> option == SchemaOption.ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT)) {
+				.noneMatch(option -> option == SchemaOption.ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT)) {
 			schema.put("additionalProperties", false);
 		}
 		if (Stream.of(schemaOptions).anyMatch(option -> option == SchemaOption.UPPER_CASE_TYPE_VALUES)) {
@@ -190,7 +190,7 @@ public final class JsonSchemaGenerator {
 	 * <li>{@code @Nullable}</li>
 	 * </ul>
 	 * <p>
-	 *
+	 * <p>
 	 * If none of these annotations are present, the default behavior is to consider the *
 	 * property as required.
 	 */
@@ -261,21 +261,18 @@ public final class JsonSchemaGenerator {
 				JsonNode value = entry.getValue();
 				if (value.isObject()) {
 					convertTypeValuesToUpperCase((ObjectNode) value);
-				}
-				else if (value.isArray()) {
+				} else if (value.isArray()) {
 					value.elements().forEachRemaining(element -> {
 						if (element.isObject() || element.isArray()) {
 							convertTypeValuesToUpperCase((ObjectNode) element);
 						}
 					});
-				}
-				else if (value.isTextual() && entry.getKey().equals("type")) {
+				} else if (value.isTextual() && entry.getKey().equals("type")) {
 					String oldValue = node.get("type").asText();
 					node.put("type", oldValue.toUpperCase());
 				}
 			});
-		}
-		else if (node.isArray()) {
+		} else if (node.isArray()) {
 			node.elements().forEachRemaining(element -> {
 				if (element.isObject() || element.isArray()) {
 					convertTypeValuesToUpperCase((ObjectNode) element);

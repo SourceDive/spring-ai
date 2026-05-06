@@ -35,16 +35,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StabilityAiAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.stabilityai.image.api-key=" + System.getenv("STABILITYAI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class));
+			.withPropertyValues("spring.ai.stabilityai.image.api-key=" + System.getenv("STABILITYAI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(StabilityAiImageAutoConfiguration.class));
 
 	@Test
 	void generate() {
 		this.contextRunner.run(context -> {
 			ImageModel imageModel = context.getBean(ImageModel.class);
 			StabilityAiImageOptions imageOptions = StabilityAiImageOptions.builder()
-				.stylePreset(StyleEnum.PHOTOGRAPHIC)
-				.build();
+					.stylePreset(StyleEnum.PHOTOGRAPHIC)
+					.build();
 
 			var instructions = """
 					A light cream colored mini golden doodle.

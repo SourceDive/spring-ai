@@ -33,8 +33,8 @@ public class MistralAiModerationProperties extends MistralAiParentProperties {
 
 	@NestedConfigurationProperty
 	private MistralAiModerationOptions options = MistralAiModerationOptions.builder()
-		.model(DEFAULT_MODERATION_MODEL)
-		.build();
+			.model(DEFAULT_MODERATION_MODEL)
+			.build();
 
 	public MistralAiModerationProperties() {
 		super.setBaseUrl(MistralAiCommonProperties.DEFAULT_BASE_URL);

@@ -46,7 +46,7 @@ public class ZhiPuAiApiIT {
 	void chatCompletionEntity() {
 		ChatCompletionMessage chatCompletionMessage = new ChatCompletionMessage("Hello world", Role.USER);
 		ResponseEntity<ChatCompletion> response = this.zhiPuAiApi
-			.chatCompletionEntity(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-3-turbo", 0.7, false));
+				.chatCompletionEntity(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-3-turbo", 0.7, false));
 
 		assertThat(response).isNotNull();
 		assertThat(response.getBody()).isNotNull();
@@ -56,8 +56,8 @@ public class ZhiPuAiApiIT {
 	void chatCompletionEntityWithMoreParams() {
 		ChatCompletionMessage chatCompletionMessage = new ChatCompletionMessage("Hello world", Role.USER);
 		ResponseEntity<ChatCompletion> response = this.zhiPuAiApi
-			.chatCompletionEntity(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-3-turbo", 1024, null,
-					false, 0.95, 0.7, null, null, null, "test_request_id", false));
+				.chatCompletionEntity(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-3-turbo", 1024, null,
+						false, 0.95, 0.7, null, null, null, "test_request_id", false));
 
 		assertThat(response).isNotNull();
 		assertThat(response.getBody()).isNotNull();
@@ -67,7 +67,7 @@ public class ZhiPuAiApiIT {
 	void chatCompletionStream() {
 		ChatCompletionMessage chatCompletionMessage = new ChatCompletionMessage("Hello world", Role.USER);
 		Flux<ChatCompletionChunk> response = this.zhiPuAiApi
-			.chatCompletionStream(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-3-turbo", 0.7, true));
+				.chatCompletionStream(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-3-turbo", 0.7, true));
 
 		assertThat(response).isNotNull();
 		assertThat(response.collectList().block()).isNotNull();
@@ -76,7 +76,7 @@ public class ZhiPuAiApiIT {
 	@Test
 	void embeddings() {
 		ResponseEntity<EmbeddingList<Embedding>> response = this.zhiPuAiApi
-			.embeddings(new ZhiPuAiApi.EmbeddingRequest<>("Hello world"));
+				.embeddings(new ZhiPuAiApi.EmbeddingRequest<>("Hello world"));
 
 		assertThat(response).isNotNull();
 		assertThat(Objects.requireNonNull(response.getBody()).data()).hasSize(1);
@@ -86,8 +86,8 @@ public class ZhiPuAiApiIT {
 	@Test
 	void embeddingsWithDimensions() {
 		ResponseEntity<EmbeddingList<Embedding>> response = this.zhiPuAiApi
-			.embeddings(new ZhiPuAiApi.EmbeddingRequest<>("Hello world",
-					ZhiPuAiApi.EmbeddingModel.Embedding_3.getValue(), 1536));
+				.embeddings(new ZhiPuAiApi.EmbeddingRequest<>("Hello world",
+						ZhiPuAiApi.EmbeddingModel.Embedding_3.getValue(), 1536));
 
 		assertThat(response).isNotNull();
 		assertThat(Objects.requireNonNull(response.getBody()).data()).hasSize(1);

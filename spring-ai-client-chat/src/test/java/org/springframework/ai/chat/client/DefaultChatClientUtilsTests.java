@@ -49,8 +49,8 @@ class DefaultChatClientUtilsTests {
 	@Test
 	void whenInputRequestIsNullThenThrows() {
 		assertThatThrownBy(() -> DefaultChatClientUtils.toChatClientRequest(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("inputRequest cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("inputRequest cannot be null");
 	}
 
 	@Test
@@ -58,9 +58,9 @@ class DefaultChatClientUtilsTests {
 		String systemText = "System instructions";
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(systemText);
+				.create(chatModel)
+				.prompt()
+				.system(systemText);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -76,9 +76,9 @@ class DefaultChatClientUtilsTests {
 		Map<String, Object> systemParams = Map.of("name", "Spring AI");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(s -> s.text(systemText).params(systemParams));
+				.create(chatModel)
+				.prompt()
+				.system(s -> s.text(systemText).params(systemParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -93,9 +93,9 @@ class DefaultChatClientUtilsTests {
 		List<Message> messages = List.of(new SystemMessage("System message"), new UserMessage("User message"));
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.messages(messages);
+				.create(chatModel)
+				.prompt()
+				.messages(messages);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -110,9 +110,9 @@ class DefaultChatClientUtilsTests {
 		String userText = "User question";
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(userText);
+				.create(chatModel)
+				.prompt()
+				.user(userText);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -128,9 +128,9 @@ class DefaultChatClientUtilsTests {
 		Map<String, Object> userParams = Map.of("topic", "Spring AI");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(s -> s.text(userText).params(userParams));
+				.create(chatModel)
+				.prompt()
+				.user(s -> s.text(userText).params(userParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -146,9 +146,9 @@ class DefaultChatClientUtilsTests {
 		Media media = mock(Media.class);
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(s -> s.text(userText).media(media));
+				.create(chatModel)
+				.prompt()
+				.user(s -> s.text(userText).media(media));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -166,10 +166,10 @@ class DefaultChatClientUtilsTests {
 		List<Message> messages = List.of(new SystemMessage("System message"));
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(systemText)
-			.messages(messages);
+				.create(chatModel)
+				.prompt()
+				.system(systemText)
+				.messages(messages);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -185,10 +185,10 @@ class DefaultChatClientUtilsTests {
 		List<Message> messages = List.of(new UserMessage("User message"));
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(userText)
-			.messages(messages);
+				.create(chatModel)
+				.prompt()
+				.user(userText)
+				.messages(messages);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -204,10 +204,10 @@ class DefaultChatClientUtilsTests {
 		List<String> toolNames = List.of("tool1", "tool2");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolNames(toolNames.toArray(new String[0]));
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolNames(toolNames.toArray(new String[0]));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -224,10 +224,10 @@ class DefaultChatClientUtilsTests {
 		ToolCallback toolCallback = new TestToolCallback("tool1");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolCallbacks(toolCallback);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolCallbacks(toolCallback);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -244,10 +244,10 @@ class DefaultChatClientUtilsTests {
 		Map<String, Object> toolContext = Map.of("key", "value");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolContext(toolContext);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolContext(toolContext);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -265,10 +265,10 @@ class DefaultChatClientUtilsTests {
 		List<String> toolNames2 = List.of("tool1", "tool2");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolNames(toolNames2.toArray(new String[0]));
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolNames(toolNames2.toArray(new String[0]));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -286,10 +286,10 @@ class DefaultChatClientUtilsTests {
 		ToolCallback toolCallback2 = new TestToolCallback("tool2");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolCallbacks(toolCallback2);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolCallbacks(toolCallback2);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -307,10 +307,10 @@ class DefaultChatClientUtilsTests {
 		Map<String, Object> toolContext2 = Map.of("key2", "value2");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolContext(toolContext2);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolContext(toolContext2);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -319,7 +319,7 @@ class DefaultChatClientUtilsTests {
 		ToolCallingChatOptions resultOptions = (ToolCallingChatOptions) result.prompt().getOptions();
 		assertThat(resultOptions).isNotNull();
 		assertThat(resultOptions.getToolContext()).containsAllEntriesOf(toolContext1)
-			.containsAllEntriesOf(toolContext2);
+				.containsAllEntriesOf(toolContext2);
 	}
 
 	@Test
@@ -327,9 +327,9 @@ class DefaultChatClientUtilsTests {
 		Map<String, Object> advisorParams = Map.of("key1", "value1", "key2", "value2");
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.advisors(a -> a.params(advisorParams));
+				.create(chatModel)
+				.prompt()
+				.advisors(a -> a.params(advisorParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -342,15 +342,15 @@ class DefaultChatClientUtilsTests {
 		String systemText = "Instructions <name>";
 		Map<String, Object> systemParams = Map.of("name", "Spring AI");
 		TemplateRenderer customRenderer = StTemplateRenderer.builder()
-			.startDelimiterToken('<')
-			.endDelimiterToken('>')
-			.build();
+				.startDelimiterToken('<')
+				.endDelimiterToken('>')
+				.build();
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(s -> s.text(systemText).params(systemParams))
-			.templateRenderer(customRenderer);
+				.create(chatModel)
+				.prompt()
+				.system(s -> s.text(systemText).params(systemParams))
+				.templateRenderer(customRenderer);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -380,16 +380,16 @@ class DefaultChatClientUtilsTests {
 
 		ChatModel chatModel = mock(ChatModel.class);
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(s -> s.text(systemText).params(systemParams))
-			.user(u -> u.text(userText).params(userParams).media(media))
-			.messages(messages)
-			.toolNames(toolNames.toArray(new String[0]))
-			.toolCallbacks(toolCallback)
-			.toolContext(toolContext)
-			.options(chatOptions)
-			.advisors(a -> a.params(advisorParams));
+				.create(chatModel)
+				.prompt()
+				.system(s -> s.text(systemText).params(systemParams))
+				.user(u -> u.text(userText).params(userParams).media(media))
+				.messages(messages)
+				.toolNames(toolNames.toArray(new String[0]))
+				.toolCallbacks(toolCallback)
+				.toolContext(toolContext)
+				.options(chatOptions)
+				.advisors(a -> a.params(advisorParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 

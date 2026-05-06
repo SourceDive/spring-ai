@@ -60,8 +60,7 @@ public final class AudioPlayer {
 					Thread.sleep(3000);
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 

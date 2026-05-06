@@ -55,44 +55,44 @@ class OpenAiChatOptionsTests {
 		Map<String, Object> toolContext = Map.of("keyA", "valueA");
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model("test-model")
-			.frequencyPenalty(0.5)
-			.logitBias(logitBias)
-			.logprobs(true)
-			.topLogprobs(5)
-			.maxTokens(100)
-			.maxCompletionTokens(50)
-			.N(2)
-			.outputModalities(outputModalities)
-			.outputAudio(outputAudio)
-			.presencePenalty(0.8)
-			.responseFormat(responseFormat)
-			.streamUsage(true)
-			.seed(12345)
-			.stop(stopSequences)
-			.temperature(0.7)
-			.topP(0.9)
-			.tools(tools)
-			.toolChoice(toolChoice)
-			.user("test-user")
-			.parallelToolCalls(true)
-			.store(false)
-			.metadata(metadata)
-			.reasoningEffort("medium")
-			.internalToolExecutionEnabled(false)
-			.httpHeaders(Map.of("header1", "value1"))
-			.toolContext(toolContext)
-			.build();
+				.model("test-model")
+				.frequencyPenalty(0.5)
+				.logitBias(logitBias)
+				.logprobs(true)
+				.topLogprobs(5)
+				.maxTokens(100)
+				.maxCompletionTokens(50)
+				.N(2)
+				.outputModalities(outputModalities)
+				.outputAudio(outputAudio)
+				.presencePenalty(0.8)
+				.responseFormat(responseFormat)
+				.streamUsage(true)
+				.seed(12345)
+				.stop(stopSequences)
+				.temperature(0.7)
+				.topP(0.9)
+				.tools(tools)
+				.toolChoice(toolChoice)
+				.user("test-user")
+				.parallelToolCalls(true)
+				.store(false)
+				.metadata(metadata)
+				.reasoningEffort("medium")
+				.internalToolExecutionEnabled(false)
+				.httpHeaders(Map.of("header1", "value1"))
+				.toolContext(toolContext)
+				.build();
 
 		assertThat(options)
-			.extracting("model", "frequencyPenalty", "logitBias", "logprobs", "topLogprobs", "maxTokens",
-					"maxCompletionTokens", "n", "outputModalities", "outputAudio", "presencePenalty", "responseFormat",
-					"streamOptions", "seed", "stop", "temperature", "topP", "tools", "toolChoice", "user",
-					"parallelToolCalls", "store", "metadata", "reasoningEffort", "internalToolExecutionEnabled",
-					"httpHeaders", "toolContext")
-			.containsExactly("test-model", 0.5, logitBias, true, 5, 100, 50, 2, outputModalities, outputAudio, 0.8,
-					responseFormat, streamOptions, 12345, stopSequences, 0.7, 0.9, tools, toolChoice, "test-user", true,
-					false, metadata, "medium", false, Map.of("header1", "value1"), toolContext);
+				.extracting("model", "frequencyPenalty", "logitBias", "logprobs", "topLogprobs", "maxTokens",
+						"maxCompletionTokens", "n", "outputModalities", "outputAudio", "presencePenalty", "responseFormat",
+						"streamOptions", "seed", "stop", "temperature", "topP", "tools", "toolChoice", "user",
+						"parallelToolCalls", "store", "metadata", "reasoningEffort", "internalToolExecutionEnabled",
+						"httpHeaders", "toolContext")
+				.containsExactly("test-model", 0.5, logitBias, true, 5, 100, 50, 2, outputModalities, outputAudio, 0.8,
+						responseFormat, streamOptions, 12345, stopSequences, 0.7, 0.9, tools, toolChoice, "test-user", true,
+						false, metadata, "medium", false, Map.of("header1", "value1"), toolContext);
 
 		assertThat(options.getStreamUsage()).isTrue();
 		assertThat(options.getStreamOptions()).isEqualTo(StreamOptions.INCLUDE_USAGE);
@@ -114,33 +114,33 @@ class OpenAiChatOptionsTests {
 		Map<String, String> metadata = Map.of("key1", "value1");
 
 		OpenAiChatOptions originalOptions = OpenAiChatOptions.builder()
-			.model("test-model")
-			.frequencyPenalty(0.5)
-			.logitBias(logitBias)
-			.logprobs(true)
-			.topLogprobs(5)
-			.maxTokens(100)
-			.maxCompletionTokens(50)
-			.N(2)
-			.outputModalities(outputModalities)
-			.outputAudio(outputAudio)
-			.presencePenalty(0.8)
-			.responseFormat(responseFormat)
-			.streamUsage(false)
-			.seed(12345)
-			.stop(stopSequences)
-			.temperature(0.7)
-			.topP(0.9)
-			.tools(tools)
-			.toolChoice(toolChoice)
-			.user("test-user")
-			.parallelToolCalls(false)
-			.store(true)
-			.metadata(metadata)
-			.reasoningEffort("low")
-			.internalToolExecutionEnabled(true)
-			.httpHeaders(Map.of("header1", "value1"))
-			.build();
+				.model("test-model")
+				.frequencyPenalty(0.5)
+				.logitBias(logitBias)
+				.logprobs(true)
+				.topLogprobs(5)
+				.maxTokens(100)
+				.maxCompletionTokens(50)
+				.N(2)
+				.outputModalities(outputModalities)
+				.outputAudio(outputAudio)
+				.presencePenalty(0.8)
+				.responseFormat(responseFormat)
+				.streamUsage(false)
+				.seed(12345)
+				.stop(stopSequences)
+				.temperature(0.7)
+				.topP(0.9)
+				.tools(tools)
+				.toolChoice(toolChoice)
+				.user("test-user")
+				.parallelToolCalls(false)
+				.store(true)
+				.metadata(metadata)
+				.reasoningEffort("low")
+				.internalToolExecutionEnabled(true)
+				.httpHeaders(Map.of("header1", "value1"))
+				.build();
 
 		OpenAiChatOptions copiedOptions = originalOptions.copy();
 		assertThat(copiedOptions).isNotSameAs(originalOptions).isEqualTo(originalOptions);

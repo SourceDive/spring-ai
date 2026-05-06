@@ -103,8 +103,9 @@ public class Media {
 
 	/**
 	 * Create a new Media instance.
+	 *
 	 * @param mimeType the media MIME type
-	 * @param uri the URI for the media data
+	 * @param uri      the URI for the media data
 	 */
 	public Media(MimeType mimeType, URI uri) {
 		Assert.notNull(mimeType, "MimeType must not be null");
@@ -117,6 +118,7 @@ public class Media {
 
 	/**
 	 * Create a new Media instance.
+	 *
 	 * @param mimeType the media MIME type
 	 * @param resource the media resource
 	 */
@@ -129,14 +131,14 @@ public class Media {
 			this.id = null;
 			this.data = bytes;
 			this.name = generateDefaultName(mimeType);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Creates a new Media builder.
+	 *
 	 * @return a new Media builder instance
 	 */
 	public static Builder builder() {
@@ -145,9 +147,10 @@ public class Media {
 
 	/**
 	 * Create a new Media instance.
+	 *
 	 * @param mimeType the media MIME type
-	 * @param data the media data
-	 * @param id the media id
+	 * @param data     the media data
+	 * @param id       the media id
 	 */
 	private Media(MimeType mimeType, Object data, @Nullable String id, @Nullable String name) {
 		Assert.notNull(mimeType, "MimeType must not be null");
@@ -164,6 +167,7 @@ public class Media {
 
 	/**
 	 * Get the media MIME type
+	 *
 	 * @return the media MIME type
 	 */
 	public MimeType getMimeType() {
@@ -172,6 +176,7 @@ public class Media {
 
 	/**
 	 * Get the media data object
+	 *
 	 * @return a java.net.URI.toString() or a byte[]
 	 */
 	public Object getData() {
@@ -180,19 +185,20 @@ public class Media {
 
 	/**
 	 * Get the media data as a byte array
+	 *
 	 * @return the media data as a byte array
 	 */
 	public byte[] getDataAsByteArray() {
 		if (this.data instanceof byte[]) {
 			return (byte[]) this.data;
-		}
-		else {
+		} else {
 			throw new IllegalStateException("Media data is not a byte[]");
 		}
 	}
 
 	/**
 	 * Get the media id
+	 *
 	 * @return the media id
 	 */
 	@Nullable
@@ -222,6 +228,7 @@ public class Media {
 
 		/**
 		 * Sets the MIME type for the media object.
+		 *
 		 * @param mimeType the media MIME type, must not be null
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if mimeType is null
@@ -234,17 +241,17 @@ public class Media {
 
 		/**
 		 * Sets the media data from a Resource.
+		 *
 		 * @param resource the media resource, must not be null
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if resource is null or if reading the resource
-		 * content fails
+		 *                                  content fails
 		 */
 		public Builder data(Resource resource) {
 			Assert.notNull(resource, "Data must not be null");
 			try {
 				this.data = resource.getContentAsByteArray();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
 			return this;
@@ -252,6 +259,7 @@ public class Media {
 
 		/**
 		 * Sets the media data from any Object.
+		 *
 		 * @param data the media data object, must not be null
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if data is null
@@ -264,6 +272,7 @@ public class Media {
 
 		/**
 		 * Sets the media data from a URI.
+		 *
 		 * @param uri the media URI, must not be null
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if URI is null
@@ -277,6 +286,7 @@ public class Media {
 		/**
 		 * Sets the ID for the media object. The ID is typically assigned by AI models
 		 * when they return a reference to previously provided media content.
+		 *
 		 * @param id the media identifier
 		 * @return the builder instance
 		 */
@@ -301,6 +311,7 @@ public class Media {
 		 * <li>Parentheses
 		 * <li>Square brackets
 		 * </ul>
+		 *
 		 * @param name the media name
 		 * @return the builder instance
 		 */
@@ -311,6 +322,7 @@ public class Media {
 
 		/**
 		 * Builds a new Media instance with the configured properties.
+		 *
 		 * @return a new Media instance
 		 * @throws IllegalArgumentException if mimeType or data are null
 		 */
@@ -348,7 +360,7 @@ public class Media {
 		 * {@code application/vnd.openxmlformats-officedocument.wordprocessingml.document}.
 		 */
 		public static final MimeType DOC_DOCX = MimeType
-			.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+				.valueOf("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
 		/**
 		 * Public constant mime type for {@code application/vnd.ms-excel}.
@@ -360,7 +372,7 @@ public class Media {
 		 * {@code application/vnd.openxmlformats-officedocument.spreadsheetml.sheet}.
 		 */
 		public static final MimeType DOC_XLSX = MimeType
-			.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+				.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
 		/**
 		 * Public constant mime type for {@code text/html}.

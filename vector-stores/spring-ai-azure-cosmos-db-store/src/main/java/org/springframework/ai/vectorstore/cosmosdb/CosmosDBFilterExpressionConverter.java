@@ -46,6 +46,7 @@ class CosmosDBFilterExpressionConverter extends AbstractFilterExpressionConverte
 
 	/**
 	 * Gets the metadata field from the Cosmos DB document.
+	 *
 	 * @param name The name of the metadata field.
 	 * @return The name of the metadata field as it should appear in the query.
 	 */
@@ -60,8 +61,7 @@ class CosmosDBFilterExpressionConverter extends AbstractFilterExpressionConverte
 		Optional<String> metadataField = getMetadataField(keyName);
 		if (metadataField.isPresent()) {
 			context.append("c.metadata." + metadataField.get());
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(String.format("No metadata field %s has been configured", keyName));
 		}
 	}
@@ -71,8 +71,7 @@ class CosmosDBFilterExpressionConverter extends AbstractFilterExpressionConverte
 		// Handling AND/OR
 		if (AND.equals(expression.type()) || OR.equals(expression.type())) {
 			doCompoundExpressionType(expression, context);
-		}
-		else {
+		} else {
 			doSingleExpressionType(expression, context);
 		}
 	}

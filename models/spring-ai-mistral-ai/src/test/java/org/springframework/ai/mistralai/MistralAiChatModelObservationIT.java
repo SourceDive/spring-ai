@@ -69,15 +69,15 @@ public class MistralAiChatModelObservationIT {
 	@Test
 	void observationForChatOperation() {
 		var options = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.SMALL.getValue())
-			.maxTokens(2048)
-			.stop(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topP(1.0)
-			.presencePenalty(0.0)
-			.frequencyPenalty(0.0)
-			.n(2)
-			.build();
+				.model(MistralAiApi.ChatModel.SMALL.getValue())
+				.maxTokens(2048)
+				.stop(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topP(1.0)
+				.presencePenalty(0.0)
+				.frequencyPenalty(0.0)
+				.n(2)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -93,15 +93,15 @@ public class MistralAiChatModelObservationIT {
 	@Test
 	void observationForStreamingChatOperation() {
 		var options = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.SMALL.getValue())
-			.maxTokens(2048)
-			.stop(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topP(1.0)
-			.presencePenalty(0.0)
-			.frequencyPenalty(0.0)
-			.n(2)
-			.build();
+				.model(MistralAiApi.ChatModel.SMALL.getValue())
+				.maxTokens(2048)
+				.stop(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topP(1.0)
+				.presencePenalty(0.0)
+				.frequencyPenalty(0.0)
+				.n(2)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -112,9 +112,9 @@ public class MistralAiChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(10);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -127,47 +127,46 @@ public class MistralAiChatModelObservationIT {
 
 	private void validate(ChatResponseMetadata responseMetadata) {
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("chat " + MistralAiApi.ChatModel.SMALL.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.MISTRAL_AI.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					MistralAiApi.ChatModel.SMALL.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
-					StringUtils.hasText(responseMetadata.getModel()) ? responseMetadata.getModel()
-							: KeyValue.NONE_VALUE)
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(), "0.0")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(), "0.0")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_TOP_K.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			.matches(contextView -> {
-				var keyValue = contextView.getHighCardinalityKeyValues()
-					.stream()
-					.filter(tag -> tag.getKey().equals(HighCardinalityKeyNames.RESPONSE_ID.asString()))
-					.findFirst();
-				if (StringUtils.hasText(responseMetadata.getId())) {
-					return keyValue.isPresent() && keyValue.get().getValue().equals(responseMetadata.getId());
-				}
-				else {
-					return keyValue.isEmpty();
-				}
-			})
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(), "[\"STOP\"]")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("chat " + MistralAiApi.ChatModel.SMALL.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.MISTRAL_AI.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						MistralAiApi.ChatModel.SMALL.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
+						StringUtils.hasText(responseMetadata.getModel()) ? responseMetadata.getModel()
+								: KeyValue.NONE_VALUE)
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(), "0.0")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(), "0.0")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_TOP_K.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				.matches(contextView -> {
+					var keyValue = contextView.getHighCardinalityKeyValues()
+							.stream()
+							.filter(tag -> tag.getKey().equals(HighCardinalityKeyNames.RESPONSE_ID.asString()))
+							.findFirst();
+					if (StringUtils.hasText(responseMetadata.getId())) {
+						return keyValue.isPresent() && keyValue.get().getValue().equals(responseMetadata.getId());
+					} else {
+						return keyValue.isEmpty();
+					}
+				})
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(), "[\"STOP\"]")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -185,13 +184,13 @@ public class MistralAiChatModelObservationIT {
 
 		@Bean
 		public MistralAiChatModel openAiChatModel(MistralAiApi mistralAiApi,
-				TestObservationRegistry observationRegistry) {
+		                                          TestObservationRegistry observationRegistry) {
 			return MistralAiChatModel.builder()
-				.mistralAiApi(mistralAiApi)
-				.defaultOptions(MistralAiChatOptions.builder().build())
-				.retryTemplate(RetryTemplate.defaultInstance())
-				.observationRegistry(observationRegistry)
-				.build();
+					.mistralAiApi(mistralAiApi)
+					.defaultOptions(MistralAiChatOptions.builder().build())
+					.retryTemplate(RetryTemplate.defaultInstance())
+					.observationRegistry(observationRegistry)
+					.build();
 		}
 
 	}

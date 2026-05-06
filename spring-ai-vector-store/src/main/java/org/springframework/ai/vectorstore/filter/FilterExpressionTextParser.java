@@ -42,7 +42,7 @@ import org.springframework.util.Assert;
  *
  * Parse a textual, vector-store agnostic, filter expression language into
  * {@link Filter.Expression}.
- *
+ * <p>
  * The vector-store agnostic, filter expression language is defined by a formal ANTLR4
  * grammar (Filters.g4). The language looks and feels like a subset of the well known SQL
  * WHERE filter expressions. For example, you can use the parser like this:
@@ -148,8 +148,7 @@ public class FilterExpressionTextParser {
 			var filterExpression = filterExpressionVisitor.castToExpression(operand);
 			this.cache.putIfAbsent(textFilterExpression, filterExpression);
 			return filterExpression;
-		}
-		catch (ParseCancellationException e) {
+		} catch (ParseCancellationException e) {
 			var msg = String.join("", this.errorListener.errorMessages);
 			var rootCause = NestedExceptionUtils.getRootCause(e);
 			throw new FilterExpressionParseException(msg, rootCause);
@@ -160,7 +159,9 @@ public class FilterExpressionTextParser {
 		this.cache.clear();
 	}
 
-	/** For testing only */
+	/**
+	 * For testing only
+	 */
 	Map<String, Filter.Expression> getCache() {
 		return this.cache;
 	}
@@ -270,8 +271,7 @@ public class FilterExpressionTextParser {
 			if (expression instanceof Filter.Group group) {
 				// Remove the top-level grouping.
 				return group.content();
-			}
-			else if (expression instanceof Filter.Expression exp) {
+			} else if (expression instanceof Filter.Expression exp) {
 				return exp;
 			}
 			throw new RuntimeException("Invalid expression: " + expression);
@@ -287,7 +287,7 @@ public class FilterExpressionTextParser {
 
 		@Override
 		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
-				String msg, RecognitionException e) {
+		                        String msg, RecognitionException e) {
 
 			String sourceName = recognizer.getInputStream().getSourceName();
 

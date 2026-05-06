@@ -57,14 +57,14 @@ public class ReReadingAdvisor implements BaseAdvisor {
 	@Override
 	public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
 		String augmentedUserText = PromptTemplate.builder()
-			.template(this.re2AdviseTemplate)
-			.variables(Map.of("re2_input_query", chatClientRequest.prompt().getUserMessage().getText()))
-			.build()
-			.render();
+				.template(this.re2AdviseTemplate)
+				.variables(Map.of("re2_input_query", chatClientRequest.prompt().getUserMessage().getText()))
+				.build()
+				.render();
 
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
-			.build();
+				.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
+				.build();
 	}
 
 	@Override

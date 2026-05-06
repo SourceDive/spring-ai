@@ -66,7 +66,7 @@ public class PineconeVectorStoreObservationIT {
 	private static final String CUSTOM_CONTENT_FIELD_NAME = "article";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(Config.class);
+			.withUserConfiguration(Config.class);
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -77,8 +77,7 @@ public class PineconeVectorStoreObservationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -102,73 +101,73 @@ public class PineconeVectorStoreObservationIT {
 			vectorStore.add(this.documents);
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.PINECONE.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.PINECONE.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), PINECONE_INDEX_NAME)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "article")
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.PINECONE.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.PINECONE.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), PINECONE_INDEX_NAME)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "article")
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			Awaitility.await()
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build()),
-						hasSize(1));
+					.until(() -> vectorStore
+									.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build()),
+							hasSize(1));
 
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
 
 			assertThat(results).isNotEmpty();
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.PINECONE.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.PINECONE.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.PINECONE.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.PINECONE.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
 
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
-						"What is Great Depression")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), PINECONE_INDEX_NAME)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "article")
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
-						"0.0")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
+							"What is Great Depression")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), PINECONE_INDEX_NAME)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "article")
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
+							"0.0")
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			// Remove all documents from the store
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
+							hasSize(0));
 
 		});
 	}
@@ -185,14 +184,14 @@ public class PineconeVectorStoreObservationIT {
 		@Bean
 		public VectorStore vectorStore(EmbeddingModel embeddingModel, ObservationRegistry observationRegistry) {
 			return PineconeVectorStore.builder(embeddingModel)
-				.apiKey(System.getenv("PINECONE_API_KEY"))
-				.indexName(PINECONE_INDEX_NAME)
-				.namespace(PINECONE_NAMESPACE)
-				.contentFieldName(CUSTOM_CONTENT_FIELD_NAME)
-				.observationRegistry(observationRegistry)
-				.customObservationConvention(null)
-				.batchingStrategy(new TokenCountBatchingStrategy())
-				.build();
+					.apiKey(System.getenv("PINECONE_API_KEY"))
+					.indexName(PINECONE_INDEX_NAME)
+					.namespace(PINECONE_NAMESPACE)
+					.contentFieldName(CUSTOM_CONTENT_FIELD_NAME)
+					.observationRegistry(observationRegistry)
+					.customObservationConvention(null)
+					.batchingStrategy(new TokenCountBatchingStrategy())
+					.build();
 		}
 
 		@Bean

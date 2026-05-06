@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  *
  * @author Phillip Webb
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ExtendWith(DisabledIfProcessUnavailableCondition.class)

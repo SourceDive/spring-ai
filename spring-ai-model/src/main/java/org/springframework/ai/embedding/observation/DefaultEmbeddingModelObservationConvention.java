@@ -33,10 +33,10 @@ public class DefaultEmbeddingModelObservationConvention implements EmbeddingMode
 	public static final String DEFAULT_NAME = "gen_ai.client.operation";
 
 	private static final KeyValue REQUEST_MODEL_NONE = KeyValue
-		.of(EmbeddingModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL, KeyValue.NONE_VALUE);
+			.of(EmbeddingModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL, KeyValue.NONE_VALUE);
 
 	private static final KeyValue RESPONSE_MODEL_NONE = KeyValue
-		.of(EmbeddingModelObservationDocumentation.LowCardinalityKeyNames.RESPONSE_MODEL, KeyValue.NONE_VALUE);
+			.of(EmbeddingModelObservationDocumentation.LowCardinalityKeyNames.RESPONSE_MODEL, KeyValue.NONE_VALUE);
 
 	@Override
 	public String getName() {
@@ -101,8 +101,8 @@ public class DefaultEmbeddingModelObservationConvention implements EmbeddingMode
 	protected KeyValues requestEmbeddingDimension(KeyValues keyValues, EmbeddingModelObservationContext context) {
 		if (context.getRequest().getOptions().getDimensions() != null) {
 			return keyValues
-				.and(EmbeddingModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS
-					.asString(), String.valueOf(context.getRequest().getOptions().getDimensions()));
+					.and(EmbeddingModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS
+							.asString(), String.valueOf(context.getRequest().getOptions().getDimensions()));
 		}
 		return keyValues;
 	}

@@ -22,10 +22,10 @@ import org.springframework.lang.Nullable;
  * Represents a {@link org.springframework.ai.model.Model} response that includes the
  * entire response along withe specified response entity type.
  *
- * @param <R> the entire response type.
- * @param <E> the converted entity type.
+ * @param <R>      the entire response type.
+ * @param <E>      the converted entity type.
  * @param response the entire response object.
- * @param entity the converted entity object.
+ * @param entity   the converted entity object.
  * @author Christian Tzolov
  * @author Thomas Vitale
  * @since 1.0.0

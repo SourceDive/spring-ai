@@ -82,20 +82,20 @@ public class OpenAiTranscriptionModelWithTranscriptionResponseMetadataTests {
 		assertThat(response).isNotNull();
 
 		OpenAiAudioTranscriptionResponseMetadata transcriptionResponseMetadata = (OpenAiAudioTranscriptionResponseMetadata) response
-			.getMetadata();
+				.getMetadata();
 
 		assertThat(transcriptionResponseMetadata).isNotNull();
 
 		RateLimit rateLimit = transcriptionResponseMetadata.getRateLimit();
 
 		Duration expectedRequestsReset = Duration.ofDays(2L)
-			.plus(Duration.ofHours(16L))
-			.plus(Duration.ofMinutes(15))
-			.plus(Duration.ofSeconds(29L));
+				.plus(Duration.ofHours(16L))
+				.plus(Duration.ofMinutes(15))
+				.plus(Duration.ofSeconds(29L));
 
 		Duration expectedTokensReset = Duration.ofHours(27L)
-			.plus(Duration.ofSeconds(55L))
-			.plus(Duration.ofMillis(451L));
+				.plus(Duration.ofSeconds(55L))
+				.plus(Duration.ofMillis(451L));
 
 		assertThat(rateLimit).isNotNull();
 		assertThat(rateLimit.getRequestsLimit()).isEqualTo(4000L);
@@ -122,9 +122,9 @@ public class OpenAiTranscriptionModelWithTranscriptionResponseMetadataTests {
 		httpHeaders.set(OpenAiApiResponseHeaders.TOKENS_RESET_HEADER.getName(), "27h55s451ms");
 
 		this.server.expect(requestTo(StringContains.containsString("/v1/audio/transcriptions")))
-			.andExpect(method(HttpMethod.POST))
-			.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
-			.andRespond(withSuccess(getJson(), MediaType.APPLICATION_JSON).headers(httpHeaders));
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
+				.andRespond(withSuccess(getJson(), MediaType.APPLICATION_JSON).headers(httpHeaders));
 
 	}
 

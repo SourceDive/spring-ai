@@ -30,6 +30,7 @@ public interface AzureOpenAIClientBuilderCustomizer {
 
 	/**
 	 * Customize the {@link OpenAIClientBuilder}.
+	 *
 	 * @param clientBuilder the {@link OpenAIClientBuilder} to customize
 	 */
 	void customize(OpenAIClientBuilder clientBuilder);

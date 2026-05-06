@@ -168,8 +168,8 @@ class JsoupDocumentReaderTests {
 
 		JsoupDocumentReader reader = new JsoupDocumentReader(byteArrayResource,
 				JsoupDocumentReaderConfig.builder()
-					.selector("div") // Select the div
-					.build());
+						.selector("div") // Select the div
+						.build());
 
 		List<Document> documents = reader.get();
 		assertThat(documents).hasSize(1);

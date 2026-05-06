@@ -79,6 +79,7 @@ public class OpenAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Constructor for the OpenAiEmbeddingModel class.
+	 *
 	 * @param openAiApi The OpenAiApi instance to use for making API requests.
 	 */
 	public OpenAiEmbeddingModel(OpenAiApi openAiApi) {
@@ -87,7 +88,8 @@ public class OpenAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Initializes a new instance of the OpenAiEmbeddingModel class.
-	 * @param openAiApi The OpenAiApi instance to use for making API requests.
+	 *
+	 * @param openAiApi    The OpenAiApi instance to use for making API requests.
 	 * @param metadataMode The mode for generating metadata.
 	 */
 	public OpenAiEmbeddingModel(OpenAiApi openAiApi, MetadataMode metadataMode) {
@@ -97,37 +99,40 @@ public class OpenAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Initializes a new instance of the OpenAiEmbeddingModel class.
-	 * @param openAiApi The OpenAiApi instance to use for making API requests.
-	 * @param metadataMode The mode for generating metadata.
+	 *
+	 * @param openAiApi              The OpenAiApi instance to use for making API requests.
+	 * @param metadataMode           The mode for generating metadata.
 	 * @param openAiEmbeddingOptions The options for OpenAi embedding.
 	 */
 	public OpenAiEmbeddingModel(OpenAiApi openAiApi, MetadataMode metadataMode,
-			OpenAiEmbeddingOptions openAiEmbeddingOptions) {
+	                            OpenAiEmbeddingOptions openAiEmbeddingOptions) {
 		this(openAiApi, metadataMode, openAiEmbeddingOptions, RetryUtils.DEFAULT_RETRY_TEMPLATE);
 	}
 
 	/**
 	 * Initializes a new instance of the OpenAiEmbeddingModel class.
-	 * @param openAiApi - The OpenAiApi instance to use for making API requests.
-	 * @param metadataMode - The mode for generating metadata.
-	 * @param options - The options for OpenAI embedding.
+	 *
+	 * @param openAiApi     - The OpenAiApi instance to use for making API requests.
+	 * @param metadataMode  - The mode for generating metadata.
+	 * @param options       - The options for OpenAI embedding.
 	 * @param retryTemplate - The RetryTemplate for retrying failed API requests.
 	 */
 	public OpenAiEmbeddingModel(OpenAiApi openAiApi, MetadataMode metadataMode, OpenAiEmbeddingOptions options,
-			RetryTemplate retryTemplate) {
+	                            RetryTemplate retryTemplate) {
 		this(openAiApi, metadataMode, options, retryTemplate, ObservationRegistry.NOOP);
 	}
 
 	/**
 	 * Initializes a new instance of the OpenAiEmbeddingModel class.
-	 * @param openAiApi - The OpenAiApi instance to use for making API requests.
-	 * @param metadataMode - The mode for generating metadata.
-	 * @param options - The options for OpenAI embedding.
-	 * @param retryTemplate - The RetryTemplate for retrying failed API requests.
+	 *
+	 * @param openAiApi           - The OpenAiApi instance to use for making API requests.
+	 * @param metadataMode        - The mode for generating metadata.
+	 * @param options             - The options for OpenAI embedding.
+	 * @param retryTemplate       - The RetryTemplate for retrying failed API requests.
 	 * @param observationRegistry - The ObservationRegistry used for instrumentation.
 	 */
 	public OpenAiEmbeddingModel(OpenAiApi openAiApi, MetadataMode metadataMode, OpenAiEmbeddingOptions options,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	                            RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		Assert.notNull(openAiApi, "openAiApi must not be null");
 		Assert.notNull(metadataMode, "metadataMode must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -156,37 +161,37 @@ public class OpenAiEmbeddingModel extends AbstractEmbeddingModel {
 		OpenAiApi.EmbeddingRequest<List<String>> apiRequest = createRequest(embeddingRequest);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(OpenAiApiConstants.PROVIDER_NAME)
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider(OpenAiApiConstants.PROVIDER_NAME)
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				EmbeddingList<OpenAiApi.Embedding> apiEmbeddingResponse = this.retryTemplate
-					.execute(ctx -> this.openAiApi.embeddings(apiRequest).getBody());
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					EmbeddingList<OpenAiApi.Embedding> apiEmbeddingResponse = this.retryTemplate
+							.execute(ctx -> this.openAiApi.embeddings(apiRequest).getBody());
 
-				if (apiEmbeddingResponse == null) {
-					logger.warn("No embeddings returned for request: {}", request);
-					return new EmbeddingResponse(List.of());
-				}
+					if (apiEmbeddingResponse == null) {
+						logger.warn("No embeddings returned for request: {}", request);
+						return new EmbeddingResponse(List.of());
+					}
 
-				OpenAiApi.Usage usage = apiEmbeddingResponse.usage();
-				Usage embeddingResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
-				var metadata = new EmbeddingResponseMetadata(apiEmbeddingResponse.model(), embeddingResponseUsage);
+					OpenAiApi.Usage usage = apiEmbeddingResponse.usage();
+					Usage embeddingResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
+					var metadata = new EmbeddingResponseMetadata(apiEmbeddingResponse.model(), embeddingResponseUsage);
 
-				List<Embedding> embeddings = apiEmbeddingResponse.data()
-					.stream()
-					.map(e -> new Embedding(e.embedding(), e.index()))
-					.toList();
+					List<Embedding> embeddings = apiEmbeddingResponse.data()
+							.stream()
+							.map(e -> new Embedding(e.embedding(), e.index()))
+							.toList();
 
-				EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, metadata);
+					EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, metadata);
 
-				observationContext.setResponse(embeddingResponse);
+					observationContext.setResponse(embeddingResponse);
 
-				return embeddingResponse;
-			});
+					return embeddingResponse;
+				});
 	}
 
 	private DefaultUsage getDefaultUsage(OpenAiApi.Usage usage) {
@@ -208,22 +213,23 @@ public class OpenAiEmbeddingModel extends AbstractEmbeddingModel {
 		}
 
 		OpenAiEmbeddingOptions requestOptions = runtimeOptions == null ? this.defaultOptions : OpenAiEmbeddingOptions
-			.builder()
-			// Handle portable embedding options
-			.model(ModelOptionsUtils.mergeOption(runtimeOptions.getModel(), this.defaultOptions.getModel()))
-			.dimensions(
-					ModelOptionsUtils.mergeOption(runtimeOptions.getDimensions(), this.defaultOptions.getDimensions()))
-			// Handle OpenAI specific embedding options
-			.encodingFormat(ModelOptionsUtils.mergeOption(runtimeOptions.getEncodingFormat(),
-					this.defaultOptions.getEncodingFormat()))
-			.user(ModelOptionsUtils.mergeOption(runtimeOptions.getUser(), this.defaultOptions.getUser()))
-			.build();
+																							   .builder()
+				// Handle portable embedding options
+																							   .model(ModelOptionsUtils.mergeOption(runtimeOptions.getModel(), this.defaultOptions.getModel()))
+																							   .dimensions(
+																									   ModelOptionsUtils.mergeOption(runtimeOptions.getDimensions(), this.defaultOptions.getDimensions()))
+				// Handle OpenAI specific embedding options
+																							   .encodingFormat(ModelOptionsUtils.mergeOption(runtimeOptions.getEncodingFormat(),
+																									   this.defaultOptions.getEncodingFormat()))
+																							   .user(ModelOptionsUtils.mergeOption(runtimeOptions.getUser(), this.defaultOptions.getUser()))
+																							   .build();
 
 		return new EmbeddingRequest(embeddingRequest.getInstructions(), requestOptions);
 	}
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(EmbeddingModelObservationConvention observationConvention) {

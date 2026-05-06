@@ -56,8 +56,8 @@ public class TypesenseVectorStoreAutoConfigurationIT {
 	private static final TypesenseContainer typesense = new TypesenseContainer("typesense/typesense:26.0");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(TypesenseVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withConfiguration(AutoConfigurations.of(TypesenseVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	List<Document> documents = List.of(
 			new Document(ResourceUtils.getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -67,47 +67,47 @@ public class TypesenseVectorStoreAutoConfigurationIT {
 	@Test
 	public void addAndSearch() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.typesense.embeddingDimension=384",
-					"spring.ai.vectorstore.typesense.collectionName=myTestCollection",
-					"spring.ai.vectorstore.typesense.initialize-schema=true",
-					"spring.ai.vectorstore.typesense.client.apiKey=" + typesense.getApiKey(),
-					"spring.ai.vectorstore.typesense.client.protocol=http",
-					"spring.ai.vectorstore.typesense.client.host=" + typesense.getHost(),
-					"spring.ai.vectorstore.typesense.client.port=" + typesense.getHttpPort())
-			.run(context -> {
-				VectorStore vectorStore = context.getBean(VectorStore.class);
-				TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
+				.withPropertyValues("spring.ai.vectorstore.typesense.embeddingDimension=384",
+						"spring.ai.vectorstore.typesense.collectionName=myTestCollection",
+						"spring.ai.vectorstore.typesense.initialize-schema=true",
+						"spring.ai.vectorstore.typesense.client.apiKey=" + typesense.getApiKey(),
+						"spring.ai.vectorstore.typesense.client.protocol=http",
+						"spring.ai.vectorstore.typesense.client.host=" + typesense.getHost(),
+						"spring.ai.vectorstore.typesense.client.port=" + typesense.getHttpPort())
+				.run(context -> {
+					VectorStore vectorStore = context.getBean(VectorStore.class);
+					TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
 
-				vectorStore.add(this.documents);
+					vectorStore.add(this.documents);
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.TYPESENSE,
-						VectorStoreObservationContext.Operation.ADD);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.TYPESENSE,
+							VectorStoreObservationContext.Operation.ADD);
+					observationRegistry.clear();
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
-				assertThat(resultDoc.getText()).contains(
-						"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
-				assertThat(resultDoc.getMetadata()).hasSize(2);
-				assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
+					assertThat(resultDoc.getText()).contains(
+							"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+					assertThat(resultDoc.getMetadata()).hasSize(2);
+					assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.TYPESENSE,
-						VectorStoreObservationContext.Operation.QUERY);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.TYPESENSE,
+							VectorStoreObservationContext.Operation.QUERY);
+					observationRegistry.clear();
 
-				vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
+					vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.TYPESENSE,
-						VectorStoreObservationContext.Operation.DELETE);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.TYPESENSE,
+							VectorStoreObservationContext.Operation.DELETE);
+					observationRegistry.clear();
 
-				results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
-				assertThat(results).hasSize(0);
-			});
+					results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					assertThat(results).hasSize(0);
+				});
 	}
 
 	@Test

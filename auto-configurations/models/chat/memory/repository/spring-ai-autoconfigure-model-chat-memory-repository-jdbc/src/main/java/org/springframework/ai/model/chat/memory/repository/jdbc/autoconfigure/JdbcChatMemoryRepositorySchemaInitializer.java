@@ -39,7 +39,7 @@ class JdbcChatMemoryRepositorySchemaInitializer extends DataSourceScriptDatabase
 	}
 
 	static DatabaseInitializationSettings getSettings(DataSource dataSource,
-			JdbcChatMemoryRepositoryProperties properties) {
+	                                                  JdbcChatMemoryRepositoryProperties properties) {
 		var settings = new DatabaseInitializationSettings();
 		settings.setSchemaLocations(resolveSchemaLocations(dataSource, properties));
 		settings.setMode(properties.getInitializeSchema());
@@ -48,7 +48,7 @@ class JdbcChatMemoryRepositorySchemaInitializer extends DataSourceScriptDatabase
 	}
 
 	private static List<String> resolveSchemaLocations(DataSource dataSource,
-			JdbcChatMemoryRepositoryProperties properties) {
+	                                                   JdbcChatMemoryRepositoryProperties properties) {
 		PlatformPlaceholderDatabaseDriverResolver platformResolver = new PlatformPlaceholderDatabaseDriverResolver();
 		if (StringUtils.hasText(properties.getPlatform())) {
 			return platformResolver.resolveAll(properties.getPlatform(), properties.getSchema());

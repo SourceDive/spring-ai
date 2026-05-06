@@ -24,6 +24,7 @@ public interface OpenAiAudioSpeechMetadata extends ResultMetadata {
 
 	/**
 	 * Factory method used to construct a new {@link OpenAiAudioSpeechMetadata}
+	 *
 	 * @return a new {@link OpenAiAudioSpeechMetadata}
 	 */
 	static OpenAiAudioSpeechMetadata create() {

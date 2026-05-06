@@ -62,9 +62,9 @@ public class OpenAiTestConfiguration {
 	@Bean
 	public OpenAiChatModel openAiChatModel(OpenAiApi api) {
 		return OpenAiChatModel.builder()
-			.openAiApi(api)
-			.defaultOptions(OpenAiChatOptions.builder().model(ChatModel.GPT_4_O_MINI).build())
-			.build();
+				.openAiApi(api)
+				.defaultOptions(OpenAiChatOptions.builder().model(ChatModel.GPT_4_O_MINI).build())
+				.build();
 	}
 
 	@Bean

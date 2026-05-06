@@ -25,6 +25,7 @@ public enum MessageType {
 	/**
 	 * A {@link Message} of type {@literal user}, having the user role and originating
 	 * from an end-user or developer.
+	 *
 	 * @see UserMessage
 	 */
 	USER("user"),
@@ -32,6 +33,7 @@ public enum MessageType {
 	/**
 	 * A {@link Message} of type {@literal assistant} passed in subsequent input
 	 * {@link Message Messages} as the {@link Message} generated in response to the user.
+	 *
 	 * @see AssistantMessage
 	 */
 	ASSISTANT("assistant"),
@@ -40,6 +42,7 @@ public enum MessageType {
 	 * A {@link Message} of type {@literal system} passed as input {@link Message
 	 * Messages} containing high-level instructions for the conversation, such as behave
 	 * like a certain character or provide answers in a specific format.
+	 *
 	 * @see SystemMessage
 	 */
 	SYSTEM("system"),
@@ -47,6 +50,7 @@ public enum MessageType {
 	/**
 	 * A {@link Message} of type {@literal function} passed as input {@link Message
 	 * Messages} with function content in a chat application.
+	 *
 	 * @see ToolResponseMessage
 	 */
 	TOOL("tool");

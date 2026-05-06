@@ -52,12 +52,12 @@ class OllamaChatModelMultimodalIT extends BaseOllamaIT {
 		var imageData = new ClassPathResource("/norway.webp");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see in this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see in this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		assertThatThrownBy(() -> this.chatModel.call(new Prompt(List.of(userMessage))))
-			.isInstanceOf(RuntimeException.class);
+				.isInstanceOf(RuntimeException.class);
 	}
 
 	@Test
@@ -65,9 +65,9 @@ class OllamaChatModelMultimodalIT extends BaseOllamaIT {
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see in this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see in this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage)));
 
@@ -87,9 +87,9 @@ class OllamaChatModelMultimodalIT extends BaseOllamaIT {
 		@Bean
 		public OllamaChatModel ollamaChat(OllamaApi ollamaApi) {
 			return OllamaChatModel.builder()
-				.ollamaApi(ollamaApi)
-				.defaultOptions(OllamaOptions.builder().model(MODEL).temperature(0.9).build())
-				.build();
+					.ollamaApi(ollamaApi)
+					.defaultOptions(OllamaOptions.builder().model(MODEL).temperature(0.9).build())
+					.build();
 		}
 
 	}

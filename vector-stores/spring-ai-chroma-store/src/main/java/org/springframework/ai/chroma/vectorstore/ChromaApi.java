@@ -71,14 +71,15 @@ public class ChromaApi {
 	public ChromaApi(String baseUrl, RestClient.Builder restClientBuilder, ObjectMapper objectMapper) {
 
 		this.restClient = restClientBuilder.baseUrl(baseUrl)
-			.defaultHeaders(h -> h.setContentType(MediaType.APPLICATION_JSON))
-			.build();
+				.defaultHeaders(h -> h.setContentType(MediaType.APPLICATION_JSON))
+				.build();
 		this.objectMapper = objectMapper;
 	}
 
 	/**
 	 * Configure access to ChromaDB secured with static API Token Authentication:
 	 * https://docs.trychroma.com/usage-guide#static-api-token-authentication
+	 *
 	 * @param keyToken Chroma static API Token Authentication. (Optional)
 	 */
 	public ChromaApi withKeyToken(String keyToken) {
@@ -89,13 +90,14 @@ public class ChromaApi {
 	/**
 	 * Configure access to ChromaDB secured with Basic Authentication:
 	 * https://docs.trychroma.com/usage-guide#basic-authentication
+	 *
 	 * @param username Credentials username.
 	 * @param password Credentials password.
 	 */
 	public ChromaApi withBasicAuthCredentials(String username, String password) {
 		this.restClient = this.restClient.mutate()
-			.requestInterceptor(new BasicAuthenticationInterceptor(username, password))
-			.build();
+				.requestInterceptor(new BasicAuthenticationInterceptor(username, password))
+				.build();
 		return this;
 	}
 
@@ -116,11 +118,11 @@ public class ChromaApi {
 	public void createTenant(String tenantName) {
 
 		this.restClient.post()
-			.uri("/api/v2/tenants")
-			.headers(this::httpHeaders)
-			.body(new CreateTenantRequest(tenantName))
-			.retrieve()
-			.toBodilessEntity();
+				.uri("/api/v2/tenants")
+				.headers(this::httpHeaders)
+				.body(new CreateTenantRequest(tenantName))
+				.retrieve()
+				.toBodilessEntity();
 	}
 
 	@Nullable
@@ -128,13 +130,12 @@ public class ChromaApi {
 
 		try {
 			return this.restClient.get()
-				.uri("/api/v2/tenants/{tenant_name}", tenantName)
-				.headers(this::httpHeaders)
-				.retrieve()
-				.toEntity(Tenant.class)
-				.getBody();
-		}
-		catch (HttpServerErrorException | HttpClientErrorException e) {
+					.uri("/api/v2/tenants/{tenant_name}", tenantName)
+					.headers(this::httpHeaders)
+					.retrieve()
+					.toEntity(Tenant.class)
+					.getBody();
+		} catch (HttpServerErrorException | HttpClientErrorException e) {
 			String msg = this.getErrorMessage(e);
 			if (String.format("Tenant [%s] not found", tenantName).equals(msg)) {
 				return null;
@@ -146,11 +147,11 @@ public class ChromaApi {
 	public void createDatabase(String tenantName, String databaseName) {
 
 		this.restClient.post()
-			.uri("/api/v2/tenants/{tenant_name}/databases", tenantName)
-			.headers(this::httpHeaders)
-			.body(new CreateDatabaseRequest(databaseName))
-			.retrieve()
-			.toBodilessEntity();
+				.uri("/api/v2/tenants/{tenant_name}/databases", tenantName)
+				.headers(this::httpHeaders)
+				.body(new CreateDatabaseRequest(databaseName))
+				.retrieve()
+				.toBodilessEntity();
 	}
 
 	@Nullable
@@ -158,13 +159,12 @@ public class ChromaApi {
 
 		try {
 			return this.restClient.get()
-				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}", tenantName, databaseName)
-				.headers(this::httpHeaders)
-				.retrieve()
-				.toEntity(Database.class)
-				.getBody();
-		}
-		catch (HttpServerErrorException | HttpClientErrorException e) {
+					.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}", tenantName, databaseName)
+					.headers(this::httpHeaders)
+					.retrieve()
+					.toEntity(Database.class)
+					.getBody();
+		} catch (HttpServerErrorException | HttpClientErrorException e) {
 			String msg = this.getErrorMessage(e);
 			if (msg.startsWith(String.format("Database [%s] not found.", databaseName))) {
 				return null;
@@ -175,44 +175,46 @@ public class ChromaApi {
 
 	/**
 	 * Delete a database with the given name.
-	 * @param tenantName the name of the tenant to delete.
+	 *
+	 * @param tenantName   the name of the tenant to delete.
 	 * @param databaseName the name of the database to delete.
 	 */
 	public void deleteDatabase(String tenantName, String databaseName) {
 
 		this.restClient.delete()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}", tenantName, databaseName)
-			.headers(this::httpHeaders)
-			.retrieve()
-			.toBodilessEntity();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}", tenantName, databaseName)
+				.headers(this::httpHeaders)
+				.retrieve()
+				.toBodilessEntity();
 	}
 
 	@Nullable
 	public Collection createCollection(String tenantName, String databaseName,
-			CreateCollectionRequest createCollectionRequest) {
+	                                   CreateCollectionRequest createCollectionRequest) {
 
 		return this.restClient.post()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections", tenantName, databaseName)
-			.headers(this::httpHeaders)
-			.body(createCollectionRequest)
-			.retrieve()
-			.toEntity(Collection.class)
-			.getBody();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections", tenantName, databaseName)
+				.headers(this::httpHeaders)
+				.body(createCollectionRequest)
+				.retrieve()
+				.toEntity(Collection.class)
+				.getBody();
 	}
 
 	/**
 	 * Delete a collection with the given name.
+	 *
 	 * @param collectionName the name of the collection to delete.
 	 *
 	 */
 	public void deleteCollection(String tenantName, String databaseName, String collectionName) {
 
 		this.restClient.delete()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}", tenantName,
-					databaseName, collectionName)
-			.headers(this::httpHeaders)
-			.retrieve()
-			.toBodilessEntity();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}", tenantName,
+						databaseName, collectionName)
+				.headers(this::httpHeaders)
+				.retrieve()
+				.toBodilessEntity();
 	}
 
 	@Nullable
@@ -220,14 +222,13 @@ public class ChromaApi {
 
 		try {
 			return this.restClient.get()
-				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}",
-						tenantName, databaseName, collectionName)
-				.headers(this::httpHeaders)
-				.retrieve()
-				.toEntity(Collection.class)
-				.getBody();
-		}
-		catch (HttpServerErrorException | HttpClientErrorException e) {
+					.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}",
+							tenantName, databaseName, collectionName)
+					.headers(this::httpHeaders)
+					.retrieve()
+					.toEntity(Collection.class)
+					.getBody();
+		} catch (HttpServerErrorException | HttpClientErrorException e) {
 			String msg = this.getErrorMessage(e);
 			if (String.format("Collection [%s] does not exists", collectionName).equals(msg)) {
 				return null;
@@ -240,62 +241,62 @@ public class ChromaApi {
 	public List<Collection> listCollections(String tenantName, String databaseName) {
 
 		return this.restClient.get()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections", tenantName, databaseName)
-			.headers(this::httpHeaders)
-			.retrieve()
-			.toEntity(CollectionList.class)
-			.getBody();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections", tenantName, databaseName)
+				.headers(this::httpHeaders)
+				.retrieve()
+				.toEntity(CollectionList.class)
+				.getBody();
 	}
 
 	public void upsertEmbeddings(String tenantName, String databaseName, String collectionId,
-			AddEmbeddingsRequest embedding) {
+	                             AddEmbeddingsRequest embedding) {
 
 		this.restClient.post()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}/upsert",
-					tenantName, databaseName, collectionId)
-			.headers(this::httpHeaders)
-			.body(embedding)
-			.retrieve()
-			.toBodilessEntity();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}/upsert",
+						tenantName, databaseName, collectionId)
+				.headers(this::httpHeaders)
+				.body(embedding)
+				.retrieve()
+				.toBodilessEntity();
 	}
 
 	public int deleteEmbeddings(String tenantName, String databaseName, String collectionId,
-			DeleteEmbeddingsRequest deleteRequest) {
+	                            DeleteEmbeddingsRequest deleteRequest) {
 		return this.restClient.post()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}/delete",
-					tenantName, databaseName, collectionId)
-			.headers(this::httpHeaders)
-			.body(deleteRequest)
-			.retrieve()
-			.toEntity(String.class)
-			.getStatusCode()
-			.value();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_name}/delete",
+						tenantName, databaseName, collectionId)
+				.headers(this::httpHeaders)
+				.body(deleteRequest)
+				.retrieve()
+				.toEntity(String.class)
+				.getStatusCode()
+				.value();
 	}
 
 	@Nullable
 	public Long countEmbeddings(String tenantName, String databaseName, String collectionId) {
 
 		return this.restClient.get()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_id}/count",
-					tenantName, databaseName, collectionId)
-			.headers(this::httpHeaders)
-			.retrieve()
-			.toEntity(Long.class)
-			.getBody();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_id}/count",
+						tenantName, databaseName, collectionId)
+				.headers(this::httpHeaders)
+				.retrieve()
+				.toEntity(Long.class)
+				.getBody();
 	}
 
 	@Nullable
 	public QueryResponse queryCollection(String tenantName, String databaseName, String collectionId,
-			QueryRequest queryRequest) {
+	                                     QueryRequest queryRequest) {
 
 		return this.restClient.post()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_id}/query",
-					tenantName, databaseName, collectionId)
-			.headers(this::httpHeaders)
-			.body(queryRequest)
-			.retrieve()
-			.toEntity(QueryResponse.class)
-			.getBody();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_id}/query",
+						tenantName, databaseName, collectionId)
+				.headers(this::httpHeaders)
+				.body(queryRequest)
+				.retrieve()
+				.toEntity(QueryResponse.class)
+				.getBody();
 	}
 
 	//
@@ -303,24 +304,23 @@ public class ChromaApi {
 	//
 	@Nullable
 	public GetEmbeddingResponse getEmbeddings(String tenantName, String databaseName, String collectionId,
-			GetEmbeddingsRequest getEmbeddingsRequest) {
+	                                          GetEmbeddingsRequest getEmbeddingsRequest) {
 
 		return this.restClient.post()
-			.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_id}/get", tenantName,
-					databaseName, collectionId)
-			.headers(this::httpHeaders)
-			.body(getEmbeddingsRequest)
-			.retrieve()
-			.toEntity(GetEmbeddingResponse.class)
-			.getBody();
+				.uri("/api/v2/tenants/{tenant_name}/databases/{database_name}/collections/{collection_id}/get", tenantName,
+						databaseName, collectionId)
+				.headers(this::httpHeaders)
+				.body(getEmbeddingsRequest)
+				.retrieve()
+				.toEntity(GetEmbeddingResponse.class)
+				.getBody();
 	}
 
 	// Utils
 	public Map<String, Object> where(String text) {
 		try {
 			return this.objectMapper.readValue(text, Map.class);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -394,8 +394,8 @@ public class ChromaApi {
 	/**
 	 * Chroma embedding collection.
 	 *
-	 * @param id Collection Id.
-	 * @param name The name of the collection.
+	 * @param id       Collection Id.
+	 * @param name     The name of the collection.
 	 * @param metadata Metadata associated with the collection.
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -409,7 +409,7 @@ public class ChromaApi {
 	/**
 	 * Request to create a new collection with the given name and metadata.
 	 *
-	 * @param name The name of the collection to create.
+	 * @param name     The name of the collection to create.
 	 * @param metadata Optional metadata to associate with the collection.
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -430,11 +430,11 @@ public class ChromaApi {
 	/**
 	 * Add embeddings to the chroma data store.
 	 *
-	 * @param ids The ids of the embeddings to add.
+	 * @param ids        The ids of the embeddings to add.
 	 * @param embeddings The embeddings to add.
-	 * @param metadata The metadata to associate with the embeddings. When querying, you
-	 * can filter on this metadata.
-	 * @param documents The documents contents to associate with the embeddings.
+	 * @param metadata   The metadata to associate with the embeddings. When querying, you
+	 *                   can filter on this metadata.
+	 * @param documents  The documents contents to associate with the embeddings.
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record AddEmbeddingsRequest(// @formatter:off
@@ -452,9 +452,9 @@ public class ChromaApi {
 	/**
 	 * Request to delete embedding from a collection.
 	 *
-	 * @param ids The ids of the embeddings to delete. (Optional)
+	 * @param ids   The ids of the embeddings to delete. (Optional)
 	 * @param where Condition to filter items to delete based on metadata values.
-	 * (Optional)
+	 *              (Optional)
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record DeleteEmbeddingsRequest(// @formatter:off
@@ -469,13 +469,13 @@ public class ChromaApi {
 	/**
 	 * Get embeddings from a collection.
 	 *
-	 * @param ids IDs of the embeddings to get.
-	 * @param where Condition to filter results based on metadata values.
-	 * @param limit Limit on the number of collection embeddings to get.
-	 * @param offset Offset on the embeddings to get.
+	 * @param ids     IDs of the embeddings to get.
+	 * @param where   Condition to filter results based on metadata values.
+	 * @param limit   Limit on the number of collection embeddings to get.
+	 * @param offset  Offset on the embeddings to get.
 	 * @param include A list of what to include in the results. Can contain "embeddings",
-	 * "metadatas", "documents", "distances". Ids are always included. Defaults to
-	 * [metadatas, documents, distances].
+	 *                "metadatas", "documents", "distances". Ids are always included. Defaults to
+	 *                [metadatas, documents, distances].
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record GetEmbeddingsRequest(// @formatter:off
@@ -502,10 +502,10 @@ public class ChromaApi {
 	/**
 	 * Object containing the get embedding results.
 	 *
-	 * @param ids List of document ids. One for each returned document.
+	 * @param ids        List of document ids. One for each returned document.
 	 * @param embeddings List of document embeddings. One for each returned document.
-	 * @param documents List of document contents. One for each returned document.
-	 * @param metadata List of document metadata. One for each returned document.
+	 * @param documents  List of document contents. One for each returned document.
+	 * @param metadata   List of document metadata. One for each returned document.
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record GetEmbeddingResponse(// @formatter:off
@@ -520,12 +520,12 @@ public class ChromaApi {
 	 * queryEmbeddings.
 	 *
 	 * @param queryEmbeddings The embeddings to get the closes neighbors of.
-	 * @param nResults The number of neighbors to return for each query_embedding or
-	 * query_texts.
-	 * @param where Condition to filter results based on metadata values.
-	 * @param include A list of what to include in the results. Can contain "embeddings",
-	 * "metadatas", "documents", "distances". Ids are always included. Defaults to
-	 * [metadatas, documents, distances].
+	 * @param nResults        The number of neighbors to return for each query_embedding or
+	 *                        query_texts.
+	 * @param where           Condition to filter results based on metadata values.
+	 * @param include         A list of what to include in the results. Can contain "embeddings",
+	 *                        "metadatas", "documents", "distances". Ids are always included. Defaults to
+	 *                        [metadatas, documents, distances].
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record QueryRequest(// @formatter:off
@@ -568,12 +568,12 @@ public class ChromaApi {
 	/**
 	 * A QueryResponse object containing the query results.
 	 *
-	 * @param ids List of list of document ids. One for each returned document.
+	 * @param ids        List of list of document ids. One for each returned document.
 	 * @param embeddings List of list of document embeddings. One for each returned
-	 * document.
-	 * @param documents List of list of document contents. One for each returned document.
-	 * @param metadata List of list of document metadata. One for each returned document.
-	 * @param distances List of list of search distances. One for each returned document.
+	 *                   document.
+	 * @param documents  List of list of document contents. One for each returned document.
+	 * @param metadata   List of list of document metadata. One for each returned document.
+	 * @param distances  List of list of search distances. One for each returned document.
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record QueryResponse(// @formatter:off
@@ -587,10 +587,10 @@ public class ChromaApi {
 	/**
 	 * Single query embedding response.
 	 *
-	 * @param id The id of the document.
+	 * @param id        The id of the document.
 	 * @param embedding The embedding of the document.
-	 * @param document The content of the document.
-	 * @param metadata The metadata of the document.
+	 * @param document  The content of the document.
+	 * @param metadata  The metadata of the document.
 	 * @param distances The distance of the document to the query embedding.
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)

@@ -78,6 +78,7 @@ public class MistralAiApi {
 
 	/**
 	 * Create a new client api with DEFAULT_BASE_URL
+	 *
 	 * @param mistralAiApiKey Mistral api Key.
 	 */
 	public MistralAiApi(String mistralAiApiKey) {
@@ -86,7 +87,8 @@ public class MistralAiApi {
 
 	/**
 	 * Create a new client api.
-	 * @param baseUrl api base URL.
+	 *
+	 * @param baseUrl         api base URL.
 	 * @param mistralAiApiKey Mistral api Key.
 	 */
 	public MistralAiApi(String baseUrl, String mistralAiApiKey) {
@@ -95,25 +97,27 @@ public class MistralAiApi {
 
 	/**
 	 * Create a new client api.
-	 * @param baseUrl api base URL.
-	 * @param mistralAiApiKey Mistral api Key.
-	 * @param restClientBuilder RestClient builder.
+	 *
+	 * @param baseUrl              api base URL.
+	 * @param mistralAiApiKey      Mistral api Key.
+	 * @param restClientBuilder    RestClient builder.
 	 * @param responseErrorHandler Response error handler.
 	 */
 	public MistralAiApi(String baseUrl, String mistralAiApiKey, RestClient.Builder restClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                    ResponseErrorHandler responseErrorHandler) {
 		this(baseUrl, mistralAiApiKey, restClientBuilder, WebClient.builder(), responseErrorHandler);
 	}
 
 	/**
 	 * Create a new client api.
-	 * @param baseUrl api base URL.
-	 * @param mistralAiApiKey Mistral api Key.
-	 * @param restClientBuilder RestClient builder.
+	 *
+	 * @param baseUrl              api base URL.
+	 * @param mistralAiApiKey      Mistral api Key.
+	 * @param restClientBuilder    RestClient builder.
 	 * @param responseErrorHandler Response error handler.
 	 */
 	public MistralAiApi(String baseUrl, String mistralAiApiKey, RestClient.Builder restClientBuilder,
-			WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                    WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		Consumer<HttpHeaders> jsonContentHeaders = headers -> {
 			headers.setBearerAuth(mistralAiApiKey);
@@ -121,24 +125,25 @@ public class MistralAiApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 
 		this.webClient = webClientBuilder.clone().baseUrl(baseUrl).defaultHeaders(jsonContentHeaders).build();
 	}
 
 	/**
 	 * Creates an embedding vector representing the input text or token array.
-	 * @param embeddingRequest The embedding request.
-	 * @return Returns list of {@link Embedding} wrapped in {@link EmbeddingList}.
-	 * @param <T> Type of the entity in the data list. Can be a {@link String} or
-	 * {@link List} of tokens (e.g. Integers). For embedding multiple inputs in a single
-	 * request, You can pass a {@link List} of {@link String} or {@link List} of
-	 * {@link List} of tokens. For example:
 	 *
-	 * <pre>{@code List.of("text1", "text2", "text3") or List.of(List.of(1, 2, 3), List.of(3, 4, 5))} </pre>
+	 * @param embeddingRequest The embedding request.
+	 * @param <T>              Type of the entity in the data list. Can be a {@link String} or
+	 *                         {@link List} of tokens (e.g. Integers). For embedding multiple inputs in a single
+	 *                         request, You can pass a {@link List} of {@link String} or {@link List} of
+	 *                         {@link List} of tokens. For example:
+	 *
+	 *                         <pre>{@code List.of("text1", "text2", "text3") or List.of(List.of(1, 2, 3), List.of(3, 4, 5))} </pre>
+	 * @return Returns list of {@link Embedding} wrapped in {@link EmbeddingList}.
 	 */
 	public <T> ResponseEntity<EmbeddingList<Embedding>> embeddings(EmbeddingRequest<T> embeddingRequest) {
 
@@ -162,16 +167,17 @@ public class MistralAiApi {
 		}
 
 		return this.restClient.post()
-			.uri("/v1/embeddings")
-			.body(embeddingRequest)
-			.retrieve()
-			.toEntity(new ParameterizedTypeReference<>() {
+				.uri("/v1/embeddings")
+				.body(embeddingRequest)
+				.retrieve()
+				.toEntity(new ParameterizedTypeReference<>() {
 
-			});
+				});
 	}
 
 	/**
 	 * Creates a model response for the given chat conversation.
+	 *
 	 * @param chatRequest The chat completion request.
 	 * @return Entity response with {@link ChatCompletion} as a body and HTTP status code
 	 * and headers.
@@ -182,16 +188,17 @@ public class MistralAiApi {
 		Assert.isTrue(!chatRequest.stream(), "Request must set the stream property to false.");
 
 		return this.restClient.post()
-			.uri("/v1/chat/completions")
-			.body(chatRequest)
-			.retrieve()
-			.toEntity(ChatCompletion.class);
+				.uri("/v1/chat/completions")
+				.body(chatRequest)
+				.retrieve()
+				.toEntity(ChatCompletion.class);
 	}
 
 	/**
 	 * Creates a streaming chat response for the given chat conversation.
+	 *
 	 * @param chatRequest The chat completion request. Must have the stream property set
-	 * to true.
+	 *                    to true.
 	 * @return Returns a {@link Flux} stream from chat completion chunks.
 	 */
 	public Flux<ChatCompletionChunk> chatCompletionStream(ChatCompletionRequest chatRequest) {
@@ -202,33 +209,33 @@ public class MistralAiApi {
 		AtomicBoolean isInsideTool = new AtomicBoolean(false);
 
 		return this.webClient.post()
-			.uri("/v1/chat/completions")
-			.body(Mono.just(chatRequest), ChatCompletionRequest.class)
-			.retrieve()
-			.bodyToFlux(String.class)
-			.takeUntil(SSE_DONE_PREDICATE)
-			.filter(SSE_DONE_PREDICATE.negate())
-			.map(content -> ModelOptionsUtils.jsonToObject(content, ChatCompletionChunk.class))
-			.map(chunk -> {
-				if (this.chunkMerger.isStreamingToolFunctionCall(chunk)) {
-					isInsideTool.set(true);
-				}
-				return chunk;
-			})
-			.windowUntil(chunk -> {
-				if (isInsideTool.get() && this.chunkMerger.isStreamingToolFunctionCallFinish(chunk)) {
-					isInsideTool.set(false);
-					return true;
-				}
-				return !isInsideTool.get();
-			})
-			.concatMapIterable(window -> {
-				Mono<ChatCompletionChunk> mono1 = window.reduce(
-						new ChatCompletionChunk(null, null, null, null, null, null),
-						(previous, current) -> this.chunkMerger.merge(previous, current));
-				return List.of(mono1);
-			})
-			.flatMap(mono -> mono);
+				.uri("/v1/chat/completions")
+				.body(Mono.just(chatRequest), ChatCompletionRequest.class)
+				.retrieve()
+				.bodyToFlux(String.class)
+				.takeUntil(SSE_DONE_PREDICATE)
+				.filter(SSE_DONE_PREDICATE.negate())
+				.map(content -> ModelOptionsUtils.jsonToObject(content, ChatCompletionChunk.class))
+				.map(chunk -> {
+					if (this.chunkMerger.isStreamingToolFunctionCall(chunk)) {
+						isInsideTool.set(true);
+					}
+					return chunk;
+				})
+				.windowUntil(chunk -> {
+					if (isInsideTool.get() && this.chunkMerger.isStreamingToolFunctionCallFinish(chunk)) {
+						isInsideTool.set(false);
+						return true;
+					}
+					return !isInsideTool.get();
+				})
+				.concatMapIterable(window -> {
+					Mono<ChatCompletionChunk> mono1 = window.reduce(
+							new ChatCompletionChunk(null, null, null, null, null, null),
+							(previous, current) -> this.chunkMerger.merge(previous, current));
+					return List.of(mono1);
+				})
+				.flatMap(mono -> mono);
 	}
 
 	/**
@@ -353,6 +360,7 @@ public class MistralAiApi {
 
 		/**
 		 * Create a tool of type 'function' and the given function definition.
+		 *
 		 * @param function function definition.
 		 */
 		public FunctionTool(Function function) {
@@ -416,13 +424,14 @@ public class MistralAiApi {
 
 			/**
 			 * Create tool function definition.
+			 *
 			 * @param description A description of what the function does, used by the
-			 * model to choose when and how to call the function.
-			 * @param name The name of the function to be called. Must be a-z, A-Z, 0-9,
-			 * or contain underscores and dashes, with a maximum length of 64.
-			 * @param parameters The parameters the functions accepts, described as a JSON
-			 * Schema object. To describe a function that accepts no parameters, provide
-			 * the value {"type": "object", "properties": {}}.
+			 *                    model to choose when and how to call the function.
+			 * @param name        The name of the function to be called. Must be a-z, A-Z, 0-9,
+			 *                    or contain underscores and dashes, with a maximum length of 64.
+			 * @param parameters  The parameters the functions accepts, described as a JSON
+			 *                    Schema object. To describe a function that accepts no parameters, provide
+			 *                    the value {"type": "object", "properties": {}}.
 			 */
 			public Function(String description, String name, Map<String, Object> parameters) {
 				this.description = description;
@@ -432,9 +441,10 @@ public class MistralAiApi {
 
 			/**
 			 * Create tool function definition.
+			 *
 			 * @param description tool function description.
-			 * @param name tool function name.
-			 * @param jsonSchema tool function schema as json.
+			 * @param name        tool function name.
+			 * @param jsonSchema  tool function schema as json.
 			 */
 			public Function(String description, String name, String jsonSchema) {
 				this(description, name, ModelOptionsUtils.jsonToMap(jsonSchema));
@@ -482,16 +492,16 @@ public class MistralAiApi {
 	/**
 	 * Usage statistics.
 	 *
-	 * @param promptTokens Number of tokens in the prompt.
-	 * @param totalTokens Total number of tokens used in the request (prompt +
-	 * completion).
+	 * @param promptTokens     Number of tokens in the prompt.
+	 * @param totalTokens      Total number of tokens used in the request (prompt +
+	 *                         completion).
 	 * @param completionTokens Number of tokens in the generated completion. Only
-	 * applicable for completion requests.
+	 *                         applicable for completion requests.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record Usage(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("prompt_tokens") Integer promptTokens,
 		@JsonProperty("total_tokens") Integer totalTokens,
 		@JsonProperty("completion_tokens") Integer completionTokens) {
@@ -501,15 +511,15 @@ public class MistralAiApi {
 	/**
 	 * Represents an embedding vector returned by embedding endpoint.
 	 *
-	 * @param index The index of the embedding in the list of embeddings.
+	 * @param index     The index of the embedding in the list of embeddings.
 	 * @param embedding The embedding vector, which is a list of floats. The length of
-	 * vector depends on the model.
-	 * @param object The object type, which is always 'embedding'.
+	 *                  vector depends on the model.
+	 * @param object    The object type, which is always 'embedding'.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record Embedding(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("index") Integer index,
 		@JsonProperty("embedding") float[] embedding,
 		@JsonProperty("object") String object) {
@@ -518,9 +528,10 @@ public class MistralAiApi {
 		/**
 		 * Create an embedding with the given index, embedding and object type set to
 		 * 'embedding'.
-		 * @param index The index of the embedding in the list of embeddings.
+		 *
+		 * @param index     The index of the embedding in the list of embeddings.
 		 * @param embedding The embedding vector, which is a list of floats. The length of
-		 * vector depends on the model.
+		 *                  vector depends on the model.
 		 */
 		public Embedding(Integer index, float[] embedding) {
 			this(index, embedding, "embedding");
@@ -556,15 +567,15 @@ public class MistralAiApi {
 	/**
 	 * Creates an embedding vector representing the input text.
 	 *
-	 * @param <T> Type of the input.
-	 * @param input Input text to embed, encoded as a string or array of tokens
-	 * @param model ID of the model to use.
+	 * @param <T>            Type of the input.
+	 * @param input          Input text to embed, encoded as a string or array of tokens
+	 * @param model          ID of the model to use.
 	 * @param encodingFormat The format to return the embeddings in. Can be either float
-	 * or base64.
+	 *                       or base64.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record EmbeddingRequest<T>(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("input") T input,
 		@JsonProperty("model") String model,
 		@JsonProperty("encoding_format") String encodingFormat) {
@@ -573,6 +584,7 @@ public class MistralAiApi {
 		/**
 		 * Create an embedding request with the given input, model and encoding format set
 		 * to float.
+		 *
 		 * @param input Input text to embed.
 		 * @param model ID of the model to use.
 		 */
@@ -583,6 +595,7 @@ public class MistralAiApi {
 		/**
 		 * Create an embedding request with the given input. Encoding format is set to
 		 * float and user is null and the model is set to 'mistral-embed'.
+		 *
 		 * @param input Input text to embed.
 		 */
 		public EmbeddingRequest(T input) {
@@ -594,16 +607,16 @@ public class MistralAiApi {
 	/**
 	 * List of multiple embedding responses.
 	 *
-	 * @param <T> Type of the entities in the data list.
+	 * @param <T>    Type of the entities in the data list.
 	 * @param object Must have value "list".
-	 * @param data List of entities.
-	 * @param model ID of the model to use.
-	 * @param usage Usage statistics for the completion request.
+	 * @param data   List of entities.
+	 * @param model  ID of the model to use.
+	 * @param usage  Usage statistics for the completion request.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record EmbeddingList<T>(
-	// @formatter:off
+			// @formatter:off
 			@JsonProperty("object") String object,
 			@JsonProperty("data") List<T> data,
 			@JsonProperty("model") String model,
@@ -614,45 +627,45 @@ public class MistralAiApi {
 	/**
 	 * Creates a model request for chat conversation.
 	 *
-	 * @param model ID of the model to use.
-	 * @param messages The prompt(s) to generate completions for, encoded as a list of
-	 * dict with role and content. The first prompt role should be user or system.
-	 * @param tools A list of tools the model may call. Currently, only functions are
-	 * supported as a tool. Use this to provide a list of functions the model may generate
-	 * JSON inputs for.
-	 * @param toolChoice Controls which (if any) function is called by the model. none
-	 * means the model will not call a function and instead generates a message. auto
-	 * means the model can pick between generating a message or calling a function. Any
-	 * means the model must call a function.
-	 * @param temperature What sampling temperature to use, between 0.0 and 1.0. Higher
-	 * values like 0.8 will make the output more random, while lower values like 0.2 will
-	 * make it more focused and deterministic. We generally recommend altering this or
-	 * top_p but not both.
-	 * @param topP Nucleus sampling, where the model considers the results of the tokens
-	 * with top_p probability mass. So 0.1 means only the tokens comprising the top 10%
-	 * probability mass are considered. We generally recommend altering this or
-	 * temperature but not both.
-	 * @param maxTokens The maximum number of tokens to generate in the completion. The
-	 * token count of your prompt plus max_tokens cannot exceed the model's context
-	 * length.
-	 * @param stream Whether to stream back partial progress. If set, tokens will be sent
-	 * as data-only server-sent events as they become available, with the stream
-	 * terminated by a data: [DONE] message. Otherwise, the server will hold the request
-	 * open until the timeout or until completion, with the response containing the full
-	 * result as JSON.
-	 * @param safePrompt Whether to inject a safety prompt before all conversations.
-	 * @param stop A list of tokens that the model should stop generating after. If set,
-	 * @param randomSeed The seed to use for random sampling. If set, different calls will
-	 * generate deterministic results.
+	 * @param model          ID of the model to use.
+	 * @param messages       The prompt(s) to generate completions for, encoded as a list of
+	 *                       dict with role and content. The first prompt role should be user or system.
+	 * @param tools          A list of tools the model may call. Currently, only functions are
+	 *                       supported as a tool. Use this to provide a list of functions the model may generate
+	 *                       JSON inputs for.
+	 * @param toolChoice     Controls which (if any) function is called by the model. none
+	 *                       means the model will not call a function and instead generates a message. auto
+	 *                       means the model can pick between generating a message or calling a function. Any
+	 *                       means the model must call a function.
+	 * @param temperature    What sampling temperature to use, between 0.0 and 1.0. Higher
+	 *                       values like 0.8 will make the output more random, while lower values like 0.2 will
+	 *                       make it more focused and deterministic. We generally recommend altering this or
+	 *                       top_p but not both.
+	 * @param topP           Nucleus sampling, where the model considers the results of the tokens
+	 *                       with top_p probability mass. So 0.1 means only the tokens comprising the top 10%
+	 *                       probability mass are considered. We generally recommend altering this or
+	 *                       temperature but not both.
+	 * @param maxTokens      The maximum number of tokens to generate in the completion. The
+	 *                       token count of your prompt plus max_tokens cannot exceed the model's context
+	 *                       length.
+	 * @param stream         Whether to stream back partial progress. If set, tokens will be sent
+	 *                       as data-only server-sent events as they become available, with the stream
+	 *                       terminated by a data: [DONE] message. Otherwise, the server will hold the request
+	 *                       open until the timeout or until completion, with the response containing the full
+	 *                       result as JSON.
+	 * @param safePrompt     Whether to inject a safety prompt before all conversations.
+	 * @param stop           A list of tokens that the model should stop generating after. If set,
+	 * @param randomSeed     The seed to use for random sampling. If set, different calls will
+	 *                       generate deterministic results.
 	 * @param responseFormat An object specifying the format or schema that the model must
-	 * output. Setting to { "type": "json_object" } enables JSON mode, which guarantees
-	 * the message the model generates is valid JSON. Setting to { "type": "json_object" ,
-	 * "json_schema": schema} allows you to ensure the model provides an answer in a very
-	 * specific JSON format by supplying a clear JSON schema.
+	 *                       output. Setting to { "type": "json_object" } enables JSON mode, which guarantees
+	 *                       the message the model generates is valid JSON. Setting to { "type": "json_object" ,
+	 *                       "json_schema": schema} allows you to ensure the model provides an answer in a very
+	 *                       specific JSON format by supplying a clear JSON schema.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record ChatCompletionRequest(
-	// @formatter:off
+			// @formatter:off
 			@JsonProperty("model") String model,
 			@JsonProperty("messages") List<ChatCompletionMessage> messages,
 			@JsonProperty("tools") List<FunctionTool> tools,
@@ -670,9 +683,10 @@ public class MistralAiApi {
 		/**
 		 * Shortcut constructor for a chat completion request with the given messages and
 		 * model.
+		 *
 		 * @param messages The prompt(s) to generate completions for, encoded as a list of
-		 * dict with role and content. The first prompt role should be user or system.
-		 * @param model ID of the model to use.
+		 *                 dict with role and content. The first prompt role should be user or system.
+		 * @param model    ID of the model to use.
 		 */
 		public ChatCompletionRequest(List<ChatCompletionMessage> messages, String model) {
 			this(model, messages, null, null, 0.7, 1.0, null, false, false, null, null, null);
@@ -681,24 +695,26 @@ public class MistralAiApi {
 		/**
 		 * Shortcut constructor for a chat completion request with the given messages,
 		 * model and temperature.
-		 * @param messages The prompt(s) to generate completions for, encoded as a list of
-		 * dict with role and content. The first prompt role should be user or system.
-		 * @param model ID of the model to use.
+		 *
+		 * @param messages    The prompt(s) to generate completions for, encoded as a list of
+		 *                    dict with role and content. The first prompt role should be user or system.
+		 * @param model       ID of the model to use.
 		 * @param temperature What sampling temperature to use, between 0.0 and 1.0.
-		 * @param stream Whether to stream back partial progress. If set, tokens will be
-		 * sent
+		 * @param stream      Whether to stream back partial progress. If set, tokens will be
+		 *                    sent
 		 */
 		public ChatCompletionRequest(List<ChatCompletionMessage> messages, String model, Double temperature,
-				boolean stream) {
+		                             boolean stream) {
 			this(model, messages, null, null, temperature, 1.0, null, stream, false, null, null, null);
 		}
 
 		/**
 		 * Shortcut constructor for a chat completion request with the given messages,
 		 * model and temperature.
-		 * @param messages The prompt(s) to generate completions for, encoded as a list of
-		 * dict with role and content. The first prompt role should be user or system.
-		 * @param model ID of the model to use.
+		 *
+		 * @param messages    The prompt(s) to generate completions for, encoded as a list of
+		 *                    dict with role and content. The first prompt role should be user or system.
+		 * @param model       ID of the model to use.
 		 * @param temperature What sampling temperature to use, between 0.0 and 1.0.
 		 *
 		 */
@@ -710,14 +726,15 @@ public class MistralAiApi {
 		 * Shortcut constructor for a chat completion request with the given messages,
 		 * model, tools and tool choice. Streaming is set to false, temperature to 0.8 and
 		 * all other parameters are null.
-		 * @param messages A list of messages comprising the conversation so far.
-		 * @param model ID of the model to use.
-		 * @param tools A list of tools the model may call. Currently, only functions are
-		 * supported as a tool.
+		 *
+		 * @param messages   A list of messages comprising the conversation so far.
+		 * @param model      ID of the model to use.
+		 * @param tools      A list of tools the model may call. Currently, only functions are
+		 *                   supported as a tool.
 		 * @param toolChoice Controls which (if any) function is called by the model.
 		 */
 		public ChatCompletionRequest(List<ChatCompletionMessage> messages, String model, List<FunctionTool> tools,
-				ToolChoice toolChoice) {
+		                             ToolChoice toolChoice) {
 			this(model, messages, tools, toolChoice, null, 1.0, null, false, false, null, null, null);
 		}
 
@@ -750,12 +767,12 @@ public class MistralAiApi {
 		/**
 		 * An object specifying the format that the model must output.
 		 *
-		 * @param type Must be one of 'text' or 'json_object'.
+		 * @param type       Must be one of 'text' or 'json_object'.
 		 * @param jsonSchema A specific JSON schema to match, if 'type' is 'json_object'.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		public record ResponseFormat(@JsonProperty("type") String type,
-				@JsonProperty("json_schema") Map<String, Object> jsonSchema) {
+		                             @JsonProperty("json_schema") Map<String, Object> jsonSchema) {
 		}
 
 	}
@@ -764,19 +781,19 @@ public class MistralAiApi {
 	 * Message comprising the conversation.
 	 *
 	 * @param rawContent The contents of the message. Can be either a {@link MediaContent}
-	 * or a {@link String}. The response message content is always a {@link String}.
-	 * @param role The role of the messages author. Could be one of the {@link Role}
-	 * types.
-	 * @param name The name of the author of the message.
-	 * @param toolCalls The tool calls generated by the model, such as function calls.
-	 * Applicable only for {@link Role#ASSISTANT} role and null otherwise.
+	 *                   or a {@link String}. The response message content is always a {@link String}.
+	 * @param role       The role of the messages author. Could be one of the {@link Role}
+	 *                   types.
+	 * @param name       The name of the author of the message.
+	 * @param toolCalls  The tool calls generated by the model, such as function calls.
+	 *                   Applicable only for {@link Role#ASSISTANT} role and null otherwise.
 	 * @param toolCallId Tool call that this message is responding to. Only applicable for
-	 * the {@link Role#TOOL} role and null otherwise.
+	 *                   the {@link Role#TOOL} role and null otherwise.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ChatCompletionMessage(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("content") Object rawContent,
 		@JsonProperty("role") Role role,
 		@JsonProperty("name") String name,
@@ -786,11 +803,12 @@ public class MistralAiApi {
 
 		/**
 		 * Message comprising the conversation.
-		 * @param content The contents of the message.
-		 * @param role The role of the messages author. Could be one of the {@link Role}
-		 * types.
+		 *
+		 * @param content   The contents of the message.
+		 * @param role      The role of the messages author. Could be one of the {@link Role}
+		 *                  types.
 		 * @param toolCalls The tool calls generated by the model, such as function calls.
-		 * Applicable only for {@link Role#ASSISTANT} role and null otherwise.
+		 *                  Applicable only for {@link Role#ASSISTANT} role and null otherwise.
 		 */
 		public ChatCompletionMessage(Object content, Role role, String name, List<ToolCall> toolCalls) {
 			this(content, role, name, toolCalls, null);
@@ -799,8 +817,9 @@ public class MistralAiApi {
 		/**
 		 * Create a chat completion message with the given content and role. All other
 		 * fields are null.
+		 *
 		 * @param content The contents of the message.
-		 * @param role The role of the author of this message.
+		 * @param role    The role of the author of this message.
 		 */
 		public ChatCompletionMessage(Object content, Role role) {
 			this(content, role, null, null, null);
@@ -821,7 +840,7 @@ public class MistralAiApi {
 
 		/**
 		 * The role of the author of this message.
-		 *
+		 * <p>
 		 * NOTE: Mistral expects the system message to be before the user message or will
 		 * fail with 400 error.
 		 */
@@ -843,31 +862,32 @@ public class MistralAiApi {
 		/**
 		 * The relevant tool call.
 		 *
-		 * @param id The ID of the tool call. This ID must be referenced when you submit
-		 * the tool outputs in using the Submit tool outputs to run endpoint.
-		 * @param type The type of tool call the output is required for. For now, this is
-		 * always function.
+		 * @param id       The ID of the tool call. This ID must be referenced when you submit
+		 *                 the tool outputs in using the Submit tool outputs to run endpoint.
+		 * @param type     The type of tool call the output is required for. For now, this is
+		 *                 always function.
 		 * @param function The function definition.
-		 * @param index The index of the tool call in the list of tool calls.
+		 * @param index    The index of the tool call in the list of tool calls.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record ToolCall(@JsonProperty("id") String id, @JsonProperty("type") String type,
-				@JsonProperty("function") ChatCompletionFunction function, @JsonProperty("index") Integer index) {
+		                       @JsonProperty("function") ChatCompletionFunction function,
+		                       @JsonProperty("index") Integer index) {
 
 		}
 
 		/**
 		 * The function definition.
 		 *
-		 * @param name The name of the function.
+		 * @param name      The name of the function.
 		 * @param arguments The arguments that the model expects you to pass to the
-		 * function.
+		 *                  function.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record ChatCompletionFunction(@JsonProperty("name") String name,
-				@JsonProperty("arguments") String arguments) {
+		                                     @JsonProperty("arguments") String arguments) {
 
 		}
 
@@ -875,14 +895,14 @@ public class MistralAiApi {
 		 * An array of content parts with a defined type. Each MediaContent can be of
 		 * either "text" or "image_url" type. Only one option allowed.
 		 *
-		 * @param type Content type, each can be of type text or image_url.
-		 * @param text The text content of the message.
+		 * @param type     Content type, each can be of type text or image_url.
+		 * @param text     The text content of the message.
 		 * @param imageUrl The image content of the message.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record MediaContent(
-		// @formatter:off
+				// @formatter:off
 		   		@JsonProperty("type") String type,
 		   		@JsonProperty("text") String text,
 		   		@JsonProperty("image_url") ImageUrl imageUrl
@@ -891,6 +911,7 @@ public class MistralAiApi {
 
 			/**
 			 * Shortcut constructor for a text content.
+			 *
 			 * @param text The text content of the message.
 			 */
 			public MediaContent(String text) {
@@ -899,6 +920,7 @@ public class MistralAiApi {
 
 			/**
 			 * Shortcut constructor for an image content.
+			 *
 			 * @param imageUrl The image content of the message.
 			 */
 			public MediaContent(ImageUrl imageUrl) {
@@ -908,14 +930,14 @@ public class MistralAiApi {
 			/**
 			 * Shortcut constructor for an image content.
 			 *
-			 * @param url Either a URL of the image or the base64 encoded image data. The
-			 * base64 encoded image data must have a special prefix in the following
-			 * format: "data:{mimetype};base64,{base64-encoded-image-data}".
+			 * @param url    Either a URL of the image or the base64 encoded image data. The
+			 *               base64 encoded image data must have a special prefix in the following
+			 *               format: "data:{mimetype};base64,{base64-encoded-image-data}".
 			 * @param detail Specifies the detail level of the image.
 			 */
 			@JsonInclude(Include.NON_NULL)
 			public record ImageUrl(
-			// @formatter:off
+					// @formatter:off
 					@JsonProperty("url") String url,
 					@JsonProperty("detail") String detail
 					// @formatter:on
@@ -935,18 +957,18 @@ public class MistralAiApi {
 	 * Represents a chat completion response returned by model, based on the provided
 	 * input.
 	 *
-	 * @param id A unique identifier for the chat completion.
-	 * @param object The object type, which is always chat.completion.
+	 * @param id      A unique identifier for the chat completion.
+	 * @param object  The object type, which is always chat.completion.
 	 * @param created The Unix timestamp (in seconds) of when the chat completion was
-	 * created.
-	 * @param model The model used for the chat completion.
+	 *                created.
+	 * @param model   The model used for the chat completion.
 	 * @param choices A list of chat completion choices.
-	 * @param usage Usage statistics for the completion request.
+	 * @param usage   Usage statistics for the completion request.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ChatCompletion(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("id") String id,
 		@JsonProperty("object") String object,
 		@JsonProperty("created") Long created,
@@ -958,15 +980,15 @@ public class MistralAiApi {
 		/**
 		 * Chat completion choice.
 		 *
-		 * @param index The index of the choice in the list of choices.
-		 * @param message A chat completion message generated by the model.
+		 * @param index        The index of the choice in the list of choices.
+		 * @param message      A chat completion message generated by the model.
 		 * @param finishReason The reason the model stopped generating tokens.
-		 * @param logprobs Log probability information for the choice.
+		 * @param logprobs     Log probability information for the choice.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record Choice(
-		// @formatter:off
+				// @formatter:off
 			@JsonProperty("index") Integer index,
 			@JsonProperty("message") ChatCompletionMessage message,
 			@JsonProperty("finish_reason") ChatCompletionFinishReason finishReason,
@@ -989,38 +1011,38 @@ public class MistralAiApi {
 		/**
 		 * Message content tokens with log probability information.
 		 *
-		 * @param token The token.
-		 * @param logprob The log probability of the token.
-		 * @param probBytes A list of integers representing the UTF-8 bytes representation
-		 * of the token. Useful in instances where characters are represented by multiple
-		 * tokens and their byte representations must be combined to generate the correct
-		 * text representation. Can be null if there is no bytes representation for the
-		 * token.
+		 * @param token       The token.
+		 * @param logprob     The log probability of the token.
+		 * @param probBytes   A list of integers representing the UTF-8 bytes representation
+		 *                    of the token. Useful in instances where characters are represented by multiple
+		 *                    tokens and their byte representations must be combined to generate the correct
+		 *                    text representation. Can be null if there is no bytes representation for the
+		 *                    token.
 		 * @param topLogprobs List of the most likely tokens and their log probability, at
-		 * this token position. In rare cases, there may be fewer than the number of
-		 * requested top_logprobs returned.
+		 *                    this token position. In rare cases, there may be fewer than the number of
+		 *                    requested top_logprobs returned.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record Content(@JsonProperty("token") String token, @JsonProperty("logprob") Float logprob,
-				@JsonProperty("bytes") List<Integer> probBytes,
-				@JsonProperty("top_logprobs") List<TopLogProbs> topLogprobs) {
+		                      @JsonProperty("bytes") List<Integer> probBytes,
+		                      @JsonProperty("top_logprobs") List<TopLogProbs> topLogprobs) {
 
 			/**
 			 * The most likely tokens and their log probability, at this token position.
 			 *
-			 * @param token The token.
-			 * @param logprob The log probability of the token.
+			 * @param token     The token.
+			 * @param logprob   The log probability of the token.
 			 * @param probBytes A list of integers representing the UTF-8 bytes
-			 * representation of the token. Useful in instances where characters are
-			 * represented by multiple tokens and their byte representations must be
-			 * combined to generate the correct text representation. Can be null if there
-			 * is no bytes representation for the token.
+			 *                  representation of the token. Useful in instances where characters are
+			 *                  represented by multiple tokens and their byte representations must be
+			 *                  combined to generate the correct text representation. Can be null if there
+			 *                  is no bytes representation for the token.
 			 */
 			@JsonInclude(Include.NON_NULL)
 			@JsonIgnoreProperties(ignoreUnknown = true)
 			public record TopLogProbs(@JsonProperty("token") String token, @JsonProperty("logprob") Float logprob,
-					@JsonProperty("bytes") List<Integer> probBytes) {
+			                          @JsonProperty("bytes") List<Integer> probBytes) {
 
 			}
 
@@ -1032,19 +1054,19 @@ public class MistralAiApi {
 	 * Represents a streamed chunk of a chat completion response returned by model, based
 	 * on the provided input.
 	 *
-	 * @param id A unique identifier for the chat completion. Each chunk has the same ID.
-	 * @param object The object type, which is always 'chat.completion.chunk'.
+	 * @param id      A unique identifier for the chat completion. Each chunk has the same ID.
+	 * @param object  The object type, which is always 'chat.completion.chunk'.
 	 * @param created The Unix timestamp (in seconds) of when the chat completion was
-	 * created. Each chunk has the same timestamp.
-	 * @param model The model used for the chat completion.
+	 *                created. Each chunk has the same timestamp.
+	 * @param model   The model used for the chat completion.
 	 * @param choices A list of chat completion choices. Can be more than one if n is
-	 * greater than 1.
-	 * @param usage usage metrics for the chat completion.
+	 *                greater than 1.
+	 * @param usage   usage metrics for the chat completion.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record ChatCompletionChunk(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("id") String id,
 		@JsonProperty("object") String object,
 		@JsonProperty("created") Long created,
@@ -1056,15 +1078,15 @@ public class MistralAiApi {
 		/**
 		 * Chat completion choice.
 		 *
-		 * @param index The index of the choice in the list of choices.
-		 * @param delta A chat completion delta generated by streamed model responses.
+		 * @param index        The index of the choice in the list of choices.
+		 * @param delta        A chat completion delta generated by streamed model responses.
 		 * @param finishReason The reason the model stopped generating tokens.
-		 * @param logprobs Log probability information for the choice.
+		 * @param logprobs     Log probability information for the choice.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record ChunkChoice(
-		// @formatter:off
+				// @formatter:off
 			@JsonProperty("index") Integer index,
 			@JsonProperty("delta") ChatCompletionMessage delta,
 			@JsonProperty("finish_reason") ChatCompletionFinishReason finishReason,

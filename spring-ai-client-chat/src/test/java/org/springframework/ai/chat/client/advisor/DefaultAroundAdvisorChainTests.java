@@ -49,22 +49,22 @@ class DefaultAroundAdvisorChainTests {
 	@Test
 	void whenObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the observationRegistry must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the observationRegistry must be non-null");
 	}
 
 	@Test
 	void whenAdvisorIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).push(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the advisor must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the advisor must be non-null");
 	}
 
 	@Test
 	void whenAdvisorListIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).pushAll(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the advisors must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the advisors must be non-null");
 	}
 
 	@Test
@@ -72,8 +72,8 @@ class DefaultAroundAdvisorChainTests {
 		List<Advisor> advisors = new ArrayList<>();
 		advisors.add(null);
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).pushAll(advisors).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the advisors must not contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the advisors must not contain null elements");
 	}
 
 	@Test
@@ -114,8 +114,8 @@ class DefaultAroundAdvisorChainTests {
 
 		List<StreamAdvisor> advisors = List.of(mockAdvisor1, mockAdvisor2);
 		StreamAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(advisors)
-			.build();
+				.pushAll(advisors)
+				.build();
 		assertThat(chain.getStreamAdvisors()).containsExactlyInAnyOrder(advisors.toArray(new StreamAdvisor[0]));
 
 		chain.nextStream(ChatClientRequest.builder().prompt(new Prompt("Hello")).build()).blockLast();

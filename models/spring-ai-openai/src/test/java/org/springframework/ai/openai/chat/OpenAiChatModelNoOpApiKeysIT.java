@@ -43,7 +43,7 @@ public class OpenAiChatModelNoOpApiKeysIT {
 	@Test
 	void checkNoOpApiKey() {
 		assertThatThrownBy(() -> this.openAiChatModel.call("Tell me a joke"))
-			.isInstanceOf(NonTransientAiException.class);
+				.isInstanceOf(NonTransientAiException.class);
 	}
 
 	@SpringBootConfiguration

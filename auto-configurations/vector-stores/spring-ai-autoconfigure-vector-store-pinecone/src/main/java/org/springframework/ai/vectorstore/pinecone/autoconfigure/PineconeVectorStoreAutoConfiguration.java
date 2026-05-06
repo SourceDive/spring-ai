@@ -39,7 +39,7 @@ import org.springframework.context.annotation.Bean;
  * @author Soby Chacko
  */
 @AutoConfiguration
-@ConditionalOnClass({ PineconeVectorStore.class, EmbeddingModel.class })
+@ConditionalOnClass({PineconeVectorStore.class, EmbeddingModel.class})
 @EnableConfigurationProperties(PineconeVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.PINECONE,
 		matchIfMissing = true)
@@ -54,20 +54,20 @@ public class PineconeVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PineconeVectorStore vectorStore(EmbeddingModel embeddingModel, PineconeVectorStoreProperties properties,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                       ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                       BatchingStrategy batchingStrategy) {
 
 		return PineconeVectorStore.builder(embeddingModel)
-			.apiKey(properties.getApiKey())
-			.indexName(properties.getIndexName())
-			.namespace(properties.getNamespace())
-			.contentFieldName(properties.getContentFieldName())
-			.distanceMetadataFieldName(properties.getDistanceMetadataFieldName())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.apiKey(properties.getApiKey())
+				.indexName(properties.getIndexName())
+				.namespace(properties.getNamespace())
+				.contentFieldName(properties.getContentFieldName())
+				.distanceMetadataFieldName(properties.getDistanceMetadataFieldName())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 }

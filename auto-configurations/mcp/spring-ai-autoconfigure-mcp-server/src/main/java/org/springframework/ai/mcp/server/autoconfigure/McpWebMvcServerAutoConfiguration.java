@@ -57,12 +57,12 @@ import org.springframework.web.servlet.function.ServerResponse;
  *
  * @author Christian Tzolov
  * @author Yanming Zhou
- * @since 1.0.0
  * @see McpServerProperties
  * @see WebMvcSseServerTransportProvider
+ * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ WebMvcSseServerTransportProvider.class })
+@ConditionalOnClass({WebMvcSseServerTransportProvider.class})
 @ConditionalOnMissingBean(McpServerTransportProvider.class)
 @Conditional(McpServerStdioDisabledCondition.class)
 public class McpWebMvcServerAutoConfiguration {

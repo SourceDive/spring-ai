@@ -35,14 +35,14 @@ public final class ObservationTestUtil {
 	}
 
 	public static void assertObservationRegistry(TestObservationRegistry observationRegistry,
-			VectorStoreProvider vectorStoreProvider, VectorStoreObservationContext.Operation operation) {
+	                                             VectorStoreProvider vectorStoreProvider, VectorStoreObservationContext.Operation operation) {
 		TestObservationRegistryAssert.assertThat(observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo(vectorStoreProvider.value() + " " + operation.value())
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo(vectorStoreProvider.value() + " " + operation.value())
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 }

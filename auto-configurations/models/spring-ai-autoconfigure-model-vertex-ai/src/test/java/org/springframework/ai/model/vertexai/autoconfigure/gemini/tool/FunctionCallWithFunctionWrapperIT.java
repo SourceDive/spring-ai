@@ -45,32 +45,32 @@ public class FunctionCallWithFunctionWrapperIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithFunctionWrapperIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.vertex.ai.gemini.project-id=" + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"),
-				"spring.ai.vertex.ai.gemini.location=" + System.getenv("VERTEX_AI_GEMINI_LOCATION"))
-		.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.vertex.ai.gemini.project-id=" + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"),
+					"spring.ai.vertex.ai.gemini.location=" + System.getenv("VERTEX_AI_GEMINI_LOCATION"))
+			.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vertex.ai.gemini.chat.options.model="
-					+ VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.vertex.ai.gemini.chat.options.model="
+						+ VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
+				.run(context -> {
 
-				VertexAiGeminiChatModel chatModel = context.getBean(VertexAiGeminiChatModel.class);
+					VertexAiGeminiChatModel chatModel = context.getBean(VertexAiGeminiChatModel.class);
 
-				var userMessage = new UserMessage("""
-						What's the weather like in San Francisco, Paris and in Tokyo?
-						Return the temperature in Celsius.
-						""");
+					var userMessage = new UserMessage("""
+							What's the weather like in San Francisco, Paris and in Tokyo?
+							Return the temperature in Celsius.
+							""");
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
-						VertexAiGeminiChatOptions.builder().toolName("WeatherInfo").build()));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
+							VertexAiGeminiChatOptions.builder().toolName("WeatherInfo").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 	@Configuration
@@ -80,9 +80,9 @@ public class FunctionCallWithFunctionWrapperIT {
 		public ToolCallback weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description("Get the current weather in a given location")
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

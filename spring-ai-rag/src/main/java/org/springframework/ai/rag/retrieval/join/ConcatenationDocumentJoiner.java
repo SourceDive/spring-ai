@@ -52,15 +52,15 @@ public class ConcatenationDocumentJoiner implements DocumentJoiner {
 		logger.debug("Joining documents by concatenation");
 
 		return new ArrayList<>(documentsForQuery.values()
-			.stream()
-			.flatMap(List::stream)
-			.flatMap(List::stream)
-			.collect(Collectors.toMap(Document::getId, Function.identity(), (existing, duplicate) -> existing))
-			.values()
-			.stream()
-			.sorted(Comparator.comparingDouble((Document doc) -> doc.getScore() != null ? doc.getScore() : 0.0)
-				.reversed())
-			.toList());
+				.stream()
+				.flatMap(List::stream)
+				.flatMap(List::stream)
+				.collect(Collectors.toMap(Document::getId, Function.identity(), (existing, duplicate) -> existing))
+				.values()
+				.stream()
+				.sorted(Comparator.comparingDouble((Document doc) -> doc.getScore() != null ? doc.getScore() : 0.0)
+						.reversed())
+				.toList());
 	}
 
 }

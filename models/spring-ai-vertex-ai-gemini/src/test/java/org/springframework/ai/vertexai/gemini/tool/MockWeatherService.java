@@ -39,11 +39,9 @@ public class MockWeatherService implements Function<MockWeatherService.Request, 
 		double temperature = 0;
 		if (request.location().contains("Paris")) {
 			temperature = 15;
-		}
-		else if (request.location().contains("Tokyo")) {
+		} else if (request.location().contains("Tokyo")) {
 			temperature = 10;
-		}
-		else if (request.location().contains("San Francisco")) {
+		} else if (request.location().contains("San Francisco")) {
 			temperature = 30;
 		}
 
@@ -83,7 +81,7 @@ public class MockWeatherService implements Function<MockWeatherService.Request, 
 	@JsonClassDescription("Weather API request")
 	public record Request(@JsonProperty(required = true,
 			value = "location") @JsonPropertyDescription("The city and state e.g. San Francisco, CA") String location,
-			@JsonProperty(required = true, value = "unit") @JsonPropertyDescription("Temperature unit") Unit unit) {
+	                      @JsonProperty(required = true, value = "unit") @JsonPropertyDescription("Temperature unit") Unit unit) {
 
 	}
 

@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  * Represents a response returned by a {@link ChatClient}.
  *
  * @param chatResponse The response returned by the AI model
- * @param context The contextual data propagated through the execution chain
+ * @param context      The contextual data propagated through the execution chain
  * @author Thomas Vitale
  * @since 1.0.0
  */

@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 
 /**
  * Common configuration for the {@link JsoupDocumentReader}.
- *
+ * <p>
  * Provides options for specifying the character encoding, CSS selector, text separator,
  * and whether to extract all text from the body or specific elements, and handling link
  * extraction.
@@ -93,6 +93,7 @@ public final class JsoupDocumentReaderConfig {
 
 		/**
 		 * Sets the character encoding to use for reading the HTML. Defaults to UTF-8.
+		 *
 		 * @param charset The charset to use.
 		 * @return This builder.
 		 */
@@ -103,6 +104,7 @@ public final class JsoupDocumentReaderConfig {
 
 		/**
 		 * Sets the CSS selector to use for extracting elements. Defaults to "body".
+		 *
 		 * @param selector The CSS selector.
 		 * @return This builder.
 		 */
@@ -114,6 +116,7 @@ public final class JsoupDocumentReaderConfig {
 		/**
 		 * Sets the separator string to use when joining text from multiple elements.
 		 * Defaults to "\n".
+		 *
 		 * @param separator The separator string.
 		 * @return This builder.
 		 */
@@ -125,6 +128,7 @@ public final class JsoupDocumentReaderConfig {
 		/**
 		 * Enables extracting text from all elements in the body, creating a single
 		 * document. Overrides the selector setting. Defaults to false.
+		 *
 		 * @param allElements True to extract all text, false otherwise.
 		 * @return This builder.
 		 */
@@ -136,6 +140,7 @@ public final class JsoupDocumentReaderConfig {
 		/**
 		 * Determines if on the selected element, the content will be read on per-element
 		 * base.
+		 *
 		 * @param groupByElement to read text using element as a separator.
 		 * @return this builder.
 		 */
@@ -146,6 +151,7 @@ public final class JsoupDocumentReaderConfig {
 
 		/**
 		 * Enables the inclusion of link URLs in the document metadata. Defaults to false.
+		 *
 		 * @param includeLinkUrls True to include link URLs, false otherwise.
 		 * @return This builder.
 		 */
@@ -156,6 +162,7 @@ public final class JsoupDocumentReaderConfig {
 
 		/**
 		 * Adds a metadata tag name to extract from the HTML <meta> tags.
+		 *
 		 * @param metadataTag The name of the metadata tag.
 		 * @return This builder.
 		 */
@@ -167,6 +174,7 @@ public final class JsoupDocumentReaderConfig {
 		/**
 		 * Sets the metadata tags to extract from the HTML <meta> tags. Overwrites any
 		 * previously added tags.
+		 *
 		 * @param metadataTags The list of metadata tag names.
 		 * @return This builder.
 		 */
@@ -178,6 +186,7 @@ public final class JsoupDocumentReaderConfig {
 		/**
 		 * Adds this additional metadata to the all built
 		 * {@link org.springframework.ai.document.Document}s.
+		 *
 		 * @return this builder
 		 */
 		public Builder additionalMetadata(String key, Object value) {
@@ -190,6 +199,7 @@ public final class JsoupDocumentReaderConfig {
 		/**
 		 * Adds this additional metadata to the all built
 		 * {@link org.springframework.ai.document.Document}s.
+		 *
 		 * @return this builder
 		 */
 		public Builder additionalMetadata(Map<String, Object> additionalMetadata) {

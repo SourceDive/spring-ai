@@ -38,12 +38,12 @@ public class BedrockConverseTestConfiguration {
 		String modelId = "anthropic.claude-3-5-sonnet-20240620-v1:0";
 
 		return BedrockProxyChatModel.builder()
-			.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-			.region(Region.US_EAST_1)
-			// .region(Region.US_EAST_1)
-			.timeout(Duration.ofSeconds(120))
-			.defaultOptions(ToolCallingChatOptions.builder().model(modelId).build())
-			.build();
+				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+				.region(Region.US_EAST_1)
+				// .region(Region.US_EAST_1)
+				.timeout(Duration.ofSeconds(120))
+				.defaultOptions(ToolCallingChatOptions.builder().model(modelId).build())
+				.build();
 	}
 
 }

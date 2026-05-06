@@ -35,8 +35,9 @@ public interface DocumentJoiner extends Function<Map<Query, List<List<Document>>
 
 	/**
 	 * Joins documents retrieved across multiple queries and daa sources.
+	 *
 	 * @param documentsForQuery a map of queries and the corresponding list of documents
-	 * retrieved
+	 *                          retrieved
 	 * @return a single collection of documents
 	 */
 	List<Document> join(Map<Query, List<List<Document>>> documentsForQuery);

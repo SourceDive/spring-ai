@@ -39,6 +39,7 @@ public class EmbeddingResponse implements ModelResponse<Embedding> {
 
 	/**
 	 * Creates a new {@link EmbeddingResponse} instance with empty metadata.
+	 *
 	 * @param embeddings the embedding data.
 	 */
 	public EmbeddingResponse(List<Embedding> embeddings) {
@@ -47,8 +48,9 @@ public class EmbeddingResponse implements ModelResponse<Embedding> {
 
 	/**
 	 * Creates a new {@link EmbeddingResponse} instance.
+	 *
 	 * @param embeddings the embedding data.
-	 * @param metadata the embedding metadata.
+	 * @param metadata   the embedding metadata.
 	 */
 	public EmbeddingResponse(List<Embedding> embeddings, EmbeddingResponseMetadata metadata) {
 		this.embeddings = embeddings;

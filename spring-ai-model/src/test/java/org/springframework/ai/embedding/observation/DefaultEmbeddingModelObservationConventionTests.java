@@ -47,34 +47,34 @@ class DefaultEmbeddingModelObservationConventionTests {
 	@Test
 	void shouldHaveName() {
 		assertThat(this.observationConvention.getName())
-			.isEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME);
+				.isEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME);
 	}
 
 	@Test
 	void contextualNameWhenModelIsDefined() {
 		EmbeddingModelObservationContext observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("embedding mistral");
 	}
 
 	@Test
 	void contextualNameWhenModelIsNotDefined() {
 		EmbeddingModelObservationContext observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("embedding");
 	}
 
 	@Test
 	void supportsOnlyEmbeddingModelObservationContext() {
 		EmbeddingModelObservationContext observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(
-					generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("supermodel").build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(
+						generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("supermodel").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
 	}
@@ -82,9 +82,9 @@ class DefaultEmbeddingModelObservationConventionTests {
 	@Test
 	void shouldHaveLowCardinalityKeyValuesWhenDefined() {
 		EmbeddingModelObservationContext observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(), "embedding"),
 				KeyValue.of(LowCardinalityKeyNames.AI_PROVIDER.asString(), "superprovider"),
@@ -94,14 +94,14 @@ class DefaultEmbeddingModelObservationConventionTests {
 	@Test
 	void shouldHaveLowCardinalityKeyValuesWhenDefinedAndResponse() {
 		EmbeddingModelObservationContext observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(generateEmbeddingRequest(
-					EmbeddingOptionsBuilder.builder().withModel("mistral").withDimensions(1492).build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(generateEmbeddingRequest(
+						EmbeddingOptionsBuilder.builder().withModel("mistral").withDimensions(1492).build()))
+				.provider("superprovider")
+				.build();
 		observationContext.setResponse(new EmbeddingResponse(List.of(),
 				new EmbeddingResponseMetadata("mistral-42", new TestUsage(), Map.of())));
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext))
-			.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), "mistral-42"));
+				.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), "mistral-42"));
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(), "1492"),
 				KeyValue.of(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(), "1000"),
@@ -111,18 +111,18 @@ class DefaultEmbeddingModelObservationConventionTests {
 	@Test
 	void shouldNotHaveKeyValuesWhenMissing() {
 		EmbeddingModelObservationContext observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext))
-			.contains(KeyValue.of(LowCardinalityKeyNames.REQUEST_MODEL.asString(), KeyValue.NONE_VALUE))
-			.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), KeyValue.NONE_VALUE));
+				.contains(KeyValue.of(LowCardinalityKeyNames.REQUEST_MODEL.asString(), KeyValue.NONE_VALUE))
+				.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), KeyValue.NONE_VALUE));
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)
-			.stream()
-			.map(KeyValue::getKey)
-			.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(),
-					HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString());
+				.stream()
+				.map(KeyValue::getKey)
+				.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(),
+				HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+				HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString());
 	}
 
 	private EmbeddingRequest generateEmbeddingRequest(EmbeddingOptions embeddingOptions) {

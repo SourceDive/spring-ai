@@ -35,6 +35,7 @@ public interface DocumentRetriever extends Function<Query, List<Document>> {
 	/**
 	 * Retrieves relevant documents from an underlying data source based on the given
 	 * query.
+	 *
 	 * @param query The query to use for retrieving documents
 	 * @return The list of relevant documents
 	 */

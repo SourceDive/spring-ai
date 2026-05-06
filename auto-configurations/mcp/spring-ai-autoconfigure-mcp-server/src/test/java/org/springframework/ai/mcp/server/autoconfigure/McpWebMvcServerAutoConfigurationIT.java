@@ -50,7 +50,7 @@ class McpWebMvcServerAutoConfigurationIT {
 	@Test
 	void stdioEnabledConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.stdio=true")
-			.run(context -> assertThat(context).doesNotHaveBean(WebMvcSseServerTransportProvider.class));
+				.run(context -> assertThat(context).doesNotHaveBean(WebMvcSseServerTransportProvider.class));
 	}
 
 	@Test
@@ -64,8 +64,8 @@ class McpWebMvcServerAutoConfigurationIT {
 	@Test
 	void serverBaseUrlConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.base-url=/test")
-			.run(context -> assertThat(context.getBean(WebMvcSseServerTransportProvider.class)).extracting("baseUrl")
-				.isEqualTo("/test"));
+				.run(context -> assertThat(context.getBean(WebMvcSseServerTransportProvider.class)).extracting("baseUrl")
+						.isEqualTo("/test"));
 	}
 
 }

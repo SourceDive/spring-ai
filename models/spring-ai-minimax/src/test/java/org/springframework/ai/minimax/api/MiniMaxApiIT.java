@@ -45,7 +45,7 @@ public class MiniMaxApiIT {
 	void chatCompletionEntity() {
 		ChatCompletionMessage chatCompletionMessage = new ChatCompletionMessage("Hello world", Role.USER);
 		ResponseEntity<ChatCompletion> response = this.miniMaxApi
-			.chatCompletionEntity(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-4-air", 0.7, false));
+				.chatCompletionEntity(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-4-air", 0.7, false));
 
 		assertThat(response).isNotNull();
 		assertThat(response.getBody()).isNotNull();
@@ -55,7 +55,7 @@ public class MiniMaxApiIT {
 	void chatCompletionStream() {
 		ChatCompletionMessage chatCompletionMessage = new ChatCompletionMessage("Hello world", Role.USER);
 		Flux<ChatCompletionChunk> response = this.miniMaxApi
-			.chatCompletionStream(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-4-air", 0.7, true));
+				.chatCompletionStream(new ChatCompletionRequest(List.of(chatCompletionMessage), "glm-4-air", 0.7, true));
 
 		assertThat(response).isNotNull();
 		assertThat(response.collectList().block()).isNotNull();
@@ -64,7 +64,7 @@ public class MiniMaxApiIT {
 	@Test
 	void embeddings() {
 		ResponseEntity<EmbeddingList> response = this.miniMaxApi
-			.embeddings(new MiniMaxApi.EmbeddingRequest("Hello world"));
+				.embeddings(new MiniMaxApi.EmbeddingRequest("Hello world"));
 
 		assertThat(response).isNotNull();
 		assertThat(Objects.requireNonNull(response.getBody()).vectors()).hasSize(1);

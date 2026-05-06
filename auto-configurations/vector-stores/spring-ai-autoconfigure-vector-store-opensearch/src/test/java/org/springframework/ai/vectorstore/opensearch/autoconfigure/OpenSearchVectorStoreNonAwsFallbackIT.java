@@ -50,13 +50,13 @@ class OpenSearchVectorStoreNonAwsFallbackIT {
 	private static final String DOCUMENT_INDEX = "nonaws-spring-ai-document-index";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(OpenSearchVectorStoreAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.opensearch.aws.enabled=false",
-				"spring.ai.vectorstore.opensearch.uris=" + opensearchContainer.getHttpHostAddress(),
-				"spring.ai.vectorstore.opensearch.indexName=" + DOCUMENT_INDEX,
-				"spring.ai.vectorstore.opensearch.mappingJson={\"properties\":{\"embedding\":{\"type\":\"knn_vector\",\"dimension\":384}}}");
+			.withConfiguration(AutoConfigurations.of(OpenSearchVectorStoreAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.opensearch.aws.enabled=false",
+					"spring.ai.vectorstore.opensearch.uris=" + opensearchContainer.getHttpHostAddress(),
+					"spring.ai.vectorstore.opensearch.indexName=" + DOCUMENT_INDEX,
+					"spring.ai.vectorstore.opensearch.mappingJson={\"properties\":{\"embedding\":{\"type\":\"knn_vector\",\"dimension\":384}}}");
 
 	private List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -79,8 +79,7 @@ class OpenSearchVectorStoreNonAwsFallbackIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

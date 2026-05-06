@@ -38,7 +38,7 @@ public class AudioTranscriptionResponse implements ModelResponse<AudioTranscript
 	}
 
 	public AudioTranscriptionResponse(AudioTranscription transcript,
-			AudioTranscriptionResponseMetadata transcriptionResponseMetadata) {
+	                                  AudioTranscriptionResponseMetadata transcriptionResponseMetadata) {
 		this.transcript = transcript;
 		this.transcriptionResponseMetadata = transcriptionResponseMetadata;
 	}

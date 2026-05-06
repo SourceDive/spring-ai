@@ -37,7 +37,7 @@ class ContentFormatterTests {
 
 		assertThat(this.document.getFormattedContent()).isEqualTo(this.document.getFormattedContent(MetadataMode.ALL));
 		assertThat(this.document.getFormattedContent())
-			.isEqualTo(this.document.getFormattedContent(Document.DEFAULT_CONTENT_FORMATTER, MetadataMode.ALL));
+				.isEqualTo(this.document.getFormattedContent(Document.DEFAULT_CONTENT_FORMATTER, MetadataMode.ALL));
 
 	}
 
@@ -47,19 +47,19 @@ class ContentFormatterTests {
 		DefaultContentFormatter defaultConfigFormatter = DefaultContentFormatter.defaultConfig();
 
 		TextBlockAssertion.assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
-			.isEqualTo("""
-					llmKey2: value4
-					embedKey1: value1
-					embedKey2: value2
-					embedKey3: value3
-
-					The World is Big and Salvation Lurks Around the Corner""");
-
-		assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
-			.isEqualTo(this.document.getFormattedContent());
+				.isEqualTo("""
+						llmKey2: value4
+						embedKey1: value1
+						embedKey2: value2
+						embedKey3: value3
+						
+						The World is Big and Salvation Lurks Around the Corner""");
 
 		assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
-			.isEqualTo(defaultConfigFormatter.format(this.document, MetadataMode.ALL));
+				.isEqualTo(this.document.getFormattedContent());
+
+		assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
+				.isEqualTo(defaultConfigFormatter.format(this.document, MetadataMode.ALL));
 	}
 
 }

@@ -37,8 +37,8 @@ class MethodToolCallbackProviderTests {
 	@Test
 	void whenToolObjectHasToolAnnotatedMethodThenSucceed() {
 		MethodToolCallbackProvider provider = MethodToolCallbackProvider.builder()
-			.toolObjects(new ValidToolObject())
-			.build();
+				.toolObjects(new ValidToolObject())
+				.build();
 
 		assertThat(provider.getToolCallbacks()).hasSize(1);
 		assertThat(provider.getToolCallbacks()[0].getToolDefinition().name()).isEqualTo("validTool");
@@ -48,23 +48,23 @@ class MethodToolCallbackProviderTests {
 	void whenToolObjectHasNoToolAnnotatedMethodThenThrow() {
 		assertThatThrownBy(
 				() -> MethodToolCallbackProvider.builder().toolObjects(new NoToolAnnotatedMethodObject()).build())
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("No @Tool annotated methods found in");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("No @Tool annotated methods found in");
 	}
 
 	@Test
 	void whenToolObjectHasOnlyFunctionalTypeToolMethodsThenThrow() {
 		assertThatThrownBy(() -> MethodToolCallbackProvider.builder()
-			.toolObjects(new OnlyFunctionalTypeToolMethodsObject())
-			.build()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("No @Tool annotated methods found in");
+				.toolObjects(new OnlyFunctionalTypeToolMethodsObject())
+				.build()).isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("No @Tool annotated methods found in");
 	}
 
 	@Test
 	void whenToolObjectHasMixOfValidAndFunctionalTypeToolMethodsThenSucceed() {
 		MethodToolCallbackProvider provider = MethodToolCallbackProvider.builder()
-			.toolObjects(new MixedToolMethodsObject())
-			.build();
+				.toolObjects(new MixedToolMethodsObject())
+				.build();
 
 		assertThat(provider.getToolCallbacks()).hasSize(1);
 		assertThat(provider.getToolCallbacks()[0].getToolDefinition().name()).isEqualTo("validTool");
@@ -73,9 +73,9 @@ class MethodToolCallbackProviderTests {
 	@Test
 	void whenMultipleToolObjectsWithSameToolNameThenThrow() {
 		assertThatThrownBy(() -> MethodToolCallbackProvider.builder()
-			.toolObjects(new ValidToolObject(), new DuplicateToolNameObject())
-			.build()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name (validTool) found in sources");
+				.toolObjects(new ValidToolObject(), new DuplicateToolNameObject())
+				.build()).isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Multiple tools with the same name (validTool) found in sources");
 	}
 
 	static class ValidToolObject {

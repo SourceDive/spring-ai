@@ -104,8 +104,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 		if (builder.initializeImmediately) {
 			try {
 				afterPropertiesSet();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new IllegalStateException("Failed to initialize ChromaVectorStore", e);
 			}
 		}
@@ -133,8 +132,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 					collection = this.chromaApi.createCollection(this.tenantName, this.databaseName,
 							new ChromaApi.CreateCollectionRequest(this.collectionName));
-				}
-				else {
+				} else {
 					throw new RuntimeException("Collection " + this.collectionName
 							+ " doesn't exist and won't be created as the initializeSchema is set to false.");
 				}
@@ -193,8 +191,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 			DeleteEmbeddingsRequest deleteRequest = new DeleteEmbeddingsRequest(null, whereClause);
 			this.chromaApi.deleteEmbeddings(this.tenantName, this.databaseName, this.collectionId, deleteRequest);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter: {}", e.getMessage(), e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -231,11 +228,11 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 				metadata.put(DocumentMetadata.DISTANCE.value(), distance);
 				Document document = Document.builder()
-					.id(id)
-					.text(content)
-					.metadata(metadata)
-					.score(1.0 - distance)
-					.build();
+						.id(id)
+						.text(content)
+						.metadata(metadata)
+						.score(1.0 - distance)
+						.build();
 				responseDocuments.add(document);
 			}
 		}
@@ -247,8 +244,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 	private Map<String, Object> jsonToMap(String jsonText) {
 		try {
 			return (Map<String, Object>) this.objectMapper.readValue(jsonText, Map.class);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -256,8 +252,8 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.CHROMA.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName(this.collectionName + ":" + this.collectionId);
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName(this.collectionName + ":" + this.collectionId);
 	}
 
 	// used by the test
@@ -298,6 +294,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the tenant name.
+		 *
 		 * @param tenantName the name of the tenant
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -310,6 +307,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the database name.
+		 *
 		 * @param databaseName the name of the database
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -322,6 +320,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the collection name.
+		 *
 		 * @param collectionName the name of the collection
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -334,6 +333,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -344,6 +344,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the filter expression converter.
+		 *
 		 * @param converter the filter expression converter to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if converter is null
@@ -356,6 +357,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to initialize immediately.
+		 *
 		 * @param initialize true to initialize immediately, false otherwise
 		 * @return the builder instance
 		 */
@@ -366,6 +368,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Builds the {@link ChromaVectorStore} instance.
+		 *
 		 * @return a new ChromaVectorStore instance
 		 * @throws IllegalStateException if the builder is in an invalid state
 		 */

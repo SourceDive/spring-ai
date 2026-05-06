@@ -48,34 +48,34 @@ import static org.springframework.ai.model.openai.autoconfigure.OpenAIAutoConfig
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(OpenAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.AUDIO_TRANSCRIPTION_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OpenAiConnectionProperties.class, OpenAiAudioTranscriptionProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OpenAiConnectionProperties.class, OpenAiAudioTranscriptionProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class OpenAiAudioTranscriptionAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiAudioTranscriptionModel openAiAudioTranscriptionModel(OpenAiConnectionProperties commonProperties,
-			OpenAiAudioTranscriptionProperties transcriptionProperties, RetryTemplate retryTemplate,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
+	                                                                   OpenAiAudioTranscriptionProperties transcriptionProperties, RetryTemplate retryTemplate,
+	                                                                   ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                                                   ObjectProvider<WebClient.Builder> webClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
 
 		OpenAIAutoConfigurationUtil.ResolvedConnectionProperties resolved = resolveConnectionProperties(
 				commonProperties, transcriptionProperties, "transcription");
 
 		var openAiAudioApi = OpenAiAudioApi.builder()
-			.baseUrl(resolved.baseUrl())
-			.apiKey(new SimpleApiKey(resolved.apiKey()))
-			.headers(resolved.headers())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolved.baseUrl())
+				.apiKey(new SimpleApiKey(resolved.apiKey()))
+				.headers(resolved.headers())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 
 		return new OpenAiAudioTranscriptionModel(openAiAudioApi, transcriptionProperties.getOptions(), retryTemplate);
 

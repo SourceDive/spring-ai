@@ -50,8 +50,8 @@ public class OCIGenAiChatAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public OCICohereChatModel ociChatModel(GenerativeAiInferenceClient generativeAiClient,
-			OCICohereChatModelProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention) {
+	                                       OCICohereChatModelProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<ChatModelObservationConvention> observationConvention) {
 		var chatModel = new OCICohereChatModel(generativeAiClient, properties.getOptions(),
 				observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP));
 		observationConvention.ifAvailable(chatModel::setObservationConvention);

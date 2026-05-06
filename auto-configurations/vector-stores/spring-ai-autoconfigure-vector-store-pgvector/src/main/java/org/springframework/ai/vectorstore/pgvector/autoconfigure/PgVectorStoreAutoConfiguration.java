@@ -45,7 +45,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 1.0.0
  */
 @AutoConfiguration(after = JdbcTemplateAutoConfiguration.class)
-@ConditionalOnClass({ PgVectorStore.class, DataSource.class, JdbcTemplate.class })
+@ConditionalOnClass({PgVectorStore.class, DataSource.class, JdbcTemplate.class})
 @EnableConfigurationProperties(PgVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.PGVECTOR,
 		matchIfMissing = true)
@@ -60,27 +60,27 @@ public class PgVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PgVectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel,
-			PgVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                 PgVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                 ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                 BatchingStrategy batchingStrategy) {
 
 		var initializeSchema = properties.isInitializeSchema();
 
 		return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.schemaName(properties.getSchemaName())
-			.idType(properties.getIdType())
-			.vectorTableName(properties.getTableName())
-			.vectorTableValidationsEnabled(properties.isSchemaValidation())
-			.dimensions(properties.getDimensions())
-			.distanceType(properties.getDistanceType())
-			.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
-			.indexType(properties.getIndexType())
-			.initializeSchema(initializeSchema)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.maxDocumentBatchSize(properties.getMaxDocumentBatchSize())
-			.build();
+				.schemaName(properties.getSchemaName())
+				.idType(properties.getIdType())
+				.vectorTableName(properties.getTableName())
+				.vectorTableValidationsEnabled(properties.isSchemaValidation())
+				.dimensions(properties.getDimensions())
+				.distanceType(properties.getDistanceType())
+				.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
+				.indexType(properties.getIndexType())
+				.initializeSchema(initializeSchema)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.maxDocumentBatchSize(properties.getMaxDocumentBatchSize())
+				.build();
 	}
 
 }

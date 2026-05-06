@@ -33,9 +33,9 @@ class AiRuntimeHintsTests {
 	void discoverRelevantClasses() throws Exception {
 		var classes = AiRuntimeHints.findJsonAnnotatedClassesInPackage(TestApi.class);
 		var included = Set.of(TestApi.Bar.class, TestApi.Foo.class)
-			.stream()
-			.map(t -> TypeReference.of(t.getName()))
-			.collect(Collectors.toSet());
+				.stream()
+				.map(t -> TypeReference.of(t.getName()))
+				.collect(Collectors.toSet());
 		LogFactory.getLog(getClass()).info(classes);
 		Assert.state(classes.containsAll(included), "there should be all of the enumerated classes. ");
 	}

@@ -70,35 +70,35 @@ public abstract class RetryUtils {
 	private static final Logger logger = LoggerFactory.getLogger(RetryUtils.class);
 
 	public static final RetryTemplate DEFAULT_RETRY_TEMPLATE = RetryTemplate.builder()
-		.maxAttempts(10)
-		.retryOn(TransientAiException.class)
-		.exponentialBackoff(Duration.ofMillis(2000), 5, Duration.ofMillis(3 * 60000))
-		.withListener(new RetryListener() {
+			.maxAttempts(10)
+			.retryOn(TransientAiException.class)
+			.exponentialBackoff(Duration.ofMillis(2000), 5, Duration.ofMillis(3 * 60000))
+			.withListener(new RetryListener() {
 
-			@Override
-			public <T extends Object, E extends Throwable> void onError(RetryContext context,
-					RetryCallback<T, E> callback, Throwable throwable) {
-				logger.warn("Retry error. Retry count:" + context.getRetryCount(), throwable);
-			}
-		})
-		.build();
+				@Override
+				public <T extends Object, E extends Throwable> void onError(RetryContext context,
+				                                                            RetryCallback<T, E> callback, Throwable throwable) {
+					logger.warn("Retry error. Retry count:" + context.getRetryCount(), throwable);
+				}
+			})
+			.build();
 
 	/**
 	 * Useful in testing scenarios where you don't want to wait long for retry and now
 	 * show stack trace
 	 */
 	public static final RetryTemplate SHORT_RETRY_TEMPLATE = RetryTemplate.builder()
-		.maxAttempts(10)
-		.retryOn(TransientAiException.class)
-		.fixedBackoff(Duration.ofMillis(100))
-		.withListener(new RetryListener() {
+			.maxAttempts(10)
+			.retryOn(TransientAiException.class)
+			.fixedBackoff(Duration.ofMillis(100))
+			.withListener(new RetryListener() {
 
-			@Override
-			public <T extends Object, E extends Throwable> void onError(RetryContext context,
-					RetryCallback<T, E> callback, Throwable throwable) {
-				logger.warn("Retry error. Retry count:" + context.getRetryCount());
-			}
-		})
-		.build();
+				@Override
+				public <T extends Object, E extends Throwable> void onError(RetryContext context,
+				                                                            RetryCallback<T, E> callback, Throwable throwable) {
+					logger.warn("Retry error. Retry count:" + context.getRetryCount());
+				}
+			})
+			.build();
 
 }

@@ -65,12 +65,12 @@ public class VertexAiChatModelObservationIT {
 	void observationForChatOperation() {
 
 		var options = VertexAiGeminiChatOptions.builder()
-			.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
-			.temperature(0.7)
-			.stopSequences(List.of("this-is-the-end"))
-			.maxOutputTokens(2048)
-			.topP(1.0)
-			.build();
+				.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
+				.temperature(0.7)
+				.stopSequences(List.of("this-is-the-end"))
+				.maxOutputTokens(2048)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -87,12 +87,12 @@ public class VertexAiChatModelObservationIT {
 	void observationForStreamingOperation() {
 
 		var options = VertexAiGeminiChatOptions.builder()
-			.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
-			.temperature(0.7)
-			.stopSequences(List.of("this-is-the-end"))
-			.maxOutputTokens(2048)
-			.topP(1.0)
-			.build();
+				.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
+				.temperature(0.7)
+				.stopSequences(List.of("this-is-the-end"))
+				.maxOutputTokens(2048)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -102,9 +102,9 @@ public class VertexAiChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(1);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -117,42 +117,42 @@ public class VertexAiChatModelObservationIT {
 
 	private void validate(ChatResponseMetadata responseMetadata) {
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasLowCardinalityKeyValue(
-					ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.VERTEX_AI.value())
-			.hasLowCardinalityKeyValue(
-					ChatModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
-			.doesNotHaveHighCardinalityKeyValueWithKey(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_K.asString())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-					"[\"STOP\"]")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasLowCardinalityKeyValue(
+						ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.VERTEX_AI.value())
+				.hasLowCardinalityKeyValue(
+						ChatModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH.getValue())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
+				.doesNotHaveHighCardinalityKeyValueWithKey(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_K.asString())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+						"[\"STOP\"]")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -168,22 +168,22 @@ public class VertexAiChatModelObservationIT {
 			String projectId = System.getenv("VERTEX_AI_GEMINI_PROJECT_ID");
 			String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
 			return new VertexAI.Builder().setProjectId(projectId)
-				.setLocation(location)
-				.setTransport(Transport.REST)
-				.build();
+					.setLocation(location)
+					.setTransport(Transport.REST)
+					.build();
 		}
 
 		@Bean
 		public VertexAiGeminiChatModel vertexAiEmbedding(VertexAI vertexAi,
-				TestObservationRegistry observationRegistry) {
+		                                                 TestObservationRegistry observationRegistry) {
 
 			return VertexAiGeminiChatModel.builder()
-				.vertexAI(vertexAi)
-				.observationRegistry(observationRegistry)
-				.defaultOptions(VertexAiGeminiChatOptions.builder()
-					.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-					.build())
-				.build();
+					.vertexAI(vertexAi)
+					.observationRegistry(observationRegistry)
+					.defaultOptions(VertexAiGeminiChatOptions.builder()
+							.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+							.build())
+					.build();
 		}
 
 	}

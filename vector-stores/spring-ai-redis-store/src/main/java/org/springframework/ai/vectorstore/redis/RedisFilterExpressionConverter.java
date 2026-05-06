@@ -46,7 +46,7 @@ public class RedisFilterExpressionConverter extends AbstractFilterExpressionConv
 
 	public RedisFilterExpressionConverter(List<MetadataField> metadataFields) {
 		this.metadataFields = metadataFields.stream()
-			.collect(Collectors.toMap(MetadataField::name, Function.identity()));
+				.collect(Collectors.toMap(MetadataField::name, Function.identity()));
 	}
 
 	@Override

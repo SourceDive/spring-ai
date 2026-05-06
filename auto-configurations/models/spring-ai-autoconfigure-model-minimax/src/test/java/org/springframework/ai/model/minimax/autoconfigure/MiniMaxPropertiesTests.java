@@ -43,34 +43,34 @@ public class MiniMaxPropertiesTests {
 	public void chatProperties() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.minimax.base-url=TEST_BASE_URL",
 				"spring.ai.minimax.api-key=abc123",
 				"spring.ai.minimax.chat.options.model=MODEL_XYZ",
 				"spring.ai.minimax.chat.options.temperature=0.55")
 				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(MiniMaxChatProperties.class);
-				var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(MiniMaxChatProperties.class);
+					var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(chatProperties.getApiKey()).isNull();
-				assertThat(chatProperties.getBaseUrl()).isNull();
+					assertThat(chatProperties.getApiKey()).isNull();
+					assertThat(chatProperties.getBaseUrl()).isNull();
 
-				assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
-			});
+					assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
+				});
 	}
 
 	@Test
 	public void chatOverrideConnectionProperties() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.minimax.base-url=TEST_BASE_URL",
 				"spring.ai.minimax.api-key=abc123",
 				"spring.ai.minimax.chat.base-url=TEST_BASE_URL2",
@@ -78,80 +78,80 @@ public class MiniMaxPropertiesTests {
 				"spring.ai.minimax.chat.options.model=MODEL_XYZ",
 				"spring.ai.minimax.chat.options.temperature=0.55")
 				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(MiniMaxChatProperties.class);
-				var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(MiniMaxChatProperties.class);
+					var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(chatProperties.getApiKey()).isEqualTo("456");
-				assertThat(chatProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL2");
+					assertThat(chatProperties.getApiKey()).isEqualTo("456");
+					assertThat(chatProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL2");
 
-				assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
-			});
+					assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
+				});
 	}
 
 	@Test
 	public void embeddingProperties() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.minimax.base-url=TEST_BASE_URL",
 				"spring.ai.minimax.api-key=abc123",
 				"spring.ai.minimax.embedding.options.model=MODEL_XYZ")
 				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(MiniMaxEmbeddingProperties.class);
-				var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(MiniMaxEmbeddingProperties.class);
+					var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(embeddingProperties.getApiKey()).isNull();
-				assertThat(embeddingProperties.getBaseUrl()).isNull();
+					assertThat(embeddingProperties.getApiKey()).isNull();
+					assertThat(embeddingProperties.getBaseUrl()).isNull();
 
-				assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-			});
+					assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+				});
 	}
 
 	@Test
 	public void embeddingOverrideConnectionProperties() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.minimax.base-url=TEST_BASE_URL",
 				"spring.ai.minimax.api-key=abc123",
 				"spring.ai.minimax.embedding.base-url=TEST_BASE_URL2",
 				"spring.ai.minimax.embedding.api-key=456",
 				"spring.ai.minimax.embedding.options.model=MODEL_XYZ")
 				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(MiniMaxEmbeddingProperties.class);
-				var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(MiniMaxEmbeddingProperties.class);
+					var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(embeddingProperties.getApiKey()).isEqualTo("456");
-				assertThat(embeddingProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL2");
+					assertThat(embeddingProperties.getApiKey()).isEqualTo("456");
+					assertThat(embeddingProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL2");
 
-				assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-			});
+					assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+				});
 	}
 
 	@Test
 	public void chatOptionsTest() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.minimax.api-key=API_KEY",
 				"spring.ai.minimax.base-url=TEST_BASE_URL",
 
@@ -198,45 +198,45 @@ public class MiniMaxPropertiesTests {
 					"""
 				)
 			// @formatter:on
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(MiniMaxChatProperties.class);
-				var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(MiniMaxChatProperties.class);
+					var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
 
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
-				assertThat(connectionProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("API_KEY");
 
-				assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(chatProperties.getOptions().getFrequencyPenalty()).isEqualTo(-1.5);
-				assertThat(chatProperties.getOptions().getMaxTokens()).isEqualTo(123);
-				assertThat(chatProperties.getOptions().getN()).isEqualTo(10);
-				assertThat(chatProperties.getOptions().getPresencePenalty()).isEqualTo(0);
-				assertThat(chatProperties.getOptions().getResponseFormat())
-					.isEqualTo(new MiniMaxApi.ChatCompletionRequest.ResponseFormat("json"));
-				assertThat(chatProperties.getOptions().getSeed()).isEqualTo(66);
-				assertThat(chatProperties.getOptions().getStop()).contains("boza", "koza");
-				assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
-				assertThat(chatProperties.getOptions().getTopP()).isEqualTo(0.56);
+					assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(chatProperties.getOptions().getFrequencyPenalty()).isEqualTo(-1.5);
+					assertThat(chatProperties.getOptions().getMaxTokens()).isEqualTo(123);
+					assertThat(chatProperties.getOptions().getN()).isEqualTo(10);
+					assertThat(chatProperties.getOptions().getPresencePenalty()).isEqualTo(0);
+					assertThat(chatProperties.getOptions().getResponseFormat())
+							.isEqualTo(new MiniMaxApi.ChatCompletionRequest.ResponseFormat("json"));
+					assertThat(chatProperties.getOptions().getSeed()).isEqualTo(66);
+					assertThat(chatProperties.getOptions().getStop()).contains("boza", "koza");
+					assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
+					assertThat(chatProperties.getOptions().getTopP()).isEqualTo(0.56);
 
-				JSONAssert.assertEquals("{\"type\":\"function\",\"function\":{\"name\":\"toolChoiceFunctionName\"}}",
-						chatProperties.getOptions().getToolChoice(), JSONCompareMode.LENIENT);
+					JSONAssert.assertEquals("{\"type\":\"function\",\"function\":{\"name\":\"toolChoiceFunctionName\"}}",
+							chatProperties.getOptions().getToolChoice(), JSONCompareMode.LENIENT);
 
-				assertThat(chatProperties.getOptions().getTools()).hasSize(1);
-				var tool = chatProperties.getOptions().getTools().get(0);
-				assertThat(tool.getType()).isEqualTo(MiniMaxApi.FunctionTool.Type.FUNCTION);
-				var function = tool.getFunction();
-				assertThat(function.getName()).isEqualTo("myFunction1");
-				assertThat(function.getDescription()).isEqualTo("function description");
-				assertThat(function.getParameters()).isNotEmpty();
-			});
+					assertThat(chatProperties.getOptions().getTools()).hasSize(1);
+					var tool = chatProperties.getOptions().getTools().get(0);
+					assertThat(tool.getType()).isEqualTo(MiniMaxApi.FunctionTool.Type.FUNCTION);
+					var function = tool.getFunction();
+					assertThat(function.getName()).isEqualTo("myFunction1");
+					assertThat(function.getDescription()).isEqualTo("function description");
+					assertThat(function.getParameters()).isNotEmpty();
+				});
 	}
 
 	@Test
 	public void embeddingOptionsTest() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.minimax.api-key=API_KEY",
 				"spring.ai.minimax.base-url=TEST_BASE_URL",
 
@@ -244,82 +244,82 @@ public class MiniMaxPropertiesTests {
 				"spring.ai.minimax.embedding.options.encodingFormat=MyEncodingFormat"
 				)
 			// @formatter:on
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
-				var embeddingProperties = context.getBean(MiniMaxEmbeddingProperties.class);
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var connectionProperties = context.getBean(MiniMaxConnectionProperties.class);
+					var embeddingProperties = context.getBean(MiniMaxEmbeddingProperties.class);
 
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
-				assertThat(connectionProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("API_KEY");
 
-				assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-			});
+					assertThat(embeddingProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+				});
 	}
 
 	@Test
 	void embeddingActivation() {
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
-					"spring.ai.model.embedding=none")
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MiniMaxEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(MiniMaxEmbeddingModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
+						"spring.ai.model.embedding=none")
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MiniMaxEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(MiniMaxEmbeddingModel.class)).isEmpty();
+				});
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL")
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MiniMaxEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(MiniMaxEmbeddingModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL")
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MiniMaxEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(MiniMaxEmbeddingModel.class)).isNotEmpty();
+				});
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
-					"spring.ai.model.embedding=minimax")
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MiniMaxEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(MiniMaxEmbeddingModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
+						"spring.ai.model.embedding=minimax")
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MiniMaxEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(MiniMaxEmbeddingModel.class)).isNotEmpty();
+				});
 	}
 
 	@Test
 	void chatActivation() {
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
-					"spring.ai.model.chat=none")
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MiniMaxChatProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(MiniMaxChatModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
+						"spring.ai.model.chat=none")
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MiniMaxChatProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(MiniMaxChatModel.class)).isEmpty();
+				});
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL")
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MiniMaxChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(MiniMaxChatModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL")
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MiniMaxChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(MiniMaxChatModel.class)).isNotEmpty();
+				});
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
-					"spring.ai.model.chat=minimax")
-			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-					RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MiniMaxChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(MiniMaxChatModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.minimax.api-key=API_KEY", "spring.ai.minimax.base-url=TEST_BASE_URL",
+						"spring.ai.model.chat=minimax")
+				.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+						RestClientAutoConfiguration.class, MiniMaxChatAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MiniMaxChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(MiniMaxChatModel.class)).isNotEmpty();
+				});
 
 	}
 

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
-@JsonPropertyOrder({ "promptTokens", "completionTokens", "totalTokens", "nativeUsage" })
+@JsonPropertyOrder({"promptTokens", "completionTokens", "totalTokens", "nativeUsage"})
 public class DefaultUsage implements Usage {
 
 	private final Integer promptTokens;
@@ -44,14 +44,15 @@ public class DefaultUsage implements Usage {
 	/**
 	 * Create a new DefaultUsage with promptTokens, completionTokens, totalTokens and
 	 * native {@link Usage} object.
-	 * @param promptTokens the number of tokens in the prompt, or {@code null} if not
-	 * available
+	 *
+	 * @param promptTokens     the number of tokens in the prompt, or {@code null} if not
+	 *                         available
 	 * @param completionTokens the number of tokens in the generation, or {@code null} if
-	 * not available
-	 * @param totalTokens the total number of tokens, or {@code null} to calculate from
-	 * promptTokens and completionTokens
-	 * @param nativeUsage the native usage object returned by the model provider, or
-	 * {@code null} to return the map of prompt, completion and total tokens.
+	 *                         not available
+	 * @param totalTokens      the total number of tokens, or {@code null} to calculate from
+	 *                         promptTokens and completionTokens
+	 * @param nativeUsage      the native usage object returned by the model provider, or
+	 *                         {@code null} to return the map of prompt, completion and total tokens.
 	 */
 	public DefaultUsage(Integer promptTokens, Integer completionTokens, Integer totalTokens, Object nativeUsage) {
 		this.promptTokens = promptTokens != null ? promptTokens : 0;
@@ -63,10 +64,11 @@ public class DefaultUsage implements Usage {
 
 	/**
 	 * Create a new DefaultUsage with promptTokens and completionTokens.
-	 * @param promptTokens the number of tokens in the prompt, or {@code null} if not
-	 * available
+	 *
+	 * @param promptTokens     the number of tokens in the prompt, or {@code null} if not
+	 *                         available
 	 * @param completionTokens the number of tokens in the generation, or {@code null} if
-	 * not available
+	 *                         not available
 	 */
 	public DefaultUsage(Integer promptTokens, Integer completionTokens) {
 		this(promptTokens, completionTokens, null, null);
@@ -74,12 +76,13 @@ public class DefaultUsage implements Usage {
 
 	/**
 	 * Create a new DefaultUsage with promptTokens, completionTokens, and totalTokens.
-	 * @param promptTokens the number of tokens in the prompt, or {@code null} if not
-	 * available
+	 *
+	 * @param promptTokens     the number of tokens in the prompt, or {@code null} if not
+	 *                         available
 	 * @param completionTokens the number of tokens in the generation, or {@code null} if
-	 * not available
-	 * @param totalTokens the total number of tokens, or {@code null} to calculate from
-	 * promptTokens and completionTokens
+	 *                         not available
+	 * @param totalTokens      the total number of tokens, or {@code null} to calculate from
+	 *                         promptTokens and completionTokens
 	 */
 	public DefaultUsage(Integer promptTokens, Integer completionTokens, Integer totalTokens) {
 		this(promptTokens, completionTokens, totalTokens, null);
@@ -89,16 +92,17 @@ public class DefaultUsage implements Usage {
 	 * Create a new DefaultUsage with promptTokens, completionTokens, and totalTokens.
 	 * This constructor is used for JSON deserialization and handles both the new format
 	 * with completionTokens and the legacy format with generationTokens.
-	 * @param promptTokens the number of tokens in the prompt
+	 *
+	 * @param promptTokens     the number of tokens in the prompt
 	 * @param completionTokens the number of tokens in the completion (new format)
-	 * @param totalTokens the total number of tokens
-	 * @param nativeUsage the native usage object
+	 * @param totalTokens      the total number of tokens
+	 * @param nativeUsage      the native usage object
 	 * @return a new DefaultUsage instance
 	 */
 	@JsonCreator
 	public static DefaultUsage fromJson(@JsonProperty("promptTokens") Integer promptTokens,
-			@JsonProperty("completionTokens") Integer completionTokens,
-			@JsonProperty("totalTokens") Integer totalTokens, @JsonProperty("nativeUsage") Object nativeUsage) {
+	                                    @JsonProperty("completionTokens") Integer completionTokens,
+	                                    @JsonProperty("totalTokens") Integer totalTokens, @JsonProperty("nativeUsage") Object nativeUsage) {
 		return new DefaultUsage(promptTokens, completionTokens, totalTokens, nativeUsage);
 	}
 

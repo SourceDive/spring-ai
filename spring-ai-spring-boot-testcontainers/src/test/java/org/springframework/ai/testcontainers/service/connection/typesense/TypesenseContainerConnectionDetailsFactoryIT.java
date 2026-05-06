@@ -42,9 +42,9 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
-@TestPropertySource(properties = { "spring.ai.vectorstore.typesense.embeddingDimension=384",
+@TestPropertySource(properties = {"spring.ai.vectorstore.typesense.embeddingDimension=384",
 		"spring.ai.vectorstore.typesense.initialize-schema=true",
-		"spring.ai.vectorstore.typesense.collectionName=myTestCollection" })
+		"spring.ai.vectorstore.typesense.collectionName=myTestCollection"})
 @Testcontainers
 class TypesenseContainerConnectionDetailsFactoryIT {
 
@@ -66,13 +66,13 @@ class TypesenseContainerConnectionDetailsFactoryIT {
 		this.vectorStore.add(this.documents);
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 		assertThat(results).hasSize(1);
 		Document resultDoc = results.get(0);
 		assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
 		assertThat(resultDoc.getText())
-			.contains("Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+				.contains("Spring AI provides abstractions that serve as the foundation for developing AI applications.");
 		assertThat(resultDoc.getMetadata()).hasSize(2);
 		assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
 

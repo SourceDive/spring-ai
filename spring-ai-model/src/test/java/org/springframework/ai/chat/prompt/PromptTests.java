@@ -37,11 +37,11 @@ class PromptTests {
 	@Test
 	void whenContentIsNullThenThrow() {
 		assertThatThrownBy(() -> new Prompt((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 
 		assertThatThrownBy(() -> new Prompt((String) null, ChatOptions.builder().build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 	}
 
 	@Test
@@ -56,21 +56,21 @@ class PromptTests {
 	@Test
 	void whenMessageIsNullThenThrow() {
 		assertThatThrownBy(() -> new Prompt((Message) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot contain null elements");
+				.hasMessageContaining("messages cannot contain null elements");
 
 		assertThatThrownBy(() -> new Prompt((Message) null, ChatOptions.builder().build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("messages cannot contain null elements");
 	}
 
 	@Test
 	void whenMessageListIsNullThenThrow() {
 		assertThatThrownBy(() -> new Prompt((List<Message>) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot be null");
+				.hasMessageContaining("messages cannot be null");
 
 		assertThatThrownBy(() -> new Prompt((List<Message>) null, ChatOptions.builder().build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("messages cannot be null");
 	}
 
 	@Test
@@ -81,8 +81,8 @@ class PromptTests {
 	@Test
 	void whenContentAndMessageAreBothDefinedThenThrow() {
 		assertThatThrownBy(() -> Prompt.builder().content("Something").messages(new UserMessage("Else")).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("content and messages cannot be set at the same time");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("content and messages cannot be set at the same time");
 	}
 
 	@Test
@@ -171,8 +171,8 @@ class PromptTests {
 	@Test
 	void getSystemMessageWhenMultiple() {
 		Prompt prompt = Prompt.builder()
-			.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
-			.build();
+				.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
+				.build();
 
 		assertThat(prompt.getSystemMessage()).isNotNull();
 		assertThat(prompt.getSystemMessage().getText()).isEqualTo("Hello");
@@ -209,8 +209,8 @@ class PromptTests {
 	@Test
 	void augmentSystemMessageWhenMultiple() {
 		Prompt prompt = Prompt.builder()
-			.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
-			.build();
+				.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
+				.build();
 
 		assertThat(prompt.getSystemMessage()).isNotNull();
 		assertThat(prompt.getSystemMessage().getText()).isEqualTo("Hello");

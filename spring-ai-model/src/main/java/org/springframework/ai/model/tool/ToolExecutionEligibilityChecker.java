@@ -33,8 +33,9 @@ public interface ToolExecutionEligibilityChecker extends Function<ChatResponse, 
 	/**
 	 * Determines if tool execution should be performed based on the prompt options and
 	 * chat response.
+	 *
 	 * @param promptOptions The options from the prompt
-	 * @param chatResponse The response from the chat model
+	 * @param chatResponse  The response from the chat model
 	 * @return true if tool execution should be performed, false otherwise
 	 */
 	default boolean isToolExecutionRequired(ChatOptions promptOptions, ChatResponse chatResponse) {
@@ -45,6 +46,7 @@ public interface ToolExecutionEligibilityChecker extends Function<ChatResponse, 
 
 	/**
 	 * Determines if the response is a tool call message response.
+	 *
 	 * @param chatResponse The response from the chat model call
 	 * @return true if the response is a tool call message response, false otherwise
 	 */
@@ -55,6 +57,7 @@ public interface ToolExecutionEligibilityChecker extends Function<ChatResponse, 
 
 	/**
 	 * Determines if tool execution should be performed by the Spring AI or by the client.
+	 *
 	 * @param chatOptions The options from the chat
 	 * @return true if tool execution should be performed by Spring AI, false if it should
 	 * be performed by the client
@@ -66,9 +69,8 @@ public interface ToolExecutionEligibilityChecker extends Function<ChatResponse, 
 		if (chatOptions instanceof ToolCallingChatOptions toolCallingChatOptions
 				&& toolCallingChatOptions.getInternalToolExecutionEnabled() != null) {
 			internalToolExecutionEnabled = Boolean.TRUE
-				.equals(toolCallingChatOptions.getInternalToolExecutionEnabled());
-		}
-		else {
+					.equals(toolCallingChatOptions.getInternalToolExecutionEnabled());
+		} else {
 			internalToolExecutionEnabled = true;
 		}
 		return internalToolExecutionEnabled;

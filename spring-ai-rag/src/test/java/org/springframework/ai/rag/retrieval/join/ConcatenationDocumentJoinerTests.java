@@ -38,7 +38,7 @@ class ConcatenationDocumentJoinerTests {
 	void whenDocumentsForQueryIsNullThenThrow() {
 		DocumentJoiner documentJoiner = new ConcatenationDocumentJoiner();
 		assertThatThrownBy(() -> documentJoiner.apply(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("documentsForQuery cannot be null");
+				.hasMessageContaining("documentsForQuery cannot be null");
 	}
 
 	@Test
@@ -47,7 +47,7 @@ class ConcatenationDocumentJoinerTests {
 		var documentsForQuery = new HashMap<Query, List<List<Document>>>();
 		documentsForQuery.put(null, List.of());
 		assertThatThrownBy(() -> documentJoiner.apply(documentsForQuery)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("documentsForQuery cannot contain null keys");
+				.hasMessageContaining("documentsForQuery cannot contain null keys");
 	}
 
 	@Test
@@ -56,7 +56,7 @@ class ConcatenationDocumentJoinerTests {
 		var documentsForQuery = new HashMap<Query, List<List<Document>>>();
 		documentsForQuery.put(new Query("test"), null);
 		assertThatThrownBy(() -> documentJoiner.apply(documentsForQuery)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("documentsForQuery cannot contain null values");
+				.hasMessageContaining("documentsForQuery cannot contain null values");
 	}
 
 	@Test

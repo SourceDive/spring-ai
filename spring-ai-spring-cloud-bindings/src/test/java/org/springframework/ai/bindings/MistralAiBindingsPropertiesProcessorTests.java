@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MistralAiBindingsPropertiesProcessorTests {
 
 	private final Bindings bindings = new Bindings(new Binding("test-name", Paths.get("test-path"),
-	// @formatter:off
+			// @formatter:off
 			Map.of(
 				Binding.TYPE, MistralAiBindingsPropertiesProcessor.TYPE,
 				"api-key", "demo",

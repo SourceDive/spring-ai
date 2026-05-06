@@ -47,6 +47,7 @@ public class McpSyncClientConfigurer {
 
 	/**
 	 * Configures an MCP sync client specification by applying all registered customizers.
+	 *
 	 * @param name the name of the client being configured
 	 * @param spec the specification to customize
 	 * @return the customized specification
@@ -62,6 +63,7 @@ public class McpSyncClientConfigurer {
 	 * <p>
 	 * Customizers are applied in the order they were registered. If no customizers are
 	 * registered, this method has no effect.
+	 *
 	 * @param name the name of the client being customized
 	 * @param spec the specification to customize
 	 */

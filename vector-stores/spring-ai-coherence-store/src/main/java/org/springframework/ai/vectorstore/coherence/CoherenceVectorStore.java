@@ -142,6 +142,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 	/**
 	 * Protected constructor that accepts a builder instance. This is the preferred way to
 	 * create new CoherenceVectorStore instances.
+	 *
 	 * @param builder the configured builder instance
 	 */
 	protected CoherenceVectorStore(Builder builder) {
@@ -159,6 +160,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 
 	/**
 	 * Creates a new builder for configuring and creating CoherenceVectorStore instances.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder(Session session, EmbeddingModel embeddingModel) {
@@ -199,8 +201,8 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 
 		var search = new SimilaritySearch<DocumentChunk.Id, DocumentChunk, float[]>(DocumentChunk::vector, vector,
 				request.getTopK())
-			.algorithm(getDistanceAlgorithm())
-			.filter(filter);
+				.algorithm(getDistanceAlgorithm())
+				.filter(filter);
 
 		var results = this.documentChunks.aggregate(search);
 
@@ -212,11 +214,11 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 				Map<String, Object> mergedMetadata = new HashMap<>(chunk.metadata());
 				mergedMetadata.put(DocumentMetadata.DISTANCE.value(), r.getDistance());
 				documents.add(Document.builder()
-					.id(id.docId())
-					.text(chunk.text())
-					.metadata(mergedMetadata)
-					.score(1 - r.getDistance())
-					.build());
+						.id(id.docId())
+						.text(chunk.text())
+						.metadata(mergedMetadata)
+						.score(1 - r.getDistance())
+						.build());
 			}
 		}
 		return documents;
@@ -235,7 +237,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 		this.documentChunks = this.session.getMap(this.mapName);
 		switch (this.indexType) {
 			case HNSW -> this.documentChunks
-				.addIndex(new HnswIndex<>(DocumentChunk::vector, this.distanceType.name(), this.dimensions));
+					.addIndex(new HnswIndex<>(DocumentChunk::vector, this.distanceType.name(), this.dimensions));
 			case BINARY -> this.documentChunks.addIndex(new BinaryQuantIndex<>(DocumentChunk::vector));
 		}
 	}
@@ -251,6 +253,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 	 * {@link com.oracle.coherence.ai.Float32Vector} object ready to be inserted.
 	 * <p/>
 	 * Optionally normalize the vector beforehand (see forcedNormalization).
+	 *
 	 * @param floats an array of Doubles to convert
 	 * @return a {@code Vector} instance
 	 */
@@ -266,8 +269,8 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.NEO4J.value(), operationName)
-			.collectionName(this.mapName)
-			.dimensions(this.embeddingModel.dimensions());
+				.collectionName(this.mapName)
+				.dimensions(this.embeddingModel.dimensions());
 	}
 
 	@Override
@@ -305,6 +308,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the map name for vector storage.
+		 *
 		 * @param mapName the name of the map to use
 		 * @return the builder instance
 		 */
@@ -317,6 +321,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the distance type for vector similarity calculations.
+		 *
 		 * @param distanceType the distance type to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if distanceType is null
@@ -329,6 +334,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets whether to force vector normalization.
+		 *
 		 * @param forcedNormalization true to force normalization, false otherwise
 		 * @return the builder instance
 		 */
@@ -339,6 +345,7 @@ public class CoherenceVectorStore extends AbstractObservationVectorStore impleme
 
 		/**
 		 * Sets the index type for vector storage.
+		 *
 		 * @param indexType the index type to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if indexType is null

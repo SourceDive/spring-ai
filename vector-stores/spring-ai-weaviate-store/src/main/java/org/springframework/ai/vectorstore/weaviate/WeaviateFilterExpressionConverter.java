@@ -63,19 +63,16 @@ public class WeaviateFilterExpressionConverter extends AbstractFilterExpressionC
 
 		if (exp.type() == ExpressionType.IN) {
 			FilterHelper.expandIn(exp, context, this);
-		}
-		else if (exp.type() == ExpressionType.NIN) {
+		} else if (exp.type() == ExpressionType.NIN) {
 			FilterHelper.expandNin(exp, context, this);
-		}
-		else if (exp.type() == ExpressionType.AND || exp.type() == ExpressionType.OR) {
+		} else if (exp.type() == ExpressionType.AND || exp.type() == ExpressionType.OR) {
 			context.append(getOperationSymbol(exp));
 			context.append("operands:[{");
 			this.convertOperand(exp.left(), context);
 			context.append("},\n{");
 			this.convertOperand(exp.right(), context);
 			context.append("}]");
-		}
-		else {
+		} else {
 			this.convertOperand(exp.left(), context);
 			context.append(getOperationSymbol(exp));
 			this.convertOperand(exp.right(), context);
@@ -124,8 +121,7 @@ public class WeaviateFilterExpressionConverter extends AbstractFilterExpressionC
 		if (filterValue.value() instanceof List) {
 			// nothing
 			throw new IllegalStateException("");
-		}
-		else {
+		} else {
 			this.doSingleValue(filterValue.value(), context);
 		}
 	}
@@ -136,36 +132,27 @@ public class WeaviateFilterExpressionConverter extends AbstractFilterExpressionC
 		if (value instanceof Integer i) {
 			if (this.mapIntegerToNumberValue) {
 				context.append(String.format(singleValueFormat, i));
-			}
-			else {
+			} else {
 				context.append(String.format("valueInt:%s ", i));
 			}
-		}
-		else if (value instanceof Long l) {
+		} else if (value instanceof Long l) {
 			if (this.mapIntegerToNumberValue) {
 				context.append(String.format(singleValueFormat, l));
-			}
-			else {
+			} else {
 				context.append(String.format("valueInt:%s ", l));
 			}
-		}
-		else if (value instanceof Double d) {
+		} else if (value instanceof Double d) {
 			context.append(String.format(singleValueFormat, d));
-		}
-		else if (value instanceof Float f) {
+		} else if (value instanceof Float f) {
 			context.append(String.format(singleValueFormat, f));
-		}
-		else if (value instanceof Boolean b) {
+		} else if (value instanceof Boolean b) {
 			context.append(String.format("valueBoolean:%s ", b));
-		}
-		else if (value instanceof String s) {
+		} else if (value instanceof String s) {
 			context.append(String.format("valueText:\"%s\" ", s));
-		}
-		else if (value instanceof Date date) {
+		} else if (value instanceof Date date) {
 			String dateString = DateFormatUtils.format(date, "yyyy-MM-dd\'T\'HH:mm:ssZZZZZ");
 			context.append(String.format("valueDate:\"%s\" ", dateString));
-		}
-		else {
+		} else {
 			throw new RuntimeException("Unsupported value type: " + value);
 		}
 	}
@@ -175,7 +162,7 @@ public class WeaviateFilterExpressionConverter extends AbstractFilterExpressionC
 		// Replaces the group: AND((foo == "bar" OR bar == "foo"), "boza" == "koza") into
 		// AND(AND(id != -1, (foo == "bar" OR bar == "foo")), "boza" == "koza") into
 		this.convertOperand(new Expression(ExpressionType.AND,
-				new Expression(ExpressionType.NE, new Filter.Key("id"), new Filter.Value("-1")), group.content()),
+						new Expression(ExpressionType.NE, new Filter.Key("id"), new Filter.Value("-1")), group.content()),
 				context);
 	}
 

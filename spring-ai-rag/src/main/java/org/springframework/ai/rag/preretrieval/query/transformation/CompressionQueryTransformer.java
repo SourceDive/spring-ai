@@ -50,13 +50,13 @@ public class CompressionQueryTransformer implements QueryTransformer {
 			Given the following conversation history and a follow-up query, your task is to synthesize
 			a concise, standalone query that incorporates the context from the history.
 			Ensure the standalone query is clear, specific, and maintains the user's intent.
-
+			
 			Conversation history:
 			{history}
-
+			
 			Follow-up query:
 			{query}
-
+			
 			Standalone query:
 			""");
 
@@ -80,11 +80,11 @@ public class CompressionQueryTransformer implements QueryTransformer {
 		logger.debug("Compressing conversation history and follow-up query into a standalone query");
 
 		var compressedQueryText = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("history", formatConversationHistory(query.history()))
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("history", formatConversationHistory(query.history()))
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (!StringUtils.hasText(compressedQueryText)) {
 			logger.warn("Query compression result is null/empty. Returning the input query unchanged.");
@@ -100,10 +100,10 @@ public class CompressionQueryTransformer implements QueryTransformer {
 		}
 
 		return history.stream()
-			.filter(message -> message.getMessageType().equals(MessageType.USER)
-					|| message.getMessageType().equals(MessageType.ASSISTANT))
-			.map(message -> "%s: %s".formatted(message.getMessageType(), message.getText()))
-			.collect(Collectors.joining("\n"));
+				.filter(message -> message.getMessageType().equals(MessageType.USER)
+						|| message.getMessageType().equals(MessageType.ASSISTANT))
+				.map(message -> "%s: %s".formatted(message.getMessageType(), message.getText()))
+				.collect(Collectors.joining("\n"));
 	}
 
 	public static Builder builder() {

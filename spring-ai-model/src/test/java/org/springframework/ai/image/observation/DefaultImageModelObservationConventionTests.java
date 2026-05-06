@@ -45,27 +45,27 @@ class DefaultImageModelObservationConventionTests {
 	@Test
 	void contextualNameWhenModelIsDefined() {
 		ImageModelObservationContext observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("image mistral");
 	}
 
 	@Test
 	void contextualNameWhenModelIsNotDefined() {
 		ImageModelObservationContext observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("image");
 	}
 
 	@Test
 	void supportsOnlyImageModelObservationContext() {
 		ImageModelObservationContext observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
 	}
@@ -73,9 +73,9 @@ class DefaultImageModelObservationConventionTests {
 	@Test
 	void shouldHaveLowCardinalityKeyValuesWhenDefined() {
 		ImageModelObservationContext observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(AiObservationAttributes.AI_OPERATION_TYPE.value(), "image"),
 				KeyValue.of(AiObservationAttributes.AI_PROVIDER.value(), "superprovider"),
@@ -85,17 +85,17 @@ class DefaultImageModelObservationConventionTests {
 	@Test
 	void shouldHaveHighCardinalityKeyValuesWhenDefined() {
 		var imageOptions = ImageOptionsBuilder.builder()
-			.model("mistral")
-			.N(1)
-			.height(1080)
-			.width(1920)
-			.style("sketch")
-			.responseFormat("base64")
-			.build();
+				.model("mistral")
+				.N(1)
+				.height(1080)
+				.width(1920)
+				.style("sketch")
+				.responseFormat("base64")
+				.build();
 		ImageModelObservationContext observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(imageOptions))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(imageOptions))
+				.provider("superprovider")
+				.build();
 
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(AiObservationAttributes.REQUEST_IMAGE_RESPONSE_FORMAT.value(), "base64"),
@@ -106,18 +106,18 @@ class DefaultImageModelObservationConventionTests {
 	@Test
 	void shouldNotHaveKeyValuesWhenEmptyValues() {
 		ImageModelObservationContext observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext))
-			.contains(KeyValue.of(AiObservationAttributes.REQUEST_MODEL.value(), KeyValue.NONE_VALUE));
+				.contains(KeyValue.of(AiObservationAttributes.REQUEST_MODEL.value(), KeyValue.NONE_VALUE));
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)
-			.stream()
-			.map(KeyValue::getKey)
-			.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_IMAGE_RESPONSE_FORMAT.asString(),
-					HighCardinalityKeyNames.REQUEST_IMAGE_SIZE.asString(),
-					HighCardinalityKeyNames.REQUEST_IMAGE_STYLE.asString());
+				.stream()
+				.map(KeyValue::getKey)
+				.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_IMAGE_RESPONSE_FORMAT.asString(),
+				HighCardinalityKeyNames.REQUEST_IMAGE_SIZE.asString(),
+				HighCardinalityKeyNames.REQUEST_IMAGE_STYLE.asString());
 	}
 
 	private ImagePrompt generateImagePrompt(ImageOptions imageOptions) {

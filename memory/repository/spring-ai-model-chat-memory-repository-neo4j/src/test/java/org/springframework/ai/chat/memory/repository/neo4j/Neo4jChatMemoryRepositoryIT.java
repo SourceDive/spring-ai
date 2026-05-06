@@ -61,11 +61,11 @@ class Neo4jChatMemoryRepositoryIT {
 
 	static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("neo4j");
 
-	@SuppressWarnings({ "rawtypes", "resource" })
+	@SuppressWarnings({"rawtypes", "resource"})
 	@Container
 	static Neo4jContainer neo4jContainer = (Neo4jContainer) new Neo4jContainer(DEFAULT_IMAGE_NAME.withTag("5"))
-		.withoutAuthentication()
-		.withExposedPorts(7474, 7687);
+			.withoutAuthentication()
+			.withExposedPorts(7474, 7687);
 
 	private ChatMemoryRepository chatMemoryRepository;
 
@@ -96,8 +96,8 @@ class Neo4jChatMemoryRepositoryIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM",
-			"Message from tool,TOOL" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM",
+			"Message from tool,TOOL"})
 	void saveAndFindSingleMessage(String content, MessageType messageType) {
 		var conversationId = UUID.randomUUID().toString();
 		Message message = createMessageByType(content + " - " + conversationId, messageType);
@@ -118,7 +118,7 @@ class Neo4jChatMemoryRepositoryIT {
 		try (Session session = this.driver.session()) {
 			var result = session.run(
 					"MATCH (s:%s {id:$conversationId})-[:HAS_MESSAGE]->(m:%s) RETURN count(m) as count"
-						.formatted(this.config.getSessionLabel(), this.config.getMessageLabel()),
+							.formatted(this.config.getSessionLabel(), this.config.getMessageLabel()),
 					Map.of("conversationId", conversationId));
 			assertThat(result.single().get("count").asLong()).isEqualTo(1);
 		}
@@ -207,7 +207,7 @@ class Neo4jChatMemoryRepositoryIT {
 		// Verify directly in the database
 		try (Session session = this.driver.session()) {
 			var result = session.run("MATCH (s:%s {id:$conversationId}) RETURN count(s) as count"
-				.formatted(this.config.getSessionLabel()), Map.of("conversationId", conversationId));
+					.formatted(this.config.getSessionLabel()), Map.of("conversationId", conversationId));
 			assertThat(result.single().get("count").asLong()).isZero();
 		}
 	}
@@ -241,11 +241,11 @@ class Neo4jChatMemoryRepositoryIT {
 
 		MimeType textPlain = MimeType.valueOf("text/plain");
 		List<Media> media = List.of(Media.builder()
-			.name("some media")
-			.id(UUID.randomUUID().toString())
-			.mimeType(textPlain)
-			.data("hello".getBytes(StandardCharsets.UTF_8))
-			.build(), Media.builder().data(URI.create("http://www.example.com")).mimeType(textPlain).build());
+				.name("some media")
+				.id(UUID.randomUUID().toString())
+				.mimeType(textPlain)
+				.data("hello".getBytes(StandardCharsets.UTF_8))
+				.build(), Media.builder().data(URI.create("http://www.example.com")).mimeType(textPlain).build());
 
 		UserMessage userMessageWithMedia = UserMessage.builder().text("Message with media").media(media).build();
 
@@ -283,7 +283,7 @@ class Neo4jChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 
 		ToolResponseMessage toolResponseMessage = new ToolResponseMessage(List
-			.of(new ToolResponse("id1", "name1", "responseData1"), new ToolResponse("id2", "name2", "responseData2")),
+				.of(new ToolResponse("id1", "name1", "responseData1"), new ToolResponse("id2", "name2", "responseData2")),
 				Map.of("metadataKey", "metadataValue"));
 
 		this.chatMemoryRepository.saveAll(conversationId, List.<Message>of(toolResponseMessage));
@@ -304,9 +304,9 @@ class Neo4jChatMemoryRepositoryIT {
 		Map<String, Object> customMetadata = Map.of("priority", "high", "source", "test");
 
 		SystemMessage systemMessage = SystemMessage.builder()
-			.text("System message with custom metadata - " + conversationId)
-			.metadata(customMetadata)
-			.build();
+				.text("System message with custom metadata - " + conversationId)
+				.metadata(customMetadata)
+				.build();
 
 		this.chatMemoryRepository.saveAll(conversationId, List.of(systemMessage));
 		List<Message> retrievedMessages = this.chatMemoryRepository.findByConversationId(conversationId);
@@ -322,11 +322,11 @@ class Neo4jChatMemoryRepositoryIT {
 		assertThat(retrievedMessage.getMetadata()).containsEntry("messageType", MessageType.SYSTEM);
 		// Verify no extra unwanted metadata keys beyond what's expected
 		assertThat(retrievedMessage.getMetadata().keySet())
-			.containsExactlyInAnyOrderElementsOf(new ArrayList<>(customMetadata.keySet()) {
-				{
-					add("messageType");
-				}
-			});
+				.containsExactlyInAnyOrderElementsOf(new ArrayList<>(customMetadata.keySet()) {
+					{
+						add("messageType");
+					}
+				});
 	}
 
 	@Test
@@ -370,9 +370,9 @@ class Neo4jChatMemoryRepositoryIT {
 
 		UserMessage messageWithEmptyContent = new UserMessage("");
 		UserMessage messageWithEmptyMetadata = UserMessage.builder()
-			.text("Content with empty metadata")
-			.metadata(Collections.emptyMap())
-			.build();
+				.text("Content with empty metadata")
+				.metadata(Collections.emptyMap())
+				.build();
 
 		List<Message> messagesToSave = List.of(messageWithEmptyContent, messageWithEmptyMetadata);
 		this.chatMemoryRepository.saveAll(conversationId, messagesToSave);
@@ -385,9 +385,9 @@ class Neo4jChatMemoryRepositoryIT {
 		assertThat(retrievedEmptyContentMsg).isInstanceOf(UserMessage.class);
 		assertThat(retrievedEmptyContentMsg.getText()).isEqualTo("");
 		assertThat(retrievedEmptyContentMsg.getMetadata()).containsEntry("messageType", MessageType.USER); // Default
-																											// metadata
+		// metadata
 		assertThat(retrievedEmptyContentMsg.getMetadata().keySet()).hasSize(1); // Only
-																				// messageType
+		// messageType
 
 		// Verify second message (empty metadata from input, should only have messageType
 		// after retrieval)
@@ -396,7 +396,7 @@ class Neo4jChatMemoryRepositoryIT {
 		assertThat(retrievedEmptyMetadataMsg.getText()).isEqualTo("Content with empty metadata");
 		assertThat(retrievedEmptyMetadataMsg.getMetadata()).containsEntry("messageType", MessageType.USER);
 		assertThat(retrievedEmptyMetadataMsg.getMetadata().keySet()).hasSize(1); // Only
-																					// messageType
+		// messageType
 	}
 
 	private Message createMessageByType(String content, MessageType messageType) {

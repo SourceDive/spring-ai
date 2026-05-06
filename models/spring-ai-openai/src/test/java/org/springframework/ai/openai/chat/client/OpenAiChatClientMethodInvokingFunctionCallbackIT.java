@@ -45,7 +45,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class OpenAiChatClientMethodInvokingFunctionCallbackIT {
 
 	private static final Logger logger = LoggerFactory
-		.getLogger(OpenAiChatClientMethodInvokingFunctionCallbackIT.class);
+			.getLogger(OpenAiChatClientMethodInvokingFunctionCallbackIT.class);
 
 	public static Map<String, Object> arguments = new ConcurrentHashMap<>();
 
@@ -240,11 +240,9 @@ class OpenAiChatClientMethodInvokingFunctionCallbackIT {
 			double temperature = 0;
 			if (city.contains("Paris")) {
 				temperature = 15;
-			}
-			else if (city.contains("Tokyo")) {
+			} else if (city.contains("Tokyo")) {
 				temperature = 10;
-			}
-			else if (city.contains("San Francisco")) {
+			} else if (city.contains("San Francisco")) {
 				temperature = 30;
 			}
 

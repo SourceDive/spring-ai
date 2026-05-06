@@ -46,7 +46,7 @@ public class FilterExpressionBuilderTests {
 	public void testEQ() {
 		// country == "BG"
 		assertThat(this.b.eq("country", "BG").build())
-			.isEqualTo(new Expression(EQ, new Key("country"), new Value("BG")));
+				.isEqualTo(new Expression(EQ, new Key("country"), new Value("BG")));
 	}
 
 	@Test
@@ -62,15 +62,15 @@ public class FilterExpressionBuilderTests {
 		// genre in ["comedy", "documentary", "drama"]
 		var exp = this.b.in("genre", "comedy", "documentary", "drama").build();
 		assertThat(exp)
-			.isEqualTo(new Expression(IN, new Key("genre"), new Value(List.of("comedy", "documentary", "drama"))));
+				.isEqualTo(new Expression(IN, new Key("genre"), new Value(List.of("comedy", "documentary", "drama"))));
 	}
 
 	@Test
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		var exp = this.b
-			.and(this.b.or(this.b.gte("year", 2020), this.b.eq("country", "BG")), this.b.ne("city", "Sofia"))
-			.build();
+				.and(this.b.or(this.b.gte("year", 2020), this.b.eq("country", "BG")), this.b.ne("city", "Sofia"))
+				.build();
 
 		assertThat(exp).isEqualTo(new Expression(AND,
 				new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
@@ -82,9 +82,9 @@ public class FilterExpressionBuilderTests {
 	public void testGroup() {
 		// (year >= 2020 OR country == "BG") AND city NIN ["Sofia", "Plovdiv"]
 		var exp = this.b
-			.and(this.b.group(this.b.or(this.b.gte("year", 2020), this.b.eq("country", "BG"))),
-					this.b.nin("city", "Sofia", "Plovdiv"))
-			.build();
+				.and(this.b.group(this.b.or(this.b.gte("year", 2020), this.b.eq("country", "BG"))),
+						this.b.nin("city", "Sofia", "Plovdiv"))
+				.build();
 
 		assertThat(exp).isEqualTo(new Expression(AND,
 				new Group(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
@@ -96,9 +96,9 @@ public class FilterExpressionBuilderTests {
 	public void tesIn2() {
 		// isOpen == true AND year >= 2020 AND country IN ["BG", "NL", "US"]
 		var exp = this.b
-			.and(this.b.and(this.b.eq("isOpen", true), this.b.gte("year", 2020)),
-					this.b.in("country", "BG", "NL", "US"))
-			.build();
+				.and(this.b.and(this.b.eq("isOpen", true), this.b.gte("year", 2020)),
+						this.b.in("country", "BG", "NL", "US"))
+				.build();
 
 		assertThat(exp).isEqualTo(new Expression(AND,
 				new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
@@ -110,8 +110,8 @@ public class FilterExpressionBuilderTests {
 	public void tesNot() {
 		// isOpen == true AND year >= 2020 AND country IN ["BG", "NL", "US"]
 		var exp = this.b.not(this.b.and(this.b.and(this.b.eq("isOpen", true), this.b.gte("year", 2020)),
-				this.b.in("country", "BG", "NL", "US")))
-			.build();
+						this.b.in("country", "BG", "NL", "US")))
+				.build();
 
 		assertThat(exp).isEqualTo(new Expression(NOT,
 				new Expression(AND,

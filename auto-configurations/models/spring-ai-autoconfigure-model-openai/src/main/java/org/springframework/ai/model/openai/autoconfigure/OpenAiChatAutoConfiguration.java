@@ -54,39 +54,39 @@ import static org.springframework.ai.model.openai.autoconfigure.OpenAIAutoConfig
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 @ConditionalOnClass(OpenAiApi.class)
-@EnableConfigurationProperties({ OpenAiConnectionProperties.class, OpenAiChatProperties.class })
+@EnableConfigurationProperties({OpenAiConnectionProperties.class, OpenAiChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 public class OpenAiChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiChatModel openAiChatModel(OpenAiConnectionProperties commonProperties,
-			OpenAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> openAiToolExecutionEligibilityPredicate) {
+	                                       OpenAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                       ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
+	                                       RetryTemplate retryTemplate, ResponseErrorHandler responseErrorHandler,
+	                                       ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                       ObjectProvider<ToolExecutionEligibilityPredicate> openAiToolExecutionEligibilityPredicate) {
 
 		var openAiApi = openAiApi(chatProperties, commonProperties,
 				restClientBuilderProvider.getIfAvailable(RestClient::builder),
 				webClientBuilderProvider.getIfAvailable(WebClient::builder), responseErrorHandler, "chat");
 
 		var chatModel = OpenAiChatModel.builder()
-			.openAiApi(openAiApi)
-			.defaultOptions(chatProperties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(
-					openAiToolExecutionEligibilityPredicate.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.retryTemplate(retryTemplate)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.openAiApi(openAiApi)
+				.defaultOptions(chatProperties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(
+						openAiToolExecutionEligibilityPredicate.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.retryTemplate(retryTemplate)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
@@ -94,22 +94,22 @@ public class OpenAiChatAutoConfiguration {
 	}
 
 	private OpenAiApi openAiApi(OpenAiChatProperties chatProperties, OpenAiConnectionProperties commonProperties,
-			RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ResponseErrorHandler responseErrorHandler, String modelType) {
+	                            RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+	                            ResponseErrorHandler responseErrorHandler, String modelType) {
 
 		OpenAIAutoConfigurationUtil.ResolvedConnectionProperties resolved = resolveConnectionProperties(
 				commonProperties, chatProperties, modelType);
 
 		return OpenAiApi.builder()
-			.baseUrl(resolved.baseUrl())
-			.apiKey(new SimpleApiKey(resolved.apiKey()))
-			.headers(resolved.headers())
-			.completionsPath(chatProperties.getCompletionsPath())
-			.embeddingsPath(OpenAiEmbeddingProperties.DEFAULT_EMBEDDINGS_PATH)
-			.restClientBuilder(restClientBuilder)
-			.webClientBuilder(webClientBuilder)
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolved.baseUrl())
+				.apiKey(new SimpleApiKey(resolved.apiKey()))
+				.headers(resolved.headers())
+				.completionsPath(chatProperties.getCompletionsPath())
+				.embeddingsPath(OpenAiEmbeddingProperties.DEFAULT_EMBEDDINGS_PATH)
+				.restClientBuilder(restClientBuilder)
+				.webClientBuilder(webClientBuilder)
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 	}
 
 }

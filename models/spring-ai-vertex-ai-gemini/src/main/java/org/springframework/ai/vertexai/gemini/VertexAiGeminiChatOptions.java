@@ -481,8 +481,7 @@ public class VertexAiGeminiChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

@@ -94,7 +94,7 @@ class SyncMcpToolCallbackProviderTests {
 		SyncMcpToolCallbackProvider provider = new SyncMcpToolCallbackProvider(this.mcpClient);
 
 		assertThatThrownBy(() -> provider.getToolCallbacks()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name");
+				.hasMessageContaining("Multiple tools with the same name");
 	}
 
 	@Test
@@ -229,7 +229,7 @@ class SyncMcpToolCallbackProviderTests {
 
 		// Create a filter that only accepts tools from client1
 		BiPredicate<McpSyncClient, Tool> clientFilter = (client,
-				tool) -> client.getClientInfo().name().equals("testClient1");
+		                                                 tool) -> client.getClientInfo().name().equals("testClient1");
 
 		SyncMcpToolCallbackProvider provider = new SyncMcpToolCallbackProvider(clientFilter, mcpClient1, mcpClient2);
 
@@ -257,7 +257,7 @@ class SyncMcpToolCallbackProviderTests {
 
 		// Create a filter that only accepts weather tools from the weather service
 		BiPredicate<McpSyncClient, Tool> complexFilter = (client,
-				tool) -> client.getClientInfo().name().equals("weather-service") && tool.name().equals("weather");
+		                                                  tool) -> client.getClientInfo().name().equals("weather-service") && tool.name().equals("weather");
 
 		SyncMcpToolCallbackProvider provider = new SyncMcpToolCallbackProvider(complexFilter, weatherClient);
 

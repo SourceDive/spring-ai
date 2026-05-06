@@ -98,6 +98,7 @@ public final class McpToolUtils {
 	 * This method processes multiple tool callbacks in bulk, converting each one to its
 	 * corresponding MCP tool specification while maintaining synchronous execution
 	 * semantics.
+	 *
 	 * @param toolCallbacks the list of tool callbacks to convert
 	 * @return a list of MCP synchronous tool specification
 	 */
@@ -112,6 +113,7 @@ public final class McpToolUtils {
 	 * <p>
 	 * This is a varargs wrapper around {@link #toSyncToolSpecification(List)} for easier
 	 * usage when working with individual callbacks.
+	 *
 	 * @param toolCallbacks the tool callbacks to convert
 	 * @return a list of MCP synchronous tool specification
 	 */
@@ -134,9 +136,10 @@ public final class McpToolUtils {
 	 * <li>Provides error handling and result formatting according to MCP
 	 * specifications</li>
 	 * </ul>
-	 *
+	 * <p>
 	 * You can use the ToolCallback builder to create a new instance of ToolCallback using
 	 * either java.util.function.Function or Method reference.
+	 *
 	 * @param toolCallback the Spring AI function callback to convert
 	 * @return an MCP SyncToolSpecification that wraps the function callback
 	 * @throws RuntimeException if there's an error during the function execution
@@ -159,13 +162,14 @@ public final class McpToolUtils {
 	 * <li>Provides error handling and result formatting according to MCP
 	 * specifications</li>
 	 * </ul>
+	 *
 	 * @param toolCallback the Spring AI function callback to convert
-	 * @param mimeType the MIME type of the output content
+	 * @param mimeType     the MIME type of the output content
 	 * @return an MCP SyncToolSpecification that wraps the function callback
 	 * @throws RuntimeException if there's an error during the function execution
 	 */
 	public static McpServerFeatures.SyncToolSpecification toSyncToolSpecification(ToolCallback toolCallback,
-			MimeType mimeType) {
+	                                                                              MimeType mimeType) {
 
 		var tool = new McpSchema.Tool(toolCallback.getToolDefinition().name(),
 				toolCallback.getToolDefinition().description(), toolCallback.getToolDefinition().inputSchema());
@@ -176,12 +180,11 @@ public final class McpToolUtils {
 						new ToolContext(Map.of(TOOL_CONTEXT_MCP_EXCHANGE_KEY, exchange)));
 				if (mimeType != null && mimeType.toString().startsWith("image")) {
 					return new McpSchema.CallToolResult(List
-						.of(new McpSchema.ImageContent(List.of(Role.ASSISTANT), null, callResult, mimeType.toString())),
+							.of(new McpSchema.ImageContent(List.of(Role.ASSISTANT), null, callResult, mimeType.toString())),
 							false);
 				}
 				return new McpSchema.CallToolResult(List.of(new McpSchema.TextContent(callResult)), false);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				return new McpSchema.CallToolResult(List.of(new McpSchema.TextContent(e.getMessage())), true);
 			}
 		});
@@ -189,13 +192,14 @@ public final class McpToolUtils {
 
 	/**
 	 * Retrieves the MCP exchange object from the provided tool context if it exists.
+	 *
 	 * @param toolContext the tool context from which to retrieve the MCP exchange
 	 * @return the MCP exchange object, or null if not present in the context
 	 */
 	public static Optional<McpSyncServerExchange> getMcpExchange(ToolContext toolContext) {
 		if (toolContext != null && toolContext.getContext().containsKey(TOOL_CONTEXT_MCP_EXCHANGE_KEY)) {
 			return Optional
-				.ofNullable((McpSyncServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY));
+					.ofNullable((McpSyncServerExchange) toolContext.getContext().get(TOOL_CONTEXT_MCP_EXCHANGE_KEY));
 		}
 		return Optional.empty();
 	}
@@ -207,6 +211,7 @@ public final class McpToolUtils {
 	 * corresponding MCP tool specification while adding asynchronous execution
 	 * capabilities. The resulting specifications will execute their tools on a bounded
 	 * elastic scheduler.
+	 *
 	 * @param toolCallbacks the list of tool callbacks to convert
 	 * @return a list of MCP asynchronous tool specifications
 	 */
@@ -221,6 +226,7 @@ public final class McpToolUtils {
 	 * <p>
 	 * This is a varargs wrapper around {@link #toAsyncToolSpecifications(List)} for
 	 * easier usage when working with individual callbacks.
+	 *
 	 * @param toolCallbacks the tool callbacks to convert
 	 * @return a list of MCP asynchronous tool specifications
 	 * @see #toAsyncToolSpecifications(List)
@@ -248,6 +254,7 @@ public final class McpToolUtils {
 	 * <li>Handle errors and results asynchronously</li>
 	 * <li>Provide backpressure through Project Reactor</li>
 	 * </ul>
+	 *
 	 * @param toolCallback the Spring AI tool callback to convert
 	 * @return an MCP asynchronous tool specification that wraps the tool callback
 	 * @see McpServerFeatures.AsyncToolSpecification
@@ -276,21 +283,22 @@ public final class McpToolUtils {
 	 * <li>Handle errors and results asynchronously</li>
 	 * <li>Provide backpressure through Project Reactor</li>
 	 * </ul>
+	 *
 	 * @param toolCallback the Spring AI tool callback to convert
-	 * @param mimeType the MIME type of the output content
+	 * @param mimeType     the MIME type of the output content
 	 * @return an MCP asynchronous tool specificaiotn that wraps the tool callback
 	 * @see McpServerFeatures.AsyncToolSpecification
 	 * @see Schedulers#boundedElastic()
 	 */
 	public static McpServerFeatures.AsyncToolSpecification toAsyncToolSpecification(ToolCallback toolCallback,
-			MimeType mimeType) {
+	                                                                                MimeType mimeType) {
 
 		McpServerFeatures.SyncToolSpecification syncToolSpecification = toSyncToolSpecification(toolCallback, mimeType);
 
 		return new AsyncToolSpecification(syncToolSpecification.tool(),
 				(exchange, map) -> Mono
-					.fromCallable(() -> syncToolSpecification.call().apply(new McpSyncServerExchange(exchange), map))
-					.subscribeOn(Schedulers.boundedElastic()));
+						.fromCallable(() -> syncToolSpecification.call().apply(new McpSyncServerExchange(exchange), map))
+						.subscribeOn(Schedulers.boundedElastic()));
 	}
 
 	/**
@@ -298,6 +306,7 @@ public final class McpToolUtils {
 	 * <p>
 	 * This is a varargs wrapper around {@link #getToolCallbacksFromSyncClients(List)} for
 	 * easier usage when working with individual clients.
+	 *
 	 * @param mcpClients the synchronous MCP clients to get callbacks from
 	 * @return a list of tool callbacks from all provided clients
 	 * @see #getToolCallbacksFromSyncClients(List)
@@ -315,6 +324,7 @@ public final class McpToolUtils {
 	 * <li>Creates a provider for each client</li>
 	 * <li>Retrieves and combines all tool callbacks into a single list</li>
 	 * </ol>
+	 *
 	 * @param mcpClients the list of synchronous MCP clients to get callbacks from
 	 * @return a list of tool callbacks from all provided clients
 	 */
@@ -331,6 +341,7 @@ public final class McpToolUtils {
 	 * <p>
 	 * This is a varargs wrapper around {@link #getToolCallbacksFromAsyncClients(List)}
 	 * for easier usage when working with individual clients.
+	 *
 	 * @param asyncMcpClients the asynchronous MCP clients to get callbacks from
 	 * @return a list of tool callbacks from all provided clients
 	 * @see #getToolCallbacksFromAsyncClients(List)
@@ -348,6 +359,7 @@ public final class McpToolUtils {
 	 * <li>Creates a provider for each client</li>
 	 * <li>Retrieves and combines all tool callbacks into a single list</li>
 	 * </ol>
+	 *
 	 * @param asyncMcpClients the list of asynchronous MCP clients to get callbacks from
 	 * @return a list of tool callbacks from all provided clients
 	 */

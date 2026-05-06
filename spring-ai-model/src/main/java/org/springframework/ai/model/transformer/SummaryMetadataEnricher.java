@@ -42,9 +42,9 @@ public class SummaryMetadataEnricher implements DocumentTransformer {
 	public static final String DEFAULT_SUMMARY_EXTRACT_TEMPLATE = """
 			Here is the content of the section:
 			{context_str}
-
+			
 			Summarize the key topics and entities of the section.
-
+			
 			Summary:""";
 
 	private static final String SECTION_SUMMARY_METADATA_KEY = "section_summary";
@@ -77,7 +77,7 @@ public class SummaryMetadataEnricher implements DocumentTransformer {
 	}
 
 	public SummaryMetadataEnricher(ChatModel chatModel, List<SummaryType> summaryTypes, String summaryTemplate,
-			MetadataMode metadataMode) {
+	                               MetadataMode metadataMode) {
 		Assert.notNull(chatModel, "ChatModel must not be null");
 		Assert.hasText(summaryTemplate, "Summary template must not be empty");
 
@@ -96,7 +96,7 @@ public class SummaryMetadataEnricher implements DocumentTransformer {
 			var documentContext = document.getFormattedContent(this.metadataMode);
 
 			Prompt prompt = new PromptTemplate(this.summaryTemplate)
-				.create(Map.of(CONTEXT_STR_PLACEHOLDER, documentContext));
+					.create(Map.of(CONTEXT_STR_PLACEHOLDER, documentContext));
 			documentSummaries.add(this.chatModel.call(prompt).getResult().getOutput().getText());
 		}
 

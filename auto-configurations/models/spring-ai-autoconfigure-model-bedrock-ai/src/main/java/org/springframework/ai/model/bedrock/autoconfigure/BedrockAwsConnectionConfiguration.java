@@ -38,7 +38,7 @@ import org.springframework.util.StringUtils;
  * @author Wei Jiang
  */
 @Configuration
-@EnableConfigurationProperties({ BedrockAwsConnectionProperties.class })
+@EnableConfigurationProperties({BedrockAwsConnectionProperties.class})
 public class BedrockAwsConnectionConfiguration {
 
 	@Bean
@@ -53,7 +53,7 @@ public class BedrockAwsConnectionConfiguration {
 			}
 
 			return StaticCredentialsProvider
-				.create(AwsBasicCredentials.create(properties.getAccessKey(), properties.getSecretKey()));
+					.create(AwsBasicCredentials.create(properties.getAccessKey(), properties.getSecretKey()));
 		}
 
 		return DefaultCredentialsProvider.create();
@@ -77,8 +77,7 @@ public class BedrockAwsConnectionConfiguration {
 		StaticRegionProvider(String region) {
 			try {
 				this.region = Region.of(region);
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException("The region '" + region + "' is not a valid region!", e);
 			}
 		}

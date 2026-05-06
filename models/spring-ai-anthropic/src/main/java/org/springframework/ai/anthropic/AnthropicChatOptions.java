@@ -97,21 +97,21 @@ public class AnthropicChatOptions implements ToolCallingChatOptions {
 
 	public static AnthropicChatOptions fromOptions(AnthropicChatOptions fromOptions) {
 		return builder().model(fromOptions.getModel())
-			.maxTokens(fromOptions.getMaxTokens())
-			.metadata(fromOptions.getMetadata())
-			.stopSequences(
-					fromOptions.getStopSequences() != null ? new ArrayList<>(fromOptions.getStopSequences()) : null)
-			.temperature(fromOptions.getTemperature())
-			.topP(fromOptions.getTopP())
-			.topK(fromOptions.getTopK())
-			.thinking(fromOptions.getThinking())
-			.toolCallbacks(
-					fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
-			.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
-			.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
-			.toolContext(fromOptions.getToolContext() != null ? new HashMap<>(fromOptions.getToolContext()) : null)
-			.httpHeaders(fromOptions.getHttpHeaders() != null ? new HashMap<>(fromOptions.getHttpHeaders()) : null)
-			.build();
+				.maxTokens(fromOptions.getMaxTokens())
+				.metadata(fromOptions.getMetadata())
+				.stopSequences(
+						fromOptions.getStopSequences() != null ? new ArrayList<>(fromOptions.getStopSequences()) : null)
+				.temperature(fromOptions.getTemperature())
+				.topP(fromOptions.getTopP())
+				.topK(fromOptions.getTopK())
+				.thinking(fromOptions.getThinking())
+				.toolCallbacks(
+						fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
+				.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
+				.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
+				.toolContext(fromOptions.getToolContext() != null ? new HashMap<>(fromOptions.getToolContext()) : null)
+				.httpHeaders(fromOptions.getHttpHeaders() != null ? new HashMap<>(fromOptions.getHttpHeaders()) : null)
+				.build();
 	}
 
 	@Override
@@ -377,8 +377,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

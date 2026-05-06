@@ -50,6 +50,7 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 
 	/**
 	 * The speed of the default voice synthesis.
+	 *
 	 * @see OpenAiAudioSpeechOptions
 	 */
 	private static final Float SPEED = 1.0f;
@@ -75,24 +76,26 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 	 * Initializes a new instance of the OpenAiAudioSpeechModel class with the provided
 	 * OpenAiAudioApi. It uses the model tts-1, response format mp3, voice alloy, and the
 	 * default speed of 1.0.
+	 *
 	 * @param audioApi The OpenAiAudioApi to use for speech synthesis.
 	 */
 	public OpenAiAudioSpeechModel(OpenAiAudioApi audioApi) {
 		this(audioApi,
 				OpenAiAudioSpeechOptions.builder()
-					.model(OpenAiAudioApi.TtsModel.TTS_1.getValue())
-					.responseFormat(AudioResponseFormat.MP3)
-					.voice(OpenAiAudioApi.SpeechRequest.Voice.ALLOY.getValue())
-					.speed(SPEED)
-					.build());
+						.model(OpenAiAudioApi.TtsModel.TTS_1.getValue())
+						.responseFormat(AudioResponseFormat.MP3)
+						.voice(OpenAiAudioApi.SpeechRequest.Voice.ALLOY.getValue())
+						.speed(SPEED)
+						.build());
 	}
 
 	/**
 	 * Initializes a new instance of the OpenAiAudioSpeechModel class with the provided
 	 * OpenAiAudioApi and options.
+	 *
 	 * @param audioApi The OpenAiAudioApi to use for speech synthesis.
-	 * @param options The OpenAiAudioSpeechOptions containing the speech synthesis
-	 * options.
+	 * @param options  The OpenAiAudioSpeechOptions containing the speech synthesis
+	 *                 options.
 	 */
 	public OpenAiAudioSpeechModel(OpenAiAudioApi audioApi, OpenAiAudioSpeechOptions options) {
 		this(audioApi, options, RetryUtils.DEFAULT_RETRY_TEMPLATE);
@@ -101,13 +104,14 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 	/**
 	 * Initializes a new instance of the OpenAiAudioSpeechModel class with the provided
 	 * OpenAiAudioApi and options.
-	 * @param audioApi The OpenAiAudioApi to use for speech synthesis.
-	 * @param options The OpenAiAudioSpeechOptions containing the speech synthesis
-	 * options.
+	 *
+	 * @param audioApi      The OpenAiAudioApi to use for speech synthesis.
+	 * @param options       The OpenAiAudioSpeechOptions containing the speech synthesis
+	 *                      options.
 	 * @param retryTemplate The retry template.
 	 */
 	public OpenAiAudioSpeechModel(OpenAiAudioApi audioApi, OpenAiAudioSpeechOptions options,
-			RetryTemplate retryTemplate) {
+	                              RetryTemplate retryTemplate) {
 		Assert.notNull(audioApi, "OpenAiAudioApi must not be null");
 		Assert.notNull(options, "OpenAiSpeechOptions must not be null");
 		Assert.notNull(options, "RetryTemplate must not be null");
@@ -128,7 +132,7 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 		OpenAiAudioApi.SpeechRequest speechRequest = createRequest(speechPrompt);
 
 		ResponseEntity<byte[]> speechEntity = this.retryTemplate
-			.execute(ctx -> this.audioApi.createSpeech(speechRequest));
+				.execute(ctx -> this.audioApi.createSpeech(speechRequest));
 
 		var speech = speechEntity.getBody();
 
@@ -144,8 +148,9 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 
 	/**
 	 * Streams the audio response for the given speech prompt.
+	 *
 	 * @param speechPrompt The speech prompt containing the text and options for speech
-	 * synthesis.
+	 *                     synthesis.
 	 * @return A Flux of SpeechResponse objects containing the streamed audio and
 	 * metadata.
 	 */
@@ -155,7 +160,7 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 		OpenAiAudioApi.SpeechRequest speechRequest = createRequest(speechPrompt);
 
 		Flux<ResponseEntity<byte[]>> speechEntity = this.retryTemplate
-			.execute(ctx -> this.audioApi.stream(speechRequest));
+				.execute(ctx -> this.audioApi.stream(speechRequest));
 
 		return speechEntity.map(entity -> new SpeechResponse(new Speech(entity.getBody()),
 				new OpenAiAudioSpeechResponseMetadata(OpenAiResponseHeaderExtractor.extractAiResponseHeaders(entity))));
@@ -167,8 +172,7 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 		if (request.getOptions() != null) {
 			if (request.getOptions() instanceof OpenAiAudioSpeechOptions runtimeOptions) {
 				options = this.merge(runtimeOptions, options);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Prompt options are not of type SpeechOptions: "
 						+ request.getOptions().getClass().getSimpleName());
 			}
@@ -178,11 +182,11 @@ public class OpenAiAudioSpeechModel implements SpeechModel, StreamingSpeechModel
 				: request.getInstructions().getText();
 
 		OpenAiAudioApi.SpeechRequest.Builder requestBuilder = OpenAiAudioApi.SpeechRequest.builder()
-			.model(options.getModel())
-			.input(input)
-			.voice(options.getVoice())
-			.responseFormat(options.getResponseFormat())
-			.speed(options.getSpeed());
+				.model(options.getModel())
+				.input(input)
+				.voice(options.getVoice())
+				.responseFormat(options.getResponseFormat())
+				.speed(options.getSpeed());
 
 		return requestBuilder.build();
 	}

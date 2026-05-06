@@ -55,7 +55,7 @@ import static org.mockito.Mockito.when;
 public class McpServerAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class));
 
 	@Test
 	void defaultConfiguration() {
@@ -63,7 +63,7 @@ public class McpServerAutoConfigurationIT {
 			assertThat(context).hasSingleBean(McpSyncServer.class);
 			assertThat(context).hasSingleBean(McpServerTransportProvider.class);
 			assertThat(context.getBean(McpServerTransportProvider.class))
-				.isInstanceOf(StdioServerTransportProvider.class);
+					.isInstanceOf(StdioServerTransportProvider.class);
 
 			McpServerProperties properties = context.getBean(McpServerProperties.class);
 			assertThat(properties.getName()).isEqualTo("mcp-server");
@@ -88,32 +88,32 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void asyncConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.name=test-server",
-					"spring.ai.mcp.server.version=2.0.0", "spring.ai.mcp.server.instructions=My MCP Server",
-					"spring.ai.mcp.server.request-timeout=30s")
-			.run(context -> {
-				assertThat(context).hasSingleBean(McpAsyncServer.class);
-				assertThat(context).doesNotHaveBean(McpSyncServer.class);
+				.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.name=test-server",
+						"spring.ai.mcp.server.version=2.0.0", "spring.ai.mcp.server.instructions=My MCP Server",
+						"spring.ai.mcp.server.request-timeout=30s")
+				.run(context -> {
+					assertThat(context).hasSingleBean(McpAsyncServer.class);
+					assertThat(context).doesNotHaveBean(McpSyncServer.class);
 
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getName()).isEqualTo("test-server");
-				assertThat(properties.getVersion()).isEqualTo("2.0.0");
-				assertThat(properties.getInstructions()).isEqualTo("My MCP Server");
-				assertThat(properties.getType()).isEqualTo(McpServerProperties.ServerType.ASYNC);
-				assertThat(properties.getRequestTimeout().getSeconds()).isEqualTo(30);
-			});
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getName()).isEqualTo("test-server");
+					assertThat(properties.getVersion()).isEqualTo("2.0.0");
+					assertThat(properties.getInstructions()).isEqualTo("My MCP Server");
+					assertThat(properties.getType()).isEqualTo(McpServerProperties.ServerType.ASYNC);
+					assertThat(properties.getRequestTimeout().getSeconds()).isEqualTo(30);
+				});
 	}
 
 	@Test
 	void syncServerInstructionsConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.instructions=Sync Server Instructions")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getInstructions()).isEqualTo("Sync Server Instructions");
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getInstructions()).isEqualTo("Sync Server Instructions");
 
-				McpSyncServer server = context.getBean(McpSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					McpSyncServer server = context.getBean(McpSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
@@ -127,13 +127,13 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void serverNotificationConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.tool-change-notification=false",
-					"spring.ai.mcp.server.resource-change-notification=false")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.isToolChangeNotification()).isFalse();
-				assertThat(properties.isResourceChangeNotification()).isFalse();
-			});
+				.withPropertyValues("spring.ai.mcp.server.tool-change-notification=false",
+						"spring.ai.mcp.server.resource-change-notification=false")
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.isToolChangeNotification()).isFalse();
+					assertThat(properties.isResourceChangeNotification()).isFalse();
+				});
 	}
 
 	// @Test
@@ -141,8 +141,8 @@ public class McpServerAutoConfigurationIT {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.version=invalid-version").run(context -> {
 			assertThat(context).hasFailed();
 			assertThat(context).getFailure()
-				.hasRootCauseInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Invalid version format");
+					.hasRootCauseInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("Invalid version format");
 		});
 	}
 
@@ -158,15 +158,15 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void notificationConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.tool-change-notification=false",
-					"spring.ai.mcp.server.resource-change-notification=false",
-					"spring.ai.mcp.server.prompt-change-notification=false")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.isToolChangeNotification()).isFalse();
-				assertThat(properties.isResourceChangeNotification()).isFalse();
-				assertThat(properties.isPromptChangeNotification()).isFalse();
-			});
+				.withPropertyValues("spring.ai.mcp.server.tool-change-notification=false",
+						"spring.ai.mcp.server.resource-change-notification=false",
+						"spring.ai.mcp.server.prompt-change-notification=false")
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.isToolChangeNotification()).isFalse();
+					assertThat(properties.isResourceChangeNotification()).isFalse();
+					assertThat(properties.isPromptChangeNotification()).isFalse();
+				});
 	}
 
 	@Test
@@ -213,11 +213,11 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void asyncToolSpecificationConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.type=ASYNC")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				List<AsyncToolSpecification> tools = context.getBean("asyncTools", List.class);
-				assertThat(tools).hasSize(1);
-			});
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					List<AsyncToolSpecification> tools = context.getBean("asyncTools", List.class);
+					assertThat(tools).hasSize(1);
+				});
 	}
 
 	@Test
@@ -225,7 +225,7 @@ public class McpServerAutoConfigurationIT {
 		this.contextRunner.withUserConfiguration(CustomCapabilitiesConfiguration.class).run(context -> {
 			assertThat(context).hasSingleBean(McpSchema.ServerCapabilities.Builder.class);
 			assertThat(context.getBean(McpSchema.ServerCapabilities.Builder.class))
-				.isInstanceOf(CustomCapabilitiesBuilder.class);
+					.isInstanceOf(CustomCapabilitiesBuilder.class);
 		});
 	}
 
@@ -240,47 +240,47 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void asyncRootsChangeHandlerConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.type=ASYNC")
-			.withUserConfiguration(TestAsyncRootsHandlerConfiguration.class)
-			.run(context -> {
-				McpAsyncServer server = context.getBean(McpAsyncServer.class);
-				assertThat(server).isNotNull();
-			});
+				.withUserConfiguration(TestAsyncRootsHandlerConfiguration.class)
+				.run(context -> {
+					McpAsyncServer server = context.getBean(McpAsyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
 	void capabilitiesConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.capabilities.tool=false",
-				"spring.ai.mcp.server.capabilities.resource=false", "spring.ai.mcp.server.capabilities.prompt=false",
-				"spring.ai.mcp.server.capabilities.completion=false")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getCapabilities().isTool()).isFalse();
-				assertThat(properties.getCapabilities().isResource()).isFalse();
-				assertThat(properties.getCapabilities().isPrompt()).isFalse();
-				assertThat(properties.getCapabilities().isCompletion()).isFalse();
+						"spring.ai.mcp.server.capabilities.resource=false", "spring.ai.mcp.server.capabilities.prompt=false",
+						"spring.ai.mcp.server.capabilities.completion=false")
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getCapabilities().isTool()).isFalse();
+					assertThat(properties.getCapabilities().isResource()).isFalse();
+					assertThat(properties.getCapabilities().isPrompt()).isFalse();
+					assertThat(properties.getCapabilities().isCompletion()).isFalse();
 
-				// Verify the server is configured with the disabled capabilities
-				McpSyncServer server = context.getBean(McpSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					// Verify the server is configured with the disabled capabilities
+					McpSyncServer server = context.getBean(McpSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
 	void toolResponseMimeTypeConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.tool-response-mime-type.test-tool=application/json")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getToolResponseMimeType()).containsEntry("test-tool", "application/json");
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getToolResponseMimeType()).containsEntry("test-tool", "application/json");
 
-				// Verify the MIME type is applied to the tool specifications
-				List<SyncToolSpecification> tools = context.getBean("syncTools", List.class);
-				assertThat(tools).hasSize(1);
+					// Verify the MIME type is applied to the tool specifications
+					List<SyncToolSpecification> tools = context.getBean("syncTools", List.class);
+					assertThat(tools).hasSize(1);
 
-				// The server should be properly configured with the tool
-				McpSyncServer server = context.getBean(McpSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					// The server should be properly configured with the tool
+					McpSyncServer server = context.getBean(McpSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
@@ -298,19 +298,19 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void endpointConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.base-url=http://localhost:8080",
-					"spring.ai.mcp.server.sse-endpoint=/events",
-					"spring.ai.mcp.server.sse-message-endpoint=/api/mcp/message")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getBaseUrl()).isEqualTo("http://localhost:8080");
-				assertThat(properties.getSseEndpoint()).isEqualTo("/events");
-				assertThat(properties.getSseMessageEndpoint()).isEqualTo("/api/mcp/message");
+				.withPropertyValues("spring.ai.mcp.server.base-url=http://localhost:8080",
+						"spring.ai.mcp.server.sse-endpoint=/events",
+						"spring.ai.mcp.server.sse-message-endpoint=/api/mcp/message")
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getBaseUrl()).isEqualTo("http://localhost:8080");
+					assertThat(properties.getSseEndpoint()).isEqualTo("/events");
+					assertThat(properties.getSseMessageEndpoint()).isEqualTo("/api/mcp/message");
 
-				// Verify the server is configured with the endpoints
-				McpSyncServer server = context.getBean(McpSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					// Verify the server is configured with the endpoints
+					McpSyncServer server = context.getBean(McpSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
@@ -324,17 +324,17 @@ public class McpServerAutoConfigurationIT {
 	@Test
 	void asyncCompletionSpecificationConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.type=ASYNC")
-			.withUserConfiguration(TestAsyncCompletionConfiguration.class)
-			.run(context -> {
-				List<AsyncCompletionSpecification> completions = context.getBean("testAsyncCompletions", List.class);
-				assertThat(completions).hasSize(1);
-			});
+				.withUserConfiguration(TestAsyncCompletionConfiguration.class)
+				.run(context -> {
+					List<AsyncCompletionSpecification> completions = context.getBean("testAsyncCompletions", List.class);
+					assertThat(completions).hasSize(1);
+				});
 	}
 
 	@Test
 	void toolCallbackProviderConfiguration() {
 		this.contextRunner.withUserConfiguration(TestToolCallbackProviderConfiguration.class)
-			.run(context -> assertThat(context).hasSingleBean(ToolCallbackProvider.class));
+				.run(context -> assertThat(context).hasSingleBean(ToolCallbackProvider.class));
 	}
 
 	@Configuration
@@ -405,7 +405,7 @@ public class McpServerAutoConfigurationIT {
 				Mockito.when(mockTool.description()).thenReturn("Provider Tool");
 				when(mockClient.getClientInfo()).thenReturn(new McpSchema.Implementation("testClient", "1.0.0"));
 
-				return new ToolCallback[] { new SyncMcpToolCallback(mockClient, mockTool) };
+				return new ToolCallback[]{new SyncMcpToolCallback(mockClient, mockTool)};
 			};
 		}
 
@@ -419,7 +419,7 @@ public class McpServerAutoConfigurationIT {
 
 			BiFunction<McpSyncServerExchange, McpSchema.CompleteRequest, McpSchema.CompleteResult> completionHandler = (
 					exchange, request) -> new McpSchema.CompleteResult(
-							new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false));
+					new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false));
 
 			return List.of(new McpServerFeatures.SyncCompletionSpecification(
 					new McpSchema.PromptReference("ref/prompt", "code_review"), completionHandler));
@@ -434,7 +434,7 @@ public class McpServerAutoConfigurationIT {
 		List<AsyncCompletionSpecification> testAsyncCompletions() {
 			BiFunction<McpAsyncServerExchange, McpSchema.CompleteRequest, Mono<McpSchema.CompleteResult>> completionHandler = (
 					exchange, request) -> Mono.just(new McpSchema.CompleteResult(
-							new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false)));
+					new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false)));
 
 			return List.of(new McpServerFeatures.AsyncCompletionSpecification(
 					new McpSchema.PromptReference("ref/prompt", "code_review"), completionHandler));

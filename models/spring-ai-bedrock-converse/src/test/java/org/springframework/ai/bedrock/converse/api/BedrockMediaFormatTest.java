@@ -103,7 +103,7 @@ class BedrockMediaFormatTest {
 
 		// Test image format conversion
 		assertThat(BedrockMediaFormat.getFormatAsString(Media.Format.IMAGE_JPEG))
-			.isEqualTo(ImageFormat.JPEG.toString());
+				.isEqualTo(ImageFormat.JPEG.toString());
 
 		// Test video format conversion
 		assertThat(BedrockMediaFormat.getFormatAsString(Media.Format.VIDEO_MP4)).isEqualTo(VideoFormat.MP4.toString());
@@ -115,8 +115,8 @@ class BedrockMediaFormatTest {
 		MimeType unsupportedFormat = MimeType.valueOf("application/unknown");
 
 		assertThatThrownBy(() -> BedrockMediaFormat.getFormatAsString(unsupportedFormat))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Unsupported media format: " + unsupportedFormat);
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Unsupported media format: " + unsupportedFormat);
 	}
 
 	@Test

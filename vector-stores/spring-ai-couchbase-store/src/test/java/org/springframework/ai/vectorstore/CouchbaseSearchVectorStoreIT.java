@@ -63,13 +63,13 @@ public class CouchbaseSearchVectorStoreIT {
 	@Container
 	final static CouchbaseContainer couchbaseContainer = new CouchbaseContainer(
 			CouchbaseContainerMetadata.COUCHBASE_IMAGE_ENTERPRISE)
-		.withCredentials(CouchbaseContainerMetadata.USERNAME, CouchbaseContainerMetadata.PASSWORD)
-		.withEnabledServices(CouchbaseService.KV, CouchbaseService.QUERY, CouchbaseService.INDEX,
-				CouchbaseService.SEARCH)
-		.withBucket(CouchbaseContainerMetadata.bucketDefinition)
-		.withStartupAttempts(4)
-		.withStartupTimeout(Duration.ofSeconds(90))
-		.waitingFor(Wait.forHealthcheck());
+			.withCredentials(CouchbaseContainerMetadata.USERNAME, CouchbaseContainerMetadata.PASSWORD)
+			.withEnabledServices(CouchbaseService.KV, CouchbaseService.QUERY, CouchbaseService.INDEX,
+					CouchbaseService.SEARCH)
+			.withBucket(CouchbaseContainerMetadata.bucketDefinition)
+			.withStartupAttempts(4)
+			.withStartupTimeout(Duration.ofSeconds(90))
+			.waitingFor(Wait.forHealthcheck());
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -104,7 +104,7 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(5000); // wait for indexing
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -116,7 +116,7 @@ public class CouchbaseSearchVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(documents.stream().map(Document::getId).collect(Collectors.toList()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 			assertThat(results2).isEmpty();
 
 		});
@@ -134,7 +134,7 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(5000); // Await a second for the document to be indexed
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -159,7 +159,7 @@ public class CouchbaseSearchVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(Collections.singletonList(document.getId()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 			assertThat(results2).isEmpty();
 		});
 	}
@@ -180,45 +180,45 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(5000); // Await a second for the document to be indexed
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country == 'BG' && year == 2020)")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country == 'BG' && year == 2020)")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(nlDocument.getId(), bgDocument2.getId());
@@ -227,7 +227,7 @@ public class CouchbaseSearchVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(List.of(bgDocument.getId(), bgDocument2.getId(), nlDocument.getId()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 			assertThat(results2).isEmpty();
 
 		});
@@ -257,18 +257,18 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(1000); // Wait for deletion to be processed
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder("A", "B");
+					.containsExactlyInAnyOrder("A", "B");
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("priority")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(1, 1);
+					.containsExactlyInAnyOrder(1, 1);
 
 			// Remove all documents from the store
 			vectorStore.delete(List.of(doc1.getId(), doc3.getId()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).build());
 			assertThat(results2).isEmpty();
 		});
 	}
@@ -283,7 +283,7 @@ public class CouchbaseSearchVectorStoreIT {
 	}
 
 	@SpringBootConfiguration
-	@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
+	@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 	public static class TestApplication {
 
 		@Bean
@@ -291,9 +291,9 @@ public class CouchbaseSearchVectorStoreIT {
 			Cluster cluster = Cluster.connect(couchbaseContainer.getConnectionString(),
 					couchbaseContainer.getUsername(), couchbaseContainer.getPassword());
 			CouchbaseSearchVectorStore.Builder builder = CouchbaseSearchVectorStore.builder(cluster, embeddingModel)
-				.bucketName("springBucket")
-				.scopeName("springScope")
-				.collectionName("springCollection");
+					.bucketName("springBucket")
+					.scopeName("springScope")
+					.collectionName("springCollection");
 
 			return builder.initializeSchema(true).build();
 		}

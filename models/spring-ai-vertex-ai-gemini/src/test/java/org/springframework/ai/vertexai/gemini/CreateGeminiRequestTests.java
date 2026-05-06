@@ -56,12 +56,12 @@ public class CreateGeminiRequestTests {
 	public void createRequestWithChatOptions() {
 
 		var client = VertexAiGeminiChatModel.builder()
-			.vertexAI(this.vertexAI)
-			.defaultOptions(VertexAiGeminiChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
-			.build();
+				.vertexAI(this.vertexAI)
+				.defaultOptions(VertexAiGeminiChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
+				.build();
 
 		GeminiRequest request = client.createGeminiRequest(client
-			.buildRequestPrompt(new Prompt("Test message content", VertexAiGeminiChatOptions.builder().build())));
+				.buildRequestPrompt(new Prompt("Test message content", VertexAiGeminiChatOptions.builder().build())));
 
 		assertThat(request.contents()).hasSize(1);
 
@@ -83,16 +83,16 @@ public class CreateGeminiRequestTests {
 	public void createRequestWithFrequencyAndPresencePenalty() {
 
 		var client = VertexAiGeminiChatModel.builder()
-			.vertexAI(this.vertexAI)
-			.defaultOptions(VertexAiGeminiChatOptions.builder()
-				.model("DEFAULT_MODEL")
-				.frequencePenalty(.25)
-				.presencePenalty(.75)
-				.build())
-			.build();
+				.vertexAI(this.vertexAI)
+				.defaultOptions(VertexAiGeminiChatOptions.builder()
+						.model("DEFAULT_MODEL")
+						.frequencePenalty(.25)
+						.presencePenalty(.75)
+						.build())
+				.build();
 
 		GeminiRequest request = client.createGeminiRequest(client
-			.buildRequestPrompt(new Prompt("Test message content", VertexAiGeminiChatOptions.builder().build())));
+				.buildRequestPrompt(new Prompt("Test message content", VertexAiGeminiChatOptions.builder().build())));
 
 		assertThat(request.contents()).hasSize(1);
 
@@ -106,18 +106,18 @@ public class CreateGeminiRequestTests {
 		var systemMessage = new SystemMessage("System Message Text");
 
 		var userMessage = UserMessage.builder()
-			.text("User Message Text")
-			.media(List
-				.of(Media.builder().mimeType(MimeTypeUtils.IMAGE_PNG).data(URI.create("http://example.com")).build()))
-			.build();
+				.text("User Message Text")
+				.media(List
+						.of(Media.builder().mimeType(MimeTypeUtils.IMAGE_PNG).data(URI.create("http://example.com")).build()))
+				.build();
 
 		var client = VertexAiGeminiChatModel.builder()
-			.vertexAI(this.vertexAI)
-			.defaultOptions(VertexAiGeminiChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
-			.build();
+				.vertexAI(this.vertexAI)
+				.defaultOptions(VertexAiGeminiChatOptions.builder().model("DEFAULT_MODEL").temperature(66.6).build())
+				.build();
 
 		GeminiRequest request = client
-			.createGeminiRequest(client.buildRequestPrompt(new Prompt(List.of(systemMessage, userMessage))));
+				.createGeminiRequest(client.buildRequestPrompt(new Prompt(List.of(systemMessage, userMessage))));
 
 		assertThat(request.model().getModelName()).isEqualTo("DEFAULT_MODEL");
 		assertThat(request.model().getGenerationConfig().getTemperature()).isEqualTo(66.6f);
@@ -146,24 +146,24 @@ public class CreateGeminiRequestTests {
 		var toolCallingManager = ToolCallingManager.builder().build();
 
 		var client = VertexAiGeminiChatModel.builder()
-			.vertexAI(this.vertexAI)
-			.defaultOptions(VertexAiGeminiChatOptions.builder().model("DEFAULT_MODEL").build())
-			.toolCallingManager(toolCallingManager)
-			.build();
+				.vertexAI(this.vertexAI)
+				.defaultOptions(VertexAiGeminiChatOptions.builder().model("DEFAULT_MODEL").build())
+				.toolCallingManager(toolCallingManager)
+				.build();
 
 		var requestPrompt = client.buildRequestPrompt(new Prompt("Test message content",
 				VertexAiGeminiChatOptions.builder()
-					.model("PROMPT_MODEL")
-					.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-						.description("Get the weather in location")
-						.inputType(MockWeatherService.Request.class)
-						.build()))
-					.build()));
+						.model("PROMPT_MODEL")
+						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+								.description("Get the weather in location")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build()));
 
 		var request = client.createGeminiRequest(requestPrompt);
 
 		List<ToolDefinition> toolDefinitions = toolCallingManager
-			.resolveToolDefinitions((ToolCallingChatOptions) requestPrompt.getOptions());
+				.resolveToolDefinitions((ToolCallingChatOptions) requestPrompt.getOptions());
 
 		assertThat(toolDefinitions).hasSize(1);
 		assertThat(toolDefinitions.get(0).name()).isSameAs(TOOL_FUNCTION_NAME);
@@ -174,7 +174,7 @@ public class CreateGeminiRequestTests {
 
 		assertThat(request.model().getTools()).hasSize(1);
 		assertThat(request.model().getTools().get(0).getFunctionDeclarations(0).getName())
-			.isEqualTo(TOOL_FUNCTION_NAME);
+				.isEqualTo(TOOL_FUNCTION_NAME);
 	}
 
 	@Test
@@ -185,23 +185,23 @@ public class CreateGeminiRequestTests {
 		var toolCallingManager = ToolCallingManager.builder().build();
 
 		var client = VertexAiGeminiChatModel.builder()
-			.vertexAI(this.vertexAI)
-			.toolCallingManager(toolCallingManager)
-			.defaultOptions(VertexAiGeminiChatOptions.builder()
-				.model("DEFAULT_MODEL")
-				.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build())
-			.build();
+				.vertexAI(this.vertexAI)
+				.toolCallingManager(toolCallingManager)
+				.defaultOptions(VertexAiGeminiChatOptions.builder()
+						.model("DEFAULT_MODEL")
+						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+								.description("Get the weather in location")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build())
+				.build();
 
 		var requestPrompt = client.buildRequestPrompt(new Prompt("Test message content"));
 
 		var request = client.createGeminiRequest(requestPrompt);
 
 		List<ToolDefinition> toolDefinitions = toolCallingManager
-			.resolveToolDefinitions((ToolCallingChatOptions) requestPrompt.getOptions());
+				.resolveToolDefinitions((ToolCallingChatOptions) requestPrompt.getOptions());
 
 		assertThat(toolDefinitions).hasSize(1);
 		assertThat(toolDefinitions.get(0).name()).isSameAs(TOOL_FUNCTION_NAME);
@@ -222,26 +222,26 @@ public class CreateGeminiRequestTests {
 
 		assertThat(request.model().getTools()).hasSize(1);
 		assertThat(request.model().getTools().get(0).getFunctionDeclarations(0).getName())
-			.as("Explicitly enabled function")
-			.isEqualTo(TOOL_FUNCTION_NAME);
+				.as("Explicitly enabled function")
+				.isEqualTo(TOOL_FUNCTION_NAME);
 
 		// Override the default options function with one from the prompt
 		requestPrompt = client.buildRequestPrompt(new Prompt("Test message content",
 				VertexAiGeminiChatOptions.builder()
-					.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-						.description("Overridden function description")
-						.inputType(MockWeatherService.Request.class)
-						.build()))
-					.build()));
+						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+								.description("Overridden function description")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build()));
 		request = client.createGeminiRequest(requestPrompt);
 
 		assertThat(request.model().getTools()).hasSize(1);
 		assertThat(request.model().getTools().get(0).getFunctionDeclarations(0).getName())
-			.as("Explicitly enabled function")
-			.isEqualTo(TOOL_FUNCTION_NAME);
+				.as("Explicitly enabled function")
+				.isEqualTo(TOOL_FUNCTION_NAME);
 
 		toolDefinitions = toolCallingManager
-			.resolveToolDefinitions((ToolCallingChatOptions) requestPrompt.getOptions());
+				.resolveToolDefinitions((ToolCallingChatOptions) requestPrompt.getOptions());
 
 		assertThat(toolDefinitions).hasSize(1);
 		assertThat(toolDefinitions.get(0).name()).isSameAs(TOOL_FUNCTION_NAME);
@@ -252,21 +252,21 @@ public class CreateGeminiRequestTests {
 	public void createRequestWithGenerationConfigOptions() {
 
 		var client = VertexAiGeminiChatModel.builder()
-			.vertexAI(this.vertexAI)
-			.defaultOptions(VertexAiGeminiChatOptions.builder()
-				.model("DEFAULT_MODEL")
-				.temperature(66.6)
-				.maxOutputTokens(100)
-				.topK(10)
-				.topP(5.0)
-				.stopSequences(List.of("stop1", "stop2"))
-				.candidateCount(1)
-				.responseMimeType("application/json")
-				.build())
-			.build();
+				.vertexAI(this.vertexAI)
+				.defaultOptions(VertexAiGeminiChatOptions.builder()
+						.model("DEFAULT_MODEL")
+						.temperature(66.6)
+						.maxOutputTokens(100)
+						.topK(10)
+						.topP(5.0)
+						.stopSequences(List.of("stop1", "stop2"))
+						.candidateCount(1)
+						.responseMimeType("application/json")
+						.build())
+				.build();
 
 		GeminiRequest request = client
-			.createGeminiRequest(client.buildRequestPrompt(new Prompt("Test message content")));
+				.createGeminiRequest(client.buildRequestPrompt(new Prompt("Test message content")));
 
 		assertThat(request.contents()).hasSize(1);
 

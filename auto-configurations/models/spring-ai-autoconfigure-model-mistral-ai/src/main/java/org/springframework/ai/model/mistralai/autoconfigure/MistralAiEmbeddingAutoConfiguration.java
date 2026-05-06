@@ -48,21 +48,21 @@ import org.springframework.web.client.RestClient;
  * @author Ilayaperumal Gopinathan
  * @since 0.8.1
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class })
-@EnableConfigurationProperties({ MistralAiCommonProperties.class, MistralAiEmbeddingProperties.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class})
+@EnableConfigurationProperties({MistralAiCommonProperties.class, MistralAiEmbeddingProperties.class})
 @ConditionalOnClass(MistralAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.MISTRAL,
 		matchIfMissing = true)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class})
 public class MistralAiEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MistralAiEmbeddingModel mistralAiEmbeddingModel(MistralAiCommonProperties commonProperties,
-			MistralAiEmbeddingProperties embeddingProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, RetryTemplate retryTemplate,
-			ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                       MistralAiEmbeddingProperties embeddingProperties,
+	                                                       ObjectProvider<RestClient.Builder> restClientBuilderProvider, RetryTemplate retryTemplate,
+	                                                       ResponseErrorHandler responseErrorHandler, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                       ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var mistralAiApi = mistralAiApi(embeddingProperties.getApiKey(), commonProperties.getApiKey(),
 				embeddingProperties.getBaseUrl(), commonProperties.getBaseUrl(),
@@ -78,7 +78,7 @@ public class MistralAiEmbeddingAutoConfiguration {
 	}
 
 	private MistralAiApi mistralAiApi(String apiKey, String commonApiKey, String baseUrl, String commonBaseUrl,
-			RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                                  RestClient.Builder restClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		var resolvedApiKey = StringUtils.hasText(apiKey) ? apiKey : commonApiKey;
 		var resoledBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;

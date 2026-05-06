@@ -51,7 +51,7 @@ public class AzureOpenAiDirectOpenAiAutoConfigurationIT {
 	private static String EMBEDDING_MODEL_NAME = "text-embedding-ada-002";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 			"spring.ai.azure.openai.openai-api-key=" + System.getenv("OPENAI_API_KEY"),
 
 			"spring.ai.azure.openai.chat.options.deployment-name=" + CHAT_MODEL_NAME,
@@ -59,9 +59,9 @@ public class AzureOpenAiDirectOpenAiAutoConfigurationIT {
 			"spring.ai.azure.openai.chat.options.maxTokens=123",
 			"spring.ai.azure.openai.embedding.options.deployment-name=" + EMBEDDING_MODEL_NAME
 			// @formatter:on
-	)
-		.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class,
-				AzureOpenAiEmbeddingAutoConfiguration.class));
+			)
+			.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class,
+					AzureOpenAiEmbeddingAutoConfiguration.class));
 
 	private final Message systemMessage = new SystemPromptTemplate("""
 			You are a helpful AI assistant. Your name is {name}.
@@ -94,11 +94,11 @@ public class AzureOpenAiDirectOpenAiAutoConfigurationIT {
 			assertThat(responses.size()).isGreaterThan(10);
 
 			String stitchedResponseContent = responses.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(stitchedResponseContent).contains("Blackbeard");
 		});
@@ -110,7 +110,7 @@ public class AzureOpenAiDirectOpenAiAutoConfigurationIT {
 			AzureOpenAiEmbeddingModel embeddingModel = context.getBean(AzureOpenAiEmbeddingModel.class);
 
 			EmbeddingResponse embeddingResponse = embeddingModel
-				.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+					.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
 			assertThat(embeddingResponse.getResults()).hasSize(2);
 			assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 			assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);

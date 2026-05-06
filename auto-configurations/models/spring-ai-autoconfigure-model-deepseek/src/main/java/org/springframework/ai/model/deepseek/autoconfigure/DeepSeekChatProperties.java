@@ -50,9 +50,9 @@ public class DeepSeekChatProperties extends DeepSeekParentProperties {
 
 	@NestedConfigurationProperty
 	private DeepSeekChatOptions options = DeepSeekChatOptions.builder()
-		.model(DEFAULT_CHAT_MODEL)
-		.temperature(DEFAULT_TEMPERATURE)
-		.build();
+			.model(DEFAULT_CHAT_MODEL)
+			.temperature(DEFAULT_TEMPERATURE)
+			.build();
 
 	public DeepSeekChatOptions getOptions() {
 		return this.options;

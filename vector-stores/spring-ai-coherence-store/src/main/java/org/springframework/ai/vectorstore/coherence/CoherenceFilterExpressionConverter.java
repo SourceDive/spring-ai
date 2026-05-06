@@ -36,7 +36,7 @@ import org.springframework.ai.vectorstore.filter.FilterHelper;
  *
  * @author Aleks Seovic
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CoherenceFilterExpressionConverter {
 
 	public Filter<?> convert(Operand expression) {
@@ -60,7 +60,7 @@ public class CoherenceFilterExpressionConverter {
 			case LTE -> Filters.lessEqual(extractor(expression.left()), value(expression.right()));
 			case IN -> Filters.in(extractor(expression.left()), ((List) value(expression.right())).toArray());
 			case NIN ->
-				Filters.not(Filters.in(extractor(expression.left()), ((List) value(expression.right())).toArray()));
+					Filters.not(Filters.in(extractor(expression.left()), ((List) value(expression.right())).toArray()));
 			case NOT -> convert(FilterHelper.negate(expression));
 			case AND -> and(expression);
 			case OR -> or(expression);

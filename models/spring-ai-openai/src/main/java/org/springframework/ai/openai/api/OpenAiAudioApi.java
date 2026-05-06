@@ -59,16 +59,17 @@ public class OpenAiAudioApi {
 
 	/**
 	 * Create a new audio api.
-	 * @param baseUrl api base URL.
-	 * @param apiKey OpenAI apiKey.
-	 * @param headers the http headers to use.
-	 * @param restClientBuilder RestClient builder.
-	 * @param webClientBuilder WebClient builder.
+	 *
+	 * @param baseUrl              api base URL.
+	 * @param apiKey               OpenAI apiKey.
+	 * @param headers              the http headers to use.
+	 * @param restClientBuilder    RestClient builder.
+	 * @param webClientBuilder     WebClient builder.
 	 * @param responseErrorHandler Response error handler.
 	 */
 	public OpenAiAudioApi(String baseUrl, ApiKey apiKey, MultiValueMap<String, String> headers,
-			RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                      RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+	                      ResponseErrorHandler responseErrorHandler) {
 
 		Consumer<HttpHeaders> authHeaders = h -> {
 			if (!(apiKey instanceof NoopApiKey)) {
@@ -79,10 +80,10 @@ public class OpenAiAudioApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(authHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(authHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 
 		this.webClient = webClientBuilder.clone().baseUrl(baseUrl).defaultHeaders(authHeaders).build();
 	}
@@ -93,6 +94,7 @@ public class OpenAiAudioApi {
 
 	/**
 	 * Request to generates audio from the input text.
+	 *
 	 * @param requestBody The request body.
 	 * @return Response entity containing the audio binary.
 	 */
@@ -106,26 +108,28 @@ public class OpenAiAudioApi {
 	 * This method sends a POST request to the OpenAI API to generate audio from the
 	 * provided text. The audio is streamed back as a Flux of ResponseEntity objects, each
 	 * containing a byte array of the audio data.
+	 *
 	 * @param requestBody The request body containing the details for the audio
-	 * generation, such as the input text, model, voice, and response format.
+	 *                    generation, such as the input text, model, voice, and response format.
 	 * @return A Flux of ResponseEntity objects, each containing a byte array of the audio
 	 * data.
 	 */
 	public Flux<ResponseEntity<byte[]>> stream(SpeechRequest requestBody) {
 
 		return this.webClient.post()
-			.uri("/v1/audio/speech")
-			.body(Mono.just(requestBody), SpeechRequest.class)
-			.accept(MediaType.APPLICATION_OCTET_STREAM)
-			.exchangeToFlux(clientResponse -> {
-				HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-				return clientResponse.bodyToFlux(byte[].class)
-					.map(bytes -> ResponseEntity.ok().headers(headers).body(bytes));
-			});
+				.uri("/v1/audio/speech")
+				.body(Mono.just(requestBody), SpeechRequest.class)
+				.accept(MediaType.APPLICATION_OCTET_STREAM)
+				.exchangeToFlux(clientResponse -> {
+					HttpHeaders headers = clientResponse.headers().asHttpHeaders();
+					return clientResponse.bodyToFlux(byte[].class)
+							.map(bytes -> ResponseEntity.ok().headers(headers).body(bytes));
+				});
 	}
 
 	/**
 	 * Transcribes audio into the input language.
+	 *
 	 * @param requestBody The request body.
 	 * @return Response entity containing the transcribed text in either json or text
 	 * format.
@@ -137,8 +141,9 @@ public class OpenAiAudioApi {
 	/**
 	 * Transcribes audio into the input language. The response type is specified by the
 	 * responseType parameter.
-	 * @param <T> The response type.
-	 * @param requestBody The request body.
+	 *
+	 * @param <T>          The response type.
+	 * @param requestBody  The request body.
 	 * @param responseType The response type class.
 	 * @return Response entity containing the transcribed text in the responseType format.
 	 */
@@ -164,14 +169,15 @@ public class OpenAiAudioApi {
 		}
 
 		return this.restClient.post()
-			.uri("/v1/audio/transcriptions")
-			.body(multipartBody)
-			.retrieve()
-			.toEntity(responseType);
+				.uri("/v1/audio/transcriptions")
+				.body(multipartBody)
+				.retrieve()
+				.toEntity(responseType);
 	}
 
 	/**
 	 * Translates audio into English.
+	 *
 	 * @param requestBody The request body.
 	 * @return Response entity containing the transcribed text in either json or text
 	 * format.
@@ -183,8 +189,9 @@ public class OpenAiAudioApi {
 	/**
 	 * Translates audio into English. The response type is specified by the responseType
 	 * parameter.
-	 * @param <T> The response type.
-	 * @param requestBody The request body.
+	 *
+	 * @param <T>          The response type.
+	 * @param requestBody  The request body.
 	 * @param responseType The response type class.
 	 * @return Response entity containing the transcribed text in the responseType format.
 	 */
@@ -204,10 +211,10 @@ public class OpenAiAudioApi {
 		multipartBody.add("temperature", requestBody.temperature());
 
 		return this.restClient.post()
-			.uri("/v1/audio/translations")
-			.body(multipartBody)
-			.retrieve()
-			.toEntity(responseType);
+				.uri("/v1/audio/translations")
+				.body(multipartBody)
+				.retrieve()
+				.toEntity(responseType);
 	}
 
 	/**
@@ -318,19 +325,19 @@ public class OpenAiAudioApi {
 	 * <a href="https://platform.openai.com/docs/api-reference/audio/createSpeech">Create
 	 * Speech</a>
 	 *
-	 * @param model The model to use for generating the audio. One of the available TTS
-	 * models: tts-1 or tts-1-hd.
-	 * @param input The input text to synthesize. Must be at most 4096 tokens long.
-	 * @param voice The voice to use for synthesis. One of the available voices for the
-	 * chosen model: 'alloy', 'echo', 'fable', 'onyx', 'nova', and 'shimmer'.
+	 * @param model          The model to use for generating the audio. One of the available TTS
+	 *                       models: tts-1 or tts-1-hd.
+	 * @param input          The input text to synthesize. Must be at most 4096 tokens long.
+	 * @param voice          The voice to use for synthesis. One of the available voices for the
+	 *                       chosen model: 'alloy', 'echo', 'fable', 'onyx', 'nova', and 'shimmer'.
 	 * @param responseFormat The format to audio in. Supported formats are mp3, opus, aac,
-	 * and flac. Defaults to mp3.
-	 * @param speed The speed of the voice synthesis. The acceptable range is from 0.25
-	 * (slowest) to 4.0 (fastest).
+	 *                       and flac. Defaults to mp3.
+	 * @param speed          The speed of the voice synthesis. The acceptable range is from 0.25
+	 *                       (slowest) to 4.0 (fastest).
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record SpeechRequest(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("model") String model,
 		@JsonProperty("input") String input,
 		@JsonProperty("voice") String voice,
@@ -474,27 +481,27 @@ public class OpenAiAudioApi {
 	 * "https://platform.openai.com/docs/api-reference/audio/createTranscription">Create
 	 * Transcription</a>
 	 *
-	 * @param file The audio file to transcribe. Must be a valid audio file type.
-	 * @param model ID of the model to use. Only whisper-1 is currently available.
-	 * @param language The language of the input audio. Supplying the input language in
-	 * ISO-639-1 format will improve accuracy and latency.
-	 * @param prompt An optional text to guide the model's style or continue a previous
-	 * audio segment. The prompt should match the audio language.
-	 * @param responseFormat The format of the transcript output, in one of these options:
-	 * json, text, srt, verbose_json, or vtt. Defaults to json.
-	 * @param temperature The sampling temperature, between 0 and 1. Higher values like
-	 * 0.8 will make the output more random, while lower values like 0.2 will make it more
-	 * focused and deterministic. If set to 0, the model will use log probability to
-	 * automatically increase the temperature until certain thresholds are hit.
+	 * @param file            The audio file to transcribe. Must be a valid audio file type.
+	 * @param model           ID of the model to use. Only whisper-1 is currently available.
+	 * @param language        The language of the input audio. Supplying the input language in
+	 *                        ISO-639-1 format will improve accuracy and latency.
+	 * @param prompt          An optional text to guide the model's style or continue a previous
+	 *                        audio segment. The prompt should match the audio language.
+	 * @param responseFormat  The format of the transcript output, in one of these options:
+	 *                        json, text, srt, verbose_json, or vtt. Defaults to json.
+	 * @param temperature     The sampling temperature, between 0 and 1. Higher values like
+	 *                        0.8 will make the output more random, while lower values like 0.2 will make it more
+	 *                        focused and deterministic. If set to 0, the model will use log probability to
+	 *                        automatically increase the temperature until certain thresholds are hit.
 	 * @param granularityType The timestamp granularities to populate for this
-	 * transcription. response_format must be set verbose_json to use timestamp
-	 * granularities. Either or both of these options are supported: word, or segment.
-	 * Note: There is no additional latency for segment timestamps, but generating word
-	 * timestamps incurs additional latency.
+	 *                        transcription. response_format must be set verbose_json to use timestamp
+	 *                        granularities. Either or both of these options are supported: word, or segment.
+	 *                        Note: There is no additional latency for segment timestamps, but generating word
+	 *                        timestamps incurs additional latency.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record TranscriptionRequest(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("file") byte[] file,
 		@JsonProperty("model") String model,
 		@JsonProperty("language") String language,
@@ -596,21 +603,21 @@ public class OpenAiAudioApi {
 	/**
 	 * Request to translate an audio file to English.
 	 *
-	 * @param file The audio file object (not file name) to translate, in one of these
-	 * formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.
-	 * @param model ID of the model to use. Only whisper-1 is currently available.
-	 * @param prompt An optional text to guide the model's style or continue a previous
-	 * audio segment. The prompt should be in English.
+	 * @param file           The audio file object (not file name) to translate, in one of these
+	 *                       formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.
+	 * @param model          ID of the model to use. Only whisper-1 is currently available.
+	 * @param prompt         An optional text to guide the model's style or continue a previous
+	 *                       audio segment. The prompt should be in English.
 	 * @param responseFormat The format of the transcript output, in one of these options:
-	 * json, text, srt, verbose_json, or vtt.
-	 * @param temperature The sampling temperature, between 0 and 1. Higher values like
-	 * 0.8 will make the output more random, while lower values like 0.2 will make it more
-	 * focused and deterministic. If set to 0, the model will use log probability to
-	 * automatically increase the temperature until certain thresholds are hit.
+	 *                       json, text, srt, verbose_json, or vtt.
+	 * @param temperature    The sampling temperature, between 0 and 1. Higher values like
+	 *                       0.8 will make the output more random, while lower values like 0.2 will make it more
+	 *                       focused and deterministic. If set to 0, the model will use log probability to
+	 *                       automatically increase the temperature until certain thresholds are hit.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record TranslationRequest(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("file") byte[] file,
 		@JsonProperty("model") String model,
 		@JsonProperty("prompt") String prompt,
@@ -680,15 +687,15 @@ public class OpenAiAudioApi {
 	 *
 	 * @param language The language of the transcribed text.
 	 * @param duration The duration of the audio in seconds.
-	 * @param text The transcribed text.
-	 * @param words The extracted words and their timestamps.
+	 * @param text     The transcribed text.
+	 * @param words    The extracted words and their timestamps.
 	 * @param segments The segments of the transcribed text and their corresponding
-	 * details.
+	 *                 details.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record StructuredResponse(
-	// @formatter:off
+			// @formatter:off
 		@JsonProperty("language") String language,
 		@JsonProperty("duration") Float duration,
 		@JsonProperty("text") String text,
@@ -699,14 +706,14 @@ public class OpenAiAudioApi {
 		/**
 		 * Extracted word and it corresponding timestamps.
 		 *
-		 * @param word The text content of the word.
+		 * @param word  The text content of the word.
 		 * @param start The start time of the word in seconds.
-		 * @param end The end time of the word in seconds.
+		 * @param end   The end time of the word in seconds.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record Word(
-		// @formatter:off
+				// @formatter:off
 			@JsonProperty("word") String word,
 			@JsonProperty("start") Float start,
 			@JsonProperty("end") Float end) {
@@ -716,24 +723,24 @@ public class OpenAiAudioApi {
 		/**
 		 * Segment of the transcribed text and its corresponding details.
 		 *
-		 * @param id Unique identifier of the segment.
-		 * @param seek Seek offset of the segment.
-		 * @param start Start time of the segment in seconds.
-		 * @param end End time of the segment in seconds.
-		 * @param text The text content of the segment.
-		 * @param tokens Array of token IDs for the text content.
-		 * @param temperature Temperature parameter used for generating the segment.
-		 * @param avgLogprob Average logprob of the segment. If the value is lower than
-		 * -1, consider the logprobs failed.
+		 * @param id               Unique identifier of the segment.
+		 * @param seek             Seek offset of the segment.
+		 * @param start            Start time of the segment in seconds.
+		 * @param end              End time of the segment in seconds.
+		 * @param text             The text content of the segment.
+		 * @param tokens           Array of token IDs for the text content.
+		 * @param temperature      Temperature parameter used for generating the segment.
+		 * @param avgLogprob       Average logprob of the segment. If the value is lower than
+		 *                         -1, consider the logprobs failed.
 		 * @param compressionRatio Compression ratio of the segment. If the value is
-		 * greater than 2.4, consider the compression failed.
-		 * @param noSpeechProb Probability of no speech in the segment. If the value is
-		 * higher than 1.0 and the avg_logprob is below -1, consider this segment silent.
+		 *                         greater than 2.4, consider the compression failed.
+		 * @param noSpeechProb     Probability of no speech in the segment. If the value is
+		 *                         higher than 1.0 and the avg_logprob is below -1, consider this segment silent.
 		 */
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record Segment(
-		// @formatter:off
+				// @formatter:off
 			@JsonProperty("id") Integer id,
 			@JsonProperty("seek") Integer seek,
 			@JsonProperty("start") Float start,

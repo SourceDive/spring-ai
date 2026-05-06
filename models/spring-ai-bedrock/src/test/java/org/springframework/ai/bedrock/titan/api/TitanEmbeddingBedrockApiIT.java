@@ -80,7 +80,7 @@ public class TitanEmbeddingBedrockApiIT {
 				Region.US_EAST_1.id(), new ObjectMapper(), Duration.ofMinutes(2));
 
 		byte[] image = new DefaultResourceLoader().getResource("classpath:/spring_framework.png")
-			.getContentAsByteArray();
+				.getContentAsByteArray();
 
 		String imageBase64 = Base64.getEncoder().encodeToString(image);
 		System.out.println(imageBase64.length());

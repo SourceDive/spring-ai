@@ -73,7 +73,7 @@ public class GemFireVectorStoreObservationIT {
 	private static GemFireCluster gemFireCluster;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(Config.class);
+			.withUserConfiguration(Config.class);
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -93,7 +93,7 @@ public class GemFireVectorStoreObservationIT {
 		gemFireCluster = new GemFireCluster(GemFireImage.DEFAULT_IMAGE, LOCATOR_COUNT, SERVER_COUNT);
 		gemFireCluster.withConfiguration(GemFireCluster.SERVER_GLOB,
 				container -> container.withExposedPorts(HTTP_SERVICE_PORT)
-					.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
+						.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
 		gemFireCluster.withGemFireProperty(GemFireCluster.SERVER_GLOB, "http-service-port",
 				Integer.toString(HTTP_SERVICE_PORT));
 		gemFireCluster.acceptLicense().start();
@@ -106,8 +106,7 @@ public class GemFireVectorStoreObservationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -124,67 +123,67 @@ public class GemFireVectorStoreObservationIT {
 			vectorStore.add(this.documents);
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.GEMFIRE.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.GEMFIRE.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), TEST_INDEX_NAME)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "/embeddings")
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.GEMFIRE.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.GEMFIRE.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), TEST_INDEX_NAME)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "/embeddings")
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(5).similarityThresholdAll().build()),
-						hasSize(3));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(5).similarityThresholdAll().build()),
+							hasSize(3));
 
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
 
 			assertThat(results).isNotEmpty();
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.GEMFIRE.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.GEMFIRE.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.GEMFIRE.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.GEMFIRE.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
 
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
-						"What is Great Depression")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), TEST_INDEX_NAME)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "/embeddings")
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
-						"0.0")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
+							"What is Great Depression")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "384")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), TEST_INDEX_NAME)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(), "/embeddings")
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
+							"0.0")
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 		});
 	}
@@ -201,14 +200,14 @@ public class GemFireVectorStoreObservationIT {
 		@Bean
 		public GemFireVectorStore vectorStore(EmbeddingModel embeddingModel, ObservationRegistry observationRegistry) {
 			return GemFireVectorStore.builder(embeddingModel)
-				.host("localhost")
-				.port(HTTP_SERVICE_PORT)
-				.indexName(TEST_INDEX_NAME)
-				.initializeSchema(true)
-				.observationRegistry(observationRegistry)
-				.customObservationConvention(null)
-				.batchingStrategy(new TokenCountBatchingStrategy())
-				.build();
+					.host("localhost")
+					.port(HTTP_SERVICE_PORT)
+					.indexName(TEST_INDEX_NAME)
+					.initializeSchema(true)
+					.observationRegistry(observationRegistry)
+					.customObservationConvention(null)
+					.batchingStrategy(new TokenCountBatchingStrategy())
+					.build();
 		}
 
 		@Bean

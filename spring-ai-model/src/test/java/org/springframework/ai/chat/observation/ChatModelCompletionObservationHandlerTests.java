@@ -52,18 +52,18 @@ class ChatModelCompletionObservationHandlerTests {
 	@Test
 	void whenSupportedObservationContextThenReturnTrue() {
 		var context = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationHandler.supportsContext(context)).isTrue();
 	}
 
 	@Test
 	void whenEmptyResponseThenOutputNothing(CapturedOutput output) {
 		var context = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.c.o.ChatModelCompletionObservationHandler -- Chat Model Completion:
@@ -74,9 +74,9 @@ class ChatModelCompletionObservationHandlerTests {
 	@Test
 	void whenEmptyCompletionThenOutputNothing(CapturedOutput output) {
 		var context = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		context.setResponse(new ChatResponse(List.of(new Generation(new AssistantMessage("")))));
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
@@ -88,9 +88,9 @@ class ChatModelCompletionObservationHandlerTests {
 	@Test
 	void whenCompletionWithTextThenOutputIt(CapturedOutput output) {
 		var context = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		context.setResponse(new ChatResponse(List.of(new Generation(new AssistantMessage("say please")),
 				new Generation(new AssistantMessage("seriously, say please")))));
 		this.observationHandler.onStop(context);

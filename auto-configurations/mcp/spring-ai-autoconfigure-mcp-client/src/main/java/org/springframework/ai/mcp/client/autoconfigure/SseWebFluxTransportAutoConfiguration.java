@@ -57,7 +57,7 @@ import org.springframework.web.reactive.function.client.WebClient;
  */
 @AutoConfiguration
 @ConditionalOnClass(WebFluxSseClientTransport.class)
-@EnableConfigurationProperties({ McpSseClientProperties.class, McpClientCommonProperties.class })
+@EnableConfigurationProperties({McpSseClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 public class SseWebFluxTransportAutoConfiguration {
@@ -72,16 +72,17 @@ public class SseWebFluxTransportAutoConfiguration {
 	 * <li>ObjectMapper for JSON processing
 	 * <li>Server connection parameters from properties
 	 * </ul>
-	 * @param sseProperties the SSE client properties containing server configurations
+	 *
+	 * @param sseProperties            the SSE client properties containing server configurations
 	 * @param webClientBuilderProvider the provider for WebClient.Builder
-	 * @param objectMapperProvider the provider for ObjectMapper or a new instance if not
-	 * available
+	 * @param objectMapperProvider     the provider for ObjectMapper or a new instance if not
+	 *                                 available
 	 * @return list of named MCP transports
 	 */
 	@Bean
 	public List<NamedClientMcpTransport> webFluxClientTransports(McpSseClientProperties sseProperties,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider,
-			ObjectProvider<ObjectMapper> objectMapperProvider) {
+	                                                             ObjectProvider<WebClient.Builder> webClientBuilderProvider,
+	                                                             ObjectProvider<ObjectMapper> objectMapperProvider) {
 
 		List<NamedClientMcpTransport> sseTransports = new ArrayList<>();
 
@@ -93,9 +94,9 @@ public class SseWebFluxTransportAutoConfiguration {
 			String sseEndpoint = serverParameters.getValue().sseEndpoint() != null
 					? serverParameters.getValue().sseEndpoint() : "/sse";
 			var transport = WebFluxSseClientTransport.builder(webClientBuilder)
-				.sseEndpoint(sseEndpoint)
-				.objectMapper(objectMapper)
-				.build();
+					.sseEndpoint(sseEndpoint)
+					.objectMapper(objectMapper)
+					.build();
 			sseTransports.add(new NamedClientMcpTransport(serverParameters.getKey(), transport));
 		}
 

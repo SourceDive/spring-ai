@@ -56,16 +56,16 @@ public final class MultiQueryExpander implements QueryExpander {
 	private static final PromptTemplate DEFAULT_PROMPT_TEMPLATE = new PromptTemplate("""
 			You are an expert at information retrieval and search optimization.
 			Your task is to generate {number} different versions of the given query.
-
+			
 			Each variant must cover different perspectives or aspects of the topic,
 			while maintaining the core intent of the original query. The goal is to
 			expand the search space and improve the chances of finding relevant information.
-
+			
 			Do not explain your choices or add any other text.
 			Provide the query variants separated by newlines.
-
+			
 			Original query: {query}
-
+			
 			Query variants:
 			""");
 
@@ -82,7 +82,7 @@ public final class MultiQueryExpander implements QueryExpander {
 	private final int numberOfQueries;
 
 	public MultiQueryExpander(ChatClient.Builder chatClientBuilder, @Nullable PromptTemplate promptTemplate,
-			@Nullable Boolean includeOriginal, @Nullable Integer numberOfQueries) {
+	                          @Nullable Boolean includeOriginal, @Nullable Integer numberOfQueries) {
 		Assert.notNull(chatClientBuilder, "chatClientBuilder cannot be null");
 
 		this.chatClient = chatClientBuilder.build();
@@ -100,11 +100,11 @@ public final class MultiQueryExpander implements QueryExpander {
 		logger.debug("Generating {} query variants", this.numberOfQueries);
 
 		var response = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("number", this.numberOfQueries)
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("number", this.numberOfQueries)
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (response == null) {
 			logger.warn("Query expansion result is null. Returning the input query unchanged.");
@@ -121,9 +121,9 @@ public final class MultiQueryExpander implements QueryExpander {
 		}
 
 		var queries = queryVariants.stream()
-			.filter(StringUtils::hasText)
-			.map(queryText -> query.mutate().text(queryText).build())
-			.collect(Collectors.toList());
+				.filter(StringUtils::hasText)
+				.map(queryText -> query.mutate().text(queryText).build())
+				.collect(Collectors.toList());
 
 		if (this.includeOriginal) {
 			logger.debug("Including the original query in the result");

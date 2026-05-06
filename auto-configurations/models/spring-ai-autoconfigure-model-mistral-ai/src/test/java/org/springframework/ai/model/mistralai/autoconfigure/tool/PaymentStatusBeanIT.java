@@ -52,31 +52,31 @@ class PaymentStatusBeanIT {
 	private final Logger logger = LoggerFactory.getLogger(PaymentStatusBeanIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mistralai.apiKey=" + System.getenv("MISTRAL_AI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.mistralai.apiKey=" + System.getenv("MISTRAL_AI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.mistralai.chat.options.model=" + MistralAiApi.ChatModel.LARGE.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.mistralai.chat.options.model=" + MistralAiApi.ChatModel.LARGE.getValue())
+				.run(context -> {
 
-				MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
+					MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
 
-				ChatResponse response = chatModel
-					.call(new Prompt(List.of(new UserMessage("What's the status of my transaction with id T1001?")),
-							MistralAiChatOptions.builder()
-								.toolNames("retrievePaymentStatus")
-								.toolNames("retrievePaymentDate")
-								.build()));
+					ChatResponse response = chatModel
+							.call(new Prompt(List.of(new UserMessage("What's the status of my transaction with id T1001?")),
+									MistralAiChatOptions.builder()
+											.toolNames("retrievePaymentStatus")
+											.toolNames("retrievePaymentDate")
+											.build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
-			});
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
+				});
 	}
 
 	record StatusDate(String status, String date) {

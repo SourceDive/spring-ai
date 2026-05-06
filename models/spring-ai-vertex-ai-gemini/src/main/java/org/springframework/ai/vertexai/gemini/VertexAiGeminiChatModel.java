@@ -136,10 +136,10 @@ import org.springframework.util.StringUtils;
  * @author Jihoon Kim
  * @author Alexandros Pappas
  * @author Ilayaperumal Gopinathan
- * @since 0.8.1
  * @see VertexAiGeminiChatOptions
  * @see ToolCallingManager
  * @see ChatModel
+ * @since 0.8.1
  */
 public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
@@ -192,8 +192,8 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 	 * @param observationRegistry the observation registry to use
 	 */
 	public VertexAiGeminiChatModel(VertexAI vertexAI, VertexAiGeminiChatOptions defaultOptions,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                               ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
+	                               ObservationRegistry observationRegistry) {
 		this(vertexAI, defaultOptions, toolCallingManager, retryTemplate, observationRegistry,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
@@ -210,8 +210,8 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 	 * @param toolExecutionEligibilityPredicate the tool execution eligibility predicate
 	 */
 	public VertexAiGeminiChatModel(VertexAI vertexAI, VertexAiGeminiChatOptions defaultOptions,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	                               ToolCallingManager toolCallingManager, RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
+	                               ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 
 		Assert.notNull(vertexAI, "VertexAI must not be null");
 		Assert.notNull(defaultOptions, "VertexAiGeminiChatOptions must not be null");
@@ -232,8 +232,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		// compatibility with Vertex AI's OpenAPI schema format.
 		if (toolCallingManager instanceof VertexToolCallingManager) {
 			this.toolCallingManager = toolCallingManager;
-		}
-		else {
+		} else {
 			this.toolCallingManager = new VertexToolCallingManager(toolCallingManager);
 		}
 	}
@@ -265,8 +264,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 			}
 
 			return parts;
-		}
-		else if (message instanceof UserMessage userMessage) {
+		} else if (message instanceof UserMessage userMessage) {
 			List<Part> parts = new ArrayList<>();
 			if (userMessage.getText() != null) {
 				parts.add(Part.newBuilder().setText(userMessage.getText()).build());
@@ -275,38 +273,35 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 			parts.addAll(mediaToParts(userMessage.getMedia()));
 
 			return parts;
-		}
-		else if (message instanceof AssistantMessage assistantMessage) {
+		} else if (message instanceof AssistantMessage assistantMessage) {
 			List<Part> parts = new ArrayList<>();
 			if (StringUtils.hasText(assistantMessage.getText())) {
 				parts.add(Part.newBuilder().setText(assistantMessage.getText()).build());
 			}
 			if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
 				parts.addAll(assistantMessage.getToolCalls()
-					.stream()
-					.map(toolCall -> Part.newBuilder()
-						.setFunctionCall(FunctionCall.newBuilder()
-							.setName(toolCall.name())
-							.setArgs(jsonToStruct(toolCall.arguments()))
-							.build())
-						.build())
-					.toList());
+						.stream()
+						.map(toolCall -> Part.newBuilder()
+								.setFunctionCall(FunctionCall.newBuilder()
+										.setName(toolCall.name())
+										.setArgs(jsonToStruct(toolCall.arguments()))
+										.build())
+								.build())
+						.toList());
 			}
 			return parts;
-		}
-		else if (message instanceof ToolResponseMessage toolResponseMessage) {
+		} else if (message instanceof ToolResponseMessage toolResponseMessage) {
 
 			return toolResponseMessage.getResponses()
-				.stream()
-				.map(response -> Part.newBuilder()
-					.setFunctionResponse(FunctionResponse.newBuilder()
-						.setName(response.name())
-						.setResponse(jsonToStruct(response.responseData()))
-						.build())
-					.build())
-				.toList();
-		}
-		else {
+					.stream()
+					.map(response -> Part.newBuilder()
+							.setFunctionResponse(FunctionResponse.newBuilder()
+									.setName(response.name())
+									.setResponse(jsonToStruct(response.responseData()))
+									.build())
+							.build())
+					.toList();
+		} else {
 			throw new IllegalArgumentException("Gemini doesn't support message type: " + message.getClass());
 		}
 	}
@@ -315,8 +310,8 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		List<Part> parts = new ArrayList<>();
 
 		List<Part> mediaParts = media.stream()
-			.map(mediaData -> PartMaker.fromMimeTypeAndData(mediaData.getMimeType().toString(), mediaData.getData()))
-			.toList();
+				.map(mediaData -> PartMaker.fromMimeTypeAndData(mediaData.getMimeType().toString(), mediaData.getData()))
+				.toList();
 
 		if (!CollectionUtils.isEmpty(mediaParts)) {
 			parts.addAll(mediaParts);
@@ -328,8 +323,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 	private static String structToJson(Struct struct) {
 		try {
 			return JsonFormat.printer().print(struct);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -342,8 +336,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
 			if (rootNode.isTextual()) {
 				structBuilder.putFields("result", Value.newBuilder().setStringValue(json).build());
-			}
-			else if (rootNode.isArray()) {
+			} else if (rootNode.isArray()) {
 				// Handle JSON array
 				List<Value> values = new ArrayList<>();
 
@@ -359,17 +352,15 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 				// Add the array to the main struct with a field name like "items"
 				structBuilder.putFields("items",
 						Value.newBuilder()
-							.setListValue(com.google.protobuf.ListValue.newBuilder().addAllValues(values).build())
-							.build());
-			}
-			else {
+								.setListValue(com.google.protobuf.ListValue.newBuilder().addAllValues(values).build())
+								.build());
+			} else {
 				// Original behavior for single JSON object
 				JsonFormat.parser().ignoringUnknownFields().merge(json, structBuilder);
 			}
 
 			return structBuilder.build();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -379,8 +370,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 			var schemaBuilder = Schema.newBuilder();
 			JsonFormat.parser().ignoringUnknownFields().merge(json, schemaBuilder);
 			return schemaBuilder.build();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -395,46 +385,45 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 	private ChatResponse internalCall(Prompt prompt, ChatResponse previousChatResponse) {
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(VertexAiGeminiConstants.PROVIDER_NAME)
-			.build();
+				.prompt(prompt)
+				.provider(VertexAiGeminiConstants.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> this.retryTemplate.execute(context -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> this.retryTemplate.execute(context -> {
 
-				var geminiRequest = createGeminiRequest(prompt);
+					var geminiRequest = createGeminiRequest(prompt);
 
-				GenerateContentResponse generateContentResponse = this.getContentResponse(geminiRequest);
+					GenerateContentResponse generateContentResponse = this.getContentResponse(geminiRequest);
 
-				List<Generation> generations = generateContentResponse.getCandidatesList()
-					.stream()
-					.map(this::responseCandidateToGeneration)
-					.flatMap(List::stream)
-					.toList();
+					List<Generation> generations = generateContentResponse.getCandidatesList()
+							.stream()
+							.map(this::responseCandidateToGeneration)
+							.flatMap(List::stream)
+							.toList();
 
-				GenerateContentResponse.UsageMetadata usage = generateContentResponse.getUsageMetadata();
-				Usage currentUsage = (usage != null)
-						? new DefaultUsage(usage.getPromptTokenCount(), usage.getCandidatesTokenCount())
-						: new EmptyUsage();
-				Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
-				ChatResponse chatResponse = new ChatResponse(generations, toChatResponseMetadata(cumulativeUsage));
+					GenerateContentResponse.UsageMetadata usage = generateContentResponse.getUsageMetadata();
+					Usage currentUsage = (usage != null)
+							? new DefaultUsage(usage.getPromptTokenCount(), usage.getCandidatesTokenCount())
+							: new EmptyUsage();
+					Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
+					ChatResponse chatResponse = new ChatResponse(generations, toChatResponseMetadata(cumulativeUsage));
 
-				observationContext.setResponse(chatResponse);
-				return chatResponse;
-			}));
+					observationContext.setResponse(chatResponse);
+					return chatResponse;
+				}));
 
 		if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(prompt.getOptions(), response)) {
 			var toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, response);
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the client.
 				return ChatResponse.builder()
-					.from(response)
-					.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-					.build();
-			}
-			else {
+						.from(response)
+						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+						.build();
+			} else {
 				// Send the tool execution result back to the model.
 				return this.internalCall(new Prompt(toolExecutionResult.conversationHistory(), prompt.getOptions()),
 						response);
@@ -452,8 +441,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
 						VertexAiGeminiChatOptions.class);
-			}
-			else {
+			} else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						VertexAiGeminiChatOptions.class);
 			}
@@ -480,8 +468,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 					runtimeOptions.getGoogleSearchRetrieval(), this.defaultOptions.getGoogleSearchRetrieval()));
 			requestOptions.setSafetySettings(ModelOptionsUtils.mergeOption(runtimeOptions.getSafetySettings(),
 					this.defaultOptions.getSafetySettings()));
-		}
-		else {
+		} else {
 			requestOptions.setInternalToolExecutionEnabled(this.defaultOptions.getInternalToolExecutionEnabled());
 			requestOptions.setToolNames(this.defaultOptions.getToolNames());
 			requestOptions.setToolCallbacks(this.defaultOptions.getToolCallbacks());
@@ -506,9 +493,9 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		return Flux.deferContextual(contextView -> {
 
 			ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(VertexAiGeminiConstants.PROVIDER_NAME)
-				.build();
+					.prompt(prompt)
+					.provider(VertexAiGeminiConstants.PROVIDER_NAME)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -520,14 +507,14 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
 			try {
 				ResponseStream<GenerateContentResponse> responseStream = request.model
-					.generateContentStream(request.contents);
+						.generateContentStream(request.contents);
 
 				Flux<ChatResponse> chatResponseFlux = Flux.fromStream(responseStream.stream()).switchMap(response -> {
 					List<Generation> generations = response.getCandidatesList()
-						.stream()
-						.map(this::responseCandidateToGeneration)
-						.flatMap(List::stream)
-						.toList();
+							.stream()
+							.map(this::responseCandidateToGeneration)
+							.flatMap(List::stream)
+							.toList();
 
 					GenerateContentResponse.UsageMetadata usage = response.getUsageMetadata();
 					Usage currentUsage = (usage != null) ? getDefaultUsage(usage) : new EmptyUsage();
@@ -566,8 +553,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
 				return new MessageAggregator().aggregate(flux, observationContext::setResponse);
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException("Failed to generate content", e);
 			}
 
@@ -584,35 +570,34 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 				candidateFinishReason);
 
 		ChatGenerationMetadata chatGenerationMetadata = ChatGenerationMetadata.builder()
-			.finishReason(candidateFinishReason.name())
-			.build();
+				.finishReason(candidateFinishReason.name())
+				.build();
 
 		boolean isFunctionCall = candidate.getContent().getPartsList().stream().allMatch(Part::hasFunctionCall);
 
 		if (isFunctionCall) {
 			List<AssistantMessage.ToolCall> assistantToolCalls = candidate.getContent()
-				.getPartsList()
-				.stream()
-				.filter(part -> part.hasFunctionCall())
-				.map(part -> {
-					FunctionCall functionCall = part.getFunctionCall();
-					var functionName = functionCall.getName();
-					String functionArguments = structToJson(functionCall.getArgs());
-					return new AssistantMessage.ToolCall("", "function", functionName, functionArguments);
-				})
-				.toList();
+					.getPartsList()
+					.stream()
+					.filter(part -> part.hasFunctionCall())
+					.map(part -> {
+						FunctionCall functionCall = part.getFunctionCall();
+						var functionName = functionCall.getName();
+						String functionArguments = structToJson(functionCall.getArgs());
+						return new AssistantMessage.ToolCall("", "function", functionName, functionArguments);
+					})
+					.toList();
 
 			AssistantMessage assistantMessage = new AssistantMessage("", messageMetadata, assistantToolCalls);
 
 			return List.of(new Generation(assistantMessage, chatGenerationMetadata));
-		}
-		else {
+		} else {
 			List<Generation> generations = candidate.getContent()
-				.getPartsList()
-				.stream()
-				.map(part -> new AssistantMessage(part.getText(), messageMetadata))
-				.map(assistantMessage -> new Generation(assistantMessage, chatGenerationMetadata))
-				.toList();
+					.getPartsList()
+					.stream()
+					.map(part -> new AssistantMessage(part.getText(), messageMetadata))
+					.map(assistantMessage -> new Generation(assistantMessage, chatGenerationMetadata))
+					.toList();
 
 			return generations;
 		}
@@ -646,12 +631,11 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		VertexAiGeminiChatOptions requestOptions = (VertexAiGeminiChatOptions) prompt.getOptions();
 
 		var generativeModelBuilder = new GenerativeModel.Builder().setVertexAi(this.vertexAI)
-			.setSafetySettings(toGeminiSafetySettings(requestOptions.getSafetySettings()));
+				.setSafetySettings(toGeminiSafetySettings(requestOptions.getSafetySettings()));
 
 		if (requestOptions.getModel() != null) {
 			generativeModelBuilder.setModelName(requestOptions.getModel());
-		}
-		else {
+		} else {
 			generativeModelBuilder.setModelName(this.defaultOptions.getModel());
 		}
 
@@ -666,12 +650,12 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		List<ToolDefinition> toolDefinitions = this.toolCallingManager.resolveToolDefinitions(requestOptions);
 		if (!CollectionUtils.isEmpty(toolDefinitions)) {
 			final List<FunctionDeclaration> functionDeclarations = toolDefinitions.stream()
-				.map(toolDefinition -> FunctionDeclaration.newBuilder()
-					.setName(toolDefinition.name())
-					.setDescription(toolDefinition.description())
-					.setParameters(jsonToSchema(toolDefinition.inputSchema()))
-					.build())
-				.toList();
+					.map(toolDefinition -> FunctionDeclaration.newBuilder()
+							.setName(toolDefinition.name())
+							.setDescription(toolDefinition.description())
+							.setParameters(jsonToSchema(toolDefinition.inputSchema()))
+							.build())
+					.toList();
 			tools.add(Tool.newBuilder().addAllFunctionDeclarations(functionDeclarations).build());
 		}
 
@@ -744,28 +728,29 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 	private List<Content> toGeminiContent(List<Message> instructions) {
 
 		List<Content> contents = instructions.stream()
-			.map(message -> Content.newBuilder()
-				.setRole(toGeminiMessageType(message.getMessageType()).getValue())
-				.addAllParts(messageToGeminiParts(message))
-				.build())
-			.toList();
+				.map(message -> Content.newBuilder()
+						.setRole(toGeminiMessageType(message.getMessageType()).getValue())
+						.addAllParts(messageToGeminiParts(message))
+						.build())
+				.toList();
 
 		return contents;
 	}
 
 	private List<SafetySetting> toGeminiSafetySettings(List<VertexAiGeminiSafetySetting> safetySettings) {
 		return safetySettings.stream()
-			.map(safetySetting -> SafetySetting.newBuilder()
-				.setCategoryValue(safetySetting.getCategory().getValue())
-				.setThresholdValue(safetySetting.getThreshold().getValue())
-				.setMethodValue(safetySetting.getMethod().getValue())
-				.build())
-			.toList();
+				.map(safetySetting -> SafetySetting.newBuilder()
+						.setCategoryValue(safetySetting.getCategory().getValue())
+						.setThresholdValue(safetySetting.getThreshold().getValue())
+						.setMethodValue(safetySetting.getMethod().getValue())
+						.build())
+				.toList();
 	}
 
 	/**
 	 * Generates the content response based on the provided Gemini request. Package
 	 * protected for testing purposes.
+	 *
 	 * @param request the GeminiRequest containing the content and model information
 	 * @return a GenerateContentResponse containing the generated content
 	 * @throws RuntimeException if content generation fails
@@ -773,8 +758,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 	GenerateContentResponse getContentResponse(GeminiRequest request) {
 		try {
 			return request.model.generateContent(request.contents);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to generate content", e);
 		}
 	}
@@ -793,6 +777,7 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -809,10 +794,10 @@ public class VertexAiGeminiChatModel implements ChatModel, DisposableBean {
 		private VertexAI vertexAI;
 
 		private VertexAiGeminiChatOptions defaultOptions = VertexAiGeminiChatOptions.builder()
-			.temperature(0.7)
-			.topP(1.0)
-			.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-			.build();
+				.temperature(0.7)
+				.topP(1.0)
+				.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+				.build();
 
 		private ToolCallingManager toolCallingManager;
 

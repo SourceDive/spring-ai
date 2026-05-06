@@ -63,7 +63,7 @@ public class AnthropicApiLegacyToolIT {
 
 	public static final String TOO_SYSTEM_PROMPT_TEMPLATE = """
 			In this environment you have access to a set of tools you can use to answer the user's question.
-
+			
 			You may call them like this:
 			<function_calls>
 				<invoke>
@@ -74,7 +74,7 @@ public class AnthropicApiLegacyToolIT {
 					</parameters>
 				</invoke>
 			</function_calls>
-
+			
 			Here are the tools available:
 			<tools>%s</tools>
 			""";
@@ -135,7 +135,7 @@ public class AnthropicApiLegacyToolIT {
 		Object functionCallResponseData = FUNCTIONS.get(functionCalls.invoke().toolName()).apply(request);
 
 		XmlHelper.FunctionResults functionResults = new XmlHelper.FunctionResults(List
-			.of(new XmlHelper.FunctionResults.Result(functionCalls.invoke().toolName(), functionCallResponseData)));
+				.of(new XmlHelper.FunctionResults.Result(functionCalls.invoke().toolName(), functionCallResponseData)));
 
 		String content = XmlHelper.toXml(functionResults);
 

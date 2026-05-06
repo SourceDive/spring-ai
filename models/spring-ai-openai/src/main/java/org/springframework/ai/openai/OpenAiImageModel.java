@@ -85,8 +85,9 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates an instance of the OpenAiImageModel.
+	 *
 	 * @param openAiImageApi The OpenAiImageApi instance to be used for interacting with
-	 * the OpenAI Image API.
+	 *                       the OpenAI Image API.
 	 * @throws IllegalArgumentException if openAiImageApi is null
 	 */
 	public OpenAiImageModel(OpenAiImageApi openAiImageApi) {
@@ -95,10 +96,11 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Initializes a new instance of the OpenAiImageModel.
+	 *
 	 * @param openAiImageApi The OpenAiImageApi instance to be used for interacting with
-	 * the OpenAI Image API.
-	 * @param options The OpenAiImageOptions to configure the image model.
-	 * @param retryTemplate The retry template.
+	 *                       the OpenAI Image API.
+	 * @param options        The OpenAiImageOptions to configure the image model.
+	 * @param retryTemplate  The retry template.
 	 */
 	public OpenAiImageModel(OpenAiImageApi openAiImageApi, OpenAiImageOptions options, RetryTemplate retryTemplate) {
 		this(openAiImageApi, options, retryTemplate, ObservationRegistry.NOOP);
@@ -106,14 +108,15 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Initializes a new instance of the OpenAiImageModel.
-	 * @param openAiImageApi The OpenAiImageApi instance to be used for interacting with
-	 * the OpenAI Image API.
-	 * @param options The OpenAiImageOptions to configure the image model.
-	 * @param retryTemplate The retry template.
+	 *
+	 * @param openAiImageApi      The OpenAiImageApi instance to be used for interacting with
+	 *                            the OpenAI Image API.
+	 * @param options             The OpenAiImageOptions to configure the image model.
+	 * @param retryTemplate       The retry template.
 	 * @param observationRegistry The ObservationRegistry used for instrumentation.
 	 */
 	public OpenAiImageModel(OpenAiImageApi openAiImageApi, OpenAiImageOptions options, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                        ObservationRegistry observationRegistry) {
 		Assert.notNull(openAiImageApi, "OpenAiImageApi must not be null");
 		Assert.notNull(options, "options must not be null");
 		Assert.notNull(retryTemplate, "retryTemplate must not be null");
@@ -133,23 +136,23 @@ public class OpenAiImageModel implements ImageModel {
 		OpenAiImageApi.OpenAiImageRequest imageRequest = createRequest(requestImagePrompt);
 
 		var observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(imagePrompt)
-			.provider(OpenAiApiConstants.PROVIDER_NAME)
-			.build();
+				.imagePrompt(imagePrompt)
+				.provider(OpenAiApiConstants.PROVIDER_NAME)
+				.build();
 
 		return ImageModelObservationDocumentation.IMAGE_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				ResponseEntity<OpenAiImageApi.OpenAiImageResponse> imageResponseEntity = this.retryTemplate
-					.execute(ctx -> this.openAiImageApi.createImage(imageRequest));
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					ResponseEntity<OpenAiImageApi.OpenAiImageResponse> imageResponseEntity = this.retryTemplate
+							.execute(ctx -> this.openAiImageApi.createImage(imageRequest));
 
-				ImageResponse imageResponse = convertResponse(imageResponseEntity, imageRequest);
+					ImageResponse imageResponse = convertResponse(imageResponseEntity, imageRequest);
 
-				observationContext.setResponse(imageResponse);
+					observationContext.setResponse(imageResponse);
 
-				return imageResponse;
-			});
+					return imageResponse;
+				});
 	}
 
 	private OpenAiImageApi.OpenAiImageRequest createRequest(ImagePrompt imagePrompt) {
@@ -163,7 +166,7 @@ public class OpenAiImageModel implements ImageModel {
 	}
 
 	private ImageResponse convertResponse(ResponseEntity<OpenAiImageApi.OpenAiImageResponse> imageResponseEntity,
-			OpenAiImageApi.OpenAiImageRequest openAiImageRequest) {
+	                                      OpenAiImageApi.OpenAiImageRequest openAiImageRequest) {
 		OpenAiImageApi.OpenAiImageResponse imageApiResponse = imageResponseEntity.getBody();
 		if (imageApiResponse == null) {
 			logger.warn("No image response returned for request: {}", openAiImageRequest);
@@ -171,10 +174,10 @@ public class OpenAiImageModel implements ImageModel {
 		}
 
 		List<ImageGeneration> imageGenerationList = imageApiResponse.data()
-			.stream()
-			.map(entry -> new ImageGeneration(new Image(entry.url(), entry.b64Json()),
-					new OpenAiImageGenerationMetadata(entry.revisedPrompt())))
-			.toList();
+				.stream()
+				.map(entry -> new ImageGeneration(new Image(entry.url(), entry.b64Json()),
+						new OpenAiImageGenerationMetadata(entry.revisedPrompt())))
+				.toList();
 
 		ImageResponseMetadata openAiImageResponseMetadata = new ImageResponseMetadata(imageApiResponse.created());
 		return new ImageResponse(imageGenerationList, openAiImageResponseMetadata);
@@ -189,24 +192,25 @@ public class OpenAiImageModel implements ImageModel {
 		}
 
 		OpenAiImageOptions requestOptions = runtimeOptions == null ? this.defaultOptions : OpenAiImageOptions.builder()
-			// Handle portable image options
-			.model(ModelOptionsUtils.mergeOption(runtimeOptions.getModel(), this.defaultOptions.getModel()))
-			.N(ModelOptionsUtils.mergeOption(runtimeOptions.getN(), this.defaultOptions.getN()))
-			.responseFormat(ModelOptionsUtils.mergeOption(runtimeOptions.getResponseFormat(),
-					this.defaultOptions.getResponseFormat()))
-			.width(ModelOptionsUtils.mergeOption(runtimeOptions.getWidth(), this.defaultOptions.getWidth()))
-			.height(ModelOptionsUtils.mergeOption(runtimeOptions.getHeight(), this.defaultOptions.getHeight()))
-			.style(ModelOptionsUtils.mergeOption(runtimeOptions.getStyle(), this.defaultOptions.getStyle()))
-			// Handle OpenAI specific image options
-			.quality(ModelOptionsUtils.mergeOption(runtimeOptions.getQuality(), this.defaultOptions.getQuality()))
-			.user(ModelOptionsUtils.mergeOption(runtimeOptions.getUser(), this.defaultOptions.getUser()))
-			.build();
+				// Handle portable image options
+																						   .model(ModelOptionsUtils.mergeOption(runtimeOptions.getModel(), this.defaultOptions.getModel()))
+																						   .N(ModelOptionsUtils.mergeOption(runtimeOptions.getN(), this.defaultOptions.getN()))
+																						   .responseFormat(ModelOptionsUtils.mergeOption(runtimeOptions.getResponseFormat(),
+																								   this.defaultOptions.getResponseFormat()))
+																						   .width(ModelOptionsUtils.mergeOption(runtimeOptions.getWidth(), this.defaultOptions.getWidth()))
+																						   .height(ModelOptionsUtils.mergeOption(runtimeOptions.getHeight(), this.defaultOptions.getHeight()))
+																						   .style(ModelOptionsUtils.mergeOption(runtimeOptions.getStyle(), this.defaultOptions.getStyle()))
+				// Handle OpenAI specific image options
+																						   .quality(ModelOptionsUtils.mergeOption(runtimeOptions.getQuality(), this.defaultOptions.getQuality()))
+																						   .user(ModelOptionsUtils.mergeOption(runtimeOptions.getUser(), this.defaultOptions.getUser()))
+																						   .build();
 
 		return new ImagePrompt(imagePrompt.getInstructions(), requestOptions);
 	}
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ImageModelObservationConvention observationConvention) {

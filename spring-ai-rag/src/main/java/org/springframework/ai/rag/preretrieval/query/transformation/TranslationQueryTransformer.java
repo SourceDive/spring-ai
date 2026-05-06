@@ -57,9 +57,9 @@ public final class TranslationQueryTransformer implements QueryTransformer {
 			If the query is already in {targetLanguage}, return it unchanged.
 			If you don't know the language of the query, return it unchanged.
 			Do not add explanations nor any other text.
-
+			
 			Original query: {query}
-
+			
 			Translated query:
 			""");
 
@@ -70,7 +70,7 @@ public final class TranslationQueryTransformer implements QueryTransformer {
 	private final String targetLanguage;
 
 	public TranslationQueryTransformer(ChatClient.Builder chatClientBuilder, @Nullable PromptTemplate promptTemplate,
-			String targetLanguage) {
+	                                   String targetLanguage) {
 		Assert.notNull(chatClientBuilder, "chatClientBuilder cannot be null");
 		Assert.hasText(targetLanguage, "targetLanguage cannot be null or empty");
 
@@ -88,11 +88,11 @@ public final class TranslationQueryTransformer implements QueryTransformer {
 		logger.debug("Translating query to target language: {}", this.targetLanguage);
 
 		var translatedQueryText = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("targetLanguage", this.targetLanguage)
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("targetLanguage", this.targetLanguage)
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (!StringUtils.hasText(translatedQueryText)) {
 			logger.warn("Query translation result is null/empty. Returning the input query unchanged.");

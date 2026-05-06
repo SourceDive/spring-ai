@@ -43,46 +43,46 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OpenAiAudioApiIT {
 
 	OpenAiAudioApi audioApi = OpenAiAudioApi.builder()
-		.apiKey(new SimpleApiKey(System.getenv("OPENAI_API_KEY")))
-		.build();
+			.apiKey(new SimpleApiKey(System.getenv("OPENAI_API_KEY")))
+			.build();
 
 	@SuppressWarnings("null")
 	@Test
 	void speechTranscriptionAndTranslation() throws IOException {
 
 		byte[] speech = this.audioApi
-			.createSpeech(SpeechRequest.builder()
-				.model(TtsModel.TTS_1_HD.getValue())
-				.input("Hello, my name is Chris and I love Spring A.I.")
-				.voice(Voice.ONYX.getValue())
-				.build())
-			.getBody();
+				.createSpeech(SpeechRequest.builder()
+						.model(TtsModel.TTS_1_HD.getValue())
+						.input("Hello, my name is Chris and I love Spring A.I.")
+						.voice(Voice.ONYX.getValue())
+						.build())
+				.getBody();
 
 		assertThat(speech).isNotEmpty();
 
 		FileCopyUtils.copy(speech, new File("target/speech.mp3"));
 
 		StructuredResponse translation = this.audioApi
-			.createTranslation(
-					TranslationRequest.builder().model(WhisperModel.WHISPER_1.getValue()).file(speech).build(),
-					StructuredResponse.class)
-			.getBody();
+				.createTranslation(
+						TranslationRequest.builder().model(WhisperModel.WHISPER_1.getValue()).file(speech).build(),
+						StructuredResponse.class)
+				.getBody();
 
 		assertThat(translation.text().replaceAll(",", "")).isEqualTo("Hello my name is Chris and I love Spring AI.");
 
 		StructuredResponse transcriptionEnglish = this.audioApi
-			.createTranscription(
-					TranscriptionRequest.builder().model(WhisperModel.WHISPER_1.getValue()).file(speech).build(),
-					StructuredResponse.class)
-			.getBody();
+				.createTranscription(
+						TranscriptionRequest.builder().model(WhisperModel.WHISPER_1.getValue()).file(speech).build(),
+						StructuredResponse.class)
+				.getBody();
 
 		assertThat(transcriptionEnglish.text().replaceAll(",", ""))
-			.isEqualTo("Hello my name is Chris and I love Spring AI.");
+				.isEqualTo("Hello my name is Chris and I love Spring AI.");
 
 		StructuredResponse transcriptionDutch = this.audioApi
-			.createTranscription(TranscriptionRequest.builder().file(speech).language("nl").build(),
-					StructuredResponse.class)
-			.getBody();
+				.createTranscription(TranscriptionRequest.builder().file(speech).language("nl").build(),
+						StructuredResponse.class)
+				.getBody();
 
 		assertThat(transcriptionDutch.text()).containsAnyOf("Hallo, mijn naam is Chris en ik hou van Spring AI.",
 				"Hallo, mijn naam is Chris en ik houd van Spring AI.");

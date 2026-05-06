@@ -28,6 +28,7 @@ public interface TokenCountEstimator {
 
 	/**
 	 * Estimates the number of tokens in the given text.
+	 *
 	 * @param text the text to estimate the number of tokens for.
 	 * @return the estimated number of tokens.
 	 */
@@ -35,14 +36,16 @@ public interface TokenCountEstimator {
 
 	/**
 	 * Estimates the number of tokens in the given message.
+	 *
 	 * @param content the content (Message or Document) to estimate the number of tokens
-	 * for.
+	 *                for.
 	 * @return the estimated number of tokens.
 	 */
 	int estimate(MediaContent content);
 
 	/**
 	 * Estimates the number of tokens in the given messages.
+	 *
 	 * @param messages the messages to estimate the number of tokens for.
 	 * @return the estimated number of tokens.
 	 */

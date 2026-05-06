@@ -21,10 +21,10 @@ package org.springframework.ai.observation.conventions;
  * Conventions for AI Systems.
  *
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href=
  * "https://github.com/open-telemetry/semantic-conventions/tree/main/docs/gen-ai">OTel
  * Semantic Conventions</a>.
+ * @since 1.0.0
  */
 public enum AiOperationType {
 

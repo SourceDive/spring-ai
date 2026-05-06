@@ -87,11 +87,11 @@ class VertexAIGeminiWithOpenAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}
@@ -102,19 +102,19 @@ class VertexAIGeminiWithOpenAiChatModelIT {
 		@Bean
 		public OpenAiApi chatCompletionApi() {
 			return OpenAiApi.builder()
-				.baseUrl(VERTEX_AI_GEMINI_BASE_URL)
-				.completionsPath("/v1beta/openai/chat/completions")
-				.apiKey(new SimpleApiKey(System.getenv("GEMINI_API_KEY")))
-				.build();
+					.baseUrl(VERTEX_AI_GEMINI_BASE_URL)
+					.completionsPath("/v1beta/openai/chat/completions")
+					.apiKey(new SimpleApiKey(System.getenv("GEMINI_API_KEY")))
+					.build();
 		}
 
 		@Bean
 		public OpenAiChatModel openAiClient(OpenAiApi openAiApi) {
 			return OpenAiChatModel.builder()
-				.openAiApi(openAiApi)
-				.toolCallingManager(ToolCallingManager.builder().build())
-				.defaultOptions(OpenAiChatOptions.builder().model(VERTEX_AI_GEMINI_DEFAULT_MODEL).build())
-				.build();
+					.openAiApi(openAiApi)
+					.toolCallingManager(ToolCallingManager.builder().build())
+					.defaultOptions(OpenAiChatOptions.builder().model(VERTEX_AI_GEMINI_DEFAULT_MODEL).build())
+					.build();
 		}
 
 	}

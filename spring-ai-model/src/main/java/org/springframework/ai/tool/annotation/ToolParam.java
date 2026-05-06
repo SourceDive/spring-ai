@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * @author Thomas Vitale
  * @since 1.0.0
  */
-@Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ToolParam {

@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class McpToolCallbackAutoConfigurationTests {
 
 	private final ApplicationContextRunner applicationContext = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpToolCallbackAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpToolCallbackAutoConfiguration.class));
 
 	@Test
 	void enableddByDefault() {
@@ -37,18 +37,18 @@ public class McpToolCallbackAutoConfigurationTests {
 		});
 
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.type=SYNC")
-			.run(context -> {
-				assertThat(context).hasBean("mcpToolCallbacks");
-				assertThat(context).doesNotHaveBean("mcpAsyncToolCallbacks");
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.type=SYNC")
+				.run(context -> {
+					assertThat(context).hasBean("mcpToolCallbacks");
+					assertThat(context).doesNotHaveBean("mcpAsyncToolCallbacks");
+				});
 
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.type=ASYNC")
-			.run(context -> {
-				assertThat(context).doesNotHaveBean("mcpToolCallbacks");
-				assertThat(context).hasBean("mcpAsyncToolCallbacks");
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.type=ASYNC")
+				.run(context -> {
+					assertThat(context).doesNotHaveBean("mcpToolCallbacks");
+					assertThat(context).hasBean("mcpAsyncToolCallbacks");
+				});
 	}
 
 	@Test
@@ -61,28 +61,28 @@ public class McpToolCallbackAutoConfigurationTests {
 		});
 
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=true",
-					"spring.ai.mcp.client.type=SYNC")
-			.run(context -> {
-				assertThat(context).hasBean("mcpToolCallbacks");
-				assertThat(context).doesNotHaveBean("mcpAsyncToolCallbacks");
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=true",
+						"spring.ai.mcp.client.type=SYNC")
+				.run(context -> {
+					assertThat(context).hasBean("mcpToolCallbacks");
+					assertThat(context).doesNotHaveBean("mcpAsyncToolCallbacks");
+				});
 
 		// Async
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.toolcallback.enabled=true", "spring.ai.mcp.client.type=ASYNC")
-			.run(context -> {
-				assertThat(context).doesNotHaveBean("mcpToolCallbacks");
-				assertThat(context).hasBean("mcpAsyncToolCallbacks");
-			});
+				.withPropertyValues("spring.ai.mcp.client.toolcallback.enabled=true", "spring.ai.mcp.client.type=ASYNC")
+				.run(context -> {
+					assertThat(context).doesNotHaveBean("mcpToolCallbacks");
+					assertThat(context).hasBean("mcpAsyncToolCallbacks");
+				});
 
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=true",
-					"spring.ai.mcp.client.type=ASYNC")
-			.run(context -> {
-				assertThat(context).doesNotHaveBean("mcpToolCallbacks");
-				assertThat(context).hasBean("mcpAsyncToolCallbacks");
-			});
+				.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=true",
+						"spring.ai.mcp.client.type=ASYNC")
+				.run(context -> {
+					assertThat(context).doesNotHaveBean("mcpToolCallbacks");
+					assertThat(context).hasBean("mcpAsyncToolCallbacks");
+				});
 	}
 
 }

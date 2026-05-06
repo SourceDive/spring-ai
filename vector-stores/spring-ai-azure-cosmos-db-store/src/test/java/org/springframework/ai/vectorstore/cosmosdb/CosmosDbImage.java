@@ -26,7 +26,7 @@ public final class CosmosDbImage {
 	// It must always be "latest" or else Azure locks the image after a while. See:
 	// https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/60
 	public static final DockerImageName DEFAULT_IMAGE = DockerImageName
-		.parse("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest");
+			.parse("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest");
 
 	private CosmosDbImage() {
 

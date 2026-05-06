@@ -82,7 +82,7 @@ class EmbeddingIT extends AbstractIT {
 				() -> this.embeddingModel.embed(List.of(new Document("Hello World"), new Document(contentAsString)),
 						OpenAiEmbeddingOptions.builder().model(OpenAiApi.DEFAULT_EMBEDDING_MODEL).build(),
 						new TokenCountBatchingStrategy()))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test

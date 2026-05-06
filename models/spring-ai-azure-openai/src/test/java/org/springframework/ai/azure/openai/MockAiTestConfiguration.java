@@ -110,14 +110,13 @@ public class MockAiTestConfiguration {
 
 			try {
 				MvcResult result = getMockMvc().perform(requestBuilderFrom(request))
-					.andExpect(status().isOk())
-					.andReturn();
+						.andExpect(status().isOk())
+						.andReturn();
 
 				MockHttpServletResponse response = result.getResponse();
 
 				return mockResponseFrom(response);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -168,10 +167,9 @@ public class MockAiTestConfiguration {
 
 			try {
 				return response.getContentAsString(FALLBACK_CHARSET);
-			}
-			catch (UnsupportedEncodingException e) {
+			} catch (UnsupportedEncodingException e) {
 				throw new RuntimeException("Failed to decode content using HttpServletResponse Charset [%s]"
-					.formatted(responseCharacterEncoding), e);
+						.formatted(responseCharacterEncoding), e);
 			}
 		}
 
@@ -254,8 +252,7 @@ public class MockAiTestConfiguration {
 
 			try {
 				this.mockWebServer.shutdown();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				getLogger().warn("MockWebServer was not shutdown correctly: {}", e.getMessage());
 				getLogger().trace("MockWebServer shutdown failure", e);
 			}
@@ -266,8 +263,7 @@ public class MockAiTestConfiguration {
 			try {
 				webServer.start();
 				return webServer;
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new IllegalStateException("Failed to start MockWebServer", e);
 			}
 		}

@@ -83,13 +83,13 @@ public class MessageChatMemoryAdvisorIT extends AbstractChatMemoryAdvisorIT {
 		// Arrange
 		String conversationId = "multi-user-messages-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create MessageChatMemoryAdvisor with the conversation ID
 		MessageChatMemoryAdvisor advisor = MessageChatMemoryAdvisor.builder(chatMemory)
-			.conversationId(conversationId)
-			.build();
+				.conversationId(conversationId)
+				.build();
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel).defaultAdvisors(advisor).build();
 
@@ -104,9 +104,9 @@ public class MessageChatMemoryAdvisorIT extends AbstractChatMemoryAdvisorIT {
 
 		// Send the prompt to the chat client
 		String answer = chatClient.prompt(prompt)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		logger.info("Answer: {}", answer);
 
@@ -122,10 +122,10 @@ public class MessageChatMemoryAdvisorIT extends AbstractChatMemoryAdvisorIT {
 
 		// Send a follow-up question
 		String followUpAnswer = chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		logger.info("Follow-up Answer: {}", followUpAnswer);
 
@@ -143,13 +143,13 @@ public class MessageChatMemoryAdvisorIT extends AbstractChatMemoryAdvisorIT {
 		// Arrange
 		String conversationId = "streaming-test-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create MessageChatMemoryAdvisor with the conversation ID
 		MessageChatMemoryAdvisor advisor = MessageChatMemoryAdvisor.builder(chatMemory)
-			.conversationId(conversationId)
-			.build();
+				.conversationId(conversationId)
+				.build();
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel).defaultAdvisors(advisor).build();
 
@@ -159,18 +159,17 @@ public class MessageChatMemoryAdvisorIT extends AbstractChatMemoryAdvisorIT {
 		// Collect the streaming responses
 		List<String> streamedResponses = new ArrayList<>();
 		chatClient.prompt()
-			.user(userInput)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.stream()
-			.content()
-			.collectList()
-			.block();
+				.user(userInput)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.stream()
+				.content()
+				.collectList()
+				.block();
 
 		// Wait a moment to ensure all processing is complete
 		try {
 			Thread.sleep(500);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
 

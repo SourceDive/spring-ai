@@ -36,10 +36,10 @@ class EmbeddingModelObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(
-					generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("supermodel").build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(
+						generateEmbeddingRequest(EmbeddingOptionsBuilder.builder().withModel("supermodel").build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}

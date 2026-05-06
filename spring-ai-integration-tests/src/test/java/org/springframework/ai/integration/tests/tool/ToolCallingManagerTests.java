@@ -63,9 +63,9 @@ public class ToolCallingManagerTests {
 	@Test
 	void explicitToolCallingExecutionWithNewOptions() {
 		ChatOptions chatOptions = ToolCallingChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(this.tools))
-			.internalToolExecutionEnabled(false)
-			.build();
+				.toolCallbacks(ToolCallbacks.from(this.tools))
+				.internalToolExecutionEnabled(false)
+				.build();
 		Prompt prompt = new Prompt(
 				new UserMessage("What books written by %s are available in the library?".formatted("J.R.R. Tolkien")),
 				chatOptions);
@@ -75,11 +75,11 @@ public class ToolCallingManagerTests {
 	@Test
 	void explicitToolCallingExecutionWithNewOptionsStream() {
 		ChatOptions chatOptions = ToolCallingChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(this.tools))
-			.internalToolExecutionEnabled(false)
-			.build();
+				.toolCallbacks(ToolCallbacks.from(this.tools))
+				.internalToolExecutionEnabled(false)
+				.build();
 		Prompt prompt = new Prompt(new UserMessage("What books written by %s, %s, and %s are available in the library?"
-			.formatted("J.R.R. Tolkien", "Philip Pullman", "C.S. Lewis")), chatOptions);
+				.formatted("J.R.R. Tolkien", "Philip Pullman", "C.S. Lewis")), chatOptions);
 		runExplicitToolCallingExecutionWithOptionsStream(chatOptions, prompt);
 	}
 
@@ -93,7 +93,7 @@ public class ToolCallingManagerTests {
 
 		assertThat(toolExecutionResult.conversationHistory()).isNotEmpty();
 		assertThat(toolExecutionResult.conversationHistory().stream().anyMatch(m -> m instanceof ToolResponseMessage))
-			.isTrue();
+				.isTrue();
 
 		Prompt secondPrompt = new Prompt(toolExecutionResult.conversationHistory(), chatOptions);
 
@@ -101,9 +101,9 @@ public class ToolCallingManagerTests {
 
 		assertThat(secondChatResponse).isNotNull();
 		assertThat(secondChatResponse.getResult().getOutput().getText()).isNotEmpty()
-			.contains("The Hobbit")
-			.contains("The Lord of The Rings")
-			.contains("The Silmarillion");
+				.contains("The Hobbit")
+				.contains("The Lord of The Rings")
+				.contains("The Silmarillion");
 	}
 
 	private void runExplicitToolCallingExecutionWithOptionsStream(ChatOptions chatOptions, Prompt prompt) {
@@ -113,8 +113,8 @@ public class ToolCallingManagerTests {
 
 				assertThat(toolExecutionResult.conversationHistory()).isNotEmpty();
 				assertThat(toolExecutionResult.conversationHistory()
-					.stream()
-					.anyMatch(m -> m instanceof ToolResponseMessage)).isTrue();
+						.stream()
+						.anyMatch(m -> m instanceof ToolResponseMessage)).isTrue();
 
 				Prompt secondPrompt = new Prompt(toolExecutionResult.conversationHistory(), chatOptions);
 				// return openAiChatModel.stream(secondPrompt);
@@ -125,11 +125,11 @@ public class ToolCallingManagerTests {
 
 		assertThat(chatResponse).isNotNull();
 		assertThat(chatResponse.getResult().getOutput().getText()).isNotEmpty()
-			.contains("His Dark Materials")
-			.contains("The Lion, the Witch and the Wardrob")
-			.contains("The Hobbit")
-			.contains("The Lord of The Rings")
-			.contains("The Silmarillion");
+				.contains("His Dark Materials")
+				.contains("The Lion, the Witch and the Wardrob")
+				.contains("The Hobbit")
+				.contains("The Lord of The Rings")
+				.contains("The Silmarillion");
 	}
 
 	static class Tools {

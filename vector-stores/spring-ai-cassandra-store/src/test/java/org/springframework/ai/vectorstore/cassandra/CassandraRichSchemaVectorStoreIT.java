@@ -90,26 +90,26 @@ class CassandraRichSchemaVectorStoreIT {
 	static CassandraContainer cassandraContainer = new CassandraContainer(CassandraImage.DEFAULT_IMAGE);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	static CassandraVectorStore.Builder storeBuilder(ApplicationContext context,
-			List<CassandraVectorStore.SchemaColumn> columnOverrides) throws IOException {
+	                                                 List<CassandraVectorStore.SchemaColumn> columnOverrides) throws IOException {
 
 		Optional<CassandraVectorStore.SchemaColumn> wikiOverride = columnOverrides.stream()
-			.filter(f -> "wiki".equals(f.name()))
-			.findFirst();
+				.filter(f -> "wiki".equals(f.name()))
+				.findFirst();
 
 		Optional<CassandraVectorStore.SchemaColumn> langOverride = columnOverrides.stream()
-			.filter(f -> "language".equals(f.name()))
-			.findFirst();
+				.filter(f -> "language".equals(f.name()))
+				.findFirst();
 
 		Optional<CassandraVectorStore.SchemaColumn> titleOverride = columnOverrides.stream()
-			.filter(f -> "title".equals(f.name()))
-			.findFirst();
+				.filter(f -> "title".equals(f.name()))
+				.findFirst();
 
 		Optional<CassandraVectorStore.SchemaColumn> chunkNoOverride = columnOverrides.stream()
-			.filter(f -> "chunk_no".equals(f.name()))
-			.findFirst();
+				.filter(f -> "chunk_no".equals(f.name()))
+				.findFirst();
 
 		var wikiSC = wikiOverride.orElse(new CassandraVectorStore.SchemaColumn("wiki", DataTypes.TEXT));
 		var langSC = langOverride.orElse(new CassandraVectorStore.SchemaColumn("language", DataTypes.TEXT));
@@ -120,31 +120,31 @@ class CassandraRichSchemaVectorStoreIT {
 		List<CassandraVectorStore.SchemaColumn> clusteringKeys = List.of(chunkNoSC);
 
 		return CassandraVectorStore.builder(context.getBean(EmbeddingModel.class))
-			.session(context.getBean(CqlSession.class))
-			.keyspace("test_wikidata")
-			.table("articles")
-			.partitionKeys(partitionKeys)
-			.clusteringKeys(clusteringKeys)
-			.contentColumnName("body")
-			.embeddingColumnName("all_minilm_l6_v2_embedding")
-			.indexName("all_minilm_l6_v2_ann")
-			.addMetadataColumns(new CassandraVectorStore.SchemaColumn("revision", DataTypes.INT),
-					new CassandraVectorStore.SchemaColumn("id", DataTypes.INT,
-							CassandraVectorStore.SchemaColumnTags.INDEXED))
-			// this store uses '§¶' as a deliminator in the document id between db columns
-			// 'title' and 'chunk_no'
-			.primaryKeyTranslator((List<Object> primaryKeys) -> {
-				if (primaryKeys.isEmpty()) {
-					return "test§¶0";
-				}
-				return String.format("%s§¶%s", primaryKeys.get(2), primaryKeys.get(3));
-			})
-			.documentIdTranslator(id -> {
-				String[] parts = id.split("§¶");
-				String title = parts[0];
-				int chunk_no = 0 < parts.length ? Integer.parseInt(parts[1]) : 0;
-				return List.of("simplewiki", "en", title, chunk_no);
-			});
+				.session(context.getBean(CqlSession.class))
+				.keyspace("test_wikidata")
+				.table("articles")
+				.partitionKeys(partitionKeys)
+				.clusteringKeys(clusteringKeys)
+				.contentColumnName("body")
+				.embeddingColumnName("all_minilm_l6_v2_embedding")
+				.indexName("all_minilm_l6_v2_ann")
+				.addMetadataColumns(new CassandraVectorStore.SchemaColumn("revision", DataTypes.INT),
+						new CassandraVectorStore.SchemaColumn("id", DataTypes.INT,
+								CassandraVectorStore.SchemaColumnTags.INDEXED))
+				// this store uses '§¶' as a deliminator in the document id between db columns
+				// 'title' and 'chunk_no'
+				.primaryKeyTranslator((List<Object> primaryKeys) -> {
+					if (primaryKeys.isEmpty()) {
+						return "test§¶0";
+					}
+					return String.format("%s§¶%s", primaryKeys.get(2), primaryKeys.get(3));
+				})
+				.documentIdTranslator(id -> {
+					String[] parts = id.split("§¶");
+					String title = parts[0];
+					int chunk_no = 0 < parts.length ? Integer.parseInt(parts[1]) : 0;
+					return List.of("simplewiki", "en", title, chunk_no);
+				});
 	}
 
 	@Test
@@ -179,8 +179,7 @@ class CassandraRichSchemaVectorStoreIT {
 						() -> createStore(context, List.of(), false, false));
 
 				Assertions.assertEquals("index all_minilm_l6_v2_ann does not exist", ise.getMessage());
-			}
-			finally {
+			} finally {
 				CassandraVectorStore.dropKeyspace(builder);
 				store.close();
 			}
@@ -201,8 +200,7 @@ class CassandraRichSchemaVectorStoreIT {
 					store.checkSchemaValid();
 
 					store.similaritySearch(SearchRequest.builder().query("1843").topK(1).build());
-				}
-				finally {
+				} finally {
 					CassandraVectorStore.dropKeyspace(builder);
 					store.close();
 				}
@@ -252,7 +250,7 @@ class CassandraRichSchemaVectorStoreIT {
 		this.contextRunner.run(context -> {
 
 			try (CassandraVectorStore store = storeBuilder(context, List.of()).fixedThreadPoolExecutorSize(nThreads)
-				.build()) {
+					.build()) {
 
 				var executor = Executors.newFixedThreadPool((int) (nThreads * 1.2));
 				for (int k = 0; k < rounds; ++k) {
@@ -267,14 +265,14 @@ class CassandraRichSchemaVectorStoreIT {
 										RandomStringUtils.randomAlphanumeric(4) + "§¶"
 												+ ThreadLocalRandom.current().nextInt(1, 10),
 										RandomStringUtils.randomAlphanumeric(1024), Map.of("revision",
-												ThreadLocalRandom.current().nextInt(1, 100000), "id", 1000)));
+										ThreadLocalRandom.current().nextInt(1, 100000), "id", 1000)));
 							}
 							store.add(documents);
 
 							var results = store.similaritySearch(SearchRequest.builder()
-								.query(RandomStringUtils.randomAlphanumeric(20))
-								.topK(10)
-								.build());
+									.query(RandomStringUtils.randomAlphanumeric(20))
+									.topK(10)
+									.build());
 
 							assertThat(results).hasSize(10);
 						}, executor);
@@ -294,15 +292,15 @@ class CassandraRichSchemaVectorStoreIT {
 				store.add(documents);
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("Great Dark Spot").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("Great Dark Spot").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query(URANUS_ORBIT_QUERY)
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("wiki == 'simplewiki' && language == 'en' && title == 'Neptune'")
-					.build());
+						.query(URANUS_ORBIT_QUERY)
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("wiki == 'simplewiki' && language == 'en' && title == 'Neptune'")
+						.build());
 
 				assertThat(results).hasSize(3);
 				assertThat(results.get(0).getId()).isEqualTo(documents.get(1).getId());
@@ -322,23 +320,23 @@ class CassandraRichSchemaVectorStoreIT {
 				// assertThat(results.get(0).getId()).isEqualTo(documents.get(0).getId());
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("Great Dark Spot")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("wiki == 'simplewiki' && language == 'en' && title == 'Neptune' && id == 558")
-					.build());
+						.query("Great Dark Spot")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("wiki == 'simplewiki' && language == 'en' && title == 'Neptune' && id == 558")
+						.build());
 
 				assertThat(results).hasSize(3);
 
 				// cassandra server will throw an error
 				Assertions.assertThrows(SyntaxError.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("Great Dark Spot")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression(
-									"NOT(wiki == 'simplewiki' && language == 'en' && title == 'Neptune' && id == 1)")
-							.build()));
+								.query("Great Dark Spot")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression(
+										"NOT(wiki == 'simplewiki' && language == 'en' && title == 'Neptune' && id == 1)")
+								.build()));
 			}
 		});
 	}
@@ -350,16 +348,16 @@ class CassandraRichSchemaVectorStoreIT {
 				store.add(documents);
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("Great Dark Spot").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("Great Dark Spot").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				Assertions.assertThrows(InvalidQueryException.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("The World")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("revision == 9385813")
-							.build()));
+								.query("The World")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("revision == 9385813")
+								.build()));
 			}
 		});
 	}
@@ -371,35 +369,35 @@ class CassandraRichSchemaVectorStoreIT {
 				store.add(documents);
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query(URANUS_ORBIT_QUERY).topK(5).build());
+						.similaritySearch(SearchRequest.builder().query(URANUS_ORBIT_QUERY).topK(5).build());
 				assertThat(results).hasSize(3);
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query(URANUS_ORBIT_QUERY)
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("id == 558")
-					.build());
-
-				assertThat(results).hasSize(3);
-				assertThat(results.get(0).getId()).isEqualTo(documents.get(1).getId());
-
-				results = store.similaritySearch(SearchRequest.builder()
-					.query(URANUS_ORBIT_QUERY)
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("id > 557")
-					.build());
+						.query(URANUS_ORBIT_QUERY)
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("id == 558")
+						.build());
 
 				assertThat(results).hasSize(3);
 				assertThat(results.get(0).getId()).isEqualTo(documents.get(1).getId());
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query(URANUS_ORBIT_QUERY)
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("id >= 558")
-					.build());
+						.query(URANUS_ORBIT_QUERY)
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("id > 557")
+						.build());
+
+				assertThat(results).hasSize(3);
+				assertThat(results.get(0).getId()).isEqualTo(documents.get(1).getId());
+
+				results = store.similaritySearch(SearchRequest.builder()
+						.query(URANUS_ORBIT_QUERY)
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("id >= 558")
+						.build());
 
 				assertThat(results).hasSize(3);
 				assertThat(results.get(0).getId()).isEqualTo(documents.get(1).getId());
@@ -411,30 +409,30 @@ class CassandraRichSchemaVectorStoreIT {
 				// e.g. searchWithFilterOnPrimaryKeys()
 				Assertions.assertThrows(InvalidQueryException.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query(URANUS_ORBIT_QUERY)
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("id > 557 && \"chunk_no\" == 1")
-							.build()));
+								.query(URANUS_ORBIT_QUERY)
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("id > 557 && \"chunk_no\" == 1")
+								.build()));
 
 				// cassandra server will throw an error,
 				// as revision is not searchable (i.e. no SAI index on it)
 				Assertions.assertThrows(SyntaxError.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("Great Dark Spot")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("id == 558 || revision == 2020")
-							.build()));
+								.query("Great Dark Spot")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("id == 558 || revision == 2020")
+								.build()));
 
 				// cassandra java-driver will throw an error
 				Assertions.assertThrows(InvalidQueryException.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("Great Dark Spot")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("NOT(id == 557 || revision == 2020)")
-							.build()));
+								.query("Great Dark Spot")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("NOT(id == 557 || revision == 2020)")
+								.build()));
 			}
 		});
 	}
@@ -452,15 +450,15 @@ class CassandraRichSchemaVectorStoreIT {
 				store.add(documents);
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query(URANUS_ORBIT_QUERY).topK(5).build());
+						.similaritySearch(SearchRequest.builder().query(URANUS_ORBIT_QUERY).topK(5).build());
 				assertThat(results).hasSize(3);
 
 				store.similaritySearch(SearchRequest.builder()
-					.query(URANUS_ORBIT_QUERY)
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("id > 557 && \"chunk_no\" == 1")
-					.build());
+						.query(URANUS_ORBIT_QUERY)
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("id > 557 && \"chunk_no\" == 1")
+						.build());
 
 				assertThat(results).hasSize(3);
 				assertThat(results.get(0).getId()).isEqualTo(documents.get(1).getId());
@@ -485,7 +483,7 @@ class CassandraRichSchemaVectorStoreIT {
 				store.add(documents);
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query(URANUS_ORBIT_QUERY).topK(1).build());
+						.similaritySearch(SearchRequest.builder().query(URANUS_ORBIT_QUERY).topK(1).build());
 
 				assertThat(results).hasSize(1);
 				Document resultDoc = results.get(0);
@@ -545,10 +543,10 @@ class CassandraRichSchemaVectorStoreIT {
 				double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 				List<Document> results = store.similaritySearch(SearchRequest.builder()
-					.query(URANUS_ORBIT_QUERY)
-					.topK(5)
-					.similarityThreshold(similarityThreshold)
-					.build());
+						.query(URANUS_ORBIT_QUERY)
+						.topK(5)
+						.similarityThreshold(similarityThreshold)
+						.build());
 
 				assertThat(results).hasSize(1);
 				Document resultDoc = results.get(0);
@@ -568,7 +566,7 @@ class CassandraRichSchemaVectorStoreIT {
 	}
 
 	private CassandraVectorStore createStore(ApplicationContext context, List<SchemaColumn> columnOverrides,
-			boolean initializeSchema, boolean dropKeyspaceFirst) throws IOException {
+	                                         boolean initializeSchema, boolean dropKeyspaceFirst) throws IOException {
 
 		CassandraVectorStore.Builder builder = storeBuilder(context, columnOverrides);
 		builder.initializeSchema(initializeSchema);
@@ -581,7 +579,7 @@ class CassandraRichSchemaVectorStoreIT {
 	}
 
 	private CassandraVectorStore.Builder createBuilder(ApplicationContext context, List<SchemaColumn> columnOverrides,
-			boolean initailzeSchema, boolean dropKeyspaceFirst) throws IOException {
+	                                                   boolean initailzeSchema, boolean dropKeyspaceFirst) throws IOException {
 
 		CassandraVectorStore.Builder builder = storeBuilder(context, columnOverrides);
 		builder.initializeSchema(initailzeSchema);
@@ -599,9 +597,9 @@ class CassandraRichSchemaVectorStoreIT {
 		CqlSession session = context.getBean(CqlSession.class);
 
 		String[] cql = new DefaultResourceLoader().getResource(filename)
-			.getContentAsString(StandardCharsets.UTF_8)
-			.trim()
-			.split(";");
+				.getContentAsString(StandardCharsets.UTF_8)
+				.trim()
+				.split(";");
 
 		for (var c : cql) {
 			session.execute(c.trim());
@@ -609,7 +607,7 @@ class CassandraRichSchemaVectorStoreIT {
 	}
 
 	@SpringBootConfiguration
-	@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
+	@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 	public static class TestApplication {
 
 		@Bean
@@ -621,10 +619,10 @@ class CassandraRichSchemaVectorStoreIT {
 		@Bean
 		public CqlSession cqlSession() {
 			return new CqlSessionBuilder()
-				// comment next two lines out to connect to a local C* cluster
-				.addContactPoint(cassandraContainer.getContactPoint())
-				.withLocalDatacenter(cassandraContainer.getLocalDatacenter())
-				.build();
+					// comment next two lines out to connect to a local C* cluster
+					.addContactPoint(cassandraContainer.getContactPoint())
+					.withLocalDatacenter(cassandraContainer.getLocalDatacenter())
+					.build();
 		}
 
 	}

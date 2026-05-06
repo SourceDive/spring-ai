@@ -50,6 +50,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given operand into a string representation.
+	 *
 	 * @param operand the operand to convert
 	 * @return the string representation of the operand
 	 */
@@ -61,6 +62,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given operand into a string representation.
+	 *
 	 * @param operand the operand to convert
 	 * @param context the context to append the string representation to
 	 */
@@ -68,22 +70,18 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 		if (operand instanceof Filter.Group group) {
 			this.doGroup(group, context);
-		}
-		else if (operand instanceof Filter.Key key) {
+		} else if (operand instanceof Filter.Key key) {
 			this.doKey(key, context);
-		}
-		else if (operand instanceof Filter.Value value) {
+		} else if (operand instanceof Filter.Value value) {
 			this.doValue(value, context);
-		}
-		else if (operand instanceof Filter.Expression expression) {
+		} else if (operand instanceof Filter.Expression expression) {
 			if ((expression.type() != ExpressionType.NOT && expression.type() != ExpressionType.AND
 					&& expression.type() != ExpressionType.OR) && !(expression.right() instanceof Filter.Value)) {
 				throw new RuntimeException("Non AND/OR expression must have Value right argument!");
 			}
 			if (expression.type() == ExpressionType.NOT) {
 				this.doNot(expression, context);
-			}
-			else {
+			} else {
 				this.doExpression(expression, context);
 			}
 		}
@@ -91,8 +89,9 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given expression into a string representation.
+	 *
 	 * @param expression the expression to convert
-	 * @param context the context to append the string representation to
+	 * @param context    the context to append the string representation to
 	 */
 	protected void doNot(Filter.Expression expression, StringBuilder context) {
 		// Default behavior is to convert the NOT expression into its semantically
@@ -104,22 +103,25 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given expression into a string representation.
+	 *
 	 * @param expression the expression to convert
-	 * @param context the context to append the string representation to
+	 * @param context    the context to append the string representation to
 	 */
 	protected abstract void doExpression(Filter.Expression expression, StringBuilder context);
 
 	/**
 	 * Convert the given key into a string representation.
+	 *
 	 * @param filterKey the key to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected abstract void doKey(Filter.Key filterKey, StringBuilder context);
 
 	/**
 	 * Convert the given value into a string representation.
+	 *
 	 * @param filterValue the value to convert
-	 * @param context the context to append the string representation to
+	 * @param context     the context to append the string representation to
 	 */
 	protected void doValue(Filter.Value filterValue, StringBuilder context) {
 		if (filterValue.value() instanceof List list) {
@@ -132,29 +134,29 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 				}
 			}
 			this.doEndValueRange(filterValue, context);
-		}
-		else {
+		} else {
 			this.doSingleValue(filterValue.value(), context);
 		}
 	}
 
 	/**
 	 * Convert the given value into a string representation.
-	 * @param value the value to convert
+	 *
+	 * @param value   the value to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof String) {
 			context.append(String.format("\"%s\"", value));
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}
 
 	/**
 	 * Convert the given group into a string representation.
-	 * @param group the group to convert
+	 *
+	 * @param group   the group to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doGroup(Group group, StringBuilder context) {
@@ -165,7 +167,8 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given group into a string representation.
-	 * @param group the group to convert
+	 *
+	 * @param group   the group to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doStartGroup(Group group, StringBuilder context) {
@@ -173,7 +176,8 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given group into a string representation.
-	 * @param group the group to convert
+	 *
+	 * @param group   the group to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doEndGroup(Group group, StringBuilder context) {
@@ -181,8 +185,9 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given value range into a string representation.
+	 *
 	 * @param listValue the value range to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected void doStartValueRange(Filter.Value listValue, StringBuilder context) {
 		context.append("[");
@@ -190,8 +195,9 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given value range into a string representation.
+	 *
 	 * @param listValue the value range to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected void doEndValueRange(Filter.Value listValue, StringBuilder context) {
 		context.append("]");
@@ -199,16 +205,19 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given value range into a string representation.
+	 *
 	 * @param listValue the value range to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected void doAddValueRangeSpitter(Filter.Value listValue, StringBuilder context) {
 		context.append(",");
 	}
 
 	// Utilities
+
 	/**
 	 * Check if the given string has outer quotes.
+	 *
 	 * @param str the string to check
 	 * @return true if the string has outer quotes, false otherwise
 	 */
@@ -219,6 +228,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Remove the outer quotes from the given string.
+	 *
 	 * @param in the string to remove the outer quotes from
 	 * @return the string without the outer quotes
 	 */

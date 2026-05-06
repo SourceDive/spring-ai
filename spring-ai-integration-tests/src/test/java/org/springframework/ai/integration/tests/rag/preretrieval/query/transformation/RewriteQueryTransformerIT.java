@@ -46,8 +46,8 @@ class RewriteQueryTransformerIT {
 	void whenTransformerWithDefaults() {
 		Query query = new Query("What are the main tourist attractions in L.A.?");
 		QueryTransformer queryTransformer = RewriteQueryTransformer.builder()
-			.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-			.build();
+				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+				.build();
 
 		Query transformedQuery = queryTransformer.apply(query);
 

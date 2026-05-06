@@ -43,10 +43,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.ai.vectorstore.milvus.metricType=COSINE",
+@TestPropertySource(properties = {"spring.ai.vectorstore.milvus.metricType=COSINE",
 		"spring.ai.vectorstore.milvus.indexType=IVF_FLAT", "spring.ai.vectorstore.milvus.embeddingDimension=384",
 		"spring.ai.vectorstore.milvus.collectionName=myTestCollection",
-		"spring.ai.vectorstore.milvus.initialize-schema=true" })
+		"spring.ai.vectorstore.milvus.initialize-schema=true"})
 class MilvusContainerConnectionDetailsFactoryIT {
 
 	@Container
@@ -66,13 +66,13 @@ class MilvusContainerConnectionDetailsFactoryIT {
 		this.vectorStore.add(this.documents);
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 		assertThat(results).hasSize(1);
 		Document resultDoc = results.get(0);
 		assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
 		assertThat(resultDoc.getText())
-			.contains("Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+				.contains("Spring AI provides abstractions that serve as the foundation for developing AI applications.");
 		assertThat(resultDoc.getMetadata()).hasSize(2);
 		assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
 

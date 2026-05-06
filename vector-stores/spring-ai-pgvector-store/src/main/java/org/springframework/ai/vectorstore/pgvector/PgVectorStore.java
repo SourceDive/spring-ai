@@ -303,8 +303,7 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 	private String toJson(Map<String, Object> map) {
 		try {
 			return this.objectMapper.writeValueAsString(map);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -347,8 +346,7 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 		// Execute the delete
 		try {
 			this.jdbcTemplate.update(sql);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
 	}
@@ -443,8 +441,8 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 
 		if (this.createIndexMethod != PgIndexType.NONE) {
 			this.jdbcTemplate.execute(String.format("""
-					CREATE INDEX IF NOT EXISTS %s ON %s USING %s (embedding %s)
-					""", this.getVectorIndexName(), this.getFullyQualifiedTableName(), this.createIndexMethod,
+							CREATE INDEX IF NOT EXISTS %s ON %s USING %s (embedding %s)
+							""", this.getVectorIndexName(), this.getFullyQualifiedTableName(), this.createIndexMethod,
 					this.getDistanceType().index));
 		}
 	}
@@ -490,8 +488,7 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 			if (embeddingDimensions > 0) {
 				return embeddingDimensions;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.warn("Failed to obtain the embedding dimensions from the embedding model and fall backs to default:"
 					+ OPENAI_EMBEDDING_DIMENSION_SIZE, e);
 		}
@@ -502,10 +499,10 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.PG_VECTOR.value(), operationName)
-			.collectionName(this.vectorTableName)
-			.dimensions(this.embeddingDimensions())
-			.namespace(this.schemaName)
-			.similarityMetric(getSimilarityMetric());
+				.collectionName(this.vectorTableName)
+				.dimensions(this.embeddingDimensions())
+				.namespace(this.schemaName)
+				.similarityMetric(getSimilarityMetric());
 	}
 
 	private String getSimilarityMetric() {
@@ -639,8 +636,7 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 			String source = pgObject.getValue();
 			try {
 				return (Map<String, Object>) this.objectMapper.readValue(source, Map.class);
-			}
-			catch (JsonProcessingException e) {
+			} catch (JsonProcessingException e) {
 				throw new RuntimeException(e);
 			}
 		}

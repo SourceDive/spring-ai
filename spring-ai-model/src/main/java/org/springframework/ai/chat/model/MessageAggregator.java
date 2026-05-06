@@ -49,7 +49,7 @@ public class MessageAggregator {
 	private static final Logger logger = LoggerFactory.getLogger(MessageAggregator.class);
 
 	public Flux<ChatResponse> aggregate(Flux<ChatResponse> fluxChatResponse,
-			Consumer<ChatResponse> onAggregationComplete) {
+	                                    Consumer<ChatResponse> onAggregationComplete) {
 
 		// Assistant Message
 		AtomicReference<StringBuilder> messageTextContentRef = new AtomicReference<>(new StringBuilder());
@@ -103,7 +103,7 @@ public class MessageAggregator {
 					metadataUsageGenerationTokensRef.set(usage.getCompletionTokens() > 0 ? usage.getCompletionTokens()
 							: metadataUsageGenerationTokensRef.get());
 					metadataUsageTotalTokensRef
-						.set(usage.getTotalTokens() > 0 ? usage.getTotalTokens() : metadataUsageTotalTokensRef.get());
+							.set(usage.getTotalTokens() > 0 ? usage.getTotalTokens() : metadataUsageTotalTokensRef.get());
 				}
 				if (chatResponse.getMetadata().getPromptMetadata() != null
 						&& chatResponse.getMetadata().getPromptMetadata().iterator().hasNext()) {
@@ -126,12 +126,12 @@ public class MessageAggregator {
 					metadataUsageTotalTokensRef.get());
 
 			var chatResponseMetadata = ChatResponseMetadata.builder()
-				.id(metadataIdRef.get())
-				.model(metadataModelRef.get())
-				.rateLimit(metadataRateLimitRef.get())
-				.usage(usage)
-				.promptMetadata(metadataPromptMetadataRef.get())
-				.build();
+					.id(metadataIdRef.get())
+					.model(metadataModelRef.get())
+					.rateLimit(metadataRateLimitRef.get())
+					.usage(usage)
+					.promptMetadata(metadataPromptMetadataRef.get())
+					.build();
 
 			onAggregationComplete.accept(new ChatResponse(List.of(new Generation(
 					new AssistantMessage(messageTextContentRef.get().toString(), messageMetadataMapRef.get()),

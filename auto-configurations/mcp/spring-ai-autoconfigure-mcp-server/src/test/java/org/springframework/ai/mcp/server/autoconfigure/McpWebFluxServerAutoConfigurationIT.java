@@ -50,7 +50,7 @@ class McpWebFluxServerAutoConfigurationIT {
 	@Test
 	void stdioEnabledConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.stdio=true")
-			.run(context -> assertThat(context).doesNotHaveBean(WebFluxSseServerTransportProvider.class));
+				.run(context -> assertThat(context).doesNotHaveBean(WebFluxSseServerTransportProvider.class));
 	}
 
 	@Test
@@ -64,8 +64,8 @@ class McpWebFluxServerAutoConfigurationIT {
 	@Test
 	void serverBaseUrlConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.base-url=/test")
-			.run(context -> assertThat(context.getBean(WebFluxSseServerTransportProvider.class)).extracting("baseUrl")
-				.isEqualTo("/test"));
+				.run(context -> assertThat(context.getBean(WebFluxSseServerTransportProvider.class)).extracting("baseUrl")
+						.isEqualTo("/test"));
 	}
 
 }

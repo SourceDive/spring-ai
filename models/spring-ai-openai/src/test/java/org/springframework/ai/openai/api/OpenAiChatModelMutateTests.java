@@ -36,32 +36,32 @@ class OpenAiChatModelMutateTests {
 	private final OpenAiApi baseApi = OpenAiApi.builder().baseUrl("https://api.openai.com").apiKey("base-key").build();
 
 	private final OpenAiChatModel baseModel = OpenAiChatModel.builder()
-		.openAiApi(this.baseApi)
-		.defaultOptions(OpenAiChatOptions.builder().model("gpt-3.5-turbo").build())
-		.build();
+			.openAiApi(this.baseApi)
+			.defaultOptions(OpenAiChatOptions.builder().model("gpt-3.5-turbo").build())
+			.build();
 
 	@Test
 	void testMutateCreatesDistinctClientsWithDifferentEndpointsAndModels() {
 		// Mutate for GPT-4
 		OpenAiApi gpt4Api = this.baseApi.mutate()
-			.baseUrl("https://api.openai.com")
-			.apiKey("your-api-key-for-gpt4")
-			.build();
+				.baseUrl("https://api.openai.com")
+				.apiKey("your-api-key-for-gpt4")
+				.build();
 		OpenAiChatModel gpt4Model = this.baseModel.mutate()
-			.openAiApi(gpt4Api)
-			.defaultOptions(OpenAiChatOptions.builder().model("gpt-4").temperature(0.7).build())
-			.build();
+				.openAiApi(gpt4Api)
+				.defaultOptions(OpenAiChatOptions.builder().model("gpt-4").temperature(0.7).build())
+				.build();
 		ChatClient gpt4Client = ChatClient.builder(gpt4Model).build();
 
 		// Mutate for Llama
 		OpenAiApi llamaApi = this.baseApi.mutate()
-			.baseUrl("https://your-custom-endpoint.com")
-			.apiKey("your-api-key-for-llama")
-			.build();
+				.baseUrl("https://your-custom-endpoint.com")
+				.apiKey("your-api-key-for-llama")
+				.build();
 		OpenAiChatModel llamaModel = this.baseModel.mutate()
-			.openAiApi(llamaApi)
-			.defaultOptions(OpenAiChatOptions.builder().model("llama-70b").temperature(0.5).build())
-			.build();
+				.openAiApi(llamaApi)
+				.defaultOptions(OpenAiChatOptions.builder().model("llama-70b").temperature(0.5).build())
+				.build();
 		ChatClient llamaClient = ChatClient.builder(llamaModel).build();
 
 		// Assert endpoints and models are different
@@ -83,8 +83,8 @@ class OpenAiChatModelMutateTests {
 	@Test
 	void mutateDoesNotAffectOriginal() {
 		OpenAiChatModel mutated = this.baseModel.mutate()
-			.defaultOptions(OpenAiChatOptions.builder().model("gpt-4").build())
-			.build();
+				.defaultOptions(OpenAiChatOptions.builder().model("gpt-4").build())
+				.build();
 		assertThat(mutated).isNotSameAs(this.baseModel);
 		assertThat(mutated.getDefaultOptions().getModel()).isEqualTo("gpt-4");
 		assertThat(this.baseModel.getDefaultOptions().getModel()).isEqualTo("gpt-3.5-turbo");
@@ -93,8 +93,8 @@ class OpenAiChatModelMutateTests {
 	@Test
 	void mutateHeadersCreatesDistinctHeaders() {
 		OpenAiApi mutatedApi = this.baseApi.mutate()
-			.headers(new LinkedMultiValueMap<>(java.util.Map.of("X-Test", java.util.List.of("value"))))
-			.build();
+				.headers(new LinkedMultiValueMap<>(java.util.Map.of("X-Test", java.util.List.of("value"))))
+				.build();
 
 		assertThat(mutatedApi.getHeaders()).containsKey("X-Test");
 		assertThat(this.baseApi.getHeaders()).doesNotContainKey("X-Test");
@@ -112,8 +112,8 @@ class OpenAiChatModelMutateTests {
 	@Test
 	void multipleSequentialMutationsProduceDistinctInstances() {
 		OpenAiChatModel m1 = this.baseModel.mutate()
-			.defaultOptions(OpenAiChatOptions.builder().model("m1").build())
-			.build();
+				.defaultOptions(OpenAiChatOptions.builder().model("m1").build())
+				.build();
 		OpenAiChatModel m2 = m1.mutate().defaultOptions(OpenAiChatOptions.builder().model("m2").build()).build();
 		OpenAiChatModel m3 = m2.mutate().defaultOptions(OpenAiChatOptions.builder().model("m3").build()).build();
 		assertThat(m1).isNotSameAs(m2);

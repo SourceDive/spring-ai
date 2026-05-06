@@ -46,8 +46,8 @@ public class ModelOptionsUtilsTests {
 
 		assertThatThrownBy(
 				() -> ModelOptionsUtils.merge(portableOptions, specificOptions, TestPortableOptionsImpl.class))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("No @JsonProperty fields found in the ");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("No @JsonProperty fields found in the ");
 
 		var specificOptions2 = ModelOptionsUtils.merge(portableOptions, specificOptions, TestSpecificOptions.class);
 
@@ -136,10 +136,10 @@ public class ModelOptionsUtilsTests {
 
 		// Custom ObjectMapper: still "" for Map
 		ObjectMapper strictMapper = JsonMapper.builder()
-			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-			.build()
-			.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, false);
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+				.build()
+				.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, false);
 		Map<String, Object> mapStrict = ModelOptionsUtils.jsonToMap(json, strictMapper);
 		assertThat(mapStrict.get("name")).isEqualTo("");
 	}

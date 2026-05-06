@@ -67,7 +67,7 @@ public class CricketWorldCupHanaController {
 		int deleteCount = ((HanaCloudVectorStore) this.hanaCloudVectorStore).purgeEmbeddings();
 		logger.info("{} embeddings purged from CRICKET_WORLD_CUP table in Hana DB", deleteCount);
 		return ResponseEntity.ok()
-			.body(String.format("%d embeddings purged from CRICKET_WORLD_CUP table in Hana DB", deleteCount));
+				.body(String.format("%d embeddings purged from CRICKET_WORLD_CUP table in Hana DB", deleteCount));
 	}
 
 	@PostMapping("/ai/hana-vector-store/cricket-world-cup/upload")
@@ -79,7 +79,7 @@ public class CricketWorldCupHanaController {
 		logger.info("{} documents created from pdf file: {}", documents.size(), pdf.getFilename());
 		this.hanaCloudVectorStore.accept(documents);
 		return ResponseEntity.ok()
-			.body(String.format("%d documents created from pdf file: %s", documents.size(), pdf.getFilename()));
+				.body(String.format("%d documents created from pdf file: %s", documents.size(), pdf.getFilename()));
 	}
 
 	@GetMapping("/ai/hana-vector-store/cricket-world-cup")
@@ -87,7 +87,7 @@ public class CricketWorldCupHanaController {
 		var documents = this.hanaCloudVectorStore.similaritySearch(message);
 		var inlined = documents.stream().map(Document::getText).collect(Collectors.joining(System.lineSeparator()));
 		var similarDocsMessage = new SystemPromptTemplate("Based on the following: {documents}")
-			.createMessage(Map.of("documents", inlined));
+				.createMessage(Map.of("documents", inlined));
 
 		var userMessage = new UserMessage(message);
 		Prompt prompt = new Prompt(List.of(similarDocsMessage, userMessage));

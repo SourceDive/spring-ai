@@ -49,17 +49,17 @@ public final class BedrockConverseChatModelMain3 {
 				// temperature in Celsius.",
 				"What's the weather like in Paris? Return the temperature in Celsius.",
 				ToolCallingChatOptions.builder()
-					.model(modelId)
-					.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-						.description("Get the weather in location")
-						.inputType(MockWeatherService.Request.class)
-						.build()))
-					.build());
+						.model(modelId)
+						.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+								.description("Get the weather in location")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build());
 
 		BedrockProxyChatModel chatModel = BedrockProxyChatModel.builder()
-			.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-			.region(Region.US_EAST_1)
-			.build();
+				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+				.region(Region.US_EAST_1)
+				.build();
 
 		var response = chatModel.call(prompt);
 

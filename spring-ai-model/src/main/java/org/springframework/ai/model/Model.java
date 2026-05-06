@@ -32,6 +32,7 @@ public interface Model<TReq extends ModelRequest<?>, TRes extends ModelResponse<
 
 	/**
 	 * Executes a method call to the AI model.
+	 *
 	 * @param request the request object to be sent to the AI model
 	 * @return the response from the AI model
 	 */

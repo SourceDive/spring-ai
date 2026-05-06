@@ -40,22 +40,22 @@ class JsonParserTests {
 	@Test
 	void shouldThrowExceptionWhenJsonIsNull() {
 		assertThatThrownBy(() -> JsonParser.fromJson(null, TestRecord.class))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("json cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("json cannot be null");
 	}
 
 	@Test
 	void shouldThrowExceptionWhenClassIsNull() {
 		assertThatThrownBy(() -> JsonParser.fromJson("{}", (Class<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("type cannot be null");
 	}
 
 	@Test
 	void shouldThrowExceptionWhenTypeIsNull() {
 		assertThatThrownBy(() -> JsonParser.fromJson("{}", (TypeReference<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("type cannot be null");
 	}
 
 	@Test

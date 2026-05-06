@@ -42,7 +42,7 @@ import org.springframework.util.Assert;
 
 /**
  * DefaultChatClientBuilder is a builder class for creating a ChatClient.
- *
+ * <p>
  * It provides methods to set default values for various properties of the ChatClient.
  *
  * @author Mark Pollack
@@ -61,7 +61,7 @@ public class DefaultChatClientBuilder implements Builder {
 	}
 
 	public DefaultChatClientBuilder(ChatModel chatModel, ObservationRegistry observationRegistry,
-			@Nullable ChatClientObservationConvention customObservationConvention) {
+	                                @Nullable ChatClientObservationConvention customObservationConvention) {
 		Assert.notNull(chatModel, "the " + ChatModel.class.getName() + " must be non-null");
 		Assert.notNull(observationRegistry, "the " + ObservationRegistry.class.getName() + " must be non-null");
 		this.defaultRequest = new DefaultChatClientRequestSpec(chatModel, null, Map.of(), null, Map.of(), List.of(),
@@ -107,8 +107,7 @@ public class DefaultChatClientBuilder implements Builder {
 		Assert.notNull(charset, "charset cannot be null");
 		try {
 			this.defaultRequest.user(text.getContentAsString(charset));
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		return this;
@@ -133,8 +132,7 @@ public class DefaultChatClientBuilder implements Builder {
 		Assert.notNull(charset, "charset cannot be null");
 		try {
 			this.defaultRequest.system(text.getContentAsString(charset));
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		return this;

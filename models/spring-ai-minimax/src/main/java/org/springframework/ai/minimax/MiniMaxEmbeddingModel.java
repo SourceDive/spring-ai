@@ -78,6 +78,7 @@ public class MiniMaxEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Constructor for the MiniMaxEmbeddingModel class.
+	 *
 	 * @param miniMaxApi The MiniMaxApi instance to use for making API requests.
 	 */
 	public MiniMaxEmbeddingModel(MiniMaxApi miniMaxApi) {
@@ -86,7 +87,8 @@ public class MiniMaxEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Initializes a new instance of the MiniMaxEmbeddingModel class.
-	 * @param miniMaxApi The MiniMaxApi instance to use for making API requests.
+	 *
+	 * @param miniMaxApi   The MiniMaxApi instance to use for making API requests.
 	 * @param metadataMode The mode for generating metadata.
 	 */
 	public MiniMaxEmbeddingModel(MiniMaxApi miniMaxApi, MetadataMode metadataMode) {
@@ -97,38 +99,41 @@ public class MiniMaxEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Initializes a new instance of the MiniMaxEmbeddingModel class.
-	 * @param miniMaxApi The MiniMaxApi instance to use for making API requests.
-	 * @param metadataMode The mode for generating metadata.
+	 *
+	 * @param miniMaxApi              The MiniMaxApi instance to use for making API requests.
+	 * @param metadataMode            The mode for generating metadata.
 	 * @param miniMaxEmbeddingOptions The options for MiniMax embedding.
 	 */
 	public MiniMaxEmbeddingModel(MiniMaxApi miniMaxApi, MetadataMode metadataMode,
-			MiniMaxEmbeddingOptions miniMaxEmbeddingOptions) {
+	                             MiniMaxEmbeddingOptions miniMaxEmbeddingOptions) {
 		this(miniMaxApi, metadataMode, miniMaxEmbeddingOptions, RetryUtils.DEFAULT_RETRY_TEMPLATE,
 				ObservationRegistry.NOOP);
 	}
 
 	/**
 	 * Initializes a new instance of the MiniMaxEmbeddingModel class.
-	 * @param miniMaxApi The MiniMaxApi instance to use for making API requests.
-	 * @param metadataMode The mode for generating metadata.
+	 *
+	 * @param miniMaxApi              The MiniMaxApi instance to use for making API requests.
+	 * @param metadataMode            The mode for generating metadata.
 	 * @param miniMaxEmbeddingOptions The options for MiniMax embedding.
-	 * @param retryTemplate - The RetryTemplate for retrying failed API requests.
+	 * @param retryTemplate           - The RetryTemplate for retrying failed API requests.
 	 */
 	public MiniMaxEmbeddingModel(MiniMaxApi miniMaxApi, MetadataMode metadataMode,
-			MiniMaxEmbeddingOptions miniMaxEmbeddingOptions, RetryTemplate retryTemplate) {
+	                             MiniMaxEmbeddingOptions miniMaxEmbeddingOptions, RetryTemplate retryTemplate) {
 		this(miniMaxApi, metadataMode, miniMaxEmbeddingOptions, retryTemplate, ObservationRegistry.NOOP);
 	}
 
 	/**
 	 * Initializes a new instance of the MiniMaxEmbeddingModel class.
-	 * @param miniMaxApi - The MiniMaxApi instance to use for making API requests.
-	 * @param metadataMode - The mode for generating metadata.
-	 * @param options - The options for MiniMax embedding.
-	 * @param retryTemplate - The RetryTemplate for retrying failed API requests.
+	 *
+	 * @param miniMaxApi          - The MiniMaxApi instance to use for making API requests.
+	 * @param metadataMode        - The mode for generating metadata.
+	 * @param options             - The options for MiniMax embedding.
+	 * @param retryTemplate       - The RetryTemplate for retrying failed API requests.
 	 * @param observationRegistry - The ObservationRegistry used for instrumentation.
 	 */
 	public MiniMaxEmbeddingModel(MiniMaxApi miniMaxApi, MetadataMode metadataMode, MiniMaxEmbeddingOptions options,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	                             RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		Assert.notNull(miniMaxApi, "MiniMaxApi must not be null");
 		Assert.notNull(metadataMode, "metadataMode must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -157,33 +162,33 @@ public class MiniMaxEmbeddingModel extends AbstractEmbeddingModel {
 				embeddingRequest.getOptions().getModel());
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(request)
-			.provider(MiniMaxApiConstants.PROVIDER_NAME)
-			.build();
+				.embeddingRequest(request)
+				.provider(MiniMaxApiConstants.PROVIDER_NAME)
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				MiniMaxApi.EmbeddingList apiEmbeddingResponse = this.retryTemplate
-					.execute(ctx -> this.miniMaxApi.embeddings(apiRequest).getBody());
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					MiniMaxApi.EmbeddingList apiEmbeddingResponse = this.retryTemplate
+							.execute(ctx -> this.miniMaxApi.embeddings(apiRequest).getBody());
 
-				if (apiEmbeddingResponse == null) {
-					logger.warn("No embeddings returned for request: {}", request);
-					return new EmbeddingResponse(List.of());
-				}
+					if (apiEmbeddingResponse == null) {
+						logger.warn("No embeddings returned for request: {}", request);
+						return new EmbeddingResponse(List.of());
+					}
 
-				var metadata = new EmbeddingResponseMetadata(apiRequest.model(), getDefaultUsage(apiEmbeddingResponse));
+					var metadata = new EmbeddingResponseMetadata(apiRequest.model(), getDefaultUsage(apiEmbeddingResponse));
 
-				List<Embedding> embeddings = new ArrayList<>();
-				for (int i = 0; i < apiEmbeddingResponse.vectors().size(); i++) {
-					float[] vector = apiEmbeddingResponse.vectors().get(i);
-					embeddings.add(new Embedding(vector, i));
-				}
-				EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, metadata);
-				observationContext.setResponse(embeddingResponse);
-				return embeddingResponse;
-			});
+					List<Embedding> embeddings = new ArrayList<>();
+					for (int i = 0; i < apiEmbeddingResponse.vectors().size(); i++) {
+						float[] vector = apiEmbeddingResponse.vectors().get(i);
+						embeddings.add(new Embedding(vector, i));
+					}
+					EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, metadata);
+					observationContext.setResponse(embeddingResponse);
+					return embeddingResponse;
+				});
 	}
 
 	private DefaultUsage getDefaultUsage(MiniMaxApi.EmbeddingList apiEmbeddingList) {

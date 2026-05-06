@@ -58,12 +58,12 @@ public class OpenAiImageModelObservationIT {
 	@Test
 	void observationForImageOperation() {
 		var options = OpenAiImageOptions.builder()
-			.model(OpenAiImageApi.ImageModel.DALL_E_3.getValue())
-			.height(1024)
-			.width(1024)
-			.responseFormat("url")
-			.style("natural")
-			.build();
+				.model(OpenAiImageApi.ImageModel.DALL_E_3.getValue())
+				.height(1024)
+				.width(1024)
+				.responseFormat("url")
+				.style("natural")
+				.build();
 
 		var instructions = "Here comes the sun";
 
@@ -73,19 +73,19 @@ public class OpenAiImageModelObservationIT {
 		assertThat(imageResponse.getResults()).hasSize(1);
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultImageModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("image " + OpenAiImageApi.ImageModel.DALL_E_3.getValue())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.IMAGE.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.OPENAI.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					OpenAiImageApi.ImageModel.DALL_E_3.getValue())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_IMAGE_SIZE.asString(), "1024x1024")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_IMAGE_RESPONSE_FORMAT.asString(), "url")
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultImageModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("image " + OpenAiImageApi.ImageModel.DALL_E_3.getValue())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.IMAGE.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.OPENAI.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						OpenAiImageApi.ImageModel.DALL_E_3.getValue())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_IMAGE_SIZE.asString(), "1024x1024")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_IMAGE_RESPONSE_FORMAT.asString(), "url")
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -103,7 +103,7 @@ public class OpenAiImageModelObservationIT {
 
 		@Bean
 		public OpenAiImageModel openAiImageModel(OpenAiImageApi openAiImageApi,
-				TestObservationRegistry observationRegistry) {
+		                                         TestObservationRegistry observationRegistry) {
 			return new OpenAiImageModel(openAiImageApi, OpenAiImageOptions.builder().build(),
 					RetryTemplate.defaultInstance(), observationRegistry);
 		}

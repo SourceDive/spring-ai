@@ -41,20 +41,20 @@ import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT.TestConfig.class,
-		properties = { "spring.datasource.url=jdbc:hsqldb:mem:chat_memory_auto_configuration_test;DB_CLOSE_DELAY=-1",
+		properties = {"spring.datasource.url=jdbc:hsqldb:mem:chat_memory_auto_configuration_test;DB_CLOSE_DELAY=-1",
 				"spring.datasource.username=sa", "spring.datasource.password=",
 				"spring.datasource.driver-class-name=org.hsqldb.jdbcDriver",
 				"spring.ai.chat.memory.repository.jdbc.initialize-schema=always", "spring.sql.init.mode=always",
 				"spring.jpa.hibernate.ddl-auto=none", "spring.jpa.defer-datasource-initialization=true",
 				"spring.sql.init.continue-on-error=true", "spring.sql.init.schema-locations=classpath:schema.sql",
 				"logging.level.org.springframework.jdbc=DEBUG",
-				"logging.level.org.springframework.boot.sql.init=DEBUG" })
+				"logging.level.org.springframework.boot.sql.init=DEBUG"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@ImportAutoConfiguration({ org.springframework.ai.model.chat.memory.autoconfigure.ChatMemoryAutoConfiguration.class,
+@ImportAutoConfiguration({org.springframework.ai.model.chat.memory.autoconfigure.ChatMemoryAutoConfiguration.class,
 		JdbcChatMemoryRepositoryAutoConfiguration.class,
 		org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration.class,
 		org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
-		SqlInitializationAutoConfiguration.class })
+		SqlInitializationAutoConfiguration.class})
 public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 
 	@Autowired
@@ -75,14 +75,13 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 			// Debug: Print current schemas and tables
 			try {
 				List<String> schemas = this.jdbcTemplate
-					.queryForList("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA", String.class);
+						.queryForList("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA", String.class);
 				System.out.println("Available schemas: " + schemas);
 
 				List<String> tables = this.jdbcTemplate
-					.queryForList("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES", String.class);
+						.queryForList("SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES", String.class);
 				System.out.println("Available tables: " + tables);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				System.out.println("Error listing schemas/tables: " + e.getMessage());
 			}
 
@@ -108,15 +107,13 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 						"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SPRING_AI_CHAT_MEMORY'",
 						Integer.class) > 0;
 				System.out.println("Table SPRING_AI_CHAT_MEMORY exists after creation: " + tableExists);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				System.out.println("Error during direct table creation: " + e.getMessage());
 				e.printStackTrace();
 			}
 
 			System.out.println("Schema initialization completed");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("Error during explicit schema initialization: " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -130,15 +127,14 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 		// Debug: List all schema-hsqldb.sql resources on the classpath
 		try {
 			java.util.Enumeration<java.net.URL> resources = Thread.currentThread()
-				.getContextClassLoader()
-				.getResources("org/springframework/ai/chat/memory/repository/jdbc/schema-hsqldb.sql");
+					.getContextClassLoader()
+					.getResources("org/springframework/ai/chat/memory/repository/jdbc/schema-hsqldb.sql");
 			System.out.println("--- schema-hsqldb.sql resources found on classpath ---");
 			while (resources.hasMoreElements()) {
 				System.out.println(resources.nextElement());
 			}
 			System.out.println("------------------------------------------------------");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -149,8 +145,7 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 					Integer.class) > 0;
 			System.out.println("Table SPRING_AI_CHAT_MEMORY exists: " + tableExists);
 			assertThat(tableExists).isTrue();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("Error checking table: " + e.getMessage());
 			e.printStackTrace();
 			fail("Failed to check if table exists: " + e.getMessage());

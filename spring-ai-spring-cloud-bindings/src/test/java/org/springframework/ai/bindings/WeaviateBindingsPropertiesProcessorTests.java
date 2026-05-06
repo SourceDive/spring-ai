@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WeaviateBindingsPropertiesProcessorTests {
 
 	private final Bindings bindings = new Bindings(new Binding("test-name", Paths.get("test-path"),
-	// @formatter:off
+			// @formatter:off
 			Map.of(
 				Binding.TYPE, WeaviateBindingsPropertiesProcessor.TYPE,
 				"uri", "https://example.net:8000",

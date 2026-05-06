@@ -36,8 +36,8 @@ import org.springframework.util.Assert;
  * All properties are prefixed with {@code spring.ai.mcp.server}.
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see McpServerAutoConfiguration
+ * @since 1.0.0
  */
 @ConfigurationProperties(McpServerProperties.CONFIG_PREFIX)
 public class McpServerProperties {
@@ -108,10 +108,12 @@ public class McpServerProperties {
 	private boolean promptChangeNotification = true;
 
 	/**
+	 *
 	 */
 	private String baseUrl = "";
 
 	/**
+	 *
 	 */
 	private String sseEndpoint = "/sse";
 

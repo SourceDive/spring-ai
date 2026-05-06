@@ -65,7 +65,7 @@ import org.springframework.util.StringUtils;
 public class VertexAiMultimodalEmbeddingOptions implements EmbeddingOptions {
 
 	public static final String DEFAULT_MODEL_NAME = VertexAiMultimodalEmbeddingModelName.MULTIMODAL_EMBEDDING_001
-		.getName();
+			.getName();
 
 	// @formatter:off
 	/**

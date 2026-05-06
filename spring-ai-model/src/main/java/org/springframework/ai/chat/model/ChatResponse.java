@@ -47,8 +47,9 @@ public class ChatResponse implements ModelResponse<Generation> {
 
 	/**
 	 * Construct a new {@link ChatResponse} instance without metadata.
+	 *
 	 * @param generations the {@link List} of {@link Generation} returned by the AI
-	 * provider.
+	 *                    provider.
 	 */
 	public ChatResponse(List<Generation> generations) {
 		this(generations, new ChatResponseMetadata());
@@ -56,10 +57,11 @@ public class ChatResponse implements ModelResponse<Generation> {
 
 	/**
 	 * Construct a new {@link ChatResponse} instance.
-	 * @param generations the {@link List} of {@link Generation} returned by the AI
-	 * provider.
+	 *
+	 * @param generations          the {@link List} of {@link Generation} returned by the AI
+	 *                             provider.
 	 * @param chatResponseMetadata {@link ChatResponseMetadata} containing information
-	 * about the use of the AI provider's API.
+	 *                             about the use of the AI provider's API.
 	 */
 	public ChatResponse(List<Generation> generations, ChatResponseMetadata chatResponseMetadata) {
 		this.chatResponseMetadata = chatResponseMetadata;
@@ -75,6 +77,7 @@ public class ChatResponse implements ModelResponse<Generation> {
 	 * <p>
 	 * It is a {@link List} of {@link List lists} because the Prompt could request
 	 * multiple output {@link Generation generations}.
+	 *
 	 * @return the {@link List} of {@link Generation generated outputs}.
 	 */
 

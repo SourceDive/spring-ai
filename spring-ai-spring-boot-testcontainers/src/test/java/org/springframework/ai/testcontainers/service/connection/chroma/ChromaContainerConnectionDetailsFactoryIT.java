@@ -43,8 +43,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.ai.vectorstore.chroma.collectionName=TestCollection",
-		"spring.ai.vectorstore.chroma.initialize-schema=true" })
+@TestPropertySource(properties = {"spring.ai.vectorstore.chroma.collectionName=TestCollection",
+		"spring.ai.vectorstore.chroma.initialize-schema=true"})
 class ChromaContainerConnectionDetailsFactoryIT {
 
 	@Container
@@ -74,9 +74,9 @@ class ChromaContainerConnectionDetailsFactoryIT {
 		assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 		results = this.vectorStore.similaritySearch(SearchRequest.from(request)
-			.similarityThresholdAll()
-			.filterExpression("country == 'Netherlands'")
-			.build());
+				.similarityThresholdAll()
+				.filterExpression("country == 'Netherlands'")
+				.build());
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 

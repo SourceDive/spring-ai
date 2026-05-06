@@ -47,9 +47,9 @@ class JdbcChatMemoryRepositoryRuntimeHintsTest {
 	@Test
 	void aotFactoriesContainsRegistrar() {
 		var match = SpringFactoriesLoader.forResourceLocation("META-INF/spring/aot.factories")
-			.load(RuntimeHintsRegistrar.class)
-			.stream()
-			.anyMatch(registrar -> registrar instanceof JdbcChatMemoryRepositoryRuntimeHints);
+				.load(RuntimeHintsRegistrar.class)
+				.stream()
+				.anyMatch(registrar -> registrar instanceof JdbcChatMemoryRepositoryRuntimeHints);
 
 		assertThat(match).isTrue();
 	}
@@ -60,7 +60,7 @@ class JdbcChatMemoryRepositoryRuntimeHintsTest {
 		this.jdbcChatMemoryRepositoryRuntimeHints.registerHints(this.hints, getClass().getClassLoader());
 
 		var predicate = RuntimeHintsPredicates.resource()
-			.forResource("org/springframework/ai/chat/memory/repository/jdbc/" + schemaFileName);
+				.forResource("org/springframework/ai/chat/memory/repository/jdbc/" + schemaFileName);
 
 		assertThat(predicate).accepts(this.hints);
 	}
@@ -74,7 +74,7 @@ class JdbcChatMemoryRepositoryRuntimeHintsTest {
 
 	private static Stream<String> getSchemaFileNames() throws IOException {
 		var resources = new PathMatchingResourcePatternResolver()
-			.getResources("classpath*:org/springframework/ai/chat/memory/repository/jdbc/schema-*.sql");
+				.getResources("classpath*:org/springframework/ai/chat/memory/repository/jdbc/schema-*.sql");
 
 		return Arrays.stream(resources).map(Resource::getFilename);
 	}

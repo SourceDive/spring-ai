@@ -31,7 +31,7 @@ class Character {
 	private boolean isCharacterCloseToPreviousWord;
 
 	Character(char characterValue, int index, boolean isCharacterPartOfPreviousWord, boolean isFirstCharacterOfAWord,
-			boolean isCharacterAtTheBeginningOfNewLine, boolean isCharacterPartOfASentence) {
+	          boolean isCharacterAtTheBeginningOfNewLine, boolean isCharacterPartOfASentence) {
 		this.characterValue = characterValue;
 		this.index = index;
 		this.isCharacterPartOfPreviousWord = isCharacterPartOfPreviousWord;

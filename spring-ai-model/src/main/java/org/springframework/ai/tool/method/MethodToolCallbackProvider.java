@@ -65,11 +65,11 @@ public final class MethodToolCallbackProvider implements ToolCallbackProvider {
 
 		for (Object toolObject : toolObjects) {
 			List<Method> toolMethods = Stream
-				.of(ReflectionUtils.getDeclaredMethods(
-						AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
-				.filter(toolMethod -> toolMethod.isAnnotationPresent(Tool.class))
-				.filter(toolMethod -> !isFunctionalType(toolMethod))
-				.toList();
+					.of(ReflectionUtils.getDeclaredMethods(
+							AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
+					.filter(toolMethod -> toolMethod.isAnnotationPresent(Tool.class))
+					.filter(toolMethod -> !isFunctionalType(toolMethod))
+					.toList();
 
 			if (toolMethods.isEmpty()) {
 				throw new IllegalStateException("No @Tool annotated methods found in " + toolObject + "."
@@ -81,21 +81,21 @@ public final class MethodToolCallbackProvider implements ToolCallbackProvider {
 	@Override
 	public ToolCallback[] getToolCallbacks() {
 		var toolCallbacks = this.toolObjects.stream()
-			.map(toolObject -> Stream
-				.of(ReflectionUtils.getDeclaredMethods(
-						AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
-				.filter(toolMethod -> toolMethod.isAnnotationPresent(Tool.class))
-				.filter(toolMethod -> !isFunctionalType(toolMethod))
-				.map(toolMethod -> MethodToolCallback.builder()
-					.toolDefinition(ToolDefinitions.from(toolMethod))
-					.toolMetadata(ToolMetadata.from(toolMethod))
-					.toolMethod(toolMethod)
-					.toolObject(toolObject)
-					.toolCallResultConverter(ToolUtils.getToolCallResultConverter(toolMethod))
-					.build())
-				.toArray(ToolCallback[]::new))
-			.flatMap(Stream::of)
-			.toArray(ToolCallback[]::new);
+				.map(toolObject -> Stream
+						.of(ReflectionUtils.getDeclaredMethods(
+								AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
+						.filter(toolMethod -> toolMethod.isAnnotationPresent(Tool.class))
+						.filter(toolMethod -> !isFunctionalType(toolMethod))
+						.map(toolMethod -> MethodToolCallback.builder()
+								.toolDefinition(ToolDefinitions.from(toolMethod))
+								.toolMetadata(ToolMetadata.from(toolMethod))
+								.toolMethod(toolMethod)
+								.toolObject(toolObject)
+								.toolCallResultConverter(ToolUtils.getToolCallResultConverter(toolMethod))
+								.build())
+						.toArray(ToolCallback[]::new))
+				.flatMap(Stream::of)
+				.toArray(ToolCallback[]::new);
 
 		validateToolCallbacks(toolCallbacks);
 

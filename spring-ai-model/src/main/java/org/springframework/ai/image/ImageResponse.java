@@ -40,8 +40,9 @@ public class ImageResponse implements ModelResponse<ImageGeneration> {
 
 	/**
 	 * Construct a new {@link ImageResponse} instance without metadata.
+	 *
 	 * @param generations the {@link List} of {@link ImageGeneration} returned by the AI
-	 * provider.
+	 *                    provider.
 	 */
 	public ImageResponse(List<ImageGeneration> generations) {
 		this(generations, new ImageResponseMetadata());
@@ -49,10 +50,11 @@ public class ImageResponse implements ModelResponse<ImageGeneration> {
 
 	/**
 	 * Construct a new {@link ImageResponse} instance.
-	 * @param generations the {@link List} of {@link ImageGeneration} returned by the AI
-	 * provider.
+	 *
+	 * @param generations           the {@link List} of {@link ImageGeneration} returned by the AI
+	 *                              provider.
 	 * @param imageResponseMetadata {@link ImageResponseMetadata} containing information
-	 * about the use of the AI provider's API.
+	 *                              about the use of the AI provider's API.
 	 */
 	public ImageResponse(List<ImageGeneration> generations, ImageResponseMetadata imageResponseMetadata) {
 		this.imageResponseMetadata = imageResponseMetadata;
@@ -64,6 +66,7 @@ public class ImageResponse implements ModelResponse<ImageGeneration> {
 	 * <p>
 	 * It is a {@link List} of {@link List lists} because the Prompt could request
 	 * multiple output {@link ImageGeneration generations}.
+	 *
 	 * @return the {@link List} of {@link ImageGeneration generated outputs}.
 	 */
 	@Override

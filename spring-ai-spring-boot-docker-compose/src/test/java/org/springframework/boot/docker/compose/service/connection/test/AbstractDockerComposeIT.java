@@ -49,8 +49,8 @@ import static org.assertj.core.api.Assertions.fail;
  * @author Andy Wilkinson
  * @author Scott Frederick
  */
-@DisabledIfProcessUnavailable({ "docker", "version" })
-@DisabledIfProcessUnavailable({ "docker", "compose" })
+@DisabledIfProcessUnavailable({"docker", "version"})
+@DisabledIfProcessUnavailable({"docker", "compose"})
 public abstract class AbstractDockerComposeIT {
 
 	@TempDir
@@ -88,8 +88,7 @@ public abstract class AbstractDockerComposeIT {
 			String composeFileContent = FileCopyUtils.copyToString(new FileReader(composeFile));
 			composeFileContent = composeFileContent.replace("{imageName}", imageName.asCanonicalNameString());
 			FileCopyUtils.copy(composeFileContent, new FileWriter(tempComposeFile));
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			fail("Error transforming Docker compose file '" + composeFile + "' to '" + tempComposeFile + "': "
 					+ ex.getMessage());
 		}

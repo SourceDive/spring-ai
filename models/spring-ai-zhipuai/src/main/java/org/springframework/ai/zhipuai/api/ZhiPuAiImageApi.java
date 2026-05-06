@@ -31,8 +31,8 @@ import org.springframework.web.client.RestClient;
 /**
  * ZhiPuAI Image API.
  *
- * @see <a href= "https://open.bigmodel.cn/dev/howuse/cogview">CogView Images</a>
  * @author Geng Rong
+ * @see <a href= "https://open.bigmodel.cn/dev/howuse/cogview">CogView Images</a>
  * @since 1.0.0 M1
  */
 public class ZhiPuAiImageApi {
@@ -68,10 +68,10 @@ public class ZhiPuAiImageApi {
 	 * @param responseErrorHandler the response error handler to use.
 	 */
 	public ZhiPuAiImageApi(String baseUrl, String zhiPuAiToken, RestClient.Builder restClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                       ResponseErrorHandler responseErrorHandler) {
 
 		this.restClient = restClientBuilder.baseUrl(baseUrl).defaultHeaders(h -> h.setBearerAuth(zhiPuAiToken)
-		// h.setContentType(MediaType.APPLICATION_JSON);
+				// h.setContentType(MediaType.APPLICATION_JSON);
 		).defaultStatusHandler(responseErrorHandler).build();
 	}
 
@@ -80,10 +80,10 @@ public class ZhiPuAiImageApi {
 		Assert.hasLength(zhiPuAiImageRequest.prompt(), "Prompt cannot be empty.");
 
 		return this.restClient.post()
-			.uri("/v4/images/generations")
-			.body(zhiPuAiImageRequest)
-			.retrieve()
-			.toEntity(ZhiPuAiImageResponse.class);
+				.uri("/v4/images/generations")
+				.body(zhiPuAiImageRequest)
+				.retrieve()
+				.toEntity(ZhiPuAiImageResponse.class);
 	}
 
 	/**

@@ -53,6 +53,7 @@ public abstract class AbstractChatMemoryAdvisorIT {
 
 	/**
 	 * Create an advisor instance for testing.
+	 *
 	 * @param chatMemory The chat memory to use
 	 * @return An instance of the advisor to test
 	 */
@@ -62,6 +63,7 @@ public abstract class AbstractChatMemoryAdvisorIT {
 	 * Assert the follow-up response meets the expectations for this advisor type. Default
 	 * implementation expects the model to remember "John" from the first message.
 	 * Subclasses can override this to implement advisor-specific assertions.
+	 *
 	 * @param followUpAnswer The follow-up answer from the model
 	 */
 	protected void assertFollowUpResponse(String followUpAnswer) {
@@ -77,8 +79,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 	protected void testMultipleUserMessagesInPrompt() {
 		String conversationId = "multi-user-messages-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		var advisor = createAdvisor(chatMemory);
 
@@ -93,9 +95,9 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		Prompt prompt = new Prompt(messages);
 
 		String answer = chatClient.prompt(prompt)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		logger.info("Answer: {}", answer);
 		assertThat(answer).containsIgnoringCase("software engineer");
@@ -108,10 +110,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 
 		// Send a follow-up question
 		String followUpAnswer = chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		logger.info("Follow-up Answer: {}", followUpAnswer);
 		assertThat(followUpAnswer).containsIgnoringCase("David");
@@ -126,8 +128,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// Arrange
 		String conversationId = "test-conversation-multi-user-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor with the conversation ID
 		var advisor = createAdvisor(chatMemory);
@@ -145,9 +147,9 @@ public abstract class AbstractChatMemoryAdvisorIT {
 
 		// Send the prompt to the chat client
 		String answer = chatClient.prompt(prompt)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		logger.info("Multiple user messages answer: {}", answer);
 
@@ -163,10 +165,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 
 		// Act - Send a follow-up question
 		String followUpAnswer = chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.content();
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.content();
 
 		logger.info("Follow-up answer: {}", followUpAnswer);
 
@@ -177,7 +179,7 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// response
 		memoryMessages = chatMemory.get(conversationId);
 		assertThat(memoryMessages).hasSize(6); // 3 user + 1 assistant + 1 user + 1
-												// assistant
+		// assistant
 		assertThat(memoryMessages.get(4).getText()).isEqualTo("What is my name?");
 	}
 
@@ -188,8 +190,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// Arrange
 		String customConversationId = "custom-conversation-id-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor without a default conversation ID
 		var advisor = createAdvisor(chatMemory);
@@ -199,10 +201,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		String question = "What is the capital of Germany?";
 
 		String answer = chatClient.prompt()
-			.user(question)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, customConversationId))
-			.call()
-			.content();
+				.user(question)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, customConversationId))
+				.call()
+				.content();
 
 		logger.info("Question: {}", question);
 		logger.info("Answer: {}", answer);
@@ -226,8 +228,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		String conversationId2 = "conversation-2-" + System.currentTimeMillis();
 
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor without a default conversation ID
 		var advisor = createAdvisor(chatMemory);
@@ -236,19 +238,19 @@ public abstract class AbstractChatMemoryAdvisorIT {
 
 		// Act - First conversation
 		String answer1 = chatClient.prompt()
-			.user("My name is Alice.")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId1))
-			.call()
-			.content();
+				.user("My name is Alice.")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId1))
+				.call()
+				.content();
 
 		logger.info("Answer 1: {}", answer1);
 
 		// Act - Second conversation
 		String answer2 = chatClient.prompt()
-			.user("My name is Bob.")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId2))
-			.call()
-			.content();
+				.user("My name is Bob.")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId2))
+				.call()
+				.content();
 
 		logger.info("Answer 2: {}", answer2);
 
@@ -263,19 +265,19 @@ public abstract class AbstractChatMemoryAdvisorIT {
 
 		// Act - Follow-up in first conversation
 		String followUpAnswer1 = chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId1))
-			.call()
-			.content();
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId1))
+				.call()
+				.content();
 
 		logger.info("Follow-up Answer 1: {}", followUpAnswer1);
 
 		// Act - Follow-up in second conversation
 		String followUpAnswer2 = chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId2))
-			.call()
-			.content();
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId2))
+				.call()
+				.content();
 
 		logger.info("Follow-up Answer 2: {}", followUpAnswer2);
 
@@ -297,8 +299,9 @@ public abstract class AbstractChatMemoryAdvisorIT {
 	 * Assert the follow-up response for a specific name. Default implementation expects
 	 * the model to remember the name from the first message. Subclasses can override this
 	 * to implement advisor-specific assertions.
+	 *
 	 * @param followUpAnswer The model's response to the follow-up question
-	 * @param expectedName The name that should be remembered
+	 * @param expectedName   The name that should be remembered
 	 */
 	protected void assertFollowUpResponseForName(String followUpAnswer, String expectedName) {
 		assertThat(followUpAnswer).containsIgnoringCase(expectedName);
@@ -311,8 +314,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// Arrange
 		String nonExistentId = "non-existent-conversation-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor without a default conversation ID
 		var advisor = createAdvisor(chatMemory);
@@ -323,10 +326,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		String question = "Do you remember our previous conversation?";
 
 		String answer = chatClient.prompt()
-			.user(question)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, nonExistentId))
-			.call()
-			.content();
+				.user(question)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, nonExistentId))
+				.call()
+				.content();
 
 		logger.info("Question: {}", question);
 		logger.info("Answer: {}", answer);
@@ -344,6 +347,7 @@ public abstract class AbstractChatMemoryAdvisorIT {
 	 * Assert the response for a non-existent conversation. Default implementation expects
 	 * the model to indicate there's no previous conversation. Subclasses can override
 	 * this to implement advisor-specific assertions.
+	 *
 	 * @param answer The model's response to the question about a previous conversation
 	 */
 	protected void assertNonExistentConversationResponse(String answer) {
@@ -361,6 +365,7 @@ public abstract class AbstractChatMemoryAdvisorIT {
 	 * Assert the follow-up response for reactive mode test. Default implementation
 	 * expects the model to remember the name and location. Subclasses can override this
 	 * to implement advisor-specific assertions.
+	 *
 	 * @param followUpAnswer The model's response to the follow-up question
 	 */
 	protected void assertReactiveFollowUpResponse(String followUpAnswer) {
@@ -371,8 +376,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 	protected void testHandleMultipleMessagesInReactiveMode() {
 		String conversationId = "reactive-conversation-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		var advisor = createAdvisor(chatMemory);
 
@@ -381,10 +386,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		List<String> responseList = new ArrayList<>();
 		for (String message : List.of("My name is Charlie.", "I am 30 years old.", "I live in London.")) {
 			String response = chatClient.prompt()
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-				.user(message)
-				.call()
-				.content();
+					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+					.user(message)
+					.call()
+					.content();
 			responseList.add(response);
 		}
 
@@ -399,10 +404,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		assertThat(memoryMessages.get(4).getText()).isEqualTo("I live in London.");
 
 		String followUpAnswer = chatClient.prompt()
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.user("What is my name and where do I live?")
-			.call()
-			.content();
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.user("What is my name and where do I live?")
+				.call()
+				.content();
 
 		logger.info("Follow-up answer: {}", followUpAnswer);
 
@@ -422,8 +427,8 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// Arrange
 		String conversationId = "streaming-conversation-" + System.currentTimeMillis();
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		// Create advisor with the conversation ID
 		var advisor = createAdvisor(chatMemory);
@@ -436,10 +441,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// Collect all streaming chunks
 		List<String> streamingChunks = new ArrayList<>();
 		Flux<String> responseStream = chatClient.prompt()
-			.user(initialQuestion)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.stream()
-			.content();
+				.user(initialQuestion)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.stream()
+				.content();
 
 		// Block and collect all streaming chunks
 		responseStream.doOnNext(streamingChunks::add).blockLast();
@@ -460,10 +465,10 @@ public abstract class AbstractChatMemoryAdvisorIT {
 		// Collect all streaming chunks for the follow-up
 		List<String> followUpStreamingChunks = new ArrayList<>();
 		Flux<String> followUpResponseStream = chatClient.prompt()
-			.user(followUpQuestion)
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.stream()
-			.content();
+				.user(followUpQuestion)
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.stream()
+				.content();
 
 		// Block and collect all streaming chunks
 		followUpResponseStream.doOnNext(followUpStreamingChunks::add).blockLast();

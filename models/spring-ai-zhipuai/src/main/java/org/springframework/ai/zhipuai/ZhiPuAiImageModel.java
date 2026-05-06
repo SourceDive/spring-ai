@@ -56,7 +56,7 @@ public class ZhiPuAiImageModel implements ImageModel {
 	}
 
 	public ZhiPuAiImageModel(ZhiPuAiImageApi zhiPuAiImageApi, ZhiPuAiImageOptions defaultOptions,
-			RetryTemplate retryTemplate) {
+	                         RetryTemplate retryTemplate) {
 		Assert.notNull(zhiPuAiImageApi, "ZhiPuAiImageApi must not be null");
 		Assert.notNull(defaultOptions, "defaultOptions must not be null");
 		Assert.notNull(retryTemplate, "retryTemplate must not be null");
@@ -90,7 +90,7 @@ public class ZhiPuAiImageModel implements ImageModel {
 
 			// Make the request
 			ResponseEntity<ZhiPuAiImageApi.ZhiPuAiImageResponse> imageResponseEntity = this.zhiPuAiImageApi
-				.createImage(imageRequest);
+					.createImage(imageRequest);
 
 			// Convert to org.springframework.ai.model derived ImageResponse data type
 			return convertResponse(imageResponseEntity, imageRequest);
@@ -98,7 +98,7 @@ public class ZhiPuAiImageModel implements ImageModel {
 	}
 
 	private ImageResponse convertResponse(ResponseEntity<ZhiPuAiImageApi.ZhiPuAiImageResponse> imageResponseEntity,
-			ZhiPuAiImageApi.ZhiPuAiImageRequest zhiPuAiImageRequest) {
+	                                      ZhiPuAiImageApi.ZhiPuAiImageRequest zhiPuAiImageRequest) {
 		ZhiPuAiImageApi.ZhiPuAiImageResponse imageApiResponse = imageResponseEntity.getBody();
 		if (imageApiResponse == null) {
 			logger.warn("No image response returned for request: {}", zhiPuAiImageRequest);
@@ -106,15 +106,16 @@ public class ZhiPuAiImageModel implements ImageModel {
 		}
 
 		List<ImageGeneration> imageGenerationList = imageApiResponse.data()
-			.stream()
-			.map(entry -> new ImageGeneration(new Image(entry.url(), null)))
-			.toList();
+				.stream()
+				.map(entry -> new ImageGeneration(new Image(entry.url(), null)))
+				.toList();
 
 		return new ImageResponse(imageGenerationList);
 	}
 
 	/**
 	 * Convert the {@link ImageOptions} into {@link ZhiPuAiImageOptions}.
+	 *
 	 * @param runtimeImageOptions the image options to use.
 	 * @return the converted {@link ZhiPuAiImageOptions}.
 	 */

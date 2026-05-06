@@ -50,7 +50,7 @@ import org.springframework.web.client.ResponseErrorHandler;
  */
 @AutoConfiguration
 @ConditionalOnClass(RetryUtils.class)
-@EnableConfigurationProperties({ SpringAiRetryProperties.class })
+@EnableConfigurationProperties({SpringAiRetryProperties.class})
 public class SpringAiRetryAutoConfiguration {
 
 	private static final Logger logger = LoggerFactory.getLogger(SpringAiRetryAutoConfiguration.class);
@@ -59,20 +59,20 @@ public class SpringAiRetryAutoConfiguration {
 	@ConditionalOnMissingBean
 	public RetryTemplate retryTemplate(SpringAiRetryProperties properties) {
 		return RetryTemplate.builder()
-			.maxAttempts(properties.getMaxAttempts())
-			.retryOn(TransientAiException.class)
-			.exponentialBackoff(properties.getBackoff().getInitialInterval(), properties.getBackoff().getMultiplier(),
-					properties.getBackoff().getMaxInterval())
-			.withListener(new RetryListener() {
+				.maxAttempts(properties.getMaxAttempts())
+				.retryOn(TransientAiException.class)
+				.exponentialBackoff(properties.getBackoff().getInitialInterval(), properties.getBackoff().getMultiplier(),
+						properties.getBackoff().getMaxInterval())
+				.withListener(new RetryListener() {
 
-				@Override
-				public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback,
-						Throwable throwable) {
-					logger.warn("Retry error. Retry count: {}, Exception: {}", context.getRetryCount(),
-							throwable.getMessage(), throwable);
-				}
-			})
-			.build();
+					@Override
+					public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback,
+					                                             Throwable throwable) {
+						logger.warn("Retry error. Retry count: {}, Exception: {}", context.getRetryCount(),
+								throwable.getMessage(), throwable);
+					}
+				})
+				.build();
 	}
 
 	@Bean

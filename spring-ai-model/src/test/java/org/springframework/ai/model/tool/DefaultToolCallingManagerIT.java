@@ -68,14 +68,14 @@ class DefaultToolCallingManagerIT {
 	void observationForToolCall() {
 		ToolCallback toolCallback = new TestToolCallback("toolA");
 		Prompt prompt = Prompt.builder()
-			.content("Why does a raven look like a desk?")
-			.chatOptions(ToolCallingChatOptions.builder().toolCallbacks(toolCallback).build())
-			.build();
+				.content("Why does a raven look like a desk?")
+				.chatOptions(ToolCallingChatOptions.builder().toolCallbacks(toolCallback).build())
+				.build();
 
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("Answer", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("Answer", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
+				.build();
 
 		ToolExecutionResult toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, chatResponse);
 
@@ -85,28 +85,28 @@ class DefaultToolCallingManagerIT {
 		assertThat(responseMetadata).isNotNull();
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultToolCallingObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo(SpringAiKind.TOOL_CALL.value() + " " + toolCallback.getToolDefinition().name())
-			.hasLowCardinalityKeyValue(
-					ToolCallingObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.FRAMEWORK.value())
-			.hasLowCardinalityKeyValue(
-					ToolCallingObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.SPRING_AI.value())
-			.hasLowCardinalityKeyValue(
-					ToolCallingObservationDocumentation.LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-					SpringAiKind.TOOL_CALL.value())
-			.hasLowCardinalityKeyValue(
-					ToolCallingObservationDocumentation.LowCardinalityKeyNames.TOOL_DEFINITION_NAME.asString(),
-					toolCallback.getToolDefinition().name())
-			.hasHighCardinalityKeyValue(
-					ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_DEFINITION_DESCRIPTION.asString(),
-					toolCallback.getToolDefinition().description())
-			.hasHighCardinalityKeyValue(
-					ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_DEFINITION_SCHEMA.asString(),
-					toolCallback.getToolDefinition().inputSchema());
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultToolCallingObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo(SpringAiKind.TOOL_CALL.value() + " " + toolCallback.getToolDefinition().name())
+				.hasLowCardinalityKeyValue(
+						ToolCallingObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.FRAMEWORK.value())
+				.hasLowCardinalityKeyValue(
+						ToolCallingObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.SPRING_AI.value())
+				.hasLowCardinalityKeyValue(
+						ToolCallingObservationDocumentation.LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+						SpringAiKind.TOOL_CALL.value())
+				.hasLowCardinalityKeyValue(
+						ToolCallingObservationDocumentation.LowCardinalityKeyNames.TOOL_DEFINITION_NAME.asString(),
+						toolCallback.getToolDefinition().name())
+				.hasHighCardinalityKeyValue(
+						ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_DEFINITION_DESCRIPTION.asString(),
+						toolCallback.getToolDefinition().description())
+				.hasHighCardinalityKeyValue(
+						ToolCallingObservationDocumentation.HighCardinalityKeyNames.TOOL_DEFINITION_SCHEMA.asString(),
+						toolCallback.getToolDefinition().inputSchema());
 	}
 
 	@SpringBootConfiguration

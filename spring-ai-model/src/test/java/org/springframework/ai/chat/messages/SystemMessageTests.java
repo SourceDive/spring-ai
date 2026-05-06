@@ -66,8 +66,8 @@ class SystemMessageTests {
 		SystemMessage message = SystemMessage.builder().text(text).metadata(Map.of("key", "value")).build();
 		assertEquals(text, message.getText());
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key", "value");
 	}
 
 	@Test
@@ -76,8 +76,8 @@ class SystemMessageTests {
 		SystemMessage message = SystemMessage.builder().text(resource).metadata(Map.of("key", "value")).build();
 		assertEquals("Tell me, did you sail across the sun?", message.getText());
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key", "value");
 	}
 
 	@Test

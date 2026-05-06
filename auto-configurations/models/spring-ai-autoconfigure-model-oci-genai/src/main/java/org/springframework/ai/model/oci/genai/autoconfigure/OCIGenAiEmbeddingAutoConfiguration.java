@@ -47,7 +47,7 @@ public class OCIGenAiEmbeddingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public OCIEmbeddingModel ociEmbeddingModel(GenerativeAiInferenceClient generativeAiClient,
-			OCIEmbeddingModelProperties properties) {
+	                                           OCIEmbeddingModelProperties properties) {
 		return new OCIEmbeddingModel(generativeAiClient, properties.getEmbeddingOptions());
 	}
 

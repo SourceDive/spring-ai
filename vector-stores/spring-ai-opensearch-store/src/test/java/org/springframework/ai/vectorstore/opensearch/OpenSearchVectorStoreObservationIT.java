@@ -83,8 +83,7 @@ public class OpenSearchVectorStoreObservationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -120,82 +119,82 @@ public class OpenSearchVectorStoreObservationIT {
 			vectorStore.add(this.documents);
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.OPENSEARCH.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.OPENSEARCH.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
-						OpenSearchVectorStore.DEFAULT_INDEX_NAME)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
-						VectorStoreSimilarityMetric.COSINE.value())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(
-						HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s add".formatted(VectorStoreProvider.OPENSEARCH.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "add")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.OPENSEARCH.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
+							OpenSearchVectorStore.DEFAULT_INDEX_NAME)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
+							VectorStoreSimilarityMetric.COSINE.value())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(
+							HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString())
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression").topK(1).build());
 
 			assertThat(results).isNotEmpty();
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.OPENSEARCH.value()))
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
-						VectorStoreProvider.OPENSEARCH.value())
-				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
-						SpringAiKind.VECTOR_STORE.value())
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("%s query".formatted(VectorStoreProvider.OPENSEARCH.value()))
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query")
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.DB_SYSTEM.asString(),
+							VectorStoreProvider.OPENSEARCH.value())
+					.hasLowCardinalityKeyValue(LowCardinalityKeyNames.SPRING_AI_KIND.asString(),
+							SpringAiKind.VECTOR_STORE.value())
 
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
-						"What is Great Depression")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
-						OpenSearchVectorStore.DEFAULT_INDEX_NAME)
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
-						VectorStoreSimilarityMetric.COSINE.value())
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
-						"0.0")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
+							"What is Great Depression")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(), "1536")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
+							OpenSearchVectorStore.DEFAULT_INDEX_NAME)
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_NAMESPACE.asString())
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
+							VectorStoreSimilarityMetric.COSINE.value())
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_TOP_K.asString(), "1")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_SIMILARITY_THRESHOLD.asString(),
+							"0.0")
 
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.hasBeenStarted()
+					.hasBeenStopped();
 
 			observationRegistry.clear();
 
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 
 		});
 	}
 
 	@SpringBootConfiguration
-	@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
+	@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 	static class Config {
 
 		@Bean
@@ -205,21 +204,20 @@ public class OpenSearchVectorStoreObservationIT {
 
 		@Bean
 		public OpenSearchVectorStore vectorStore(EmbeddingModel embeddingModel,
-				ObservationRegistry observationRegistry) {
+		                                         ObservationRegistry observationRegistry) {
 			try {
 				OpenSearchClient openSearchClient = new OpenSearchClient(ApacheHttpClient5TransportBuilder
-					.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
-					.build());
+						.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
+						.build());
 				return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-					.index(OpenSearchVectorStore.DEFAULT_INDEX_NAME)
-					.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
-					.initializeSchema(true)
-					.observationRegistry(observationRegistry)
-					.customObservationConvention(null)
-					.batchingStrategy(new TokenCountBatchingStrategy())
-					.build();
-			}
-			catch (URISyntaxException e) {
+						.index(OpenSearchVectorStore.DEFAULT_INDEX_NAME)
+						.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
+						.initializeSchema(true)
+						.observationRegistry(observationRegistry)
+						.customObservationConvention(null)
+						.batchingStrategy(new TokenCountBatchingStrategy())
+						.build();
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}

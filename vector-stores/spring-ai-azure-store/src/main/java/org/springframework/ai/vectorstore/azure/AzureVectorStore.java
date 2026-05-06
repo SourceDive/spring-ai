@@ -129,6 +129,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 	/**
 	 * Protected constructor that accepts a builder instance. This is the preferred way to
 	 * create new AzureVectorStore instances.
+	 *
 	 * @param builder the configured builder instance
 	 */
 	protected AzureVectorStore(Builder builder) {
@@ -204,10 +205,10 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 	@Override
 	public List<Document> similaritySearch(String query) {
 		return this.similaritySearch(SearchRequest.builder()
-			.query(query)
-			.topK(this.defaultTopK)
-			.similarityThreshold(this.defaultSimilarityThreshold)
-			.build());
+				.query(query)
+				.topK(this.defaultTopK)
+				.similarityThreshold(this.defaultSimilarityThreshold)
+				.build());
 	}
 
 	@Override
@@ -218,13 +219,13 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 		var searchEmbedding = this.embeddingModel.embed(request.getQuery());
 
 		final var vectorQuery = new VectorizedQuery(EmbeddingUtils.toList(searchEmbedding))
-			.setKNearestNeighborsCount(request.getTopK())
-			// Set the fields to compare the vector against. This is a comma-delimited
-			// list of field names.
-			.setFields(EMBEDDING_FIELD_NAME);
+				.setKNearestNeighborsCount(request.getTopK())
+				// Set the fields to compare the vector against. This is a comma-delimited
+				// list of field names.
+				.setFields(EMBEDDING_FIELD_NAME);
 
 		var searchOptions = new SearchOptions()
-			.setVectorSearchOptions(new VectorSearchOptions().setQueries(vectorQuery));
+				.setVectorSearchOptions(new VectorSearchOptions().setQueries(vectorQuery));
 
 		if (request.hasFilterExpression()) {
 			String oDataFilter = this.filterExpressionConverter.convertExpression(request.getFilterExpression());
@@ -234,26 +235,26 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 		final var searchResults = this.searchClient.search(null, searchOptions, Context.NONE);
 
 		return searchResults.stream()
-			.filter(result -> result.getScore() >= request.getSimilarityThreshold())
-			.map(result -> {
+				.filter(result -> result.getScore() >= request.getSimilarityThreshold())
+				.map(result -> {
 
-				final AzureSearchDocument entry = result.getDocument(AzureSearchDocument.class);
+					final AzureSearchDocument entry = result.getDocument(AzureSearchDocument.class);
 
-				Map<String, Object> metadata = (StringUtils.hasText(entry.metadata()))
-						? JSONObject.parseObject(entry.metadata(), new TypeReference<Map<String, Object>>() {
+					Map<String, Object> metadata = (StringUtils.hasText(entry.metadata()))
+							? JSONObject.parseObject(entry.metadata(), new TypeReference<Map<String, Object>>() {
 
-						}) : Map.of();
+					}) : Map.of();
 
-				metadata.put(DocumentMetadata.DISTANCE.value(), 1.0 - result.getScore());
+					metadata.put(DocumentMetadata.DISTANCE.value(), 1.0 - result.getScore());
 
-				return Document.builder()
-					.id(entry.id())
-					.text(entry.content)
-					.metadata(metadata)
-					.score(result.getScore())
-					.build();
-			})
-			.collect(Collectors.toList());
+					return Document.builder()
+							.id(entry.id())
+							.text(entry.content)
+							.metadata(metadata)
+							.score(result.getScore())
+							.build();
+				})
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -269,38 +270,38 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 		List<SearchField> fields = new ArrayList<>();
 
 		fields.add(new SearchField(ID_FIELD_NAME, SearchFieldDataType.STRING).setKey(true)
-			.setFilterable(true)
-			.setSortable(true));
+				.setFilterable(true)
+				.setSortable(true));
 		fields.add(new SearchField(EMBEDDING_FIELD_NAME, SearchFieldDataType.collection(SearchFieldDataType.SINGLE))
-			.setSearchable(true)
-			.setHidden(false)
-			.setVectorSearchDimensions(dimensions)
-			// This must match a vector search configuration name.
-			.setVectorSearchProfileName(SPRING_AI_VECTOR_PROFILE));
+				.setSearchable(true)
+				.setHidden(false)
+				.setVectorSearchDimensions(dimensions)
+				// This must match a vector search configuration name.
+				.setVectorSearchProfileName(SPRING_AI_VECTOR_PROFILE));
 		fields.add(new SearchField(CONTENT_FIELD_NAME, SearchFieldDataType.STRING).setSearchable(true)
-			.setFilterable(true));
+				.setFilterable(true));
 		fields.add(new SearchField(METADATA_FIELD_NAME, SearchFieldDataType.STRING).setSearchable(true)
-			.setFilterable(true));
+				.setFilterable(true));
 
 		for (MetadataField filterableMetadataField : this.filterMetadataFields) {
 			fields.add(new SearchField(METADATA_FIELD_PREFIX + filterableMetadataField.name(),
 					filterableMetadataField.fieldType())
-				.setSearchable(false)
-				.setFacetable(true));
+					.setSearchable(false)
+					.setFacetable(true));
 		}
 
 		SearchIndex searchIndex = new SearchIndex(this.indexName).setFields(fields)
-			// VectorSearch configuration is required for a vector field. The name used
-			// for the vector search algorithm configuration must match the configuration
-			// used by the search field used for vector search.
-			.setVectorSearch(new VectorSearch()
-				.setProfiles(Collections
-					.singletonList(new VectorSearchProfile(SPRING_AI_VECTOR_PROFILE, SPRING_AI_VECTOR_CONFIG)))
-				.setAlgorithms(Collections.singletonList(new HnswAlgorithmConfiguration(SPRING_AI_VECTOR_CONFIG)
-					.setParameters(new HnswParameters().setM(4)
-						.setEfConstruction(400)
-						.setEfSearch(1000)
-						.setMetric(VectorSearchAlgorithmMetric.COSINE)))));
+				// VectorSearch configuration is required for a vector field. The name used
+				// for the vector search algorithm configuration must match the configuration
+				// used by the search field used for vector search.
+				.setVectorSearch(new VectorSearch()
+						.setProfiles(Collections
+								.singletonList(new VectorSearchProfile(SPRING_AI_VECTOR_PROFILE, SPRING_AI_VECTOR_CONFIG)))
+						.setAlgorithms(Collections.singletonList(new HnswAlgorithmConfiguration(SPRING_AI_VECTOR_CONFIG)
+								.setParameters(new HnswParameters().setM(4)
+										.setEfConstruction(400)
+										.setEfSearch(1000)
+										.setMetric(VectorSearchAlgorithmMetric.COSINE)))));
 
 		SearchIndex index = this.searchIndexClient.createOrUpdateIndex(searchIndex);
 
@@ -313,9 +314,9 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.AZURE.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions())
-			.similarityMetric(this.initializeSchema ? VectorStoreSimilarityMetric.COSINE.value() : null);
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions())
+				.similarityMetric(this.initializeSchema ? VectorStoreSimilarityMetric.COSINE.value() : null);
 	}
 
 	@Override
@@ -389,6 +390,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -399,6 +401,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata fields for filtering.
+		 *
 		 * @param filterMetadataFields the list of metadata fields
 		 * @return the builder instance
 		 */
@@ -409,6 +412,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the index name for the Azure Vector Store.
+		 *
 		 * @param indexName the name of the index to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if indexName is null or empty
@@ -421,6 +425,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the default maximum number of similar documents to return.
+		 *
 		 * @param defaultTopK the maximum number of documents
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if defaultTopK is negative
@@ -433,11 +438,12 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the default similarity threshold for returned documents.
+		 *
 		 * @param defaultSimilarityThreshold the similarity threshold (must be between 0.0
-		 * and 1.0)
+		 *                                   and 1.0)
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if defaultSimilarityThreshold is not between
-		 * 0.0 and 1.0
+		 *                                  0.0 and 1.0
 		 */
 		public Builder defaultSimilarityThreshold(Double defaultSimilarityThreshold) {
 			Assert.isTrue(defaultSimilarityThreshold >= 0.0 && defaultSimilarityThreshold <= 1.0,

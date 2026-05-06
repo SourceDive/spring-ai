@@ -138,6 +138,7 @@ public class AzureOpenAiChatOptions implements ToolCallingChatOptions {
 
 	/**
 	 * The response format expected from the Azure OpenAI model
+	 *
 	 * @see org.springframework.ai.azure.openai.AzureOpenAiResponseFormat for supported
 	 * formats
 	 */
@@ -263,32 +264,32 @@ public class AzureOpenAiChatOptions implements ToolCallingChatOptions {
 
 	public static AzureOpenAiChatOptions fromOptions(AzureOpenAiChatOptions fromOptions) {
 		return builder().deploymentName(fromOptions.getDeploymentName())
-			.frequencyPenalty(fromOptions.getFrequencyPenalty() != null ? fromOptions.getFrequencyPenalty() : null)
-			.logitBias(fromOptions.getLogitBias())
-			.maxTokens(fromOptions.getMaxTokens())
-			.N(fromOptions.getN())
-			.presencePenalty(fromOptions.getPresencePenalty() != null ? fromOptions.getPresencePenalty() : null)
-			.stop(fromOptions.getStop() != null ? new ArrayList<>(fromOptions.getStop()) : null)
-			.temperature(fromOptions.getTemperature())
-			.topP(fromOptions.getTopP())
-			.user(fromOptions.getUser())
-			.toolCallbacks(
-					fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
-			.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
-			.responseFormat(fromOptions.getResponseFormat())
-			.streamUsage(fromOptions.getStreamUsage())
-			.reasoningEffort(fromOptions.getReasoningEffort())
-			.seed(fromOptions.getSeed())
-			.logprobs(fromOptions.isLogprobs())
-			.topLogprobs(fromOptions.getTopLogProbs())
-			.enhancements(fromOptions.getEnhancements())
-			.toolContext(fromOptions.getToolContext() != null ? new HashMap<>(fromOptions.getToolContext()) : null)
-			.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
-			.streamOptions(fromOptions.getStreamOptions())
-			.toolCallbacks(
-					fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
-			.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
-			.build();
+				.frequencyPenalty(fromOptions.getFrequencyPenalty() != null ? fromOptions.getFrequencyPenalty() : null)
+				.logitBias(fromOptions.getLogitBias())
+				.maxTokens(fromOptions.getMaxTokens())
+				.N(fromOptions.getN())
+				.presencePenalty(fromOptions.getPresencePenalty() != null ? fromOptions.getPresencePenalty() : null)
+				.stop(fromOptions.getStop() != null ? new ArrayList<>(fromOptions.getStop()) : null)
+				.temperature(fromOptions.getTemperature())
+				.topP(fromOptions.getTopP())
+				.user(fromOptions.getUser())
+				.toolCallbacks(
+						fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
+				.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
+				.responseFormat(fromOptions.getResponseFormat())
+				.streamUsage(fromOptions.getStreamUsage())
+				.reasoningEffort(fromOptions.getReasoningEffort())
+				.seed(fromOptions.getSeed())
+				.logprobs(fromOptions.isLogprobs())
+				.topLogprobs(fromOptions.getTopLogProbs())
+				.enhancements(fromOptions.getEnhancements())
+				.toolContext(fromOptions.getToolContext() != null ? new HashMap<>(fromOptions.getToolContext()) : null)
+				.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
+				.streamOptions(fromOptions.getStreamOptions())
+				.toolCallbacks(
+						fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
+				.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
+				.build();
 	}
 
 	@Override
@@ -624,8 +625,7 @@ public class AzureOpenAiChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

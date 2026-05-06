@@ -52,7 +52,7 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testEQ() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country:BG");
 	}
 
@@ -89,7 +89,7 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 						new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")))),
 				new Filter.Expression(NIN, new Filter.Key("city"), new Filter.Value(List.of("Sofia", "Plovdiv")))));
 		assertThat(vectorExpr)
-			.isEqualTo("(metadata.year:>=2020 OR metadata.country:BG) AND NOT (metadata.city:Sofia OR Plovdiv)");
+				.isEqualTo("(metadata.year:>=2020 OR metadata.country:BG) AND NOT (metadata.city:Sofia OR Plovdiv)");
 	}
 
 	@Test
@@ -100,7 +100,7 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 				new Filter.Expression(IN, new Filter.Key("country"), new Filter.Value(List.of("BG", "NL", "US")))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("metadata.isOpen:true AND metadata.year:>=2020 AND (metadata.country:BG OR NL OR US)");
+				.isEqualTo("metadata.isOpen:true AND metadata.year:>=2020 AND (metadata.country:BG OR NL OR US)");
 	}
 
 	@Test
@@ -115,11 +115,11 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country 1 2 3:BG");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country 1 2 3:BG");
 	}
 

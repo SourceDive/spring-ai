@@ -38,12 +38,12 @@ class MilvusSearchRequestTest {
 		String searchParamsJson = "{\"nprobe\":128}";
 
 		MilvusSearchRequest request = MilvusSearchRequest.milvusBuilder()
-			.query(query)
-			.topK(topK)
-			.similarityThreshold(similarityThreshold)
-			.nativeExpression(nativeExpression)
-			.searchParamsJson(searchParamsJson)
-			.build();
+				.query(query)
+				.topK(topK)
+				.similarityThreshold(similarityThreshold)
+				.nativeExpression(nativeExpression)
+				.searchParamsJson(searchParamsJson)
+				.build();
 
 		assertThat(request.getQuery()).isEqualTo(query);
 		assertThat(request.getTopK()).isEqualTo(topK);

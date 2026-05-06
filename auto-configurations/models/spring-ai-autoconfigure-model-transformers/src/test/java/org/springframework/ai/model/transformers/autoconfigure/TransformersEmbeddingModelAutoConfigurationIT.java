@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TransformersEmbeddingModelAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(TransformersEmbeddingModelAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(TransformersEmbeddingModelAutoConfiguration.class));
 
 	@TempDir
 	File tempDir;
@@ -63,31 +63,31 @@ public class TransformersEmbeddingModelAutoConfigurationIT {
 	public void remoteOnnxModel() {
 		// https://huggingface.co/intfloat/e5-small-v2
 		this.contextRunner.withPropertyValues(
-				"spring.ai.embedding.transformer.cache.directory=" + this.tempDir.getAbsolutePath(),
-				"spring.ai.embedding.transformer.onnx.modelUri=https://huggingface.co/intfloat/e5-small-v2/resolve/main/model.onnx",
-				"spring.ai.embedding.transformer.tokenizer.uri=https://huggingface.co/intfloat/e5-small-v2/raw/main/tokenizer.json")
-			.run(context -> {
-				var properties = context.getBean(TransformersEmbeddingModelProperties.class);
-				assertThat(properties.getOnnx().getModelUri())
-					.isEqualTo("https://huggingface.co/intfloat/e5-small-v2/resolve/main/model.onnx");
-				assertThat(properties.getTokenizer().getUri())
-					.isEqualTo("https://huggingface.co/intfloat/e5-small-v2/raw/main/tokenizer.json");
+						"spring.ai.embedding.transformer.cache.directory=" + this.tempDir.getAbsolutePath(),
+						"spring.ai.embedding.transformer.onnx.modelUri=https://huggingface.co/intfloat/e5-small-v2/resolve/main/model.onnx",
+						"spring.ai.embedding.transformer.tokenizer.uri=https://huggingface.co/intfloat/e5-small-v2/raw/main/tokenizer.json")
+				.run(context -> {
+					var properties = context.getBean(TransformersEmbeddingModelProperties.class);
+					assertThat(properties.getOnnx().getModelUri())
+							.isEqualTo("https://huggingface.co/intfloat/e5-small-v2/resolve/main/model.onnx");
+					assertThat(properties.getTokenizer().getUri())
+							.isEqualTo("https://huggingface.co/intfloat/e5-small-v2/raw/main/tokenizer.json");
 
-				assertThat(properties.getCache().isEnabled()).isTrue();
-				assertThat(properties.getCache().getDirectory()).isEqualTo(this.tempDir.getAbsolutePath());
-				assertThat(this.tempDir.listFiles()).hasSize(2);
+					assertThat(properties.getCache().isEnabled()).isTrue();
+					assertThat(properties.getCache().getDirectory()).isEqualTo(this.tempDir.getAbsolutePath());
+					assertThat(this.tempDir.listFiles()).hasSize(2);
 
-				EmbeddingModel embeddingModel = context.getBean(EmbeddingModel.class);
-				assertThat(embeddingModel).isInstanceOf(TransformersEmbeddingModel.class);
+					EmbeddingModel embeddingModel = context.getBean(EmbeddingModel.class);
+					assertThat(embeddingModel).isInstanceOf(TransformersEmbeddingModel.class);
 
-				assertThat(embeddingModel.dimensions()).isEqualTo(384);
+					assertThat(embeddingModel.dimensions()).isEqualTo(384);
 
-				List<float[]> embeddings = embeddingModel.embed(List.of("Spring Framework", "Spring AI"));
+					List<float[]> embeddings = embeddingModel.embed(List.of("Spring Framework", "Spring AI"));
 
-				assertThat(embeddings.size()).isEqualTo(2); // batch size
-				assertThat(embeddings.get(0).length).isEqualTo(embeddingModel.dimensions()); // dimensions
-				// size
-			});
+					assertThat(embeddings.size()).isEqualTo(2); // batch size
+					assertThat(embeddings.get(0).length).isEqualTo(embeddingModel.dimensions()); // dimensions
+					// size
+				});
 	}
 
 	@Test

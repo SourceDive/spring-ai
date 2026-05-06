@@ -79,10 +79,10 @@ class Neo4JChatMemoryRepositoryConfigIT {
 		String customSessionLabel = "ChatSession";
 		String customMessageLabel = "ChatMessage";
 		Neo4jChatMemoryRepositoryConfig config = Neo4jChatMemoryRepositoryConfig.builder()
-			.withDriver(driver)
-			.withSessionLabel(customSessionLabel)
-			.withMessageLabel(customMessageLabel)
-			.build();
+				.withDriver(driver)
+				.withSessionLabel(customSessionLabel)
+				.withMessageLabel(customMessageLabel)
+				.build();
 		assertThat(config.getSessionLabel()).isEqualTo(customSessionLabel);
 		assertThat(config.getMessageLabel()).isEqualTo(customMessageLabel);
 	}
@@ -90,14 +90,14 @@ class Neo4JChatMemoryRepositoryConfigIT {
 	@Test
 	void gettersShouldReturnConfiguredValues() {
 		Neo4jChatMemoryRepositoryConfig config = Neo4jChatMemoryRepositoryConfig.builder()
-			.withDriver(driver)
-			.withSessionLabel("Session")
-			.withToolCallLabel("ToolCall")
-			.withMetadataLabel("Metadata")
-			.withMessageLabel("Message")
-			.withToolResponseLabel("ToolResponse")
-			.withMediaLabel("Media")
-			.build();
+				.withDriver(driver)
+				.withSessionLabel("Session")
+				.withToolCallLabel("ToolCall")
+				.withMetadataLabel("Metadata")
+				.withMessageLabel("Message")
+				.withToolResponseLabel("ToolResponse")
+				.withMediaLabel("Media")
+				.build();
 		assertThat(config.getSessionLabel()).isEqualTo("Session");
 		assertThat(config.getToolCallLabel()).isEqualTo("ToolCall");
 		assertThat(config.getMetadataLabel()).isEqualTo("Metadata");

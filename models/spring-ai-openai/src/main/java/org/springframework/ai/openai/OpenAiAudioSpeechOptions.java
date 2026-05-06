@@ -145,38 +145,33 @@ public class OpenAiAudioSpeechOptions implements ModelOptions {
 			if (other.model != null) {
 				return false;
 			}
-		}
-		else if (!this.model.equals(other.model)) {
+		} else if (!this.model.equals(other.model)) {
 			return false;
 		}
 		if (this.input == null) {
 			if (other.input != null) {
 				return false;
 			}
-		}
-		else if (!this.input.equals(other.input)) {
+		} else if (!this.input.equals(other.input)) {
 			return false;
 		}
 		if (this.voice == null) {
 			if (other.voice != null) {
 				return false;
 			}
-		}
-		else if (!this.voice.equals(other.voice)) {
+		} else if (!this.voice.equals(other.voice)) {
 			return false;
 		}
 		if (this.responseFormat == null) {
 			if (other.responseFormat != null) {
 				return false;
 			}
-		}
-		else if (!this.responseFormat.equals(other.responseFormat)) {
+		} else if (!this.responseFormat.equals(other.responseFormat)) {
 			return false;
 		}
 		if (this.speed == null) {
 			return other.speed == null;
-		}
-		else {
+		} else {
 			return this.speed.equals(other.speed);
 		}
 	}

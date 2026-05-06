@@ -42,9 +42,9 @@ class OpenAiTranscriptionModelIT extends AbstractIT {
 	@Test
 	void transcriptionTest() {
 		OpenAiAudioTranscriptionOptions transcriptionOptions = OpenAiAudioTranscriptionOptions.builder()
-			.responseFormat(TranscriptResponseFormat.TEXT)
-			.temperature(0f)
-			.build();
+				.responseFormat(TranscriptResponseFormat.TEXT)
+				.temperature(0f)
+				.build();
 		AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(this.audioFile,
 				transcriptionOptions);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(transcriptionRequest);
@@ -57,11 +57,11 @@ class OpenAiTranscriptionModelIT extends AbstractIT {
 		OpenAiAudioApi.TranscriptResponseFormat responseFormat = OpenAiAudioApi.TranscriptResponseFormat.VTT;
 
 		OpenAiAudioTranscriptionOptions transcriptionOptions = OpenAiAudioTranscriptionOptions.builder()
-			.language("en")
-			.prompt("Ask not this, but ask that")
-			.temperature(0f)
-			.responseFormat(responseFormat)
-			.build();
+				.language("en")
+				.prompt("Ask not this, but ask that")
+				.temperature(0f)
+				.responseFormat(responseFormat)
+				.build();
 		AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(this.audioFile,
 				transcriptionOptions);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(transcriptionRequest);

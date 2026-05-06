@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Helper class to support Streaming function calling.
- *
+ * <p>
  * It can merge the streamed ChatCompletionChunk in case of function calling message.
  *
  * @author Christian Tzolov
@@ -47,8 +47,9 @@ public class OpenAiStreamFunctionCallingHelper {
 
 	/**
 	 * Merge the previous and current ChatCompletionChunk into a single one.
+	 *
 	 * @param previous the previous ChatCompletionChunk
-	 * @param current the current ChatCompletionChunk
+	 * @param current  the current ChatCompletionChunk
 	 * @return the merged ChatCompletionChunk
 	 */
 	public ChatCompletionChunk merge(ChatCompletionChunk previous, ChatCompletionChunk current) {
@@ -120,12 +121,10 @@ public class OpenAiStreamFunctionCallingHelper {
 					toolCalls.add(lastPreviousTooCall);
 				}
 				toolCalls.add(currentToolCall);
-			}
-			else {
+			} else {
 				toolCalls.add(merge(lastPreviousTooCall, currentToolCall));
 			}
-		}
-		else {
+		} else {
 			if (lastPreviousTooCall != null) {
 				toolCalls.add(lastPreviousTooCall);
 			}
@@ -195,15 +194,16 @@ public class OpenAiStreamFunctionCallingHelper {
 
 	/**
 	 * Convert the ChatCompletionChunk into a ChatCompletion. The Usage is set to null.
+	 *
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
 	public ChatCompletion chunkToChatCompletion(ChatCompletionChunk chunk) {
 		List<Choice> choices = chunk.choices()
-			.stream()
-			.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
-					chunkChoice.logprobs()))
-			.toList();
+				.stream()
+				.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
+						chunkChoice.logprobs()))
+				.toList();
 
 		return new OpenAiApi.ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.serviceTier(),
 				chunk.systemFingerprint(), "chat.completion", null);

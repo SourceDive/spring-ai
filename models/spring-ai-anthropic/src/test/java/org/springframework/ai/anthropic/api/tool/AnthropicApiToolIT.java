@@ -62,21 +62,21 @@ public class AnthropicApiToolIT {
 
 	List<Tool> tools = List.of(new Tool("getCurrentWeather",
 			"Get the weather in location. Return temperature in 30°F or 30°C format.", ModelOptionsUtils.jsonToMap("""
-					{
-						"type": "object",
-						"properties": {
-							"location": {
-								"type": "string",
-								"description": "The city and state e.g. San Francisco, CA"
-							},
-							"unit": {
-								"type": "string",
-								"enum": ["C", "F"]
-							}
-						},
-						"required": ["location", "unit"]
+			{
+				"type": "object",
+				"properties": {
+					"location": {
+						"type": "string",
+						"description": "The city and state e.g. San Francisco, CA"
+					},
+					"unit": {
+						"type": "string",
+						"enum": ["C", "F"]
 					}
-					""")));
+				},
+				"required": ["location", "unit"]
+			}
+			""")));
 
 	@Test
 	void toolCalls() {
@@ -102,20 +102,20 @@ public class AnthropicApiToolIT {
 	private ResponseEntity<ChatCompletionResponse> doCall(List<AnthropicMessage> messageConversation) {
 
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS)
-			.messages(messageConversation)
-			.maxTokens(1500)
-			.temperature(0.8)
-			.tools(this.tools)
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS)
+				.messages(messageConversation)
+				.maxTokens(1500)
+				.temperature(0.8)
+				.tools(this.tools)
+				.build();
 
 		ResponseEntity<ChatCompletionResponse> response = this.anthropicApi.chatCompletionEntity(chatCompletionRequest);
 
 		List<ContentBlock> toolToUseList = response.getBody()
-			.content()
-			.stream()
-			.filter(c -> c.type() == ContentBlock.Type.TOOL_USE)
-			.toList();
+				.content()
+				.stream()
+				.filter(c -> c.type() == ContentBlock.Type.TOOL_USE)
+				.toList();
 
 		if (CollectionUtils.isEmpty(toolToUseList)) {
 			return response;

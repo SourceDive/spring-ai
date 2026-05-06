@@ -135,7 +135,7 @@ public final class OllamaApiHelper {
 	}
 
 	private static List<OllamaApi.Message.ToolCall> mergeToolCall(OllamaApi.Message previous,
-			OllamaApi.Message current) {
+	                                                              OllamaApi.Message current) {
 		if (previous == null) {
 			return (current != null ? current.toolCalls() : null);
 		}

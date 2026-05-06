@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Demonstrates how to use function calling suing Mistral AI Java API:
  * {@link MistralAiApi}.
- *
+ * <p>
  * It is based on the <a href="https://docs.mistral.ai/guides/function-calling/">Mistral
  * AI Function Calling</a> guide.
  *
@@ -69,8 +69,7 @@ public class PaymentStatusFunctionCallingIT {
 	private static <T> T jsonToObject(String json, Class<T> targetClass) {
 		try {
 			return new ObjectMapper().readValue(json, targetClass);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -134,7 +133,7 @@ public class PaymentStatusFunctionCallingIT {
 		}
 
 		response = mistralApi
-			.chatCompletionEntity(new ChatCompletionRequest(messages, MistralAiApi.ChatModel.LARGE.getValue()));
+				.chatCompletionEntity(new ChatCompletionRequest(messages, MistralAiApi.ChatModel.LARGE.getValue()));
 
 		var responseContent = response.getBody().choices().get(0).message().content();
 		logger.info("Final response: " + responseContent);

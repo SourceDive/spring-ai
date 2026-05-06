@@ -24,6 +24,7 @@ public interface JsonMetadataGenerator {
 	/**
 	 * The input is the JSON document represented as a map, the output are the fields
 	 * extracted from the input map that will be used as metadata.
+	 *
 	 * @param jsonMap json document map
 	 * @return json metadata map
 	 */

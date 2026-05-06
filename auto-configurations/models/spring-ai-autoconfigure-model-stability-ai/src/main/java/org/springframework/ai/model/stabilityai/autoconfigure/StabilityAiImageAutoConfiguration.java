@@ -40,17 +40,17 @@ import org.springframework.web.client.RestClient;
  * @author Ilayaperumal Gopinathan
  * @since 0.8.0
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class})
 @ConditionalOnClass(StabilityAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.IMAGE_MODEL, havingValue = SpringAIModels.STABILITY_AI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ StabilityAiConnectionProperties.class, StabilityAiImageProperties.class })
+@EnableConfigurationProperties({StabilityAiConnectionProperties.class, StabilityAiImageProperties.class})
 public class StabilityAiImageAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public StabilityAiApi stabilityAiApi(StabilityAiConnectionProperties commonProperties,
-			StabilityAiImageProperties imageProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider) {
+	                                     StabilityAiImageProperties imageProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider) {
 
 		String apiKey = StringUtils.hasText(imageProperties.getApiKey()) ? imageProperties.getApiKey()
 				: commonProperties.getApiKey();
@@ -68,7 +68,7 @@ public class StabilityAiImageAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public StabilityAiImageModel stabilityAiImageModel(StabilityAiApi stabilityAiApi,
-			StabilityAiImageProperties stabilityAiImageProperties) {
+	                                                   StabilityAiImageProperties stabilityAiImageProperties) {
 		return new StabilityAiImageModel(stabilityAiApi, stabilityAiImageProperties.getOptions());
 	}
 

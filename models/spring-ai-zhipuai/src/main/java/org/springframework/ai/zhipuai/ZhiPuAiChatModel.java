@@ -131,8 +131,9 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 	/**
 	 * Creates an instance of the ZhiPuAiChatModel.
+	 *
 	 * @param zhiPuAiApi The ZhiPuAiApi instance to be used for interacting with the
-	 * ZhiPuAI Chat API.
+	 *                   ZhiPuAI Chat API.
 	 * @throws IllegalArgumentException if zhiPuAiApi is null
 	 */
 	public ZhiPuAiChatModel(ZhiPuAiApi zhiPuAiApi) {
@@ -141,9 +142,10 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 	/**
 	 * Initializes an instance of the ZhiPuAiChatModel.
+	 *
 	 * @param zhiPuAiApi The ZhiPuAiApi instance to be used for interacting with the
-	 * ZhiPuAI Chat API.
-	 * @param options The ZhiPuAiChatOptions to configure the chat model.
+	 *                   ZhiPuAI Chat API.
+	 * @param options    The ZhiPuAiChatOptions to configure the chat model.
 	 */
 	public ZhiPuAiChatModel(ZhiPuAiApi zhiPuAiApi, ZhiPuAiChatOptions options) {
 		this(zhiPuAiApi, options, RetryUtils.DEFAULT_RETRY_TEMPLATE);
@@ -151,9 +153,10 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 	/**
 	 * Initializes an instance of the ZhiPuAiChatModel.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to be used for interacting with the
-	 * ZhiPuAI Chat API.
-	 * @param options The ZhiPuAiChatOptions to configure the chat model.
+	 *
+	 * @param zhiPuAiApi    The ZhiPuAiApi instance to be used for interacting with the
+	 *                      ZhiPuAI Chat API.
+	 * @param options       The ZhiPuAiChatOptions to configure the chat model.
 	 * @param retryTemplate The retry template.
 	 */
 	public ZhiPuAiChatModel(ZhiPuAiApi zhiPuAiApi, ZhiPuAiChatOptions options, RetryTemplate retryTemplate) {
@@ -163,46 +166,49 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 	/**
 	 * Initializes an instance of the ZhiPuAiChatModel.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to be used for interacting with the
-	 * ZhiPuAI Chat API.
-	 * @param options The ZhiPuAiChatOptions to configure the chat model.
-	 * @param retryTemplate The retry template.
+	 *
+	 * @param zhiPuAiApi          The ZhiPuAiApi instance to be used for interacting with the
+	 *                            ZhiPuAI Chat API.
+	 * @param options             The ZhiPuAiChatOptions to configure the chat model.
+	 * @param retryTemplate       The retry template.
 	 * @param observationRegistry The Observation Registry.
 	 */
 	public ZhiPuAiChatModel(ZhiPuAiApi zhiPuAiApi, ZhiPuAiChatOptions options, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                        ObservationRegistry observationRegistry) {
 		this(zhiPuAiApi, options, ToolCallingManager.builder().build(), retryTemplate, observationRegistry,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
 	/**
 	 * Initializes an instance of the ZhiPuAiChatModel.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to be used for interacting with the
-	 * ZhiPuAI Chat API.
-	 * @param toolCallingManager The tool calling manager
-	 * @param options The ZhiPuAiChatOptions to configure the chat model.
-	 * @param retryTemplate The retry template.
+	 *
+	 * @param zhiPuAiApi          The ZhiPuAiApi instance to be used for interacting with the
+	 *                            ZhiPuAI Chat API.
+	 * @param toolCallingManager  The tool calling manager
+	 * @param options             The ZhiPuAiChatOptions to configure the chat model.
+	 * @param retryTemplate       The retry template.
 	 * @param observationRegistry The Observation Registry.
 	 */
 	public ZhiPuAiChatModel(ZhiPuAiApi zhiPuAiApi, ZhiPuAiChatOptions options, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	                        RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		this(zhiPuAiApi, options, toolCallingManager, retryTemplate, observationRegistry,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
 	/**
 	 * Initializes a new instance of the ZhiPuAiChatModel.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to be used for interacting with the
-	 * ZhiPuAI Chat API.
-	 * @param options The ZhiPuAiChatOptions to configure the chat model.
-	 * @param toolCallingManager The tool calling manager
-	 * @param retryTemplate The retry template.
-	 * @param observationRegistry The ObservationRegistry used for instrumentation.
+	 *
+	 * @param zhiPuAiApi                        The ZhiPuAiApi instance to be used for interacting with the
+	 *                                          ZhiPuAI Chat API.
+	 * @param options                           The ZhiPuAiChatOptions to configure the chat model.
+	 * @param toolCallingManager                The tool calling manager
+	 * @param retryTemplate                     The retry template.
+	 * @param observationRegistry               The ObservationRegistry used for instrumentation.
 	 * @param toolExecutionEligibilityPredicate The Tool execution eligibility predicate.
 	 */
 	public ZhiPuAiChatModel(ZhiPuAiApi zhiPuAiApi, ZhiPuAiChatOptions options, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	                        RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
+	                        ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 		Assert.notNull(zhiPuAiApi, "ZhiPuAiApi must not be null");
 		Assert.notNull(options, "Options must not be null");
 		Assert.notNull(retryTemplate, "RetryTemplate must not be null");
@@ -220,11 +226,11 @@ public class ZhiPuAiChatModel implements ChatModel {
 	private static Generation buildGeneration(Choice choice, Map<String, Object> metadata) {
 		List<AssistantMessage.ToolCall> toolCalls = choice.message().toolCalls() == null ? List.of()
 				: choice.message()
-					.toolCalls()
-					.stream()
-					.map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
-							toolCall.function().name(), toolCall.function().arguments()))
-					.toList();
+				  .toolCalls()
+				  .stream()
+				  .map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
+						  toolCall.function().name(), toolCall.function().arguments()))
+				  .toList();
 
 		var assistantMessage = new AssistantMessage(choice.message().content(), metadata, toolCalls);
 		String finishReason = (choice.finishReason() != null ? choice.finishReason().name() : "");
@@ -240,54 +246,53 @@ public class ZhiPuAiChatModel implements ChatModel {
 		ChatCompletionRequest request = createRequest(requestPrompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(requestPrompt)
-			.provider(ZhiPuApiConstants.PROVIDER_NAME)
-			.build();
+				.prompt(requestPrompt)
+				.provider(ZhiPuApiConstants.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ResponseEntity<ChatCompletion> completionEntity = this.retryTemplate
-					.execute(ctx -> this.zhiPuAiApi.chatCompletionEntity(request));
+					ResponseEntity<ChatCompletion> completionEntity = this.retryTemplate
+							.execute(ctx -> this.zhiPuAiApi.chatCompletionEntity(request));
 
-				var chatCompletion = completionEntity.getBody();
+					var chatCompletion = completionEntity.getBody();
 
-				if (chatCompletion == null) {
-					logger.warn("No chat completion returned for prompt: {}", prompt);
-					return new ChatResponse(List.of());
-				}
+					if (chatCompletion == null) {
+						logger.warn("No chat completion returned for prompt: {}", prompt);
+						return new ChatResponse(List.of());
+					}
 
-				List<Choice> choices = chatCompletion.choices();
+					List<Choice> choices = chatCompletion.choices();
 
-				List<Generation> generations = choices.stream().map(choice -> {
-			// @formatter:off
+					List<Generation> generations = choices.stream().map(choice -> {
+						// @formatter:off
 					Map<String, Object> metadata = Map.of(
 						"id", chatCompletion.id(),
 						"role", choice.message().role() != null ? choice.message().role().name() : "",
 						"finishReason", choice.finishReason() != null ? choice.finishReason().name() : ""
 					);
 					// @formatter:on
-					return buildGeneration(choice, metadata);
-				}).toList();
+						return buildGeneration(choice, metadata);
+					}).toList();
 
-				ChatResponse chatResponse = new ChatResponse(generations, from(completionEntity.getBody()));
+					ChatResponse chatResponse = new ChatResponse(generations, from(completionEntity.getBody()));
 
-				observationContext.setResponse(chatResponse);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
-			});
+					return chatResponse;
+				});
 		if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(requestPrompt.getOptions(), response)) {
 			var toolExecutionResult = this.toolCallingManager.executeToolCalls(requestPrompt, response);
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the client.
 				return ChatResponse.builder()
-					.from(response)
-					.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-					.build();
-			}
-			else {
+						.from(response)
+						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+						.build();
+			} else {
 				// Send the tool execution result back to the model.
 				return this.call(new Prompt(toolExecutionResult.conversationHistory(), requestPrompt.getOptions()));
 			}
@@ -309,16 +314,16 @@ public class ZhiPuAiChatModel implements ChatModel {
 			ChatCompletionRequest request = createRequest(requestPrompt, true);
 
 			Flux<ChatCompletionChunk> completionChunks = this.retryTemplate
-				.execute(ctx -> this.zhiPuAiApi.chatCompletionStream(request));
+					.execute(ctx -> this.zhiPuAiApi.chatCompletionStream(request));
 
 			// For chunked responses, only the first chunk contains the choice role.
 			// The rest of the chunks with same ID share the same role.
 			ConcurrentHashMap<String, String> roleMap = new ConcurrentHashMap<>();
 
 			final ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(requestPrompt)
-				.provider(ZhiPuApiConstants.PROVIDER_NAME)
-				.build();
+					.prompt(requestPrompt)
+					.provider(ZhiPuApiConstants.PROVIDER_NAME)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -327,11 +332,11 @@ public class ZhiPuAiChatModel implements ChatModel {
 			observation.parentObservation(contextView.getOrDefault(ObservationThreadLocalAccessor.KEY, null)).start();
 
 			Flux<ChatResponse> chatResponse = completionChunks.map(this::chunkToChatCompletion)
-				.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
-					try {
-						String id = chatCompletion2.id();
+					.switchMap(chatCompletion -> Mono.just(chatCompletion).map(chatCompletion2 -> {
+						try {
+							String id = chatCompletion2.id();
 
-				// @formatter:off
+							// @formatter:off
 						List<Generation> generations = chatCompletion2.choices().stream().map(choice -> {
 							if (choice.message().role() != null) {
 								roleMap.putIfAbsent(id, choice.message().role().name());
@@ -345,14 +350,13 @@ public class ZhiPuAiChatModel implements ChatModel {
 						}).toList();
 						// @formatter:on
 
-						return new ChatResponse(generations, from(chatCompletion2));
-					}
-					catch (Exception e) {
-						logger.error("Error processing chat completion", e);
-						return new ChatResponse(List.of());
-					}
+							return new ChatResponse(generations, from(chatCompletion2));
+						} catch (Exception e) {
+							logger.error("Error processing chat completion", e);
+							return new ChatResponse(List.of());
+						}
 
-				}));
+					}));
 
 			// @formatter:off
 			Flux<ChatResponse> flux = chatResponse.flatMap(response -> {
@@ -387,12 +391,12 @@ public class ZhiPuAiChatModel implements ChatModel {
 	private ChatResponseMetadata from(ChatCompletion result) {
 		Assert.notNull(result, "ZhiPuAI ChatCompletionResult must not be null");
 		return ChatResponseMetadata.builder()
-			.id(result.id() != null ? result.id() : "")
-			.usage(result.usage() != null ? getDefaultUsage(result.usage()) : new EmptyUsage())
-			.model(result.model() != null ? result.model() : "")
-			.keyValue("created", result.created() != null ? result.created() : 0L)
-			.keyValue("system-fingerprint", result.systemFingerprint() != null ? result.systemFingerprint() : "")
-			.build();
+				.id(result.id() != null ? result.id() : "")
+				.usage(result.usage() != null ? getDefaultUsage(result.usage()) : new EmptyUsage())
+				.model(result.model() != null ? result.model() : "")
+				.keyValue("created", result.created() != null ? result.created() : 0L)
+				.keyValue("system-fingerprint", result.systemFingerprint() != null ? result.systemFingerprint() : "")
+				.build();
 	}
 
 	private DefaultUsage getDefaultUsage(ZhiPuAiApi.Usage usage) {
@@ -401,6 +405,7 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 	/**
 	 * Convert the ChatCompletionChunk into a ChatCompletion. The Usage is set to null.
+	 *
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
@@ -432,8 +437,7 @@ public class ZhiPuAiChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
 						ZhiPuAiChatOptions.class);
-			}
-			else {
+			} else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						ZhiPuAiChatOptions.class);
 			}
@@ -455,8 +459,7 @@ public class ZhiPuAiChatModel implements ChatModel {
 					this.defaultOptions.getToolCallbacks()));
 			requestOptions.setToolContext(ToolCallingChatOptions.mergeToolContext(runtimeOptions.getToolContext(),
 					this.defaultOptions.getToolContext()));
-		}
-		else {
+		} else {
 			requestOptions.setInternalToolExecutionEnabled(this.defaultOptions.getInternalToolExecutionEnabled());
 			requestOptions.setToolNames(this.defaultOptions.getToolNames());
 			requestOptions.setToolCallbacks(this.defaultOptions.getToolCallbacks());
@@ -481,10 +484,10 @@ public class ZhiPuAiChatModel implements ChatModel {
 						List<MediaContent> contentList = new ArrayList<>(List.of(new MediaContent(message.getText())));
 
 						contentList.addAll(userMessage.getMedia()
-							.stream()
-							.map(media -> new MediaContent(new MediaContent.ImageUrl(
-									this.fromMediaData(media.getMimeType(), media.getData()))))
-							.toList());
+								.stream()
+								.map(media -> new MediaContent(new MediaContent.ImageUrl(
+										this.fromMediaData(media.getMimeType(), media.getData()))))
+								.toList());
 
 						content = contentList;
 					}
@@ -492,8 +495,7 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 				return List.of(new ChatCompletionMessage(content,
 						ChatCompletionMessage.Role.valueOf(message.getMessageType().name())));
-			}
-			else if (message.getMessageType() == MessageType.ASSISTANT) {
+			} else if (message.getMessageType() == MessageType.ASSISTANT) {
 				var assistantMessage = (AssistantMessage) message;
 				List<ToolCall> toolCalls = null;
 				if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
@@ -504,20 +506,18 @@ public class ZhiPuAiChatModel implements ChatModel {
 				}
 				return List.of(new ChatCompletionMessage(assistantMessage.getText(),
 						ChatCompletionMessage.Role.ASSISTANT, null, null, toolCalls));
-			}
-			else if (message.getMessageType() == MessageType.TOOL) {
+			} else if (message.getMessageType() == MessageType.TOOL) {
 				ToolResponseMessage toolMessage = (ToolResponseMessage) message;
 
 				toolMessage.getResponses()
-					.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
+						.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
 
 				return toolMessage.getResponses()
-					.stream()
-					.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
-							tr.id(), null))
-					.toList();
-			}
-			else {
+						.stream()
+						.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
+								tr.id(), null))
+						.toList();
+			} else {
 				throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 			}
 		}).flatMap(List::stream).toList();
@@ -529,8 +529,7 @@ public class ZhiPuAiChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions,
 						ToolCallingChatOptions.class, ZhiPuAiChatOptions.class);
-			}
-			else {
+			} else {
 				updatedRuntimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						ZhiPuAiChatOptions.class);
 			}
@@ -557,12 +556,10 @@ public class ZhiPuAiChatModel implements ChatModel {
 			// Assume the bytes are an image. So, convert the bytes to a base64 encoded
 			// following the prefix pattern.
 			return String.format("data:%s;base64,%s", mimeType.toString(), Base64.getEncoder().encodeToString(bytes));
-		}
-		else if (mediaContentData instanceof String text) {
+		} else if (mediaContentData instanceof String text) {
 			// Assume the text is a URLs or a base64 encoded image prefixed by the user.
 			return text;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(
 					"Unsupported media data type: " + mediaContentData.getClass().getSimpleName());
 		}
@@ -570,12 +567,12 @@ public class ZhiPuAiChatModel implements ChatModel {
 
 	private ChatOptions buildRequestOptions(ZhiPuAiApi.ChatCompletionRequest request) {
 		return ChatOptions.builder()
-			.model(request.model())
-			.maxTokens(request.maxTokens())
-			.stopSequences(request.stop())
-			.temperature(request.temperature())
-			.topP(request.topP())
-			.build();
+				.model(request.model())
+				.maxTokens(request.maxTokens())
+				.stopSequences(request.stop())
+				.temperature(request.temperature())
+				.topP(request.topP())
+				.build();
 	}
 
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {

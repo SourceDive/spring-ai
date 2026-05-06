@@ -67,7 +67,7 @@ class ToolBeanRegistrationAotProcessorTests {
 		DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 		beanFactory.registerBeanDefinition(beanClass.getName(), new RootBeanDefinition(beanClass));
 		return new ToolBeanRegistrationAotProcessor()
-			.processAheadOfTime(RegisteredBean.of(beanFactory, beanClass.getName()));
+				.processAheadOfTime(RegisteredBean.of(beanFactory, beanClass.getName()));
 	}
 
 	static class TestTools {

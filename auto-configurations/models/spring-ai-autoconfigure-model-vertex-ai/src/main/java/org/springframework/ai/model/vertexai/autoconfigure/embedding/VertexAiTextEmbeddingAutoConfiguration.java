@@ -42,21 +42,21 @@ import org.springframework.retry.support.RetryTemplate;
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
-@AutoConfiguration(after = { SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(VertexAiTextEmbeddingModel.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.TEXT_EMBEDDING_MODEL, havingValue = SpringAIModels.VERTEX_AI,
 		matchIfMissing = true)
 @EnableConfigurationProperties(VertexAiTextEmbeddingProperties.class)
 @ImportAutoConfiguration(
-		classes = { SpringAiRetryAutoConfiguration.class, VertexAiEmbeddingConnectionAutoConfiguration.class })
+		classes = {SpringAiRetryAutoConfiguration.class, VertexAiEmbeddingConnectionAutoConfiguration.class})
 public class VertexAiTextEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public VertexAiTextEmbeddingModel textEmbedding(VertexAiEmbeddingConnectionDetails connectionDetails,
-			VertexAiTextEmbeddingProperties textEmbeddingProperties, RetryTemplate retryTemplate,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                VertexAiTextEmbeddingProperties textEmbeddingProperties, RetryTemplate retryTemplate,
+	                                                ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var embeddingModel = new VertexAiTextEmbeddingModel(connectionDetails, textEmbeddingProperties.getOptions(),
 				retryTemplate, observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP));

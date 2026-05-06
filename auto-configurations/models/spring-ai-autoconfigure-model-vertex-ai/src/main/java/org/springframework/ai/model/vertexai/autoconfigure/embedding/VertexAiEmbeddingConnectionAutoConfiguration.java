@@ -49,8 +49,8 @@ public class VertexAiEmbeddingConnectionAutoConfiguration {
 		Assert.hasText(connectionProperties.getLocation(), "Vertex AI location must be set!");
 
 		var connectionBuilder = VertexAiEmbeddingConnectionDetails.builder()
-			.projectId(connectionProperties.getProjectId())
-			.location(connectionProperties.getLocation());
+				.projectId(connectionProperties.getProjectId())
+				.location(connectionProperties.getLocation());
 
 		if (StringUtils.hasText(connectionProperties.getApiEndpoint())) {
 			connectionBuilder.apiEndpoint(connectionProperties.getApiEndpoint());

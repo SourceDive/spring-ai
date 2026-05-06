@@ -67,15 +67,15 @@ public class OllamaChatModelObservationIT extends BaseOllamaIT {
 	@Test
 	void observationForChatOperation() {
 		var options = OllamaOptions.builder()
-			.model(MODEL)
-			.frequencyPenalty(0.0)
-			.numPredict(2048)
-			.presencePenalty(0.0)
-			.stop(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topK(1)
-			.topP(1.0)
-			.build();
+				.model(MODEL)
+				.frequencyPenalty(0.0)
+				.numPredict(2048)
+				.presencePenalty(0.0)
+				.stop(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topK(1)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -91,15 +91,15 @@ public class OllamaChatModelObservationIT extends BaseOllamaIT {
 	@Test
 	void observationForStreamingChatOperation() {
 		var options = OllamaOptions.builder()
-			.model(MODEL)
-			.frequencyPenalty(0.0)
-			.numPredict(2048)
-			.presencePenalty(0.0)
-			.stop(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topK(1)
-			.topP(1.0)
-			.build();
+				.model(MODEL)
+				.frequencyPenalty(0.0)
+				.numPredict(2048)
+				.presencePenalty(0.0)
+				.stop(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topK(1)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -110,9 +110,9 @@ public class OllamaChatModelObservationIT extends BaseOllamaIT {
 		assertThat(responses).hasSizeGreaterThan(10);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -125,33 +125,33 @@ public class OllamaChatModelObservationIT extends BaseOllamaIT {
 
 	private void validate(ChatResponseMetadata responseMetadata) {
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("chat " + MODEL)
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.OLLAMA.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(), MODEL)
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(), "0.0")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(), "0.0")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_K.asString(), "1")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.RESPONSE_ID.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(), "[\"stop\"]")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("chat " + MODEL)
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(), AiProvider.OLLAMA.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(), MODEL)
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(), "0.0")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(), "0.0")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_K.asString(), "1")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.RESPONSE_ID.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(), "[\"stop\"]")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration

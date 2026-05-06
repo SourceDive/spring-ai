@@ -43,8 +43,7 @@ final class MessageUtils {
 		Assert.notNull(charset, "charset cannot be null");
 		try (InputStream inputStream = resource.getInputStream()) {
 			return StreamUtils.copyToString(inputStream, charset);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Failed to read resource", ex);
 		}
 	}

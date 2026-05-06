@@ -71,8 +71,7 @@ public interface JdbcChatMemoryRepositoryDialect {
 				return new HsqldbChatMemoryRepositoryDialect();
 			}
 			// Add more as needed
-		}
-		catch (Exception ignored) {
+		} catch (Exception ignored) {
 		}
 		return new PostgresChatMemoryRepositoryDialect(); // default
 	}

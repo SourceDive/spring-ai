@@ -47,13 +47,13 @@ public class FunctionCallbackInPromptIT extends BaseOllamaIT {
 	private static final String MODEL_NAME = "qwen2.5:3b";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 				"spring.ai.ollama.baseUrl=" + getBaseUrl(),
 				"spring.ai.ollama.chat.options.model=" + MODEL_NAME,
 				"spring.ai.ollama.chat.options.temperature=0.5",
 				"spring.ai.ollama.chat.options.topK=10")
 				// @formatter:on
-		.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class));
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -70,12 +70,12 @@ public class FunctionCallbackInPromptIT extends BaseOllamaIT {
 					"What are the weather conditions in San Francisco, Tokyo, and Paris? Find the temperature in Celsius for each of the three locations.");
 
 			var promptOptions = OllamaOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description(
-							"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description(
+									"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
@@ -95,23 +95,23 @@ public class FunctionCallbackInPromptIT extends BaseOllamaIT {
 					"What are the weather conditions in San Francisco, Tokyo, and Paris? Find the temperature in Celsius for each of the three locations.");
 
 			var promptOptions = OllamaOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description(
-							"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description(
+									"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			Flux<ChatResponse> response = chatModel.stream(new Prompt(List.of(userMessage), promptOptions));
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).containsAnyOf("30.0", "30");

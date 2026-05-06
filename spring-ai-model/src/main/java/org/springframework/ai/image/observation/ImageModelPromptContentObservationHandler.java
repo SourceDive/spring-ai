@@ -41,8 +41,8 @@ public class ImageModelPromptContentObservationHandler implements ObservationHan
 		if (!CollectionUtils.isEmpty(context.getRequest().getInstructions())) {
 			StringJoiner promptMessagesJoiner = new StringJoiner(", ", "[", "]");
 			context.getRequest()
-				.getInstructions()
-				.forEach(message -> promptMessagesJoiner.add("\"" + message.getText() + "\""));
+					.getInstructions()
+					.forEach(message -> promptMessagesJoiner.add("\"" + message.getText() + "\""));
 
 			logger.info("Image Model Prompt Content:\n{}", promptMessagesJoiner);
 		}

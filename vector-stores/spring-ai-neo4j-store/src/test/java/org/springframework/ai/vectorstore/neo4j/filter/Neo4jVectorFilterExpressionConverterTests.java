@@ -57,8 +57,8 @@ public class Neo4jVectorFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre = "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("node.`metadata.genre` = \"drama\" AND node.`metadata.year` >= 2020");
 	}
 
@@ -82,9 +82,9 @@ public class Neo4jVectorFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country = "BG" AND city <> "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo(
 				"node.`metadata.year` >= 2020 OR node.`metadata.country` = \"BG\" AND node.`metadata.city` <> \"Sofia\"");
 	}
@@ -116,27 +116,27 @@ public class Neo4jVectorFilterExpressionConverterTests {
 	public void testDecimal() {
 		// temperature >= -15.6 AND temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("node.`metadata.temperature` >= -15.6 AND node.`metadata.temperature` <= 20.13");
+				.isEqualTo("node.`metadata.temperature` >= -15.6 AND node.`metadata.temperature` <= 20.13");
 	}
 
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("node.`metadata.country 1 2 3` = \"BG\"");
 	}
 
 	@Test
 	public void testComplexIdentifiers2() {
 		Expression expr = new FilterExpressionTextParser()
-			.parse("author in ['john', 'jill'] && 'article_type' == 'blog'");
+				.parse("author in ['john', 'jill'] && 'article_type' == 'blog'");
 		String vectorExpr = this.converter.convertExpression(expr);
 		assertThat(vectorExpr)
-			.isEqualTo("node.`metadata.author` IN [\"john\",\"jill\"] AND node.`metadata.'article_type'` = \"blog\"");
+				.isEqualTo("node.`metadata.author` IN [\"john\",\"jill\"] AND node.`metadata.'article_type'` = \"blog\"");
 	}
 
 }

@@ -68,13 +68,13 @@ public class BedrockProxyChatModelObservationIT {
 	@Test
 	void observationForChatOperation() {
 		var options = ToolCallingChatOptions.builder()
-			.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
-			.maxTokens(2048)
-			.stopSequences(List.of("this-is-the-end"))
-			.temperature(0.7)
-			// .withTopK(1)
-			.topP(1.0)
-			.build();
+				.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
+				.maxTokens(2048)
+				.stopSequences(List.of("this-is-the-end"))
+				.temperature(0.7)
+				// .withTopK(1)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -90,12 +90,12 @@ public class BedrockProxyChatModelObservationIT {
 	@Test
 	void observationForStreamingChatOperation() {
 		var options = ToolCallingChatOptions.builder()
-			.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
-			.maxTokens(2048)
-			.stopSequences(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topP(1.0)
-			.build();
+				.model("anthropic.claude-3-5-sonnet-20240620-v1:0")
+				.maxTokens(2048)
+				.stopSequences(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -106,10 +106,10 @@ public class BedrockProxyChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(3);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.filter(r -> r.getResult() != null)
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.filter(r -> r.getResult() != null)
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -122,38 +122,38 @@ public class BedrockProxyChatModelObservationIT {
 
 	private void validate(ChatResponseMetadata responseMetadata, String finishReasons) {
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("chat " + "anthropic.claude-3-5-sonnet-20240620-v1:0")
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.BEDROCK_CONVERSE.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					"anthropic.claude-3-5-sonnet-20240620-v1:0")
-			// .hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
-			// responseMetadata.getModel())
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(),
-			// "0.7")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_ID.asString(),
-			// responseMetadata.getId())
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-			// finishReasons)
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("chat " + "anthropic.claude-3-5-sonnet-20240620-v1:0")
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.BEDROCK_CONVERSE.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						"anthropic.claude-3-5-sonnet-20240620-v1:0")
+				// .hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
+				// responseMetadata.getModel())
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(),
+				// "0.7")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_ID.asString(),
+				// responseMetadata.getId())
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+				// finishReasons)
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -170,11 +170,11 @@ public class BedrockProxyChatModelObservationIT {
 			String modelId = "anthropic.claude-3-5-sonnet-20240620-v1:0";
 
 			return BedrockProxyChatModel.builder()
-				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-				.region(Region.US_EAST_1)
-				.observationRegistry(observationRegistry)
-				.defaultOptions(ToolCallingChatOptions.builder().model(modelId).build())
-				.build();
+					.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+					.region(Region.US_EAST_1)
+					.observationRegistry(observationRegistry)
+					.defaultOptions(ToolCallingChatOptions.builder().model(modelId).build())
+					.build();
 		}
 
 	}

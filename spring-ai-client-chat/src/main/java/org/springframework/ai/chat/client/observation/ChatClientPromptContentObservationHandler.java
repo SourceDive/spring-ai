@@ -50,9 +50,9 @@ public class ChatClientPromptContentObservationHandler implements ObservationHan
 
 		var messages = new HashMap<String, Object>();
 		context.getRequest()
-			.prompt()
-			.getInstructions()
-			.forEach(message -> messages.put(message.getMessageType().getValue(), message.getText()));
+				.prompt()
+				.getInstructions()
+				.forEach(message -> messages.put(message.getMessageType().getValue(), message.getText()));
 		return messages;
 	}
 

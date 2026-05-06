@@ -44,7 +44,7 @@ import static org.mockito.BDDMockito.given;
 /**
  * @author Christian Tzolov
  */
-@ExtendWith({ MockitoExtension.class, OutputCaptureExtension.class })
+@ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 @ActiveProfiles("logging-test")
 public class SimpleLoggerAdvisorTests {
 
@@ -58,7 +58,7 @@ public class SimpleLoggerAdvisorTests {
 	public void callLogging(CapturedOutput output) {
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("Your answer is ZXY")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("Your answer is ZXY")))));
 
 		var loggerAdvisor = new SimpleLoggerAdvisor();
 

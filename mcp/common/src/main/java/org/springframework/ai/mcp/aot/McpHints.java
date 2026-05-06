@@ -42,9 +42,9 @@ import org.springframework.lang.Nullable;
  * </ul>
  *
  * @author Josh Long
- * @since 1.0.0
  * @see RuntimeHintsRegistrar
  * @see McpSchema
+ * @since 1.0.0
  */
 @SuppressWarnings("unused")
 public class McpHints implements RuntimeHintsRegistrar {
@@ -58,7 +58,8 @@ public class McpHints implements RuntimeHintsRegistrar {
 	 * <li>Registers each discovered class for reflection access</li>
 	 * <li>Enables all member categories for complete reflection support</li>
 	 * </ol>
-	 * @param hints the hints instance to register hints with
+	 *
+	 * @param hints       the hints instance to register hints with
 	 * @param classLoader the classloader to use (may be null)
 	 */
 	@Override
@@ -75,6 +76,7 @@ public class McpHints implements RuntimeHintsRegistrar {
 	 * <p>
 	 * This method recursively finds all nested classes (both declared and inherited) of
 	 * the provided class and converts them to type references.
+	 *
 	 * @param clazz the class to find inner classes for
 	 * @return a set of type references for all discovered inner classes
 	 */
@@ -93,7 +95,8 @@ public class McpHints implements RuntimeHintsRegistrar {
 	 * <li>Recursively processes each nested class</li>
 	 * <li>Adds the class names to the provided set</li>
 	 * </ol>
-	 * @param clazz the class to find nested classes for
+	 *
+	 * @param clazz  the class to find nested classes for
 	 * @param indent the set to collect class names in
 	 */
 	private void findNestedClasses(Class<?> clazz, Set<String> indent) {

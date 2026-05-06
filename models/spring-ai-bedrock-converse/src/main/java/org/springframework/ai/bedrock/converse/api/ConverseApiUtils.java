@@ -68,9 +68,9 @@ import org.springframework.util.StringUtils;
 public final class ConverseApiUtils {
 
 	public static final ChatResponse EMPTY_CHAT_RESPONSE = ChatResponse.builder()
-		.generations(List.of())
-		.metadata("empty", true)
-		.build();
+			.generations(List.of())
+			.metadata("empty", true)
+			.build();
 
 	private ConverseApiUtils() {
 
@@ -92,173 +92,165 @@ public final class ConverseApiUtils {
 	}
 
 	public static Flux<ChatResponse> toChatResponse(Flux<ConverseStreamOutput> responses,
-			ChatResponse perviousChatResponse) {
+	                                                ChatResponse perviousChatResponse) {
 
 		AtomicBoolean isInsideTool = new AtomicBoolean(false);
 
 		return responses.map(event -> {
-			if (ConverseApiUtils.isToolUseStart(event)) {
-				isInsideTool.set(true);
-			}
-			return event;
-		}).windowUntil(event -> { // Group all chunks belonging to the same function call.
-			if (isInsideTool.get() && ConverseApiUtils.isToolUseFinish(event)) {
-				isInsideTool.set(false);
-				return true;
-			}
-			return !isInsideTool.get();
-		}).concatMapIterable(window -> { // Merging the window chunks into a single chunk.
-			Mono<ConverseStreamOutput> monoChunk = window.reduce(new ToolUseAggregationEvent(),
-					ConverseApiUtils::mergeToolUseEvents);
-			return List.of(monoChunk);
-		}).flatMap(mono -> mono).scanWith(() -> new Aggregation(), (lastAggregation, nextEvent) -> {
-
-			// System.out.println(nextEvent);
-			if (nextEvent instanceof ToolUseAggregationEvent toolUseAggregationEvent) {
-
-				if (CollectionUtils.isEmpty(toolUseAggregationEvent.toolUseEntries())) {
-					return new Aggregation();
-				}
-
-				List<AssistantMessage.ToolCall> toolCalls = new ArrayList<>();
-
-				Integer promptTokens = 0;
-				Integer generationTokens = 0;
-				Integer totalTokens = 0;
-
-				for (ToolUseAggregationEvent.ToolUseEntry toolUseEntry : toolUseAggregationEvent.toolUseEntries()) {
-					var functionCallId = toolUseEntry.id();
-					var functionName = toolUseEntry.name();
-					var functionArguments = toolUseEntry.input();
-					toolCalls.add(
-							new AssistantMessage.ToolCall(functionCallId, "function", functionName, functionArguments));
-
-					if (toolUseEntry.usage() != null) {
-						promptTokens += toolUseEntry.usage().getPromptTokens();
-						generationTokens += toolUseEntry.usage().getCompletionTokens();
-						totalTokens += toolUseEntry.usage().getTotalTokens();
+					if (ConverseApiUtils.isToolUseStart(event)) {
+						isInsideTool.set(true);
 					}
-				}
+					return event;
+				}).windowUntil(event -> { // Group all chunks belonging to the same function call.
+					if (isInsideTool.get() && ConverseApiUtils.isToolUseFinish(event)) {
+						isInsideTool.set(false);
+						return true;
+					}
+					return !isInsideTool.get();
+				}).concatMapIterable(window -> { // Merging the window chunks into a single chunk.
+					Mono<ConverseStreamOutput> monoChunk = window.reduce(new ToolUseAggregationEvent(),
+							ConverseApiUtils::mergeToolUseEvents);
+					return List.of(monoChunk);
+				}).flatMap(mono -> mono).scanWith(() -> new Aggregation(), (lastAggregation, nextEvent) -> {
 
-				AssistantMessage assistantMessage = new AssistantMessage("", Map.of(), toolCalls);
-				Generation toolCallGeneration = new Generation(assistantMessage,
-						ChatGenerationMetadata.builder().finishReason("tool_use").build());
+					// System.out.println(nextEvent);
+					if (nextEvent instanceof ToolUseAggregationEvent toolUseAggregationEvent) {
 
-				var chatResponseMetaData = ChatResponseMetadata.builder()
-					.usage(new DefaultUsage(promptTokens, generationTokens, totalTokens))
-					.build();
-
-				return new Aggregation(
-						MetadataAggregation.builder().copy(lastAggregation.metadataAggregation()).build(),
-						new ChatResponse(List.of(toolCallGeneration), chatResponseMetaData));
-
-			}
-			else if (nextEvent instanceof MessageStartEvent messageStartEvent) {
-				var newMeta = MetadataAggregation.builder()
-					.copy(lastAggregation.metadataAggregation())
-					.withRole(messageStartEvent.role().toString())
-					.build();
-				return new Aggregation(newMeta, ConverseApiUtils.EMPTY_CHAT_RESPONSE);
-			}
-			else if (nextEvent instanceof MessageStopEvent messageStopEvent) {
-				var newMeta = MetadataAggregation.builder()
-					.copy(lastAggregation.metadataAggregation())
-					.withStopReason(messageStopEvent.stopReasonAsString())
-					.withAdditionalModelResponseFields(messageStopEvent.additionalModelResponseFields())
-					.build();
-				return new Aggregation(newMeta, ConverseApiUtils.EMPTY_CHAT_RESPONSE);
-			}
-			else if (nextEvent instanceof ContentBlockStartEvent contentBlockStartEvent) {
-				// TODO ToolUse support
-				return new Aggregation();
-			}
-			else if (nextEvent instanceof ContentBlockDeltaEvent contentBlockDeltaEvent) {
-				if (contentBlockDeltaEvent.delta().type().equals(ContentBlockDelta.Type.TEXT)) {
-
-					var generation = new Generation(
-							new AssistantMessage(contentBlockDeltaEvent.delta().text(), Map.of()),
-							ChatGenerationMetadata.builder()
-								.finishReason(lastAggregation.metadataAggregation().stopReason())
-								.build());
-
-					return new Aggregation(
-							MetadataAggregation.builder().copy(lastAggregation.metadataAggregation()).build(),
-							new ChatResponse(List.of(generation)));
-				}
-				else if (contentBlockDeltaEvent.delta().type().equals(ContentBlockDelta.Type.TOOL_USE)) {
-					// TODO ToolUse support
-				}
-				return new Aggregation();
-			}
-			else if (nextEvent instanceof ContentBlockStopEvent contentBlockStopEvent) {
-				// TODO ToolUse support
-				return new Aggregation();
-			}
-			else if (nextEvent instanceof ConverseStreamMetadataEvent metadataEvent) {
-
-				var newMeta = MetadataAggregation.builder()
-					.copy(lastAggregation.metadataAggregation())
-					.withTokenUsage(metadataEvent.usage())
-					.withMetrics(metadataEvent.metrics())
-					.withTrace(metadataEvent.trace())
-					.build();
-
-				// TODO
-				Document modelResponseFields = lastAggregation.metadataAggregation().additionalModelResponseFields();
-				ConverseStreamMetrics metrics = metadataEvent.metrics();
-
-				DefaultUsage usage = new DefaultUsage(metadataEvent.usage().inputTokens(),
-						metadataEvent.usage().outputTokens(), metadataEvent.usage().totalTokens());
-
-				var chatResponseMetaData = ChatResponseMetadata.builder().usage(usage).build();
-
-				return new Aggregation(newMeta, new ChatResponse(List.of(), chatResponseMetaData));
-			}
-			else {
-				return new Aggregation();
-			}
-		})
-			// .skip(1)
-			.filter(aggregation -> aggregation.chatResponse() != ConverseApiUtils.EMPTY_CHAT_RESPONSE)
-			.map(aggregation -> {
-
-				var chatResponse = aggregation.chatResponse();
-
-				// Merge the previous chat response metadata with the current one.
-				if (perviousChatResponse != null && perviousChatResponse.getMetadata() != null
-						&& perviousChatResponse.getMetadata().getUsage() != null) {
-
-					var metadataBuilder = ChatResponseMetadata.builder();
-
-					Integer promptTokens = perviousChatResponse.getMetadata().getUsage().getPromptTokens();
-					Integer generationTokens = perviousChatResponse.getMetadata().getUsage().getCompletionTokens();
-					int totalTokens = perviousChatResponse.getMetadata().getUsage().getTotalTokens();
-
-					if (chatResponse.getMetadata() != null) {
-						metadataBuilder.id(chatResponse.getMetadata().getId());
-						metadataBuilder.model(chatResponse.getMetadata().getModel());
-						metadataBuilder.rateLimit(chatResponse.getMetadata().getRateLimit());
-						metadataBuilder.promptMetadata(chatResponse.getMetadata().getPromptMetadata());
-
-						if (chatResponse.getMetadata().getUsage() != null) {
-							promptTokens = promptTokens + chatResponse.getMetadata().getUsage().getPromptTokens();
-							generationTokens = generationTokens
-									+ chatResponse.getMetadata().getUsage().getCompletionTokens();
-							totalTokens = totalTokens + chatResponse.getMetadata().getUsage().getTotalTokens();
+						if (CollectionUtils.isEmpty(toolUseAggregationEvent.toolUseEntries())) {
+							return new Aggregation();
 						}
+
+						List<AssistantMessage.ToolCall> toolCalls = new ArrayList<>();
+
+						Integer promptTokens = 0;
+						Integer generationTokens = 0;
+						Integer totalTokens = 0;
+
+						for (ToolUseAggregationEvent.ToolUseEntry toolUseEntry : toolUseAggregationEvent.toolUseEntries()) {
+							var functionCallId = toolUseEntry.id();
+							var functionName = toolUseEntry.name();
+							var functionArguments = toolUseEntry.input();
+							toolCalls.add(
+									new AssistantMessage.ToolCall(functionCallId, "function", functionName, functionArguments));
+
+							if (toolUseEntry.usage() != null) {
+								promptTokens += toolUseEntry.usage().getPromptTokens();
+								generationTokens += toolUseEntry.usage().getCompletionTokens();
+								totalTokens += toolUseEntry.usage().getTotalTokens();
+							}
+						}
+
+						AssistantMessage assistantMessage = new AssistantMessage("", Map.of(), toolCalls);
+						Generation toolCallGeneration = new Generation(assistantMessage,
+								ChatGenerationMetadata.builder().finishReason("tool_use").build());
+
+						var chatResponseMetaData = ChatResponseMetadata.builder()
+								.usage(new DefaultUsage(promptTokens, generationTokens, totalTokens))
+								.build();
+
+						return new Aggregation(
+								MetadataAggregation.builder().copy(lastAggregation.metadataAggregation()).build(),
+								new ChatResponse(List.of(toolCallGeneration), chatResponseMetaData));
+
+					} else if (nextEvent instanceof MessageStartEvent messageStartEvent) {
+						var newMeta = MetadataAggregation.builder()
+								.copy(lastAggregation.metadataAggregation())
+								.withRole(messageStartEvent.role().toString())
+								.build();
+						return new Aggregation(newMeta, ConverseApiUtils.EMPTY_CHAT_RESPONSE);
+					} else if (nextEvent instanceof MessageStopEvent messageStopEvent) {
+						var newMeta = MetadataAggregation.builder()
+								.copy(lastAggregation.metadataAggregation())
+								.withStopReason(messageStopEvent.stopReasonAsString())
+								.withAdditionalModelResponseFields(messageStopEvent.additionalModelResponseFields())
+								.build();
+						return new Aggregation(newMeta, ConverseApiUtils.EMPTY_CHAT_RESPONSE);
+					} else if (nextEvent instanceof ContentBlockStartEvent contentBlockStartEvent) {
+						// TODO ToolUse support
+						return new Aggregation();
+					} else if (nextEvent instanceof ContentBlockDeltaEvent contentBlockDeltaEvent) {
+						if (contentBlockDeltaEvent.delta().type().equals(ContentBlockDelta.Type.TEXT)) {
+
+							var generation = new Generation(
+									new AssistantMessage(contentBlockDeltaEvent.delta().text(), Map.of()),
+									ChatGenerationMetadata.builder()
+											.finishReason(lastAggregation.metadataAggregation().stopReason())
+											.build());
+
+							return new Aggregation(
+									MetadataAggregation.builder().copy(lastAggregation.metadataAggregation()).build(),
+									new ChatResponse(List.of(generation)));
+						} else if (contentBlockDeltaEvent.delta().type().equals(ContentBlockDelta.Type.TOOL_USE)) {
+							// TODO ToolUse support
+						}
+						return new Aggregation();
+					} else if (nextEvent instanceof ContentBlockStopEvent contentBlockStopEvent) {
+						// TODO ToolUse support
+						return new Aggregation();
+					} else if (nextEvent instanceof ConverseStreamMetadataEvent metadataEvent) {
+
+						var newMeta = MetadataAggregation.builder()
+								.copy(lastAggregation.metadataAggregation())
+								.withTokenUsage(metadataEvent.usage())
+								.withMetrics(metadataEvent.metrics())
+								.withTrace(metadataEvent.trace())
+								.build();
+
+						// TODO
+						Document modelResponseFields = lastAggregation.metadataAggregation().additionalModelResponseFields();
+						ConverseStreamMetrics metrics = metadataEvent.metrics();
+
+						DefaultUsage usage = new DefaultUsage(metadataEvent.usage().inputTokens(),
+								metadataEvent.usage().outputTokens(), metadataEvent.usage().totalTokens());
+
+						var chatResponseMetaData = ChatResponseMetadata.builder().usage(usage).build();
+
+						return new Aggregation(newMeta, new ChatResponse(List.of(), chatResponseMetaData));
+					} else {
+						return new Aggregation();
+					}
+				})
+				// .skip(1)
+				.filter(aggregation -> aggregation.chatResponse() != ConverseApiUtils.EMPTY_CHAT_RESPONSE)
+				.map(aggregation -> {
+
+					var chatResponse = aggregation.chatResponse();
+
+					// Merge the previous chat response metadata with the current one.
+					if (perviousChatResponse != null && perviousChatResponse.getMetadata() != null
+							&& perviousChatResponse.getMetadata().getUsage() != null) {
+
+						var metadataBuilder = ChatResponseMetadata.builder();
+
+						Integer promptTokens = perviousChatResponse.getMetadata().getUsage().getPromptTokens();
+						Integer generationTokens = perviousChatResponse.getMetadata().getUsage().getCompletionTokens();
+						int totalTokens = perviousChatResponse.getMetadata().getUsage().getTotalTokens();
+
+						if (chatResponse.getMetadata() != null) {
+							metadataBuilder.id(chatResponse.getMetadata().getId());
+							metadataBuilder.model(chatResponse.getMetadata().getModel());
+							metadataBuilder.rateLimit(chatResponse.getMetadata().getRateLimit());
+							metadataBuilder.promptMetadata(chatResponse.getMetadata().getPromptMetadata());
+
+							if (chatResponse.getMetadata().getUsage() != null) {
+								promptTokens = promptTokens + chatResponse.getMetadata().getUsage().getPromptTokens();
+								generationTokens = generationTokens
+										+ chatResponse.getMetadata().getUsage().getCompletionTokens();
+								totalTokens = totalTokens + chatResponse.getMetadata().getUsage().getTotalTokens();
+							}
+						}
+
+						metadataBuilder.usage(new DefaultUsage(promptTokens, generationTokens, totalTokens));
+
+						return new ChatResponse(chatResponse.getResults(), metadataBuilder.build());
 					}
 
-					metadataBuilder.usage(new DefaultUsage(promptTokens, generationTokens, totalTokens));
-
-					return new ChatResponse(chatResponse.getResults(), metadataBuilder.build());
-				}
-
-				return aggregation.chatResponse();
-			});
+					return aggregation.chatResponse();
+				});
 	}
 
 	public static ConverseStreamOutput mergeToolUseEvents(ConverseStreamOutput previousEvent,
-			ConverseStreamOutput event) {
+	                                                      ConverseStreamOutput event) {
 
 		ToolUseAggregationEvent toolUseEventAggregator = (ToolUseAggregationEvent) previousEvent;
 
@@ -270,24 +262,20 @@ public final class ConverseApiUtils {
 				ToolUseBlockStart cbToolUse = contentBlockStart.start().toolUse();
 
 				return toolUseEventAggregator.withIndex(contentBlockStart.contentBlockIndex())
-					.withId(cbToolUse.toolUseId())
-					.withName(cbToolUse.name())
-					.appendPartialJson(""); // CB START always has empty JSON.
+						.withId(cbToolUse.toolUseId())
+						.withName(cbToolUse.name())
+						.appendPartialJson(""); // CB START always has empty JSON.
 			}
-		}
-		else if (event.sdkEventType() == EventType.CONTENT_BLOCK_DELTA) {
+		} else if (event.sdkEventType() == EventType.CONTENT_BLOCK_DELTA) {
 			ContentBlockDeltaEvent contentBlockDelta = (ContentBlockDeltaEvent) event;
 			if (ContentBlockDelta.Type.TOOL_USE == contentBlockDelta.delta().type()) {
 				return toolUseEventAggregator.appendPartialJson(contentBlockDelta.delta().toolUse().input());
 			}
-		}
-		else if (event.sdkEventType() == EventType.CONTENT_BLOCK_STOP) {
+		} else if (event.sdkEventType() == EventType.CONTENT_BLOCK_STOP) {
 			return toolUseEventAggregator;
-		}
-		else if (event.sdkEventType() == EventType.MESSAGE_STOP) {
+		} else if (event.sdkEventType() == EventType.MESSAGE_STOP) {
 			return toolUseEventAggregator;
-		}
-		else if (event.sdkEventType() == EventType.METADATA) {
+		} else if (event.sdkEventType() == EventType.METADATA) {
 			ConverseStreamMetadataEvent metadataEvent = (ConverseStreamMetadataEvent) event;
 			DefaultUsage usage = new DefaultUsage(metadataEvent.usage().inputTokens(),
 					metadataEvent.usage().outputTokens(), metadataEvent.usage().totalTokens());
@@ -304,7 +292,7 @@ public final class ConverseApiUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Document getChatOptionsAdditionalModelRequestFields(ChatOptions defaultOptions,
-			ModelOptions promptOptions) {
+	                                                                  ModelOptions promptOptions) {
 		if (defaultOptions == null && promptOptions == null) {
 			return null;
 		}
@@ -318,8 +306,7 @@ public final class ConverseApiUtils {
 		if (promptOptions != null) {
 			if (promptOptions instanceof ChatOptions runtimeOptions) {
 				attributes.putAll(ModelOptionsUtils.objectToMap(runtimeOptions));
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException(
 						"Prompt options are not of type ChatOptions:" + promptOptions.getClass().getSimpleName());
 			}
@@ -348,46 +335,35 @@ public final class ConverseApiUtils {
 	public static Document convertObjectToDocument(Object value) {
 		if (value == null) {
 			return Document.fromNull();
-		}
-		else if (value instanceof String stringValue) {
+		} else if (value instanceof String stringValue) {
 			return Document.fromString(stringValue);
-		}
-		else if (value instanceof Boolean booleanValue) {
+		} else if (value instanceof Boolean booleanValue) {
 			return Document.fromBoolean(booleanValue);
-		}
-		else if (value instanceof Integer integerValue) {
+		} else if (value instanceof Integer integerValue) {
 			return Document.fromNumber(integerValue);
-		}
-		else if (value instanceof Long longValue) {
+		} else if (value instanceof Long longValue) {
 			return Document.fromNumber(longValue);
-		}
-		else if (value instanceof Float floatValue) {
+		} else if (value instanceof Float floatValue) {
 			return Document.fromNumber(floatValue);
-		}
-		else if (value instanceof Double doubleValue) {
+		} else if (value instanceof Double doubleValue) {
 			return Document.fromNumber(doubleValue);
-		}
-		else if (value instanceof BigDecimal bigDecimalValue) {
+		} else if (value instanceof BigDecimal bigDecimalValue) {
 			return Document.fromNumber(bigDecimalValue);
-		}
-		else if (value instanceof BigInteger bigIntegerValue) {
+		} else if (value instanceof BigInteger bigIntegerValue) {
 			return Document.fromNumber(bigIntegerValue);
-		}
-		else if (value instanceof List listValue) {
+		} else if (value instanceof List listValue) {
 			return Document.fromList(listValue.stream().map(v -> convertObjectToDocument(v)).toList());
-		}
-		else if (value instanceof Map mapValue) {
+		} else if (value instanceof Map mapValue) {
 			return convertMapToDocument(mapValue);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unsupported value type:" + value.getClass().getSimpleName());
 		}
 	}
 
 	private static Document convertMapToDocument(Map<String, Object> value) {
 		Map<String, Document> attr = value.entrySet()
-			.stream()
-			.collect(Collectors.toMap(e -> e.getKey(), e -> convertObjectToDocument(e.getValue())));
+				.stream()
+				.collect(Collectors.toMap(e -> e.getKey(), e -> convertObjectToDocument(e.getValue())));
 
 		return Document.fromMap(attr);
 	}
@@ -481,7 +457,7 @@ public final class ConverseApiUtils {
 	}
 
 	public record MetadataAggregation(String role, String stopReason, Document additionalModelResponseFields,
-			TokenUsage tokenUsage, ConverseStreamMetrics metrics, ConverseStreamTrace trace) {
+	                                  TokenUsage tokenUsage, ConverseStreamMetrics metrics, ConverseStreamTrace trace) {
 
 		public static Builder builder() {
 			return new Builder();

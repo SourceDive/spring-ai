@@ -49,36 +49,36 @@ import org.springframework.context.annotation.Bean;
  * @author Ilayaperumal Gopinathan
  * @since 0.8.0
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, ToolCallingAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, ToolCallingAutoConfiguration.class})
 @ConditionalOnClass(OllamaChatModel.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.OLLAMA,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OllamaChatProperties.class, OllamaInitializationProperties.class })
-@ImportAutoConfiguration(classes = { OllamaApiAutoConfiguration.class, RestClientAutoConfiguration.class,
-		ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OllamaChatProperties.class, OllamaInitializationProperties.class})
+@ImportAutoConfiguration(classes = {OllamaApiAutoConfiguration.class, RestClientAutoConfiguration.class,
+		ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class})
 public class OllamaChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OllamaChatModel ollamaChatModel(OllamaApi ollamaApi, OllamaChatProperties properties,
-			OllamaInitializationProperties initProperties, ToolCallingManager toolCallingManager,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> ollamaToolExecutionEligibilityPredicate) {
+	                                       OllamaInitializationProperties initProperties, ToolCallingManager toolCallingManager,
+	                                       ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                       ObjectProvider<ToolExecutionEligibilityPredicate> ollamaToolExecutionEligibilityPredicate) {
 		var chatModelPullStrategy = initProperties.getChat().isInclude() ? initProperties.getPullModelStrategy()
 				: PullModelStrategy.NEVER;
 
 		var chatModel = OllamaChatModel.builder()
-			.ollamaApi(ollamaApi)
-			.defaultOptions(properties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(
-					ollamaToolExecutionEligibilityPredicate.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.modelManagementOptions(
-					new ModelManagementOptions(chatModelPullStrategy, initProperties.getChat().getAdditionalModels(),
-							initProperties.getTimeout(), initProperties.getMaxRetries()))
-			.build();
+				.ollamaApi(ollamaApi)
+				.defaultOptions(properties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(
+						ollamaToolExecutionEligibilityPredicate.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.modelManagementOptions(
+						new ModelManagementOptions(chatModelPullStrategy, initProperties.getChat().getAdditionalModels(),
+								initProperties.getTimeout(), initProperties.getMaxRetries()))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 

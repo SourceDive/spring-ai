@@ -43,11 +43,11 @@ public class PostgresMlEmbeddingProperties {
 
 	@NestedConfigurationProperty
 	private PostgresMlEmbeddingOptions options = PostgresMlEmbeddingOptions.builder()
-		.transformer(PostgresMlEmbeddingModel.DEFAULT_TRANSFORMER_MODEL)
-		.vectorType(PostgresMlEmbeddingModel.VectorType.PG_ARRAY)
-		.kwargs(Map.of())
-		.metadataMode(MetadataMode.EMBED)
-		.build();
+			.transformer(PostgresMlEmbeddingModel.DEFAULT_TRANSFORMER_MODEL)
+			.vectorType(PostgresMlEmbeddingModel.VectorType.PG_ARRAY)
+			.kwargs(Map.of())
+			.metadataMode(MetadataMode.EMBED)
+			.build();
 
 	public PostgresMlEmbeddingOptions getOptions() {
 		return this.options;

@@ -36,6 +36,7 @@ public interface ChatGenerationMetadata extends ResultMetadata {
 
 	/**
 	 * Get the {@link String reason} this choice completed for the generation.
+	 *
 	 * @return the {@link String reason} this choice completed for the generation.
 	 */
 	String getFinishReason();

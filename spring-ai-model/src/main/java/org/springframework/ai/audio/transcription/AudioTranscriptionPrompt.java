@@ -38,6 +38,7 @@ public class AudioTranscriptionPrompt implements ModelRequest<Resource> {
 	 * Construct a new AudioTranscriptionPrompt given the resource representing the audio
 	 * file. The following input file types are supported: mp3, mp4, mpeg, mpga, m4a, wav,
 	 * and webm.
+	 *
 	 * @param audioResource resource of the audio file.
 	 */
 	public AudioTranscriptionPrompt(Resource audioResource) {
@@ -48,6 +49,7 @@ public class AudioTranscriptionPrompt implements ModelRequest<Resource> {
 	 * Construct a new AudioTranscriptionPrompt given the resource representing the audio
 	 * file. The following input file types are supported: mp3, mp4, mpeg, mpga, m4a, wav,
 	 * and webm.
+	 *
 	 * @param audioResource resource of the audio file.
 	 * @param modelOptions
 	 */

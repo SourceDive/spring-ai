@@ -34,10 +34,10 @@ public class BedrockConverseProxyChatProperties {
 
 	@NestedConfigurationProperty
 	private ToolCallingChatOptions options = ToolCallingChatOptions.builder()
-		.temperature(0.7)
-		.maxTokens(300)
-		.topK(10)
-		.build();
+			.temperature(0.7)
+			.maxTokens(300)
+			.topK(10)
+			.build();
 
 	public ToolCallingChatOptions getOptions() {
 		return this.options;

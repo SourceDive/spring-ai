@@ -51,8 +51,9 @@ public class VertexToolCallingManager implements ToolCallingManager {
 
 	/**
 	 * Creates a new instance of VertexToolCallingManager.
+	 *
 	 * @param delegateToolCallingManager the underlying tool calling manager that handles
-	 * actual tool execution
+	 *                                   actual tool execution
 	 */
 	public VertexToolCallingManager(ToolCallingManager delegateToolCallingManager) {
 		Assert.notNull(delegateToolCallingManager, "Delegate tool calling manager must not be null");
@@ -63,6 +64,7 @@ public class VertexToolCallingManager implements ToolCallingManager {
 	 * Resolves tool definitions and converts their input schemas to be compatible with
 	 * Vertex AI's OpenAPI format. This includes converting JSON schemas to OpenAPI format
 	 * and ensuring proper type value casing.
+	 *
 	 * @param chatOptions the options containing tool preferences and configurations
 	 * @return a list of tool definitions with Vertex AI compatible schemas
 	 */
@@ -77,16 +79,17 @@ public class VertexToolCallingManager implements ToolCallingManager {
 			JsonSchemaGenerator.convertTypeValuesToUpperCase(openApiSchema);
 
 			return DefaultToolDefinition.builder()
-				.name(td.name())
-				.description(td.description())
-				.inputSchema(openApiSchema.toPrettyString())
-				.build();
+					.name(td.name())
+					.description(td.description())
+					.inputSchema(openApiSchema.toPrettyString())
+					.build();
 		}).toList();
 	}
 
 	/**
 	 * Executes tool calls by delegating to the underlying tool calling manager.
-	 * @param prompt the original prompt that triggered the tool calls
+	 *
+	 * @param prompt       the original prompt that triggered the tool calls
 	 * @param chatResponse the chat response containing the tool calls to execute
 	 * @return the result of executing the tool calls
 	 */

@@ -34,15 +34,15 @@ import org.springframework.util.Assert;
  * Token count based strategy implementation for {@link BatchingStrategy}. Using openai
  * max input token as the default:
  * https://platform.openai.com/docs/guides/embeddings/embedding-models.
- *
+ * <p>
  * This strategy incorporates a reserve percentage to provide a buffer for potential
  * overhead or unexpected increases in token count during processing. The actual max input
  * token count used is calculated as: actualMaxInputTokenCount =
  * originalMaxInputTokenCount * (1 - RESERVE_PERCENTAGE)
- *
+ * <p>
  * For example, with the default reserve percentage of 10% (0.1) and the default max input
  * token count of 8191, the actual max input token count used will be 7371.
- *
+ * <p>
  * The strategy batches documents based on their token counts, ensuring that each batch
  * does not exceed the calculated max input token count.
  *
@@ -78,10 +78,10 @@ public class TokenCountBatchingStrategy implements BatchingStrategy {
 	}
 
 	/**
-	 * @param encodingType {@link EncodingType}
+	 * @param encodingType       {@link EncodingType}
 	 * @param maxInputTokenCount upper limit for input tokens
-	 * @param reservePercentage the percentage of tokens to reserve from the max input
-	 * token count to create a buffer.
+	 * @param reservePercentage  the percentage of tokens to reserve from the max input
+	 *                           token count to create a buffer.
 	 */
 	public TokenCountBatchingStrategy(EncodingType encodingType, int maxInputTokenCount, double reservePercentage) {
 		this(encodingType, maxInputTokenCount, reservePercentage, Document.DEFAULT_CONTENT_FORMATTER,
@@ -89,17 +89,17 @@ public class TokenCountBatchingStrategy implements BatchingStrategy {
 	}
 
 	/**
-	 * @param encodingType The {@link EncodingType} to be used for token counting.
+	 * @param encodingType       The {@link EncodingType} to be used for token counting.
 	 * @param maxInputTokenCount The initial upper limit for input tokens.
-	 * @param reservePercentage The percentage of tokens to reserve from the max input
-	 * token count. This creates a buffer for potential token count increases during
-	 * processing.
-	 * @param contentFormatter the {@link ContentFormatter} to be used for formatting
-	 * content.
-	 * @param metadataMode The {@link MetadataMode} to be used for handling metadata.
+	 * @param reservePercentage  The percentage of tokens to reserve from the max input
+	 *                           token count. This creates a buffer for potential token count increases during
+	 *                           processing.
+	 * @param contentFormatter   the {@link ContentFormatter} to be used for formatting
+	 *                           content.
+	 * @param metadataMode       The {@link MetadataMode} to be used for handling metadata.
 	 */
 	public TokenCountBatchingStrategy(EncodingType encodingType, int maxInputTokenCount, double reservePercentage,
-			ContentFormatter contentFormatter, MetadataMode metadataMode) {
+	                                  ContentFormatter contentFormatter, MetadataMode metadataMode) {
 		Assert.notNull(encodingType, "EncodingType must not be null");
 		Assert.isTrue(maxInputTokenCount > 0, "MaxInputTokenCount must be greater than 0");
 		Assert.isTrue(reservePercentage >= 0 && reservePercentage < 1, "ReservePercentage must be in range [0, 1)");
@@ -113,16 +113,17 @@ public class TokenCountBatchingStrategy implements BatchingStrategy {
 
 	/**
 	 * Constructs a TokenCountBatchingStrategy with the specified parameters.
+	 *
 	 * @param tokenCountEstimator the TokenCountEstimator to be used for estimating token
-	 * counts.
-	 * @param maxInputTokenCount the initial upper limit for input tokens.
-	 * @param reservePercentage the percentage of tokens to reserve from the max input
-	 * token count to create a buffer.
-	 * @param contentFormatter the ContentFormatter to be used for formatting content.
-	 * @param metadataMode the MetadataMode to be used for handling metadata.
+	 *                            counts.
+	 * @param maxInputTokenCount  the initial upper limit for input tokens.
+	 * @param reservePercentage   the percentage of tokens to reserve from the max input
+	 *                            token count to create a buffer.
+	 * @param contentFormatter    the ContentFormatter to be used for formatting content.
+	 * @param metadataMode        the MetadataMode to be used for handling metadata.
 	 */
 	public TokenCountBatchingStrategy(TokenCountEstimator tokenCountEstimator, int maxInputTokenCount,
-			double reservePercentage, ContentFormatter contentFormatter, MetadataMode metadataMode) {
+	                                  double reservePercentage, ContentFormatter contentFormatter, MetadataMode metadataMode) {
 		Assert.notNull(tokenCountEstimator, "TokenCountEstimator must not be null");
 		Assert.isTrue(maxInputTokenCount > 0, "MaxInputTokenCount must be greater than 0");
 		Assert.isTrue(reservePercentage >= 0 && reservePercentage < 1, "ReservePercentage must be in range [0, 1)");
@@ -145,7 +146,7 @@ public class TokenCountBatchingStrategy implements BatchingStrategy {
 
 		for (Document document : documents) {
 			int tokenCount = this.tokenCountEstimator
-				.estimate(document.getFormattedContent(this.contentFormatter, this.metadataMode));
+					.estimate(document.getFormattedContent(this.contentFormatter, this.metadataMode));
 			if (tokenCount > this.maxInputTokenCount) {
 				throw new IllegalArgumentException(
 						"Tokens in a single document exceeds the maximum number of allowed input tokens");

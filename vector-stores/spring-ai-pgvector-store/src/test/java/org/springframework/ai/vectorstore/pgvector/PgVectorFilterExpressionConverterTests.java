@@ -55,8 +55,8 @@ public class PgVectorFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("$.genre == \"drama\" && $.year >= 2020");
 	}
 
@@ -66,16 +66,16 @@ public class PgVectorFilterExpressionConverterTests {
 		String vectorExpr = this.converter.convertExpression(
 				new Expression(IN, new Key("genre"), new Value(List.of("comedy", "documentary", "drama"))));
 		assertThat(vectorExpr)
-			.isEqualTo("($.genre == \"comedy\" || $.genre == \"documentary\" || $.genre == \"drama\")");
+				.isEqualTo("($.genre == \"comedy\" || $.genre == \"documentary\" || $.genre == \"drama\")");
 	}
 
 	@Test
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo("$.year >= 2020 || $.country == \"BG\" && $.city != \"Sofia\"");
 	}
 
@@ -87,7 +87,7 @@ public class PgVectorFilterExpressionConverterTests {
 						new Expression(EQ, new Key("country"), new Value("BG")))),
 				new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv")))));
 		assertThat(vectorExpr)
-			.isEqualTo("($.year >= 2020 || $.country == \"BG\") && !($.city == \"Sofia\" || $.city == \"Plovdiv\")");
+				.isEqualTo("($.year >= 2020 || $.country == \"BG\") && !($.city == \"Sofia\" || $.city == \"Plovdiv\")");
 	}
 
 	@Test
@@ -106,8 +106,8 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo("$.temperature >= -15.6 && $.temperature <= 20.13");
 	}
@@ -115,7 +115,7 @@ public class PgVectorFilterExpressionConverterTests {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("$.\"country 1 2 3\" == \"BG\"");
 	}
 

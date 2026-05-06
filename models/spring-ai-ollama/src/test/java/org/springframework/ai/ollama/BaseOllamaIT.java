@@ -40,7 +40,7 @@ public abstract class BaseOllamaIT {
 	// Environment variable to control whether to create a new container or use existing
 	// Ollama instance
 	private static final boolean SKIP_CONTAINER_CREATION = Boolean
-		.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
+			.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
 
 	private static OllamaContainer ollamaContainer;
 
@@ -49,6 +49,7 @@ public abstract class BaseOllamaIT {
 	/**
 	 * Initialize the Ollama container and API with the specified model. This method
 	 * should be called from @BeforeAll in subclasses.
+	 *
 	 * @param model the Ollama model to initialize (must not be null or empty)
 	 * @return configured OllamaApi instance
 	 * @throws IllegalArgumentException if model is null or empty
@@ -68,6 +69,7 @@ public abstract class BaseOllamaIT {
 
 	/**
 	 * Get the initialized OllamaApi instance.
+	 *
 	 * @return the OllamaApi instance
 	 * @throws IllegalStateException if called before initialization
 	 */
@@ -93,9 +95,9 @@ public abstract class BaseOllamaIT {
 
 	private static void ensureModelIsPresent(final OllamaApi ollamaApi, final String model) {
 		final var modelManagementOptions = ModelManagementOptions.builder()
-			.maxRetries(DEFAULT_MAX_RETRIES)
-			.timeout(DEFAULT_TIMEOUT)
-			.build();
+				.maxRetries(DEFAULT_MAX_RETRIES)
+				.timeout(DEFAULT_TIMEOUT)
+				.build();
 		final var ollamaModelManager = new OllamaModelManager(ollamaApi, modelManagementOptions);
 		ollamaModelManager.pullModel(model, PullModelStrategy.WHEN_MISSING);
 	}

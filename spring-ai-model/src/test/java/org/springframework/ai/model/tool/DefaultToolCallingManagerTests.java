@@ -59,29 +59,29 @@ class DefaultToolCallingManagerTests {
 	@Test
 	void whenObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultToolCallingManager.builder()
-			.observationRegistry(null)
-			.toolCallbackResolver(mock(ToolCallbackResolver.class))
-			.toolExecutionExceptionProcessor(mock(ToolExecutionExceptionProcessor.class))
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("observationRegistry cannot be null");
+				.observationRegistry(null)
+				.toolCallbackResolver(mock(ToolCallbackResolver.class))
+				.toolExecutionExceptionProcessor(mock(ToolExecutionExceptionProcessor.class))
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("observationRegistry cannot be null");
 	}
 
 	@Test
 	void whenToolCallbackResolverIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultToolCallingManager.builder()
-			.observationRegistry(mock(ObservationRegistry.class))
-			.toolCallbackResolver(null)
-			.toolExecutionExceptionProcessor(mock(ToolExecutionExceptionProcessor.class))
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("toolCallbackResolver cannot be null");
+				.observationRegistry(mock(ObservationRegistry.class))
+				.toolCallbackResolver(null)
+				.toolExecutionExceptionProcessor(mock(ToolExecutionExceptionProcessor.class))
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("toolCallbackResolver cannot be null");
 	}
 
 	@Test
 	void whenToolCallExceptionConverterIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultToolCallingManager.builder()
-			.observationRegistry(mock(ObservationRegistry.class))
-			.toolCallbackResolver(mock(ToolCallbackResolver.class))
-			.toolExecutionExceptionProcessor(null)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolCallExceptionConverter cannot be null");
+				.observationRegistry(mock(ObservationRegistry.class))
+				.toolCallbackResolver(mock(ToolCallbackResolver.class))
+				.toolExecutionExceptionProcessor(null)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("toolCallExceptionConverter cannot be null");
 	}
 
 	// RESOLVE TOOL DEFINITIONS
@@ -90,8 +90,8 @@ class DefaultToolCallingManagerTests {
 	void whenChatOptionsIsNullThenThrow() {
 		DefaultToolCallingManager defaultToolExecutor = DefaultToolCallingManager.builder().build();
 		assertThatThrownBy(() -> defaultToolExecutor.resolveToolDefinitions(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatOptions cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("chatOptions cannot be null");
 	}
 
 	@Test
@@ -99,11 +99,11 @@ class DefaultToolCallingManagerTests {
 		ToolCallback toolCallback = new TestToolCallback("toolA");
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(List.of(toolCallback));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		List<ToolDefinition> toolDefinitions = toolCallingManager
-			.resolveToolDefinitions(ToolCallingChatOptions.builder().toolNames("toolA").build());
+				.resolveToolDefinitions(ToolCallingChatOptions.builder().toolNames("toolA").build());
 
 		assertThat(toolDefinitions).containsExactly(toolCallback.getToolDefinition());
 	}
@@ -112,13 +112,13 @@ class DefaultToolCallingManagerTests {
 	void whenToolCallbackDoesNotExistThenThrow() {
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(List.of());
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		assertThatThrownBy(() -> toolCallingManager
-			.resolveToolDefinitions(ToolCallingChatOptions.builder().toolNames("toolB").build()))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("No ToolCallback found for tool name: toolB");
+				.resolveToolDefinitions(ToolCallingChatOptions.builder().toolNames("toolB").build()))
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("No ToolCallback found for tool name: toolB");
 	}
 
 	// EXECUTE TOOL CALLS
@@ -127,16 +127,16 @@ class DefaultToolCallingManagerTests {
 	void whenPromptIsNullThenThrow() {
 		DefaultToolCallingManager defaultToolExecutor = DefaultToolCallingManager.builder().build();
 		assertThatThrownBy(() -> defaultToolExecutor.executeToolCalls(null, mock(ChatResponse.class)))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("prompt cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("prompt cannot be null");
 	}
 
 	@Test
 	void whenChatResponseIsNullThenThrow() {
 		DefaultToolCallingManager defaultToolExecutor = DefaultToolCallingManager.builder().build();
 		assertThatThrownBy(() -> defaultToolExecutor.executeToolCalls(mock(Prompt.class), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatResponse cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("chatResponse cannot be null");
 	}
 
 	@Test
@@ -144,8 +144,8 @@ class DefaultToolCallingManagerTests {
 		DefaultToolCallingManager defaultToolExecutor = DefaultToolCallingManager.builder().build();
 		assertThatThrownBy(() -> defaultToolExecutor.executeToolCalls(mock(Prompt.class),
 				ChatResponse.builder().generations(List.of()).build()))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("No tool call requested by the chat model");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("No tool call requested by the chat model");
 	}
 
 	@Test
@@ -153,14 +153,14 @@ class DefaultToolCallingManagerTests {
 		ToolCallback toolCallback = new TestToolCallback("toolA");
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(List.of(toolCallback));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"), ToolCallingChatOptions.builder().build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolA", "toolA", "Mission accomplished!")));
@@ -175,14 +175,14 @@ class DefaultToolCallingManagerTests {
 		ToolCallback toolCallback = new TestToolCallback("toolA", true);
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(List.of(toolCallback));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"), ToolCallingChatOptions.builder().build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolA", "toolA", "Mission accomplished!")));
@@ -200,15 +200,15 @@ class DefaultToolCallingManagerTests {
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(
 				List.of(toolCallbackA, toolCallbackB));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"), ToolCallingChatOptions.builder().build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"),
-							new AssistantMessage.ToolCall("toolB", "function", "toolB", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"),
+								new AssistantMessage.ToolCall("toolB", "function", "toolB", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolA", "toolA", "Mission accomplished!"),
@@ -225,13 +225,13 @@ class DefaultToolCallingManagerTests {
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"),
 				ToolCallingChatOptions.builder()
-					.toolCallbacks(new TestToolCallback("toolA"))
-					.toolNames("toolA")
-					.build());
+						.toolCallbacks(new TestToolCallback("toolA"))
+						.toolNames("toolA")
+						.build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolA", "toolA", "Mission accomplished!")));
@@ -248,15 +248,15 @@ class DefaultToolCallingManagerTests {
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(
 				List.of(toolCallbackA, toolCallbackB));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"), ToolCallingChatOptions.builder().build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"),
-							new AssistantMessage.ToolCall("toolB", "function", "toolB", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"),
+								new AssistantMessage.ToolCall("toolB", "function", "toolB", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolA", "toolA", "Mission accomplished!"),
@@ -275,15 +275,15 @@ class DefaultToolCallingManagerTests {
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(
 				List.of(toolCallbackA, toolCallbackB));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"), ToolCallingChatOptions.builder().build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"),
-							new AssistantMessage.ToolCall("toolB", "function", "toolB", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolA", "function", "toolA", "{}"),
+								new AssistantMessage.ToolCall("toolB", "function", "toolB", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolA", "toolA", "Mission accomplished!"),
@@ -300,14 +300,14 @@ class DefaultToolCallingManagerTests {
 		ToolCallback toolCallback = new FailingToolCallback("toolC");
 		ToolCallbackResolver toolCallbackResolver = new StaticToolCallbackResolver(List.of(toolCallback));
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder()
-			.toolCallbackResolver(toolCallbackResolver)
-			.build();
+				.toolCallbackResolver(toolCallbackResolver)
+				.build();
 
 		Prompt prompt = new Prompt(new UserMessage("Hello"), ToolCallingChatOptions.builder().build());
 		ChatResponse chatResponse = ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
-					List.of(new AssistantMessage.ToolCall("toolC", "function", "toolC", "{}"))))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("", Map.of(),
+						List.of(new AssistantMessage.ToolCall("toolC", "function", "toolC", "{}"))))))
+				.build();
 
 		ToolResponseMessage expectedToolResponse = new ToolResponseMessage(
 				List.of(new ToolResponseMessage.ToolResponse("toolC", "toolC", "You failed this city!")));

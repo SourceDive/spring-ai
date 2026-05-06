@@ -47,7 +47,7 @@ public class EmbeddingResultMetadata implements ResultMetadata {
 	}
 
 	public EmbeddingResultMetadata(String documentId, ModalityType modalityType, MimeType mimeType,
-			Object documentData) {
+	                               Object documentData) {
 		Assert.notNull(modalityType, "ModalityType must not be null");
 		Assert.notNull(mimeType, "MimeType must not be null");
 
@@ -92,6 +92,7 @@ public class EmbeddingResultMetadata implements ResultMetadata {
 		/**
 		 * Infers the {@link ModalityType} of the source data used to generate the
 		 * embedding using the source data {@link MimeType}.
+		 *
 		 * @param mimeType the {@link MimeType} of the source data.
 		 * @return Returns the {@link ModalityType} of the source data used to generate
 		 * the embedding.
@@ -104,14 +105,11 @@ public class EmbeddingResultMetadata implements ResultMetadata {
 
 			if (mimeType.isCompatibleWith(IMAGE_MIME_TYPE)) {
 				return ModalityType.IMAGE;
-			}
-			else if (mimeType.isCompatibleWith(AUDIO_MIME_TYPE)) {
+			} else if (mimeType.isCompatibleWith(AUDIO_MIME_TYPE)) {
 				return ModalityType.AUDIO;
-			}
-			else if (mimeType.isCompatibleWith(VIDEO_MIME_TYPE)) {
+			} else if (mimeType.isCompatibleWith(VIDEO_MIME_TYPE)) {
 				return ModalityType.VIDEO;
-			}
-			else if (mimeType.isCompatibleWith(TEXT_MIME_TYPE)) {
+			} else if (mimeType.isCompatibleWith(TEXT_MIME_TYPE)) {
 				return ModalityType.TEXT;
 			}
 

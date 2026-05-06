@@ -54,10 +54,10 @@ public class MariaDBFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr)
-			.isEqualTo("JSON_VALUE(metadata, '$.genre') = 'drama' AND JSON_VALUE(metadata, '$.year') >=" + " 2020");
+				.isEqualTo("JSON_VALUE(metadata, '$.genre') = 'drama' AND JSON_VALUE(metadata, '$.year') >=" + " 2020");
 	}
 
 	@Test
@@ -72,12 +72,12 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr)
-			.isEqualTo("JSON_VALUE(metadata, '$.year') >= 2020 OR JSON_VALUE(metadata, '$.country') = 'BG'"
-					+ " AND JSON_VALUE(metadata, '$.city') != 'Sofia'");
+				.isEqualTo("JSON_VALUE(metadata, '$.year') >= 2020 OR JSON_VALUE(metadata, '$.country') = 'BG'"
+						+ " AND JSON_VALUE(metadata, '$.city') != 'Sofia'");
 	}
 
 	@Test
@@ -88,8 +88,8 @@ public class MariaDBFilterExpressionConverterTests {
 						new Expression(EQ, new Key("country"), new Value("BG")))),
 				new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv")))));
 		assertThat(vectorExpr)
-			.isEqualTo("(JSON_VALUE(metadata, '$.year') >= 2020 OR JSON_VALUE(metadata, '$.country') ="
-					+ " 'BG') AND JSON_VALUE(metadata, '$.city') NOT IN ('Sofia','Plovdiv')");
+				.isEqualTo("(JSON_VALUE(metadata, '$.year') >= 2020 OR JSON_VALUE(metadata, '$.country') ="
+						+ " 'BG') AND JSON_VALUE(metadata, '$.city') NOT IN ('Sofia','Plovdiv')");
 	}
 
 	@Test
@@ -101,16 +101,16 @@ public class MariaDBFilterExpressionConverterTests {
 				new Expression(IN, new Key("country"), new Value(List.of("BG", "NL", "US")))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("JSON_VALUE(metadata, '$.isOpen') = true AND JSON_VALUE(metadata, '$.year') >= 2020"
-					+ " AND JSON_VALUE(metadata, '$.country') IN ('BG','NL','US')");
+				.isEqualTo("JSON_VALUE(metadata, '$.isOpen') = true AND JSON_VALUE(metadata, '$.year') >= 2020"
+						+ " AND JSON_VALUE(metadata, '$.country') IN ('BG','NL','US')");
 	}
 
 	@Test
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(metadata, '$.temperature') >= -15.6 AND JSON_VALUE(metadata,"
 				+ " '$.temperature') <= 20.13");
@@ -119,7 +119,7 @@ public class MariaDBFilterExpressionConverterTests {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(metadata, '$.\"country 1 2 3\"') = 'BG'");
 	}
 

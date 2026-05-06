@@ -58,8 +58,7 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 		return (T t) -> {
 			try {
 				return (R) method.invoke(obj, t);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		};
@@ -141,11 +140,9 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -184,11 +181,9 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -249,13 +244,13 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 		Function<MyFunction.Req, Object> function = createFunction(myFunction, currentTemp);
 
 		String content = chatClient.prompt()
-			.user("What's the weather like in Shanghai?")
-			.toolCallbacks(FunctionToolCallback.builder("currentTemp", function)
-				.description("get current temp")
-				.inputType(MyFunction.Req.class)
-				.build())
-			.call()
-			.content();
+				.user("What's the weather like in Shanghai?")
+				.toolCallbacks(FunctionToolCallback.builder("currentTemp", function)
+						.description("get current temp")
+						.inputType(MyFunction.Req.class)
+						.build())
+				.call()
+				.content();
 
 		assertThat(content).contains("23");
 	}

@@ -44,164 +44,164 @@ public class AzureOpenAiModelConfigurationTests {
 	@Test
 	void chatModelActivation() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-			});
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=azure-openai")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=azure-openai")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isNotEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=azure-openai", "spring.ai.model.embedding=none",
-					"spring.ai.model.image=none", "spring.ai.model.audio.speech=none",
-					"spring.ai.model.audio.transcription=none", "spring.ai.model.moderation=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=azure-openai", "spring.ai.model.embedding=none",
+						"spring.ai.model.image=none", "spring.ai.model.audio.speech=none",
+						"spring.ai.model.audio.transcription=none", "spring.ai.model.moderation=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+				});
 	}
 
 	@Test
 	void embeddingModelActivation() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-			});
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding=azure-openai")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=azure-openai")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=none", "spring.ai.model.embedding=azure-openai",
-					"spring.ai.model.image=none", "spring.ai.model.audio.speech=none",
-					"spring.ai.model.audio.transcription=none", "spring.ai.model.moderation=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=none", "spring.ai.model.embedding=azure-openai",
+						"spring.ai.model.image=none", "spring.ai.model.audio.speech=none",
+						"spring.ai.model.audio.transcription=none", "spring.ai.model.moderation=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+				});
 	}
 
 	@Test
 	void imageModelActivation() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-			});
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiImageAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.image=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiImageOptionsProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.image=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiImageOptionsProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiImageAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.image=azure-openai")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiImageOptionsProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.image=azure-openai")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiImageOptionsProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(AzureOpenAiImageAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=none", "spring.ai.model.embedding=none",
-					"spring.ai.model.image=azure-openai", "spring.ai.model.audio.speech=none",
-					"spring.ai.model.audio.transcription=none", "spring.ai.model.moderation=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=none", "spring.ai.model.embedding=none",
+						"spring.ai.model.image=azure-openai", "spring.ai.model.audio.speech=none",
+						"spring.ai.model.audio.transcription=none", "spring.ai.model.moderation=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+				});
 	}
 
 	@Test
 	void audioTranscriptionModelActivation() {
 		this.contextRunner
-			.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+				});
 
 		this.contextRunner
-			.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.audio.transcription=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.audio.transcription=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isEmpty();
+				});
 
 		this.contextRunner
-			.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.audio.transcription=azure-openai")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.audio.transcription=azure-openai")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+				});
 
 		this.contextRunner
-			.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=none", "spring.ai.model.embedding=none",
-					"spring.ai.model.image=none", "spring.ai.model.audio.speech=none",
-					"spring.ai.model.audio.transcription=azure-openai", "spring.ai.model.moderation=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
-				assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(AzureOpenAiAudioTranscriptionAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.chat=none", "spring.ai.model.embedding=none",
+						"spring.ai.model.image=none", "spring.ai.model.audio.speech=none",
+						"spring.ai.model.audio.transcription=azure-openai", "spring.ai.model.moderation=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(AzureOpenAiChatModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiEmbeddingModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiImageModel.class)).isEmpty();
+					assertThat(context.getBeansOfType(AzureOpenAiAudioTranscriptionModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAIClientBuilder.class)).isNotEmpty();
+				});
 	}
 
 }

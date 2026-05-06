@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  * @since 1.0.0
  */
 public record DefaultToolExecutionResult(List<Message> conversationHistory,
-		boolean returnDirect) implements ToolExecutionResult {
+                                         boolean returnDirect) implements ToolExecutionResult {
 
 	public DefaultToolExecutionResult {
 		Assert.notNull(conversationHistory, "conversationHistory cannot be null");

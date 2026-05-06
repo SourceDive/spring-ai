@@ -87,12 +87,10 @@ public class SimpleVectorStoreFilterExpressionConverter extends AbstractFilterEx
 
 			if (context.lastIndexOf("in ") == -1) {
 				context.append(formattedList);
-			}
-			else {
+			} else {
 				appendSpELContains(formattedList, context);
 			}
-		}
-		else {
+		} else {
 			this.doSingleValue(filterValue.value(), context);
 		}
 	}
@@ -115,24 +113,20 @@ public class SimpleVectorStoreFilterExpressionConverter extends AbstractFilterEx
 			context.append("'");
 			context.append(this.dateFormat.format(date));
 			context.append("'");
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			context.append("'");
 			if (DATE_FORMAT_PATTERN.matcher(text).matches()) {
 				try {
 					Date date = this.dateFormat.parse(text);
 					context.append(this.dateFormat.format(date));
-				}
-				catch (ParseException e) {
+				} catch (ParseException e) {
 					throw new IllegalArgumentException("Invalid date type:" + text, e);
 				}
-			}
-			else {
+			} else {
 				context.append(text);
 			}
 			context.append("'");
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}

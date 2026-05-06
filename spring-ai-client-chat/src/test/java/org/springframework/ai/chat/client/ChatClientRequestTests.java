@@ -36,21 +36,21 @@ class ChatClientRequestTests {
 	@Test
 	void whenPromptIsNullThenThrow() {
 		assertThatThrownBy(() -> new ChatClientRequest(null, Map.of())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("prompt cannot be null");
+				.hasMessage("prompt cannot be null");
 
 		assertThatThrownBy(() -> ChatClientRequest.builder().prompt(null).context(Map.of()).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("prompt cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("prompt cannot be null");
 	}
 
 	@Test
 	void whenContextIsNullThenThrow() {
 		assertThatThrownBy(() -> new ChatClientRequest(new Prompt(), null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.hasMessage("context cannot be null");
 
 		assertThatThrownBy(() -> ChatClientRequest.builder().prompt(new Prompt()).context(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("context cannot be null");
 	}
 
 	@Test
@@ -58,8 +58,8 @@ class ChatClientRequestTests {
 		Map<String, Object> context = new HashMap<>();
 		context.put(null, "something");
 		assertThatThrownBy(() -> new ChatClientRequest(new Prompt(), context))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context keys cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("context keys cannot be null");
 	}
 
 	@Test

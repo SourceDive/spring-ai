@@ -72,11 +72,11 @@ public class OpenAiSpeechModelWithSpeechResponseMetadataTests {
 		prepareMock();
 
 		OpenAiAudioSpeechOptions speechOptions = OpenAiAudioSpeechOptions.builder()
-			.voice(OpenAiAudioApi.SpeechRequest.Voice.ALLOY.getValue())
-			.speed(SPEED)
-			.responseFormat(OpenAiAudioApi.SpeechRequest.AudioResponseFormat.MP3)
-			.model(OpenAiAudioApi.TtsModel.TTS_1.value)
-			.build();
+				.voice(OpenAiAudioApi.SpeechRequest.Voice.ALLOY.getValue())
+				.speed(SPEED)
+				.responseFormat(OpenAiAudioApi.SpeechRequest.AudioResponseFormat.MP3)
+				.model(OpenAiAudioApi.TtsModel.TTS_1.value)
+				.build();
 
 		SpeechPrompt speechPrompt = new SpeechPrompt("Today is a wonderful day to build something people love!",
 				speechOptions);
@@ -114,9 +114,9 @@ public class OpenAiSpeechModelWithSpeechResponseMetadataTests {
 		httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
 		this.server.expect(requestTo(StringContains.containsString("/v1/audio/speech")))
-			.andExpect(method(HttpMethod.POST))
-			.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
-			.andRespond(withSuccess("Audio bytes as string", MediaType.APPLICATION_OCTET_STREAM).headers(httpHeaders));
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
+				.andRespond(withSuccess("Audio bytes as string", MediaType.APPLICATION_OCTET_STREAM).headers(httpHeaders));
 
 	}
 

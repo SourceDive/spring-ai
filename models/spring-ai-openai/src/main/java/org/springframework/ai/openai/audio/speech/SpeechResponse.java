@@ -37,6 +37,7 @@ public class SpeechResponse implements ModelResponse<Speech> {
 
 	/**
 	 * Creates a new instance of SpeechResponse with the given speech result.
+	 *
 	 * @param speech the speech result to be set in the SpeechResponse
 	 * @see Speech
 	 */
@@ -47,9 +48,10 @@ public class SpeechResponse implements ModelResponse<Speech> {
 	/**
 	 * Creates a new instance of SpeechResponse with the given speech result and speech
 	 * response metadata.
-	 * @param speech the speech result to be set in the SpeechResponse
+	 *
+	 * @param speech                 the speech result to be set in the SpeechResponse
 	 * @param speechResponseMetadata the speech response metadata to be set in the
-	 * SpeechResponse
+	 *                               SpeechResponse
 	 * @see Speech
 	 * @see OpenAiAudioSpeechResponseMetadata
 	 */

@@ -56,11 +56,11 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 
 	static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("neo4j");
 
-	@SuppressWarnings({ "rawtypes", "resource" })
+	@SuppressWarnings({"rawtypes", "resource"})
 	@Container
 	static Neo4jContainer neo4jContainer = (Neo4jContainer) new Neo4jContainer(DEFAULT_IMAGE_NAME.withTag("5"))
-		.withoutAuthentication()
-		.withExposedPorts(7474, 7687);
+			.withoutAuthentication()
+			.withExposedPorts(7474, 7687);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
 			AutoConfigurations.of(Neo4jChatMemoryRepositoryAutoConfiguration.class, Neo4jAutoConfiguration.class));
@@ -96,11 +96,11 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 			MimeType textPlain = MimeType.valueOf("text/plain");
 			List<Media> media = List.of(
 					Media.builder()
-						.name("some media")
-						.id(UUID.randomUUID().toString())
-						.mimeType(textPlain)
-						.data("hello".getBytes(StandardCharsets.UTF_8))
-						.build(),
+							.name("some media")
+							.id(UUID.randomUUID().toString())
+							.mimeType(textPlain)
+							.data("hello".getBytes(StandardCharsets.UTF_8))
+							.build(),
 					Media.builder().data(URI.create("http://www.google.com")).mimeType(textPlain).build());
 			UserMessage userMessageWithMedia = UserMessage.builder().text("Message with media").media(media).build();
 			memory.saveAll(sessionId, List.of(userMessageWithMedia));
@@ -110,7 +110,7 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 			assertThat(messages.get(0)).isEqualTo(userMessageWithMedia);
 			assertThat(((UserMessage) messages.get(0)).getMedia()).hasSize(2);
 			assertThat(((UserMessage) messages.get(0)).getMedia()).usingRecursiveFieldByFieldElementComparator()
-				.isEqualTo(media);
+					.isEqualTo(media);
 			memory.deleteByConversationId(sessionId);
 			ToolResponseMessage toolResponseMessage = new ToolResponseMessage(
 					List.of(new ToolResponse("id", "name", "responseData"),
@@ -141,23 +141,23 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 
 		final String propertyBase = "spring.ai.chat.memory.repository.neo4j.%s=%s";
 		this.contextRunner
-			.withPropertyValues("spring.neo4j.uri=" + neo4jContainer.getBoltUrl(),
-					propertyBase.formatted("sessionlabel", sessionLabel),
-					propertyBase.formatted("toolcallLabel", toolCallLabel),
-					propertyBase.formatted("metadatalabel", metadataLabel),
-					propertyBase.formatted("messagelabel", messageLabel),
-					propertyBase.formatted("toolresponselabel", toolResponseLabel),
-					propertyBase.formatted("medialabel", mediaLabel))
-			.run(context -> {
-				Neo4jChatMemoryRepository chatMemory = context.getBean(Neo4jChatMemoryRepository.class);
-				Neo4jChatMemoryRepositoryConfig config = chatMemory.getConfig();
-				assertThat(config.getMessageLabel()).isEqualTo(messageLabel);
-				assertThat(config.getMediaLabel()).isEqualTo(mediaLabel);
-				assertThat(config.getMetadataLabel()).isEqualTo(metadataLabel);
-				assertThat(config.getSessionLabel()).isEqualTo(sessionLabel);
-				assertThat(config.getToolResponseLabel()).isEqualTo(toolResponseLabel);
-				assertThat(config.getToolCallLabel()).isEqualTo(toolCallLabel);
-			});
+				.withPropertyValues("spring.neo4j.uri=" + neo4jContainer.getBoltUrl(),
+						propertyBase.formatted("sessionlabel", sessionLabel),
+						propertyBase.formatted("toolcallLabel", toolCallLabel),
+						propertyBase.formatted("metadatalabel", metadataLabel),
+						propertyBase.formatted("messagelabel", messageLabel),
+						propertyBase.formatted("toolresponselabel", toolResponseLabel),
+						propertyBase.formatted("medialabel", mediaLabel))
+				.run(context -> {
+					Neo4jChatMemoryRepository chatMemory = context.getBean(Neo4jChatMemoryRepository.class);
+					Neo4jChatMemoryRepositoryConfig config = chatMemory.getConfig();
+					assertThat(config.getMessageLabel()).isEqualTo(messageLabel);
+					assertThat(config.getMediaLabel()).isEqualTo(mediaLabel);
+					assertThat(config.getMetadataLabel()).isEqualTo(metadataLabel);
+					assertThat(config.getSessionLabel()).isEqualTo(sessionLabel);
+					assertThat(config.getToolResponseLabel()).isEqualTo(toolResponseLabel);
+					assertThat(config.getToolCallLabel()).isEqualTo(toolCallLabel);
+				});
 	}
 
 }

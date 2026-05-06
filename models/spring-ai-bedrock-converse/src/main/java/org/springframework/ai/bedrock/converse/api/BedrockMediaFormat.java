@@ -88,11 +88,9 @@ public abstract class BedrockMediaFormat {
 	public static String getFormatAsString(MimeType mimeType) {
 		if (isSupportedDocumentFormat(mimeType)) {
 			return DOCUMENT_MAP.get(mimeType).toString();
-		}
-		else if (isSupportedImageFormat(mimeType)) {
+		} else if (isSupportedImageFormat(mimeType)) {
 			return IMAGE_MAP.get(mimeType).toString();
-		}
-		else if (isSupportedVideoFormat(mimeType)) {
+		} else if (isSupportedVideoFormat(mimeType)) {
 			return VIDEO_MAP.get(mimeType).toString();
 		}
 		throw new IllegalArgumentException("Unsupported media format: " + mimeType);

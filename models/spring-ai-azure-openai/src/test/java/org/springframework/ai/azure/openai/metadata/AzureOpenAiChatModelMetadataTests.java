@@ -86,9 +86,9 @@ class AzureOpenAiChatModelMetadataTests {
 		Generation generation = response.getResult();
 
 		assertThat(generation).isNotNull()
-			.extracting(Generation::getOutput)
-			.extracting(AssistantMessage::getText)
-			.isEqualTo("No! You will actually land with a resounding thud. This is the way!");
+				.extracting(Generation::getOutput)
+				.extracting(AssistantMessage::getText)
+				.isEqualTo("No! You will actually land with a resounding thud. This is the way!");
 
 		// assertPromptMetadata(response);
 		assertGenerationMetadata(response);
@@ -115,7 +115,7 @@ class AzureOpenAiChatModelMetadataTests {
 
 		assertThat(chatResponseMetadata).isNotNull();
 		assertThat(chatResponseMetadata.getRateLimit().getRequestsLimit())
-			.isEqualTo(new EmptyRateLimit().getRequestsLimit());
+				.isEqualTo(new EmptyRateLimit().getRequestsLimit());
 
 		Usage usage = chatResponseMetadata.getUsage();
 
@@ -173,21 +173,21 @@ class AzureOpenAiChatModelMetadataTests {
 	}
 
 	private static void assertLogprobResult(ChatTokenLogProbabilityResult actual, double expectedLogprob,
-			String expectedToken, Integer... expectedBytes) {
+	                                        String expectedToken, Integer... expectedBytes) {
 		assertThat(actual.getLogprob()).isEqualTo(expectedLogprob);
 		assertThat(actual.getBytes()).contains(expectedBytes);
 		assertThat(actual.getToken()).isEqualTo(expectedToken);
 	}
 
 	private static void assertLogprobInfo(ChatTokenLogProbabilityInfo actual, double expectedLogprob,
-			String expectedToken, Integer... expectedBytes) {
+	                                      String expectedToken, Integer... expectedBytes) {
 		assertThat(actual.getLogprob()).isEqualTo(expectedLogprob);
 		assertThat(actual.getBytes()).contains(expectedBytes);
 		assertThat(actual.getToken()).isEqualTo(expectedToken);
 	}
 
 	private void assertContentFilterResultsForPrompt(ContentFilterResultDetailsForPrompt contentFilterResultForPrompt,
-			ContentFilterSeverity selfHarmSeverity) {
+	                                                 ContentFilterSeverity selfHarmSeverity) {
 
 		assertThat(contentFilterResultForPrompt).isNotNull();
 		assertContentFilterResult(contentFilterResultForPrompt.getHate());
@@ -202,7 +202,7 @@ class AzureOpenAiChatModelMetadataTests {
 	}
 
 	private void assertContentFilterResults(ContentFilterResultsForChoice contentFilterResults,
-			ContentFilterSeverity selfHarmSeverity) {
+	                                        ContentFilterSeverity selfHarmSeverity) {
 
 		assertThat(contentFilterResults).isNotNull();
 		assertContentFilterResult(contentFilterResults.getHate());
@@ -218,7 +218,7 @@ class AzureOpenAiChatModelMetadataTests {
 	}
 
 	private void assertContentFilterResult(ContentFilterResult contentFilterResult,
-			ContentFilterSeverity expectedSeverity) {
+	                                       ContentFilterSeverity expectedSeverity) {
 
 		boolean filtered = !ContentFilterSeverity.SAFE.equals(expectedSeverity);
 
@@ -250,9 +250,9 @@ class AzureOpenAiChatModelMetadataTests {
 			String json = getJson();
 
 			ResponseEntity<?> response = ResponseEntity.status(HttpStatusCode.valueOf(200))
-				.contentType(MediaType.APPLICATION_JSON)
-				.contentLength(json.getBytes(StandardCharsets.UTF_8).length)
-				.body(getJson());
+					.contentType(MediaType.APPLICATION_JSON)
+					.contentLength(json.getBytes(StandardCharsets.UTF_8).length)
+					.body(getJson());
 
 			return response;
 		}

@@ -129,14 +129,14 @@ public class OllamaChatModel implements ChatModel {
 	private ChatModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
 	public OllamaChatModel(OllamaApi ollamaApi, OllamaOptions defaultOptions, ToolCallingManager toolCallingManager,
-			ObservationRegistry observationRegistry, ModelManagementOptions modelManagementOptions) {
+	                       ObservationRegistry observationRegistry, ModelManagementOptions modelManagementOptions) {
 		this(ollamaApi, defaultOptions, toolCallingManager, observationRegistry, modelManagementOptions,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
 	public OllamaChatModel(OllamaApi ollamaApi, OllamaOptions defaultOptions, ToolCallingManager toolCallingManager,
-			ObservationRegistry observationRegistry, ModelManagementOptions modelManagementOptions,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	                       ObservationRegistry observationRegistry, ModelManagementOptions modelManagementOptions,
+	                       ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 		Assert.notNull(ollamaApi, "ollamaApi must not be null");
 		Assert.notNull(defaultOptions, "defaultOptions must not be null");
 		Assert.notNull(toolCallingManager, "toolCallingManager must not be null");
@@ -175,7 +175,7 @@ public class OllamaChatModel implements ChatModel {
 			}
 			if (previousChatResponse.getMetadata().get(METADATA_PROMPT_EVAL_DURATION) != null) {
 				promptEvalDuration = promptEvalDuration
-					.plus(previousChatResponse.getMetadata().get(METADATA_PROMPT_EVAL_DURATION));
+						.plus(previousChatResponse.getMetadata().get(METADATA_PROMPT_EVAL_DURATION));
 			}
 			if (previousChatResponse.getMetadata().get(METADATA_LOAD_DURATION) != null) {
 				loadDuration = loadDuration.plus(previousChatResponse.getMetadata().get(METADATA_LOAD_DURATION));
@@ -193,17 +193,17 @@ public class OllamaChatModel implements ChatModel {
 		DefaultUsage aggregatedUsage = new DefaultUsage(promptTokens, generationTokens, totalTokens);
 
 		return ChatResponseMetadata.builder()
-			.usage(aggregatedUsage)
-			.model(response.model())
-			.keyValue(METADATA_CREATED_AT, response.createdAt())
-			.keyValue(METADATA_EVAL_DURATION, evalDuration)
-			.keyValue(METADATA_EVAL_COUNT, aggregatedUsage.getCompletionTokens().intValue())
-			.keyValue(METADATA_LOAD_DURATION, loadDuration)
-			.keyValue(METADATA_PROMPT_EVAL_DURATION, promptEvalDuration)
-			.keyValue(METADATA_PROMPT_EVAL_COUNT, aggregatedUsage.getPromptTokens().intValue())
-			.keyValue(METADATA_TOTAL_DURATION, totalDuration)
-			.keyValue(DONE, response.done())
-			.build();
+				.usage(aggregatedUsage)
+				.model(response.model())
+				.keyValue(METADATA_CREATED_AT, response.createdAt())
+				.keyValue(METADATA_EVAL_DURATION, evalDuration)
+				.keyValue(METADATA_EVAL_COUNT, aggregatedUsage.getCompletionTokens().intValue())
+				.keyValue(METADATA_LOAD_DURATION, loadDuration)
+				.keyValue(METADATA_PROMPT_EVAL_DURATION, promptEvalDuration)
+				.keyValue(METADATA_PROMPT_EVAL_COUNT, aggregatedUsage.getPromptTokens().intValue())
+				.keyValue(METADATA_TOTAL_DURATION, totalDuration)
+				.keyValue(DONE, response.done())
+				.build();
 	}
 
 	private static DefaultUsage getDefaultUsage(OllamaApi.ChatResponse response) {
@@ -224,54 +224,53 @@ public class OllamaChatModel implements ChatModel {
 		OllamaApi.ChatRequest request = ollamaChatRequest(prompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(OllamaApiConstants.PROVIDER_NAME)
-			.build();
+				.prompt(prompt)
+				.provider(OllamaApiConstants.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				OllamaApi.ChatResponse ollamaResponse = this.chatApi.chat(request);
+					OllamaApi.ChatResponse ollamaResponse = this.chatApi.chat(request);
 
-				List<AssistantMessage.ToolCall> toolCalls = ollamaResponse.message().toolCalls() == null ? List.of()
-						: ollamaResponse.message()
-							.toolCalls()
-							.stream()
-							.map(toolCall -> new AssistantMessage.ToolCall("", "function", toolCall.function().name(),
-									ModelOptionsUtils.toJsonString(toolCall.function().arguments())))
-							.toList();
+					List<AssistantMessage.ToolCall> toolCalls = ollamaResponse.message().toolCalls() == null ? List.of()
+							: ollamaResponse.message()
+							  .toolCalls()
+							  .stream()
+							  .map(toolCall -> new AssistantMessage.ToolCall("", "function", toolCall.function().name(),
+									  ModelOptionsUtils.toJsonString(toolCall.function().arguments())))
+							  .toList();
 
-				var assistantMessage = new AssistantMessage(ollamaResponse.message().content(), Map.of(), toolCalls);
+					var assistantMessage = new AssistantMessage(ollamaResponse.message().content(), Map.of(), toolCalls);
 
-				ChatGenerationMetadata generationMetadata = ChatGenerationMetadata.NULL;
-				if (ollamaResponse.promptEvalCount() != null && ollamaResponse.evalCount() != null) {
-					generationMetadata = ChatGenerationMetadata.builder()
-						.finishReason(ollamaResponse.doneReason())
-						.build();
-				}
+					ChatGenerationMetadata generationMetadata = ChatGenerationMetadata.NULL;
+					if (ollamaResponse.promptEvalCount() != null && ollamaResponse.evalCount() != null) {
+						generationMetadata = ChatGenerationMetadata.builder()
+								.finishReason(ollamaResponse.doneReason())
+								.build();
+					}
 
-				var generator = new Generation(assistantMessage, generationMetadata);
-				ChatResponse chatResponse = new ChatResponse(List.of(generator),
-						from(ollamaResponse, previousChatResponse));
+					var generator = new Generation(assistantMessage, generationMetadata);
+					ChatResponse chatResponse = new ChatResponse(List.of(generator),
+							from(ollamaResponse, previousChatResponse));
 
-				observationContext.setResponse(chatResponse);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
+					return chatResponse;
 
-			});
+				});
 
 		if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(prompt.getOptions(), response)) {
 			var toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, response);
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the client.
 				return ChatResponse.builder()
-					.from(response)
-					.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-					.build();
-			}
-			else {
+						.from(response)
+						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+						.build();
+			} else {
 				// Send the tool execution result back to the model.
 				return this.internalCall(new Prompt(toolExecutionResult.conversationHistory(), prompt.getOptions()),
 						response);
@@ -294,9 +293,9 @@ public class OllamaChatModel implements ChatModel {
 			OllamaApi.ChatRequest request = ollamaChatRequest(prompt, true);
 
 			final ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(OllamaApiConstants.PROVIDER_NAME)
-				.build();
+					.prompt(prompt)
+					.provider(OllamaApiConstants.PROVIDER_NAME)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -314,11 +313,11 @@ public class OllamaChatModel implements ChatModel {
 				// Added null checks to prevent NPE when accessing tool calls
 				if (chunk.message() != null && chunk.message().toolCalls() != null) {
 					toolCalls = chunk.message()
-						.toolCalls()
-						.stream()
-						.map(toolCall -> new AssistantMessage.ToolCall("", "function", toolCall.function().name(),
-								ModelOptionsUtils.toJsonString(toolCall.function().arguments())))
-						.toList();
+							.toolCalls()
+							.stream()
+							.map(toolCall -> new AssistantMessage.ToolCall("", "function", toolCall.function().name(),
+									ModelOptionsUtils.toJsonString(toolCall.function().arguments())))
+							.toList();
 				}
 
 				var assistantMessage = new AssistantMessage(content, Map.of(), toolCalls);
@@ -374,8 +373,7 @@ public class OllamaChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
 						OllamaOptions.class);
-			}
-			else {
+			} else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						OllamaOptions.class);
 			}
@@ -396,8 +394,7 @@ public class OllamaChatModel implements ChatModel {
 					this.defaultOptions.getToolCallbacks()));
 			requestOptions.setToolContext(ToolCallingChatOptions.mergeToolContext(runtimeOptions.getToolContext(),
 					this.defaultOptions.getToolContext()));
-		}
-		else {
+		} else {
 			requestOptions.setInternalToolExecutionEnabled(this.defaultOptions.getInternalToolExecutionEnabled());
 			requestOptions.setToolNames(this.defaultOptions.getToolNames());
 			requestOptions.setToolCallbacks(this.defaultOptions.getToolCallbacks());
@@ -427,11 +424,9 @@ public class OllamaChatModel implements ChatModel {
 							userMessage.getMedia().stream().map(media -> this.fromMediaData(media.getData())).toList());
 				}
 				return List.of(messageBuilder.build());
-			}
-			else if (message instanceof SystemMessage systemMessage) {
+			} else if (message instanceof SystemMessage systemMessage) {
 				return List.of(OllamaApi.Message.builder(Role.SYSTEM).content(systemMessage.getText()).build());
-			}
-			else if (message instanceof AssistantMessage assistantMessage) {
+			} else if (message instanceof AssistantMessage assistantMessage) {
 				List<ToolCall> toolCalls = null;
 				if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
 					toolCalls = assistantMessage.getToolCalls().stream().map(toolCall -> {
@@ -442,15 +437,14 @@ public class OllamaChatModel implements ChatModel {
 					}).toList();
 				}
 				return List.of(OllamaApi.Message.builder(Role.ASSISTANT)
-					.content(assistantMessage.getText())
-					.toolCalls(toolCalls)
-					.build());
-			}
-			else if (message instanceof ToolResponseMessage toolMessage) {
+						.content(assistantMessage.getText())
+						.toolCalls(toolCalls)
+						.build());
+			} else if (message instanceof ToolResponseMessage toolMessage) {
 				return toolMessage.getResponses()
-					.stream()
-					.map(tr -> OllamaApi.Message.builder(Role.TOOL).content(tr.responseData()).build())
-					.toList();
+						.stream()
+						.map(tr -> OllamaApi.Message.builder(Role.TOOL).content(tr.responseData()).build())
+						.toList();
 			}
 			throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 		}).flatMap(List::stream).toList();
@@ -458,9 +452,9 @@ public class OllamaChatModel implements ChatModel {
 		OllamaOptions requestOptions = (OllamaOptions) prompt.getOptions();
 
 		OllamaApi.ChatRequest.Builder requestBuilder = OllamaApi.ChatRequest.builder(requestOptions.getModel())
-			.stream(stream)
-			.messages(ollamaMessages)
-			.options(requestOptions);
+				.stream(stream)
+				.messages(ollamaMessages)
+				.options(requestOptions);
 
 		if (requestOptions.getFormat() != null) {
 			requestBuilder.format(requestOptions.getFormat());
@@ -481,11 +475,9 @@ public class OllamaChatModel implements ChatModel {
 	private String fromMediaData(Object mediaData) {
 		if (mediaData instanceof byte[] bytes) {
 			return Base64.getEncoder().encodeToString(bytes);
-		}
-		else if (mediaData instanceof String text) {
+		} else if (mediaData instanceof String text) {
 			return text;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unsupported media data type: " + mediaData.getClass().getSimpleName());
 		}
 
@@ -515,6 +507,7 @@ public class OllamaChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {

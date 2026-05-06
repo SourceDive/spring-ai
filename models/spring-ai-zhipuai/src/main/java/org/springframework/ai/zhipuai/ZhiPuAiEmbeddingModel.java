@@ -78,6 +78,7 @@ public class ZhiPuAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Constructor for the ZhiPuAiEmbeddingModel class.
+	 *
 	 * @param zhiPuAiApi The ZhiPuAiApi instance to use for making API requests.
 	 */
 	public ZhiPuAiEmbeddingModel(ZhiPuAiApi zhiPuAiApi) {
@@ -86,7 +87,8 @@ public class ZhiPuAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Initializes a new instance of the ZhiPuAiEmbeddingModel class.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to use for making API requests.
+	 *
+	 * @param zhiPuAiApi   The ZhiPuAiApi instance to use for making API requests.
 	 * @param metadataMode The mode for generating metadata.
 	 */
 	public ZhiPuAiEmbeddingModel(ZhiPuAiApi zhiPuAiApi, MetadataMode metadataMode) {
@@ -97,37 +99,40 @@ public class ZhiPuAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Initializes a new instance of the ZhiPuAiEmbeddingModel class.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to use for making API requests.
-	 * @param metadataMode The mode for generating metadata.
+	 *
+	 * @param zhiPuAiApi              The ZhiPuAiApi instance to use for making API requests.
+	 * @param metadataMode            The mode for generating metadata.
 	 * @param zhiPuAiEmbeddingOptions The options for ZhiPuAI embedding.
 	 */
 	public ZhiPuAiEmbeddingModel(ZhiPuAiApi zhiPuAiApi, MetadataMode metadataMode,
-			ZhiPuAiEmbeddingOptions zhiPuAiEmbeddingOptions) {
+	                             ZhiPuAiEmbeddingOptions zhiPuAiEmbeddingOptions) {
 		this(zhiPuAiApi, metadataMode, zhiPuAiEmbeddingOptions, RetryUtils.DEFAULT_RETRY_TEMPLATE);
 	}
 
 	/**
 	 * Initializes a new instance of the ZhiPuAiEmbeddingModel class.
-	 * @param zhiPuAiApi The ZhiPuAiApi instance to use for making API requests.
-	 * @param metadataMode The mode for generating metadata.
+	 *
+	 * @param zhiPuAiApi              The ZhiPuAiApi instance to use for making API requests.
+	 * @param metadataMode            The mode for generating metadata.
 	 * @param zhiPuAiEmbeddingOptions The options for ZhiPuAI embedding.
-	 * @param retryTemplate - The RetryTemplate for retrying failed API requests.
+	 * @param retryTemplate           - The RetryTemplate for retrying failed API requests.
 	 */
 	public ZhiPuAiEmbeddingModel(ZhiPuAiApi zhiPuAiApi, MetadataMode metadataMode,
-			ZhiPuAiEmbeddingOptions zhiPuAiEmbeddingOptions, RetryTemplate retryTemplate) {
+	                             ZhiPuAiEmbeddingOptions zhiPuAiEmbeddingOptions, RetryTemplate retryTemplate) {
 		this(zhiPuAiApi, metadataMode, zhiPuAiEmbeddingOptions, retryTemplate, ObservationRegistry.NOOP);
 	}
 
 	/**
 	 * Initializes a new instance of the ZhiPuAiEmbeddingModel class.
-	 * @param zhiPuAiApi - The ZhiPuAiApi instance to use for making API requests.
-	 * @param metadataMode - The mode for generating metadata.
-	 * @param options - The options for ZhiPuAI embedding.
-	 * @param retryTemplate - The RetryTemplate for retrying failed API requests.
+	 *
+	 * @param zhiPuAiApi          - The ZhiPuAiApi instance to use for making API requests.
+	 * @param metadataMode        - The mode for generating metadata.
+	 * @param options             - The options for ZhiPuAI embedding.
+	 * @param retryTemplate       - The RetryTemplate for retrying failed API requests.
 	 * @param observationRegistry - The ObservationRegistry used for instrumentation.
 	 */
 	public ZhiPuAiEmbeddingModel(ZhiPuAiApi zhiPuAiApi, MetadataMode metadataMode, ZhiPuAiEmbeddingOptions options,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	                             RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		Assert.notNull(zhiPuAiApi, "ZhiPuAiApi must not be null");
 		Assert.notNull(metadataMode, "metadataMode must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -158,53 +163,52 @@ public class ZhiPuAiEmbeddingModel extends AbstractEmbeddingModel {
 		EmbeddingRequest embeddingRequest = buildEmbeddingRequest(request);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(ZhiPuApiConstants.PROVIDER_NAME)
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider(ZhiPuApiConstants.PROVIDER_NAME)
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				List<float[]> embeddingList = new ArrayList<>();
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					List<float[]> embeddingList = new ArrayList<>();
 
-				var totalUsage = new ZhiPuAiApi.Usage(0, 0, 0);
+					var totalUsage = new ZhiPuAiApi.Usage(0, 0, 0);
 
-				for (String inputContent : request.getInstructions()) {
-					var apiRequest = createEmbeddingRequest(inputContent, embeddingRequest.getOptions());
+					for (String inputContent : request.getInstructions()) {
+						var apiRequest = createEmbeddingRequest(inputContent, embeddingRequest.getOptions());
 
-					ZhiPuAiApi.EmbeddingList<ZhiPuAiApi.Embedding> response = this.retryTemplate
-						.execute(ctx -> this.zhiPuAiApi.embeddings(apiRequest).getBody());
-					if (response == null || response.data() == null || response.data().isEmpty()) {
-						logger.warn("No embeddings returned for input: {}", inputContent);
-						embeddingList.add(new float[0]);
+						ZhiPuAiApi.EmbeddingList<ZhiPuAiApi.Embedding> response = this.retryTemplate
+								.execute(ctx -> this.zhiPuAiApi.embeddings(apiRequest).getBody());
+						if (response == null || response.data() == null || response.data().isEmpty()) {
+							logger.warn("No embeddings returned for input: {}", inputContent);
+							embeddingList.add(new float[0]);
+						} else {
+							int completionTokens = totalUsage.completionTokens() + response.usage().completionTokens();
+							int promptTokens = totalUsage.promptTokens() + response.usage().promptTokens();
+							int totalTokens = totalUsage.totalTokens() + response.usage().totalTokens();
+							totalUsage = new ZhiPuAiApi.Usage(completionTokens, promptTokens, totalTokens);
+							embeddingList.add(response.data().get(0).embedding());
+						}
 					}
-					else {
-						int completionTokens = totalUsage.completionTokens() + response.usage().completionTokens();
-						int promptTokens = totalUsage.promptTokens() + response.usage().promptTokens();
-						int totalTokens = totalUsage.totalTokens() + response.usage().totalTokens();
-						totalUsage = new ZhiPuAiApi.Usage(completionTokens, promptTokens, totalTokens);
-						embeddingList.add(response.data().get(0).embedding());
-					}
-				}
 
-				String model = (request.getOptions() != null && request.getOptions().getModel() != null)
-						? request.getOptions().getModel() : "unknown";
+					String model = (request.getOptions() != null && request.getOptions().getModel() != null)
+							? request.getOptions().getModel() : "unknown";
 
-				var metadata = new EmbeddingResponseMetadata(model, getDefaultUsage(totalUsage));
+					var metadata = new EmbeddingResponseMetadata(model, getDefaultUsage(totalUsage));
 
-				var indexCounter = new AtomicInteger(0);
+					var indexCounter = new AtomicInteger(0);
 
-				List<Embedding> embeddings = embeddingList.stream()
-					.map(e -> new Embedding(e, indexCounter.getAndIncrement()))
-					.toList();
+					List<Embedding> embeddings = embeddingList.stream()
+							.map(e -> new Embedding(e, indexCounter.getAndIncrement()))
+							.toList();
 
-				EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, metadata);
+					EmbeddingResponse embeddingResponse = new EmbeddingResponse(embeddings, metadata);
 
-				observationContext.setResponse(embeddingResponse);
+					observationContext.setResponse(embeddingResponse);
 
-				return embeddingResponse;
-			});
+					return embeddingResponse;
+				});
 	}
 
 	private DefaultUsage getDefaultUsage(ZhiPuAiApi.Usage usage) {

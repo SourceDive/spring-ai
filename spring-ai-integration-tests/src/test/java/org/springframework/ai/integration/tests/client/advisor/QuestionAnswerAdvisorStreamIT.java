@@ -83,12 +83,12 @@ public class QuestionAnswerAdvisorStreamIT {
 		// Test streaming with the QuestionAnswerAdvisor
 		// This verifies the fix works in the streaming context too
 		Flux<String> responseFlux = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(qaAdvisor)
-			.options(OpenAiChatOptions.builder().streamUsage(true).build())
-			.stream()
-			.content();
+				.build()
+				.prompt(question)
+				.advisors(qaAdvisor)
+				.options(OpenAiChatOptions.builder().streamUsage(true).build())
+				.stream()
+				.content();
 
 		// Collect the streamed responses
 		String response = responseFlux.collectList().block().stream().collect(Collectors.joining());

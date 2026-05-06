@@ -40,10 +40,10 @@ public class VertexAiGeminiChatProperties {
 	 */
 	@NestedConfigurationProperty
 	private VertexAiGeminiChatOptions options = VertexAiGeminiChatOptions.builder()
-		.temperature(0.7)
-		.candidateCount(1)
-		.model(DEFAULT_MODEL)
-		.build();
+			.temperature(0.7)
+			.candidateCount(1)
+			.model(DEFAULT_MODEL)
+			.build();
 
 	public VertexAiGeminiChatOptions getOptions() {
 		return this.options;

@@ -66,9 +66,9 @@ public class PgVectorStoreTests {
 			"'customvectorstore\u0000', false", // Null byte included
 			"'customvectorstore\n', false", // Newline character
 			"12345678901234567890123456789012345678901234567890123456789012345, false" // More
-	// than
-	// 64
-	// characters
+			// than
+			// 64
+			// characters
 	})
 	void isValidTable(String tableName, Boolean expected) {
 		assertThat(PgVectorSchemaValidator.isValidNameForDatabaseObject(tableName)).isEqualTo(expected);
@@ -94,14 +94,14 @@ public class PgVectorStoreTests {
 		verify(jdbcTemplate, times(10)).batchUpdate(anyString(), batchUpdateCaptor.capture());
 
 		assertThat(batchUpdateCaptor.getAllValues()).hasSize(10)
-			.allSatisfy(BatchPreparedStatementSetter::getBatchSize)
-			.satisfies(batches -> {
-				for (int i = 0; i < 9; i++) {
-					assertThat(batches.get(i).getBatchSize()).as("Batch at index %d should have size 10", i)
-						.isEqualTo(1000);
-				}
-				assertThat(batches.get(9).getBatchSize()).as("Last batch should have size 989").isEqualTo(989);
-			});
+				.allSatisfy(BatchPreparedStatementSetter::getBatchSize)
+				.satisfies(batches -> {
+					for (int i = 0; i < 9; i++) {
+						assertThat(batches.get(i).getBatchSize()).as("Batch at index %d should have size 10", i)
+								.isEqualTo(1000);
+					}
+					assertThat(batches.get(9).getBatchSize()).as("Last batch should have size 989").isEqualTo(989);
+				});
 	}
 
 }

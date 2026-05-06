@@ -41,7 +41,7 @@ public class ChatClientMessageAggregator {
 	private static final Logger logger = LoggerFactory.getLogger(ChatClientMessageAggregator.class);
 
 	public Flux<ChatClientResponse> aggregateChatClientResponse(Flux<ChatClientResponse> chatClientResponses,
-			Consumer<ChatClientResponse> aggregationHandler) {
+	                                                            Consumer<ChatClientResponse> aggregationHandler) {
 
 		AtomicReference<Map<String, Object>> context = new AtomicReference<>(new HashMap<>());
 
@@ -50,9 +50,9 @@ public class ChatClientMessageAggregator {
 			return chatClientResponse.chatResponse();
 		}), aggregatedChatResponse -> {
 			ChatClientResponse aggregatedChatClientResponse = ChatClientResponse.builder()
-				.chatResponse(aggregatedChatResponse)
-				.context(context.get())
-				.build();
+					.chatResponse(aggregatedChatResponse)
+					.context(context.get())
+					.build();
 			aggregationHandler.accept(aggregatedChatClientResponse);
 		}).map(chatResponse -> ChatClientResponse.builder().chatResponse(chatResponse).context(context.get()).build());
 	}

@@ -69,13 +69,13 @@ public class QdrantVectorStoreCloudAutoConfigurationIT {
 	private static final int CLOUD_GRPC_PORT = 6334;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(QdrantVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.qdrant.port=" + CLOUD_GRPC_PORT,
-				"spring.ai.vectorstore.qdrant.host=" + CLOUD_HOST,
-				"spring.ai.vectorstore.qdrant.api-key=" + CLOUD_API_KEY,
-				"spring.ai.vectorstore.qdrant.collection-name=" + COLLECTION_NAME,
-				"spring.ai.vectorstore.qdrant.initializeSchema=true", "spring.ai.vectorstore.qdrant.use-tls=true");
+			.withConfiguration(AutoConfigurations.of(QdrantVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.qdrant.port=" + CLOUD_GRPC_PORT,
+					"spring.ai.vectorstore.qdrant.host=" + CLOUD_HOST,
+					"spring.ai.vectorstore.qdrant.api-key=" + CLOUD_API_KEY,
+					"spring.ai.vectorstore.qdrant.collection-name=" + COLLECTION_NAME,
+					"spring.ai.vectorstore.qdrant.initializeSchema=true", "spring.ai.vectorstore.qdrant.use-tls=true");
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -94,9 +94,9 @@ public class QdrantVectorStoreCloudAutoConfigurationIT {
 			}
 
 			var vectorParams = VectorParams.newBuilder()
-				.setDistance(Distance.Cosine)
-				.setSize(EMBEDDING_DIMENSION)
-				.build();
+					.setDistance(Distance.Cosine)
+					.setSize(EMBEDDING_DIMENSION)
+					.build();
 
 			client.createCollectionAsync(COLLECTION_NAME, vectorParams).get();
 		}
@@ -106,8 +106,7 @@ public class QdrantVectorStoreCloudAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -121,7 +120,7 @@ public class QdrantVectorStoreCloudAutoConfigurationIT {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);

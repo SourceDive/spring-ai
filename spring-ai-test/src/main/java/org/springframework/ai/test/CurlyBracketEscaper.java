@@ -30,6 +30,7 @@ public final class CurlyBracketEscaper {
 
 	/**
 	 * Escapes all curly brackets in the input string by adding a backslash before them
+	 *
 	 * @param input The string containing curly brackets to escape
 	 * @return The string with escaped curly brackets
 	 */
@@ -42,6 +43,7 @@ public final class CurlyBracketEscaper {
 
 	/**
 	 * Unescapes previously escaped curly brackets by removing the backslashes
+	 *
 	 * @param input The string containing escaped curly brackets
 	 * @return The string with unescaped curly brackets
 	 */

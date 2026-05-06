@@ -61,30 +61,30 @@ class DeepSeekChatModelFunctionCallingIT {
 
 	private static final DeepSeekApi.FunctionTool FUNCTION_TOOL = new DeepSeekApi.FunctionTool(
 			DeepSeekApi.FunctionTool.Type.FUNCTION, new DeepSeekApi.FunctionTool.Function(
-					"Get the weather in location. Return temperature in 30°F or 30°C format.", "getCurrentWeather", """
-							{
-								"type": "object",
-								"properties": {
-									"location": {
-										"type": "string",
-										"description": "The city and state e.g. San Francisco, CA"
-									},
-									"lat": {
-										"type": "number",
-										"description": "The city latitude"
-									},
-									"lon": {
-										"type": "number",
-										"description": "The city longitude"
-									},
-									"unit": {
-										"type": "string",
-										"enum": ["C", "F"]
-									}
-								},
-								"required": ["location", "lat", "lon", "unit"]
-							}
-							"""));
+			"Get the weather in location. Return temperature in 30°F or 30°C format.", "getCurrentWeather", """
+			{
+				"type": "object",
+				"properties": {
+					"location": {
+						"type": "string",
+						"description": "The city and state e.g. San Francisco, CA"
+					},
+					"lat": {
+						"type": "number",
+						"description": "The city latitude"
+					},
+					"lon": {
+						"type": "number",
+						"description": "The city longitude"
+					},
+					"unit": {
+						"type": "string",
+						"enum": ["C", "F"]
+					}
+				},
+				"required": ["location", "lat", "lon", "unit"]
+			}
+			"""));
 
 	@Test
 	void functionCallTest() {
@@ -95,12 +95,12 @@ class DeepSeekChatModelFunctionCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = DeepSeekChatOptions.builder()
-			.model(DeepSeekApi.ChatModel.DEEPSEEK_CHAT.getValue())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(DeepSeekApi.ChatModel.DEEPSEEK_CHAT.getValue())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -118,23 +118,23 @@ class DeepSeekChatModelFunctionCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = DeepSeekChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(Objects::nonNull)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).contains("30", "10", "15");
@@ -143,13 +143,13 @@ class DeepSeekChatModelFunctionCallingIT {
 	@Test
 	public void toolFunctionCallWithUsage() {
 		var promptOptions = DeepSeekChatOptions.builder()
-			.model(DeepSeekApi.ChatModel.DEEPSEEK_CHAT.getValue())
-			.tools(Arrays.asList(FUNCTION_TOOL))
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(DeepSeekApi.ChatModel.DEEPSEEK_CHAT.getValue())
+				.tools(Arrays.asList(FUNCTION_TOOL))
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 		Prompt prompt = new Prompt("What's the weather like in San Francisco? Return the temperature in Celsius.",
 				promptOptions);
 
@@ -167,13 +167,13 @@ class DeepSeekChatModelFunctionCallingIT {
 	@Test
 	public void testStreamFunctionCallUsage() {
 		var promptOptions = DeepSeekChatOptions.builder()
-			.model(DeepSeekApi.ChatModel.DEEPSEEK_CHAT.getValue())
-			.tools(Arrays.asList(FUNCTION_TOOL))
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(DeepSeekApi.ChatModel.DEEPSEEK_CHAT.getValue())
+				.tools(Arrays.asList(FUNCTION_TOOL))
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 		Prompt prompt = new Prompt("What's the weather like in San Francisco? Return the temperature in Celsius.",
 				promptOptions);
 

@@ -52,30 +52,30 @@ public class AzureChatCompletionsOptionsTests {
 		OpenAIClientBuilder mockClient = Mockito.mock(OpenAIClientBuilder.class);
 
 		AzureChatEnhancementConfiguration mockAzureChatEnhancementConfiguration = Mockito
-			.mock(AzureChatEnhancementConfiguration.class);
+				.mock(AzureChatEnhancementConfiguration.class);
 
 		var defaultOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName("DEFAULT_MODEL")
-			.temperature(66.6)
-			.frequencyPenalty(696.9)
-			.presencePenalty(969.6)
-			.logitBias(Map.of("foo", 1))
-			.maxTokens(969)
-			.N(69)
-			.stop(List.of("foo", "bar"))
-			.topP(0.69)
-			.user("user")
-			.seed(123L)
-			.logprobs(true)
-			.topLogprobs(5)
-			.enhancements(mockAzureChatEnhancementConfiguration)
-			.responseFormat(AzureOpenAiResponseFormat.builder().type(Type.TEXT).build())
-			.build();
+				.deploymentName("DEFAULT_MODEL")
+				.temperature(66.6)
+				.frequencyPenalty(696.9)
+				.presencePenalty(969.6)
+				.logitBias(Map.of("foo", 1))
+				.maxTokens(969)
+				.N(69)
+				.stop(List.of("foo", "bar"))
+				.topP(0.69)
+				.user("user")
+				.seed(123L)
+				.logprobs(true)
+				.topLogprobs(5)
+				.enhancements(mockAzureChatEnhancementConfiguration)
+				.responseFormat(AzureOpenAiResponseFormat.builder().type(Type.TEXT).build())
+				.build();
 
 		var client = AzureOpenAiChatModel.builder()
-			.openAIClientBuilder(mockClient)
-			.defaultOptions(defaultOptions)
-			.build();
+				.openAIClientBuilder(mockClient)
+				.defaultOptions(defaultOptions)
+				.build();
 
 		var requestOptions = client.toAzureChatCompletionsOptions(new Prompt("Test message content"));
 
@@ -98,25 +98,25 @@ public class AzureChatCompletionsOptionsTests {
 		assertThat(requestOptions.getResponseFormat()).isInstanceOf(ChatCompletionsTextResponseFormat.class);
 
 		AzureChatEnhancementConfiguration anotherMockAzureChatEnhancementConfiguration = Mockito
-			.mock(AzureChatEnhancementConfiguration.class);
+				.mock(AzureChatEnhancementConfiguration.class);
 
 		var runtimeOptions = AzureOpenAiChatOptions.builder()
-			.deploymentName("PROMPT_MODEL")
-			.temperature(99.9)
-			.frequencyPenalty(100.0)
-			.presencePenalty(100.0)
-			.logitBias(Map.of("foo", 2))
-			.maxTokens(100)
-			.N(100)
-			.stop(List.of("foo", "bar"))
-			.topP(0.111)
-			.user("user2")
-			.seed(1234L)
-			.logprobs(true)
-			.topLogprobs(4)
-			.enhancements(anotherMockAzureChatEnhancementConfiguration)
-			.responseFormat(AzureOpenAiResponseFormat.builder().type(Type.JSON_OBJECT).build())
-			.build();
+				.deploymentName("PROMPT_MODEL")
+				.temperature(99.9)
+				.frequencyPenalty(100.0)
+				.presencePenalty(100.0)
+				.logitBias(Map.of("foo", 2))
+				.maxTokens(100)
+				.N(100)
+				.stop(List.of("foo", "bar"))
+				.topP(0.111)
+				.user("user2")
+				.seed(1234L)
+				.logprobs(true)
+				.topLogprobs(4)
+				.enhancements(anotherMockAzureChatEnhancementConfiguration)
+				.responseFormat(AzureOpenAiResponseFormat.builder().type(Type.JSON_OBJECT).build())
+				.build();
 
 		requestOptions = client.toAzureChatCompletionsOptions(new Prompt("Test message content", runtimeOptions));
 
@@ -142,26 +142,24 @@ public class AzureChatCompletionsOptionsTests {
 	@ParameterizedTest
 	@MethodSource("providePresencePenaltyAndFrequencyPenaltyTest")
 	public void createChatOptionsWithPresencePenaltyAndFrequencyPenalty(Double presencePenalty,
-			Double frequencyPenalty) {
+	                                                                    Double frequencyPenalty) {
 		var options = AzureOpenAiChatOptions.builder()
-			.maxTokens(800)
-			.temperature(0.7)
-			.topP(0.95)
-			.presencePenalty(presencePenalty)
-			.frequencyPenalty(frequencyPenalty)
-			.build();
+				.maxTokens(800)
+				.temperature(0.7)
+				.topP(0.95)
+				.presencePenalty(presencePenalty)
+				.frequencyPenalty(frequencyPenalty)
+				.build();
 
 		if (presencePenalty == null) {
 			assertThat(options.getPresencePenalty()).isEqualTo(null);
-		}
-		else {
+		} else {
 			assertThat(options.getPresencePenalty()).isEqualTo(presencePenalty);
 		}
 
 		if (frequencyPenalty == null) {
 			assertThat(options.getFrequencyPenalty()).isEqualTo(null);
-		}
-		else {
+		} else {
 			assertThat(options.getFrequencyPenalty()).isEqualTo(frequencyPenalty);
 		}
 	}

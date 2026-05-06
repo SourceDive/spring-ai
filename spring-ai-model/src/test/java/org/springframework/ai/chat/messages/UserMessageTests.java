@@ -39,7 +39,7 @@ class UserMessageTests {
 	@Test
 	void userMessageWithNullText() {
 		assertThatThrownBy(() -> new UserMessage((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 	}
 
 	@Test
@@ -54,7 +54,7 @@ class UserMessageTests {
 	@Test
 	void userMessageWithNullResource() {
 		assertThatThrownBy(() -> new UserMessage((Resource) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.hasMessageContaining("resource cannot be null");
 	}
 
 	@Test
@@ -69,15 +69,15 @@ class UserMessageTests {
 	void userMessageFromBuilderWithText() {
 		String text = "Hello, world!";
 		UserMessage message = UserMessage.builder()
-			.text(text)
-			.media(new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt")))
-			.metadata(Map.of("key", "value"))
-			.build();
+				.text(text)
+				.media(new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt")))
+				.metadata(Map.of("key", "value"))
+				.build();
 		assertThat(message.getText()).isEqualTo(text);
 		assertThat(message.getMedia()).hasSize(1);
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.USER)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.USER)
+				.containsEntry("key", "value");
 	}
 
 	@Test

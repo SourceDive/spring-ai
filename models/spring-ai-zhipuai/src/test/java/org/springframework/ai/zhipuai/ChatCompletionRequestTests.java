@@ -67,13 +67,13 @@ public class ChatCompletionRequestTests {
 				ZhiPuAiChatOptions.builder().model("DEFAULT_MODEL").build());
 
 		var request = client.createRequest(new Prompt("Test message content",
-				ZhiPuAiChatOptions.builder()
-					.model("PROMPT_MODEL")
-					.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-						.description("Get the weather in location")
-						.inputType(MockWeatherService.Request.class)
-						.build()))
-					.build()),
+						ZhiPuAiChatOptions.builder()
+								.model("PROMPT_MODEL")
+								.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+										.description("Get the weather in location")
+										.inputType(MockWeatherService.Request.class)
+										.build()))
+								.build()),
 				false);
 
 		assertThat(request.messages()).hasSize(1);
@@ -91,12 +91,12 @@ public class ChatCompletionRequestTests {
 
 		var client = new ZhiPuAiChatModel(new ZhiPuAiApi("TEST"),
 				ZhiPuAiChatOptions.builder()
-					.model("DEFAULT_MODEL")
-					.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
-						.description("Get the weather in location")
-						.inputType(MockWeatherService.Request.class)
-						.build()))
-					.build());
+						.model("DEFAULT_MODEL")
+						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_FUNCTION_NAME, new MockWeatherService())
+								.description("Get the weather in location")
+								.inputType(MockWeatherService.Request.class)
+								.build()))
+						.build());
 
 		var prompt = client.buildRequestPrompt(new Prompt("Test message content"));
 

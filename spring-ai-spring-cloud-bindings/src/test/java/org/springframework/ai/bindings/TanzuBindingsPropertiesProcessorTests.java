@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TanzuBindingsPropertiesProcessorTests {
 
 	private final Bindings bindings = new Bindings(new Binding("test-name", Paths.get("test-path"),
-	// @formatter:off
+			// @formatter:off
 			Map.of(
 				Binding.TYPE, TanzuBindingsPropertiesProcessor.TYPE,
 				"api-key", "demo",
@@ -55,7 +55,7 @@ class TanzuBindingsPropertiesProcessorTests {
 
 	private final Bindings bindingsMissingModelCapabilities = new Bindings(
 			new Binding("test-name", Paths.get("test-path"),
-			// @formatter:off
+					// @formatter:off
 			Map.of(
 				Binding.TYPE, TanzuBindingsPropertiesProcessor.TYPE,
 				"api-key", "demo",

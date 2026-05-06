@@ -115,11 +115,11 @@ class AzureOpenAiChatModelIT {
 
 		final var counter = new AtomicInteger();
 		String content = this.chatModel.stream(prompt)
-			.doOnEach(listSignal -> counter.getAndIncrement())
-			.collectList()
-			.block()
-			.stream()
-			.collect(Collectors.joining());
+				.doOnEach(listSignal -> counter.getAndIncrement())
+				.collectList()
+				.block()
+				.stream()
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(counter.get()).isGreaterThan(8).as("More than 8 chuncks because there are 8 planets");
@@ -138,9 +138,9 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -159,10 +159,10 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -182,9 +182,9 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -203,9 +203,9 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -226,21 +226,21 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(Objects::nonNull)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = converter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -296,18 +296,18 @@ class AzureOpenAiChatModelIT {
 		@Bean
 		public OpenAIClientBuilder openAIClientBuilder() {
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(System.getenv("AZURE_OPENAI_API_KEY")))
-				.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
-				.serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
-				.httpLogOptions(new HttpLogOptions()
-					.setLogLevel(com.azure.core.http.policy.HttpLogDetailLevel.BODY_AND_HEADERS));
+					.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+					.serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
+					.httpLogOptions(new HttpLogOptions()
+							.setLogLevel(com.azure.core.http.policy.HttpLogDetailLevel.BODY_AND_HEADERS));
 		}
 
 		@Bean
 		public AzureOpenAiChatModel azureOpenAiChatModel(OpenAIClientBuilder openAIClientBuilder) {
 			return AzureOpenAiChatModel.builder()
-				.openAIClientBuilder(openAIClientBuilder)
-				.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName("gpt-4o").maxTokens(1000).build())
-				.build();
+					.openAIClientBuilder(openAIClientBuilder)
+					.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName("gpt-4o").maxTokens(1000).build())
+					.build();
 		}
 
 	}

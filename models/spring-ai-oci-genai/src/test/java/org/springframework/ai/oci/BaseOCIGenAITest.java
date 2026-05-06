@@ -47,8 +47,7 @@ public class BaseOCIGenAITest {
 			ConfigFileAuthenticationDetailsProvider authProvider = new ConfigFileAuthenticationDetailsProvider(
 					CONFIG_FILE, PROFILE);
 			return GenerativeAiInferenceClient.builder().region(Region.valueOf(REGION)).build(authProvider);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

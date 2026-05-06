@@ -52,8 +52,7 @@ public class PdfReaderRuntimeHints implements RuntimeHintsRegistrar {
 				}
 			}
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 

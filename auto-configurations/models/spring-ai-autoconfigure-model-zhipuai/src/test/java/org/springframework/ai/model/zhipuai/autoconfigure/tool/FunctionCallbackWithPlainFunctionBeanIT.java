@@ -54,10 +54,10 @@ class FunctionCallbackWithPlainFunctionBeanIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallbackWithPlainFunctionBeanIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.zhipuai.apiKey=" + System.getenv("ZHIPU_AI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-				RestClientAutoConfiguration.class, ZhiPuAiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.zhipuai.apiKey=" + System.getenv("ZHIPU_AI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+					RestClientAutoConfiguration.class, ZhiPuAiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
@@ -98,8 +98,8 @@ class FunctionCallbackWithPlainFunctionBeanIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius.");
 
 			ToolCallingChatOptions functionOptions = ToolCallingChatOptions.builder()
-				.toolNames("weatherFunction")
-				.build();
+					.toolNames("weatherFunction")
+					.build();
 
 			ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), functionOptions));
 
@@ -121,13 +121,13 @@ class FunctionCallbackWithPlainFunctionBeanIT {
 					ZhiPuAiChatOptions.builder().toolNames("weatherFunction").build()));
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).containsAnyOf("30.0", "30");
@@ -139,13 +139,13 @@ class FunctionCallbackWithPlainFunctionBeanIT {
 					ZhiPuAiChatOptions.builder().toolNames("weatherFunctionTwo").build()));
 
 			content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).containsAnyOf("30.0", "30");

@@ -32,7 +32,7 @@ public class DefaultImageModelObservationConvention implements ImageModelObserva
 	public static final String DEFAULT_NAME = "gen_ai.client.operation";
 
 	private static final KeyValue REQUEST_MODEL_NONE = KeyValue
-		.of(ImageModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL, KeyValue.NONE_VALUE);
+			.of(ImageModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL, KeyValue.NONE_VALUE);
 
 	@Override
 	public String getName() {

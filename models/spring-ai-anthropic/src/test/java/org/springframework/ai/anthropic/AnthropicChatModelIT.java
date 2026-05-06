@@ -88,8 +88,8 @@ class AnthropicChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "claude-3-7-sonnet-latest", "claude-3-5-sonnet-latest", "claude-3-5-haiku-latest",
-			"claude-3-opus-latest" })
+	@ValueSource(strings = {"claude-3-7-sonnet-latest", "claude-3-5-sonnet-latest", "claude-3-5-haiku-latest",
+			"claude-3-opus-latest"})
 	void roleTest(String modelName) {
 		UserMessage userMessage = new UserMessage(
 				"Tell me about 3 famous pirates from the Golden Age of Piracy and why they did.");
@@ -102,8 +102,8 @@ class AnthropicChatModelIT {
 		assertThat(response.getMetadata().getUsage().getCompletionTokens()).isGreaterThan(0);
 		assertThat(response.getMetadata().getUsage().getPromptTokens()).isGreaterThan(0);
 		assertThat(response.getMetadata().getUsage().getTotalTokens())
-			.isEqualTo(response.getMetadata().getUsage().getPromptTokens()
-					+ response.getMetadata().getUsage().getCompletionTokens());
+				.isEqualTo(response.getMetadata().getUsage().getPromptTokens()
+						+ response.getMetadata().getUsage().getCompletionTokens());
 		Generation generation = response.getResults().get(0);
 		assertThat(generation.getOutput().getText()).contains("Blackbeard");
 		assertThat(generation.getMetadata().getFinishReason()).isEqualTo("end_turn");
@@ -155,9 +155,9 @@ class AnthropicChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -175,10 +175,10 @@ class AnthropicChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -198,9 +198,9 @@ class AnthropicChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -221,20 +221,20 @@ class AnthropicChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.streamingChatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = beanOutputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -248,9 +248,9 @@ class AnthropicChatModelIT {
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage)));
 
@@ -265,9 +265,9 @@ class AnthropicChatModelIT {
 		var pdfData = new ClassPathResource("/spring-ai-reference-overview.pdf");
 
 		var userMessage = UserMessage.builder()
-			.text("You are a very professional document summarization specialist. Please summarize the given document.")
-			.media(List.of(new Media(new MimeType("application", "pdf"), pdfData)))
-			.build();
+				.text("You are a very professional document summarization specialist. Please summarize the given document.")
+				.media(List.of(new Media(new MimeType("application", "pdf"), pdfData)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage),
 				ToolCallingChatOptions.builder().model(AnthropicApi.ChatModel.CLAUDE_3_5_SONNET.getName()).build()));
@@ -284,13 +284,13 @@ class AnthropicChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS.getName())
-			.toolCallbacks(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
-				.inputType(MockWeatherService.Request.class)
-				.build())
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS.getName())
+				.toolCallbacks(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
+						.inputType(MockWeatherService.Request.class)
+						.build())
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -316,22 +316,22 @@ class AnthropicChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_5_SONNET.getName())
-			.toolCallbacks(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
-				.inputType(MockWeatherService.Request.class)
-				.build())
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_5_SONNET.getName())
+				.toolCallbacks(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
+						.inputType(MockWeatherService.Request.class)
+						.build())
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 
 		logger.info("Response: {}", content);
 		assertThat(content).contains("30", "10", "15");
@@ -346,13 +346,13 @@ class AnthropicChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_5_SONNET.getName())
-			.toolCallbacks(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
-				.inputType(MockWeatherService.Request.class)
-				.build())
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_5_SONNET.getName())
+				.toolCallbacks(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
+						.inputType(MockWeatherService.Request.class)
+						.build())
+				.build();
 
 		Flux<ChatResponse> responseFlux = this.chatModel.stream(new Prompt(messages, promptOptions));
 
@@ -403,12 +403,12 @@ class AnthropicChatModelIT {
 				"Are there an infinite number of prime numbers such that n mod 4 == 3?");
 
 		var promptOptions = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_7_SONNET.getName())
-			.temperature(1.0) // temperature should be set to 1 when thinking is enabled
-			.maxTokens(8192)
-			.thinking(AnthropicApi.ThinkingType.ENABLED, 2048) // Must be ≥1024 && <
-																// max_tokens
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_7_SONNET.getName())
+				.temperature(1.0) // temperature should be set to 1 when thinking is enabled
+				.maxTokens(8192)
+				.thinking(AnthropicApi.ThinkingType.ENABLED, 2048) // Must be ≥1024 && <
+				// max_tokens
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
@@ -418,12 +418,10 @@ class AnthropicChatModelIT {
 			AssistantMessage message = generation.getOutput();
 			if (message.getText() != null) { // text
 				assertThat(message.getText()).isNotBlank();
-			}
-			else if (message.getMetadata().containsKey("signature")) { // thinking
+			} else if (message.getMetadata().containsKey("signature")) { // thinking
 				assertThat(message.getMetadata().get("signature")).isNotNull();
 				assertThat(message.getMetadata().get("thinking")).isNotNull();
-			}
-			else if (message.getMetadata().containsKey("data")) { // redacted thinking
+			} else if (message.getMetadata().containsKey("data")) { // redacted thinking
 				assertThat(message.getMetadata().get("data")).isNotNull();
 			}
 		}
@@ -437,13 +435,13 @@ class AnthropicChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = AnthropicChatOptions.builder()
-			.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS.getName())
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(AnthropicApi.ChatModel.CLAUDE_3_OPUS.getName())
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 

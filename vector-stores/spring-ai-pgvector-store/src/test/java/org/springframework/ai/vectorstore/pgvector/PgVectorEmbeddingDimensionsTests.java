@@ -48,8 +48,8 @@ public class PgVectorEmbeddingDimensionsTests {
 		final int explicitDimensions = 696;
 
 		PgVectorStore pgVectorStore = PgVectorStore.builder(this.jdbcTemplate, this.embeddingModel)
-			.dimensions(explicitDimensions)
-			.build();
+				.dimensions(explicitDimensions)
+				.build();
 		var dim = pgVectorStore.embeddingDimensions();
 
 		assertThat(dim).isEqualTo(explicitDimensions);

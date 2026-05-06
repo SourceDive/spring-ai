@@ -78,9 +78,9 @@ public class TextSplitterTests {
 
 		// Doc2 chunks:
 		assertThat(chunks.get(2).getText())
-			.isEqualTo("The most oppressive thing about the labyrinth is that you are constantly being forced to ");
+				.isEqualTo("The most oppressive thing about the labyrinth is that you are constantly being forced to ");
 		assertThat(chunks.get(3).getText())
-			.isEqualTo("choose. It isn’t the lack of an exit, but the abundance of exits that is so disorienting.");
+				.isEqualTo("choose. It isn’t the lack of an exit, but the abundance of exits that is so disorienting.");
 
 		// Verify that the same, merged metadata is copied to all chunks.
 		assertThat(chunks.get(0).getMetadata()).isEqualTo(chunks.get(1).getMetadata());

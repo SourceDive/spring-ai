@@ -61,7 +61,7 @@ class NoOpTemplateRendererTests {
 		Map<String, Object> variables = new HashMap<>();
 
 		assertThatThrownBy(() -> renderer.apply("", variables)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
@@ -70,7 +70,7 @@ class NoOpTemplateRendererTests {
 		Map<String, Object> variables = new HashMap<>();
 
 		assertThatThrownBy(() -> renderer.apply(null, variables)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
@@ -79,7 +79,7 @@ class NoOpTemplateRendererTests {
 		String template = "Hello!";
 
 		assertThatThrownBy(() -> renderer.apply(template, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables cannot be null");
+				.hasMessageContaining("variables cannot be null");
 	}
 
 	@Test
@@ -90,7 +90,7 @@ class NoOpTemplateRendererTests {
 		variables.put(null, "Spring AI");
 
 		assertThatThrownBy(() -> renderer.apply(template, variables)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables keys cannot be null");
+				.hasMessageContaining("variables keys cannot be null");
 	}
 
 	@Test

@@ -43,21 +43,21 @@ import org.springframework.web.client.RestClient;
  *
  * @author Ricken Bazolo
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
-@EnableConfigurationProperties({ MistralAiCommonProperties.class, MistralAiModerationProperties.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
+@EnableConfigurationProperties({MistralAiCommonProperties.class, MistralAiModerationProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.MODERATION_MODEL, havingValue = SpringAIModels.MISTRAL,
 		matchIfMissing = true)
 @ConditionalOnClass(MistralAiApi.class)
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class MistralAiModerationAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MistralAiModerationModel mistralAiModerationModel(MistralAiCommonProperties commonProperties,
-			MistralAiModerationProperties moderationProperties, RetryTemplate retryTemplate,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
+	                                                         MistralAiModerationProperties moderationProperties, RetryTemplate retryTemplate,
+	                                                         ObjectProvider<RestClient.Builder> restClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
 
 		var apiKey = moderationProperties.getApiKey();
 		var baseUrl = moderationProperties.getBaseUrl();

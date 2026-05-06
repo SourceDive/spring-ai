@@ -34,39 +34,39 @@ class CompressionQueryTransformerTests {
 	@Test
 	void whenChatClientBuilderIsNullThenThrow() {
 		assertThatThrownBy(() -> CompressionQueryTransformer.builder().chatClientBuilder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatClientBuilder cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("chatClientBuilder cannot be null");
 	}
 
 	@Test
 	void whenQueryIsNullThenThrow() {
 		QueryTransformer queryTransformer = CompressionQueryTransformer.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.build();
 		assertThatThrownBy(() -> queryTransformer.transform(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("query cannot be null");
+				.hasMessageContaining("query cannot be null");
 	}
 
 	@Test
 	void whenPromptHasMissingHistoryPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("Compress {query}");
 		assertThatThrownBy(() -> CompressionQueryTransformer.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(customPromptTemplate)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("history");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(customPromptTemplate)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("history");
 	}
 
 	@Test
 	void whenPromptHasMissingQueryPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("Compress {history}");
 		assertThatThrownBy(() -> CompressionQueryTransformer.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(customPromptTemplate)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("query");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(customPromptTemplate)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("query");
 	}
 
 }

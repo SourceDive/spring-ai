@@ -23,15 +23,15 @@ import java.util.List;
  * Options for managing models in Ollama.
  *
  * @param pullModelStrategy the strategy to pull models
- * @param additionalModels additional models to manage
- * @param timeout the timeout for managing models
- * @param maxRetries the maximum number of retries
+ * @param additionalModels  additional models to manage
+ * @param timeout           the timeout for managing models
+ * @param maxRetries        the maximum number of retries
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
 public record ModelManagementOptions(PullModelStrategy pullModelStrategy, List<String> additionalModels,
-		Duration timeout, Integer maxRetries) {
+                                     Duration timeout, Integer maxRetries) {
 
 	public static ModelManagementOptions defaults() {
 		return new ModelManagementOptions(PullModelStrategy.NEVER, List.of(), Duration.ofMinutes(5), 0);

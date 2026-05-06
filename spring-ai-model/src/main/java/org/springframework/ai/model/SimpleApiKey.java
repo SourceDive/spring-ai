@@ -31,6 +31,7 @@ public record SimpleApiKey(String value) implements ApiKey {
 
 	/**
 	 * Create a new SimpleApiKey.
+	 *
 	 * @param value the API key value, must not be null or empty
 	 * @throws IllegalArgumentException if value is null or empty
 	 */

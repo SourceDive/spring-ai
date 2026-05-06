@@ -42,8 +42,9 @@ public class ContentFormatTransformer implements DocumentTransformer {
 
 	/**
 	 * Creates a ContentFormatTransformer object with the given ContentFormatter.
+	 *
 	 * @param contentFormatter the ContentFormatter to be used for transforming the
-	 * documents
+	 *                         documents
 	 */
 	public ContentFormatTransformer(ContentFormatter contentFormatter) {
 		this(contentFormatter, false);
@@ -52,10 +53,11 @@ public class ContentFormatTransformer implements DocumentTransformer {
 	/**
 	 * The ContentFormatTransformer class is responsible for processing a list of
 	 * documents by applying a content formatter to each document.
-	 * @param contentFormatter The ContentFormatter to be used for transforming the
-	 * documents
+	 *
+	 * @param contentFormatter       The ContentFormatter to be used for transforming the
+	 *                               documents
 	 * @param disableTemplateRewrite Flag indicating whether to disable the
-	 * content-formatter template rewrite
+	 *                               content-formatter template rewrite
 	 */
 	public ContentFormatTransformer(ContentFormatter contentFormatter, boolean disableTemplateRewrite) {
 		this.contentFormatter = contentFormatter;
@@ -64,6 +66,7 @@ public class ContentFormatTransformer implements DocumentTransformer {
 
 	/**
 	 * Post process documents chunked from loader. Allows extractors to be chained.
+	 *
 	 * @param documents to post process.
 	 * @return processed documents
 	 */
@@ -80,14 +83,13 @@ public class ContentFormatTransformer implements DocumentTransformer {
 				&& this.contentFormatter instanceof DefaultContentFormatter toUpdateFormatter) {
 			updateFormatter(document, docFormatter, toUpdateFormatter);
 
-		}
-		else {
+		} else {
 			overrideFormatter(document);
 		}
 	}
 
 	private void updateFormatter(Document document, DefaultContentFormatter docFormatter,
-			DefaultContentFormatter toUpdateFormatter) {
+	                             DefaultContentFormatter toUpdateFormatter) {
 		List<String> updatedEmbedExcludeKeys = new ArrayList<>(docFormatter.getExcludedEmbedMetadataKeys());
 		updatedEmbedExcludeKeys.addAll(toUpdateFormatter.getExcludedEmbedMetadataKeys());
 
@@ -95,10 +97,10 @@ public class ContentFormatTransformer implements DocumentTransformer {
 		updatedInterfaceExcludeKeys.addAll(toUpdateFormatter.getExcludedInferenceMetadataKeys());
 
 		DefaultContentFormatter.Builder builder = DefaultContentFormatter.builder()
-			.withExcludedEmbedMetadataKeys(updatedEmbedExcludeKeys)
-			.withExcludedInferenceMetadataKeys(updatedInterfaceExcludeKeys)
-			.withMetadataTemplate(docFormatter.getMetadataTemplate())
-			.withMetadataSeparator(docFormatter.getMetadataSeparator());
+				.withExcludedEmbedMetadataKeys(updatedEmbedExcludeKeys)
+				.withExcludedInferenceMetadataKeys(updatedInterfaceExcludeKeys)
+				.withMetadataTemplate(docFormatter.getMetadataTemplate())
+				.withMetadataSeparator(docFormatter.getMetadataSeparator());
 
 		if (!this.disableTemplateRewrite) {
 			builder.withTextTemplate(docFormatter.getTextTemplate());

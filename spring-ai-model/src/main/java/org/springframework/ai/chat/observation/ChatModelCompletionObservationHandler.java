@@ -54,12 +54,12 @@ public class ChatModelCompletionObservationHandler implements ObservationHandler
 		}
 
 		return context.getResponse()
-			.getResults()
-			.stream()
-			.filter(generation -> generation.getOutput() != null
-					&& StringUtils.hasText(generation.getOutput().getText()))
-			.map(generation -> generation.getOutput().getText())
-			.toList();
+				.getResults()
+				.stream()
+				.filter(generation -> generation.getOutput() != null
+						&& StringUtils.hasText(generation.getOutput().getText()))
+				.map(generation -> generation.getOutput().getText())
+				.toList();
 	}
 
 	@Override

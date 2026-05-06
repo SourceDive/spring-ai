@@ -49,17 +49,17 @@ class RetrievalAugmentationAdvisorTests {
 	@Test
 	void whenQueryTransformersContainNullElementsThenThrow() {
 		assertThatThrownBy(() -> RetrievalAugmentationAdvisor.builder()
-			.queryTransformers(Mockito.mock(QueryTransformer.class), null)
-			.documentRetriever(Mockito.mock(DocumentRetriever.class))
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("queryTransformers cannot contain null elements");
+				.queryTransformers(Mockito.mock(QueryTransformer.class), null)
+				.documentRetriever(Mockito.mock(DocumentRetriever.class))
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("queryTransformers cannot contain null elements");
 	}
 
 	@Test
 	void whenDocumentRetrieverIsNullThenThrow() {
 		assertThatThrownBy(() -> RetrievalAugmentationAdvisor.builder().documentRetriever(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("documentRetriever cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("documentRetriever cannot be null");
 	}
 
 	@Test
@@ -68,8 +68,8 @@ class RetrievalAugmentationAdvisorTests {
 		var chatModel = mock(ChatModel.class);
 		var promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		given(chatModel.call(promptCaptor.capture())).willReturn(ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("Felix Felicis"))))
-			.build());
+				.generations(List.of(new Generation(new AssistantMessage("Felix Felicis"))))
+				.build());
 
 		// Document Retriever
 		var documentContext = List.of(Document.builder().id("1").text("doc1").build(),
@@ -83,45 +83,45 @@ class RetrievalAugmentationAdvisorTests {
 
 		// Chat Client
 		var chatClient = ChatClient.builder(chatModel)
-			.defaultAdvisors(advisor)
-			.defaultSystem("You are a wizard!")
-			.build();
+				.defaultAdvisors(advisor)
+				.defaultSystem("You are a wizard!")
+				.build();
 
 		// Call
 		var chatResponse = chatClient.prompt()
-			.user(user -> user.text("What would I get if I added {ingredient1} to {ingredient2}?")
-				.param("ingredient1", "a pinch of Moonstone")
-				.param("ingredient2", "a dash of powdered Gold"))
-			.call()
-			.chatResponse();
+				.user(user -> user.text("What would I get if I added {ingredient1} to {ingredient2}?")
+						.param("ingredient1", "a pinch of Moonstone")
+						.param("ingredient2", "a dash of powdered Gold"))
+				.call()
+				.chatResponse();
 
 		// Verify
 		assertThat(chatResponse.getResult().getOutput().getText()).isEqualTo("Felix Felicis");
 		assertThat(chatResponse.getMetadata().<List<Document>>get(RetrievalAugmentationAdvisor.DOCUMENT_CONTEXT))
-			.containsAll(documentContext);
+				.containsAll(documentContext);
 
 		var query = queryCaptor.getValue();
 		assertThat(query.text())
-			.isEqualTo("What would I get if I added a pinch of Moonstone to a dash of powdered Gold?");
+				.isEqualTo("What would I get if I added a pinch of Moonstone to a dash of powdered Gold?");
 
 		var prompt = promptCaptor.getValue();
 		assertThat(prompt.getContents()).contains("""
 				Context information is below.
-
+				
 				---------------------
 				doc1
 				doc2
 				---------------------
-
+				
 				Given the context information and no prior knowledge, answer the query.
-
+				
 				Follow these rules:
-
+				
 				1. If the answer is not in the context, just say that you don't know.
 				2. Avoid statements like "Based on the context..." or "The provided information...".
-
+				
 				Query: What would I get if I added a pinch of Moonstone to a dash of powdered Gold?
-
+				
 				Answer:
 				""");
 	}

@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration(after = CassandraAutoConfiguration.class, before = ChatMemoryAutoConfiguration.class)
-@ConditionalOnClass({ CassandraChatMemoryRepository.class, CqlSession.class })
+@ConditionalOnClass({CassandraChatMemoryRepository.class, CqlSession.class})
 @EnableConfigurationProperties(CassandraChatMemoryRepositoryProperties.class)
 public class CassandraChatMemoryRepositoryAutoConfiguration {
 
@@ -48,8 +48,8 @@ public class CassandraChatMemoryRepositoryAutoConfiguration {
 		var builder = CassandraChatMemoryRepositoryConfig.builder().withCqlSession(cqlSession);
 
 		builder = builder.withKeyspaceName(properties.getKeyspace())
-			.withTableName(properties.getTable())
-			.withMessagesColumnName(properties.getMessagesColumn());
+				.withTableName(properties.getTable())
+				.withMessagesColumnName(properties.getMessagesColumn());
 
 		if (!properties.isInitializeSchema()) {
 			builder = builder.disallowSchemaChanges();

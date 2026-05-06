@@ -95,9 +95,9 @@ public class MiniMaxRetryTests {
 				null, new MiniMaxApi.Usage(10, 10, 10));
 
 		given(this.miniMaxApi.chatCompletionEntity(isA(ChatCompletionRequest.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(ResponseEntity.of(Optional.of(expectedChatCompletion)));
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(ResponseEntity.of(Optional.of(expectedChatCompletion)));
 
 		var result = this.chatModel.call(new Prompt("text", ChatOptions.builder().build()));
 
@@ -110,7 +110,7 @@ public class MiniMaxRetryTests {
 	@Test
 	public void miniMaxChatNonTransientError() {
 		given(this.miniMaxApi.chatCompletionEntity(isA(ChatCompletionRequest.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 		assertThrows(RuntimeException.class, () -> this.chatModel.call(new Prompt("text")));
 	}
 
@@ -123,9 +123,9 @@ public class MiniMaxRetryTests {
 				null);
 
 		given(this.miniMaxApi.chatCompletionStream(isA(ChatCompletionRequest.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(Flux.just(expectedChatCompletion));
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(Flux.just(expectedChatCompletion));
 
 		var result = this.chatModel.stream(new Prompt("text", ChatOptions.builder().build()));
 
@@ -138,26 +138,26 @@ public class MiniMaxRetryTests {
 	@Test
 	public void miniMaxChatStreamNonTransientError() {
 		given(this.miniMaxApi.chatCompletionStream(isA(ChatCompletionRequest.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 		assertThrows(RuntimeException.class, () -> this.chatModel.stream(new Prompt("text")).collectList().block());
 	}
 
 	@Test
 	public void miniMaxEmbeddingTransientError() {
 
-		EmbeddingList expectedEmbeddings = new EmbeddingList(List.of(new float[] { 9.9f, 8.8f }), "model", 10);
+		EmbeddingList expectedEmbeddings = new EmbeddingList(List.of(new float[]{9.9f, 8.8f}), "model", 10);
 
 		given(this.miniMaxApi.embeddings(isA(EmbeddingRequest.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(ResponseEntity.of(Optional.of(expectedEmbeddings)));
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(ResponseEntity.of(Optional.of(expectedEmbeddings)));
 
 		EmbeddingOptions options = MiniMaxEmbeddingOptions.builder().model("model").build();
 		var result = this.embeddingModel
-			.call(new org.springframework.ai.embedding.EmbeddingRequest(List.of("text1", "text2"), options));
+				.call(new org.springframework.ai.embedding.EmbeddingRequest(List.of("text1", "text2"), options));
 
 		assertThat(result).isNotNull();
-		assertThat(result.getResult().getOutput()).isEqualTo(new float[] { 9.9f, 8.8f });
+		assertThat(result.getResult().getOutput()).isEqualTo(new float[]{9.9f, 8.8f});
 		assertThat(this.retryListener.onSuccessRetryCount).isEqualTo(2);
 		assertThat(this.retryListener.onErrorRetryCount).isEqualTo(2);
 	}
@@ -165,10 +165,10 @@ public class MiniMaxRetryTests {
 	@Test
 	public void miniMaxEmbeddingNonTransientError() {
 		given(this.miniMaxApi.embeddings(isA(EmbeddingRequest.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 		EmbeddingOptions options = MiniMaxEmbeddingOptions.builder().model("model").build();
 		assertThrows(RuntimeException.class, () -> this.embeddingModel
-			.call(new org.springframework.ai.embedding.EmbeddingRequest(List.of("text1", "text2"), options)));
+				.call(new org.springframework.ai.embedding.EmbeddingRequest(List.of("text1", "text2"), options)));
 	}
 
 	private class TestRetryListener implements RetryListener {
@@ -184,7 +184,7 @@ public class MiniMaxRetryTests {
 
 		@Override
 		public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback,
-				Throwable throwable) {
+		                                             Throwable throwable) {
 			this.onErrorRetryCount = context.getRetryCount();
 		}
 

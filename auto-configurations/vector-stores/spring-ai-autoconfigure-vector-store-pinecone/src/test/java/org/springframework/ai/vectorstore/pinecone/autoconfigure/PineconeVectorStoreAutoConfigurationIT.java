@@ -56,12 +56,12 @@ import static org.hamcrest.Matchers.hasSize;
 public class PineconeVectorStoreAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(PineconeVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.pinecone.apiKey=" + System.getenv("PINECONE_API_KEY"),
-				"spring.ai.vectorstore.pinecone.indexName=spring-ai-test-index",
-				"spring.ai.vectorstore.pinecone.contentFieldName=customContentField",
-				"spring.ai.vectorstore.pinecone.distanceMetadataFieldName=customDistanceField");
+			.withConfiguration(AutoConfigurations.of(PineconeVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.pinecone.apiKey=" + System.getenv("PINECONE_API_KEY"),
+					"spring.ai.vectorstore.pinecone.indexName=spring-ai-test-index",
+					"spring.ai.vectorstore.pinecone.contentFieldName=customContentField",
+					"spring.ai.vectorstore.pinecone.distanceMetadataFieldName=customDistanceField");
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -72,8 +72,7 @@ public class PineconeVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -99,12 +98,12 @@ public class PineconeVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.ADD);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+							hasSize(1));
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -126,8 +125,8 @@ public class PineconeVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+							hasSize(0));
 		});
 	}
 

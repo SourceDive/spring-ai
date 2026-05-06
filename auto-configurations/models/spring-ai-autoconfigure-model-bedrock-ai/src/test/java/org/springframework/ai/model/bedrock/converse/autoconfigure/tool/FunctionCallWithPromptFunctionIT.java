@@ -42,34 +42,34 @@ public class FunctionCallWithPromptFunctionIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithPromptFunctionIT.class);
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0")
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0")
+				.run(context -> {
 
-				BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
+					BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris and in Tokyo? Return the temperature in Celsius.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris and in Tokyo? Return the temperature in Celsius.");
 
-				var promptOptions = ToolCallingChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = ToolCallingChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 }

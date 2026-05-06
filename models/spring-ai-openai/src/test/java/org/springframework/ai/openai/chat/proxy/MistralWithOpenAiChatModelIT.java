@@ -107,11 +107,11 @@ class MistralWithOpenAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}
@@ -147,9 +147,9 @@ class MistralWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -168,9 +168,9 @@ class MistralWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "numbers from 1 to 9 under they key name 'numbers'", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "numbers from 1 to 9 under they key name 'numbers'", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -190,9 +190,9 @@ class MistralWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -211,9 +211,9 @@ class MistralWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -234,20 +234,20 @@ class MistralWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -256,7 +256,7 @@ class MistralWithOpenAiChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "mistral-small-latest", "mistral-large-latest" })
+	@ValueSource(strings = {"mistral-small-latest", "mistral-large-latest"})
 	void functionCallTest(String modelName) {
 
 		UserMessage userMessage = new UserMessage(
@@ -265,12 +265,12 @@ class MistralWithOpenAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			.model(modelName)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(modelName)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(messages, promptOptions));
 
@@ -280,7 +280,7 @@ class MistralWithOpenAiChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "mistral-large-latest" })
+	@ValueSource(strings = {"mistral-large-latest"})
 	void streamFunctionCallTest(String modelName) {
 
 		UserMessage userMessage = new UserMessage(
@@ -289,23 +289,23 @@ class MistralWithOpenAiChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			.model(modelName)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(modelName)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(messages, promptOptions));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 
 		assertThat(content).contains("30", "10", "15");
@@ -313,18 +313,18 @@ class MistralWithOpenAiChatModelIT {
 
 	@Disabled("Mistral AI does not support multi modality API")
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "mistral-small-latest" })
+	@ValueSource(strings = {"mistral-small-latest"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel
-			.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -333,19 +333,19 @@ class MistralWithOpenAiChatModelIT {
 
 	@Disabled("Mistral AI does not support multi modality API")
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "mistral-small-latest" })
+	@ValueSource(strings = {"mistral-small-latest"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel
-			.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
+				.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(modelName).build()));
 
 		logger.info(response.getResult().getOutput().getText());
 		assertThat(response.getResult().getOutput().getText()).contains("bananas", "apple");
@@ -357,30 +357,30 @@ class MistralWithOpenAiChatModelIT {
 	void streamingMultiModalityImageUrl() throws IOException {
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(Media.builder()
-				.mimeType(MimeTypeUtils.IMAGE_PNG)
-				.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
-				.build()))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(Media.builder()
+						.mimeType(MimeTypeUtils.IMAGE_PNG)
+						.data(URI.create("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png"))
+						.build()))
+				.build();
 
 		Flux<ChatResponse> response = this.chatModel.stream(new Prompt(List.of(userMessage)));
 
 		String content = response.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 		logger.info("Response: {}", content);
 		assertThat(content).containsAnyOf("bananas", "apple", "bowl", "basket", "fruit stand");
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "mistral-small-latest", "mistral-large-latest", "open-mistral-7b", "open-mixtral-8x7b",
-			"open-mixtral-8x22b" })
+	@ValueSource(strings = {"mistral-small-latest", "mistral-large-latest", "open-mistral-7b", "open-mixtral-8x7b",
+			"open-mixtral-8x22b"})
 	void validateCallResponseMetadata(String model) {
 		// @formatter:off
 		ChatResponse response = ChatClient.create(this.chatModel).prompt()
@@ -408,18 +408,18 @@ class MistralWithOpenAiChatModelIT {
 		@Bean
 		public OpenAiApi chatCompletionApi() {
 			return OpenAiApi.builder()
-				.baseUrl(MISTRAL_BASE_URL)
-				.apiKey(new SimpleApiKey(System.getenv("MISTRAL_AI_API_KEY")))
-				.build();
+					.baseUrl(MISTRAL_BASE_URL)
+					.apiKey(new SimpleApiKey(System.getenv("MISTRAL_AI_API_KEY")))
+					.build();
 		}
 
 		@Bean
 		public OpenAiChatModel openAiClient(OpenAiApi openAiApi) {
 			return OpenAiChatModel.builder()
-				.openAiApi(openAiApi)
-				.toolCallingManager(ToolCallingManager.builder().build())
-				.defaultOptions(OpenAiChatOptions.builder().model(MISTRAL_DEFAULT_MODEL).build())
-				.build();
+					.openAiApi(openAiApi)
+					.toolCallingManager(ToolCallingManager.builder().build())
+					.defaultOptions(OpenAiChatOptions.builder().model(MISTRAL_DEFAULT_MODEL).build())
+					.build();
 		}
 
 	}

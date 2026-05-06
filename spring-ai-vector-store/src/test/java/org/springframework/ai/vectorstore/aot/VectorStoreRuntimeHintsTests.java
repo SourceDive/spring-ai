@@ -31,7 +31,7 @@ public class VectorStoreRuntimeHintsTests {
 		var vectorStoreHints = new VectorStoreRuntimeHints();
 		vectorStoreHints.registerHints(runtimeHints, null);
 		assertThat(runtimeHints)
-			.matches(resource().forResource("antlr4/org/springframework/ai/vectorstore/filter/antlr4/Filters.g4"));
+				.matches(resource().forResource("antlr4/org/springframework/ai/vectorstore/filter/antlr4/Filters.g4"));
 	}
 
 }

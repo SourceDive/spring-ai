@@ -47,8 +47,7 @@ public class MariaDBFilterExpressionConverter extends AbstractFilterExpressionCo
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof String) {
 			context.append(String.format("\'%s\'", value));
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}

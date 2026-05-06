@@ -48,8 +48,8 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -57,9 +57,9 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenNullAdvisorsThenReturn() {
 		assertThatThrownBy(() -> ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(null)
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("advisors cannot be null");
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(null)
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("advisors cannot be null");
 	}
 
 	@Test
@@ -68,10 +68,10 @@ class ChatClientObservationContextTests {
 		advisors.add(mock(Advisor.class));
 		advisors.add(null);
 		assertThatThrownBy(() -> ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(advisors)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("advisors cannot contain null elements");
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(advisors)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("advisors cannot contain null elements");
 	}
 
 }

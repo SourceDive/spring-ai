@@ -33,8 +33,9 @@ public interface ToolExecutionEligibilityPredicate extends BiPredicate<ChatOptio
 	/**
 	 * Determines if tool execution should be performed based on the prompt options and
 	 * chat response.
+	 *
 	 * @param promptOptions The options from the prompt
-	 * @param chatResponse The response from the chat model
+	 * @param chatResponse  The response from the chat model
 	 * @return true if tool execution should be performed, false otherwise
 	 */
 	default boolean isToolExecutionRequired(ChatOptions promptOptions, ChatResponse chatResponse) {

@@ -50,18 +50,18 @@ class ImageModelPromptContentObservationHandlerTests {
 	@Test
 	void whenSupportedObservationContextThenReturnTrue() {
 		var context = ImageModelObservationContext.builder()
-			.imagePrompt(new ImagePrompt("", ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(new ImagePrompt("", ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationHandler.supportsContext(context)).isTrue();
 	}
 
 	@Test
 	void whenEmptyPromptThenOutputNothing(CapturedOutput output) {
 		var context = ImageModelObservationContext.builder()
-			.imagePrompt(new ImagePrompt("", ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(new ImagePrompt("", ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.i.o.ImageModelPromptContentObservationHandler -- Image Model Prompt Content:
@@ -72,10 +72,10 @@ class ImageModelPromptContentObservationHandlerTests {
 	@Test
 	void whenPromptWithTextThenOutputIt(CapturedOutput output) {
 		var context = ImageModelObservationContext.builder()
-			.imagePrompt(new ImagePrompt("supercalifragilisticexpialidocious",
-					ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(new ImagePrompt("supercalifragilisticexpialidocious",
+						ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.i.o.ImageModelPromptContentObservationHandler -- Image Model Prompt Content:
@@ -86,12 +86,12 @@ class ImageModelPromptContentObservationHandlerTests {
 	@Test
 	void whenPromptWithMessagesThenOutputIt(CapturedOutput output) {
 		var context = ImageModelObservationContext.builder()
-			.imagePrompt(new ImagePrompt(
-					List.of(new ImageMessage("you're a chimney sweep"),
-							new ImageMessage("supercalifragilisticexpialidocious")),
-					ImageOptionsBuilder.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(new ImagePrompt(
+						List.of(new ImageMessage("you're a chimney sweep"),
+								new ImageMessage("supercalifragilisticexpialidocious")),
+						ImageOptionsBuilder.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
 				INFO  o.s.a.i.o.ImageModelPromptContentObservationHandler -- Image Model Prompt Content:

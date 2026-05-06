@@ -41,9 +41,9 @@ public class MistralAiEmbeddingProperties extends MistralAiParentProperties {
 
 	@NestedConfigurationProperty
 	private MistralAiEmbeddingOptions options = MistralAiEmbeddingOptions.builder()
-		.withModel(DEFAULT_EMBEDDING_MODEL)
-		.withEncodingFormat(DEFAULT_ENCODING_FORMAT)
-		.build();
+			.withModel(DEFAULT_EMBEDDING_MODEL)
+			.withEncodingFormat(DEFAULT_ENCODING_FORMAT)
+			.build();
 
 	public MistralAiEmbeddingProperties() {
 		super.setBaseUrl(MistralAiCommonProperties.DEFAULT_BASE_URL);

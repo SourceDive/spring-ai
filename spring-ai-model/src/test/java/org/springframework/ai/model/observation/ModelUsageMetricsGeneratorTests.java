@@ -46,17 +46,17 @@ class ModelUsageMetricsGeneratorTests {
 
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(3);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-			.counter()
-			.count()).isEqualTo(1000);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+				.counter()
+				.count()).isEqualTo(1000);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
-			.counter()
-			.count()).isEqualTo(500);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
+				.counter()
+				.count()).isEqualTo(500);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.counter()
-			.count()).isEqualTo(1500);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.counter()
+				.count()).isEqualTo(1500);
 	}
 
 	@Test
@@ -67,13 +67,13 @@ class ModelUsageMetricsGeneratorTests {
 
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(2);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-			.counter()
-			.count()).isEqualTo(1000);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+				.counter()
+				.count()).isEqualTo(1000);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.counter()
-			.count()).isEqualTo(1000);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.counter()
+				.count()).isEqualTo(1000);
 	}
 
 	private Observation.Context buildContext() {

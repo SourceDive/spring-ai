@@ -96,13 +96,13 @@ public class OpenAiChatModelWithChatResponseMetadataTests {
 		RateLimit rateLimit = chatResponseMetadata.getRateLimit();
 
 		Duration expectedRequestsReset = Duration.ofDays(2L)
-			.plus(Duration.ofHours(16L))
-			.plus(Duration.ofMinutes(15))
-			.plus(Duration.ofSeconds(29L));
+				.plus(Duration.ofHours(16L))
+				.plus(Duration.ofMinutes(15))
+				.plus(Duration.ofSeconds(29L));
 
 		Duration expectedTokensReset = Duration.ofHours(27L)
-			.plus(Duration.ofSeconds(55L))
-			.plus(Duration.ofMillis(451L));
+				.plus(Duration.ofSeconds(55L))
+				.plus(Duration.ofMillis(451L));
 
 		assertThat(rateLimit).isNotNull();
 		assertThat(rateLimit.getRequestsLimit()).isEqualTo(4000L);
@@ -155,9 +155,9 @@ public class OpenAiChatModelWithChatResponseMetadataTests {
 		httpHeaders.set(OpenAiApiResponseHeaders.TOKENS_RESET_HEADER.getName(), "27h55s451ms");
 
 		this.server.expect(requestTo(StringContains.containsString("/v1/chat/completions")))
-			.andExpect(method(HttpMethod.POST))
-			.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
-			.andRespond(withSuccess(getJson(includeLogprobs), MediaType.APPLICATION_JSON).headers(httpHeaders));
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
+				.andRespond(withSuccess(getJson(includeLogprobs), MediaType.APPLICATION_JSON).headers(httpHeaders));
 
 	}
 
@@ -215,10 +215,10 @@ public class OpenAiChatModelWithChatResponseMetadataTests {
 		@Bean
 		public OpenAiApi chatCompletionApi(RestClient.Builder builder, WebClient.Builder webClientBuilder) {
 			return OpenAiApi.builder()
-				.apiKey(TEST_API_KEY)
-				.restClientBuilder(builder)
-				.webClientBuilder(webClientBuilder)
-				.build();
+					.apiKey(TEST_API_KEY)
+					.restClientBuilder(builder)
+					.webClientBuilder(webClientBuilder)
+					.build();
 		}
 
 		@Bean

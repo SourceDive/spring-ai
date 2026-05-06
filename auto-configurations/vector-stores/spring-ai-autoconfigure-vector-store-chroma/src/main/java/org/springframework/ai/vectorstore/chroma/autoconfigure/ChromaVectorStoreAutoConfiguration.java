@@ -45,8 +45,8 @@ import org.springframework.web.client.RestClient;
  * @author Sebastien Deleuze
  */
 @AutoConfiguration
-@ConditionalOnClass({ EmbeddingModel.class, RestClient.class, ChromaVectorStore.class, ObjectMapper.class })
-@EnableConfigurationProperties({ ChromaApiProperties.class, ChromaVectorStoreProperties.class })
+@ConditionalOnClass({EmbeddingModel.class, RestClient.class, ChromaVectorStore.class, ObjectMapper.class})
+@EnableConfigurationProperties({ChromaApiProperties.class, ChromaVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.CHROMA,
 		matchIfMissing = true)
 public class ChromaVectorStoreAutoConfiguration {
@@ -60,21 +60,20 @@ public class ChromaVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ChromaApi chromaApi(ChromaApiProperties apiProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, ChromaConnectionDetails connectionDetails,
-			ObjectMapper objectMapper) {
+	                           ObjectProvider<RestClient.Builder> restClientBuilderProvider, ChromaConnectionDetails connectionDetails,
+	                           ObjectMapper objectMapper) {
 
 		String chromaUrl = String.format("%s:%s", connectionDetails.getHost(), connectionDetails.getPort());
 
 		var chromaApi = ChromaApi.builder()
-			.baseUrl(chromaUrl)
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.objectMapper(objectMapper)
-			.build();
+				.baseUrl(chromaUrl)
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.objectMapper(objectMapper)
+				.build();
 
 		if (StringUtils.hasText(connectionDetails.getKeyToken())) {
 			chromaApi.withKeyToken(connectionDetails.getKeyToken());
-		}
-		else if (StringUtils.hasText(apiProperties.getUsername()) && StringUtils.hasText(apiProperties.getPassword())) {
+		} else if (StringUtils.hasText(apiProperties.getUsername()) && StringUtils.hasText(apiProperties.getPassword())) {
 			chromaApi.withBasicAuthCredentials(apiProperties.getUsername(), apiProperties.getPassword());
 		}
 
@@ -90,16 +89,16 @@ public class ChromaVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ChromaVectorStore vectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi,
-			ChromaVectorStoreProperties storeProperties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy chromaBatchingStrategy) {
+	                                     ChromaVectorStoreProperties storeProperties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                     BatchingStrategy chromaBatchingStrategy) {
 		return ChromaVectorStore.builder(chromaApi, embeddingModel)
-			.collectionName(storeProperties.getCollectionName())
-			.initializeSchema(storeProperties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(chromaBatchingStrategy)
-			.build();
+				.collectionName(storeProperties.getCollectionName())
+				.initializeSchema(storeProperties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(chromaBatchingStrategy)
+				.build();
 	}
 
 	static class PropertiesChromaConnectionDetails implements ChromaConnectionDetails {

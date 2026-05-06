@@ -58,8 +58,8 @@ public class MistralAiModerationModel implements ModerationModel {
 	public MistralAiModerationModel(MistralAiModerationApi mistralAiModerationApi) {
 		this(mistralAiModerationApi, RetryUtils.DEFAULT_RETRY_TEMPLATE,
 				MistralAiModerationOptions.builder()
-					.model(MistralAiModerationApi.Model.MISTRAL_MODERATION.getValue())
-					.build());
+						.model(MistralAiModerationApi.Model.MISTRAL_MODERATION.getValue())
+						.build());
 	}
 
 	public MistralAiModerationModel(MistralAiModerationApi mistralAiModerationApi, MistralAiModerationOptions options) {
@@ -67,7 +67,7 @@ public class MistralAiModerationModel implements ModerationModel {
 	}
 
 	public MistralAiModerationModel(MistralAiModerationApi mistralAiModerationApi, RetryTemplate retryTemplate,
-			MistralAiModerationOptions options) {
+	                                MistralAiModerationOptions options) {
 		Assert.notNull(mistralAiModerationApi, "mistralAiModerationApi must not be null");
 		Assert.notNull(retryTemplate, "retryTemplate must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -87,8 +87,7 @@ public class MistralAiModerationModel implements ModerationModel {
 			if (this.defaultOptions != null) {
 				moderationRequest = ModelOptionsUtils.merge(this.defaultOptions, moderationRequest,
 						MistralAiModerationRequest.class);
-			}
-			else {
+			} else {
 				// moderationPrompt.getOptions() never null but model can be empty, cause
 				// by ModerationPrompt constructor
 				moderationRequest = ModelOptionsUtils.merge(toMistralAiModerationOptions(moderationPrompt.getOptions()),
@@ -102,7 +101,7 @@ public class MistralAiModerationModel implements ModerationModel {
 	}
 
 	private ModerationResponse convertResponse(ResponseEntity<MistralAiModerationResponse> moderationResponseEntity,
-			MistralAiModerationRequest openAiModerationRequest) {
+	                                           MistralAiModerationRequest openAiModerationRequest) {
 		var moderationApiResponse = moderationResponseEntity.getBody();
 		if (moderationApiResponse == null) {
 			logger.warn("No moderation response returned for request: {}", openAiModerationRequest);
@@ -117,45 +116,45 @@ public class MistralAiModerationModel implements ModerationModel {
 				CategoryScores categoryScores = null;
 				if (result.categories() != null) {
 					categories = Categories.builder()
-						.sexual(result.categories().sexual())
-						.pii(result.categories().pii())
-						.law(result.categories().law())
-						.financial(result.categories().financial())
-						.health(result.categories().health())
-						.dangerousAndCriminalContent(result.categories().dangerousAndCriminalContent())
-						.violence(result.categories().violenceAndThreats())
-						.hate(result.categories().hateAndDiscrimination())
-						.selfHarm(result.categories().selfHarm())
-						.build();
+							.sexual(result.categories().sexual())
+							.pii(result.categories().pii())
+							.law(result.categories().law())
+							.financial(result.categories().financial())
+							.health(result.categories().health())
+							.dangerousAndCriminalContent(result.categories().dangerousAndCriminalContent())
+							.violence(result.categories().violenceAndThreats())
+							.hate(result.categories().hateAndDiscrimination())
+							.selfHarm(result.categories().selfHarm())
+							.build();
 				}
 				if (result.categoryScores() != null) {
 					categoryScores = CategoryScores.builder()
-						.sexual(result.categoryScores().sexual())
-						.pii(result.categoryScores().pii())
-						.law(result.categoryScores().law())
-						.financial(result.categoryScores().financial())
-						.health(result.categoryScores().health())
-						.dangerousAndCriminalContent(result.categoryScores().dangerousAndCriminalContent())
-						.violence(result.categoryScores().violenceAndThreats())
-						.hate(result.categoryScores().hateAndDiscrimination())
-						.selfHarm(result.categoryScores().selfHarm())
-						.build();
+							.sexual(result.categoryScores().sexual())
+							.pii(result.categoryScores().pii())
+							.law(result.categoryScores().law())
+							.financial(result.categoryScores().financial())
+							.health(result.categoryScores().health())
+							.dangerousAndCriminalContent(result.categoryScores().dangerousAndCriminalContent())
+							.violence(result.categoryScores().violenceAndThreats())
+							.hate(result.categoryScores().hateAndDiscrimination())
+							.selfHarm(result.categoryScores().selfHarm())
+							.build();
 				}
 				var moderationResult = ModerationResult.builder()
-					.categories(categories)
-					.categoryScores(categoryScores)
-					.flagged(result.flagged())
-					.build();
+						.categories(categories)
+						.categoryScores(categoryScores)
+						.flagged(result.flagged())
+						.build();
 				moderationResults.add(moderationResult);
 			}
 
 		}
 
 		var moderation = Moderation.builder()
-			.id(moderationApiResponse.id())
-			.model(moderationApiResponse.model())
-			.results(moderationResults)
-			.build();
+				.id(moderationApiResponse.id())
+				.model(moderationApiResponse.model())
+				.results(moderationResults)
+				.build();
 
 		return new ModerationResponse(new Generation(moderation));
 	}

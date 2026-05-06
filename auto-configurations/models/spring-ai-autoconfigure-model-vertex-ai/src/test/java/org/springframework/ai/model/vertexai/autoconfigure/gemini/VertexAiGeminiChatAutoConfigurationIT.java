@@ -40,9 +40,9 @@ public class VertexAiGeminiChatAutoConfigurationIT {
 	private static final Log logger = LogFactory.getLog(VertexAiGeminiChatAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.vertex.ai.gemini.project-id=" + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"),
-				"spring.ai.vertex.ai.gemini.location=" + System.getenv("VERTEX_AI_GEMINI_LOCATION"))
-		.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.vertex.ai.gemini.project-id=" + System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"),
+					"spring.ai.vertex.ai.gemini.location=" + System.getenv("VERTEX_AI_GEMINI_LOCATION"))
+			.withConfiguration(AutoConfigurations.of(VertexAiGeminiChatAutoConfiguration.class));
 
 	@Test
 	void generate() {
@@ -60,10 +60,10 @@ public class VertexAiGeminiChatAutoConfigurationIT {
 			VertexAiGeminiChatModel chatModel = context.getBean(VertexAiGeminiChatModel.class);
 			Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
 			String response = responseFlux.collectList()
-				.block()
-				.stream()
-				.map(chatResponse -> chatResponse.getResults().get(0).getOutput().getText())
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(chatResponse -> chatResponse.getResults().get(0).getOutput().getText())
+					.collect(Collectors.joining());
 
 			assertThat(response).isNotEmpty();
 			logger.info("Response: " + response);

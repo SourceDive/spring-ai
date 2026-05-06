@@ -44,11 +44,11 @@ public class ChatClientAutoConfigurationIT {
 	private static final Log logger = LogFactory.getLog(ChatClientAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"),
-				"spring.ai.openai.chat.options.model=gpt-4o")
-		.withConfiguration(
-				AutoConfigurations.of(SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-						OpenAiChatAutoConfiguration.class, ChatClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"),
+					"spring.ai.openai.chat.options.model=gpt-4o")
+			.withConfiguration(
+					AutoConfigurations.of(SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+							OpenAiChatAutoConfiguration.class, ChatClientAutoConfiguration.class));
 
 	@Test
 	void implicitlyEnabled() {
@@ -58,13 +58,13 @@ public class ChatClientAutoConfigurationIT {
 	@Test
 	void explicitlyEnabled() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.client.enabled=true")
-			.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isNotEmpty());
+				.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isNotEmpty());
 	}
 
 	@Test
 	void explicitlyDisabled() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.client.enabled=false")
-			.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isEmpty());
+				.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isEmpty());
 	}
 
 	@Test
@@ -94,9 +94,9 @@ public class ChatClientAutoConfigurationIT {
 			assertThat(chatClient).isNotNull();
 
 			ActorsFilms actorsFilms = chatClient.prompt()
-				.user(u -> u.param("actor", "Tom Hanks"))
-				.call()
-				.entity(ActorsFilms.class);
+					.user(u -> u.param("actor", "Tom Hanks"))
+					.call()
+					.entity(ActorsFilms.class);
 
 			logger.info("" + actorsFilms);
 			assertThat(actorsFilms.actor()).isEqualTo("Tom Hanks");
@@ -114,7 +114,7 @@ public class ChatClientAutoConfigurationIT {
 		@Bean
 		public ChatClientCustomizer chatClientCustomizer() {
 			return b -> b.defaultSystem("You are a movie expert.")
-				.defaultUser("Generate the filmography of 5 movies for {actor}.");
+					.defaultUser("Generate the filmography of 5 movies for {actor}.");
 		}
 
 	}

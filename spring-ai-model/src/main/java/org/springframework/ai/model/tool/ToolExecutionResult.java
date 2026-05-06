@@ -68,15 +68,15 @@ public interface ToolExecutionResult {
 		List<Message> conversationHistory = toolExecutionResult.conversationHistory();
 		List<Generation> generations = new ArrayList<>();
 		if (conversationHistory
-			.get(conversationHistory.size() - 1) instanceof ToolResponseMessage toolResponseMessage) {
+				.get(conversationHistory.size() - 1) instanceof ToolResponseMessage toolResponseMessage) {
 			toolResponseMessage.getResponses().forEach(response -> {
 				AssistantMessage assistantMessage = new AssistantMessage(response.responseData());
 				Generation generation = new Generation(assistantMessage,
 						ChatGenerationMetadata.builder()
-							.metadata(METADATA_TOOL_ID, response.id())
-							.metadata(METADATA_TOOL_NAME, response.name())
-							.finishReason(FINISH_REASON)
-							.build());
+								.metadata(METADATA_TOOL_ID, response.id())
+								.metadata(METADATA_TOOL_NAME, response.name())
+								.finishReason(FINISH_REASON)
+								.build());
 				generations.add(generation);
 			});
 		}

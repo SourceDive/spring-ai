@@ -34,9 +34,9 @@ public class VertexAiTextEmbeddingProperties {
 	 * Vertex AI Text Embedding API options.
 	 */
 	private VertexAiTextEmbeddingOptions options = VertexAiTextEmbeddingOptions.builder()
-		.taskType(VertexAiTextEmbeddingOptions.TaskType.RETRIEVAL_DOCUMENT)
-		.model(VertexAiTextEmbeddingOptions.DEFAULT_MODEL_NAME)
-		.build();
+			.taskType(VertexAiTextEmbeddingOptions.TaskType.RETRIEVAL_DOCUMENT)
+			.model(VertexAiTextEmbeddingOptions.DEFAULT_MODEL_NAME)
+			.build();
 
 	public VertexAiTextEmbeddingOptions getOptions() {
 		return this.options;

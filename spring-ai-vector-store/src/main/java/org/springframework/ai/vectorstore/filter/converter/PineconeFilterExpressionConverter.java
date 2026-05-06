@@ -39,8 +39,7 @@ public class PineconeFilterExpressionConverter extends AbstractFilterExpressionC
 			context.append(",");
 			this.convertOperand(exp.right(), context);
 			context.append("]");
-		}
-		else {
+		} else {
 			this.convertOperand(exp.left(), context);
 			context.append("{");
 			context.append(getOperationSymbol(exp));

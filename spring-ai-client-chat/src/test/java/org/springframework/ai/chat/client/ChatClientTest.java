@@ -74,7 +74,7 @@ public class ChatClientTest {
 	void defaultSystemText() {
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -123,7 +123,7 @@ public class ChatClientTest {
 	void defaultSystemTextLambda() {
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -133,10 +133,10 @@ public class ChatClientTest {
 				}));
 
 		var chatClient = ChatClient.builder(this.chatModel)
-			.defaultSystem(s -> s.text("Default system text {param1}, {param2}")
-				.param("param1", "value1")
-				.param("param2", "value2"))
-			.build();
+				.defaultSystem(s -> s.text("Default system text {param1}, {param2}")
+						.param("param1", "value1")
+						.param("param2", "value2"))
+				.build();
 
 		var content = chatClient.prompt("What's Spring AI?").call().content();
 
@@ -174,9 +174,9 @@ public class ChatClientTest {
 
 		// Override default system text
 		content = chatClient.prompt("What's Spring AI?")
-			.system(s -> s.text("Override default system text {param3}").param("param3", "value3"))
-			.call()
-			.content();
+				.system(s -> s.text("Override default system text {param3}").param("param3", "value3"))
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("response");
 		systemMessage = this.promptCaptor.getValue().getInstructions().get(0);
@@ -185,9 +185,9 @@ public class ChatClientTest {
 
 		// Streaming
 		content = join(chatClient.prompt("What's Spring AI?")
-			.system(s -> s.text("Override default system text {param3}").param("param3", "value3"))
-			.stream()
-			.content());
+				.system(s -> s.text("Override default system text {param3}").param("param3", "value3"))
+				.stream()
+				.content());
 
 		assertThat(content).isEqualTo("response");
 		systemMessage = this.promptCaptor.getValue().getInstructions().get(0);
@@ -202,7 +202,7 @@ public class ChatClientTest {
 		given(this.chatModel.getDefaultOptions()).willReturn(options);
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -333,7 +333,7 @@ public class ChatClientTest {
 		given(this.chatModel.getDefaultOptions()).willReturn(options);
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -423,7 +423,7 @@ public class ChatClientTest {
 	void defaultUserText() {
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).defaultUser("Default user text").build();
 
@@ -447,10 +447,10 @@ public class ChatClientTest {
 	@Test
 	void simpleUserPromptAsString() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		assertThat(ChatClient.builder(this.chatModel).build().prompt("User prompt").call().content())
-			.isEqualTo("response");
+				.isEqualTo("response");
 
 		Message userMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(userMessage.getText()).isEqualTo("User prompt");
@@ -460,10 +460,10 @@ public class ChatClientTest {
 	@Test
 	void simpleUserPrompt() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		assertThat(ChatClient.builder(this.chatModel).build().prompt().user("User prompt").call().content())
-			.isEqualTo("response");
+				.isEqualTo("response");
 
 		Message userMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(userMessage.getText()).isEqualTo("User prompt");
@@ -473,7 +473,7 @@ public class ChatClientTest {
 	@Test
 	void simpleUserPromptObject() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var media = new Media(MimeTypeUtils.IMAGE_JPEG,
 				new DefaultResourceLoader().getResource("classpath:/bikes.json"));
@@ -492,14 +492,14 @@ public class ChatClientTest {
 	@Test
 	void simpleSystemPrompt() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		String response = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt("What's Spring AI?")
-			.system("System prompt")
-			.call()
-			.content();
+				.build()
+				.prompt("What's Spring AI?")
+				.system("System prompt")
+				.call()
+				.content();
 
 		assertThat(response).isEqualTo("response");
 
@@ -513,7 +513,7 @@ public class ChatClientTest {
 	@Test
 	void complexCall() throws MalformedURLException {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var options = ToolCallingChatOptions.builder().build();
 		given(this.chatModel.getDefaultOptions()).willReturn(options);
@@ -545,7 +545,7 @@ public class ChatClientTest {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_PNG);
 		assertThat(userMessage.getMedia().iterator().next().getData())
-			.isEqualTo("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png");
+				.isEqualTo("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png");
 
 		ToolCallingChatOptions runtieOptions = (ToolCallingChatOptions) this.promptCaptor.getValue().getOptions();
 
@@ -558,27 +558,27 @@ public class ChatClientTest {
 	@Test
 	void whenCreateAndChatModelIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.create(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatModel cannot be null");
+				.hasMessage("chatModel cannot be null");
 	}
 
 	@Test
 	void whenCreateAndObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.create(this.chatModel, null, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	@Test
 	void whenBuilderAndChatModelIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.builder(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatModel cannot be null");
+				.hasMessage("chatModel cannot be null");
 	}
 
 	@Test
 	void whenBuilderAndObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.builder(this.chatModel, null, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	// Prompt Tests - User
@@ -586,7 +586,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithStringContent() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var content = chatClient.prompt("my question").call().content();
@@ -602,7 +602,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithMessages() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new SystemMessage("instructions"), UserMessage.builder().text("my question").build());
@@ -619,7 +619,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithStringContentAndUserText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var content = chatClient.prompt("my question").user("another question").call().content();
@@ -635,7 +635,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithHistoryAndUserText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new UserMessage("my question"), new AssistantMessage("your answer"));
@@ -652,7 +652,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithUserMessageAndUserText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new UserMessage("my question"));
@@ -669,7 +669,7 @@ public class ChatClientTest {
 	@Test
 	void whenMessagesWithHistoryAndUserText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new UserMessage("my question"), new AssistantMessage("your answer"));
@@ -685,7 +685,7 @@ public class ChatClientTest {
 	@Test
 	void whenMessagesWithUserMessageAndUserText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new UserMessage("my question"));
@@ -704,7 +704,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithMessagesAndSystemText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new UserMessage("my question"), new AssistantMessage("your answer"));
@@ -721,7 +721,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithSystemMessageAndNoSystemText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
@@ -738,7 +738,7 @@ public class ChatClientTest {
 	@Test
 	void whenPromptWithSystemMessageAndSystemText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
@@ -755,16 +755,16 @@ public class ChatClientTest {
 	@Test
 	void whenMessagesAndSystemText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new UserMessage("my question"), new AssistantMessage("your answer"));
 		var content = chatClient.prompt()
-			.messages(messages)
-			.system("instructions")
-			.user("another question")
-			.call()
-			.content();
+				.messages(messages)
+				.system("instructions")
+				.user("another question")
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("response");
 
@@ -777,7 +777,7 @@ public class ChatClientTest {
 	@Test
 	void whenMessagesWithSystemMessageAndNoSystemText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new SystemMessage("instructions"), new UserMessage("my question"));
@@ -794,16 +794,16 @@ public class ChatClientTest {
 	@Test
 	void whenMessagesWithSystemMessageAndSystemText() {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new SystemMessage("instructions"), new UserMessage("my question"));
 		var content = chatClient.prompt()
-			.messages(messages)
-			.system("other instructions")
-			.user("another question")
-			.call()
-			.content();
+				.messages(messages)
+				.system("other instructions")
+				.user("another question")
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("response");
 

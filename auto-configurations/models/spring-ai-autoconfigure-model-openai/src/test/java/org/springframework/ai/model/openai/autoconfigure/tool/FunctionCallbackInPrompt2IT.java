@@ -41,19 +41,19 @@ public class FunctionCallbackInPrompt2IT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallbackInPromptIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName())
-			.run(context -> {
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				ChatClient chatClient = ChatClient.builder(chatModel).build();
+					ChatClient chatClient = ChatClient.builder(chatModel).build();
 
-			// @formatter:off
+					// @formatter:off
 			chatClient.prompt()
 					.user("Tell me a joke?")
 					.call().content();
@@ -68,10 +68,10 @@ public class FunctionCallbackInPrompt2IT {
 					.call().content();
 			// @formatter:on
 
-				logger.info("Response: {}", content);
+					logger.info("Response: {}", content);
 
-				assertThat(content).contains("30", "10", "15");
-			});
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 	@Test
@@ -107,11 +107,11 @@ public class FunctionCallbackInPrompt2IT {
 	@Test
 	void functionCallTest2() {
 		this.contextRunner.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName())
-			.run(context -> {
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-			// @formatter:off
+					// @formatter:off
 			String content = ChatClient.builder(chatModel).build().prompt()
 					.user("What's the weather like in Amsterdam?")
 					.toolCallbacks(FunctionToolCallback
@@ -121,21 +121,21 @@ public class FunctionCallbackInPrompt2IT {
 					.build())
 					.call().content();
 			// @formatter:on
-				logger.info("Response: {}", content);
+					logger.info("Response: {}", content);
 
-				assertThat(content).contains("18");
-			});
+					assertThat(content).contains("18");
+				});
 	}
 
 	@Test
 	void streamingFunctionCallTest() {
 
 		this.contextRunner.withPropertyValues("spring.ai.openai.chat.options.model=" + ChatModel.GPT_4_O_MINI.getName())
-			.run(context -> {
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-			// @formatter:off
+					// @formatter:off
 			String content = ChatClient.builder(chatModel).build().prompt()
 					.user("What's the weather like in San Francisco, Tokyo, and Paris?")
 					.toolCallbacks(FunctionToolCallback
@@ -147,10 +147,10 @@ public class FunctionCallbackInPrompt2IT {
 					.collectList().block().stream().collect(Collectors.joining());
 			// @formatter:on
 
-				logger.info("Response: {}", content);
+					logger.info("Response: {}", content);
 
-				assertThat(content).contains("30", "10", "15");
-			});
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 }

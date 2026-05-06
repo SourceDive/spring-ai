@@ -45,45 +45,45 @@ import org.springframework.context.annotation.Import;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for Bedrock Converse Proxy Chat Client.
- *
+ * <p>
  * Leverages the Spring Cloud AWS to resolve the {@link AwsCredentialsProvider}.
  *
  * @author Christian Tzolov
  * @author Wei Jiang
  */
-@AutoConfiguration(after = { ToolCallingAutoConfiguration.class })
-@EnableConfigurationProperties({ BedrockConverseProxyChatProperties.class, BedrockAwsConnectionConfiguration.class })
-@ConditionalOnClass({ BedrockProxyChatModel.class, BedrockRuntimeClient.class, BedrockRuntimeAsyncClient.class })
+@AutoConfiguration(after = {ToolCallingAutoConfiguration.class})
+@EnableConfigurationProperties({BedrockConverseProxyChatProperties.class, BedrockAwsConnectionConfiguration.class})
+@ConditionalOnClass({BedrockProxyChatModel.class, BedrockRuntimeClient.class, BedrockRuntimeAsyncClient.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.BEDROCK_CONVERSE,
 		matchIfMissing = true)
 @Import(BedrockAwsConnectionConfiguration.class)
-@ImportAutoConfiguration({ ToolCallingAutoConfiguration.class })
+@ImportAutoConfiguration({ToolCallingAutoConfiguration.class})
 public class BedrockConverseProxyChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnBean({ AwsCredentialsProvider.class, AwsRegionProvider.class })
+	@ConditionalOnBean({AwsCredentialsProvider.class, AwsRegionProvider.class})
 	public BedrockProxyChatModel bedrockProxyChatModel(AwsCredentialsProvider credentialsProvider,
-			AwsRegionProvider regionProvider, BedrockAwsConnectionProperties connectionProperties,
-			BedrockConverseProxyChatProperties chatProperties, ToolCallingManager toolCallingManager,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<BedrockRuntimeClient> bedrockRuntimeClient,
-			ObjectProvider<BedrockRuntimeAsyncClient> bedrockRuntimeAsyncClient,
-			ObjectProvider<ToolExecutionEligibilityPredicate> bedrockToolExecutionEligibilityPredicate) {
+	                                                   AwsRegionProvider regionProvider, BedrockAwsConnectionProperties connectionProperties,
+	                                                   BedrockConverseProxyChatProperties chatProperties, ToolCallingManager toolCallingManager,
+	                                                   ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                   ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                                   ObjectProvider<BedrockRuntimeClient> bedrockRuntimeClient,
+	                                                   ObjectProvider<BedrockRuntimeAsyncClient> bedrockRuntimeAsyncClient,
+	                                                   ObjectProvider<ToolExecutionEligibilityPredicate> bedrockToolExecutionEligibilityPredicate) {
 
 		var chatModel = BedrockProxyChatModel.builder()
-			.credentialsProvider(credentialsProvider)
-			.region(regionProvider.getRegion())
-			.timeout(connectionProperties.getTimeout())
-			.defaultOptions(chatProperties.getOptions())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(
-					bedrockToolExecutionEligibilityPredicate.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.bedrockRuntimeClient(bedrockRuntimeClient.getIfAvailable())
-			.bedrockRuntimeAsyncClient(bedrockRuntimeAsyncClient.getIfAvailable())
-			.build();
+				.credentialsProvider(credentialsProvider)
+				.region(regionProvider.getRegion())
+				.timeout(connectionProperties.getTimeout())
+				.defaultOptions(chatProperties.getOptions())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(
+						bedrockToolExecutionEligibilityPredicate.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.bedrockRuntimeClient(bedrockRuntimeClient.getIfAvailable())
+				.bedrockRuntimeAsyncClient(bedrockRuntimeAsyncClient.getIfAvailable())
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 

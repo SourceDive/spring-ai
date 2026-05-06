@@ -75,7 +75,7 @@ class DefaultChatClientObservationConventionTests {
 
 			@Override
 			public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest,
-					CallAdvisorChain callAdvisorChain) {
+			                                     CallAdvisorChain callAdvisorChain) {
 				return null;
 			}
 
@@ -111,20 +111,20 @@ class DefaultChatClientObservationConventionTests {
 	@Test
 	void shouldHaveContextualName() {
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(this.request)
-			.stream(true)
-			.build();
+				.request(this.request)
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.getContextualName(observationContext))
-			.isEqualTo("%s %s".formatted(AiProvider.SPRING_AI.value(), SpringAiKind.CHAT_CLIENT.value()));
+				.isEqualTo("%s %s".formatted(AiProvider.SPRING_AI.value(), SpringAiKind.CHAT_CLIENT.value()));
 	}
 
 	@Test
 	void supportsOnlyChatClientObservationContext() {
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(this.request)
-			.stream(true)
-			.build();
+				.request(this.request)
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
@@ -133,9 +133,9 @@ class DefaultChatClientObservationConventionTests {
 	@Test
 	void shouldHaveRequiredKeyValues() {
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(this.request)
-			.stream(true)
-			.build();
+				.request(this.request)
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(LowCardinalityKeyNames.SPRING_AI_KIND.asString(), "chat_client"),
@@ -145,20 +145,20 @@ class DefaultChatClientObservationConventionTests {
 	@Test
 	void shouldHaveOptionalKeyValues() {
 		var request = ChatClientRequest.builder()
-			.prompt(new Prompt("",
-					ToolCallingChatOptions.builder()
-						.toolNames("tool1", "tool2")
-						.toolCallbacks(dummyFunction("toolCallback1"), dummyFunction("toolCallback2"))
-						.build()))
-			.context(ChatMemory.CONVERSATION_ID, "007")
-			.build();
+				.prompt(new Prompt("",
+						ToolCallingChatOptions.builder()
+								.toolNames("tool1", "tool2")
+								.toolCallbacks(dummyFunction("toolCallback1"), dummyFunction("toolCallback2"))
+								.build()))
+				.context(ChatMemory.CONVERSATION_ID, "007")
+				.build();
 
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(request)
-			.format("json")
-			.advisors(List.of(dummyAdvisor("advisor1"), dummyAdvisor("advisor2")))
-			.stream(true)
-			.build();
+				.request(request)
+				.format("json")
+				.advisors(List.of(dummyAdvisor("advisor1"), dummyAdvisor("advisor2")))
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(HighCardinalityKeyNames.CHAT_CLIENT_ADVISORS.asString(), """

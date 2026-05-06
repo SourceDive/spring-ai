@@ -75,6 +75,7 @@ public class ResourceCacheService {
 
 	/**
 	 * Overrides the excluded URI schemas list.
+	 *
 	 * @param excludedUriSchemas new list of URI schemas to be excluded from caching.
 	 */
 	public void setExcludedUriSchemas(List<String> excludedUriSchemas) {
@@ -84,6 +85,7 @@ public class ResourceCacheService {
 
 	/**
 	 * Get {@link Resource} representing the cached copy of the original resource.
+	 *
 	 * @param originalResourceUri Resource to be cached.
 	 * @return Returns a cached resource. If the original resource's URI schema is within
 	 * the excluded schema list the original resource is returned.
@@ -94,6 +96,7 @@ public class ResourceCacheService {
 
 	/**
 	 * Get {@link Resource} representing the cached copy of the original resource.
+	 *
 	 * @param originalResource Resource to be cached.
 	 * @return Returns a cached resource. If the original resource's URI schema is within
 	 * the excluded schema list the original resource is returned.
@@ -112,8 +115,7 @@ public class ResourceCacheService {
 				logger.info("Caching the " + originalResource.toString() + " resource to: " + cachedFile);
 			}
 			return new FileUrlResource(cachedFile.getAbsolutePath());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to cache the resource: " + originalResource.getDescription(), e);
 		}
 	}

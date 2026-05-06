@@ -140,15 +140,15 @@ public class AnthropicChatModel implements ChatModel {
 	private ChatModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
 	public AnthropicChatModel(AnthropicApi anthropicApi, AnthropicChatOptions defaultOptions,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                          ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
+	                          ObservationRegistry observationRegistry) {
 		this(anthropicApi, defaultOptions, toolCallingManager, retryTemplate, observationRegistry,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
 	public AnthropicChatModel(AnthropicApi anthropicApi, AnthropicChatOptions defaultOptions,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	                          ToolCallingManager toolCallingManager, RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
+	                          ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 
 		Assert.notNull(anthropicApi, "anthropicApi cannot be null");
 		Assert.notNull(defaultOptions, "defaultOptions cannot be null");
@@ -177,42 +177,41 @@ public class AnthropicChatModel implements ChatModel {
 		ChatCompletionRequest request = createRequest(prompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(AnthropicApi.PROVIDER_NAME)
-			.build();
+				.prompt(prompt)
+				.provider(AnthropicApi.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ResponseEntity<ChatCompletionResponse> completionEntity = this.retryTemplate.execute(
-						ctx -> this.anthropicApi.chatCompletionEntity(request, this.getAdditionalHttpHeaders(prompt)));
+					ResponseEntity<ChatCompletionResponse> completionEntity = this.retryTemplate.execute(
+							ctx -> this.anthropicApi.chatCompletionEntity(request, this.getAdditionalHttpHeaders(prompt)));
 
-				AnthropicApi.ChatCompletionResponse completionResponse = completionEntity.getBody();
-				AnthropicApi.Usage usage = completionResponse.usage();
+					AnthropicApi.ChatCompletionResponse completionResponse = completionEntity.getBody();
+					AnthropicApi.Usage usage = completionResponse.usage();
 
-				Usage currentChatResponseUsage = usage != null ? this.getDefaultUsage(completionResponse.usage())
-						: new EmptyUsage();
-				Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
-						previousChatResponse);
+					Usage currentChatResponseUsage = usage != null ? this.getDefaultUsage(completionResponse.usage())
+							: new EmptyUsage();
+					Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
+							previousChatResponse);
 
-				ChatResponse chatResponse = toChatResponse(completionEntity.getBody(), accumulatedUsage);
-				observationContext.setResponse(chatResponse);
+					ChatResponse chatResponse = toChatResponse(completionEntity.getBody(), accumulatedUsage);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
-			});
+					return chatResponse;
+				});
 
 		if (this.toolExecutionEligibilityPredicate.isToolExecutionRequired(prompt.getOptions(), response)) {
 			var toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, response);
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the client.
 				return ChatResponse.builder()
-					.from(response)
-					.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-					.build();
-			}
-			else {
+						.from(response)
+						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+						.build();
+			} else {
 				// Send the tool execution result back to the model.
 				return this.internalCall(new Prompt(toolExecutionResult.conversationHistory(), prompt.getOptions()),
 						response);
@@ -240,9 +239,9 @@ public class AnthropicChatModel implements ChatModel {
 			ChatCompletionRequest request = createRequest(prompt, true);
 
 			ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(AnthropicApi.PROVIDER_NAME)
-				.build();
+					.prompt(prompt)
+					.provider(AnthropicApi.PROVIDER_NAME)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -349,13 +348,13 @@ public class AnthropicChatModel implements ChatModel {
 	private ChatResponseMetadata from(AnthropicApi.ChatCompletionResponse result, Usage usage) {
 		Assert.notNull(result, "Anthropic ChatCompletionResult must not be null");
 		return ChatResponseMetadata.builder()
-			.id(result.id())
-			.model(result.model())
-			.usage(usage)
-			.keyValue("stop-reason", result.stopReason())
-			.keyValue("stop-sequence", result.stopSequence())
-			.keyValue("type", result.type())
-			.build();
+				.id(result.id())
+				.model(result.model())
+				.usage(usage)
+				.keyValue("stop-reason", result.stopReason())
+				.keyValue("stop-sequence", result.stopSequence())
+				.keyValue("type", result.type())
+				.build();
 	}
 
 	private Source getSourceByMedia(Media media) {
@@ -364,8 +363,7 @@ public class AnthropicChatModel implements ChatModel {
 		// http is not allowed and redirect not allowed
 		if (data.startsWith("https://")) {
 			return new Source(data);
-		}
-		else {
+		} else {
 			return new Source(media.getMimeType().toString(), data);
 		}
 	}
@@ -373,11 +371,9 @@ public class AnthropicChatModel implements ChatModel {
 	private String fromMediaData(Object mediaData) {
 		if (mediaData instanceof byte[] bytes) {
 			return Base64.getEncoder().encodeToString(bytes);
-		}
-		else if (mediaData instanceof String text) {
+		} else if (mediaData instanceof String text) {
 			return text;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unsupported media data type: " + mediaData.getClass().getSimpleName());
 		}
 
@@ -387,8 +383,7 @@ public class AnthropicChatModel implements ChatModel {
 		String mimeType = media.getMimeType().toString();
 		if (mimeType.startsWith("image")) {
 			return Type.IMAGE;
-		}
-		else if (mimeType.contains("pdf")) {
+		} else if (mimeType.contains("pdf")) {
 			return Type.DOCUMENT;
 		}
 		throw new IllegalArgumentException("Unsupported media type: " + mimeType
@@ -412,8 +407,7 @@ public class AnthropicChatModel implements ChatModel {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
 						AnthropicChatOptions.class);
-			}
-			else {
+			} else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
 						AnthropicChatOptions.class);
 			}
@@ -443,8 +437,7 @@ public class AnthropicChatModel implements ChatModel {
 					this.defaultOptions.getToolCallbacks()));
 			requestOptions.setToolContext(ToolCallingChatOptions.mergeToolContext(runtimeOptions.getToolContext(),
 					this.defaultOptions.getToolContext()));
-		}
-		else {
+		} else {
 			requestOptions.setHttpHeaders(this.defaultOptions.getHttpHeaders());
 			requestOptions.setInternalToolExecutionEnabled(this.defaultOptions.getInternalToolExecutionEnabled());
 			requestOptions.setToolNames(this.defaultOptions.getToolNames());
@@ -458,7 +451,7 @@ public class AnthropicChatModel implements ChatModel {
 	}
 
 	private Map<String, String> mergeHttpHeaders(Map<String, String> runtimeHttpHeaders,
-			Map<String, String> defaultHttpHeaders) {
+	                                             Map<String, String> defaultHttpHeaders) {
 		var mergedHttpHeaders = new HashMap<>(defaultHttpHeaders);
 		mergedHttpHeaders.putAll(runtimeHttpHeaders);
 		return mergedHttpHeaders;
@@ -467,56 +460,53 @@ public class AnthropicChatModel implements ChatModel {
 	ChatCompletionRequest createRequest(Prompt prompt, boolean stream) {
 
 		List<AnthropicMessage> userMessages = prompt.getInstructions()
-			.stream()
-			.filter(message -> message.getMessageType() != MessageType.SYSTEM)
-			.map(message -> {
-				if (message.getMessageType() == MessageType.USER) {
-					List<ContentBlock> contents = new ArrayList<>(List.of(new ContentBlock(message.getText())));
-					if (message instanceof UserMessage userMessage) {
-						if (!CollectionUtils.isEmpty(userMessage.getMedia())) {
-							List<ContentBlock> mediaContent = userMessage.getMedia().stream().map(media -> {
-								Type contentBlockType = getContentBlockTypeByMedia(media);
-								var source = getSourceByMedia(media);
-								return new ContentBlock(contentBlockType, source);
-							}).toList();
-							contents.addAll(mediaContent);
+				.stream()
+				.filter(message -> message.getMessageType() != MessageType.SYSTEM)
+				.map(message -> {
+					if (message.getMessageType() == MessageType.USER) {
+						List<ContentBlock> contents = new ArrayList<>(List.of(new ContentBlock(message.getText())));
+						if (message instanceof UserMessage userMessage) {
+							if (!CollectionUtils.isEmpty(userMessage.getMedia())) {
+								List<ContentBlock> mediaContent = userMessage.getMedia().stream().map(media -> {
+									Type contentBlockType = getContentBlockTypeByMedia(media);
+									var source = getSourceByMedia(media);
+									return new ContentBlock(contentBlockType, source);
+								}).toList();
+								contents.addAll(mediaContent);
+							}
 						}
-					}
-					return new AnthropicMessage(contents, Role.valueOf(message.getMessageType().name()));
-				}
-				else if (message.getMessageType() == MessageType.ASSISTANT) {
-					AssistantMessage assistantMessage = (AssistantMessage) message;
-					List<ContentBlock> contentBlocks = new ArrayList<>();
-					if (StringUtils.hasText(message.getText())) {
-						contentBlocks.add(new ContentBlock(message.getText()));
-					}
-					if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
-						for (AssistantMessage.ToolCall toolCall : assistantMessage.getToolCalls()) {
-							contentBlocks.add(new ContentBlock(Type.TOOL_USE, toolCall.id(), toolCall.name(),
-									ModelOptionsUtils.jsonToMap(toolCall.arguments())));
+						return new AnthropicMessage(contents, Role.valueOf(message.getMessageType().name()));
+					} else if (message.getMessageType() == MessageType.ASSISTANT) {
+						AssistantMessage assistantMessage = (AssistantMessage) message;
+						List<ContentBlock> contentBlocks = new ArrayList<>();
+						if (StringUtils.hasText(message.getText())) {
+							contentBlocks.add(new ContentBlock(message.getText()));
 						}
+						if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
+							for (AssistantMessage.ToolCall toolCall : assistantMessage.getToolCalls()) {
+								contentBlocks.add(new ContentBlock(Type.TOOL_USE, toolCall.id(), toolCall.name(),
+										ModelOptionsUtils.jsonToMap(toolCall.arguments())));
+							}
+						}
+						return new AnthropicMessage(contentBlocks, Role.ASSISTANT);
+					} else if (message.getMessageType() == MessageType.TOOL) {
+						List<ContentBlock> toolResponses = ((ToolResponseMessage) message).getResponses()
+								.stream()
+								.map(toolResponse -> new ContentBlock(Type.TOOL_RESULT, toolResponse.id(),
+										toolResponse.responseData()))
+								.toList();
+						return new AnthropicMessage(toolResponses, Role.USER);
+					} else {
+						throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 					}
-					return new AnthropicMessage(contentBlocks, Role.ASSISTANT);
-				}
-				else if (message.getMessageType() == MessageType.TOOL) {
-					List<ContentBlock> toolResponses = ((ToolResponseMessage) message).getResponses()
-						.stream()
-						.map(toolResponse -> new ContentBlock(Type.TOOL_RESULT, toolResponse.id(),
-								toolResponse.responseData()))
-						.toList();
-					return new AnthropicMessage(toolResponses, Role.USER);
-				}
-				else {
-					throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
-				}
-			})
-			.toList();
+				})
+				.toList();
 
 		String systemPrompt = prompt.getInstructions()
-			.stream()
-			.filter(m -> m.getMessageType() == MessageType.SYSTEM)
-			.map(m -> m.getText())
-			.collect(Collectors.joining(System.lineSeparator()));
+				.stream()
+				.filter(m -> m.getMessageType() == MessageType.SYSTEM)
+				.map(m -> m.getText())
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		ChatCompletionRequest request = new ChatCompletionRequest(this.defaultOptions.getModel(), userMessages,
 				systemPrompt, this.defaultOptions.getMaxTokens(), this.defaultOptions.getTemperature(), stream);
@@ -551,6 +541,7 @@ public class AnthropicChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -567,10 +558,10 @@ public class AnthropicChatModel implements ChatModel {
 		private AnthropicApi anthropicApi;
 
 		private AnthropicChatOptions defaultOptions = AnthropicChatOptions.builder()
-			.model(DEFAULT_MODEL_NAME)
-			.maxTokens(DEFAULT_MAX_TOKENS)
-			.temperature(DEFAULT_TEMPERATURE)
-			.build();
+				.model(DEFAULT_MODEL_NAME)
+				.maxTokens(DEFAULT_MAX_TOKENS)
+				.temperature(DEFAULT_TEMPERATURE)
+				.build();
 
 		private RetryTemplate retryTemplate = RetryUtils.DEFAULT_RETRY_TEMPLATE;
 

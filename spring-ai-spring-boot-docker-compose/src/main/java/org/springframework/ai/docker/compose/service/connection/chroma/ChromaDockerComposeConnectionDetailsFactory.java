@@ -27,7 +27,7 @@ import org.springframework.boot.docker.compose.service.connection.DockerComposeC
 class ChromaDockerComposeConnectionDetailsFactory
 		extends DockerComposeConnectionDetailsFactory<ChromaConnectionDetails> {
 
-	private static final String[] CHROMA_IMAGE_NAMES = { "chromadb/chroma", "ghcr.io/chroma-core/chroma" };
+	private static final String[] CHROMA_IMAGE_NAMES = {"chromadb/chroma", "ghcr.io/chroma-core/chroma"};
 
 	private static final int CHROMA_PORT = 8000;
 

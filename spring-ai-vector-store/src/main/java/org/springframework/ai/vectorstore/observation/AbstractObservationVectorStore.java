@@ -51,7 +51,7 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 	protected final BatchingStrategy batchingStrategy;
 
 	private AbstractObservationVectorStore(EmbeddingModel embeddingModel, ObservationRegistry observationRegistry,
-			@Nullable VectorStoreObservationConvention customObservationConvention, BatchingStrategy batchingStrategy) {
+	                                       @Nullable VectorStoreObservationConvention customObservationConvention, BatchingStrategy batchingStrategy) {
 		this.embeddingModel = embeddingModel;
 		this.observationRegistry = observationRegistry;
 		this.customObservationConvention = customObservationConvention;
@@ -61,6 +61,7 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 	/**
 	 * Creates a new AbstractObservationVectorStore instance with the specified builder
 	 * settings. Initializes observation-related components and the embedding model.
+	 *
 	 * @param builder the builder containing configuration settings
 	 */
 	public AbstractObservationVectorStore(AbstractVectorStoreBuilder<?> builder) {
@@ -70,44 +71,45 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 
 	/**
 	 * Create a new {@link AbstractObservationVectorStore} instance.
+	 *
 	 * @param documents the documents to add
 	 */
 	@Override
 	public void add(List<Document> documents) {
 
 		VectorStoreObservationContext observationContext = this
-			.createObservationContextBuilder(VectorStoreObservationContext.Operation.ADD.value())
-			.build();
+				.createObservationContextBuilder(VectorStoreObservationContext.Operation.ADD.value())
+				.build();
 
 		VectorStoreObservationDocumentation.AI_VECTOR_STORE
-			.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> this.doAdd(documents));
+				.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> this.doAdd(documents));
 	}
 
 	@Override
 	public void delete(List<String> deleteDocIds) {
 
 		VectorStoreObservationContext observationContext = this
-			.createObservationContextBuilder(VectorStoreObservationContext.Operation.DELETE.value())
-			.build();
+				.createObservationContextBuilder(VectorStoreObservationContext.Operation.DELETE.value())
+				.build();
 
 		VectorStoreObservationDocumentation.AI_VECTOR_STORE
-			.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> this.doDelete(deleteDocIds));
+				.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> this.doDelete(deleteDocIds));
 	}
 
 	@Override
 	public void delete(Filter.Expression filterExpression) {
 		VectorStoreObservationContext observationContext = this
-			.createObservationContextBuilder(VectorStoreObservationContext.Operation.DELETE.value())
-			.build();
+				.createObservationContextBuilder(VectorStoreObservationContext.Operation.DELETE.value())
+				.build();
 
 		VectorStoreObservationDocumentation.AI_VECTOR_STORE
-			.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> this.doDelete(filterExpression));
+				.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> this.doDelete(filterExpression));
 	}
 
 	@Override
@@ -115,28 +117,30 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 	public List<Document> similaritySearch(SearchRequest request) {
 
 		VectorStoreObservationContext searchObservationContext = this
-			.createObservationContextBuilder(VectorStoreObservationContext.Operation.QUERY.value())
-			.queryRequest(request)
-			.build();
+				.createObservationContextBuilder(VectorStoreObservationContext.Operation.QUERY.value())
+				.queryRequest(request)
+				.build();
 
 		return VectorStoreObservationDocumentation.AI_VECTOR_STORE
-			.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION,
-					() -> searchObservationContext, this.observationRegistry)
-			.observe(() -> {
-				var documents = this.doSimilaritySearch(request);
-				searchObservationContext.setQueryResponse(documents);
-				return documents;
-			});
+				.observation(this.customObservationConvention, DEFAULT_OBSERVATION_CONVENTION,
+						() -> searchObservationContext, this.observationRegistry)
+				.observe(() -> {
+					var documents = this.doSimilaritySearch(request);
+					searchObservationContext.setQueryResponse(documents);
+					return documents;
+				});
 	}
 
 	/**
 	 * Perform the actual add operation.
+	 *
 	 * @param documents the documents to add
 	 */
 	public abstract void doAdd(List<Document> documents);
 
 	/**
 	 * Perform the actual delete operation.
+	 *
 	 * @param idList the list of document IDs to delete
 	 */
 	public abstract void doDelete(List<String> idList);
@@ -144,6 +148,7 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 	/**
 	 * Template method for concrete implementations to provide filter-based deletion
 	 * logic.
+	 *
 	 * @param filterExpression Filter expression to identify documents to delete
 	 */
 	protected void doDelete(Filter.Expression filterExpression) {
@@ -155,6 +160,7 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 
 	/**
 	 * Perform the actual similarity search operation.
+	 *
 	 * @param request the search request
 	 * @return the list of documents that match the query request conditions
 	 */
@@ -162,6 +168,7 @@ public abstract class AbstractObservationVectorStore implements VectorStore {
 
 	/**
 	 * Create a new {@link VectorStoreObservationContext.Builder} instance.
+	 *
 	 * @param operationName the operation name
 	 * @return the observation context builder
 	 */

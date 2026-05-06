@@ -36,9 +36,9 @@ class ModelObservationContextTests {
 	void whenRequestAndMetadataThenReturn() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -47,43 +47,43 @@ class ModelObservationContextTests {
 	void whenRequestIsNullThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>(null,
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.EMBEDDING.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("request cannot be null");
+						.operationType(AiOperationType.EMBEDDING.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build()))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("request cannot be null");
 	}
 
 	@Test
 	void whenOperationMetadataIsNullThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request", null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("operationMetadata cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("operationMetadata cannot be null");
 	}
 
 	@Test
 	void whenOperationMetadataIsMissingOperationTypeThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().provider(AiProvider.OLLAMA.value()).build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("operationType cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("operationType cannot be null or empty");
 	}
 
 	@Test
 	void whenOperationMetadataIsMissingProviderThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().operationType(AiOperationType.IMAGE.value()).build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("provider cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("provider cannot be null or empty");
 	}
 
 	@Test
 	void whenResponseThenReturn() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		observationContext.setResponse("test response");
 
 		assertThat(observationContext).isNotNull();
@@ -93,11 +93,11 @@ class ModelObservationContextTests {
 	void whenResponseIsNullThenThrow() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		assertThatThrownBy(() -> observationContext.setResponse(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("response cannot be null");
+				.hasMessageContaining("response cannot be null");
 	}
 
 }

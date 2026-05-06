@@ -45,7 +45,7 @@ import org.springframework.context.annotation.Bean;
  */
 
 @AutoConfiguration
-@ConditionalOnClass({ CosmosDBVectorStore.class, EmbeddingModel.class, CosmosAsyncClient.class })
+@ConditionalOnClass({CosmosDBVectorStore.class, EmbeddingModel.class, CosmosAsyncClient.class})
 @EnableConfigurationProperties(CosmosDBVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.AZURE_COSMOS_DB,
 		matchIfMissing = true)
@@ -58,23 +58,21 @@ public class CosmosDBVectorStoreAutoConfiguration {
 		String mode = properties.getConnectionMode();
 		if (mode == null) {
 			properties.setConnectionMode("gateway");
-		}
-		else if (!mode.equals("direct") && !mode.equals("gateway")) {
+		} else if (!mode.equals("direct") && !mode.equals("gateway")) {
 			throw new IllegalArgumentException("Connection mode must be either 'direct' or 'gateway'");
 		}
 
 		CosmosClientBuilder builder = new CosmosClientBuilder().endpoint(properties.getEndpoint())
-			.userAgentSuffix(this.agentSuffix);
+				.userAgentSuffix(this.agentSuffix);
 
 		if (properties.getKey() == null || properties.getKey().isEmpty()) {
 			builder.credential(new DefaultAzureCredentialBuilder().build());
-		}
-		else {
+		} else {
 			builder.key(properties.getKey());
 		}
 
 		return ("direct".equals(properties.getConnectionMode()) ? builder.directMode() : builder.gatewayMode())
-			.buildAsyncClient();
+				.buildAsyncClient();
 	}
 
 	@Bean
@@ -86,18 +84,18 @@ public class CosmosDBVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public CosmosDBVectorStore cosmosDBVectorStore(ObservationRegistry observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			CosmosDBVectorStoreProperties properties, CosmosAsyncClient cosmosAsyncClient,
-			EmbeddingModel embeddingModel, BatchingStrategy batchingStrategy) {
+	                                               ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                               CosmosDBVectorStoreProperties properties, CosmosAsyncClient cosmosAsyncClient,
+	                                               EmbeddingModel embeddingModel, BatchingStrategy batchingStrategy) {
 
 		return CosmosDBVectorStore.builder(cosmosAsyncClient, embeddingModel)
-			.databaseName(properties.getDatabaseName())
-			.containerName(properties.getContainerName())
-			.metadataFields(properties.getMetadataFieldList())
-			.vectorStoreThroughput(properties.getVectorStoreThroughput())
-			.vectorDimensions(properties.getVectorDimensions())
-			.partitionKeyPath(properties.getPartitionKeyPath())
-			.build();
+				.databaseName(properties.getDatabaseName())
+				.containerName(properties.getContainerName())
+				.metadataFields(properties.getMetadataFieldList())
+				.vectorStoreThroughput(properties.getVectorStoreThroughput())
+				.vectorDimensions(properties.getVectorDimensions())
+				.partitionKeyPath(properties.getPartitionKeyPath())
+				.build();
 	}
 
 }

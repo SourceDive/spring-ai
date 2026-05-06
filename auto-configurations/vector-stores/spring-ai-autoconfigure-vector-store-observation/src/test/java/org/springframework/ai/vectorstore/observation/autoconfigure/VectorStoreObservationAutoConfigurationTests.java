@@ -44,28 +44,28 @@ import static org.mockito.Mockito.mock;
 class VectorStoreObservationAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(VectorStoreObservationAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(VectorStoreObservationAutoConfiguration.class));
 
 	@Test
 	void queryResponseHandlerNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void queryResponseHandlerWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void queryResponseHandlerEnabledNoTracer(CapturedOutput output) {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
-			.run(context -> assertThat(context).hasSingleBean(VectorStoreQueryResponseObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
+				.run(context -> assertThat(context).hasSingleBean(VectorStoreQueryResponseObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 		assertThat(output).contains(
 				"You have enabled logging out of the query response content with the risk of exposing sensitive or private information. Please, be careful!");
 	}
@@ -73,9 +73,9 @@ class VectorStoreObservationAutoConfigurationTests {
 	@Test
 	void queryResponseHandlerEnabledWithTracer(CapturedOutput output) {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
-			.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
-				.hasSingleBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
+				.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
+						.hasSingleBean(TracingAwareLoggingObservationHandler.class));
 		assertThat(output).contains(
 				"You have enabled logging out of the query response content with the risk of exposing sensitive or private information. Please, be careful!");
 	}
@@ -83,51 +83,51 @@ class VectorStoreObservationAutoConfigurationTests {
 	@Test
 	void queryResponseHandlerDisabledNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=false")
-			.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=false")
+				.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void queryResponseHandlerDisabledWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=false")
-			.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=false")
+				.run(context -> assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customQueryResponseHandlerNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withUserConfiguration(CustomVectorStoreQueryResponseObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
-			.run(context -> assertThat(context).hasSingleBean(VectorStoreQueryResponseObservationHandler.class)
-				.hasBean("customVectorStoreQueryResponseObservationHandler")
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withUserConfiguration(CustomVectorStoreQueryResponseObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
+				.run(context -> assertThat(context).hasSingleBean(VectorStoreQueryResponseObservationHandler.class)
+						.hasBean("customVectorStoreQueryResponseObservationHandler")
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customQueryResponseHandlerWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withUserConfiguration(CustomVectorStoreQueryResponseObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
-			.run(context -> assertThat(context).hasSingleBean(VectorStoreQueryResponseObservationHandler.class)
-				.hasBean("customVectorStoreQueryResponseObservationHandler")
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withUserConfiguration(CustomVectorStoreQueryResponseObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
+				.run(context -> assertThat(context).hasSingleBean(VectorStoreQueryResponseObservationHandler.class)
+						.hasBean("customVectorStoreQueryResponseObservationHandler")
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customTracingAwareLoggingObservationHandler() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withUserConfiguration(CustomTracingAwareLoggingObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
-			.run(context -> {
-				assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
-					.hasSingleBean(TracingAwareLoggingObservationHandler.class)
-					.hasBean("vectorStoreQueryResponseObservationHandler");
-				assertThat(context.getBean(TracingAwareLoggingObservationHandler.class))
-					.isSameAs(CustomTracingAwareLoggingObservationHandlerConfiguration.handlerInstance);
-			});
+				.withUserConfiguration(CustomTracingAwareLoggingObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.vectorstore.observations.log-query-response=true")
+				.run(context -> {
+					assertThat(context).doesNotHaveBean(VectorStoreQueryResponseObservationHandler.class)
+							.hasSingleBean(TracingAwareLoggingObservationHandler.class)
+							.hasBean("vectorStoreQueryResponseObservationHandler");
+					assertThat(context.getBean(TracingAwareLoggingObservationHandler.class))
+							.isSameAs(CustomTracingAwareLoggingObservationHandlerConfiguration.handlerInstance);
+				});
 	}
 
 	@Configuration(proxyBeanMethods = false)

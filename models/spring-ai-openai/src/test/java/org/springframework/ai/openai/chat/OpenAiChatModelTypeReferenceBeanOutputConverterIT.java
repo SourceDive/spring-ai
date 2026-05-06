@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OpenAiChatModelTypeReferenceBeanOutputConverterIT extends AbstractIT {
 
 	private static final Logger logger = LoggerFactory
-		.getLogger(OpenAiChatModelTypeReferenceBeanOutputConverterIT.class);
+			.getLogger(OpenAiChatModelTypeReferenceBeanOutputConverterIT.class);
 
 	@Test
 	void typeRefOutputConverterRecords() {
@@ -59,9 +59,9 @@ class OpenAiChatModelTypeReferenceBeanOutputConverterIT extends AbstractIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -86,22 +86,22 @@ class OpenAiChatModelTypeReferenceBeanOutputConverterIT extends AbstractIT {
 		String template = """
 				Generate the filmography of 5 movies for Tom Hanks and Bill Murray.
 					{format}
-					""";
+				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.streamingChatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		List<ActorsFilmsRecord> actorsFilms = outputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);

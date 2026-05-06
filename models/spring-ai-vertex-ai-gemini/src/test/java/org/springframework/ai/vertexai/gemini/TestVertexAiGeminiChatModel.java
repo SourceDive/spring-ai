@@ -33,7 +33,7 @@ public class TestVertexAiGeminiChatModel extends VertexAiGeminiChatModel {
 	private GenerativeModel mockGenerativeModel;
 
 	public TestVertexAiGeminiChatModel(VertexAI vertexAI, VertexAiGeminiChatOptions options,
-			RetryTemplate retryTemplate) {
+	                                   RetryTemplate retryTemplate) {
 		super(vertexAI, options, ToolCallingManager.builder().build(), retryTemplate, null);
 	}
 
@@ -42,12 +42,10 @@ public class TestVertexAiGeminiChatModel extends VertexAiGeminiChatModel {
 		if (this.mockGenerativeModel != null) {
 			try {
 				return this.mockGenerativeModel.generateContent(request.contents());
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				// Should not be thrown by testing class
 				throw new RuntimeException("Failed to generate content", e);
-			}
-			catch (RuntimeException e) {
+			} catch (RuntimeException e) {
 				// Re-throw RuntimeExceptions (including TransientAiException) as is
 				throw e;
 			}

@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = AzureOpenAiAudioTranscriptionModelIT.TestConfiguration.class)
 @EnabledIfEnvironmentVariables({
 		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_TRANSCRIPTION_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_TRANSCRIPTION_ENDPOINT", matches = ".+") })
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_TRANSCRIPTION_ENDPOINT", matches = ".+")})
 class AzureOpenAiAudioTranscriptionModelIT {
 
 	@Value("classpath:/speech/jfk.flac")
@@ -54,9 +54,9 @@ class AzureOpenAiAudioTranscriptionModelIT {
 	@Test
 	void transcriptionTest() {
 		AzureOpenAiAudioTranscriptionOptions transcriptionOptions = AzureOpenAiAudioTranscriptionOptions.builder()
-			.responseFormat(AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat.TEXT)
-			.temperature(0f)
-			.build();
+				.responseFormat(AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat.TEXT)
+				.temperature(0f)
+				.build();
 		AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(this.audioFile,
 				transcriptionOptions);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(transcriptionRequest);
@@ -69,11 +69,11 @@ class AzureOpenAiAudioTranscriptionModelIT {
 		AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat responseFormat = AzureOpenAiAudioTranscriptionOptions.TranscriptResponseFormat.VTT;
 
 		AzureOpenAiAudioTranscriptionOptions transcriptionOptions = AzureOpenAiAudioTranscriptionOptions.builder()
-			.language("en")
-			.prompt("Ask not this, but ask that")
-			.temperature(0f)
-			.responseFormat(responseFormat)
-			.build();
+				.language("en")
+				.prompt("Ask not this, but ask that")
+				.temperature(0f)
+				.responseFormat(responseFormat)
+				.build();
 		AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(this.audioFile,
 				transcriptionOptions);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(transcriptionRequest);
@@ -93,9 +93,9 @@ class AzureOpenAiAudioTranscriptionModelIT {
 			// System.out.println("Endpoint: " + endpoint);
 
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(apiKey))
-				.endpoint(endpoint)
-				// .serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
-				.buildClient();
+					.endpoint(endpoint)
+					// .serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
+					.buildClient();
 		}
 
 		@Bean

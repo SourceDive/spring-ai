@@ -54,17 +54,17 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 
 	@Container
 	static WeaviateContainer weaviate = new WeaviateContainer("semitechnologies/weaviate:1.25.4")
-		.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
+			.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(WeaviateVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.weaviate.scheme=http",
-				"spring.ai.vectorstore.weaviate.host=" + weaviate.getHttpHostAddress(),
-				"spring.ai.vectorstore.weaviate.filter-field.country=TEXT",
-				"spring.ai.vectorstore.weaviate.filter-field.year=NUMBER",
-				"spring.ai.vectorstore.weaviate.filter-field.active=BOOLEAN",
-				"spring.ai.vectorstore.weaviate.filter-field.price=NUMBER");
+			.withConfiguration(AutoConfigurations.of(WeaviateVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.weaviate.scheme=http",
+					"spring.ai.vectorstore.weaviate.host=" + weaviate.getHttpHostAddress(),
+					"spring.ai.vectorstore.weaviate.filter-field.country=TEXT",
+					"spring.ai.vectorstore.weaviate.filter-field.year=NUMBER",
+					"spring.ai.vectorstore.weaviate.filter-field.active=BOOLEAN",
+					"spring.ai.vectorstore.weaviate.filter-field.price=NUMBER");
 
 	@Test
 	public void addAndSearchWithFilters() {
@@ -101,9 +101,9 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Bulgaria'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Bulgaria'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
@@ -111,29 +111,29 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.QUERY);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Netherlands'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Netherlands'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("price > 1.57 && active == true")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("price > 1.57 && active == true")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("year in [2020, 2023]")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("year in [2020, 2023]")
+					.build());
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("year > 2020 && year <= 2023")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("year > 2020 && year <= 2023")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 

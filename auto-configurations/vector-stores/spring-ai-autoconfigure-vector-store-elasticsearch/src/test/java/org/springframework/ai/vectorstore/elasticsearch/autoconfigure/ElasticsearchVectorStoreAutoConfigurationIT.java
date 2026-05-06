@@ -57,16 +57,16 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 	@Container
 	private static final ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(
 			"docker.elastic.co/elasticsearch/elasticsearch:8.16.1")
-		.withEnv("xpack.security.enabled", "false");
+			.withEnv("xpack.security.enabled", "false");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
-				ElasticsearchVectorStoreAutoConfiguration.class, RestClientAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
-				"spring.ai.vectorstore.elasticsearch.initializeSchema=true",
-				"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+			.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
+					ElasticsearchVectorStoreAutoConfiguration.class, RestClientAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
+					"spring.ai.vectorstore.elasticsearch.initializeSchema=true",
+					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 
 	private List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -89,9 +89,9 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			observationRegistry.clear();
 
@@ -118,9 +118,9 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -128,26 +128,26 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 	public void propertiesTest() {
 
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
-					ElasticsearchVectorStoreAutoConfiguration.class, RestClientAutoConfiguration.class,
-					SpringAiRetryAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
-					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
-					"spring.ai.vectorstore.elasticsearch.index-name=example",
-					"spring.ai.vectorstore.elasticsearch.dimensions=1024",
-					"spring.ai.vectorstore.elasticsearch.dense-vector-indexing=true",
-					"spring.ai.vectorstore.elasticsearch.similarity=cosine")
-			.run(context -> {
-				var properties = context.getBean(ElasticsearchVectorStoreProperties.class);
-				var elasticsearchVectorStore = context.getBean(ElasticsearchVectorStore.class);
+				.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
+						ElasticsearchVectorStoreAutoConfiguration.class, RestClientAutoConfiguration.class,
+						SpringAiRetryAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
+				.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
+						"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
+						"spring.ai.vectorstore.elasticsearch.index-name=example",
+						"spring.ai.vectorstore.elasticsearch.dimensions=1024",
+						"spring.ai.vectorstore.elasticsearch.dense-vector-indexing=true",
+						"spring.ai.vectorstore.elasticsearch.similarity=cosine")
+				.run(context -> {
+					var properties = context.getBean(ElasticsearchVectorStoreProperties.class);
+					var elasticsearchVectorStore = context.getBean(ElasticsearchVectorStore.class);
 
-				assertThat(properties).isNotNull();
-				assertThat(properties.getIndexName()).isEqualTo("example");
-				assertThat(properties.getDimensions()).isEqualTo(1024);
-				assertThat(properties.getSimilarity()).isEqualTo(SimilarityFunction.cosine);
+					assertThat(properties).isNotNull();
+					assertThat(properties.getIndexName()).isEqualTo("example");
+					assertThat(properties.getDimensions()).isEqualTo(1024);
+					assertThat(properties.getSimilarity()).isEqualTo(SimilarityFunction.cosine);
 
-				assertThat(elasticsearchVectorStore).isNotNull();
-			});
+					assertThat(elasticsearchVectorStore).isNotNull();
+				});
 	}
 
 	@Test
@@ -181,8 +181,7 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

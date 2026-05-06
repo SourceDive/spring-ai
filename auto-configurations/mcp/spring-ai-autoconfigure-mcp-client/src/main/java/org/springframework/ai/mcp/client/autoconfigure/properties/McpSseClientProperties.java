@@ -39,8 +39,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * </pre>
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see SseParameters
+ * @since 1.0.0
  */
 @ConfigurationProperties(McpSseClientProperties.CONFIG_PREFIX)
 public class McpSseClientProperties {
@@ -57,6 +57,7 @@ public class McpSseClientProperties {
 
 	/**
 	 * Returns the map of configured SSE connections.
+	 *
 	 * @return map of connection names to their SSE parameters
 	 */
 	public Map<String, SseParameters> getConnections() {
@@ -66,7 +67,7 @@ public class McpSseClientProperties {
 	/**
 	 * Parameters for configuring an SSE connection to an MCP server.
 	 *
-	 * @param url the URL endpoint for SSE communication with the MCP server
+	 * @param url         the URL endpoint for SSE communication with the MCP server
 	 * @param sseEndpoint the SSE endpoint for the MCP server
 	 */
 	public record SseParameters(String url, String sseEndpoint) {

@@ -61,12 +61,12 @@ public class ChromaVectorStoreAutoConfigurationIT {
 	static ChromaDBContainer chroma = new ChromaDBContainer("ghcr.io/chroma-core/chroma:1.0.0");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations
-			.of(org.springframework.ai.vectorstore.chroma.autoconfigure.ChromaVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.chroma.client.host=http://" + chroma.getHost(),
-				"spring.ai.vectorstore.chroma.client.port=" + chroma.getMappedPort(8000),
-				"spring.ai.vectorstore.chroma.collectionName=TestCollection");
+			.withConfiguration(AutoConfigurations
+					.of(org.springframework.ai.vectorstore.chroma.autoconfigure.ChromaVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.chroma.client.host=http://" + chroma.getHost(),
+					"spring.ai.vectorstore.chroma.client.port=" + chroma.getMappedPort(8000),
+					"spring.ai.vectorstore.chroma.collectionName=TestCollection");
 
 	@Test
 	public void addAndSearchWithFilters() {
@@ -94,41 +94,41 @@ public class ChromaVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Bulgaria'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Bulgaria'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 			observationRegistry.clear();
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Netherlands'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Netherlands'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("chroma query")
-				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_FILTER.asString(),
-						"Expression[type=EQ, left=Key[key=country], right=Value[value=Netherlands]]")
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("chroma query")
+					.hasHighCardinalityKeyValue(HighCardinalityKeyNames.DB_VECTOR_QUERY_FILTER.asString(),
+							"Expression[type=EQ, left=Key[key=country], right=Value[value=Netherlands]]")
+					.hasBeenStarted()
+					.hasBeenStopped();
 			observationRegistry.clear();
 
 			// Remove all documents from the store
 			vectorStore.delete(List.of(bgDocument, nlDocument).stream().map(doc -> doc.getId()).toList());
 
 			TestObservationRegistryAssert.assertThat(observationRegistry)
-				.doesNotHaveAnyRemainingCurrentObservation()
-				.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
-				.that()
-				.hasContextualNameEqualTo("chroma delete")
-				.hasBeenStarted()
-				.hasBeenStopped();
+					.doesNotHaveAnyRemainingCurrentObservation()
+					.hasObservationWithNameEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME)
+					.that()
+					.hasContextualNameEqualTo("chroma delete")
+					.hasBeenStarted()
+					.hasBeenStopped();
 			observationRegistry.clear();
 
 		});
@@ -137,12 +137,12 @@ public class ChromaVectorStoreAutoConfigurationIT {
 	@Test
 	public void throwExceptionOnMissingCollectionAndDisabledInitializedSchema() {
 		this.contextRunner.withPropertyValues("spring.ai.vectorstore.chroma.initializeSchema=false")
-			.run(context -> assertThatThrownBy(() -> context.getBean(VectorStore.class))
-				.isInstanceOf(IllegalStateException.class)
-				.hasCauseInstanceOf(BeanCreationException.class)
-				.hasRootCauseExactlyInstanceOf(RuntimeException.class)
-				.hasRootCauseMessage(
-						"Collection TestCollection doesn't exist and won't be created as the initializeSchema is set to false."));
+				.run(context -> assertThatThrownBy(() -> context.getBean(VectorStore.class))
+						.isInstanceOf(IllegalStateException.class)
+						.hasCauseInstanceOf(BeanCreationException.class)
+						.hasRootCauseExactlyInstanceOf(RuntimeException.class)
+						.hasRootCauseMessage(
+								"Collection TestCollection doesn't exist and won't be created as the initializeSchema is set to false."));
 	}
 
 	@Test
@@ -168,13 +168,13 @@ public class ChromaVectorStoreAutoConfigurationIT {
 	@Disabled
 	public void autoConfigurationEnabledWhenTypeIsChroma() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.type=chroma",
-					"spring.ai.vectorstore.chroma.initializeSchema=true")
-			.run(context -> {
-				assertThat(context.getBeansOfType(ChromaVectorStoreProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(VectorStore.class)).isNotEmpty();
-				assertThat(context.getBean(VectorStore.class)).isInstanceOf(ChromaVectorStore.class);
-			});
+				.withPropertyValues("spring.ai.vectorstore.type=chroma",
+						"spring.ai.vectorstore.chroma.initializeSchema=true")
+				.run(context -> {
+					assertThat(context.getBeansOfType(ChromaVectorStoreProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(VectorStore.class)).isNotEmpty();
+					assertThat(context.getBean(VectorStore.class)).isInstanceOf(ChromaVectorStore.class);
+				});
 	}
 
 	@Configuration(proxyBeanMethods = false)

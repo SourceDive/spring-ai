@@ -55,14 +55,14 @@ public class Neo4jVectorStoreAutoConfigurationIT {
 
 	@Container
 	static Neo4jContainer<?> neo4jContainer = new Neo4jContainer<>(DockerImageName.parse("neo4j:5.18"))
-		.withRandomPassword();
+			.withRandomPassword();
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(Neo4jAutoConfiguration.class, Neo4jVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.neo4j.uri=" + neo4jContainer.getBoltUrl(),
-				"spring.ai.vectorstore.neo4j.initialize-schema=true", "spring.neo4j.authentication.username=" + "neo4j",
-				"spring.neo4j.authentication.password=" + neo4jContainer.getAdminPassword());
+			.withConfiguration(AutoConfigurations.of(Neo4jAutoConfiguration.class, Neo4jVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.neo4j.uri=" + neo4jContainer.getBoltUrl(),
+					"spring.ai.vectorstore.neo4j.initialize-schema=true", "spring.neo4j.authentication.username=" + "neo4j",
+					"spring.neo4j.authentication.password=" + neo4jContainer.getAdminPassword());
 
 	List<Document> documents = List.of(
 			new Document(ResourceUtils.getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -72,47 +72,47 @@ public class Neo4jVectorStoreAutoConfigurationIT {
 	@Test
 	void addAndSearch() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.neo4j.label=my_test_label",
-					"spring.ai.vectorstore.neo4j.embeddingDimension=384",
-					"spring.ai.vectorstore.neo4j.indexName=customIndexName")
-			.run(context -> {
-				var properties = context.getBean(Neo4jVectorStoreProperties.class);
-				assertThat(properties.getLabel()).isEqualTo("my_test_label");
-				assertThat(properties.getEmbeddingDimension()).isEqualTo(384);
-				assertThat(properties.getIndexName()).isEqualTo("customIndexName");
+				.withPropertyValues("spring.ai.vectorstore.neo4j.label=my_test_label",
+						"spring.ai.vectorstore.neo4j.embeddingDimension=384",
+						"spring.ai.vectorstore.neo4j.indexName=customIndexName")
+				.run(context -> {
+					var properties = context.getBean(Neo4jVectorStoreProperties.class);
+					assertThat(properties.getLabel()).isEqualTo("my_test_label");
+					assertThat(properties.getEmbeddingDimension()).isEqualTo(384);
+					assertThat(properties.getIndexName()).isEqualTo("customIndexName");
 
-				VectorStore vectorStore = context.getBean(VectorStore.class);
-				TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
+					VectorStore vectorStore = context.getBean(VectorStore.class);
+					TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
 
-				vectorStore.add(this.documents);
+					vectorStore.add(this.documents);
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.NEO4J,
-						VectorStoreObservationContext.Operation.ADD);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.NEO4J,
+							VectorStoreObservationContext.Operation.ADD);
+					observationRegistry.clear();
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
-				assertThat(resultDoc.getText()).contains(
-						"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
+					assertThat(resultDoc.getText()).contains(
+							"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.NEO4J,
-						VectorStoreObservationContext.Operation.QUERY);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.NEO4J,
+							VectorStoreObservationContext.Operation.QUERY);
+					observationRegistry.clear();
 
-				// Remove all documents from the store
-				vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
+					// Remove all documents from the store
+					vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.NEO4J,
-						VectorStoreObservationContext.Operation.DELETE);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.NEO4J,
+							VectorStoreObservationContext.Operation.DELETE);
+					observationRegistry.clear();
 
-				results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
-				assertThat(results).isEmpty();
-			});
+					results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					assertThat(results).isEmpty();
+				});
 	}
 
 	@Test

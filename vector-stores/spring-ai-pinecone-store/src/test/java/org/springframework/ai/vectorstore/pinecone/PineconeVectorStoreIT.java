@@ -71,7 +71,7 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 	private static final int DEFAULT_TOP_K = 50;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -82,8 +82,7 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -113,11 +112,11 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -131,8 +130,8 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
@@ -156,33 +155,33 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			SearchRequest searchRequest = SearchRequest.builder().query("The World").build();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.from(searchRequest).topK(1).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.from(searchRequest).topK(1).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.from(searchRequest).topK(5).build());
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Bulgaria'")
-				.build());
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'Bulgaria'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Netherlands'")
-				.build());
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'Netherlands'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country == 'Netherlands')")
-				.build());
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country == 'Netherlands')")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
@@ -191,8 +190,8 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(List.of(bgDocument, nlDocument).stream().map(doc -> doc.getId()).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.from(searchRequest).topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.from(searchRequest).topK(1).build()),
+							hasSize(0));
 		});
 	}
 
@@ -231,8 +230,8 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			SearchRequest fooBarSearchRequest = SearchRequest.builder().query("FooBar").topK(5).build();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
-						equalTo("The World is Big and Salvation Lurks Around the Corner"));
+					.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
+							equalTo("The World is Big and Salvation Lurks Around the Corner"));
 
 			results = vectorStore.similaritySearch(fooBarSearchRequest);
 
@@ -260,12 +259,12 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Depression").topK(50).similarityThresholdAll().build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Depression").topK(50).similarityThresholdAll().build()),
+							hasSize(3));
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -274,10 +273,10 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Depression")
-				.topK(5)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Depression")
+					.topK(5)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -290,8 +289,8 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			// Remove all documents from the store
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
@@ -317,8 +316,8 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			assertComplexFilterResults(results);
 
 			vectorStore.delete(List.of(documents.get(0).getId(), documents.get(2).getId())); // doc1
-																								// and
-																								// doc3
+			// and
+			// doc3
 			awaitDocumentsCount(vectorStore, "Content", 0);
 		});
 	}
@@ -365,15 +364,15 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 
 	private void assertComplexFilterResults(List<Document> results) {
 		assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-			.containsExactlyInAnyOrder("A", "B");
+				.containsExactlyInAnyOrder("A", "B");
 		assertThat(results.stream()
-			.map(doc -> ((Number) doc.getMetadata().get("priority")).intValue())
-			.collect(Collectors.toList())).containsExactlyInAnyOrder(1, 1);
+				.map(doc -> ((Number) doc.getMetadata().get("priority")).intValue())
+				.collect(Collectors.toList())).containsExactlyInAnyOrder(1, 1);
 	}
 
 	private List<Document> searchDocuments(VectorStore vectorStore, String query, int topK) {
 		return vectorStore
-			.similaritySearch(SearchRequest.builder().query(query).topK(topK).similarityThresholdAll().build());
+				.similaritySearch(SearchRequest.builder().query(query).topK(topK).similarityThresholdAll().build());
 	}
 
 	private void awaitDocumentsCount(VectorStore vectorStore, String query, int expectedCount) {
@@ -389,11 +388,11 @@ public class PineconeVectorStoreIT extends BaseVectorStoreTests {
 			String apikey = System.getenv("PINECONE_API_KEY");
 
 			return PineconeVectorStore.builder(embeddingModel)
-				.apiKey(apikey)
-				.indexName(PINECONE_INDEX_NAME)
-				.namespace(PINECONE_NAMESPACE)
-				.contentFieldName(CUSTOM_CONTENT_FIELD_NAME)
-				.build();
+					.apiKey(apikey)
+					.indexName(PINECONE_INDEX_NAME)
+					.namespace(PINECONE_NAMESPACE)
+					.contentFieldName(CUSTOM_CONTENT_FIELD_NAME)
+					.build();
 		}
 
 		@Bean

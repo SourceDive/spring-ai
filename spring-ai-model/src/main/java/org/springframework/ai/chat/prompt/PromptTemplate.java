@@ -88,8 +88,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		try (InputStream inputStream = resource.getInputStream()) {
 			this.template = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
 			Assert.hasText(this.template, "template cannot be null or empty");
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Failed to read resource", ex);
 		}
 		this.variables.putAll(variables);
@@ -113,8 +112,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		for (Entry<String, Object> entry : this.variables.entrySet()) {
 			if (entry.getValue() instanceof Resource) {
 				processedVariables.put(entry.getKey(), renderResource((Resource) entry.getValue()));
-			}
-			else {
+			} else {
 				processedVariables.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -128,8 +126,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		for (Entry<String, Object> entry : additionalVariables.entrySet()) {
 			if (entry.getValue() instanceof Resource) {
 				combinedVariables.put(entry.getKey(), renderResource((Resource) entry.getValue()));
-			}
-			else {
+			} else {
 				combinedVariables.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -153,8 +150,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 			}
 			// For other Resource types or as fallback
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			log.warn("Failed to render resource: {}", resource.getDescription(), e);
 			return "[Unable to render resource: " + resource.getDescription() + "]";
 		}
@@ -250,11 +246,9 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		public PromptTemplate build() {
 			if (this.template != null && this.resource != null) {
 				throw new IllegalArgumentException("Only one of template or resource can be set");
-			}
-			else if (this.resource != null) {
+			} else if (this.resource != null) {
 				return new PromptTemplate(this.resource, this.variables, this.renderer);
-			}
-			else {
+			} else {
 				return new PromptTemplate(this.template, this.variables, this.renderer);
 			}
 		}

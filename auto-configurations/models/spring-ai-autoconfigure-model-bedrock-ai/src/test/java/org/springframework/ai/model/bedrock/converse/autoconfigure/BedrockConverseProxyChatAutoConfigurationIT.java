@@ -43,10 +43,10 @@ public class BedrockConverseProxyChatAutoConfigurationIT {
 	private static final Log logger = LogFactory.getLog(BedrockConverseProxyChatAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withPropertyValues(
-				"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0",
-				"spring.ai.bedrock.converse.chat.options.temperature=0.5")
-		.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class));
+			.withPropertyValues(
+					"spring.ai.bedrock.converse.chat.options.model=" + "anthropic.claude-3-5-sonnet-20240620-v1:0",
+					"spring.ai.bedrock.converse.chat.options.temperature=0.5")
+			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class));
 
 	@Test
 	void call() {
@@ -65,13 +65,13 @@ public class BedrockConverseProxyChatAutoConfigurationIT {
 			Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
 
 			String response = responseFlux.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(response).isNotEmpty();
 			logger.info("Response: " + response);

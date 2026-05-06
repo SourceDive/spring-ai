@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
  * @author Christian Tzolov
  * @since 1.0.0
  */
-@SuppressWarnings({ "rawtypes", "null" })
+@SuppressWarnings({"rawtypes", "null"})
 public class ErrorLoggingObservationHandler implements ObservationHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(ErrorLoggingObservationHandler.class);
@@ -47,12 +47,12 @@ public class ErrorLoggingObservationHandler implements ObservationHandler {
 	private final Consumer<Context> errorConsumer;
 
 	public ErrorLoggingObservationHandler(Tracer tracer,
-			List<Class<? extends Observation.Context>> supportedContextTypes) {
+	                                      List<Class<? extends Observation.Context>> supportedContextTypes) {
 		this(tracer, supportedContextTypes, context -> logger.error("Traced Error: ", context.getError()));
 	}
 
 	public ErrorLoggingObservationHandler(Tracer tracer,
-			List<Class<? extends Observation.Context>> supportedContextTypes, Consumer<Context> errorConsumer) {
+	                                      List<Class<? extends Observation.Context>> supportedContextTypes, Consumer<Context> errorConsumer) {
 
 		Assert.notNull(tracer, "Tracer must not be null");
 		Assert.notNull(supportedContextTypes, "SupportedContextTypes must not be null");

@@ -34,9 +34,9 @@ public class EmbeddingModelObservationContext extends ModelObservationContext<Em
 	EmbeddingModelObservationContext(EmbeddingRequest embeddingRequest, String provider) {
 		super(embeddingRequest,
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.EMBEDDING.value())
-					.provider(provider)
-					.build());
+						.operationType(AiOperationType.EMBEDDING.value())
+						.provider(provider)
+						.build());
 	}
 
 	public static Builder builder() {

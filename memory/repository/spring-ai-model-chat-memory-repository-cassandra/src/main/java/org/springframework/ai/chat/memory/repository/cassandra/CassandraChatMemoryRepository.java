@@ -143,19 +143,19 @@ public final class CassandraChatMemoryRepository implements ChatMemoryRepository
 			msg.getMetadata().putIfAbsent(CONVERSATION_TS, instant);
 
 			UdtValue udt = this.conf.session.getMetadata()
-				.getKeyspace(this.conf.schema.keyspace())
-				.get()
-				.getUserDefinedType(this.conf.messageUDT)
-				.get()
-				.newValue()
-				.setInstant(this.conf.messageUdtTimestampColumn, (Instant) msg.getMetadata().get(CONVERSATION_TS))
-				.setString(this.conf.messageUdtTypeColumn, msg.getMessageType().name())
-				.setString(this.conf.messageUdtContentColumn, msg.getText());
+					.getKeyspace(this.conf.schema.keyspace())
+					.get()
+					.getUserDefinedType(this.conf.messageUDT)
+					.get()
+					.newValue()
+					.setInstant(this.conf.messageUdtTimestampColumn, (Instant) msg.getMetadata().get(CONVERSATION_TS))
+					.setString(this.conf.messageUdtTypeColumn, msg.getMessageType().name())
+					.setString(this.conf.messageUdtContentColumn, msg.getText());
 
 			msgs.add(udt);
 		}
 		builder = builder.setInstant(CassandraChatMemoryRepositoryConfig.DEFAULT_EXCHANGE_ID_NAME, instant)
-			.setList("msgs", msgs, UdtValue.class);
+				.setList("msgs", msgs, UdtValue.class);
 
 		this.conf.session.execute(builder.build());
 	}
@@ -180,13 +180,13 @@ public final class CassandraChatMemoryRepository implements ChatMemoryRepository
 
 	private PreparedStatement prepareAllStatement() {
 		Select stmt = QueryBuilder.selectFrom(this.conf.schema.keyspace(), this.conf.schema.table())
-			.distinct()
-			.raw(String.format("token(%s)", CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME))
-			.as("t")
-			.column(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
-			.whereToken(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
-			.isGreaterThan(QueryBuilder.bindMarker("after_token"))
-			.limit(10000);
+				.distinct()
+				.raw(String.format("token(%s)", CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME))
+				.as("t")
+				.column(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
+				.whereToken(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
+				.isGreaterThan(QueryBuilder.bindMarker("after_token"))
+				.limit(10000);
 
 		return this.conf.session.prepare(stmt.build());
 	}

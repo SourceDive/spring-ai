@@ -235,38 +235,38 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 
 	public static OpenAiChatOptions fromOptions(OpenAiChatOptions fromOptions) {
 		return OpenAiChatOptions.builder()
-			.model(fromOptions.getModel())
-			.frequencyPenalty(fromOptions.getFrequencyPenalty())
-			.logitBias(fromOptions.getLogitBias())
-			.logprobs(fromOptions.getLogprobs())
-			.topLogprobs(fromOptions.getTopLogprobs())
-			.maxTokens(fromOptions.getMaxTokens())
-			.maxCompletionTokens(fromOptions.getMaxCompletionTokens())
-			.N(fromOptions.getN())
-			.outputModalities(fromOptions.getOutputModalities() != null
-					? new ArrayList<>(fromOptions.getOutputModalities()) : null)
-			.outputAudio(fromOptions.getOutputAudio())
-			.presencePenalty(fromOptions.getPresencePenalty())
-			.responseFormat(fromOptions.getResponseFormat())
-			.streamUsage(fromOptions.getStreamUsage())
-			.seed(fromOptions.getSeed())
-			.stop(fromOptions.getStop() != null ? new ArrayList<>(fromOptions.getStop()) : null)
-			.temperature(fromOptions.getTemperature())
-			.topP(fromOptions.getTopP())
-			.tools(fromOptions.getTools())
-			.toolChoice(fromOptions.getToolChoice())
-			.user(fromOptions.getUser())
-			.parallelToolCalls(fromOptions.getParallelToolCalls())
-			.toolCallbacks(
-					fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
-			.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
-			.httpHeaders(fromOptions.getHttpHeaders() != null ? new HashMap<>(fromOptions.getHttpHeaders()) : null)
-			.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
-			.toolContext(fromOptions.getToolContext() != null ? new HashMap<>(fromOptions.getToolContext()) : null)
-			.store(fromOptions.getStore())
-			.metadata(fromOptions.getMetadata())
-			.reasoningEffort(fromOptions.getReasoningEffort())
-			.build();
+				.model(fromOptions.getModel())
+				.frequencyPenalty(fromOptions.getFrequencyPenalty())
+				.logitBias(fromOptions.getLogitBias())
+				.logprobs(fromOptions.getLogprobs())
+				.topLogprobs(fromOptions.getTopLogprobs())
+				.maxTokens(fromOptions.getMaxTokens())
+				.maxCompletionTokens(fromOptions.getMaxCompletionTokens())
+				.N(fromOptions.getN())
+				.outputModalities(fromOptions.getOutputModalities() != null
+						? new ArrayList<>(fromOptions.getOutputModalities()) : null)
+				.outputAudio(fromOptions.getOutputAudio())
+				.presencePenalty(fromOptions.getPresencePenalty())
+				.responseFormat(fromOptions.getResponseFormat())
+				.streamUsage(fromOptions.getStreamUsage())
+				.seed(fromOptions.getSeed())
+				.stop(fromOptions.getStop() != null ? new ArrayList<>(fromOptions.getStop()) : null)
+				.temperature(fromOptions.getTemperature())
+				.topP(fromOptions.getTopP())
+				.tools(fromOptions.getTools())
+				.toolChoice(fromOptions.getToolChoice())
+				.user(fromOptions.getUser())
+				.parallelToolCalls(fromOptions.getParallelToolCalls())
+				.toolCallbacks(
+						fromOptions.getToolCallbacks() != null ? new ArrayList<>(fromOptions.getToolCallbacks()) : null)
+				.toolNames(fromOptions.getToolNames() != null ? new HashSet<>(fromOptions.getToolNames()) : null)
+				.httpHeaders(fromOptions.getHttpHeaders() != null ? new HashMap<>(fromOptions.getHttpHeaders()) : null)
+				.internalToolExecutionEnabled(fromOptions.getInternalToolExecutionEnabled())
+				.toolContext(fromOptions.getToolContext() != null ? new HashMap<>(fromOptions.getToolContext()) : null)
+				.store(fromOptions.getStore())
+				.metadata(fromOptions.getMetadata())
+				.reasoningEffort(fromOptions.getReasoningEffort())
+				.build();
 	}
 
 	public Boolean getStreamUsage() {
@@ -773,8 +773,7 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 		public Builder toolContext(Map<String, Object> toolContext) {
 			if (this.options.toolContext == null) {
 				this.options.toolContext = toolContext;
-			}
-			else {
+			} else {
 				this.options.toolContext.putAll(toolContext);
 			}
 			return this;

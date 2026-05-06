@@ -53,8 +53,8 @@ class OpenAiChatClientMemoryAdvisorReproIT {
 		List<Message> messages = List.of(userMessage);
 		Prompt prompt = new Prompt(messages);
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 		MessageChatMemoryAdvisor advisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel).defaultAdvisors(advisor).build();

@@ -42,43 +42,43 @@ public class OllamaModelConfigurationTests {
 		});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(OllamaChatProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(OllamaChatModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(OllamaChatProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(OllamaChatModel.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.chat=ollama")
-			.run(context -> {
-				assertThat(context.getBeansOfType(OllamaChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OllamaChatModel.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.chat=ollama")
+				.run(context -> {
+					assertThat(context.getBeansOfType(OllamaChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OllamaChatModel.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isEmpty();
+				});
 	}
 
 	@Test
 	void embeddingModelActivation() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(OllamaEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isNotEmpty();
-			});
+				.run(context -> {
+					assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isNotEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(OllamaEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isEmpty();
+				});
 
 		this.contextRunner.withConfiguration(AutoConfigurations.of(OllamaEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding=ollama")
-			.run(context -> {
-				assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=ollama")
+				.run(context -> {
+					assertThat(context.getBeansOfType(OllamaEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OllamaEmbeddingModel.class)).isNotEmpty();
+				});
 	}
 
 }

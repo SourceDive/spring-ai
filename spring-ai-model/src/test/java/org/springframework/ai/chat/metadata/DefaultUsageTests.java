@@ -249,14 +249,14 @@ public class DefaultUsageTests {
 		// Test when total tokens is null and should be calculated
 		DefaultUsage usage = new DefaultUsage(Integer.valueOf(100), Integer.valueOf(50), null);
 		assertThat(usage.getTotalTokens()).isEqualTo(150); // Should be sum of prompt and
-															// completion tokens
+		// completion tokens
 
 		// Test that explicit total tokens takes precedence over calculated
 		DefaultUsage usageWithExplicitTotal = new DefaultUsage(Integer.valueOf(100), Integer.valueOf(50),
 				Integer.valueOf(200));
 		assertThat(usageWithExplicitTotal.getTotalTokens()).isEqualTo(200); // Should use
-																			// explicit
-																			// value
+		// explicit
+		// value
 	}
 
 }

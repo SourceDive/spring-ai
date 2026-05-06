@@ -85,9 +85,9 @@ public class OllamaApiModelsIT extends BaseOllamaIT {
 
 		var pullModelRequest = new OllamaApi.PullModelRequest(MODEL);
 		var progressResponses = ollamaApi.pullModel(pullModelRequest)
-			.timeout(Duration.ofMinutes(5))
-			.collectList()
-			.block();
+				.timeout(Duration.ofMinutes(5))
+				.collectList()
+				.block();
 
 		assertThat(progressResponses).isNotNull();
 		Awaitility.await().until(() -> {
@@ -95,7 +95,7 @@ public class OllamaApiModelsIT extends BaseOllamaIT {
 			return progressResponse.status().equals("success");
 		});
 		assertThat(progressResponses.get(progressResponses.size() - 1))
-			.isEqualTo(new OllamaApi.ProgressResponse("success", null, null, null));
+				.isEqualTo(new OllamaApi.ProgressResponse("success", null, null, null));
 
 		listModelResponse = ollamaApi.listModels();
 		assertThat(listModelResponse.models().stream().anyMatch(model -> model.name().contains(MODEL))).isTrue();

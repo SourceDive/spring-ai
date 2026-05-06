@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Import;
  */
 @AutoConfiguration
 @ConditionalOnClass(CohereEmbeddingBedrockApi.class)
-@EnableConfigurationProperties({ BedrockCohereEmbeddingProperties.class, BedrockAwsConnectionProperties.class })
+@EnableConfigurationProperties({BedrockCohereEmbeddingProperties.class, BedrockAwsConnectionProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.BEDROCK_COHERE,
 		matchIfMissing = true)
 @Import(BedrockAwsConnectionConfiguration.class)
@@ -52,10 +52,10 @@ public class BedrockCohereEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnBean({ AwsCredentialsProvider.class, AwsRegionProvider.class })
+	@ConditionalOnBean({AwsCredentialsProvider.class, AwsRegionProvider.class})
 	public CohereEmbeddingBedrockApi cohereEmbeddingApi(AwsCredentialsProvider credentialsProvider,
-			AwsRegionProvider regionProvider, BedrockCohereEmbeddingProperties properties,
-			BedrockAwsConnectionProperties awsProperties, ObjectMapper objectMapper) {
+	                                                    AwsRegionProvider regionProvider, BedrockCohereEmbeddingProperties properties,
+	                                                    BedrockAwsConnectionProperties awsProperties, ObjectMapper objectMapper) {
 		return new CohereEmbeddingBedrockApi(properties.getModel(), credentialsProvider, regionProvider.getRegion(),
 				objectMapper, awsProperties.getTimeout());
 	}
@@ -64,7 +64,7 @@ public class BedrockCohereEmbeddingAutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnBean(CohereEmbeddingBedrockApi.class)
 	public BedrockCohereEmbeddingModel cohereEmbeddingModel(CohereEmbeddingBedrockApi cohereEmbeddingApi,
-			BedrockCohereEmbeddingProperties properties) {
+	                                                        BedrockCohereEmbeddingProperties properties) {
 
 		return new BedrockCohereEmbeddingModel(cohereEmbeddingApi, properties.getOptions());
 	}

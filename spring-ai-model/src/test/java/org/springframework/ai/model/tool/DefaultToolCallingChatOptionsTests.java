@@ -64,7 +64,7 @@ class DefaultToolCallingChatOptionsTests {
 		DefaultToolCallingChatOptions options = new DefaultToolCallingChatOptions();
 
 		assertThatThrownBy(() -> options.setToolCallbacks(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolCallbacks cannot be null");
+				.hasMessage("toolCallbacks cannot be null");
 	}
 
 	@Test
@@ -91,7 +91,7 @@ class DefaultToolCallingChatOptionsTests {
 		DefaultToolCallingChatOptions options = new DefaultToolCallingChatOptions();
 
 		assertThatThrownBy(() -> options.setToolNames(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolNames cannot be null");
+				.hasMessage("toolNames cannot be null");
 	}
 
 	@Test
@@ -101,7 +101,7 @@ class DefaultToolCallingChatOptionsTests {
 		toolNames.add(null);
 
 		assertThatThrownBy(() -> options.setToolNames(toolNames)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolNames cannot contain null elements");
+				.hasMessage("toolNames cannot contain null elements");
 	}
 
 	@Test
@@ -111,7 +111,7 @@ class DefaultToolCallingChatOptionsTests {
 		toolNames.add("");
 
 		assertThatThrownBy(() -> options.setToolNames(toolNames)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolNames cannot contain empty elements");
+				.hasMessage("toolNames cannot contain empty elements");
 	}
 
 	@Test
@@ -129,7 +129,7 @@ class DefaultToolCallingChatOptionsTests {
 		DefaultToolCallingChatOptions options = new DefaultToolCallingChatOptions();
 
 		assertThatThrownBy(() -> options.setToolContext(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolContext cannot be null");
+				.hasMessage("toolContext cannot be null");
 	}
 
 	@Test
@@ -164,10 +164,10 @@ class DefaultToolCallingChatOptionsTests {
 		options.setToolContext(Map.of("key", "value"));
 
 		assertThatThrownBy(() -> options.getToolCallbacks().add(mock(ToolCallback.class)))
-			.isInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 		assertThatThrownBy(() -> options.getToolNames().add("tool2")).isInstanceOf(UnsupportedOperationException.class);
 		assertThatThrownBy(() -> options.getToolContext().put("key2", "value2"))
-			.isInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -176,19 +176,19 @@ class DefaultToolCallingChatOptionsTests {
 		Map<String, Object> context = Map.of("key", "value");
 
 		ToolCallingChatOptions options = DefaultToolCallingChatOptions.builder()
-			.toolCallbacks(List.of(callback))
-			.toolNames(Set.of("tool1"))
-			.toolContext(context)
-			.internalToolExecutionEnabled(true)
-			.model("gpt-4")
-			.temperature(0.7)
-			.maxTokens(100)
-			.frequencyPenalty(0.5)
-			.presencePenalty(0.3)
-			.stopSequences(List.of("stop"))
-			.topK(3)
-			.topP(0.9)
-			.build();
+				.toolCallbacks(List.of(callback))
+				.toolNames(Set.of("tool1"))
+				.toolContext(context)
+				.internalToolExecutionEnabled(true)
+				.model("gpt-4")
+				.temperature(0.7)
+				.maxTokens(100)
+				.frequencyPenalty(0.5)
+				.presencePenalty(0.3)
+				.stopSequences(List.of("stop"))
+				.topK(3)
+				.topP(0.9)
+				.build();
 
 		assertThat(options).satisfies(o -> {
 			assertThat(o.getToolCallbacks()).containsExactly(callback);
@@ -209,9 +209,9 @@ class DefaultToolCallingChatOptionsTests {
 	@Test
 	void builderShouldSupportToolContextAddition() {
 		ToolCallingChatOptions options = DefaultToolCallingChatOptions.builder()
-			.toolContext("key1", "value1")
-			.toolContext("key2", "value2")
-			.build();
+				.toolContext("key1", "value1")
+				.toolContext("key2", "value2")
+				.build();
 
 		assertThat(options.getToolContext()).containsEntry("key1", "value1").containsEntry("key2", "value2");
 	}

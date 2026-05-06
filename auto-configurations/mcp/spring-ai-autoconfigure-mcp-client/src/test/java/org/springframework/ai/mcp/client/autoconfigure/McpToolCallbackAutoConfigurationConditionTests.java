@@ -32,40 +32,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class McpToolCallbackAutoConfigurationConditionTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestConfiguration.class);
+			.withUserConfiguration(TestConfiguration.class);
 
 	@Test
 	void matchesWhenBothPropertiesAreEnabled() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=true")
-			.run(context -> assertThat(context).hasBean("testBean"));
+				.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=true")
+				.run(context -> assertThat(context).hasBean("testBean"));
 	}
 
 	@Test
 	void doesNotMatchWhenMcpClientIsDisabled() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.toolcallback.enabled=true")
-			.run(context -> assertThat(context).doesNotHaveBean("testBean"));
+				.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.toolcallback.enabled=true")
+				.run(context -> assertThat(context).doesNotHaveBean("testBean"));
 	}
 
 	@Test
 	void doesNotMatchWhenToolCallbackIsDisabled() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=false")
-			.run(context -> assertThat(context).doesNotHaveBean("testBean"));
+				.withPropertyValues("spring.ai.mcp.client.enabled=true", "spring.ai.mcp.client.toolcallback.enabled=false")
+				.run(context -> assertThat(context).doesNotHaveBean("testBean"));
 	}
 
 	@Test
 	void doesNotMatchWhenBothPropertiesAreDisabled() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.toolcallback.enabled=false")
-			.run(context -> assertThat(context).doesNotHaveBean("testBean"));
+				.withPropertyValues("spring.ai.mcp.client.enabled=false", "spring.ai.mcp.client.toolcallback.enabled=false")
+				.run(context -> assertThat(context).doesNotHaveBean("testBean"));
 	}
 
 	@Test
 	void doesMatchWhenToolCallbackPropertyIsMissing() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.client.enabled=true")
-			.run(context -> assertThat(context).hasBean("testBean"));
+				.run(context -> assertThat(context).hasBean("testBean"));
 	}
 
 	@Test

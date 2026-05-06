@@ -60,27 +60,27 @@ class DefaultChatModelObservationConventionTests {
 	@Test
 	void contextualNameWhenModelIsDefined() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("chat mistral");
 	}
 
 	@Test
 	void contextualNameWhenModelIsNotDefined() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("chat");
 	}
 
 	@Test
 	void supportsOnlyChatModelObservationContext() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
 	}
@@ -88,9 +88,9 @@ class DefaultChatModelObservationConventionTests {
 	@Test
 	void shouldHaveLowCardinalityKeyValuesWhenDefined() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("mistral").build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(), "chat"),
 				KeyValue.of(LowCardinalityKeyNames.AI_PROVIDER.asString(), "superprovider"),
@@ -100,24 +100,24 @@ class DefaultChatModelObservationConventionTests {
 	@Test
 	void shouldHaveKeyValuesWhenDefinedAndResponse() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder()
-				.model("mistral")
-				.frequencyPenalty(0.8)
-				.maxTokens(200)
-				.presencePenalty(1.0)
-				.stopSequences(List.of("addio", "bye"))
-				.temperature(0.5)
-				.topK(1)
-				.topP(0.9)
-				.build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder()
+						.model("mistral")
+						.frequencyPenalty(0.8)
+						.maxTokens(200)
+						.presencePenalty(1.0)
+						.stopSequences(List.of("addio", "bye"))
+						.temperature(0.5)
+						.topK(1)
+						.topP(0.9)
+						.build()))
+				.provider("superprovider")
+				.build();
 		observationContext.setResponse(new ChatResponse(
 				List.of(new Generation(new AssistantMessage("response"),
 						ChatGenerationMetadata.builder().finishReason("this-is-the-end").build())),
 				ChatResponseMetadata.builder().id("say33").model("mistral-42").usage(new TestUsage()).build()));
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext))
-			.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), "mistral-42"));
+				.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), "mistral-42"));
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(), "0.8"),
 				KeyValue.of(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "200"),
@@ -136,58 +136,58 @@ class DefaultChatModelObservationConventionTests {
 	@Test
 	void shouldNotHaveKeyValuesWhenMissing() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext))
-			.contains(KeyValue.of(LowCardinalityKeyNames.REQUEST_MODEL.asString(), KeyValue.NONE_VALUE))
-			.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), KeyValue.NONE_VALUE));
+				.contains(KeyValue.of(LowCardinalityKeyNames.REQUEST_MODEL.asString(), KeyValue.NONE_VALUE))
+				.contains(KeyValue.of(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), KeyValue.NONE_VALUE));
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)
-			.stream()
-			.map(KeyValue::getKey)
-			.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(),
-					HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(),
-					HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(),
-					HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(),
-					HighCardinalityKeyNames.REQUEST_TOOL_NAMES.asString(),
-					HighCardinalityKeyNames.REQUEST_TOP_K.asString(), HighCardinalityKeyNames.REQUEST_TOP_P.asString(),
-					HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-					HighCardinalityKeyNames.RESPONSE_ID.asString(),
-					HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString());
+				.stream()
+				.map(KeyValue::getKey)
+				.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(),
+				HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(),
+				HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(),
+				HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+				HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(),
+				HighCardinalityKeyNames.REQUEST_TOOL_NAMES.asString(),
+				HighCardinalityKeyNames.REQUEST_TOP_K.asString(), HighCardinalityKeyNames.REQUEST_TOP_P.asString(),
+				HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+				HighCardinalityKeyNames.RESPONSE_ID.asString(),
+				HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+				HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+				HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString());
 	}
 
 	@Test
 	void shouldNotHaveKeyValuesWhenEmptyValues() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().stopSequences(List.of()).build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().stopSequences(List.of()).build()))
+				.provider("superprovider")
+				.build();
 		observationContext.setResponse(new ChatResponse(
 				List.of(new Generation(new AssistantMessage("response"),
 						ChatGenerationMetadata.builder().finishReason("").build())),
 				ChatResponseMetadata.builder().id("").build()));
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)
-			.stream()
-			.map(KeyValue::getKey)
-			.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-					HighCardinalityKeyNames.RESPONSE_ID.asString());
+				.stream()
+				.map(KeyValue::getKey)
+				.toList()).doesNotContain(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+				HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+				HighCardinalityKeyNames.RESPONSE_ID.asString());
 	}
 
 	@Test
 	void shouldHaveKeyValuesWhenTools() {
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ToolCallingChatOptions.builder()
-				.model("mistral")
-				.toolNames("toolA", "toolB")
-				.toolCallbacks(new TestToolCallback("tool1", true), new TestToolCallback("tool2", false),
-						new TestToolCallback("toolB"))
-				.build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ToolCallingChatOptions.builder()
+						.model("mistral")
+						.toolNames("toolA", "toolB")
+						.toolCallbacks(new TestToolCallback("tool1", true), new TestToolCallback("tool2", false),
+								new TestToolCallback("toolB"))
+						.build()))
+				.provider("superprovider")
+				.build();
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).anySatisfy(keyValue -> {
 			assertThat(keyValue.getKey()).isEqualTo(HighCardinalityKeyNames.REQUEST_TOOL_NAMES.asString());
 			assertThat(keyValue.getValue()).contains("toolA", "toolB", "tool1", "tool2");

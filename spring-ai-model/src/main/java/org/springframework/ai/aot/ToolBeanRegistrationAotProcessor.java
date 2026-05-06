@@ -44,10 +44,10 @@ class ToolBeanRegistrationAotProcessor implements BeanRegistrationAotProcessor {
 	public BeanRegistrationAotContribution processAheadOfTime(RegisteredBean registeredBean) {
 		Class<?> beanClass = registeredBean.getBeanClass();
 		MergedAnnotations.Search search = MergedAnnotations
-			.search(org.springframework.core.annotation.MergedAnnotations.SearchStrategy.TYPE_HIERARCHY);
+				.search(org.springframework.core.annotation.MergedAnnotations.SearchStrategy.TYPE_HIERARCHY);
 
 		boolean hasAnyToolAnnotatedMethods = Stream.of(ReflectionUtils.getDeclaredMethods(beanClass))
-			.anyMatch(method -> search.from(method).isPresent(Tool.class));
+				.anyMatch(method -> search.from(method).isPresent(Tool.class));
 
 		if (hasAnyToolAnnotatedMethods) {
 			return new AotContribution(beanClass);
@@ -58,8 +58,8 @@ class ToolBeanRegistrationAotProcessor implements BeanRegistrationAotProcessor {
 
 	private static class AotContribution implements BeanRegistrationAotContribution {
 
-		private final MemberCategory[] memberCategories = new MemberCategory[] { MemberCategory.INVOKE_DECLARED_METHODS,
-				MemberCategory.INVOKE_PUBLIC_METHODS };
+		private final MemberCategory[] memberCategories = new MemberCategory[]{MemberCategory.INVOKE_DECLARED_METHODS,
+				MemberCategory.INVOKE_PUBLIC_METHODS};
 
 		private final Class<?> toolClass;
 

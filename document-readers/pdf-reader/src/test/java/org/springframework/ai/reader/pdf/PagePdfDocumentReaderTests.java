@@ -38,16 +38,16 @@ class PagePdfDocumentReaderTests {
 
 		PagePdfDocumentReader pdfReader = new PagePdfDocumentReader("classpath:/sample1.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageTopMargin(0)
-					.withPageBottomMargin(0)
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
-						.withNumberOfTopTextLinesToDelete(0)
-						.withNumberOfBottomTextLinesToDelete(3)
-						.withNumberOfTopPagesToSkipBeforeDelete(0)
-						.overrideLineSeparator("\n")
-						.build())
-					.withPagesPerDocument(1)
-					.build());
+						.withPageTopMargin(0)
+						.withPageBottomMargin(0)
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
+								.withNumberOfTopTextLinesToDelete(0)
+								.withNumberOfBottomTextLinesToDelete(3)
+								.withNumberOfTopPagesToSkipBeforeDelete(0)
+								.overrideLineSeparator("\n")
+								.build())
+						.withPagesPerDocument(1)
+						.build());
 
 		List<Document> docs = pdfReader.get();
 
@@ -63,10 +63,10 @@ class PagePdfDocumentReaderTests {
 	void testIndexOutOfBound() {
 		var documents = new PagePdfDocumentReader("classpath:/sample2.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
-					.withPagesPerDocument(1)
-					.build())
-			.get();
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
+						.withPagesPerDocument(1)
+						.build())
+				.get();
 
 		assertThat(documents).hasSize(64);
 	}

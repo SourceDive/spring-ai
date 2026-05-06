@@ -33,17 +33,17 @@ class ToolCallingObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.build();
 		assertThat(observationContext).isNotNull();
 	}
 
 	@Test
 	void whenToolArgumentsIsNullThenReturn() {
 		var observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments(null)
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments(null)
+				.build();
 		assertThat(observationContext).isNotNull();
 		assertThat(observationContext.getToolCallArguments()).isEqualTo("{}");
 	}
@@ -51,9 +51,9 @@ class ToolCallingObservationContextTests {
 	@Test
 	void whenToolArgumentsIsNotNullThenReturn() {
 		var observationContext = ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("lizard")
-			.build();
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("lizard")
+				.build();
 		assertThat(observationContext).isNotNull();
 		assertThat(observationContext.getToolCallArguments()).isEqualTo("lizard");
 	}
@@ -61,17 +61,17 @@ class ToolCallingObservationContextTests {
 	@Test
 	void whenToolDefinitionIsNullThenThrow() {
 		assertThatThrownBy(() -> ToolCallingObservationContext.builder().toolCallArguments("lizard").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("toolDefinition cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("toolDefinition cannot be null");
 	}
 
 	@Test
 	void whenToolMetadataIsNullThenThrow() {
 		assertThatThrownBy(() -> ToolCallingObservationContext.builder()
-			.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
-			.toolCallArguments("lizard")
-			.toolMetadata(null)
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("toolMetadata cannot be null");
+				.toolDefinition(ToolDefinition.builder().name("toolA").description("description").inputSchema("{}").build())
+				.toolCallArguments("lizard")
+				.toolMetadata(null)
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("toolMetadata cannot be null");
 	}
 
 }

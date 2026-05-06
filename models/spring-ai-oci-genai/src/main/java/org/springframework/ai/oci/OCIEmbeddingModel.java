@@ -72,7 +72,7 @@ public class OCIEmbeddingModel extends AbstractEmbeddingModel {
 	}
 
 	public OCIEmbeddingModel(GenerativeAiInference genAi, OCIEmbeddingOptions options,
-			ObservationRegistry observationRegistry) {
+	                         ObservationRegistry observationRegistry) {
 		Assert.notNull(genAi, "com.oracle.bmc.generativeaiinference.GenerativeAiInferenceClient must not be null");
 		Assert.notNull(options, "options must not be null");
 		Assert.notNull(observationRegistry, "observationRegistry must not be null");
@@ -91,14 +91,14 @@ public class OCIEmbeddingModel extends AbstractEmbeddingModel {
 				(OCIEmbeddingOptions) embeddingRequest.getOptions());
 
 		EmbeddingModelObservationContext context = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(AiProvider.OCI_GENAI.value())
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider(AiProvider.OCI_GENAI.value())
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> context,
-					this.observationRegistry)
-			.observe(() -> embedAllWithContext(embedTextRequests, context));
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> context,
+						this.observationRegistry)
+				.observe(() -> embedAllWithContext(embedTextRequests, context));
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class OCIEmbeddingModel extends AbstractEmbeddingModel {
 	}
 
 	private EmbeddingResponse embedAllWithContext(List<EmbedTextRequest> embedTextRequests,
-			EmbeddingModelObservationContext context) {
+	                                              EmbeddingModelObservationContext context) {
 		String modelId = null;
 		AtomicInteger index = new AtomicInteger(0);
 		List<Embedding> embeddings = new ArrayList<>();
@@ -142,11 +142,11 @@ public class OCIEmbeddingModel extends AbstractEmbeddingModel {
 	private EmbedTextRequest createRequest(List<String> inputs, OCIEmbeddingOptions embeddingOptions) {
 		ServingMode servingMode = ServingModeHelper.get(this.options.getServingMode(), this.options.getModel());
 		EmbedTextDetails embedTextDetails = EmbedTextDetails.builder()
-			.servingMode(servingMode)
-			.compartmentId(embeddingOptions.getCompartment())
-			.inputs(inputs)
-			.truncate(Objects.requireNonNullElse(embeddingOptions.getTruncate(), EmbedTextDetails.Truncate.End))
-			.build();
+				.servingMode(servingMode)
+				.compartmentId(embeddingOptions.getCompartment())
+				.inputs(inputs)
+				.truncate(Objects.requireNonNullElse(embeddingOptions.getTruncate(), EmbedTextDetails.Truncate.End))
+				.build();
 		return EmbedTextRequest.builder().embedTextDetails(embedTextDetails).build();
 	}
 

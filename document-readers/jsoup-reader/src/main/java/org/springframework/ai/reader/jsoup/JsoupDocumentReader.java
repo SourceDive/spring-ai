@@ -36,12 +36,12 @@ import org.springframework.core.io.Resource;
 
 /**
  * Reads HTML documents and extracts text content using JSoup.
- *
+ * <p>
  * This reader provides options for selecting specific HTML elements to extract, handling
  * links, and extracting metadata. It leverages the JSoup library for parsing HTML.
  *
- * @see <a href="https://jsoup.org/">JSoup Website</a>
  * @author Alexandros Pappas
+ * @see <a href="https://jsoup.org/">JSoup Website</a>
  */
 public class JsoupDocumentReader implements DocumentReader {
 
@@ -79,8 +79,7 @@ public class JsoupDocumentReader implements DocumentReader {
 				Document document = new Document(allText);
 				addMetadata(doc, document);
 				documents.add(document);
-			}
-			else if (this.config.groupByElement) {
+			} else if (this.config.groupByElement) {
 				// Extract text on a per-element base using the defined selector.
 				Elements selectedElements = doc.select(this.config.selector);
 				for (Element element : selectedElements) {
@@ -90,8 +89,7 @@ public class JsoupDocumentReader implements DocumentReader {
 					// Do not add metadata from element to avoid duplication.
 					documents.add(document);
 				}
-			}
-			else {
+			} else {
 				// Extract text from specific elements based on the selector
 				Elements elements = doc.select(this.config.selector);
 				String text = elements.stream().map(Element::text).collect(Collectors.joining(this.config.separator));
@@ -102,8 +100,7 @@ public class JsoupDocumentReader implements DocumentReader {
 
 			return documents;
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Failed to read HTML resource: " + this.htmlResource, e);
 		}
 	}

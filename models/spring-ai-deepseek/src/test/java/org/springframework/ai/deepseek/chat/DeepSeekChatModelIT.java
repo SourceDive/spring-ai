@@ -95,9 +95,9 @@ class DeepSeekChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -117,10 +117,10 @@ class DeepSeekChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -141,9 +141,9 @@ class DeepSeekChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -162,9 +162,9 @@ class DeepSeekChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -186,20 +186,20 @@ class DeepSeekChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.streamingChatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(m -> m.getText() != null ? m.getText() : "")
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(m -> m.getText() != null ? m.getText() : "")
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		logger.info("" + actorsFilms);
@@ -211,7 +211,7 @@ class DeepSeekChatModelIT {
 	void prefixCompletionTest() {
 		String userMessageContent = """
 				Please return this yaml data to json.
-
+				
 				data:
 				```yaml
 				code: 200
@@ -237,8 +237,8 @@ class DeepSeekChatModelIT {
 	@Test
 	void reasonerModelTest() {
 		var promptOptions = DeepSeekChatOptions.builder()
-			.model(DeepSeekApi.ChatModel.DEEPSEEK_REASONER.getValue())
-			.build();
+				.model(DeepSeekApi.ChatModel.DEEPSEEK_REASONER.getValue())
+				.build();
 		Prompt prompt = new Prompt("9.11 and 9.8, which is greater?", promptOptions);
 		ChatResponse response = this.chatModel.call(prompt);
 
@@ -255,8 +255,8 @@ class DeepSeekChatModelIT {
 		List<Message> messages = new ArrayList<>();
 		messages.add(new UserMessage("9.11 and 9.8, which is greater?"));
 		var promptOptions = DeepSeekChatOptions.builder()
-			.model(DeepSeekApi.ChatModel.DEEPSEEK_REASONER.getValue())
-			.build();
+				.model(DeepSeekApi.ChatModel.DEEPSEEK_REASONER.getValue())
+				.build();
 
 		Prompt prompt = new Prompt(messages, promptOptions);
 		ChatResponse response = this.chatModel.call(prompt);
@@ -271,7 +271,7 @@ class DeepSeekChatModelIT {
 		ChatResponse response2 = this.chatModel.call(prompt2);
 
 		DeepSeekAssistantMessage deepSeekAssistantMessage2 = (DeepSeekAssistantMessage) response2.getResult()
-			.getOutput();
+				.getOutput();
 		assertThat(deepSeekAssistantMessage2.getReasoningContent()).isNotEmpty();
 		assertThat(deepSeekAssistantMessage2.getText()).isNotEmpty();
 	}

@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Example integration-test to use against the schema and full wiki datasets in sstable
  * format available from https://github.com/datastax-labs/colbert-wikipedia-data
- *
+ * <p>
  * Use `mvn failsafe:integration-test -Dit.test=WikiVectorStoreExample`
  *
  * @author Mick Semb Wever
@@ -52,7 +52,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WikiVectorStoreExample {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	@Test
 	void ensureBeanGetsCreated() {
@@ -78,7 +78,7 @@ class WikiVectorStoreExample {
 	}
 
 	@SpringBootConfiguration
-	@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
+	@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 	public static class TestApplication {
 
 		@Bean
@@ -94,31 +94,31 @@ class WikiVectorStoreExample {
 					new SchemaColumn("id", DataTypes.INT));
 
 			return CassandraVectorStore.builder(embeddingModel)
-				.session(cqlSession)
-				.keyspace("wikidata")
-				.table("articles")
-				.partitionKeys(partitionColumns)
-				.clusteringKeys(clusteringColumns)
-				.contentColumnName("body")
-				.embeddingColumnName("all_minilm_l6_v2_embedding")
-				.indexName("all_minilm_l6_v2_ann")
-				.initializeSchema(false)
-				.addMetadataColumns(extraColumns)
-				.primaryKeyTranslator((List<Object> primaryKeys) -> {
-					// the deliminator used to join fields together into the document's id
-					// is arbitary, here "§¶" is used
-					if (primaryKeys.isEmpty()) {
-						return "test§¶0";
-					}
-					return String.format("%s§¶%s", primaryKeys.get(2), primaryKeys.get(3));
-				})
-				.documentIdTranslator(id -> {
-					String[] parts = id.split("§¶");
-					String title = parts[0];
-					int chunk_no = 0 < parts.length ? Integer.parseInt(parts[1]) : 0;
-					return List.of("simplewiki", "en", title, chunk_no, 0);
-				})
-				.build();
+					.session(cqlSession)
+					.keyspace("wikidata")
+					.table("articles")
+					.partitionKeys(partitionColumns)
+					.clusteringKeys(clusteringColumns)
+					.contentColumnName("body")
+					.embeddingColumnName("all_minilm_l6_v2_embedding")
+					.indexName("all_minilm_l6_v2_ann")
+					.initializeSchema(false)
+					.addMetadataColumns(extraColumns)
+					.primaryKeyTranslator((List<Object> primaryKeys) -> {
+						// the deliminator used to join fields together into the document's id
+						// is arbitary, here "§¶" is used
+						if (primaryKeys.isEmpty()) {
+							return "test§¶0";
+						}
+						return String.format("%s§¶%s", primaryKeys.get(2), primaryKeys.get(3));
+					})
+					.documentIdTranslator(id -> {
+						String[] parts = id.split("§¶");
+						String title = parts[0];
+						int chunk_no = 0 < parts.length ? Integer.parseInt(parts[1]) : 0;
+						return List.of("simplewiki", "en", title, chunk_no, 0);
+					})
+					.build();
 		}
 
 		@Bean
@@ -130,8 +130,8 @@ class WikiVectorStoreExample {
 		@Bean
 		public CqlSession cqlSession() {
 			return new CqlSessionBuilder()
-				// presumes a local C* cluster is running
-				.build();
+					// presumes a local C* cluster is running
+					.build();
 		}
 
 	}

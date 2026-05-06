@@ -93,7 +93,7 @@ public class OCICohereChatModel implements ChatModel {
 	}
 
 	public OCICohereChatModel(GenerativeAiInference genAi, OCICohereChatOptions options,
-			ObservationRegistry observationRegistry) {
+	                          ObservationRegistry observationRegistry) {
 		Assert.notNull(genAi, "com.oracle.bmc.generativeaiinference.GenerativeAiInference must not be null");
 		Assert.notNull(options, "OCIChatOptions must not be null");
 
@@ -106,18 +106,18 @@ public class OCICohereChatModel implements ChatModel {
 	public ChatResponse call(Prompt prompt) {
 		Prompt requestPrompt = this.buildRequestPrompt(prompt);
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(requestPrompt)
-			.provider(AiProvider.OCI_GENAI.value())
-			.build();
+				.prompt(requestPrompt)
+				.provider(AiProvider.OCI_GENAI.value())
+				.build();
 
 		return ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				ChatResponse chatResponse = doChatRequest(prompt);
-				observationContext.setResponse(chatResponse);
-				return chatResponse;
-			});
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					ChatResponse chatResponse = doChatRequest(prompt);
+					observationContext.setResponse(chatResponse);
+					return chatResponse;
+				});
 	}
 
 	Prompt buildRequestPrompt(Prompt prompt) {
@@ -142,6 +142,7 @@ public class OCICohereChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -154,9 +155,9 @@ public class OCICohereChatModel implements ChatModel {
 		validateChatOptions(options);
 
 		ChatResponseMetadata metadata = ChatResponseMetadata.builder()
-			.model(options.getModel())
-			.keyValue("compartment", options.getCompartment())
-			.build();
+				.model(options.getModel())
+				.keyValue("compartment", options.getCompartment())
+				.build();
 		return new ChatResponse(getGenerations(prompt, options), metadata);
 
 	}
@@ -187,19 +188,19 @@ public class OCICohereChatModel implements ChatModel {
 
 	private List<Generation> getGenerations(Prompt prompt, OCICohereChatOptions options) {
 		com.oracle.bmc.generativeaiinference.responses.ChatResponse cr = this.genAi
-			.chat(toCohereChatRequest(prompt, options));
+				.chat(toCohereChatRequest(prompt, options));
 		return toGenerations(cr, options);
 
 	}
 
 	private List<Generation> toGenerations(com.oracle.bmc.generativeaiinference.responses.ChatResponse ociChatResponse,
-			OCICohereChatOptions options) {
+	                                       OCICohereChatOptions options) {
 		BaseChatResponse cr = ociChatResponse.getChatResult().getChatResponse();
 		if (cr instanceof CohereChatResponse resp) {
 			List<Generation> generations = new ArrayList<>();
 			ChatGenerationMetadata metadata = ChatGenerationMetadata.builder()
-				.finishReason(resp.getFinishReason().getValue())
-				.build();
+					.finishReason(resp.getFinishReason().getValue())
+					.build();
 			AssistantMessage message = new AssistantMessage(resp.getText(), Map.of());
 			generations.add(new Generation(message, metadata));
 			return generations;
@@ -242,25 +243,25 @@ public class OCICohereChatModel implements ChatModel {
 
 	private ChatRequest newChatRequest(OCICohereChatOptions options, Message message, List<CohereMessage> chatHistory) {
 		BaseChatRequest baseChatRequest = CohereChatRequest.builder()
-			.frequencyPenalty(options.getFrequencyPenalty())
-			.presencePenalty(options.getPresencePenalty())
-			.maxTokens(options.getMaxTokens())
-			.topK(options.getTopK())
-			.topP(options.getTopP())
-			.temperature(Objects.requireNonNullElse(options.getTemperature(), DEFAULT_TEMPERATURE))
-			.preambleOverride(options.getPreambleOverride())
-			.stopSequences(options.getStopSequences())
-			.documents(options.getDocuments())
-			.tools(options.getTools())
-			.chatHistory(chatHistory)
-			.message(message.getText())
-			.build();
+				.frequencyPenalty(options.getFrequencyPenalty())
+				.presencePenalty(options.getPresencePenalty())
+				.maxTokens(options.getMaxTokens())
+				.topK(options.getTopK())
+				.topP(options.getTopP())
+				.temperature(Objects.requireNonNullElse(options.getTemperature(), DEFAULT_TEMPERATURE))
+				.preambleOverride(options.getPreambleOverride())
+				.stopSequences(options.getStopSequences())
+				.documents(options.getDocuments())
+				.tools(options.getTools())
+				.chatHistory(chatHistory)
+				.message(message.getText())
+				.build();
 		ServingMode servingMode = ServingModeHelper.get(options.getServingMode(), options.getModel());
 		ChatDetails chatDetails = ChatDetails.builder()
-			.compartmentId(options.getCompartment())
-			.servingMode(servingMode)
-			.chatRequest(baseChatRequest)
-			.build();
+				.compartmentId(options.getCompartment())
+				.servingMode(servingMode)
+				.chatRequest(baseChatRequest)
+				.build();
 		return ChatRequest.builder().body$(chatDetails).build();
 	}
 

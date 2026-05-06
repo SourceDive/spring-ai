@@ -30,9 +30,9 @@ public interface Evaluator {
 	default String doGetSupportingData(EvaluationRequest evaluationRequest) {
 		List<Document> data = evaluationRequest.getDataList();
 		return data.stream()
-			.map(Document::getText)
-			.filter(StringUtils::hasText)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.map(Document::getText)
+				.filter(StringUtils::hasText)
+				.collect(Collectors.joining(System.lineSeparator()));
 	}
 
 }

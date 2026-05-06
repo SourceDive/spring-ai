@@ -58,14 +58,14 @@ public class OllamaFunctionToolBeanIT extends BaseOllamaIT {
 	private static final String MODEL_NAME = "qwen2.5:3b";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 				"spring.ai.ollama.baseUrl=" + getBaseUrl(),
 				"spring.ai.ollama.chat.options.model=" + MODEL_NAME,
 				"spring.ai.ollama.chat.options.temperature=0.5",
 				"spring.ai.ollama.chat.options.topK=10")
 				// @formatter:on
-		.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withConfiguration(AutoConfigurations.of(OllamaChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -103,7 +103,7 @@ public class OllamaFunctionToolBeanIT extends BaseOllamaIT {
 					"What are the weather conditions in San Francisco, Tokyo, and Paris? Find the temperature in Celsius for each of the three locations.");
 
 			ChatResponse response = chatModel
-				.call(new Prompt(List.of(userMessage), OllamaOptions.builder().toolNames("weatherInfo").build()));
+					.call(new Prompt(List.of(userMessage), OllamaOptions.builder().toolNames("weatherInfo").build()));
 
 			logger.info("Response: {}", response);
 
@@ -121,16 +121,16 @@ public class OllamaFunctionToolBeanIT extends BaseOllamaIT {
 					"What are the weather conditions in San Francisco, Tokyo, and Paris? Find the temperature in Celsius for each of the three locations.");
 
 			Flux<ChatResponse> response = chatModel
-				.stream(new Prompt(List.of(userMessage), OllamaOptions.builder().toolNames("weatherInfo").build()));
+					.stream(new Prompt(List.of(userMessage), OllamaOptions.builder().toolNames("weatherInfo").build()));
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).contains("30", "10", "15");
@@ -164,11 +164,9 @@ public class OllamaFunctionToolBeanIT extends BaseOllamaIT {
 			int temperature = 0;
 			if (locationName.equals("San Francisco")) {
 				temperature = 30;
-			}
-			else if (locationName.equals("Tokyo")) {
+			} else if (locationName.equals("Tokyo")) {
 				temperature = 10;
-			}
-			else if (locationName.equals("Paris")) {
+			} else if (locationName.equals("Paris")) {
 				temperature = 15;
 			}
 			return "The temperature in " + locationName + " is " + temperature + " degrees Celsius.";

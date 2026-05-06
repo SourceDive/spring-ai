@@ -48,34 +48,34 @@ import static org.springframework.ai.model.openai.autoconfigure.OpenAIAutoConfig
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
-		SpringAiRetryAutoConfiguration.class })
+@AutoConfiguration(after = {RestClientAutoConfiguration.class, WebClientAutoConfiguration.class,
+		SpringAiRetryAutoConfiguration.class})
 @ConditionalOnClass(OpenAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.AUDIO_SPEECH_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OpenAiConnectionProperties.class, OpenAiAudioSpeechProperties.class })
-@ImportAutoConfiguration(classes = { SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
-		WebClientAutoConfiguration.class })
+@EnableConfigurationProperties({OpenAiConnectionProperties.class, OpenAiAudioSpeechProperties.class})
+@ImportAutoConfiguration(classes = {SpringAiRetryAutoConfiguration.class, RestClientAutoConfiguration.class,
+		WebClientAutoConfiguration.class})
 public class OpenAiAudioSpeechAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiAudioSpeechModel openAiAudioSpeechModel(OpenAiConnectionProperties commonProperties,
-			OpenAiAudioSpeechProperties speechProperties, RetryTemplate retryTemplate,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
+	                                                     OpenAiAudioSpeechProperties speechProperties, RetryTemplate retryTemplate,
+	                                                     ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                                     ObjectProvider<WebClient.Builder> webClientBuilderProvider, ResponseErrorHandler responseErrorHandler) {
 
 		OpenAIAutoConfigurationUtil.ResolvedConnectionProperties resolved = resolveConnectionProperties(
 				commonProperties, speechProperties, "speech");
 
 		var openAiAudioApi = OpenAiAudioApi.builder()
-			.baseUrl(resolved.baseUrl())
-			.apiKey(new SimpleApiKey(resolved.apiKey()))
-			.headers(resolved.headers())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
-			.responseErrorHandler(responseErrorHandler)
-			.build();
+				.baseUrl(resolved.baseUrl())
+				.apiKey(new SimpleApiKey(resolved.apiKey()))
+				.headers(resolved.headers())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
+				.responseErrorHandler(responseErrorHandler)
+				.build();
 
 		return new OpenAiAudioSpeechModel(openAiAudioApi, speechProperties.getOptions());
 	}

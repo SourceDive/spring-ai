@@ -59,7 +59,7 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithIdGeneratorNull() {
 		assertThatThrownBy(() -> this.builder.idGenerator(null).build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("idGenerator cannot be null");
+				.hasMessageContaining("idGenerator cannot be null");
 	}
 
 	@Test
@@ -73,11 +73,11 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithIdNullOrEmpty() {
 		assertThatThrownBy(() -> this.builder.text("text").id(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("id cannot be null or empty");
 
 		assertThatThrownBy(() -> this.builder.text("text").id("").build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.hasMessageContaining("id cannot be null or empty");
 	}
 
 	@Test
@@ -112,8 +112,8 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithMetadataMapNull() {
 		assertThatThrownBy(() -> this.builder.text("text").metadata(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata cannot be null");
 	}
 
 	@Test
@@ -127,15 +127,15 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithMetadataKeyNull() {
 		assertThatThrownBy(() -> this.builder.text("text").metadata(null, "value").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata key cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata key cannot be null");
 	}
 
 	@Test
 	void testWithMetadataValueNull() {
 		assertThatThrownBy(() -> this.builder.text("text").metadata("key", null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata value cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata value cannot be null");
 	}
 
 	@Test

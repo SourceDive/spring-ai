@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
 
 /**
  * Memory is retrieved from a VectorStore added into the prompt's system text.
- *
+ * <p>
  * This only works for text based exchanges with the models, not multi-modal exchanges.
  *
  * @author Christian Tzolov
@@ -66,9 +66,9 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 	private static final PromptTemplate DEFAULT_SYSTEM_PROMPT_TEMPLATE = new PromptTemplate("""
 			{instructions}
-
+			
 			Use the long term conversation memory from the LONG_TERM_MEMORY section to provide accurate answers.
-
+			
 			---------------------
 			LONG_TERM_MEMORY:
 			{long_term_memory}
@@ -88,7 +88,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 	private final VectorStore vectorStore;
 
 	private VectorStoreChatMemoryAdvisor(PromptTemplate systemPromptTemplate, int defaultTopK,
-			String defaultConversationId, int order, Scheduler scheduler, VectorStore vectorStore) {
+	                                     String defaultConversationId, int order, Scheduler scheduler, VectorStore vectorStore) {
 		Assert.notNull(systemPromptTemplate, "systemPromptTemplate cannot be null");
 		Assert.isTrue(defaultTopK > 0, "topK must be greater than 0");
 		Assert.hasText(defaultConversationId, "defaultConversationId cannot be null or empty");
@@ -123,28 +123,28 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 		int topK = getChatMemoryTopK(request.context());
 		String filter = DOCUMENT_METADATA_CONVERSATION_ID + "=='" + conversationId + "'";
 		var searchRequest = org.springframework.ai.vectorstore.SearchRequest.builder()
-			.query(query)
-			.topK(topK)
-			.filterExpression(filter)
-			.build();
+				.query(query)
+				.topK(topK)
+				.filterExpression(filter)
+				.build();
 		java.util.List<org.springframework.ai.document.Document> documents = this.vectorStore
-			.similaritySearch(searchRequest);
+				.similaritySearch(searchRequest);
 
 		String longTermMemory = documents == null ? ""
 				: documents.stream()
-					.map(org.springframework.ai.document.Document::getText)
-					.collect(java.util.stream.Collectors.joining(System.lineSeparator()));
+				  .map(org.springframework.ai.document.Document::getText)
+				  .collect(java.util.stream.Collectors.joining(System.lineSeparator()));
 
 		org.springframework.ai.chat.messages.SystemMessage systemMessage = request.prompt().getSystemMessage();
 		String augmentedSystemText = this.systemPromptTemplate
-			.render(java.util.Map.of("instructions", systemMessage.getText(), "long_term_memory", longTermMemory));
+				.render(java.util.Map.of("instructions", systemMessage.getText(), "long_term_memory", longTermMemory));
 
 		ChatClientRequest processedChatClientRequest = request.mutate()
-			.prompt(request.prompt().augmentSystemMessage(augmentedSystemText))
-			.build();
+				.prompt(request.prompt().augmentSystemMessage(augmentedSystemText))
+				.build();
 
 		org.springframework.ai.chat.messages.UserMessage userMessage = processedChatClientRequest.prompt()
-			.getUserMessage();
+				.getUserMessage();
 		if (userMessage != null) {
 			this.vectorStore.write(toDocuments(java.util.List.of(userMessage), conversationId));
 		}
@@ -161,10 +161,10 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 		List<Message> assistantMessages = new ArrayList<>();
 		if (chatClientResponse.chatResponse() != null) {
 			assistantMessages = chatClientResponse.chatResponse()
-				.getResults()
-				.stream()
-				.map(g -> (Message) g.getOutput())
-				.toList();
+					.getResults()
+					.stream()
+					.map(g -> (Message) g.getOutput())
+					.toList();
 		}
 		this.vectorStore.write(toDocuments(assistantMessages,
 				this.getConversationId(chatClientResponse.context(), this.defaultConversationId)));
@@ -173,41 +173,40 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		// Get the scheduler from BaseAdvisor
 		Scheduler scheduler = this.getScheduler();
 		// Process the request with the before method
 		return Mono.just(chatClientRequest)
-			.publishOn(scheduler)
-			.map(request -> this.before(request, streamAdvisorChain))
-			.flatMapMany(streamAdvisorChain::nextStream)
-			.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
-					response -> this.after(response, streamAdvisorChain)));
+				.publishOn(scheduler)
+				.map(request -> this.before(request, streamAdvisorChain))
+				.flatMapMany(streamAdvisorChain::nextStream)
+				.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
+						response -> this.after(response, streamAdvisorChain)));
 	}
 
 	private List<Document> toDocuments(List<Message> messages, String conversationId) {
 		List<Document> docs = messages.stream()
-			.filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
-			.map(message -> {
-				var metadata = new HashMap<>(message.getMetadata() != null ? message.getMetadata() : new HashMap<>());
-				metadata.put(DOCUMENT_METADATA_CONVERSATION_ID, conversationId);
-				metadata.put(DOCUMENT_METADATA_MESSAGE_TYPE, message.getMessageType().name());
-				if (message instanceof UserMessage userMessage) {
-					return Document.builder()
-						.text(userMessage.getText())
-						// userMessage.getMedia().get(0).getId()
-						// TODO vector store for memory would not store this into the
-						// vector store, could store an 'id' instead
-						// .media(userMessage.getMedia())
-						.metadata(metadata)
-						.build();
-				}
-				else if (message instanceof AssistantMessage assistantMessage) {
-					return Document.builder().text(assistantMessage.getText()).metadata(metadata).build();
-				}
-				throw new RuntimeException("Unknown message type: " + message.getMessageType());
-			})
-			.toList();
+				.filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
+				.map(message -> {
+					var metadata = new HashMap<>(message.getMetadata() != null ? message.getMetadata() : new HashMap<>());
+					metadata.put(DOCUMENT_METADATA_CONVERSATION_ID, conversationId);
+					metadata.put(DOCUMENT_METADATA_MESSAGE_TYPE, message.getMessageType().name());
+					if (message instanceof UserMessage userMessage) {
+						return Document.builder()
+								.text(userMessage.getText())
+								// userMessage.getMedia().get(0).getId()
+								// TODO vector store for memory would not store this into the
+								// vector store, could store an 'id' instead
+								// .media(userMessage.getMedia())
+								.metadata(metadata)
+								.build();
+					} else if (message instanceof AssistantMessage assistantMessage) {
+						return Document.builder().text(assistantMessage.getText()).metadata(metadata).build();
+					}
+					throw new RuntimeException("Unknown message type: " + message.getMessageType());
+				})
+				.toList();
 
 		return docs;
 	}
@@ -231,6 +230,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Creates a new builder instance.
+		 *
 		 * @param vectorStore the vector store to use
 		 */
 		protected Builder(VectorStore vectorStore) {
@@ -239,6 +239,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the system prompt template.
+		 *
 		 * @param systemPromptTemplate the system prompt template
 		 * @return this builder
 		 */
@@ -249,6 +250,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the chat memory retrieve size.
+		 *
 		 * @param defaultTopK the chat memory retrieve size
 		 * @return this builder
 		 */
@@ -259,6 +261,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the conversation id.
+		 *
 		 * @param conversationId the conversation id
 		 * @return the builder
 		 */
@@ -274,6 +277,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the order.
+		 *
 		 * @param order the order
 		 * @return the builder
 		 */
@@ -284,6 +288,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Build the advisor.
+		 *
 		 * @return the advisor
 		 */
 		public VectorStoreChatMemoryAdvisor build() {

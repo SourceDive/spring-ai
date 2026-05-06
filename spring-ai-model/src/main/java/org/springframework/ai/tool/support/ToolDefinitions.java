@@ -47,9 +47,9 @@ public final class ToolDefinitions {
 	public static DefaultToolDefinition.Builder builder(Method method) {
 		Assert.notNull(method, "method cannot be null");
 		return DefaultToolDefinition.builder()
-			.name(ToolUtils.getToolName(method))
-			.description(ToolUtils.getToolDescription(method))
-			.inputSchema(JsonSchemaGenerator.generateForMethodInput(method));
+				.name(ToolUtils.getToolName(method))
+				.description(ToolUtils.getToolDescription(method))
+				.inputSchema(JsonSchemaGenerator.generateForMethodInput(method));
 	}
 
 	/**

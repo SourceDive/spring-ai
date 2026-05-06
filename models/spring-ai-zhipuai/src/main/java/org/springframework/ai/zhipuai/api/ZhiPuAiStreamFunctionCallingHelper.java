@@ -42,8 +42,9 @@ public class ZhiPuAiStreamFunctionCallingHelper {
 
 	/**
 	 * Merge the previous and current ChatCompletionChunk into a single one.
+	 *
 	 * @param previous the previous ChatCompletionChunk
-	 * @param current the current ChatCompletionChunk
+	 * @param current  the current ChatCompletionChunk
 	 * @return the merged ChatCompletionChunk
 	 */
 	public ChatCompletionChunk merge(ChatCompletionChunk previous, ChatCompletionChunk current) {
@@ -108,12 +109,10 @@ public class ZhiPuAiStreamFunctionCallingHelper {
 					toolCalls.add(lastPreviousTooCall);
 				}
 				toolCalls.add(currentToolCall);
-			}
-			else {
+			} else {
 				toolCalls.add(merge(lastPreviousTooCall, currentToolCall));
 			}
-		}
-		else {
+		} else {
 			if (lastPreviousTooCall != null) {
 				toolCalls.add(lastPreviousTooCall);
 			}
@@ -183,15 +182,16 @@ public class ZhiPuAiStreamFunctionCallingHelper {
 
 	/**
 	 * Convert the ChatCompletionChunk into a ChatCompletion. The Usage is set to null.
+	 *
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
 	public ChatCompletion chunkToChatCompletion(ChatCompletionChunk chunk) {
 		List<Choice> choices = chunk.choices()
-			.stream()
-			.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
-					chunkChoice.logprobs()))
-			.toList();
+				.stream()
+				.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
+						chunkChoice.logprobs()))
+				.toList();
 
 		return new ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.systemFingerprint(),
 				"chat.completion", null);

@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Christian Tzolov
- *
+ * <p>
  * Unit Tests for {@link BedrockConverseProxyChatProperties}.
  */
 public class BedrockConverseProxyChatPropertiesTests {
@@ -35,7 +35,7 @@ public class BedrockConverseProxyChatPropertiesTests {
 	public void chatOptionsTest() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.bedrock.converse.chat.options.model=MODEL_XYZ",
 
 				"spring.ai.bedrock.converse.chat.options.max-tokens=123",
@@ -47,18 +47,18 @@ public class BedrockConverseProxyChatPropertiesTests {
 				"spring.ai.bedrock.converse.chat.options.top-k=100"
 				)
 			// @formatter:on
-			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(BedrockConverseProxyChatProperties.class);
+				.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(BedrockConverseProxyChatProperties.class);
 
-				assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(chatProperties.getOptions().getMaxTokens()).isEqualTo(123);
-				assertThat(chatProperties.getOptions().getStopSequences()).contains("boza", "koza");
-				assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
-				assertThat(chatProperties.getOptions().getTopP()).isEqualTo(0.56);
-				assertThat(chatProperties.getOptions().getTopK()).isEqualTo(100);
+					assertThat(chatProperties.getOptions().getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(chatProperties.getOptions().getMaxTokens()).isEqualTo(123);
+					assertThat(chatProperties.getOptions().getStopSequences()).contains("boza", "koza");
+					assertThat(chatProperties.getOptions().getTemperature()).isEqualTo(0.55);
+					assertThat(chatProperties.getOptions().getTopP()).isEqualTo(0.56);
+					assertThat(chatProperties.getOptions().getTopK()).isEqualTo(100);
 
-			});
+				});
 	}
 
 	@Test
@@ -66,24 +66,24 @@ public class BedrockConverseProxyChatPropertiesTests {
 
 		// It is enabled by default
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
-			.run(context -> assertThat(context.getBeansOfType(BedrockConverseProxyChatProperties.class)).isNotEmpty());
+				.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
+				.run(context -> assertThat(context.getBeansOfType(BedrockConverseProxyChatProperties.class)).isNotEmpty());
 
 		// Explicitly enable the chat auto-configuration.
 		new ApplicationContextRunner().withPropertyValues("spring.ai.model.chat=bedrock-converse")
-			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockConverseProxyChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(BedrockProxyChatModel.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockConverseProxyChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(BedrockProxyChatModel.class)).isNotEmpty();
+				});
 
 		// Explicitly disable the chat auto-configuration.
 		new ApplicationContextRunner().withPropertyValues("spring.ai.model.chat=none")
-			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(BedrockConverseProxyChatProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(BedrockProxyChatModel.class)).isEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(BedrockConverseProxyChatProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(BedrockProxyChatModel.class)).isEmpty();
+				});
 	}
 
 }

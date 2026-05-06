@@ -25,9 +25,9 @@ import org.springframework.util.Assert;
  * evaluation).
  *
  * @param operationType The type of operation performed by the model. Whenever possible, a
- * value from {@link AiOperationType}.
- * @param provider The name of the system providing the model service. Whenever possible,
- * a value from {@link AiProvider}.
+ *                      value from {@link AiOperationType}.
+ * @param provider      The name of the system providing the model service. Whenever possible,
+ *                      a value from {@link AiProvider}.
  * @author Thomas Vitale
  * @since 1.0.0
  */
@@ -35,8 +35,9 @@ public record AiOperationMetadata(String operationType, String provider) {
 
 	/**
 	 * Create a new {@link AiOperationMetadata} instance.
+	 *
 	 * @param operationType the type of operation
-	 * @param provider the provider
+	 * @param provider      the provider
 	 */
 	public AiOperationMetadata {
 		Assert.hasText(operationType, "operationType cannot be null or empty");
@@ -45,6 +46,7 @@ public record AiOperationMetadata(String operationType, String provider) {
 
 	/**
 	 * Create a new {@link Builder} instance.
+	 *
 	 * @return a new {@link Builder} instance
 	 */
 	public static Builder builder() {
@@ -65,6 +67,7 @@ public record AiOperationMetadata(String operationType, String provider) {
 
 		/**
 		 * Set the operation type.
+		 *
 		 * @param operationType the operation type
 		 * @return this {@link Builder} instance
 		 */
@@ -75,6 +78,7 @@ public record AiOperationMetadata(String operationType, String provider) {
 
 		/**
 		 * Set the provider.
+		 *
 		 * @param provider the provider
 		 * @return this {@link Builder} instance
 		 */
@@ -85,6 +89,7 @@ public record AiOperationMetadata(String operationType, String provider) {
 
 		/**
 		 * Build the {@link AiOperationMetadata} instance.
+		 *
 		 * @return a new {@link AiOperationMetadata} instance
 		 */
 		public AiOperationMetadata build() {

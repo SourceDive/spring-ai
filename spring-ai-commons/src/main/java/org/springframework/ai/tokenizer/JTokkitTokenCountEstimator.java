@@ -68,8 +68,7 @@ public class JTokkitTokenCountEstimator implements TokenCountEstimator {
 
 				if (media.getData() instanceof String textData) {
 					tokenCount += this.estimate(textData);
-				}
-				else if (media.getData() instanceof byte[] binaryData) {
+				} else if (media.getData() instanceof byte[] binaryData) {
 					tokenCount += binaryData.length; // This is likely incorrect.
 				}
 			}

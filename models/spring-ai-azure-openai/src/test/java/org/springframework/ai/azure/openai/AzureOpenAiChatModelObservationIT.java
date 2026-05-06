@@ -65,13 +65,13 @@ class AzureOpenAiChatModelObservationIT {
 	void observationForImperativeChatOperation() {
 
 		var options = AzureOpenAiChatOptions.builder()
-			.frequencyPenalty(0.0)
-			.maxTokens(2048)
-			.presencePenalty(0.0)
-			.stop(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topP(1.0)
-			.build();
+				.frequencyPenalty(0.0)
+				.maxTokens(2048)
+				.presencePenalty(0.0)
+				.stop(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -88,14 +88,14 @@ class AzureOpenAiChatModelObservationIT {
 	void observationForStreamingChatOperation() {
 
 		var options = AzureOpenAiChatOptions.builder()
-			.frequencyPenalty(0.0)
-			.deploymentName("gpt-4o")
-			.maxTokens(2048)
-			.presencePenalty(0.0)
-			.stop(List.of("this-is-the-end"))
-			.temperature(0.7)
-			.topP(1.0)
-			.build();
+				.frequencyPenalty(0.0)
+				.deploymentName("gpt-4o")
+				.maxTokens(2048)
+				.presencePenalty(0.0)
+				.stop(List.of("this-is-the-end"))
+				.temperature(0.7)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -105,9 +105,9 @@ class AzureOpenAiChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(10);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -121,57 +121,57 @@ class AzureOpenAiChatModelObservationIT {
 	private void validate(ChatResponseMetadata responseMetadata, boolean checkModel) {
 
 		TestObservationRegistryAssert.That that = TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME);
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME);
 
 		// TODO - Investigate why streaming does not contain model in the response.
 		if (checkModel) {
 			that.that()
-				.hasLowCardinalityKeyValue(
-						ChatModelObservationDocumentation.LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
-						responseMetadata.getModel());
+					.hasLowCardinalityKeyValue(
+							ChatModelObservationDocumentation.LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
+							responseMetadata.getModel());
 		}
 
 		that.that()
-			.hasLowCardinalityKeyValue(
-					ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.AZURE_OPENAI.value())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(),
-					"0.0")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(),
-					"0.0")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
-			.doesNotHaveHighCardinalityKeyValueWithKey(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_K.asString())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_ID.asString(),
-					responseMetadata.getId())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-					"[\"stop\"]")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.hasLowCardinalityKeyValue(
+						ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.AZURE_OPENAI.value())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString(),
+						"0.0")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString(),
+						"0.0")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
+				.doesNotHaveHighCardinalityKeyValueWithKey(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_K.asString())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_ID.asString(),
+						responseMetadata.getId())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+						"[\"stop\"]")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -185,20 +185,20 @@ class AzureOpenAiChatModelObservationIT {
 		@Bean
 		public OpenAIClientBuilder openAIClient() {
 			return new OpenAIClientBuilder().credential(new AzureKeyCredential(System.getenv("AZURE_OPENAI_API_KEY")))
-				.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
-				.serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
-				.httpLogOptions(new HttpLogOptions()
-					.setLogLevel(com.azure.core.http.policy.HttpLogDetailLevel.BODY_AND_HEADERS));
+					.endpoint(System.getenv("AZURE_OPENAI_ENDPOINT"))
+					.serviceVersion(OpenAIServiceVersion.V2024_02_15_PREVIEW)
+					.httpLogOptions(new HttpLogOptions()
+							.setLogLevel(com.azure.core.http.policy.HttpLogDetailLevel.BODY_AND_HEADERS));
 		}
 
 		@Bean
 		public AzureOpenAiChatModel azureOpenAiChatModel(OpenAIClientBuilder openAIClientBuilder,
-				TestObservationRegistry observationRegistry) {
+		                                                 TestObservationRegistry observationRegistry) {
 			return AzureOpenAiChatModel.builder()
-				.openAIClientBuilder(openAIClientBuilder)
-				.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName("gpt-4o").maxTokens(1000).build())
-				.observationRegistry(observationRegistry)
-				.build();
+					.openAIClientBuilder(openAIClientBuilder)
+					.defaultOptions(AzureOpenAiChatOptions.builder().deploymentName("gpt-4o").maxTokens(1000).build())
+					.observationRegistry(observationRegistry)
+					.build();
 		}
 
 	}

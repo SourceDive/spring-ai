@@ -73,8 +73,9 @@ public class MarkdownDocumentReaderConfig {
 		 * Text divided by horizontal lines will create new {@link Document}s. The default
 		 * is {@code false}, meaning text separated by horizontal lines won't create a new
 		 * document.
+		 *
 		 * @param horizontalRuleCreateDocument flag to determine whether new documents are
-		 * created from text divided by horizontal line
+		 *                                     created from text divided by horizontal line
 		 * @return this builder
 		 */
 		public Builder withHorizontalRuleCreateDocument(boolean horizontalRuleCreateDocument) {
@@ -85,8 +86,9 @@ public class MarkdownDocumentReaderConfig {
 		/**
 		 * Whatever to include code blocks in {@link Document}s. The default is
 		 * {@code false}, which means all code blocks are in separate documents.
+		 *
 		 * @param includeCodeBlock flag to include code block into paragraph document or
-		 * create new with code only
+		 *                         create new with code only
 		 * @return this builder
 		 */
 		public Builder withIncludeCodeBlock(boolean includeCodeBlock) {
@@ -97,8 +99,9 @@ public class MarkdownDocumentReaderConfig {
 		/**
 		 * Whatever to include blockquotes in {@link Document}s. The default is
 		 * {@code false}, which means all blockquotes are in separate documents.
+		 *
 		 * @param includeBlockquote flag to include blockquotes into paragraph document or
-		 * create new with blockquote only
+		 *                          create new with blockquote only
 		 * @return this builder
 		 */
 		public Builder withIncludeBlockquote(boolean includeBlockquote) {
@@ -108,6 +111,7 @@ public class MarkdownDocumentReaderConfig {
 
 		/**
 		 * Adds this additional metadata to the all built {@link Document}s.
+		 *
 		 * @return this builder
 		 */
 		public Builder withAdditionalMetadata(String key, Object value) {
@@ -119,6 +123,7 @@ public class MarkdownDocumentReaderConfig {
 
 		/**
 		 * Adds this additional metadata to the all built {@link Document}s.
+		 *
 		 * @return this builder
 		 */
 		public Builder withAdditionalMetadata(Map<String, Object> additionalMetadata) {

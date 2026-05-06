@@ -77,6 +77,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code SyncMcpToolCallbackProvider} instance with a list of MCP
 	 * clients.
+	 *
 	 * @param mcpClients the list of MCP clients to use for discovering tools
 	 * @param toolFilter a filter to apply to each discovered tool
 	 */
@@ -90,6 +91,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code SyncMcpToolCallbackProvider} instance with a list of MCP
 	 * clients.
+	 *
 	 * @param mcpClients the list of MCP clients to use for discovering tools
 	 */
 	public SyncMcpToolCallbackProvider(List<McpSyncClient> mcpClients) {
@@ -99,6 +101,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code SyncMcpToolCallbackProvider} instance with one or more MCP
 	 * clients.
+	 *
 	 * @param mcpClients the MCP clients to use for discovering tools
 	 * @param toolFilter a filter to apply to each discovered tool
 	 */
@@ -109,6 +112,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	/**
 	 * Creates a new {@code SyncMcpToolCallbackProvider} instance with one or more MCP
 	 * clients.
+	 *
 	 * @param mcpClients the MCP clients to use for discovering tools
 	 */
 	public SyncMcpToolCallbackProvider(McpSyncClient... mcpClients) {
@@ -124,18 +128,19 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	 * <li>Creates a {@link SyncMcpToolCallback} for each discovered tool</li>
 	 * <li>Validates that there are no duplicate tool names across all servers</li>
 	 * </ol>
+	 *
 	 * @return an array of tool callbacks, one for each discovered tool
 	 * @throws IllegalStateException if duplicate tool names are found
 	 */
 	@Override
 	public ToolCallback[] getToolCallbacks() {
 		var array = this.mcpClients.stream()
-			.flatMap(mcpClient -> mcpClient.listTools()
-				.tools()
-				.stream()
-				.filter(tool -> this.toolFilter.test(mcpClient, tool))
-				.map(tool -> new SyncMcpToolCallback(mcpClient, tool)))
-			.toArray(ToolCallback[]::new);
+				.flatMap(mcpClient -> mcpClient.listTools()
+						.tools()
+						.stream()
+						.filter(tool -> this.toolFilter.test(mcpClient, tool))
+						.map(tool -> new SyncMcpToolCallback(mcpClient, tool)))
+				.toArray(ToolCallback[]::new);
 		validateToolCallbacks(array);
 		return array;
 	}
@@ -145,6 +150,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	 * <p>
 	 * This method ensures that each tool has a unique name, which is required for proper
 	 * tool resolution and execution.
+	 *
 	 * @param toolCallbacks the tool callbacks to validate
 	 * @throws IllegalStateException if duplicate tool names are found
 	 */
@@ -167,6 +173,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider {
 	 * <li>Retrieves tools from all clients and combines them into a single list</li>
 	 * <li>Ensures there are no naming conflicts between tools from different clients</li>
 	 * </ol>
+	 *
 	 * @param mcpClients the list of MCP clients to create callbacks from
 	 * @return a list of tool callbacks from all provided clients
 	 */

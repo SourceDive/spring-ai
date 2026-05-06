@@ -37,7 +37,7 @@ class CharacterFactory {
 	}
 
 	public Character createCharacterFromTextPosition(final TextPosition textPosition,
-			final TextPosition previousTextPosition) {
+	                                                 final TextPosition previousTextPosition) {
 		this.setPreviousTextPosition(previousTextPosition);
 		this.isCharacterPartOfPreviousWord = this.isCharacterPartOfPreviousWord(textPosition);
 		this.isFirstCharacterOfAWord = this.isFirstCharacterOfAWord(textPosition);
@@ -84,7 +84,7 @@ class CharacterFactory {
 	}
 
 	private double numberOfSpacesBetweenTwoCharacters(final TextPosition textPosition1,
-			final TextPosition textPosition2) {
+	                                                  final TextPosition textPosition2) {
 		double previousTextXPosition = textPosition1.getX();
 		double previousTextWidth = textPosition1.getWidth();
 		double previousTextEndXPosition = (previousTextXPosition + previousTextWidth);

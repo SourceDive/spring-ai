@@ -77,20 +77,20 @@ class ToolUtilsTests {
 	@Test
 	void prefixedToolNameShouldThrowExceptionForNullOrEmptyInputs() {
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName(null, "toolName"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName("", "toolName"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName("prefix", null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName("prefix", ""))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 	}
 
 	@Test
@@ -153,12 +153,12 @@ class ToolUtilsTests {
 		assertThat(toolSpecification.tool().name()).isEqualTo("test");
 
 		StepVerifier.create(toolSpecification.call().apply(mock(McpAsyncServerExchange.class), Map.of()))
-			.assertNext(result -> {
-				TextContent content = (TextContent) result.content().get(0);
-				assertThat(content.text()).isEqualTo("success");
-				assertThat(result.isError()).isFalse();
-			})
-			.verifyComplete();
+				.assertNext(result -> {
+					TextContent content = (TextContent) result.content().get(0);
+					assertThat(content.text()).isEqualTo("success");
+					assertThat(result.isError()).isFalse();
+				})
+				.verifyComplete();
 	}
 
 	@Test
@@ -169,12 +169,12 @@ class ToolUtilsTests {
 
 		assertThat(toolSpecification).isNotNull();
 		StepVerifier.create(toolSpecification.call().apply(mock(McpAsyncServerExchange.class), Map.of()))
-			.assertNext(result -> {
-				TextContent content = (TextContent) result.content().get(0);
-				assertThat(content.text()).isEqualTo("error");
-				assertThat(result.isError()).isTrue();
-			})
-			.verifyComplete();
+				.assertNext(result -> {
+					TextContent content = (TextContent) result.content().get(0);
+					assertThat(content.text()).isEqualTo("error");
+					assertThat(result.isError()).isTrue();
+				})
+				.verifyComplete();
 	}
 
 	@Test
@@ -195,10 +195,10 @@ class ToolUtilsTests {
 	private ToolCallback createMockToolCallback(String name, String result) {
 		ToolCallback callback = mock(ToolCallback.class);
 		ToolDefinition definition = DefaultToolDefinition.builder()
-			.name(name)
-			.description("Test tool")
-			.inputSchema("{}")
-			.build();
+				.name(name)
+				.description("Test tool")
+				.inputSchema("{}")
+				.build();
 		when(callback.getToolDefinition()).thenReturn(definition);
 		when(callback.call(anyString(), any())).thenReturn(result);
 		return callback;
@@ -207,10 +207,10 @@ class ToolUtilsTests {
 	private ToolCallback createMockToolCallback(String name, RuntimeException error) {
 		ToolCallback callback = mock(ToolCallback.class);
 		ToolDefinition definition = DefaultToolDefinition.builder()
-			.name(name)
-			.description("Test tool")
-			.inputSchema("{}")
-			.build();
+				.name(name)
+				.description("Test tool")
+				.inputSchema("{}")
+				.build();
 		when(callback.getToolDefinition()).thenReturn(definition);
 		when(callback.call(anyString(), any())).thenThrow(error);
 		return callback;
@@ -326,8 +326,8 @@ class ToolUtilsTests {
 		when(mockClient2.listTools()).thenReturn(listToolsResult2);
 
 		assertThatThrownBy(() -> McpToolUtils.getToolCallbacksFromSyncClients(mockClient1, mockClient2))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Multiple tools with the same name");
 	}
 
 }

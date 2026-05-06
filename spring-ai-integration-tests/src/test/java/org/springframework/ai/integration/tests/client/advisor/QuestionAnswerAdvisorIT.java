@@ -85,11 +85,11 @@ public class QuestionAnswerAdvisorIT {
 		QuestionAnswerAdvisor qaAdvisor = QuestionAnswerAdvisor.builder(this.pgVectorStore).build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(qaAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.advisors(qaAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -105,15 +105,15 @@ public class QuestionAnswerAdvisorIT {
 		QuestionAnswerAdvisor qaAdvisor = QuestionAnswerAdvisor.builder(this.pgVectorStore).build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user(user -> user.text("Where does the adventure of <character1> and <character2> take place?")
-				.param("character1", "Anacletus")
-				.param("character2", "Birba"))
-			.advisors(qaAdvisor)
-			.templateRenderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.user(user -> user.text("Where does the adventure of <character1> and <character2> take place?")
+						.param("character1", "Anacletus")
+						.param("character2", "Birba"))
+				.advisors(qaAdvisor)
+				.templateRenderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -127,34 +127,34 @@ public class QuestionAnswerAdvisorIT {
 	@Test
 	void qaCustomPromptTemplate() {
 		PromptTemplate customPromptTemplate = PromptTemplate.builder()
-			.renderer(StTemplateRenderer.builder().startDelimiterToken('$').endDelimiterToken('$').build())
-			.template("""
-					$query$
-
-					Context information is below, surrounded by ---------------------
-
-					---------------------
-					$question_answer_context$
-					---------------------
-
-					Given the context and provided history information and not prior knowledge,
-					reply to the user comment. If the answer is not in the context, inform
-					the user that you can't answer the question.
-					""")
-			.build();
+				.renderer(StTemplateRenderer.builder().startDelimiterToken('$').endDelimiterToken('$').build())
+				.template("""
+						$query$
+						
+						Context information is below, surrounded by ---------------------
+						
+						---------------------
+						$question_answer_context$
+						---------------------
+						
+						Given the context and provided history information and not prior knowledge,
+						reply to the user comment. If the answer is not in the context, inform
+						the user that you can't answer the question.
+						""")
+				.build();
 
 		String question = "Where does the adventure of Anacletus and Birba take place?";
 
 		QuestionAnswerAdvisor qaAdvisor = QuestionAnswerAdvisor.builder(this.pgVectorStore)
-			.promptTemplate(customPromptTemplate)
-			.build();
+				.promptTemplate(customPromptTemplate)
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(qaAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.advisors(qaAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -172,11 +172,11 @@ public class QuestionAnswerAdvisorIT {
 		QuestionAnswerAdvisor qaAdvisor = QuestionAnswerAdvisor.builder(this.pgVectorStore).build();
 
 		Answer answer = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(qaAdvisor)
-			.call()
-			.entity(Answer.class);
+				.build()
+				.prompt(question)
+				.advisors(qaAdvisor)
+				.call()
+				.entity(Answer.class);
 
 		assertThat(answer).isNotNull();
 

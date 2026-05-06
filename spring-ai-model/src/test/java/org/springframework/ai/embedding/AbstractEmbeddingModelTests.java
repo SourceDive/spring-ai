@@ -50,7 +50,7 @@ public class AbstractEmbeddingModelTests {
 
 			@Override
 			public float[] embed(String text) {
-				return new float[] { 0.1f, 0.1f, 0.1f };
+				return new float[]{0.1f, 0.1f, 0.1f};
 			}
 
 			@Override
@@ -81,16 +81,16 @@ public class AbstractEmbeddingModelTests {
 	@CsvFileSource(resources = "/embedding/embedding-model-dimensions.properties", numLinesToSkip = 1, delimiter = '=')
 	public void testKnownEmbeddingModelDimensions(String model, String dimension) {
 		assertThat(AbstractEmbeddingModel.dimensions(this.embeddingModel, model, "Hello world!"))
-			.isEqualTo(Integer.valueOf(dimension));
+				.isEqualTo(Integer.valueOf(dimension));
 		verify(this.embeddingModel, never()).embed(any(String.class));
 		verify(this.embeddingModel, never()).embed(any(Document.class));
 	}
 
 	@Test
 	public void testUnknownModelDimension() {
-		given(this.embeddingModel.embed(eq("Hello world!"))).willReturn(new float[] { 0.1f, 0.1f, 0.1f });
+		given(this.embeddingModel.embed(eq("Hello world!"))).willReturn(new float[]{0.1f, 0.1f, 0.1f});
 		assertThat(AbstractEmbeddingModel.dimensions(this.embeddingModel, "unknown_model", "Hello world!"))
-			.isEqualTo(3);
+				.isEqualTo(3);
 	}
 
 }

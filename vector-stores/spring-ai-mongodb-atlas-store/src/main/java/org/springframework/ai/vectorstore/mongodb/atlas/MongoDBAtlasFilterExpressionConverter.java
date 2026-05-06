@@ -37,8 +37,7 @@ public class MongoDBAtlasFilterExpressionConverter extends AbstractFilterExpress
 		// Handling AND/OR
 		if (AND.equals(expression.type()) || OR.equals(expression.type())) {
 			doCompoundExpressionType(expression, context);
-		}
-		else {
+		} else {
 			doSingleExpressionType(expression, context);
 		}
 	}

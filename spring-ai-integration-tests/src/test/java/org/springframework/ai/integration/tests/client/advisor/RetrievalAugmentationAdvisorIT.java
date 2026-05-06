@@ -89,15 +89,15 @@ class RetrievalAugmentationAdvisorIT {
 		String question = "Where does the adventure of Anacletus and Birba take place?";
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.build();
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(ragAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.advisors(ragAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -113,58 +113,58 @@ class RetrievalAugmentationAdvisorIT {
 		String question = "Where does the adventure of Anacletus and Birba take place?";
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.build();
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(ragAdvisor)
-			.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Italy'"))
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.advisors(ragAdvisor)
+				.advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Italy'"))
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 		// No documents retrieved since the filter expression matches none of the
 		// documents in the vector store.
 		assertThat((String) chatResponse.getResult().getMetadata().get(RetrievalAugmentationAdvisor.DOCUMENT_CONTEXT))
-			.isNull();
+				.isNull();
 	}
 
 	@Test
 	void ragWithCompression() {
 		MessageChatMemoryAdvisor memoryAdvisor = MessageChatMemoryAdvisor
-			.builder(MessageWindowChatMemory.builder().build())
-			.build();
+				.builder(MessageWindowChatMemory.builder().build())
+				.build();
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.queryTransformers(CompressionQueryTransformer.builder()
-				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-				.build())
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.build();
+				.queryTransformers(CompressionQueryTransformer.builder()
+						.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+						.build())
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.build();
 
 		ChatClient chatClient = ChatClient.builder(this.openAiChatModel)
-			.defaultAdvisors(memoryAdvisor, ragAdvisor)
-			.build();
+				.defaultAdvisors(memoryAdvisor, ragAdvisor)
+				.build();
 
 		String conversationId = "007";
 
 		ChatResponse chatResponse1 = chatClient.prompt()
-			.user("Where does the adventure of Anacletus and Birba take place?")
-			.advisors(advisors -> advisors.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.chatResponse();
+				.user("Where does the adventure of Anacletus and Birba take place?")
+				.advisors(advisors -> advisors.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse1).isNotNull();
 		String response1 = chatResponse1.getResult().getOutput().getText();
 		System.out.println(response1);
 
 		ChatResponse chatResponse2 = chatClient.prompt()
-			.user("Did they meet any cow?")
-			.advisors(advisors -> advisors.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.chatResponse();
+				.user("Did they meet any cow?")
+				.advisors(advisors -> advisors.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse2).isNotNull();
 		String response2 = chatResponse2.getResult().getOutput().getText();
@@ -177,20 +177,20 @@ class RetrievalAugmentationAdvisorIT {
 		String question = "Where are the main characters going?";
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.queryTransformers(RewriteQueryTransformer.builder()
-				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-				.targetSearchSystem("vector store")
-				.build())
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.build();
+				.queryTransformers(RewriteQueryTransformer.builder()
+						.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+						.targetSearchSystem("vector store")
+						.build())
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user(question)
-			.advisors(ragAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.user(question)
+				.advisors(ragAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -206,21 +206,21 @@ class RetrievalAugmentationAdvisorIT {
 		String question = "Hvor finder Anacletus og Birbas eventyr sted?";
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.queryTransformers(TranslationQueryTransformer.builder()
-				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-				.targetLanguage("english")
-				.build())
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.build();
+				.queryTransformers(TranslationQueryTransformer.builder()
+						.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+						.targetLanguage("english")
+						.build())
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system("Answer the question in English")
-			.user(question)
-			.advisors(ragAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system("Answer the question in English")
+				.user(question)
+				.advisors(ragAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -236,19 +236,19 @@ class RetrievalAugmentationAdvisorIT {
 		String question = "Where does the adventure of Anacletus and Birba take place?";
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.queryExpander(MultiQueryExpander.builder()
-				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-				.numberOfQueries(2)
-				.build())
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.build();
+				.queryExpander(MultiQueryExpander.builder()
+						.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+						.numberOfQueries(2)
+						.build())
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(ragAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.advisors(ragAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 
@@ -264,17 +264,17 @@ class RetrievalAugmentationAdvisorIT {
 		String question = "Where does the adventure of Anacletus and Birba take place?";
 
 		RetrievalAugmentationAdvisor ragAdvisor = RetrievalAugmentationAdvisor.builder()
-			.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
-			.documentPostProcessors((query, documents) -> List
-				.of(Document.builder().text("The adventure of Anacletus and Birba takes place in Molise").build()))
-			.build();
+				.documentRetriever(VectorStoreDocumentRetriever.builder().vectorStore(this.pgVectorStore).build())
+				.documentPostProcessors((query, documents) -> List
+						.of(Document.builder().text("The adventure of Anacletus and Birba takes place in Molise").build()))
+				.build();
 
 		ChatResponse chatResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(ragAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.advisors(ragAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(chatResponse).isNotNull();
 

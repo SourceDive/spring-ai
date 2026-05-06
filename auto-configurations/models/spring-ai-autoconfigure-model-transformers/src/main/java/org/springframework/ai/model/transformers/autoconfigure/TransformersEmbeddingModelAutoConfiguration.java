@@ -38,17 +38,17 @@ import org.springframework.context.annotation.Bean;
  * @author Christian Tzolov
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ TransformersEmbeddingModelProperties.class })
+@EnableConfigurationProperties({TransformersEmbeddingModelProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.TRANSFORMERS,
 		matchIfMissing = true)
-@ConditionalOnClass({ OrtSession.class, HuggingFaceTokenizer.class, TransformersEmbeddingModel.class })
+@ConditionalOnClass({OrtSession.class, HuggingFaceTokenizer.class, TransformersEmbeddingModel.class})
 public class TransformersEmbeddingModelAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public TransformersEmbeddingModel embeddingModel(TransformersEmbeddingModelProperties properties,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                 ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                 ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		TransformersEmbeddingModel embeddingModel = new TransformersEmbeddingModel(properties.getMetadataMode(),
 				observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP));

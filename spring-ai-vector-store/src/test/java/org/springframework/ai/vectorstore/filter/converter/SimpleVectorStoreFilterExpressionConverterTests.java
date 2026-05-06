@@ -71,7 +71,7 @@ public class SimpleVectorStoreFilterExpressionConverterTests {
 	@Test
 	public void testEQ() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("#metadata['country'] == 'BG'");
 
 		StandardEvaluationContext context = new StandardEvaluationContext();
@@ -116,7 +116,7 @@ public class SimpleVectorStoreFilterExpressionConverterTests {
 								new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")),
 								new Filter.Expression(NE, new Filter.Key("city"), new Filter.Value("Sofia")))));
 		assertThat(vectorExpr)
-			.isEqualTo("#metadata['year'] >= 2020 or #metadata['country'] == 'BG' and #metadata['city'] != 'Sofia'");
+				.isEqualTo("#metadata['year'] >= 2020 or #metadata['country'] == 'BG' and #metadata['city'] != 'Sofia'");
 
 		StandardEvaluationContext context = new StandardEvaluationContext();
 		ExpressionParser parser = new SpelExpressionParser();
@@ -191,11 +191,11 @@ public class SimpleVectorStoreFilterExpressionConverterTests {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("#metadata['country 1 2 3'] == 'BG'");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("#metadata['country 1 2 3'] == 'BG'");
 
 		StandardEvaluationContext context = new StandardEvaluationContext();

@@ -45,31 +45,31 @@ import org.springframework.context.annotation.Import;
  * @author Manuel Andreo Garcia
  * @author Ilayaperumal Gopinathan
  */
-@AutoConfiguration(after = { ToolCallingAutoConfiguration.class })
-@ConditionalOnClass({ AzureOpenAiChatModel.class })
-@EnableConfigurationProperties({ AzureOpenAiChatProperties.class })
+@AutoConfiguration(after = {ToolCallingAutoConfiguration.class})
+@ConditionalOnClass({AzureOpenAiChatModel.class})
+@EnableConfigurationProperties({AzureOpenAiChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.AZURE_OPENAI,
 		matchIfMissing = true)
-@ImportAutoConfiguration(classes = { ToolCallingAutoConfiguration.class })
+@ImportAutoConfiguration(classes = {ToolCallingAutoConfiguration.class})
 @Import(AzureOpenAiClientBuilderConfiguration.class)
 public class AzureOpenAiChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public AzureOpenAiChatModel azureOpenAiChatModel(OpenAIClientBuilder openAIClientBuilder,
-			AzureOpenAiChatProperties chatProperties, ToolCallingManager toolCallingManager,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<ToolExecutionEligibilityPredicate> azureOpenAiToolExecutionEligibilityPredicate) {
+	                                                 AzureOpenAiChatProperties chatProperties, ToolCallingManager toolCallingManager,
+	                                                 ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                 ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                                 ObjectProvider<ToolExecutionEligibilityPredicate> azureOpenAiToolExecutionEligibilityPredicate) {
 
 		var chatModel = AzureOpenAiChatModel.builder()
-			.openAIClientBuilder(openAIClientBuilder)
-			.defaultOptions(chatProperties.getOptions())
-			.toolCallingManager(toolCallingManager)
-			.toolExecutionEligibilityPredicate(azureOpenAiToolExecutionEligibilityPredicate
-				.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.openAIClientBuilder(openAIClientBuilder)
+				.defaultOptions(chatProperties.getOptions())
+				.toolCallingManager(toolCallingManager)
+				.toolExecutionEligibilityPredicate(azureOpenAiToolExecutionEligibilityPredicate
+						.getIfUnique(DefaultToolExecutionEligibilityPredicate::new))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
 		return chatModel;

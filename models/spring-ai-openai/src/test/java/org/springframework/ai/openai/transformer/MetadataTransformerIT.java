@@ -118,14 +118,14 @@ public class MetadataTransformerIT {
 	public void testContentFormatEnricher() {
 
 		assertThat(((DefaultContentFormatter) this.document1.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.doesNotContain("NewEmbedKey");
+				.doesNotContain("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) this.document1.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.doesNotContain("NewInferenceKey");
+				.doesNotContain("NewInferenceKey");
 
 		assertThat(((DefaultContentFormatter) this.document2.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.doesNotContain("NewEmbedKey");
+				.doesNotContain("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) this.document2.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.doesNotContain("NewInferenceKey");
+				.doesNotContain("NewInferenceKey");
 
 		List<Document> enrichedDocuments = this.contentFormatTransformer.apply(List.of(this.document1, this.document2));
 
@@ -137,18 +137,18 @@ public class MetadataTransformerIT {
 		assertThat(doc2).isEqualTo(this.document2);
 
 		assertThat(((DefaultContentFormatter) doc1.getContentFormatter()).getTextTemplate())
-			.isSameAs(this.defaultContentFormatter.getTextTemplate());
+				.isSameAs(this.defaultContentFormatter.getTextTemplate());
 		assertThat(((DefaultContentFormatter) doc1.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.contains("NewEmbedKey");
+				.contains("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) doc1.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.contains("NewInferenceKey");
+				.contains("NewInferenceKey");
 
 		assertThat(((DefaultContentFormatter) doc2.getContentFormatter()).getTextTemplate())
-			.isSameAs(this.defaultContentFormatter.getTextTemplate());
+				.isSameAs(this.defaultContentFormatter.getTextTemplate());
 		assertThat(((DefaultContentFormatter) doc2.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.contains("NewEmbedKey");
+				.contains("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) doc2.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.contains("NewInferenceKey");
+				.contains("NewInferenceKey");
 
 	}
 
@@ -184,9 +184,9 @@ public class MetadataTransformerIT {
 		@Bean
 		public DefaultContentFormatter defaultContentFormatter() {
 			return DefaultContentFormatter.builder()
-				.withExcludedEmbedMetadataKeys("NewEmbedKey")
-				.withExcludedInferenceMetadataKeys("NewInferenceKey")
-				.build();
+					.withExcludedEmbedMetadataKeys("NewEmbedKey")
+					.withExcludedInferenceMetadataKeys("NewInferenceKey")
+					.build();
 		}
 
 		@Bean

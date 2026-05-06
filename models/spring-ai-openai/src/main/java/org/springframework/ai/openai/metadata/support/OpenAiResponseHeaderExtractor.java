@@ -96,8 +96,7 @@ public final class OpenAiResponseHeaderExtractor {
 		if (StringUtils.hasText(headerValue)) {
 			try {
 				return Long.parseLong(headerValue.trim());
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				logger.warn("Value [{}] for HTTP header [{}] is not valid: {}", headerName, headerValue,
 						e.getMessage());
 			}
@@ -153,10 +152,10 @@ public final class OpenAiResponseHeaderExtractor {
 			static Unit parseUnit(String value) {
 				String symbol = parseSymbol(value);
 				return Arrays.stream(values())
-					.filter(unit -> unit.getSymbol().equalsIgnoreCase(symbol))
-					.findFirst()
-					.orElseThrow(() -> new IllegalStateException(
-							"Value [%s] does not contain a valid time unit".formatted(value)));
+						.filter(unit -> unit.getSymbol().equalsIgnoreCase(symbol))
+						.findFirst()
+						.orElseThrow(() -> new IllegalStateException(
+								"Value [%s] does not contain a valid time unit".formatted(value)));
 			}
 
 			private static String parse(String value, Predicate<Character> predicate) {

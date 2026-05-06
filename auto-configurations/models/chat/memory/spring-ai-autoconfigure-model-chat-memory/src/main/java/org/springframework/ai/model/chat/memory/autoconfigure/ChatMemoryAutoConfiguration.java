@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ ChatMemory.class, ChatMemoryRepository.class })
+@ConditionalOnClass({ChatMemory.class, ChatMemoryRepository.class})
 public class ChatMemoryAutoConfiguration {
 
 	@Bean

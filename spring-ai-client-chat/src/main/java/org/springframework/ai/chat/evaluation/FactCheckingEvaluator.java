@@ -85,8 +85,9 @@ public class FactCheckingEvaluator implements Evaluator {
 	/**
 	 * Constructs a new FactCheckingEvaluator with the provided ChatClient.Builder. Uses
 	 * the default evaluation prompt suitable for general purpose LLMs.
+	 *
 	 * @param chatClientBuilder The builder for the ChatClient used to perform the
-	 * evaluation
+	 *                          evaluation
 	 */
 	public FactCheckingEvaluator(ChatClient.Builder chatClientBuilder) {
 		this(chatClientBuilder, DEFAULT_EVALUATION_PROMPT_TEXT);
@@ -95,9 +96,10 @@ public class FactCheckingEvaluator implements Evaluator {
 	/**
 	 * Constructs a new FactCheckingEvaluator with the provided ChatClient.Builder and
 	 * evaluation prompt.
+	 *
 	 * @param chatClientBuilder The builder for the ChatClient used to perform the
-	 * evaluation
-	 * @param evaluationPrompt The prompt text to use for evaluation
+	 *                          evaluation
+	 * @param evaluationPrompt  The prompt text to use for evaluation
 	 */
 	public FactCheckingEvaluator(ChatClient.Builder chatClientBuilder, String evaluationPrompt) {
 		this.chatClientBuilder = chatClientBuilder;
@@ -107,8 +109,9 @@ public class FactCheckingEvaluator implements Evaluator {
 	/**
 	 * Creates a FactCheckingEvaluator configured for use with the Bespoke Minicheck
 	 * model.
+	 *
 	 * @param chatClientBuilder The builder for the ChatClient used to perform the
-	 * evaluation
+	 *                          evaluation
 	 * @return A FactCheckingEvaluator configured for Bespoke Minicheck
 	 */
 	public static FactCheckingEvaluator forBespokeMinicheck(ChatClient.Builder chatClientBuilder) {
@@ -118,8 +121,9 @@ public class FactCheckingEvaluator implements Evaluator {
 	/**
 	 * Evaluates whether the response content in the EvaluationRequest is factually
 	 * supported by the context provided in the same request.
+	 *
 	 * @param evaluationRequest The request containing the response to be evaluated and
-	 * the supporting context
+	 *                          the supporting context
 	 * @return An EvaluationResponse indicating whether the claim is supported by the
 	 * document
 	 */
@@ -129,10 +133,10 @@ public class FactCheckingEvaluator implements Evaluator {
 		var context = doGetSupportingData(evaluationRequest);
 
 		String evaluationResponse = this.chatClientBuilder.build()
-			.prompt()
-			.user(userSpec -> userSpec.text(this.evaluationPrompt).param("document", context).param("claim", response))
-			.call()
-			.content();
+				.prompt()
+				.user(userSpec -> userSpec.text(this.evaluationPrompt).param("document", context).param("claim", response))
+				.call()
+				.content();
 
 		boolean passing = evaluationResponse.equalsIgnoreCase("yes");
 		return new EvaluationResponse(passing, "", Collections.emptyMap());

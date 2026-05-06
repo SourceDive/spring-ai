@@ -44,27 +44,27 @@ public class OllamaModelOptionsTests {
 	@Test
 	public void testAllNumericOptions() {
 		var options = OllamaOptions.builder()
-			.numCtx(2048)
-			.numBatch(512)
-			.numGPU(1)
-			.mainGPU(0)
-			.numThread(8)
-			.numKeep(5)
-			.seed(42)
-			.numPredict(100)
-			.topK(40)
-			.topP(0.9)
-			.tfsZ(1.0f)
-			.typicalP(1.0f)
-			.repeatLastN(64)
-			.temperature(0.7)
-			.repeatPenalty(1.1)
-			.presencePenalty(0.0)
-			.frequencyPenalty(0.0)
-			.mirostat(2)
-			.mirostatTau(5.0f)
-			.mirostatEta(0.1f)
-			.build();
+				.numCtx(2048)
+				.numBatch(512)
+				.numGPU(1)
+				.mainGPU(0)
+				.numThread(8)
+				.numKeep(5)
+				.seed(42)
+				.numPredict(100)
+				.topK(40)
+				.topP(0.9)
+				.tfsZ(1.0f)
+				.typicalP(1.0f)
+				.repeatLastN(64)
+				.temperature(0.7)
+				.repeatPenalty(1.1)
+				.presencePenalty(0.0)
+				.frequencyPenalty(0.0)
+				.mirostat(2)
+				.mirostatTau(5.0f)
+				.mirostatEta(0.1f)
+				.build();
 
 		var optionsMap = options.toMap();
 		assertThat(optionsMap).containsEntry("num_ctx", 2048);
@@ -92,16 +92,16 @@ public class OllamaModelOptionsTests {
 	@Test
 	public void testBooleanOptions() {
 		var options = OllamaOptions.builder()
-			.truncate(true)
-			.useNUMA(true)
-			.lowVRAM(false)
-			.f16KV(true)
-			.logitsAll(false)
-			.vocabOnly(false)
-			.useMMap(true)
-			.useMLock(false)
-			.penalizeNewline(true)
-			.build();
+				.truncate(true)
+				.useNUMA(true)
+				.lowVRAM(false)
+				.f16KV(true)
+				.logitsAll(false)
+				.vocabOnly(false)
+				.useMMap(true)
+				.useMLock(false)
+				.penalizeNewline(true)
+				.build();
 
 		var optionsMap = options.toMap();
 		assertThat(optionsMap).containsEntry("truncate", true);
@@ -127,11 +127,11 @@ public class OllamaModelOptionsTests {
 	@Test
 	public void testFunctionAndToolOptions() {
 		var options = OllamaOptions.builder()
-			.toolNames("function1")
-			.toolNames("function2")
-			.toolNames("function3")
-			.toolContext(Map.of("key1", "value1", "key2", "value2"))
-			.build();
+				.toolNames("function1")
+				.toolNames("function2")
+				.toolNames("function3")
+				.toolContext(Map.of("key1", "value1", "key2", "value2"))
+				.build();
 
 		// Function-related fields are not included in the map due to @JsonIgnore
 		var optionsMap = options.toMap();
@@ -141,7 +141,7 @@ public class OllamaModelOptionsTests {
 		// But they are accessible through getters
 		assertThat(options.getToolNames()).containsExactlyInAnyOrder("function1", "function2", "function3");
 		assertThat(options.getToolContext())
-			.containsExactlyInAnyOrderEntriesOf(Map.of("key1", "value1", "key2", "value2"));
+				.containsExactlyInAnyOrderEntriesOf(Map.of("key1", "value1", "key2", "value2"));
 	}
 
 	@Test
@@ -158,11 +158,11 @@ public class OllamaModelOptionsTests {
 	@Test
 	public void testFromOptions() {
 		var originalOptions = OllamaOptions.builder()
-			.model("llama2")
-			.temperature(0.7)
-			.topK(40)
-			.toolNames(Set.of("function1"))
-			.build();
+				.model("llama2")
+				.temperature(0.7)
+				.topK(40)
+				.toolNames(Set.of("function1"))
+				.build();
 
 		var copiedOptions = OllamaOptions.fromOptions(originalOptions);
 

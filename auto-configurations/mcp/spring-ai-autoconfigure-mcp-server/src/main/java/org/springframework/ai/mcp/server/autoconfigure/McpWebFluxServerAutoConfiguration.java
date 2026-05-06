@@ -62,12 +62,12 @@ import org.springframework.web.reactive.function.server.RouterFunction;
  *
  * @author Christian Tzolov
  * @author Yanming Zhou
- * @since 1.0.0
  * @see McpServerProperties
  * @see WebFluxSseServerTransportProvider
+ * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ WebFluxSseServerTransportProvider.class })
+@ConditionalOnClass({WebFluxSseServerTransportProvider.class})
 @ConditionalOnMissingBean(McpServerTransportProvider.class)
 @Conditional(McpServerStdioDisabledCondition.class)
 public class McpWebFluxServerAutoConfiguration {
@@ -75,7 +75,7 @@ public class McpWebFluxServerAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public WebFluxSseServerTransportProvider webFluxTransport(ObjectProvider<ObjectMapper> objectMapperProvider,
-			McpServerProperties serverProperties) {
+	                                                          McpServerProperties serverProperties) {
 		ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(ObjectMapper::new);
 		return new WebFluxSseServerTransportProvider(objectMapper, serverProperties.getBaseUrl(),
 				serverProperties.getSseMessageEndpoint(), serverProperties.getSseEndpoint());

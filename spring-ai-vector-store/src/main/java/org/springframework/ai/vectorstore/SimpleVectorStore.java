@@ -57,10 +57,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
  * SimpleVectorStore is a simple implementation of the VectorStore interface.
- *
+ * <p>
  * It also provides methods to save the current state of the vectors to a file, and to
  * load vectors from a file.
- *
+ * <p>
  * For a deeper understanding of the mathematical concepts and computations involved in
  * calculating similarity scores among vectors, refer to this
  * [resource](https://docs.spring.io/spring-ai/reference/api/vectordbs.html#_understanding_vectors).
@@ -95,6 +95,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Creates an instance of SimpleVectorStore builder.
+	 *
 	 * @return the SimpleVectorStore builder.
 	 */
 	public static SimpleVectorStoreBuilder builder(EmbeddingModel embeddingModel) {
@@ -129,14 +130,14 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 		Predicate<SimpleVectorStoreContent> documentFilterPredicate = doFilterPredicate(request);
 		float[] userQueryEmbedding = getUserQueryEmbedding(request.getQuery());
 		return this.store.values()
-			.stream()
-			.filter(documentFilterPredicate)
-			.map(content -> content
-				.toDocument(EmbeddingMath.cosineSimilarity(userQueryEmbedding, content.getEmbedding())))
-			.filter(document -> document.getScore() >= request.getSimilarityThreshold())
-			.sorted(Comparator.comparing(Document::getScore).reversed())
-			.limit(request.getTopK())
-			.toList();
+				.stream()
+				.filter(documentFilterPredicate)
+				.map(content -> content
+						.toDocument(EmbeddingMath.cosineSimilarity(userQueryEmbedding, content.getEmbedding())))
+				.filter(document -> document.getScore() >= request.getSimilarityThreshold())
+				.sorted(Comparator.comparing(Document::getScore).reversed())
+				.limit(request.getTopK())
+				.toList();
 	}
 
 	private Predicate<SimpleVectorStoreContent> doFilterPredicate(SearchRequest request) {
@@ -144,13 +145,14 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 			StandardEvaluationContext context = new StandardEvaluationContext();
 			context.setVariable("metadata", document.getMetadata());
 			return this.expressionParser
-				.parseExpression(this.filterExpressionConverter.convertExpression(request.getFilterExpression()))
-				.getValue(context, Boolean.class);
+				   .parseExpression(this.filterExpressionConverter.convertExpression(request.getFilterExpression()))
+				   .getValue(context, Boolean.class);
 		} : document -> true;
 	}
 
 	/**
 	 * Serialize the vector store content into a file in JSON format.
+	 *
 	 * @param file the file to save the vector store content
 	 */
 	public void save(File file) {
@@ -160,32 +162,26 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 				logger.info("Creating new vector store file: {}", file);
 				try {
 					Files.createFile(file.toPath());
-				}
-				catch (FileAlreadyExistsException e) {
+				} catch (FileAlreadyExistsException e) {
 					throw new RuntimeException("File already exists: " + file, e);
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					throw new RuntimeException("Failed to create new file: " + file + ". Reason: " + e.getMessage(), e);
 				}
-			}
-			else {
+			} else {
 				logger.info("Overwriting existing vector store file: {}", file);
 			}
 			try (OutputStream stream = new FileOutputStream(file);
-					Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
+			     Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
 				writer.write(json);
 				writer.flush();
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			logger.error("IOException occurred while saving vector store file.", ex);
 			throw new RuntimeException(ex);
-		}
-		catch (SecurityException ex) {
+		} catch (SecurityException ex) {
 			logger.error("SecurityException occurred while saving vector store file.", ex);
 			throw new RuntimeException(ex);
-		}
-		catch (NullPointerException ex) {
+		} catch (NullPointerException ex) {
 			logger.error("NullPointerException occurred while saving vector store file.", ex);
 			throw new RuntimeException(ex);
 		}
@@ -193,6 +189,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Deserialize the vector store content from a file in JSON format into memory.
+	 *
 	 * @param file the file to load the vector store content
 	 */
 	public void load(File file) {
@@ -201,14 +198,14 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 		};
 		try {
 			this.store = this.objectMapper.readValue(file, typeRef);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
 	/**
 	 * Deserialize the vector store content from a resource in JSON format into memory.
+	 *
 	 * @param resource the resource to load the vector store content
 	 */
 	public void load(Resource resource) {
@@ -217,8 +214,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 		};
 		try {
 			this.store = this.objectMapper.readValue(resource.getInputStream(), typeRef);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
@@ -227,8 +223,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 		ObjectWriter objectWriter = this.objectMapper.writerWithDefaultPrettyPrinter();
 		try {
 			return objectWriter.writeValueAsString(this.store);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new RuntimeException("Error serializing documentMap to JSON.", e);
 		}
 	}
@@ -241,9 +236,9 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.SIMPLE.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName("in-memory-map")
-			.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName("in-memory-map")
+				.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
 	}
 
 	public static final class EmbeddingMath {

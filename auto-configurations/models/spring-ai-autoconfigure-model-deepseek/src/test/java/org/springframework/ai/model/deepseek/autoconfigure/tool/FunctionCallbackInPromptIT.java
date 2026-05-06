@@ -50,8 +50,8 @@ public class FunctionCallbackInPromptIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallbackInPromptIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.deepseek.apiKey=" + System.getenv("DEEPSEEK_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(DeepSeekChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.deepseek.apiKey=" + System.getenv("DEEPSEEK_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(DeepSeekChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
@@ -63,11 +63,11 @@ public class FunctionCallbackInPromptIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius");
 
 			var promptOptions = DeepSeekChatOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description("Get the weather in location")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
@@ -88,22 +88,22 @@ public class FunctionCallbackInPromptIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius");
 
 			var promptOptions = DeepSeekChatOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description("Get the weather in location")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			Flux<ChatResponse> response = chatModel.stream(new Prompt(List.of(userMessage), promptOptions));
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 			logger.info("Response: {}", content);
 
 			assertThat(content).containsAnyOf("30.0", "30");

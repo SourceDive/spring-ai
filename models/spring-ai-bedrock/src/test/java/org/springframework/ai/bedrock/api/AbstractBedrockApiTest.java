@@ -61,19 +61,19 @@ class AbstractBedrockApiTest {
 	void shouldThrowIllegalArgumentIfAwsDefaultsFailed() {
 		try (MockedStatic<DefaultAwsRegionProviderChain> mocked = mockStatic(DefaultAwsRegionProviderChain.class)) {
 			when(awsRegionProviderBuilder.build().getRegion())
-				.thenThrow(SdkClientException.builder().message("failed load").build());
+					.thenThrow(SdkClientException.builder().message("failed load").build());
 			mocked.when(DefaultAwsRegionProviderChain::builder).thenReturn(awsRegionProviderBuilder);
 			assertThatThrownBy(() -> new TestBedrockApi("modelId", awsCredentialsProvider, null, objectMapper,
 					Duration.ofMinutes(5)))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("failed load");
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("failed load");
 		}
 	}
 
 	private static class TestBedrockApi extends AbstractBedrockApi<Object, Object, Object> {
 
 		protected TestBedrockApi(String modelId, AwsCredentialsProvider credentialsProvider, Region region,
-				ObjectMapper objectMapper, Duration timeout) {
+		                         ObjectMapper objectMapper, Duration timeout) {
 			super(modelId, credentialsProvider, region, objectMapper, timeout);
 		}
 

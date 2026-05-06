@@ -57,7 +57,7 @@ import org.springframework.context.annotation.Scope;
  * @since 1.0.0
  */
 @AutoConfiguration(
-		afterName = { "org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration" })
+		afterName = {"org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration"})
 @ConditionalOnClass(ChatClient.class)
 @EnableConfigurationProperties(ChatClientBuilderProperties.class)
 @ConditionalOnProperty(prefix = ChatClientBuilderProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
@@ -83,8 +83,8 @@ public class ChatClientAutoConfiguration {
 	@Scope("prototype")
 	@ConditionalOnMissingBean
 	ChatClient.Builder chatClientBuilder(ChatClientBuilderConfigurer chatClientBuilderConfigurer, ChatModel chatModel,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatClientObservationConvention> observationConvention) {
+	                                     ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<ChatClientObservationConvention> observationConvention) {
 
 		ChatClient.Builder builder = ChatClient.builder(chatModel,
 				observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP),

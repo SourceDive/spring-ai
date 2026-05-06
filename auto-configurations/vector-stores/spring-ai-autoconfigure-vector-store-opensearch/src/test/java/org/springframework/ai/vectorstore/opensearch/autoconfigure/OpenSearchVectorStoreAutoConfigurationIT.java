@@ -66,24 +66,24 @@ class OpenSearchVectorStoreAutoConfigurationIT {
 	private static final String DOCUMENT_INDEX = "auto-spring-ai-document-index";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(OpenSearchVectorStoreAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class))
-		.withClassLoader(new FilteredClassLoader(Region.class, ApacheHttpClient.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.opensearch.aws.enabled=false",
-				"spring.ai.vectorstore.opensearch.initialize-schema=true",
-				OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".uris=" + opensearchContainer.getHttpHostAddress(),
-				OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".indexName=" + DOCUMENT_INDEX,
-				OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".mappingJson=" + """
-						{
-							"properties":{
-								"embedding":{
-									"type":"knn_vector",
-									"dimension":384
+			.withConfiguration(AutoConfigurations.of(OpenSearchVectorStoreAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class))
+			.withClassLoader(new FilteredClassLoader(Region.class, ApacheHttpClient.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.opensearch.aws.enabled=false",
+					"spring.ai.vectorstore.opensearch.initialize-schema=true",
+					OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".uris=" + opensearchContainer.getHttpHostAddress(),
+					OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".indexName=" + DOCUMENT_INDEX,
+					OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".mappingJson=" + """
+							{
+								"properties":{
+									"embedding":{
+										"type":"knn_vector",
+										"dimension":384
+									}
 								}
 							}
-						}
-						""");
+							""");
 
 	private List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -113,9 +113,9 @@ class OpenSearchVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.ADD);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			observationRegistry.clear();
 
@@ -143,9 +143,9 @@ class OpenSearchVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -190,30 +190,29 @@ class OpenSearchVectorStoreAutoConfigurationIT {
 	@Test
 	void testPathPrefixIsConfigured() {
 		this.contextRunner
-			.withPropertyValues(OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".pathPrefix=/custom-path",
-					"spring.ai.vectorstore.opensearch.initialize-schema=false" // Prevent
-																				// schema
-																				// initialization
-			)
-			.run(context -> {
-				// Verify the property is correctly set in the properties bean
-				OpenSearchVectorStoreProperties properties = context.getBean(OpenSearchVectorStoreProperties.class);
-				assertThat(properties.getPathPrefix()).isEqualTo("/custom-path");
+				.withPropertyValues(OpenSearchVectorStoreProperties.CONFIG_PREFIX + ".pathPrefix=/custom-path",
+						"spring.ai.vectorstore.opensearch.initialize-schema=false" // Prevent
+						// schema
+						// initialization
+				)
+				.run(context -> {
+					// Verify the property is correctly set in the properties bean
+					OpenSearchVectorStoreProperties properties = context.getBean(OpenSearchVectorStoreProperties.class);
+					assertThat(properties.getPathPrefix()).isEqualTo("/custom-path");
 
-				// Verify the OpenSearchClient was configured with the correct pathPrefix
-				OpenSearchClient client = context.getBean(OpenSearchClient.class);
-				Transport transport = (Transport) ReflectionTestUtils.getField(client, "transport");
-				String configuredPathPrefix = (String) ReflectionTestUtils.getField(transport, "pathPrefix");
-				assertThat(configuredPathPrefix).isEqualTo("/custom-path");
-			});
+					// Verify the OpenSearchClient was configured with the correct pathPrefix
+					OpenSearchClient client = context.getBean(OpenSearchClient.class);
+					Transport transport = (Transport) ReflectionTestUtils.getField(client, "transport");
+					String configuredPathPrefix = (String) ReflectionTestUtils.getField(transport, "pathPrefix");
+					assertThat(configuredPathPrefix).isEqualTo("/custom-path");
+				});
 	}
 
 	private String getText(String uri) {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

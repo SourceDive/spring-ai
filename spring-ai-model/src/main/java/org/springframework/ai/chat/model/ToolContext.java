@@ -54,8 +54,9 @@ public final class ToolContext {
 
 	/**
 	 * Constructs a new ToolContext with the given context map.
+	 *
 	 * @param context A map containing the tool context information. This map is wrapped
-	 * in an unmodifiable view to prevent changes.
+	 *                in an unmodifiable view to prevent changes.
 	 */
 	public ToolContext(Map<String, Object> context) {
 		this.context = Collections.unmodifiableMap(context);
@@ -63,6 +64,7 @@ public final class ToolContext {
 
 	/**
 	 * Returns the immutable context map.
+	 *
 	 * @return An unmodifiable view of the context map.
 	 */
 	public Map<String, Object> getContext() {
@@ -71,6 +73,7 @@ public final class ToolContext {
 
 	/**
 	 * Returns the tool call history from the context map.
+	 *
 	 * @return The tool call history. TODO: review whether we still need this or
 	 * ToolCallingManager solves the original issue
 	 */

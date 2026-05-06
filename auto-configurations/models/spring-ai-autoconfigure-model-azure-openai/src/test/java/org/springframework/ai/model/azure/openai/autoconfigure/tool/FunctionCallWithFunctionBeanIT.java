@@ -47,62 +47,62 @@ class FunctionCallWithFunctionBeanIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithFunctionBeanIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 			"spring.ai.azure.openai.api-key=" + System.getenv("AZURE_OPENAI_API_KEY"),
 			"spring.ai.azure.openai.endpoint=" + System.getenv("AZURE_OPENAI_ENDPOINT"))
 			// @formatter:onn
-		.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.azure.openai.chat.options..deployment-name=" + DeploymentNameUtil.getDeploymentName())
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.azure.openai.chat.options..deployment-name=" + DeploymentNameUtil.getDeploymentName())
+				.run(context -> {
 
-				ChatModel chatModel = context.getBean(AzureOpenAiChatModel.class);
+					ChatModel chatModel = context.getBean(AzureOpenAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, Paris and in Tokyo? Use Multi-turn function calling.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, Paris and in Tokyo? Use Multi-turn function calling.");
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
-						AzureOpenAiChatOptions.builder().toolNames("weatherFunction").build()));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
+							AzureOpenAiChatOptions.builder().toolNames("weatherFunction").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-				response = chatModel.call(new Prompt(List.of(userMessage),
-						AzureOpenAiChatOptions.builder().toolNames("weatherFunction3").build()));
+					response = chatModel.call(new Prompt(List.of(userMessage),
+							AzureOpenAiChatOptions.builder().toolNames("weatherFunction3").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-			});
+				});
 	}
 
 	@Test
 	void functionCallWithPortableFunctionCallingOptions() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.azure.openai.chat.options..deployment-name=" + DeploymentNameUtil.getDeploymentName())
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.azure.openai.chat.options..deployment-name=" + DeploymentNameUtil.getDeploymentName())
+				.run(context -> {
 
-				ChatModel chatModel = context.getBean(AzureOpenAiChatModel.class);
+					ChatModel chatModel = context.getBean(AzureOpenAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, Paris and in Tokyo? Use Multi-turn function calling.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, Paris and in Tokyo? Use Multi-turn function calling.");
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
-						ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage),
+							ToolCallingChatOptions.builder().toolNames("weatherFunction").build()));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
-			});
+				});
 	}
 
 	@Configuration

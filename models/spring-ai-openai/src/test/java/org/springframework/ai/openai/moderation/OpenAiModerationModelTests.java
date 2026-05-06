@@ -133,9 +133,9 @@ public class OpenAiModerationModelTests {
 		httpHeaders.set(OpenAiApiResponseHeaders.TOKENS_RESET_HEADER.getName(), "27h55s451ms");
 
 		this.server.expect(requestTo(StringContains.containsString("v1/moderations")))
-			.andExpect(method(HttpMethod.POST))
-			.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
-			.andRespond(withSuccess(getJson(), MediaType.APPLICATION_JSON).headers(httpHeaders));
+				.andExpect(method(HttpMethod.POST))
+				.andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_API_KEY))
+				.andRespond(withSuccess(getJson(), MediaType.APPLICATION_JSON).headers(httpHeaders));
 
 	}
 
@@ -185,10 +185,10 @@ public class OpenAiModerationModelTests {
 		@Bean
 		public OpenAiModerationApi moderationGenerationApi(RestClient.Builder builder) {
 			return OpenAiModerationApi.builder()
-				.apiKey(new SimpleApiKey(TEST_API_KEY))
-				.restClientBuilder(builder)
-				.responseErrorHandler(RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER)
-				.build();
+					.apiKey(new SimpleApiKey(TEST_API_KEY))
+					.restClientBuilder(builder)
+					.responseErrorHandler(RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER)
+					.build();
 		}
 
 		@Bean

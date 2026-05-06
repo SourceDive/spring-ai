@@ -34,44 +34,44 @@ class OCICohereChatOptionsTests {
 	@Test
 	void testBuilderWithAllFields() {
 		OCICohereChatOptions options = OCICohereChatOptions.builder()
-			.model("test-model")
-			.maxTokens(10)
-			.compartment("test-compartment")
-			.servingMode("test-servingMode")
-			.preambleOverride("test-preambleOverride")
-			.temperature(0.6)
-			.topP(0.6)
-			.topK(50)
-			.stop(List.of("test"))
-			.frequencyPenalty(0.5)
-			.presencePenalty(0.5)
-			.documents(List.of("doc1", "doc2"))
-			.build();
+				.model("test-model")
+				.maxTokens(10)
+				.compartment("test-compartment")
+				.servingMode("test-servingMode")
+				.preambleOverride("test-preambleOverride")
+				.temperature(0.6)
+				.topP(0.6)
+				.topK(50)
+				.stop(List.of("test"))
+				.frequencyPenalty(0.5)
+				.presencePenalty(0.5)
+				.documents(List.of("doc1", "doc2"))
+				.build();
 
 		assertThat(options)
-			.extracting("model", "maxTokens", "compartment", "servingMode", "preambleOverride", "temperature", "topP",
-					"topK", "stop", "frequencyPenalty", "presencePenalty", "documents")
-			.containsExactly("test-model", 10, "test-compartment", "test-servingMode", "test-preambleOverride", 0.6,
-					0.6, 50, List.of("test"), 0.5, 0.5, List.of("doc1", "doc2"));
+				.extracting("model", "maxTokens", "compartment", "servingMode", "preambleOverride", "temperature", "topP",
+						"topK", "stop", "frequencyPenalty", "presencePenalty", "documents")
+				.containsExactly("test-model", 10, "test-compartment", "test-servingMode", "test-preambleOverride", 0.6,
+						0.6, 50, List.of("test"), 0.5, 0.5, List.of("doc1", "doc2"));
 	}
 
 	@Test
 	void testCopy() {
 		OCICohereChatOptions original = OCICohereChatOptions.builder()
-			.model("test-model")
-			.maxTokens(10)
-			.compartment("test-compartment")
-			.servingMode("test-servingMode")
-			.preambleOverride("test-preambleOverride")
-			.temperature(0.6)
-			.topP(0.6)
-			.topK(50)
-			.stop(List.of("test"))
-			.frequencyPenalty(0.5)
-			.presencePenalty(0.5)
-			.documents(List.of("doc1", "doc2"))
-			.tools(List.of(new CohereTool("test-tool", "test-context", Map.of())))
-			.build();
+				.model("test-model")
+				.maxTokens(10)
+				.compartment("test-compartment")
+				.servingMode("test-servingMode")
+				.preambleOverride("test-preambleOverride")
+				.temperature(0.6)
+				.topP(0.6)
+				.topK(50)
+				.stop(List.of("test"))
+				.frequencyPenalty(0.5)
+				.presencePenalty(0.5)
+				.documents(List.of("doc1", "doc2"))
+				.tools(List.of(new CohereTool("test-tool", "test-context", Map.of())))
+				.build();
 
 		OCICohereChatOptions copied = (OCICohereChatOptions) original.copy();
 

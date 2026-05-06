@@ -48,8 +48,8 @@ class MultiQueryExpanderIT {
 	void whenExpanderWithDefaults() {
 		Query query = new Query("What is the weather in Rome?");
 		QueryExpander queryExpander = MultiQueryExpander.builder()
-			.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-			.build();
+				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+				.build();
 
 		List<Query> queries = queryExpander.apply(query);
 
@@ -62,9 +62,9 @@ class MultiQueryExpanderIT {
 	void whenExpanderWithCustomQueryNumber() {
 		Query query = new Query("What is the weather in Rome?");
 		QueryExpander queryExpander = MultiQueryExpander.builder()
-			.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-			.numberOfQueries(4)
-			.build();
+				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+				.numberOfQueries(4)
+				.build();
 
 		List<Query> queries = queryExpander.apply(query);
 
@@ -77,10 +77,10 @@ class MultiQueryExpanderIT {
 	void whenExpanderWithoutOriginalQueryIncluded() {
 		Query query = new Query("What is the weather in Rome?");
 		QueryExpander queryExpander = MultiQueryExpander.builder()
-			.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-			.numberOfQueries(3)
-			.includeOriginal(false)
-			.build();
+				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+				.numberOfQueries(3)
+				.includeOriginal(false)
+				.build();
 
 		List<Query> queries = queryExpander.apply(query);
 

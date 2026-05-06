@@ -117,8 +117,8 @@ public class AcmeIT extends AbstractIT {
 	private Message getSystemMessage(List<Document> similarDocuments) {
 
 		String documents = similarDocuments.stream()
-			.map(entry -> entry.getText())
-			.collect(Collectors.joining(System.lineSeparator()));
+				.map(entry -> entry.getText())
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(this.systemBikePrompt);
 		Message systemMessage = systemPromptTemplate.createMessage(Map.of("documents", documents));

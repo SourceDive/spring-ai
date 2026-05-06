@@ -42,38 +42,38 @@ public class FunctionCallWithPromptFunctionIT {
 	private final Logger logger = LoggerFactory.getLogger(FunctionCallWithPromptFunctionIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 				"spring.ai.azure.openai.api-key=" + System.getenv("AZURE_OPENAI_API_KEY"),
 				"spring.ai.azure.openai.endpoint=" + System.getenv("AZURE_OPENAI_ENDPOINT"))
 				// @formatter:onn
-		.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(AzureOpenAiChatAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.azure.openai.chat.options.deployment-name=" + DeploymentNameUtil.getDeploymentName())
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.azure.openai.chat.options.deployment-name=" + DeploymentNameUtil.getDeploymentName())
+				.run(context -> {
 
-				AzureOpenAiChatModel chatModel = context.getBean(AzureOpenAiChatModel.class);
+					AzureOpenAiChatModel chatModel = context.getBean(AzureOpenAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris and in Tokyo? Use Multi-turn function calling.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris and in Tokyo? Use Multi-turn function calling.");
 
-				var promptOptions = AzureOpenAiChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = AzureOpenAiChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
+					ChatResponse response = chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
-				logger.info("Response: {}", response);
+					logger.info("Response: {}", response);
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 }

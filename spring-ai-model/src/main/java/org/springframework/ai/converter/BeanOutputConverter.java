@@ -68,14 +68,19 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 */
 	private final Type type;
 
-	/** The object mapper used for deserialization and other JSON operations. */
+	/**
+	 * The object mapper used for deserialization and other JSON operations.
+	 */
 	private final ObjectMapper objectMapper;
 
-	/** Holds the generated JSON schema for the target type. */
+	/**
+	 * Holds the generated JSON schema for the target type.
+	 */
 	private String jsonSchema;
 
 	/**
 	 * Constructor to initialize with the target type's class.
+	 *
 	 * @param clazz The target type's class.
 	 */
 	public BeanOutputConverter(Class<T> clazz) {
@@ -85,7 +90,8 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	/**
 	 * Constructor to initialize with the target type's class, a custom object mapper, and
 	 * a line endings normalizer to ensure consistent line endings on any platform.
-	 * @param clazz The target type's class.
+	 *
+	 * @param clazz        The target type's class.
 	 * @param objectMapper Custom object mapper for JSON operations. endings.
 	 */
 	public BeanOutputConverter(Class<T> clazz, ObjectMapper objectMapper) {
@@ -94,6 +100,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Constructor to initialize with the target class type reference.
+	 *
 	 * @param typeRef The target class type reference.
 	 */
 	public BeanOutputConverter(ParameterizedTypeReference<T> typeRef) {
@@ -104,7 +111,8 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 * Constructor to initialize with the target class type reference, a custom object
 	 * mapper, and a line endings normalizer to ensure consistent line endings on any
 	 * platform.
-	 * @param typeRef The target class type reference.
+	 *
+	 * @param typeRef      The target class type reference.
 	 * @param objectMapper Custom object mapper for JSON operations. endings.
 	 */
 	public BeanOutputConverter(ParameterizedTypeReference<T> typeRef, ObjectMapper objectMapper) {
@@ -115,7 +123,8 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 * Constructor to initialize with the target class type reference, a custom object
 	 * mapper, and a line endings normalizer to ensure consistent line endings on any
 	 * platform.
-	 * @param type The target class type.
+	 *
+	 * @param type         The target class type.
 	 * @param objectMapper Custom object mapper for JSON operations. endings.
 	 */
 	private BeanOutputConverter(Type type, ObjectMapper objectMapper) {
@@ -134,17 +143,16 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 		SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(
 				com.github.victools.jsonschema.generator.SchemaVersion.DRAFT_2020_12,
 				com.github.victools.jsonschema.generator.OptionPreset.PLAIN_JSON)
-			.with(jacksonModule)
-			.with(Option.FORBIDDEN_ADDITIONAL_PROPERTIES_BY_DEFAULT);
+				.with(jacksonModule)
+				.with(Option.FORBIDDEN_ADDITIONAL_PROPERTIES_BY_DEFAULT);
 		SchemaGeneratorConfig config = configBuilder.build();
 		SchemaGenerator generator = new SchemaGenerator(config);
 		JsonNode jsonNode = generator.generateSchema(this.type);
 		ObjectWriter objectWriter = this.objectMapper.writer(new DefaultPrettyPrinter()
-			.withObjectIndenter(new DefaultIndenter().withLinefeed(System.lineSeparator())));
+				.withObjectIndenter(new DefaultIndenter().withLinefeed(System.lineSeparator())));
 		try {
 			this.jsonSchema = objectWriter.writeValueAsString(jsonNode);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			logger.error("Could not pretty print json schema for jsonNode: {}", jsonNode);
 			throw new RuntimeException("Could not pretty print json schema for " + this.type, e);
 		}
@@ -152,6 +160,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Parses the given text to transform it to the desired target type.
+	 *
 	 * @param text The LLM output in string format.
 	 * @return The parsed output in the desired target type.
 	 */
@@ -168,8 +177,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 				String[] lines = text.split("\n", 2);
 				if (lines[0].trim().equalsIgnoreCase("```json")) {
 					text = lines.length > 1 ? lines[1] : "";
-				}
-				else {
+				} else {
 					text = text.substring(3); // Remove leading ```
 				}
 
@@ -180,8 +188,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 				text = text.trim();
 			}
 			return (T) this.objectMapper.readValue(text, this.objectMapper.constructType(this.type));
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			logger.error(SENSITIVE_DATA_MARKER,
 					"Could not parse the given text to the desired target type: \"{}\" into {}", text, this.type);
 			throw new RuntimeException(e);
@@ -190,18 +197,20 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Configures and returns an object mapper for JSON operations.
+	 *
 	 * @return Configured object mapper.
 	 */
 	protected ObjectMapper getObjectMapper() {
 		return JsonMapper.builder()
-			.addModules(JacksonUtils.instantiateAvailableModules())
-			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-			.build();
+				.addModules(JacksonUtils.instantiateAvailableModules())
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.build();
 	}
 
 	/**
 	 * Provides the expected format of the response, instructing that it should adhere to
 	 * the generated JSON schema.
+	 *
 	 * @return The instruction format string.
 	 */
 	@Override
@@ -219,6 +228,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Provides the generated JSON schema for the target type.
+	 *
 	 * @return The generated JSON schema.
 	 */
 	public String getJsonSchema() {
@@ -228,8 +238,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	public Map<String, Object> getJsonSchemaMap() {
 		try {
 			return this.objectMapper.readValue(this.jsonSchema, Map.class);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			logger.error("Could not parse the JSON Schema to a Map object", ex);
 			throw new IllegalStateException(ex);
 		}

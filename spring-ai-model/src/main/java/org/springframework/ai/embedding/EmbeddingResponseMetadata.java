@@ -63,6 +63,7 @@ public class EmbeddingResponseMetadata extends AbstractResponseMetadata implemen
 
 	/**
 	 * The AI provider specific metadata on API usage.
+	 *
 	 * @see Usage
 	 */
 	public Usage getUsage() {

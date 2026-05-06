@@ -71,7 +71,7 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 	private final TemplateRenderer templateRenderer;
 
 	DefaultAroundAdvisorChain(ObservationRegistry observationRegistry, @Nullable TemplateRenderer templateRenderer,
-			Deque<CallAdvisor> callAdvisors, Deque<StreamAdvisor> streamAdvisors) {
+	                          Deque<CallAdvisor> callAdvisors, Deque<StreamAdvisor> streamAdvisors) {
 
 		Assert.notNull(observationRegistry, "the observationRegistry must be non-null");
 		Assert.notNull(callAdvisors, "the callAdvisors must be non-null");
@@ -100,14 +100,14 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 		var advisor = this.callAdvisors.pop();
 
 		var observationContext = AdvisorObservationContext.builder()
-			.advisorName(advisor.getName())
-			.chatClientRequest(chatClientRequest)
-			.order(advisor.getOrder())
-			.build();
+				.advisorName(advisor.getName())
+				.chatClientRequest(chatClientRequest)
+				.order(advisor.getOrder())
+				.build();
 
 		return AdvisorObservationDocumentation.AI_ADVISOR
-			.observation(null, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext, this.observationRegistry)
-			.observe(() -> advisor.adviseCall(chatClientRequest, this));
+				.observation(null, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext, this.observationRegistry)
+				.observe(() -> advisor.adviseCall(chatClientRequest, this));
 	}
 
 	@Override
@@ -122,10 +122,10 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 			var advisor = this.streamAdvisors.pop();
 
 			AdvisorObservationContext observationContext = AdvisorObservationContext.builder()
-				.advisorName(advisor.getName())
-				.chatClientRequest(chatClientRequest)
-				.order(advisor.getOrder())
-				.build();
+					.advisorName(advisor.getName())
+					.chatClientRequest(chatClientRequest)
+					.order(advisor.getOrder())
+					.build();
 
 			var observation = AdvisorObservationDocumentation.AI_ADVISOR.observation(null,
 					DEFAULT_OBSERVATION_CONVENTION, () -> observationContext, this.observationRegistry);
@@ -187,18 +187,18 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 			Assert.noNullElements(advisors, "the advisors must not contain null elements");
 			if (!CollectionUtils.isEmpty(advisors)) {
 				List<CallAdvisor> callAroundAdvisorList = advisors.stream()
-					.filter(a -> a instanceof CallAdvisor)
-					.map(a -> (CallAdvisor) a)
-					.toList();
+						.filter(a -> a instanceof CallAdvisor)
+						.map(a -> (CallAdvisor) a)
+						.toList();
 
 				if (!CollectionUtils.isEmpty(callAroundAdvisorList)) {
 					callAroundAdvisorList.forEach(this.callAdvisors::push);
 				}
 
 				List<StreamAdvisor> streamAroundAdvisorList = advisors.stream()
-					.filter(a -> a instanceof StreamAdvisor)
-					.map(a -> (StreamAdvisor) a)
-					.toList();
+						.filter(a -> a instanceof StreamAdvisor)
+						.map(a -> (StreamAdvisor) a)
+						.toList();
 
 				if (!CollectionUtils.isEmpty(streamAroundAdvisorList)) {
 					streamAroundAdvisorList.forEach(this.streamAdvisors::push);

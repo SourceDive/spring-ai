@@ -29,6 +29,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the model to use for the chat.
+	 *
 	 * @return the model to use for the chat
 	 */
 	@Nullable
@@ -36,6 +37,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the frequency penalty to use for the chat.
+	 *
 	 * @return the frequency penalty to use for the chat
 	 */
 	@Nullable
@@ -43,6 +45,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the maximum number of tokens to use for the chat.
+	 *
 	 * @return the maximum number of tokens to use for the chat
 	 */
 	@Nullable
@@ -50,6 +53,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the presence penalty to use for the chat.
+	 *
 	 * @return the presence penalty to use for the chat
 	 */
 	@Nullable
@@ -57,6 +61,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the stop sequences to use for the chat.
+	 *
 	 * @return the stop sequences to use for the chat
 	 */
 	@Nullable
@@ -64,6 +69,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the temperature to use for the chat.
+	 *
 	 * @return the temperature to use for the chat
 	 */
 	@Nullable
@@ -71,6 +77,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the top K to use for the chat.
+	 *
 	 * @return the top K to use for the chat
 	 */
 	@Nullable
@@ -78,6 +85,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the top P to use for the chat.
+	 *
 	 * @return the top P to use for the chat
 	 */
 	@Nullable
@@ -85,12 +93,14 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns a copy of this {@link ChatOptions}.
+	 *
 	 * @return a copy of this {@link ChatOptions}
 	 */
 	<T extends ChatOptions> T copy();
 
 	/**
 	 * Creates a new {@link Builder} to create the default {@link ChatOptions}.
+	 *
 	 * @return Returns a new {@link Builder}.
 	 */
 	static Builder builder() {
@@ -104,6 +114,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the model to use for the chat.
+		 *
 		 * @param model
 		 * @return the builder
 		 */
@@ -111,6 +122,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the frequency penalty to use for the chat.
+		 *
 		 * @param frequencyPenalty
 		 * @return the builder.
 		 */
@@ -118,6 +130,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the maximum number of tokens to use for the chat.
+		 *
 		 * @param maxTokens
 		 * @return the builder.
 		 */
@@ -125,6 +138,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the presence penalty to use for the chat.
+		 *
 		 * @param presencePenalty
 		 * @return the builder.
 		 */
@@ -132,6 +146,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the stop sequences to use for the chat.
+		 *
 		 * @param stopSequences
 		 * @return the builder.
 		 */
@@ -139,6 +154,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the temperature to use for the chat.
+		 *
 		 * @param temperature
 		 * @return the builder.
 		 */
@@ -146,6 +162,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the top K to use for the chat.
+		 *
 		 * @param topK
 		 * @return the builder.
 		 */
@@ -153,6 +170,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the top P to use for the chat.
+		 *
 		 * @param topP
 		 * @return the builder.
 		 */
@@ -160,6 +178,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Build the {@link ChatOptions}.
+		 *
 		 * @return the Chat options.
 		 */
 		ChatOptions build();

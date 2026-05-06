@@ -49,15 +49,15 @@ public class MariaDBStoreTests {
 			"customvectorstore, true, `customvectorstore`", "user_data, true, `user_data`", "test123, true, `test123`",
 			"valid_table_name, true, `valid_table_name`", "customvectorstore, false, customvectorstore",
 			"user_data, false, user_data", "test123, false, test123", "valid_table_name, false, valid_table_name",
-			"1234567890123456789012345678901234567890123456789012345678901234, false, `1234567890123456789012345678901234567890123456789012345678901234`" })
+			"1234567890123456789012345678901234567890123456789012345678901234, false, `1234567890123456789012345678901234567890123456789012345678901234`"})
 	void enquoteIdentifier(String tableName, boolean alwaysQuote, String expected) {
 		assertThat(MariaDBSchemaValidator.validateAndEnquoteIdentifier(tableName, alwaysQuote));
 	}
 
 	@ParameterizedTest(name = "{0} - error identifier validation")
-	@CsvSource({ "12345678901234567890123456789012345678901234567890123456789012345, false",
+	@CsvSource({"12345678901234567890123456789012345678901234567890123456789012345, false",
 			"12345678901234567890123456789012345678901234567890123456789012345, true",
-			"customvectorstore;drop table users;, false", "some\u0000notpossibleValue, true" })
+			"customvectorstore;drop table users;, false", "some\u0000notpossibleValue, true"})
 	void enquoteIdentifierThrow(String tableName, boolean alwaysQuote) {
 		Assert.assertThrows(IllegalArgumentException.class,
 				() -> MariaDBSchemaValidator.validateAndEnquoteIdentifier(tableName, alwaysQuote));
@@ -69,8 +69,8 @@ public class MariaDBStoreTests {
 		var jdbcTemplate = mock(JdbcTemplate.class);
 		var embeddingModel = mock(EmbeddingModel.class);
 		var mariadbVectorStore = MariaDBVectorStore.builder(jdbcTemplate, embeddingModel)
-			.maxDocumentBatchSize(1000)
-			.build();
+				.maxDocumentBatchSize(1000)
+				.build();
 
 		// Testing with 9989 documents
 		var documents = Collections.nCopies(9989, new Document("foo"));
@@ -85,14 +85,14 @@ public class MariaDBStoreTests {
 		verify(jdbcTemplate, times(10)).batchUpdate(anyString(), batchUpdateCaptor.capture());
 
 		assertThat(batchUpdateCaptor.getAllValues()).hasSize(10)
-			.allSatisfy(BatchPreparedStatementSetter::getBatchSize)
-			.satisfies(batches -> {
-				for (int i = 0; i < 9; i++) {
-					assertThat(batches.get(i).getBatchSize()).as("Batch at index %d should have size 10", i)
-						.isEqualTo(1000);
-				}
-				assertThat(batches.get(9).getBatchSize()).as("Last batch should have size 989").isEqualTo(989);
-			});
+				.allSatisfy(BatchPreparedStatementSetter::getBatchSize)
+				.satisfies(batches -> {
+					for (int i = 0; i < 9; i++) {
+						assertThat(batches.get(i).getBatchSize()).as("Batch at index %d should have size 10", i)
+								.isEqualTo(1000);
+					}
+					assertThat(batches.get(9).getBatchSize()).as("Last batch should have size 989").isEqualTo(989);
+				});
 	}
 
 }

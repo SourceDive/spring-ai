@@ -20,11 +20,11 @@ package org.springframework.ai.vectorstore.filter;
  * Portable runtime generative for metadata filter expressions. This generic generative is
  * used to define store agnostic filter expressions than later can be converted into
  * vector-store specific, native, expressions.
- *
+ * <p>
  * The expression generative supports constant comparison
  * {@code (e.g. ==, !=, <, <=, >, >=) }, IN/NON-IN checks and AND and OR to compose
  * multiple expressions.
- *
+ * <p>
  * For example:
  *
  * <pre>{@code
@@ -55,8 +55,8 @@ package org.springframework.ai.vectorstore.filter;
  * 				new Expression(IN, new Key("country"), new Value(List.of("BG", "NL", "US")))));
  *
  * }</pre>
- *
- *
+ * <p>
+ * <p>
  * Usually you will not create expression manually but use either the
  * {@link FilterExpressionBuilder} DSL or the {@link FilterExpressionTextParser} for
  * parsing generic text expressions.
@@ -67,13 +67,13 @@ public class Filter {
 
 	/**
 	 * Filter expression operations. <br/>
-	 *
+	 * <p>
 	 * - EQ, NE, GT, GTE, LT, LTE operations supports "Key ExprType Value"
 	 * expressions.<br/>
-	 *
+	 * <p>
 	 * - AND, OR are binary operations that support "(Expression|Group) ExprType
 	 * (Expression|Group)" expressions. <br/>
-	 *
+	 * <p>
 	 * - IN, NIN support "Key (IN|NIN) ArrayValue" expression. <br/>
 	 */
 	public enum ExpressionType {
@@ -114,13 +114,13 @@ public class Filter {
 	 * Triple that represents and filter boolean expression as
 	 * <code>left type right</code>.
 	 *
-	 * @param type Specify the expression type.
-	 * @param left For comparison and inclusion expression types, the operand must be of
-	 * type {@link Key} and for the AND|OR expression types the left operand must be
-	 * another {@link Expression}.
+	 * @param type  Specify the expression type.
+	 * @param left  For comparison and inclusion expression types, the operand must be of
+	 *              type {@link Key} and for the AND|OR expression types the left operand must be
+	 *              another {@link Expression}.
 	 * @param right For comparison and inclusion expression types, the operand must be of
-	 * type {@link Value} or array of values. For the AND|OR type the right operand must
-	 * be another {@link Expression}.
+	 *              type {@link Value} or array of values. For the AND|OR type the right operand must
+	 *              be another {@link Expression}.
 	 */
 	public record Expression(ExpressionType type, Operand left, Operand right) implements Operand {
 

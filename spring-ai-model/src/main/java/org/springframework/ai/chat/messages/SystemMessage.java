@@ -117,8 +117,7 @@ public class SystemMessage extends AbstractMessage {
 		public SystemMessage build() {
 			if (StringUtils.hasText(this.textContent) && this.resource != null) {
 				throw new IllegalArgumentException("textContent and resource cannot be set at the same time");
-			}
-			else if (this.resource != null) {
+			} else if (this.resource != null) {
 				this.textContent = MessageUtils.readResource(this.resource);
 			}
 			return new SystemMessage(this.textContent, this.metadata);

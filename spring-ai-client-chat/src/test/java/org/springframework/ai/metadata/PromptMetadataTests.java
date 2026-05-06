@@ -92,8 +92,8 @@ public class PromptMetadataTests {
 	void findByInvalidPromptIndex() {
 
 		assertThatIllegalArgumentException().isThrownBy(() -> PromptMetadata.empty().findByPromptIndex(-1))
-			.withMessage("Prompt index [-1] must be greater than equal to 0")
-			.withNoCause();
+				.withMessage("Prompt index [-1] must be greater than equal to 0")
+				.withNoCause();
 	}
 
 	@Test

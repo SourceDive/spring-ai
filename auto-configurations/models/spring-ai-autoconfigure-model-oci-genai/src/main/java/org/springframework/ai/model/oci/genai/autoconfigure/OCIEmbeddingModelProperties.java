@@ -41,11 +41,11 @@ public class OCIEmbeddingModelProperties {
 
 	public OCIEmbeddingOptions getEmbeddingOptions() {
 		return OCIEmbeddingOptions.builder()
-			.compartment(this.compartment)
-			.model(this.model)
-			.servingMode(this.servingMode.getMode())
-			.truncate(this.truncate)
-			.build();
+				.compartment(this.compartment)
+				.model(this.model)
+				.servingMode(this.servingMode.getMode())
+				.truncate(this.truncate)
+				.build();
 	}
 
 	public ServingMode getServingMode() {

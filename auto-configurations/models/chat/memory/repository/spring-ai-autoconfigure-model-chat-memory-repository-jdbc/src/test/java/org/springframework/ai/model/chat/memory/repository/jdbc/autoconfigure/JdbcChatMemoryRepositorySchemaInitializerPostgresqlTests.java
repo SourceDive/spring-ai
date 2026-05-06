@@ -42,16 +42,16 @@ class JdbcChatMemoryRepositorySchemaInitializerPostgresqlTests {
 	@Container
 	@SuppressWarnings("resource")
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(DEFAULT_IMAGE_NAME)
-		.withDatabaseName("chat_memory_initializer_test")
-		.withUsername("postgres")
-		.withPassword("postgres");
+			.withDatabaseName("chat_memory_initializer_test")
+			.withUsername("postgres")
+			.withPassword("postgres");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(JdbcChatMemoryRepositoryAutoConfiguration.class,
-				JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
-		.withPropertyValues(String.format("spring.datasource.url=%s", postgresContainer.getJdbcUrl()),
-				String.format("spring.datasource.username=%s", postgresContainer.getUsername()),
-				String.format("spring.datasource.password=%s", postgresContainer.getPassword()));
+			.withConfiguration(AutoConfigurations.of(JdbcChatMemoryRepositoryAutoConfiguration.class,
+					JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues(String.format("spring.datasource.url=%s", postgresContainer.getJdbcUrl()),
+					String.format("spring.datasource.username=%s", postgresContainer.getUsername()),
+					String.format("spring.datasource.password=%s", postgresContainer.getPassword()));
 
 	@Test
 	void getSettings_shouldHaveSchemaLocations() {
@@ -62,7 +62,7 @@ class JdbcChatMemoryRepositorySchemaInitializerPostgresqlTests {
 					new JdbcChatMemoryRepositoryProperties());
 
 			assertThat(settings.getSchemaLocations())
-				.containsOnly("classpath:org/springframework/ai/chat/memory/repository/jdbc/schema-postgresql.sql");
+					.containsOnly("classpath:org/springframework/ai/chat/memory/repository/jdbc/schema-postgresql.sql");
 		});
 	}
 

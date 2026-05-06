@@ -45,9 +45,9 @@ public class DeepSeekAutoConfigurationIT {
 	private static final Log logger = LogFactory.getLog(DeepSeekAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.deepseek.apiKey=" + System.getenv("DEEPSEEK_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
-				RestClientAutoConfiguration.class, DeepSeekChatAutoConfiguration.class));
+			.withPropertyValues("spring.ai.deepseek.apiKey=" + System.getenv("DEEPSEEK_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(SpringAiRetryAutoConfiguration.class,
+					RestClientAutoConfiguration.class, DeepSeekChatAutoConfiguration.class));
 
 	@Test
 	void generate() {
@@ -65,9 +65,9 @@ public class DeepSeekAutoConfigurationIT {
 			DeepSeekChatModel client = context.getBean(DeepSeekChatModel.class);
 			Flux<ChatResponse> responseFlux = client.stream(new Prompt(new UserMessage("Hello")));
 			String response = Objects.requireNonNull(responseFlux.collectList().block())
-				.stream()
-				.map(chatResponse -> chatResponse.getResults().get(0).getOutput().getText())
-				.collect(Collectors.joining());
+					.stream()
+					.map(chatResponse -> chatResponse.getResults().get(0).getOutput().getText())
+					.collect(Collectors.joining());
 
 			assertThat(response).isNotEmpty();
 			logger.info("Response: " + response);

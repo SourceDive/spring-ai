@@ -98,15 +98,13 @@ public class MiniMaxStreamFunctionCallingHelper {
 			if (currentToolCall.id() == null
 					|| (lastPreviousTooCall != null && currentToolCall.id().equals(lastPreviousTooCall.id()))) {
 				toolCalls.add(merge(lastPreviousTooCall, currentToolCall));
-			}
-			else {
+			} else {
 				if (lastPreviousTooCall != null) {
 					toolCalls.add(lastPreviousTooCall);
 				}
 				toolCalls.add(currentToolCall);
 			}
-		}
-		else {
+		} else {
 			if (lastPreviousTooCall != null) {
 				toolCalls.add(lastPreviousTooCall);
 			}
@@ -176,15 +174,16 @@ public class MiniMaxStreamFunctionCallingHelper {
 
 	/**
 	 * Convert the ChatCompletionChunk into a ChatCompletion. The Usage is set to null.
+	 *
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
 	public MiniMaxApi.ChatCompletion chunkToChatCompletion(MiniMaxApi.ChatCompletionChunk chunk) {
 		List<MiniMaxApi.ChatCompletion.Choice> choices = chunk.choices()
-			.stream()
-			.map(chunkChoice -> new MiniMaxApi.ChatCompletion.Choice(chunkChoice.finishReason(), chunkChoice.index(),
-					chunkChoice.delta(), null, chunkChoice.logprobs()))
-			.toList();
+				.stream()
+				.map(chunkChoice -> new MiniMaxApi.ChatCompletion.Choice(chunkChoice.finishReason(), chunkChoice.index(),
+						chunkChoice.delta(), null, chunkChoice.logprobs()))
+				.toList();
 
 		return new MiniMaxApi.ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(),
 				chunk.systemFingerprint(), "chat.completion", null, null);

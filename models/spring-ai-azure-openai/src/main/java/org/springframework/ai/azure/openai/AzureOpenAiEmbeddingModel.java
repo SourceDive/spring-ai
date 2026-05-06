@@ -86,12 +86,12 @@ public class AzureOpenAiEmbeddingModel extends AbstractEmbeddingModel {
 	}
 
 	public AzureOpenAiEmbeddingModel(OpenAIClient azureOpenAiClient, MetadataMode metadataMode,
-			AzureOpenAiEmbeddingOptions options) {
+	                                 AzureOpenAiEmbeddingOptions options) {
 		this(azureOpenAiClient, metadataMode, options, ObservationRegistry.NOOP);
 	}
 
 	public AzureOpenAiEmbeddingModel(OpenAIClient azureOpenAiClient, MetadataMode metadataMode,
-			AzureOpenAiEmbeddingOptions options, ObservationRegistry observationRegistry) {
+	                                 AzureOpenAiEmbeddingOptions options, ObservationRegistry observationRegistry) {
 
 		Assert.notNull(azureOpenAiClient, "com.azure.ai.openai.OpenAIClient must not be null");
 		Assert.notNull(metadataMode, "Metadata mode must not be null");
@@ -108,7 +108,7 @@ public class AzureOpenAiEmbeddingModel extends AbstractEmbeddingModel {
 		logger.debug("Retrieving embeddings");
 
 		EmbeddingResponse response = this
-			.call(new EmbeddingRequest(List.of(document.getFormattedContent(this.metadataMode)), null));
+				.call(new EmbeddingRequest(List.of(document.getFormattedContent(this.metadataMode)), null));
 		logger.debug("Embeddings retrieved");
 
 		if (CollectionUtils.isEmpty(response.getResults())) {
@@ -122,9 +122,9 @@ public class AzureOpenAiEmbeddingModel extends AbstractEmbeddingModel {
 		logger.debug("Retrieving embeddings");
 
 		AzureOpenAiEmbeddingOptions options = AzureOpenAiEmbeddingOptions.builder()
-			.from(this.defaultOptions)
-			.merge(embeddingRequest.getOptions())
-			.build();
+				.from(this.defaultOptions)
+				.merge(embeddingRequest.getOptions())
+				.build();
 
 		EmbeddingRequest embeddingRequestWithMergedOptions = new EmbeddingRequest(embeddingRequest.getInstructions(),
 				options);
@@ -132,21 +132,21 @@ public class AzureOpenAiEmbeddingModel extends AbstractEmbeddingModel {
 		EmbeddingsOptions azureOptions = options.toAzureOptions(embeddingRequestWithMergedOptions.getInstructions());
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequestWithMergedOptions)
-			.provider(AiProvider.AZURE_OPENAI.value())
-			.build();
+				.embeddingRequest(embeddingRequestWithMergedOptions)
+				.provider(AiProvider.AZURE_OPENAI.value())
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				Embeddings embeddings = this.azureOpenAiClient.getEmbeddings(azureOptions.getModel(), azureOptions);
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					Embeddings embeddings = this.azureOpenAiClient.getEmbeddings(azureOptions.getModel(), azureOptions);
 
-				logger.debug("Embeddings retrieved");
-				var embeddingResponse = generateEmbeddingResponse(embeddings);
-				observationContext.setResponse(embeddingResponse);
-				return embeddingResponse;
-			});
+					logger.debug("Embeddings retrieved");
+					var embeddingResponse = generateEmbeddingResponse(embeddings);
+					observationContext.setResponse(embeddingResponse);
+					return embeddingResponse;
+				});
 	}
 
 	/**
@@ -155,10 +155,10 @@ public class AzureOpenAiEmbeddingModel extends AbstractEmbeddingModel {
 	EmbeddingsOptions toEmbeddingOptions(EmbeddingRequest embeddingRequest) {
 
 		return AzureOpenAiEmbeddingOptions.builder()
-			.from(this.defaultOptions)
-			.merge(embeddingRequest.getOptions())
-			.build()
-			.toAzureOptions(embeddingRequest.getInstructions());
+				.from(this.defaultOptions)
+				.merge(embeddingRequest.getOptions())
+				.build()
+				.toAzureOptions(embeddingRequest.getInstructions());
 	}
 
 	private EmbeddingResponse generateEmbeddingResponse(Embeddings embeddings) {
@@ -189,6 +189,7 @@ public class AzureOpenAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(EmbeddingModelObservationConvention observationConvention) {

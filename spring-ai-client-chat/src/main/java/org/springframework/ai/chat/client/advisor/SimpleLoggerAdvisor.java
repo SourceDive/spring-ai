@@ -61,7 +61,7 @@ public class SimpleLoggerAdvisor implements CallAdvisor, StreamAdvisor {
 	}
 
 	public SimpleLoggerAdvisor(@Nullable Function<ChatClientRequest, String> requestToString,
-			@Nullable Function<ChatResponse, String> responseToString, int order) {
+	                           @Nullable Function<ChatResponse, String> responseToString, int order) {
 		this.requestToString = requestToString != null ? requestToString : DEFAULT_REQUEST_TO_STRING;
 		this.responseToString = responseToString != null ? responseToString : DEFAULT_RESPONSE_TO_STRING;
 		this.order = order;
@@ -80,7 +80,7 @@ public class SimpleLoggerAdvisor implements CallAdvisor, StreamAdvisor {
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		logRequest(chatClientRequest);
 
 		Flux<ChatClientResponse> chatClientResponses = streamAdvisorChain.nextStream(chatClientRequest);

@@ -70,11 +70,11 @@ public class TextReaderTests {
 
 		Document defaultDocument = defaultDocuments.get(0);
 		assertThat(defaultDocument.getMetadata()).containsEntry("customKey", "DefaultValue")
-			.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
+				.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
 
 		// Assert on the SOURCE_METADATA for default ByteArrayResource
 		assertThat(defaultDocument.getMetadata().get(TextReader.SOURCE_METADATA))
-			.isEqualTo("Byte array resource [resource loaded from byte array]");
+				.isEqualTo("Byte array resource [resource loaded from byte array]");
 
 		assertThat(defaultDocument.getText()).isEqualTo("Test content");
 
@@ -92,11 +92,11 @@ public class TextReaderTests {
 
 		Document customDocument = customDocuments.get(0);
 		assertThat(customDocument.getMetadata()).containsEntry("customKey", "CustomValue")
-			.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
+				.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
 
 		// Assert on the SOURCE_METADATA for custom ByteArrayResource
 		assertThat(customDocument.getMetadata().get(TextReader.SOURCE_METADATA))
-			.isEqualTo("Byte array resource [Custom byte array resource]");
+				.isEqualTo("Byte array resource [Custom byte array resource]");
 
 		assertThat(customDocument.getText()).isEqualTo("Another test content");
 	}

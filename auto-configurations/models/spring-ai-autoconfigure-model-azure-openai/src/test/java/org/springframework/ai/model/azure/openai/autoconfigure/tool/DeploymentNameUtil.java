@@ -28,8 +28,7 @@ public final class DeploymentNameUtil {
 		String deploymentName = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
 		if (StringUtils.hasText(deploymentName)) {
 			return deploymentName;
-		}
-		else {
+		} else {
 			return "gpt-4o";
 		}
 	}

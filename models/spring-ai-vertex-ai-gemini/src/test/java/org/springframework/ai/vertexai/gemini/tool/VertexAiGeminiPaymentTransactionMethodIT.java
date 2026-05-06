@@ -75,14 +75,14 @@ public class VertexAiGeminiPaymentTransactionMethodIT {
 	public void paymentStatuses() {
 
 		String content = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.toolNames("paymentStatus")
-			.user("""
-					What is the status of my payment transactions 001, 002 and 003?
-					If requred invoke the function per transaction.
-					""")
-			.call()
-			.content();
+				.advisors(new SimpleLoggerAdvisor())
+				.toolNames("paymentStatus")
+				.user("""
+						What is the status of my payment transactions 001, 002 and 003?
+						If requred invoke the function per transaction.
+						""")
+				.call()
+				.content();
 		logger.info("" + content);
 
 		assertThat(content).contains("001", "002", "003");
@@ -93,14 +93,14 @@ public class VertexAiGeminiPaymentTransactionMethodIT {
 	public void streamingPaymentStatuses() {
 
 		Flux<String> streamContent = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.toolNames("paymentStatus")
-			.user("""
-					What is the status of my payment transactions 001, 002 and 003?
-					If requred invoke the function per transaction.
-					""")
-			.stream()
-			.content();
+				.advisors(new SimpleLoggerAdvisor())
+				.toolNames("paymentStatus")
+				.user("""
+						What is the status of my payment transactions 001, 002 and 003?
+						If requred invoke the function per transaction.
+						""")
+				.stream()
+				.content();
 
 		String content = streamContent.collectList().block().stream().collect(Collectors.joining());
 
@@ -112,8 +112,7 @@ public class VertexAiGeminiPaymentTransactionMethodIT {
 		// Quota rate
 		try {
 			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 	}
 
@@ -163,29 +162,29 @@ public class VertexAiGeminiPaymentTransactionMethodIT {
 			String location = System.getenv("VERTEX_AI_GEMINI_LOCATION");
 
 			return new VertexAI.Builder().setLocation(location)
-				.setProjectId(projectId)
-				.setTransport(Transport.REST)
-				// .setTransport(Transport.GRPC)
-				.build();
+					.setProjectId(projectId)
+					.setTransport(Transport.REST)
+					// .setTransport(Transport.GRPC)
+					.build();
 		}
 
 		@Bean
 		public VertexAiGeminiChatModel vertexAiChatModel(VertexAI vertexAi, ToolCallingManager toolCallingManager) {
 
 			return VertexAiGeminiChatModel.builder()
-				.vertexAI(vertexAi)
-				.toolCallingManager(toolCallingManager)
-				.defaultOptions(VertexAiGeminiChatOptions.builder()
-					.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
-					.temperature(0.1)
-					.build())
-				.build();
+					.vertexAI(vertexAi)
+					.toolCallingManager(toolCallingManager)
+					.defaultOptions(VertexAiGeminiChatOptions.builder()
+							.model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+							.temperature(0.1)
+							.build())
+					.build();
 		}
 
 		@Bean
 		ToolCallingManager toolCallingManager(GenericApplicationContext applicationContext,
-				List<ToolCallbackProvider> tcps, List<ToolCallback> toolCallbacks,
-				ObjectProvider<ObservationRegistry> observationRegistry) {
+		                                      List<ToolCallbackProvider> tcps, List<ToolCallback> toolCallbacks,
+		                                      ObjectProvider<ObservationRegistry> observationRegistry) {
 
 			List<ToolCallback> allToolCallbacks = new ArrayList(toolCallbacks);
 			tcps.stream().map(pr -> List.of(pr.getToolCallbacks())).forEach(allToolCallbacks::addAll);
@@ -193,17 +192,17 @@ public class VertexAiGeminiPaymentTransactionMethodIT {
 			var staticToolCallbackResolver = new StaticToolCallbackResolver(allToolCallbacks);
 
 			var springBeanToolCallbackResolver = SpringBeanToolCallbackResolver.builder()
-				.applicationContext(applicationContext)
-				.build();
+					.applicationContext(applicationContext)
+					.build();
 
 			ToolCallbackResolver toolCallbackResolver = new DelegatingToolCallbackResolver(
 					List.of(staticToolCallbackResolver, springBeanToolCallbackResolver));
 
 			return ToolCallingManager.builder()
-				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-				.toolCallbackResolver(toolCallbackResolver)
-				.toolExecutionExceptionProcessor(new DefaultToolExecutionExceptionProcessor(false))
-				.build();
+					.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+					.toolCallbackResolver(toolCallbackResolver)
+					.toolExecutionExceptionProcessor(new DefaultToolExecutionExceptionProcessor(false))
+					.build();
 		}
 
 	}

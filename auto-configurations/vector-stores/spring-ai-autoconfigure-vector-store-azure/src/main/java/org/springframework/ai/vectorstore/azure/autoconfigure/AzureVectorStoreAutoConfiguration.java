@@ -46,8 +46,8 @@ import org.springframework.context.annotation.Bean;
  * @author Soby Chacko
  */
 @AutoConfiguration
-@ConditionalOnClass({ EmbeddingModel.class, SearchIndexClient.class, AzureVectorStore.class })
-@EnableConfigurationProperties({ AzureVectorStoreProperties.class })
+@ConditionalOnClass({EmbeddingModel.class, SearchIndexClient.class, AzureVectorStore.class})
+@EnableConfigurationProperties({AzureVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.AZURE,
 		matchIfMissing = true)
 public class AzureVectorStoreAutoConfiguration {
@@ -61,15 +61,14 @@ public class AzureVectorStoreAutoConfiguration {
 		clientOptions.setApplicationId(APPLICATION_ID);
 		if (properties.isUseKeylessAuth()) {
 			return new SearchIndexClientBuilder().endpoint(properties.getUrl())
-				.credential(new DefaultAzureCredentialBuilder().build())
-				.clientOptions(clientOptions)
-				.buildClient();
-		}
-		else {
+					.credential(new DefaultAzureCredentialBuilder().build())
+					.clientOptions(clientOptions)
+					.buildClient();
+		} else {
 			return new SearchIndexClientBuilder().endpoint(properties.getUrl())
-				.credential(new AzureKeyCredential(properties.getApiKey()))
-				.clientOptions(clientOptions)
-				.buildClient();
+					.credential(new AzureKeyCredential(properties.getApiKey()))
+					.clientOptions(clientOptions)
+					.buildClient();
 		}
 	}
 
@@ -82,17 +81,17 @@ public class AzureVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public AzureVectorStore vectorStore(SearchIndexClient searchIndexClient, EmbeddingModel embeddingModel,
-			AzureVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                    AzureVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                    ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                    BatchingStrategy batchingStrategy) {
 
 		var builder = AzureVectorStore.builder(searchIndexClient, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.filterMetadataFields(List.of())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.indexName(properties.getIndexName());
+				.initializeSchema(properties.isInitializeSchema())
+				.filterMetadataFields(List.of())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.indexName(properties.getIndexName());
 
 		if (properties.getDefaultTopK() >= 0) {
 			builder.defaultTopK(properties.getDefaultTopK());

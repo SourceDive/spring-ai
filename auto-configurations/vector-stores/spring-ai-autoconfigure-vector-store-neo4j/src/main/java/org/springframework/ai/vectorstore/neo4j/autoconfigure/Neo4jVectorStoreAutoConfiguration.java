@@ -43,8 +43,8 @@ import org.springframework.context.annotation.Bean;
  * @author Soby Chacko
  */
 @AutoConfiguration(after = Neo4jAutoConfiguration.class)
-@ConditionalOnClass({ Neo4jVectorStore.class, EmbeddingModel.class, Driver.class })
-@EnableConfigurationProperties({ Neo4jVectorStoreProperties.class })
+@ConditionalOnClass({Neo4jVectorStore.class, EmbeddingModel.class, Driver.class})
+@EnableConfigurationProperties({Neo4jVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.NEO4J,
 		matchIfMissing = true)
 public class Neo4jVectorStoreAutoConfiguration {
@@ -58,25 +58,25 @@ public class Neo4jVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public Neo4jVectorStore vectorStore(Driver driver, EmbeddingModel embeddingModel,
-			Neo4jVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                    Neo4jVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                    ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                    BatchingStrategy batchingStrategy) {
 
 		return Neo4jVectorStore.builder(driver, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.databaseName(properties.getDatabaseName())
-			.embeddingDimension(properties.getEmbeddingDimension())
-			.distanceType(properties.getDistanceType())
-			.label(properties.getLabel())
-			.embeddingProperty(properties.getEmbeddingProperty())
-			.indexName(properties.getIndexName())
-			.idProperty(properties.getIdProperty())
-			.constraintName(properties.getConstraintName())
-			.textProperty(properties.getTextProperty())
-			.build();
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.databaseName(properties.getDatabaseName())
+				.embeddingDimension(properties.getEmbeddingDimension())
+				.distanceType(properties.getDistanceType())
+				.label(properties.getLabel())
+				.embeddingProperty(properties.getEmbeddingProperty())
+				.indexName(properties.getIndexName())
+				.idProperty(properties.getIdProperty())
+				.constraintName(properties.getConstraintName())
+				.textProperty(properties.getTextProperty())
+				.build();
 	}
 
 }

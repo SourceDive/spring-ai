@@ -41,8 +41,8 @@ class ToolExecutionEligibilityPredicateTests {
 		ChatResponse chatResponse = new ChatResponse(List.of(new Generation(new AssistantMessage("test"))));
 
 		assertThatThrownBy(() -> predicate.isToolExecutionRequired(null, chatResponse))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("promptOptions cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("promptOptions cannot be null");
 	}
 
 	@Test
@@ -51,8 +51,8 @@ class ToolExecutionEligibilityPredicateTests {
 		ChatOptions promptOptions = ChatOptions.builder().build();
 
 		assertThatThrownBy(() -> predicate.isToolExecutionRequired(promptOptions, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("chatResponse cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("chatResponse cannot be null");
 	}
 
 	@Test

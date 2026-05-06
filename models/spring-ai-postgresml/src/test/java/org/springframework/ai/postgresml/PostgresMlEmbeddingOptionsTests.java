@@ -44,11 +44,11 @@ public class PostgresMlEmbeddingOptionsTests {
 	@Test
 	public void newOptions() {
 		PostgresMlEmbeddingOptions options = PostgresMlEmbeddingOptions.builder()
-			.transformer("intfloat/e5-small")
-			.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
-			.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
-			.kwargs(Map.of("device", "cpu"))
-			.build();
+				.transformer("intfloat/e5-small")
+				.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
+				.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
+				.kwargs(Map.of("device", "cpu"))
+				.build();
 
 		assertThat(options.getTransformer()).isEqualTo("intfloat/e5-small");
 		assertThat(options.getVectorType()).isEqualTo(PostgresMlEmbeddingModel.VectorType.PG_VECTOR);
@@ -72,9 +72,9 @@ public class PostgresMlEmbeddingOptionsTests {
 
 		// Partial override
 		options = embeddingModel.mergeOptions(PostgresMlEmbeddingOptions.builder()
-			.transformer("intfloat/e5-small")
-			.kwargs(Map.of("device", "cpu"))
-			.build());
+				.transformer("intfloat/e5-small")
+				.kwargs(Map.of("device", "cpu"))
+				.build());
 
 		assertThat(options.getTransformer()).isEqualTo("intfloat/e5-small");
 		assertThat(options.getVectorType()).isEqualTo(PostgresMlEmbeddingModel.VectorType.PG_ARRAY); // Default
@@ -83,11 +83,11 @@ public class PostgresMlEmbeddingOptionsTests {
 
 		// Complete override
 		options = embeddingModel.mergeOptions(PostgresMlEmbeddingOptions.builder()
-			.transformer("intfloat/e5-small")
-			.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
-			.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
-			.kwargs(Map.of("device", "cpu"))
-			.build());
+				.transformer("intfloat/e5-small")
+				.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
+				.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
+				.kwargs(Map.of("device", "cpu"))
+				.build());
 
 		assertThat(options.getTransformer()).isEqualTo("intfloat/e5-small");
 		assertThat(options.getVectorType()).isEqualTo(PostgresMlEmbeddingModel.VectorType.PG_VECTOR);

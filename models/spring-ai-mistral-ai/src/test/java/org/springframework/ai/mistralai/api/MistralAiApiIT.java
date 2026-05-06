@@ -61,7 +61,7 @@ public class MistralAiApiIT {
 				You are an AI assistant that helps people find information.
 				Your name is Bob.
 				You should reply to the user's request with your name and also in the style of a pirate.
-					""", Role.SYSTEM);
+				""", Role.SYSTEM);
 
 		ResponseEntity<ChatCompletion> response = this.mistralAiApi.chatCompletionEntity(new ChatCompletionRequest(
 				List.of(systemMessage, userMessage), MistralAiApi.ChatModel.SMALL.getValue(), 0.8, false));
@@ -83,7 +83,7 @@ public class MistralAiApiIT {
 	@Test
 	void embeddings() {
 		ResponseEntity<EmbeddingList<Embedding>> response = this.mistralAiApi
-			.embeddings(new MistralAiApi.EmbeddingRequest<String>("Hello world"));
+				.embeddings(new MistralAiApi.EmbeddingRequest<String>("Hello world"));
 
 		assertThat(response).isNotNull();
 		assertThat(response.getBody().data()).hasSize(1);

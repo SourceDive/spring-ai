@@ -1,0 +1,19 @@
+name: Sync Fork from Upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: SourceDive/sync-fork@v1
+        with:
+          upstream_repo: spring-projects/spring-ai

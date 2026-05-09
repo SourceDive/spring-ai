@@ -250,6 +250,7 @@ public interface ChatClient {
 
 		ChatClientRequestSpec templateRenderer(TemplateRenderer templateRenderer);
 
+		// 发送请求到 AI 模型。
 		CallResponseSpec call();
 
 		StreamResponseSpec stream();

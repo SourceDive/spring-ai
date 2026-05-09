@@ -18,3 +18,4 @@ jobs:
       - uses: SourceDive/sync-fork@v1.1
         with:
           upstream_repo: spring-projects/spring-ai
+          github_token: ${{ secrets.SYNC_FORK_TOKEN }}

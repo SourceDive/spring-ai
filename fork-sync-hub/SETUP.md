@@ -27,7 +27,9 @@ git push -u origin main
 在 Organization `SourceDive` 级别创建 Secret：
 
 - 名称：`SYNC_FORK_TOKEN`
-- 值：具有 `repo` + `workflow` 权限的 PAT
+- 值：**Classic PAT**（不是 GitHub App），权限勾选 `repo` + `workflow`
+- 创建链接：https://github.com/settings/tokens/new?scopes=repo,workflow
+- 确保 `fork-sync-hub` 在 Organization Secret 的仓库访问列表中
 
 Organization Secret 会自动被本仓库及所有 fork 使用。
 

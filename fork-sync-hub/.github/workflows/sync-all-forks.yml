@@ -18,6 +18,10 @@ on:
         description: 是否同步分支
         type: boolean
         default: true
+      skip_workflow_tags_on_error:
+        description: tag 因 workflow 权限被拒时跳过并继续（临时方案，建议修复 PAT）
+        type: boolean
+        default: false
 
 concurrency:
   group: sync-all-forks
@@ -30,6 +34,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       sync_tags: ${{ steps.set-flags.outputs.sync_tags }}
       sync_branches: ${{ steps.set-flags.outputs.sync_branches }}
+      skip_workflow_tags_on_error: ${{ steps.set-flags.outputs.skip_workflow_tags_on_error }}
     steps:
       - uses: actions/checkout@v4
 
@@ -38,9 +43,11 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "sync_tags=${{ inputs.sync_tags }}" >> "$GITHUB_OUTPUT"
             echo "sync_branches=${{ inputs.sync_branches }}" >> "$GITHUB_OUTPUT"
+            echo "skip_workflow_tags_on_error=${{ inputs.skip_workflow_tags_on_error }}" >> "$GITHUB_OUTPUT"
           else
             echo "sync_tags=true" >> "$GITHUB_OUTPUT"
             echo "sync_branches=true" >> "$GITHUB_OUTPUT"
+            echo "skip_workflow_tags_on_error=false" >> "$GITHUB_OUTPUT"
           fi
 
       - id: set-matrix
@@ -68,17 +75,27 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.prepare.outputs.matrix) }}
     steps:
-      - name: Sync ${{ matrix.fork }}
+      - name: Checkout hub action
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/sync-fork
+          sparse-checkout-cone-mode: false
+
+      - name: Checkout fork
         uses: actions/checkout@v4
         with:
           repository: ${{ matrix.fork }}
           token: ${{ secrets.SYNC_FORK_TOKEN }}
           fetch-depth: 0
+          path: repo
 
-      - uses: SourceDive/sync-fork@v1.1
+      - uses: ./.github/actions/sync-fork
         with:
           upstream_repo: ${{ matrix.upstream }}
           github_token: ${{ secrets.SYNC_FORK_TOKEN }}
           sync_tags: ${{ needs.prepare.outputs.sync_tags }}
           sync_branches: ${{ needs.prepare.outputs.sync_branches }}
           target_branch: ${{ matrix.target_branch }}
+          skip_workflow_tags_on_error: ${{ needs.prepare.outputs.skip_workflow_tags_on_error }}
+          working_directory: repo

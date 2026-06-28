@@ -1,0 +1,28 @@
+name: Deploy fork-sync-hub
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push fork-sync-hub contents
+        env:
+          TOKEN: ${{ secrets.SYNC_FORK_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "SYNC_FORK_TOKEN secret is required"
+            exit 1
+          fi
+          cd fork-sync-hub
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "feat: centralized fork sync hub for all SourceDive forks"
+          git branch -M main
+          git remote add origin "https://x-access-token:${TOKEN}@github.com/SourceDive/fork-sync-hub.git"
+          git push -u origin main --force

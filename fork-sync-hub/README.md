@@ -9,9 +9,18 @@
 
 ## 前置条件
 
-需要一个 GitHub Personal Access Token (PAT)，权限勾选 `repo` + `workflow`。
+**必须使用 Classic Personal Access Token（用户 PAT），不能用 GitHub App token 或默认 GITHUB_TOKEN。**
 
-建议在 Organization `SourceDive` 级别创建 Secret `SYNC_FORK_TOKEN`，所有仓库共享。
+创建 Classic PAT：https://github.com/settings/tokens/new?scopes=repo,workflow
+
+勾选权限：
+- `repo`（完整仓库权限）
+- `workflow`（修改 workflow 文件，同步含 workflow 的 release tag 必需）
+
+> 错误示例：`refusing to allow a GitHub App to create or update workflow ... without workflows permission`
+> 说明当前 token 不是带 workflow 权限的 Classic PAT。
+
+存入 Organization Secret `SYNC_FORK_TOKEN`，并确保 `fork-sync-hub` 仓库有权访问该 Secret。
 
 Settings → Secrets and variables → Actions → New organization secret
 
@@ -50,6 +59,15 @@ git push
 
 - `fork_filter`：只同步名称匹配的 fork（如 `spring-ai`）
 - `sync_tags` / `sync_branches`：控制同步内容
+- `skip_workflow_tags_on_error`：临时跳过因 workflow 权限失败的 tag（根治方案仍是更换正确 PAT）
+
+## 故障排查
+
+| 错误 | 原因 | 解决 |
+|------|------|------|
+| `without workflows permission` | token 是 GitHub App 或缺少 workflow scope | 换 Classic PAT，勾选 `repo` + `workflow` |
+| `SYNC_FORK_TOKEN 未配置` | Secret 未设置或仓库无权访问 | 在 Organization 配置并授权 fork-sync-hub |
+| 分支同步成功但 tag 失败 | 仅 tag 含 workflow 文件变更 | 同上，必须 workflow 权限 |
 
 ### 启用中心化后
 

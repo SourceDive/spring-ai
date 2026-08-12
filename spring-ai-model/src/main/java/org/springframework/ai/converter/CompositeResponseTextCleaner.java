@@ -16,13 +16,12 @@
 
 package org.springframework.ai.converter;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * A composite {@link ResponseTextCleaner} that applies multiple cleaners in sequence.
@@ -37,6 +36,7 @@ public class CompositeResponseTextCleaner implements ResponseTextCleaner {
 
 	/**
 	 * Creates a composite cleaner with the given cleaners.
+	 *
 	 * @param cleaners the list of cleaners to apply in order
 	 */
 	public CompositeResponseTextCleaner(List<ResponseTextCleaner> cleaners) {
@@ -53,6 +53,7 @@ public class CompositeResponseTextCleaner implements ResponseTextCleaner {
 
 	/**
 	 * Creates a composite cleaner with the given cleaners.
+	 *
 	 * @param cleaners the cleaners to apply in order
 	 */
 	public CompositeResponseTextCleaner(ResponseTextCleaner... cleaners) {
@@ -70,6 +71,7 @@ public class CompositeResponseTextCleaner implements ResponseTextCleaner {
 
 	/**
 	 * Creates a builder for constructing a composite cleaner.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder() {
@@ -88,6 +90,7 @@ public class CompositeResponseTextCleaner implements ResponseTextCleaner {
 
 		/**
 		 * Add a cleaner to the pipeline.
+		 *
 		 * @param cleaner the cleaner to add
 		 * @return this builder
 		 */
@@ -99,6 +102,7 @@ public class CompositeResponseTextCleaner implements ResponseTextCleaner {
 
 		/**
 		 * Build the composite cleaner.
+		 *
 		 * @return a new composite cleaner instance
 		 */
 		public CompositeResponseTextCleaner build() {

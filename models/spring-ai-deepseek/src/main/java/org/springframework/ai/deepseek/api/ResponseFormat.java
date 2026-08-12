@@ -16,14 +16,13 @@
 
 package org.springframework.ai.deepseek.api;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.util.Objects;
 
 /**
  * An object specifying the format that the model must output. Setting to { "type":

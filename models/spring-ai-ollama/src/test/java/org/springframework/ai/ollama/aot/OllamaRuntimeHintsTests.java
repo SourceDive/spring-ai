@@ -16,16 +16,15 @@
 
 package org.springframework.ai.ollama.aot;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.ThinkOption;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.ai.aot.AiRuntimeHints.findJsonAnnotatedClassesInPackage;
@@ -73,7 +72,7 @@ class OllamaRuntimeHintsTests {
 
 		// Should not throw exception with null ClassLoader
 		org.assertj.core.api.Assertions.assertThatCode(() -> ollamaRuntimeHints.registerHints(runtimeHints, null))
-			.doesNotThrowAnyException();
+				.doesNotThrowAnyException();
 	}
 
 	@Test
@@ -177,8 +176,8 @@ class OllamaRuntimeHintsTests {
 
 		// Count classes related to embedding functionality
 		long embeddingClassCount = registeredTypes.stream()
-			.filter(typeRef -> typeRef.getName().toLowerCase().contains("embedding"))
-			.count();
+				.filter(typeRef -> typeRef.getName().toLowerCase().contains("embedding"))
+				.count();
 		assertThat(embeddingClassCount).isGreaterThan(0);
 	}
 
@@ -192,8 +191,8 @@ class OllamaRuntimeHintsTests {
 
 		// Should work with custom class loader
 		org.assertj.core.api.Assertions
-			.assertThatCode(() -> ollamaRuntimeHints.registerHints(runtimeHints, customClassLoader))
-			.doesNotThrowAnyException();
+				.assertThatCode(() -> ollamaRuntimeHints.registerHints(runtimeHints, customClassLoader))
+				.doesNotThrowAnyException();
 
 		// Verify hints are still registered properly
 		Set<TypeReference> registeredTypes = new HashSet<>();
@@ -232,9 +231,9 @@ class OllamaRuntimeHintsTests {
 		// Verify that reflection hints include constructor access for JSON
 		// deserialization
 		boolean hasConstructorHints = runtimeHints.reflection()
-			.typeHints()
-			.anyMatch(typeHint -> typeHint.constructors().findAny().isPresent() || typeHint.getMemberCategories()
-				.contains(org.springframework.aot.hint.MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
+				.typeHints()
+				.anyMatch(typeHint -> typeHint.constructors().findAny().isPresent() || typeHint.getMemberCategories()
+						.contains(org.springframework.aot.hint.MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
 
 		assertThat(hasConstructorHints).as("Should register constructor hints for JSON deserialization").isTrue();
 	}
@@ -250,8 +249,8 @@ class OllamaRuntimeHintsTests {
 
 		// Verify enum types are registered (critical for JSON deserialization)
 		boolean hasEnumTypes = registeredTypes.stream()
-			.anyMatch(tr -> tr.getName().contains("$") || tr.getName().toLowerCase().contains("role")
-					|| tr.getName().toLowerCase().contains("type"));
+				.anyMatch(tr -> tr.getName().contains("$") || tr.getName().toLowerCase().contains("role")
+						|| tr.getName().toLowerCase().contains("type"));
 
 		assertThat(hasEnumTypes).as("Enum types should be registered for native image compatibility").isTrue();
 	}
@@ -267,12 +266,12 @@ class OllamaRuntimeHintsTests {
 
 		// Verify response wrapper types are registered
 		assertThat(registeredTypes.stream().anyMatch(tr -> tr.getName().contains("Response")))
-			.as("Response types should be registered")
-			.isTrue();
+				.as("Response types should be registered")
+				.isTrue();
 
 		assertThat(registeredTypes.stream().anyMatch(tr -> tr.getName().contains("ChatResponse")))
-			.as("ChatResponse type should be registered")
-			.isTrue();
+				.as("ChatResponse type should be registered")
+				.isTrue();
 	}
 
 	@Test
@@ -289,18 +288,18 @@ class OllamaRuntimeHintsTests {
 
 		// Count tool-related classes
 		long toolClassCount = registeredTypes.stream()
-			.filter(typeRef -> typeRef.getName().toLowerCase().contains("tool"))
-			.count();
+				.filter(typeRef -> typeRef.getName().toLowerCase().contains("tool"))
+				.count();
 		assertThat(toolClassCount).isGreaterThan(0);
 	}
 
 	private static void assertThatAllMemberCategoriesAreRegistered(RuntimeHints runtimeHints, Class<?> type) {
 		Set<MemberCategory> memberCategories = runtimeHints.reflection()
-			.typeHints()
-			.filter(typeHint -> typeHint.getType().equals(TypeReference.of(type)))
-			.findFirst()
-			.orElseThrow()
-			.getMemberCategories();
+				.typeHints()
+				.filter(typeHint -> typeHint.getType().equals(TypeReference.of(type)))
+				.findFirst()
+				.orElseThrow()
+				.getMemberCategories();
 
 		assertThat(memberCategories.containsAll(Set.of(MemberCategory.values()))).isTrue();
 	}

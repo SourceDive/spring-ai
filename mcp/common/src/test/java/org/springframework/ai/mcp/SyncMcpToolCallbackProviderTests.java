@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
@@ -27,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -110,12 +110,12 @@ class SyncMcpToolCallbackProviderTests {
 		assertThat(toolCallbacks[1].getToolDefinition().name()).isEqualTo("alt_1_sameName");
 
 		SyncMcpToolCallbackProvider provider2 = SyncMcpToolCallbackProvider.builder()
-			.toolNamePrefixGenerator(McpToolNamePrefixGenerator.noPrefix())
-			.mcpClients(this.mcpClient)
-			.build();
+				.toolNamePrefixGenerator(McpToolNamePrefixGenerator.noPrefix())
+				.mcpClients(this.mcpClient)
+				.build();
 
 		assertThatThrownBy(() -> provider2.getToolCallbacks()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name");
+				.hasMessageContaining("Multiple tools with the same name");
 	}
 
 	@Test
@@ -147,8 +147,8 @@ class SyncMcpToolCallbackProviderTests {
 		when(mcpClient2.getClientCapabilities()).thenReturn(clientCapabilities2);
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.mcpClients(mcpClient1, mcpClient2)
-			.build();
+				.mcpClients(mcpClient1, mcpClient2)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -199,10 +199,10 @@ class SyncMcpToolCallbackProviderTests {
 		McpToolFilter rejectAllFilter = (client, tool) -> false;
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.toolFilter(rejectAllFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(this.mcpClient)
-			.build();
+				.toolFilter(rejectAllFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -233,10 +233,10 @@ class SyncMcpToolCallbackProviderTests {
 		McpToolFilter nameFilter = (client, tool) -> tool.name().contains("2") || tool.name().contains("3");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.toolFilter(nameFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(this.mcpClient)
-			.build();
+				.toolFilter(nameFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -274,13 +274,13 @@ class SyncMcpToolCallbackProviderTests {
 
 		// Create a filter that only accepts tools from client1
 		McpToolFilter clientFilter = (mcpConnectionInfo,
-				tool) -> mcpConnectionInfo.clientInfo().name().equals("testClient1");
+		                              tool) -> mcpConnectionInfo.clientInfo().name().equals("testClient1");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.toolFilter(clientFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(mcpClient1, mcpClient2)
-			.build();
+				.toolFilter(clientFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(mcpClient1, mcpClient2)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -308,14 +308,14 @@ class SyncMcpToolCallbackProviderTests {
 
 		// Create a filter that only accepts weather tools from the weather service
 		McpToolFilter complexFilter = (mcpConnectionInfo,
-				tool) -> mcpConnectionInfo.clientInfo().name().equals("weather-service")
-						&& tool.name().equals("weather");
+		                               tool) -> mcpConnectionInfo.clientInfo().name().equals("weather-service")
+				&& tool.name().equals("weather");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.toolFilter(complexFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(weatherClient)
-			.build();
+				.toolFilter(complexFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(weatherClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -351,9 +351,9 @@ class SyncMcpToolCallbackProviderTests {
 		when(mcpClient2.getClientCapabilities()).thenReturn(clientCapabilities2);
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(mcpClient1)
-			.addMcpClient(mcpClient2)
-			.build();
+				.addMcpClient(mcpClient1)
+				.addMcpClient(mcpClient2)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -410,9 +410,9 @@ class SyncMcpToolCallbackProviderTests {
 		ToolContextToMcpMetaConverter customConverter = ToolContextToMcpMetaConverter.defaultConverter();
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.toolContextToMcpMetaConverter(customConverter)
-			.build();
+				.mcpClients(this.mcpClient)
+				.toolContextToMcpMetaConverter(customConverter)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -434,8 +434,8 @@ class SyncMcpToolCallbackProviderTests {
 		when(this.mcpClient.listTools()).thenReturn(listToolsResult);
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.mcpClients(List.of(this.mcpClient))
-			.build();
+				.mcpClients(List.of(this.mcpClient))
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 

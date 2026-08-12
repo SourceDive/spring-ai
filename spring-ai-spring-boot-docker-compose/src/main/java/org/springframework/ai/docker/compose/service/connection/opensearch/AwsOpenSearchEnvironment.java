@@ -16,10 +16,10 @@
 
 package org.springframework.ai.docker.compose.service.connection.opensearch;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
 
 class AwsOpenSearchEnvironment {
 

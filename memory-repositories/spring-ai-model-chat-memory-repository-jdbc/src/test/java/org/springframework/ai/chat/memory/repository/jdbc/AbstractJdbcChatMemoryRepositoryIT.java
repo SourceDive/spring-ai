@@ -16,24 +16,11 @@
 
 package org.springframework.ai.chat.memory.repository.jdbc;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
@@ -41,6 +28,12 @@ import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+
+import javax.sql.DataSource;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,7 +53,7 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 	protected JdbcTemplate jdbcTemplate;
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM"})
 	void saveMessagesSingleMessage(String content, MessageType messageType) {
 		String conversationId = UUID.randomUUID().toString();
 		var message = switch (messageType) {
@@ -76,9 +69,9 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 
 		// Use dialect to get the appropriate SQL query
 		JdbcChatMemoryRepositoryDialect dialect = JdbcChatMemoryRepositoryDialect
-			.from(this.jdbcTemplate.getDataSource());
+				.from(this.jdbcTemplate.getDataSource());
 		String selectSql = dialect.getSelectMessagesSql()
-			.replace("content, type", "conversation_id, content, type, sequence_id");
+				.replace("content, type", "conversation_id, content, type, sequence_id");
 		var result = this.jdbcTemplate.queryForMap(selectSql, conversationId);
 
 		assertThat(result.size()).isEqualTo(5);
@@ -102,9 +95,9 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 
 		// Use dialect to get the appropriate SQL query
 		JdbcChatMemoryRepositoryDialect dialect = JdbcChatMemoryRepositoryDialect
-			.from(this.jdbcTemplate.getDataSource());
+				.from(this.jdbcTemplate.getDataSource());
 		String selectSql = dialect.getSelectMessagesSql()
-			.replace("content, type", "conversation_id, content, type, sequence_id");
+				.replace("content, type", "conversation_id, content, type, sequence_id");
 		var results = this.jdbcTemplate.queryForList(selectSql, conversationId);
 
 		assertThat(results).hasSize(messages.size());
@@ -144,9 +137,9 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 		// Read-back messages carry timestamp metadata, so compare content and type rather
 		// than full object equality.
 		assertThat(results).extracting(Message::getText)
-			.containsExactlyElementsOf(messages.stream().map(Message::getText).toList());
+				.containsExactlyElementsOf(messages.stream().map(Message::getText).toList());
 		assertThat(results).extracting(Message::getMessageType)
-			.containsExactlyElementsOf(messages.stream().map(Message::getMessageType).toList());
+				.containsExactlyElementsOf(messages.stream().map(Message::getMessageType).toList());
 	}
 
 	@Test
@@ -222,8 +215,8 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 		var user = new UserMessage("Hello");
 		var toolResponse = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "myTool", "result")))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "myTool", "result")))
+				.build();
 
 		this.chatMemoryRepository.saveAll(conversationId, List.of(user, toolResponse));
 
@@ -237,8 +230,8 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 		var user = new UserMessage("What is the weather?");
 		var toolCallAssistant = AssistantMessage.builder()
-			.toolCalls(List.of(new AssistantMessage.ToolCall("call1", "function", "getWeather", "{}")))
-			.build();
+				.toolCalls(List.of(new AssistantMessage.ToolCall("call1", "function", "getWeather", "{}")))
+				.build();
 		var plainAssistant = new AssistantMessage("It is sunny.");
 
 		this.chatMemoryRepository.saveAll(conversationId, List.of(user, toolCallAssistant, plainAssistant));
@@ -269,16 +262,16 @@ public abstract class AbstractJdbcChatMemoryRepositoryIT {
 		assertThat(afterSecondSave).hasSize(2);
 		// The first message keeps its original creation timestamp across the re-save.
 		assertThat(afterSecondSave.get(0).getMetadata().get(JdbcChatMemoryRepository.CONVERSATION_TS))
-			.isEqualTo(firstTimestamp);
+				.isEqualTo(firstTimestamp);
 		// The newly added message is assigned its own creation timestamp.
 		assertThat(afterSecondSave.get(1).getMetadata().get(JdbcChatMemoryRepository.CONVERSATION_TS))
-			.isInstanceOf(Instant.class);
+				.isInstanceOf(Instant.class);
 	}
 
 	/**
 	 * Base configuration for all integration tests.
 	 */
-	@ImportAutoConfiguration({ DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class })
+	@ImportAutoConfiguration({DataSourceAutoConfiguration.class, JdbcTemplateAutoConfiguration.class})
 	static class TestConfiguration {
 
 		@Bean

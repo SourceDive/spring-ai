@@ -16,18 +16,8 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.annotations;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.mcp.annotation.McpElicitation;
-import org.springframework.ai.mcp.annotation.McpLogging;
-import org.springframework.ai.mcp.annotation.McpProgress;
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
-import org.springframework.ai.mcp.annotation.McpSampling;
-import org.springframework.ai.mcp.annotation.McpToolListChanged;
+import org.springframework.ai.mcp.annotation.*;
 import org.springframework.ai.mcp.annotation.spring.ClientMcpAsyncHandlersRegistry;
 import org.springframework.ai.mcp.annotation.spring.ClientMcpSyncHandlersRegistry;
 import org.springframework.ai.mcp.annotation.spring.scan.AbstractAnnotatedMethodBeanFactoryInitializationAotProcessor;
@@ -43,6 +33,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportRuntimeHints;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * @author Christian Tzolov

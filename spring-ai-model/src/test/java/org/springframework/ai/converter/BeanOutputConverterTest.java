@@ -16,10 +16,6 @@
 
 package org.springframework.ai.converter;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -28,13 +24,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.ai.util.TextBlockAssertion;
+import org.springframework.core.ParameterizedTypeReference;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
-import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.ai.util.TextBlockAssertion;
-import org.springframework.core.ParameterizedTypeReference;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -116,7 +115,7 @@ class BeanOutputConverterTest {
 
 	}
 
-	@JsonPropertyOrder({ "string_property", "foo_property", "bar_property" })
+	@JsonPropertyOrder({"string_property", "foo_property", "bar_property"})
 	record TestClassWithJsonPropertyOrder(
 			@JsonProperty("string_property") @JsonPropertyDescription("string_property_description") String someString,
 
@@ -127,7 +126,7 @@ class BeanOutputConverterTest {
 
 	record TestClassWithToolParam(@ToolParam(required = true, description = "A required field") String requiredField,
 
-			@ToolParam(required = false, description = "An optional field") String optionalField) {
+	                              @ToolParam(required = false, description = "An optional field") String optionalField) {
 	}
 
 	record TestClassWithNullable(String requiredField, @Nullable String optionalField) {
@@ -204,7 +203,7 @@ class BeanOutputConverterTest {
 
 					});
 			List<TestClassWithJsonAnnotations> testClass = converter
-				.convert("[{ \"string_property\": \"some value\" }]");
+					.convert("[{ \"string_property\": \"some value\" }]");
 			assertThat(testClass).hasSize(1);
 			assertThat(testClass.get(0).getSomeString()).isEqualTo("some value");
 		}
@@ -344,25 +343,25 @@ class BeanOutputConverterTest {
 		void formatClassType() {
 			var converter = new BeanOutputConverter<>(TestClass.class);
 			TextBlockAssertion.assertThat(converter.getFormat())
-				.isEqualTo(
-						"""
-								Your response should be in JSON format.
-								Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
-								Do not include markdown code blocks in your response.
-								Remove the ```json markdown from the output.
-								Here is the JSON Schema instance your output must adhere to:
-								```{
-								  "$schema" : "https://json-schema.org/draft/2020-12/schema",
-								  "type" : "object",
-								  "properties" : {
-								    "someString" : {
-								      "type" : "string"
-								    }
-								  },
-								  "required" : [ "someString" ],
-								  "additionalProperties" : false
-								}```
-								""");
+					.isEqualTo(
+							"""
+									Your response should be in JSON format.
+									Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+									Do not include markdown code blocks in your response.
+									Remove the ```json markdown from the output.
+									Here is the JSON Schema instance your output must adhere to:
+									```{
+									  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+									  "type" : "object",
+									  "properties" : {
+									    "someString" : {
+									      "type" : "string"
+									    }
+									  },
+									  "required" : [ "someString" ],
+									  "additionalProperties" : false
+									}```
+									""");
 		}
 
 		@Test
@@ -371,25 +370,25 @@ class BeanOutputConverterTest {
 
 			});
 			TextBlockAssertion.assertThat(converter.getFormat())
-				.isEqualTo(
-						"""
-								Your response should be in JSON format.
-								Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
-								Do not include markdown code blocks in your response.
-								Remove the ```json markdown from the output.
-								Here is the JSON Schema instance your output must adhere to:
-								```{
-								  "$schema" : "https://json-schema.org/draft/2020-12/schema",
-								  "type" : "object",
-								  "properties" : {
-								    "someString" : {
-								      "type" : "string"
-								    }
-								  },
-								  "required" : [ "someString" ],
-								  "additionalProperties" : false
-								}```
-								""");
+					.isEqualTo(
+							"""
+									Your response should be in JSON format.
+									Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+									Do not include markdown code blocks in your response.
+									Remove the ```json markdown from the output.
+									Here is the JSON Schema instance your output must adhere to:
+									```{
+									  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+									  "type" : "object",
+									  "properties" : {
+									    "someString" : {
+									      "type" : "string"
+									    }
+									  },
+									  "required" : [ "someString" ],
+									  "additionalProperties" : false
+									}```
+									""");
 		}
 
 		@Test
@@ -398,28 +397,28 @@ class BeanOutputConverterTest {
 
 			});
 			TextBlockAssertion.assertThat(converter.getFormat())
-				.isEqualTo(
-						"""
-								Your response should be in JSON format.
-								Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
-								Do not include markdown code blocks in your response.
-								Remove the ```json markdown from the output.
-								Here is the JSON Schema instance your output must adhere to:
-								```{
-								  "$schema" : "https://json-schema.org/draft/2020-12/schema",
-								  "type" : "array",
-								  "items" : {
-								    "type" : "object",
-								    "properties" : {
-								      "someString" : {
-								        "type" : "string"
-								      }
-								    },
-								    "required" : [ "someString" ],
-								    "additionalProperties" : false
-								  }
-								}```
-								""");
+					.isEqualTo(
+							"""
+									Your response should be in JSON format.
+									Do not include any explanations, only provide a RFC8259 compliant JSON response following this format without deviation.
+									Do not include markdown code blocks in your response.
+									Remove the ```json markdown from the output.
+									Here is the JSON Schema instance your output must adhere to:
+									```{
+									  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+									  "type" : "array",
+									  "items" : {
+									    "type" : "object",
+									    "properties" : {
+									      "someString" : {
+									        "type" : "string"
+									      }
+									    },
+									    "required" : [ "someString" ],
+									    "additionalProperties" : false
+									  }
+									}```
+									""");
 		}
 
 		@Test
@@ -471,9 +470,9 @@ class BeanOutputConverterTest {
 			assertThat(schemaNode.get("required").toString()).doesNotContain("optionalField");
 
 			assertThat(schemaNode.get("properties").get("requiredField").get("description").asText())
-				.isEqualTo("A required field");
+					.isEqualTo("A required field");
 			assertThat(schemaNode.get("properties").get("optionalField").get("description").asText())
-				.isEqualTo("An optional field");
+					.isEqualTo("An optional field");
 		}
 
 		@Test

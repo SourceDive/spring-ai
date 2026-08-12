@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChatMemoryAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ChatMemoryAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ChatMemoryAutoConfiguration.class));
 
 	@Test
 	void defaultConfiguration() {

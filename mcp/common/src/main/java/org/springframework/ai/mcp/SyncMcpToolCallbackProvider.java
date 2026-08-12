@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import io.modelcontextprotocol.client.McpSyncClient;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.support.ToolUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provides Spring AI tool callbacks by discovering tools from MCP servers.
@@ -58,6 +57,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 	/**
 	 * Creates a provider with MCP clients and tool filter.
+	 *
 	 * @param mcpClients MCP clients for tool discovery
 	 * @param toolFilter filter for discovered tools
 	 * @deprecated use {@link #builder()} instead
@@ -70,13 +70,14 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 	/**
 	 * Creates a provider with all configuration options.
-	 * @param mcpClients MCP clients for tool discovery
-	 * @param toolNamePrefixGenerator generates prefixes for tool names
-	 * @param toolFilter filter for discovered tools
+	 *
+	 * @param mcpClients                    MCP clients for tool discovery
+	 * @param toolNamePrefixGenerator       generates prefixes for tool names
+	 * @param toolFilter                    filter for discovered tools
 	 * @param toolContextToMcpMetaConverter converts tool context to MCP metadata
 	 */
 	private SyncMcpToolCallbackProvider(McpToolFilter toolFilter, McpToolNamePrefixGenerator toolNamePrefixGenerator,
-			List<McpSyncClient> mcpClients, ToolContextToMcpMetaConverter toolContextToMcpMetaConverter) {
+	                                    List<McpSyncClient> mcpClients, ToolContextToMcpMetaConverter toolContextToMcpMetaConverter) {
 		Assert.notNull(mcpClients, "MCP clients must not be null");
 		Assert.notNull(toolFilter, "Tool filter must not be null");
 		Assert.notNull(toolNamePrefixGenerator, "Tool name prefix generator must not be null");
@@ -89,6 +90,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 	/**
 	 * Creates a provider with MCP clients using default filter.
+	 *
 	 * @param mcpClients MCP clients for tool discovery
 	 * @deprecated use {@link #builder()} instead
 	 */
@@ -99,20 +101,22 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 	/**
 	 * Creates a provider with MCP clients, filter, and prefix generator.
-	 * @param mcpClients MCP clients for tool discovery
+	 *
+	 * @param mcpClients              MCP clients for tool discovery
 	 * @param toolNamePrefixGenerator generates prefixes for tool names
-	 * @param toolFilter filter for discovered tools
+	 * @param toolFilter              filter for discovered tools
 	 * @deprecated use {@link #builder()} instead
 	 */
 	@Deprecated
 	public SyncMcpToolCallbackProvider(McpToolFilter toolFilter, McpToolNamePrefixGenerator toolNamePrefixGenerator,
-			McpSyncClient... mcpClients) {
+	                                   McpSyncClient... mcpClients) {
 		this(toolFilter, toolNamePrefixGenerator, List.of(mcpClients),
 				ToolContextToMcpMetaConverter.defaultConverter());
 	}
 
 	/**
 	 * Creates a provider with MCP clients using default filter.
+	 *
 	 * @param mcpClients MCP clients for tool discovery
 	 * @deprecated use {@link #builder()} instead
 	 */
@@ -129,24 +133,23 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 			try {
 				if (this.invalidateCache) {
 					this.cachedToolCallbacks = this.mcpClients.stream()
-						.flatMap(mcpClient -> mcpClient.listTools()
-							.tools()
-							.stream()
-							.filter(tool -> this.toolFilter.test(connectionInfo(mcpClient), tool))
-							.<ToolCallback>map(tool -> SyncMcpToolCallback.builder()
-								.mcpClient(mcpClient)
-								.tool(tool)
-								.prefixedToolName(
-										this.toolNamePrefixGenerator.prefixedToolName(connectionInfo(mcpClient), tool))
-								.toolContextToMcpMetaConverter(this.toolContextToMcpMetaConverter)
-								.build()))
-						.toList();
+							.flatMap(mcpClient -> mcpClient.listTools()
+									.tools()
+									.stream()
+									.filter(tool -> this.toolFilter.test(connectionInfo(mcpClient), tool))
+									.<ToolCallback>map(tool -> SyncMcpToolCallback.builder()
+											.mcpClient(mcpClient)
+											.tool(tool)
+											.prefixedToolName(
+													this.toolNamePrefixGenerator.prefixedToolName(connectionInfo(mcpClient), tool))
+											.toolContextToMcpMetaConverter(this.toolContextToMcpMetaConverter)
+											.build()))
+							.toList();
 
 					this.validateToolCallbacks(this.cachedToolCallbacks);
 					this.invalidateCache = false;
 				}
-			}
-			finally {
+			} finally {
 				this.lock.unlock();
 			}
 		}
@@ -168,14 +171,15 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 	private static McpConnectionInfo connectionInfo(McpSyncClient mcpClient) {
 		return McpConnectionInfo.builder()
-			.clientCapabilities(mcpClient.getClientCapabilities())
-			.clientInfo(mcpClient.getClientInfo())
-			.initializeResult(mcpClient.getCurrentInitializationResult())
-			.build();
+				.clientCapabilities(mcpClient.getClientCapabilities())
+				.clientInfo(mcpClient.getClientInfo())
+				.initializeResult(mcpClient.getCurrentInitializationResult())
+				.build();
 	}
 
 	/**
 	 * Validates tool callbacks for duplicate names.
+	 *
 	 * @param toolCallbacks callbacks to validate
 	 * @throws IllegalStateException if duplicate names exist
 	 */
@@ -192,6 +196,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 	 * <p>
 	 * Discovers and consolidates tools from all provided clients into a single list,
 	 * ensuring no naming conflicts.
+	 *
 	 * @param mcpClients MCP clients to discover tools from
 	 * @return consolidated list of tool callbacks
 	 */
@@ -205,6 +210,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 	/**
 	 * Creates a builder for constructing provider instances.
+	 *
 	 * @return new builder
 	 */
 	public static Builder builder() {
@@ -223,10 +229,11 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 		private McpToolNamePrefixGenerator toolNamePrefixGenerator = new DefaultMcpToolNamePrefixGenerator();
 
 		private ToolContextToMcpMetaConverter toolContextToMcpMetaConverter = ToolContextToMcpMetaConverter
-			.defaultConverter();
+				.defaultConverter();
 
 		/**
 		 * Sets MCP clients for tool discovery (replaces existing).
+		 *
 		 * @param mcpClients list of MCP clients
 		 * @return this builder
 		 */
@@ -238,6 +245,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 		/**
 		 * Sets MCP clients for tool discovery (replaces existing).
+		 *
 		 * @param mcpClients MCP clients array
 		 * @return this builder
 		 */
@@ -249,6 +257,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 		/**
 		 * Adds an MCP client to the existing list.
+		 *
 		 * @param mcpClient MCP client to add
 		 * @return this builder
 		 */
@@ -260,6 +269,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 		/**
 		 * Sets tool filter. Defaults to accepting all tools.
+		 *
 		 * @param toolFilter filter for discovered tools
 		 * @return this builder
 		 */
@@ -271,6 +281,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 		/**
 		 * Sets tool name prefix generator.
+		 *
 		 * @param toolNamePrefixGenerator generates prefixes for tool names
 		 * @return this builder
 		 */
@@ -283,6 +294,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 		/**
 		 * Sets tool context to MCP metadata converter. Defaults to
 		 * {@link ToolContextToMcpMetaConverter#defaultConverter()}.
+		 *
 		 * @param toolContextToMcpMetaConverter converts tool context to MCP metadata
 		 * @return this builder
 		 */
@@ -294,6 +306,7 @@ public class SyncMcpToolCallbackProvider implements ToolCallbackProvider, Applic
 
 		/**
 		 * Builds the provider with configured parameters.
+		 *
 		 * @return configured {@code SyncMcpToolCallbackProvider}
 		 */
 		public SyncMcpToolCallbackProvider build() {

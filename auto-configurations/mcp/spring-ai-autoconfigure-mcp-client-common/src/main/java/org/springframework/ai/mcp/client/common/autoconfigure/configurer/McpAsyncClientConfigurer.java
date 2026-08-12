@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.configurer;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpClient;
-
 import org.springframework.ai.mcp.customizer.McpClientCustomizer;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 public class McpAsyncClientConfigurer {
 

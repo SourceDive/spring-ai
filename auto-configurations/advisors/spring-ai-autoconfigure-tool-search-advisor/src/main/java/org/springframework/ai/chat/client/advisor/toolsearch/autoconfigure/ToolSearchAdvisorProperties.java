@@ -16,15 +16,14 @@
 
 package org.springframework.ai.chat.client.advisor.toolsearch.autoconfigure;
 
-import java.time.Duration;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.tool.toolsearch.ToolIndex;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
+
+import java.time.Duration;
 
 /**
  * Configuration properties for {@link ToolSearchAdvisorAutoConfiguration}.
@@ -65,7 +64,8 @@ public class ToolSearchAdvisorProperties {
 	 * Maximum number of tool references returned per tool-search call. When {@code null},
 	 * the {@code ToolSearchTool} uses its own built-in default.
 	 */
-	@Nullable private Integer maxResults;
+	@Nullable
+	private Integer maxResults;
 
 	/**
 	 * Key name in the advisor context map that carries the conversation/session ID. Must
@@ -86,7 +86,8 @@ public class ToolSearchAdvisorProperties {
 	 * the model on how to use the tool-search tool. When {@code null} (default), the
 	 * built-in {@code classpath:/DEFAULT_SYSTEM_PROMPT_SUFFIX.md} resource is loaded.
 	 */
-	@Nullable private String systemMessageSuffix;
+	@Nullable
+	private String systemMessageSuffix;
 
 	/**
 	 * Order of the advisor in the advisor chain. Controls which advisors participate in
@@ -180,7 +181,8 @@ public class ToolSearchAdvisorProperties {
 		 * so that sessions idle longer than this duration are also evicted. When
 		 * {@code null} (default), only LRU eviction applies.
 		 */
-		@Nullable private Duration ttl;
+		@Nullable
+		private Duration ttl;
 
 		public int getLruMaxSessions() {
 			return this.lruMaxSessions;

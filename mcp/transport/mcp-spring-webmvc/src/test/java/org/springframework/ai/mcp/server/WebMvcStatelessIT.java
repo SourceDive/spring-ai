@@ -16,9 +16,6 @@
 
 package org.springframework.ai.mcp.server;
 
-import java.time.Duration;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.AbstractStatelessIntegrationTests;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
@@ -31,8 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.provider.Arguments;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebClientStreamableHttpTransport;
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcStatelessServerTransport;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +36,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+import reactor.core.scheduler.Schedulers;
+
+import java.time.Duration;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,16 +70,16 @@ class WebMvcStatelessIT extends AbstractStatelessIntegrationTests {
 	protected void prepareClients(int port, String mcpEndpoint) {
 
 		clientBuilders.put("httpclient", McpClient
-			.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port).endpoint(mcpEndpoint).build())
-			.requestTimeout(Duration.ofHours(10)));
+				.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port).endpoint(mcpEndpoint).build())
+				.requestTimeout(Duration.ofHours(10)));
 
 		clientBuilders.put("webflux",
 				McpClient
-					.sync(WebClientStreamableHttpTransport
-						.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
-						.endpoint(mcpEndpoint)
-						.build())
-					.requestTimeout(Duration.ofHours(10)));
+						.sync(WebClientStreamableHttpTransport
+								.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
+								.endpoint(mcpEndpoint)
+								.build())
+						.requestTimeout(Duration.ofHours(10)));
 	}
 
 	@BeforeEach
@@ -91,8 +90,7 @@ class WebMvcStatelessIT extends AbstractStatelessIntegrationTests {
 		try {
 			this.tomcatServer.tomcat().start();
 			assertThat(this.tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
@@ -118,8 +116,7 @@ class WebMvcStatelessIT extends AbstractStatelessIntegrationTests {
 			try {
 				this.tomcatServer.tomcat().stop();
 				this.tomcatServer.tomcat().destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}

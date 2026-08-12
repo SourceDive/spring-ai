@@ -47,11 +47,11 @@ public class SearchRequestTests {
 	@Test
 	public void createFrom() {
 		var originalRequest = SearchRequest.builder()
-			.query("New Query")
-			.topK(696)
-			.similarityThreshold(0.678)
-			.filterExpression("country == 'NL'")
-			.build();
+				.query("New Query")
+				.topK(696)
+				.similarityThreshold(0.678)
+				.filterExpression("country == 'NL'")
+				.build();
 
 		var newRequest = SearchRequest.from(originalRequest).build();
 
@@ -80,12 +80,12 @@ public class SearchRequestTests {
 		assertThat(request1.getSimilarityThreshold()).isEqualTo(0.9);
 
 		assertThatThrownBy(() -> SearchRequest.from(request).similarityThreshold(-1))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Similarity threshold must be in [0,1] range.");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Similarity threshold must be in [0,1] range.");
 
 		assertThatThrownBy(() -> SearchRequest.from(request).similarityThreshold(1.1))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Similarity threshold must be in [0,1] range.");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Similarity threshold must be in [0,1] range.");
 
 	}
 
@@ -98,7 +98,7 @@ public class SearchRequestTests {
 		assertThat(request1.getTopK()).isEqualTo(89);
 
 		assertThatThrownBy(() -> SearchRequest.from(request).topK(-1)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("TopK should be positive.");
+				.hasMessageContaining("TopK should be positive.");
 
 	}
 
@@ -117,8 +117,8 @@ public class SearchRequestTests {
 		assertThat(request1.hasFilterExpression()).isTrue();
 
 		var request2 = SearchRequest.from(request)
-			.filterExpression(new FilterExpressionBuilder().eq("country", "NL").build())
-			.build();
+				.filterExpression(new FilterExpressionBuilder().eq("country", "NL").build())
+				.build();
 
 		assertThat(request2.getFilterExpression()).isEqualTo(
 				new Filter.Expression(Filter.ExpressionType.EQ, new Filter.Key("country"), new Filter.Value("NL")));
@@ -133,8 +133,8 @@ public class SearchRequestTests {
 		assertThat(request4.hasFilterExpression()).isFalse();
 
 		assertThatThrownBy(() -> SearchRequest.from(request).filterExpression("FooBar"))
-			.isInstanceOf(FilterExpressionParseException.class)
-			.hasMessageContaining("Error: no viable alternative at input 'FooBar'");
+				.isInstanceOf(FilterExpressionParseException.class)
+				.hasMessageContaining("Error: no viable alternative at input 'FooBar'");
 
 	}
 

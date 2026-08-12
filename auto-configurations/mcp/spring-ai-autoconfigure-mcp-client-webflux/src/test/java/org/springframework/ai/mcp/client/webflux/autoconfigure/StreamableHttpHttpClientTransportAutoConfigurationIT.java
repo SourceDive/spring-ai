@@ -16,21 +16,20 @@
 
 package org.springframework.ai.mcp.client.webflux.autoconfigure;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.McpClientAutoConfiguration;
 import org.springframework.ai.mcp.client.common.autoconfigure.annotations.McpClientAnnotationScannerAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,20 +37,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StreamableHttpHttpClientTransportAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mcp.client.initialized=false",
-				"spring.ai.mcp.client.streamable-http.connections.server1.url=" + host)
-		.withConfiguration(AutoConfigurations.of(McpClientAutoConfiguration.class,
-				McpClientAnnotationScannerAutoConfiguration.class,
-				StreamableHttpWebFluxTransportAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mcp.client.initialized=false",
+					"spring.ai.mcp.client.streamable-http.connections.server1.url=" + host)
+			.withConfiguration(AutoConfigurations.of(McpClientAutoConfiguration.class,
+					McpClientAnnotationScannerAutoConfiguration.class,
+					StreamableHttpWebFluxTransportAutoConfiguration.class));
 
 	static String host = "http://localhost:3001";
 
 	// Uses the https://github.com/tzolov/mcp-everything-server-docker-image
 	@SuppressWarnings("resource")
 	static GenericContainer<?> container = new GenericContainer<>("docker.io/tzolov/mcp-everything-server:v2")
-		.withCommand("node dist/index.js streamableHttp")
-		.withExposedPorts(3001)
-		.waitingFor(Wait.forHttp("/").forStatusCode(404));
+			.withCommand("node dist/index.js streamableHttp")
+			.withExposedPorts(3001)
+			.waitingFor(Wait.forHttp("/").forStatusCode(404));
 
 	@BeforeAll
 	static void setUp() {

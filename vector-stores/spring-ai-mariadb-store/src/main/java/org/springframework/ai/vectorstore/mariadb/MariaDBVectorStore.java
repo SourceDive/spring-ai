@@ -16,20 +16,9 @@
 
 package org.springframework.ai.vectorstore.mariadb;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingOptions;
@@ -48,6 +37,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * MariaDB-based vector store implementation using MariaDB's vector search capabilities.
@@ -197,6 +192,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 	/**
 	 * Protected constructor for creating a MariaDBVectorStore instance using the builder
 	 * pattern.
+	 *
 	 * @param builder the {@link MariaDBBuilder} containing all configuration settings
 	 * @throws IllegalArgumentException if required parameters are missing or invalid
 	 * @see MariaDBBuilder
@@ -239,6 +235,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 	/**
 	 * Creates a new MariaDBBuilder instance. This is the recommended way to instantiate a
 	 * MariaDBVectorStore.
+	 *
 	 * @return a new MariaDBBuilder instance
 	 */
 	public static MariaDBBuilder builder(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
@@ -268,11 +265,10 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 				mariaDBDocuments.add(new MariaDBDocument(document.getId(), document.getText(), document.getMetadata(),
 						embeddings.get(i)));
 			}
-		}
-		else {
+		} else {
 			for (Document document : documents) {
 				mariaDBDocuments
-					.add(new MariaDBDocument(document.getId(), document.getText(), document.getMetadata(), null));
+						.add(new MariaDBDocument(document.getId(), document.getText(), document.getMetadata(), null));
 			}
 		}
 
@@ -336,8 +332,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 			}
 
 			this.jdbcTemplate.update(sql);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete documents by filter: " + e.getMessage(), e);
 			}
@@ -410,14 +405,14 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 		}
 
 		this.jdbcTemplate.execute(String.format("""
-				CREATE TABLE IF NOT EXISTS %s (
-					%s UUID NOT NULL DEFAULT uuid() PRIMARY KEY,
-					%s TEXT,
-					%s JSON,
-					%s VECTOR(%d) NOT NULL,
-					VECTOR INDEX %s_idx (%s)
-				) ENGINE=InnoDB
-				""", this.getFullyQualifiedTableName(), this.idFieldName, this.contentFieldName, this.metadataFieldName,
+						CREATE TABLE IF NOT EXISTS %s (
+							%s UUID NOT NULL DEFAULT uuid() PRIMARY KEY,
+							%s TEXT,
+							%s JSON,
+							%s VECTOR(%d) NOT NULL,
+							VECTOR INDEX %s_idx (%s)
+						) ENGINE=InnoDB
+						""", this.getFullyQualifiedTableName(), this.idFieldName, this.contentFieldName, this.metadataFieldName,
 				this.embeddingFieldName, this.embeddingDimensions(),
 				(this.vectorTableName + "_" + this.embeddingFieldName).replaceAll("[^\\n\\r\\t\\p{Print}]", ""),
 				this.embeddingFieldName));
@@ -441,8 +436,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 			if (embeddingDimensions > 0) {
 				return embeddingDimensions;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.warn("Failed to obtain the embedding dimensions from the embedding model and fall backs to"
 					+ " default:" + OPENAI_EMBEDDING_DIMENSION_SIZE, e);
 		}
@@ -453,10 +447,10 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		VectorStoreObservationContext.Builder builder = VectorStoreObservationContext
-			.builder(VectorStoreProvider.MARIADB.value(), operationName)
-			.collectionName(this.vectorTableName)
-			.dimensions(this.embeddingDimensions())
-			.similarityMetric(getSimilarityMetric());
+				.builder(VectorStoreProvider.MARIADB.value(), operationName)
+				.collectionName(this.vectorTableName)
+				.dimensions(this.embeddingDimensions())
+				.similarityMetric(getSimilarityMetric());
 		if (this.schemaName != null) {
 			builder.namespace(this.schemaName);
 		}
@@ -467,8 +461,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 		VectorStoreSimilarityMetric metric = SIMILARITY_TYPE_MAPPING.get(this.distanceType);
 		if (metric != null) {
 			return metric.value();
-		}
-		else {
+		} else {
 			return this.getDistanceType().name();
 		}
 	}
@@ -554,6 +547,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Creates a new builder instance with the required JDBC template.
+		 *
 		 * @param jdbcTemplate the JDBC template for database operations
 		 * @throws IllegalArgumentException if jdbcTemplate is null
 		 */
@@ -565,6 +559,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the schema name for the vector store table.
+		 *
 		 * @param schemaName the database schema name (can be null for default schema)
 		 * @return this builder instance
 		 */
@@ -575,8 +570,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the vector store table name.
+		 *
 		 * @param vectorTableName the name for the vector store table (defaults to
-		 * {@value DEFAULT_TABLE_NAME})
+		 *                        {@value DEFAULT_TABLE_NAME})
 		 * @return this builder instance
 		 */
 		public MariaDBBuilder vectorTableName(String vectorTableName) {
@@ -586,6 +582,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures whether schema validation should be performed.
+		 *
 		 * @param schemaValidation true to enable schema validation, false to disable
 		 * @return this builder instance
 		 */
@@ -596,6 +593,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the dimension size of the embedding vectors.
+		 *
 		 * @param dimensions the dimension of the embeddings
 		 * @return this builder instance
 		 */
@@ -606,6 +604,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the distance type used for similarity calculations.
+		 *
 		 * @param distanceType the distance type to use
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if distanceType is null
@@ -618,8 +617,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures whether to remove any existing vector store table.
+		 *
 		 * @param removeExistingVectorStoreTable true to remove existing table, false to
-		 * keep it
+		 *                                       keep it
 		 * @return this builder instance
 		 */
 		public MariaDBBuilder removeExistingVectorStoreTable(boolean removeExistingVectorStoreTable) {
@@ -629,6 +629,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures whether to initialize the database schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return this builder instance
 		 */
@@ -639,8 +640,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the maximum batch size for document operations.
+		 *
 		 * @param maxDocumentBatchSize the maximum number of documents to process in a
-		 * batch
+		 *                             batch
 		 * @return this builder instance
 		 */
 		public MariaDBBuilder maxDocumentBatchSize(int maxDocumentBatchSize) {
@@ -651,8 +653,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the name of the content field in the database.
+		 *
 		 * @param name the field name for document content (defaults to
-		 * {@value DEFAULT_COLUMN_CONTENT})
+		 *             {@value DEFAULT_COLUMN_CONTENT})
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if name is null or empty
 		 */
@@ -664,8 +667,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the name of the embedding field in the database.
+		 *
 		 * @param name the field name for embeddings (defaults to
-		 * {@value DEFAULT_COLUMN_EMBEDDING})
+		 *             {@value DEFAULT_COLUMN_EMBEDDING})
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if name is null or empty
 		 */
@@ -677,8 +681,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the name of the ID field in the database.
+		 *
 		 * @param name the field name for document IDs (defaults to
-		 * {@value DEFAULT_COLUMN_ID})
+		 *             {@value DEFAULT_COLUMN_ID})
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if name is null or empty
 		 */
@@ -690,8 +695,9 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Configures the name of the metadata field in the database.
+		 *
 		 * @param name the field name for document metadata (defaults to
-		 * {@value DEFAULT_COLUMN_METADATA})
+		 *             {@value DEFAULT_COLUMN_METADATA})
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if name is null or empty
 		 */
@@ -704,6 +710,7 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 		/**
 		 * Builds and returns a new MariaDBVectorStore instance with the configured
 		 * settings.
+		 *
 		 * @return a new MariaDBVectorStore instance
 		 * @throws IllegalStateException if the builder configuration is invalid
 		 */
@@ -717,13 +724,13 @@ public class MariaDBVectorStore extends AbstractObservationVectorStore implement
 	/**
 	 * The representation of {@link Document} along with its embedding.
 	 *
-	 * @param id The id of the document
-	 * @param content The content of the document
-	 * @param metadata The metadata of the document
+	 * @param id        The id of the document
+	 * @param content   The content of the document
+	 * @param metadata  The metadata of the document
 	 * @param embedding The vectors representing the content of the document
 	 */
 	public record MariaDBDocument(String id, @Nullable String content, Map<String, Object> metadata,
-			float @Nullable [] embedding) {
+	                              float @Nullable [] embedding) {
 	}
 
 }

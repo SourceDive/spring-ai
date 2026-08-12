@@ -17,16 +17,10 @@
 package org.springframework.ai.metadata;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.metadata.Usage;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit Tests for {@link Usage}.

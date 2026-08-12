@@ -16,12 +16,11 @@
 
 package org.springframework.ai.vectorstore.gemfire;
 
-import reactor.core.publisher.Mono;
-
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
+import reactor.core.publisher.Mono;
 
 public class BearerTokenAuthenticationFilterFunction implements ExchangeFilterFunction {
 
@@ -34,8 +33,8 @@ public class BearerTokenAuthenticationFilterFunction implements ExchangeFilterFu
 	@Override
 	public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
 		ClientRequest filteredRequest = ClientRequest.from(request)
-			.headers(headers -> headers.setBearerAuth(this.token))
-			.build();
+				.headers(headers -> headers.setBearerAuth(this.token))
+				.build();
 		return next.exchange(filteredRequest);
 	}
 

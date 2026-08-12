@@ -16,15 +16,6 @@
 
 package org.springframework.ai.chat.cache.semantic;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.redis.testcontainers.RedisStackContainer;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistry;
@@ -32,10 +23,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -54,6 +41,18 @@ import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfigurat
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,7 +60,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Consolidated integration test for Redis-based semantic caching advisor. This test
  * combines the best elements from multiple test classes to provide comprehensive coverage
  * of semantic cache functionality.
- *
+ * <p>
  * Tests include: - Basic caching and retrieval - Similarity threshold behavior - TTL
  * (Time-To-Live) support - Cache isolation using namespaces - Redis vector search
  * behavior (KNN vs VECTOR_RANGE) - Automatic caching through advisor pattern
@@ -77,7 +76,7 @@ class SemanticCacheAdvisorIT {
 
 	@Container
 	static RedisStackContainer redisContainer = new RedisStackContainer("redis/redis-stack:latest")
-		.withExposedPorts(6379);
+			.withExposedPorts(6379);
 
 	@Autowired
 	OpenAiChatModel openAiChatModel;
@@ -94,10 +93,10 @@ class SemanticCacheAdvisorIT {
 
 	// ApplicationContextRunner for better test isolation and configuration testing
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
-				"spring.data.redis.port=" + redisContainer.getFirstMappedPort());
+			.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
+					"spring.data.redis.port=" + redisContainer.getFirstMappedPort());
 
 	@BeforeEach
 	void setUp() {
@@ -117,11 +116,11 @@ class SemanticCacheAdvisorIT {
 
 		// First query - should not be cached yet
 		ChatResponse londonResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(weatherQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(weatherQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(londonResponse).isNotNull();
 		String londonResponseText = londonResponse.getResult().getOutput().getText();
@@ -133,11 +132,11 @@ class SemanticCacheAdvisorIT {
 
 		// Same query - should use the cache
 		ChatResponse secondLondonResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(weatherQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(weatherQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(secondLondonResponse.getResult().getOutput().getText()).isEqualTo(londonResponseText);
 	}
@@ -152,14 +151,14 @@ class SemanticCacheAdvisorIT {
 
 		// First streaming query - should not be cached yet
 		ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(streamQuestion)
-			.advisors(this.cacheAdvisor)
-			.stream()
-			.chatResponse()
-			.doOnNext(response -> chunkCount.incrementAndGet())
-			.doOnComplete(streamComplete::countDown)
-			.subscribe();
+				.build()
+				.prompt(streamQuestion)
+				.advisors(this.cacheAdvisor)
+				.stream()
+				.chatResponse()
+				.doOnNext(response -> chunkCount.incrementAndGet())
+				.doOnComplete(streamComplete::countDown)
+				.subscribe();
 
 		// Wait for stream to complete
 		boolean completed = streamComplete.await(30, TimeUnit.SECONDS);
@@ -168,8 +167,8 @@ class SemanticCacheAdvisorIT {
 		// Verify we received multiple chunks (true streaming behavior)
 		// If collectList() was used, we would get all content in a single chunk
 		assertThat(chunkCount.get())
-			.withFailMessage("Expected multiple chunks for true streaming, but got %d", chunkCount.get())
-			.isGreaterThan(1);
+				.withFailMessage("Expected multiple chunks for true streaming, but got %d", chunkCount.get())
+				.isGreaterThan(1);
 
 		// Verify the response was cached after streaming completed
 		// Note: No sleep needed - the aggregator's doOnComplete (which caches) fires
@@ -190,22 +189,22 @@ class SemanticCacheAdvisorIT {
 		CountDownLatch cacheStreamComplete = new CountDownLatch(1);
 
 		ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(streamQuestion)
-			.advisors(this.cacheAdvisor)
-			.stream()
-			.chatResponse()
-			.doOnNext(response -> {
-				cacheHitChunkCount.incrementAndGet();
-				if (response.getResult() != null) {
-					String text = response.getResult().getOutput().getText();
-					if (text != null) {
-						cacheHitResponse.append(text);
+				.build()
+				.prompt(streamQuestion)
+				.advisors(this.cacheAdvisor)
+				.stream()
+				.chatResponse()
+				.doOnNext(response -> {
+					cacheHitChunkCount.incrementAndGet();
+					if (response.getResult() != null) {
+						String text = response.getResult().getOutput().getText();
+						if (text != null) {
+							cacheHitResponse.append(text);
+						}
 					}
-				}
-			})
-			.doOnComplete(cacheStreamComplete::countDown)
-			.subscribe();
+				})
+				.doOnComplete(cacheStreamComplete::countDown)
+				.subscribe();
 
 		boolean cacheCompleted = cacheStreamComplete.await(5, TimeUnit.SECONDS);
 		assertThat(cacheCompleted).isTrue();
@@ -213,13 +212,13 @@ class SemanticCacheAdvisorIT {
 		// VERIFY CACHE HIT: Cache returns Flux.just(cachedResponse) = single emission
 		// LLM streaming returns many chunks, so if we get only 1, it's from cache
 		assertThat(cacheHitChunkCount.get())
-			.withFailMessage("Cache hit should return single chunk (Flux.just), but got %d chunks",
-					cacheHitChunkCount.get())
-			.isEqualTo(1);
+				.withFailMessage("Cache hit should return single chunk (Flux.just), but got %d chunks",
+						cacheHitChunkCount.get())
+				.isEqualTo(1);
 
 		// VERIFY RESPONSE IDENTITY: Cached response should match what we stored
 		assertThat(cacheHitResponse.toString()).withFailMessage("Cache hit response should match the cached content")
-			.isEqualTo(cachedText);
+				.isEqualTo(cachedText);
 	}
 
 	@Test
@@ -228,21 +227,21 @@ class SemanticCacheAdvisorIT {
 
 		// Cache the original response
 		ChatResponse franceResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(franceQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(franceQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		// Test with similar query using default threshold
 		String similarQuestion = "Tell me the capital city of France?";
 
 		ChatResponse similarResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(similarQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(similarQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		// With default threshold, similar queries might hit cache
 		// We just verify the content is correct
@@ -250,31 +249,31 @@ class SemanticCacheAdvisorIT {
 
 		// Test with stricter threshold
 		RedisClient jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 		SemanticCache strictCache = DefaultSemanticCache.builder()
-			.embeddingModel(this.embeddingModel)
-			.jedisClient(jedisClient)
-			.distanceThreshold(0.2) // Very strict
-			.build();
+				.embeddingModel(this.embeddingModel)
+				.jedisClient(jedisClient)
+				.distanceThreshold(0.2) // Very strict
+				.build();
 
 		SemanticCacheAdvisor strictAdvisor = SemanticCacheAdvisor.builder().cache(strictCache).build();
 
 		// Cache with strict advisor
 		ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(franceQuestion)
-			.advisors(strictAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(franceQuestion)
+				.advisors(strictAdvisor)
+				.call()
+				.chatResponse();
 
 		// Similar query with strict threshold - likely a cache miss
 		ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(similarQuestion)
-			.advisors(strictAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(similarQuestion)
+				.advisors(strictAdvisor)
+				.call()
+				.chatResponse();
 
 		// Clean up
 		strictCache.clear();
@@ -285,10 +284,10 @@ class SemanticCacheAdvisorIT {
 		String question = "What is the capital of France?";
 
 		ChatResponse initialResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(question)
+				.call()
+				.chatResponse();
 
 		// Set with TTL
 		this.semanticCache.set(question, initialResponse, Duration.ofSeconds(2));
@@ -326,25 +325,25 @@ class SemanticCacheAdvisorIT {
 
 		// Create isolated caches for different users
 		RedisClient jedisClient1 = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 		RedisClient jedisClient2 = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 
 		SemanticCache user1Cache = DefaultSemanticCache.builder()
-			.embeddingModel(this.embeddingModel)
-			.jedisClient(jedisClient1)
-			.distanceThreshold(DEFAULT_DISTANCE_THRESHOLD)
-			.indexName("user1-cache")
-			.build();
+				.embeddingModel(this.embeddingModel)
+				.jedisClient(jedisClient1)
+				.distanceThreshold(DEFAULT_DISTANCE_THRESHOLD)
+				.indexName("user1-cache")
+				.build();
 
 		SemanticCache user2Cache = DefaultSemanticCache.builder()
-			.embeddingModel(this.embeddingModel)
-			.jedisClient(jedisClient2)
-			.distanceThreshold(DEFAULT_DISTANCE_THRESHOLD)
-			.indexName("user2-cache")
-			.build();
+				.embeddingModel(this.embeddingModel)
+				.jedisClient(jedisClient2)
+				.distanceThreshold(DEFAULT_DISTANCE_THRESHOLD)
+				.indexName("user2-cache")
+				.build();
 
 		// Clear both caches
 		user1Cache.clear();
@@ -355,42 +354,42 @@ class SemanticCacheAdvisorIT {
 
 		// User 1 query
 		ChatResponse user1Response = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(webQuestion)
-			.advisors(user1Advisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(webQuestion)
+				.advisors(user1Advisor)
+				.call()
+				.chatResponse();
 
 		String user1ResponseText = user1Response.getResult().getOutput().getText();
 		assertThat(user1Cache.get(webQuestion)).isPresent();
 
 		// User 2 query - should not get user1's cached response
 		ChatResponse user2Response = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(webQuestion)
-			.advisors(user2Advisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(webQuestion)
+				.advisors(user2Advisor)
+				.call()
+				.chatResponse();
 
 		String user2ResponseText = user2Response.getResult().getOutput().getText();
 		assertThat(user2Cache.get(webQuestion)).isPresent();
 
 		// Verify isolation - each user gets their own cached response
 		ChatResponse user1SecondResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(webQuestion)
-			.advisors(user1Advisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(webQuestion)
+				.advisors(user1Advisor)
+				.call()
+				.chatResponse();
 
 		assertThat(user1SecondResponse.getResult().getOutput().getText()).isEqualTo(user1ResponseText);
 
 		ChatResponse user2SecondResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(webQuestion)
-			.advisors(user2Advisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(webQuestion)
+				.advisors(user2Advisor)
+				.call()
+				.chatResponse();
 
 		assertThat(user2SecondResponse.getResult().getOutput().getText()).isEqualTo(user2ResponseText);
 
@@ -403,14 +402,14 @@ class SemanticCacheAdvisorIT {
 	void testMultipleSimilarQueries() {
 		// Test with a more lenient threshold for semantic similarity
 		RedisClient jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 
 		SemanticCache testCache = DefaultSemanticCache.builder()
-			.embeddingModel(this.embeddingModel)
-			.jedisClient(jedisClient)
-			.distanceThreshold(0.25)
-			.build();
+				.embeddingModel(this.embeddingModel)
+				.jedisClient(jedisClient)
+				.distanceThreshold(0.25)
+				.build();
 
 		SemanticCacheAdvisor advisor = SemanticCacheAdvisor.builder().cache(testCache).build();
 
@@ -418,26 +417,26 @@ class SemanticCacheAdvisorIT {
 
 		// Cache the original response
 		ChatResponse originalResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(originalQuestion)
-			.advisors(advisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(originalQuestion)
+				.advisors(advisor)
+				.call()
+				.chatResponse();
 
 		String originalText = originalResponse.getResult().getOutput().getText();
 		assertThat(originalText).containsIgnoringCase("Tokyo");
 
 		// Test several semantically similar questions
-		String[] similarQuestions = { "Can you tell me the biggest city in Japan?",
-				"What is Japan's most populous urban area?", "Which Japanese city has the largest population?" };
+		String[] similarQuestions = {"Can you tell me the biggest city in Japan?",
+				"What is Japan's most populous urban area?", "Which Japanese city has the largest population?"};
 
 		for (String similarQuestion : similarQuestions) {
 			ChatResponse response = ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(similarQuestion)
-				.advisors(advisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(similarQuestion)
+					.advisors(advisor)
+					.call()
+					.chatResponse();
 
 			// Verify the response is about Tokyo
 			assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("Tokyo");
@@ -457,15 +456,15 @@ class SemanticCacheAdvisorIT {
 		// This test demonstrates the difference between KNN and VECTOR_RANGE search
 		String indexName = "test-vector-search-" + System.currentTimeMillis();
 		RedisClient jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 
 		try {
 			// Create a vector store for testing
 			RedisVectorStore vectorStore = RedisVectorStore.builder(jedisClient, this.embeddingModel)
-				.indexName(indexName)
-				.initializeSchema(true)
-				.build();
+					.indexName(indexName)
+					.initializeSchema(true)
+					.build();
 
 			vectorStore.afterPropertiesSet();
 
@@ -480,23 +479,20 @@ class SemanticCacheAdvisorIT {
 			// Test KNN search - always returns results
 			String unrelatedQuery = "How do you make chocolate chip cookies?";
 			List<Document> knnResults = vectorStore
-				.similaritySearch(SearchRequest.builder().query(unrelatedQuery).topK(1).build());
+					.similaritySearch(SearchRequest.builder().query(unrelatedQuery).topK(1).build());
 
 			assertThat(knnResults).isNotEmpty();
 			// KNN always returns results, even if similarity is low
 
 			// Test VECTOR_RANGE search with threshold
 			List<Document> rangeResults = vectorStore.searchByRange(unrelatedQuery, 0.2);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-		}
-		finally {
+		} finally {
 			// Clean up
 			try {
 				jedisClient.ftDropIndex(indexName);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// Ignore cleanup errors
 			}
 		}
@@ -509,22 +505,22 @@ class SemanticCacheAdvisorIT {
 
 		// First call - stores in cache
 		ChatResponse firstResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(prompt)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(prompt)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(firstResponse).isNotNull();
 		String firstResponseText = firstResponse.getResult().getOutput().getText();
 
 		// Second call - should use cache
 		ChatResponse secondResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(prompt)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(prompt)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(secondResponse).isNotNull();
 		String secondResponseText = secondResponse.getResult().getOutput().getText();
@@ -536,28 +532,28 @@ class SemanticCacheAdvisorIT {
 	@Test
 	void testCacheClear() {
 		// Store multiple items
-		String[] prompts = { "What is AI?", "What is ML?" };
+		String[] prompts = {"What is AI?", "What is ML?"};
 		String[] firstResponses = new String[prompts.length];
 
 		// Store responses
 		for (int i = 0; i < prompts.length; i++) {
 			ChatResponse response = ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(prompts[i])
-				.advisors(this.cacheAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(prompts[i])
+					.advisors(this.cacheAdvisor)
+					.call()
+					.chatResponse();
 			firstResponses[i] = response.getResult().getOutput().getText();
 		}
 
 		// Verify items are cached
 		for (int i = 0; i < prompts.length; i++) {
 			ChatResponse cached = ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(prompts[i])
-				.advisors(this.cacheAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(prompts[i])
+					.advisors(this.cacheAdvisor)
+					.call()
+					.chatResponse();
 			assertThat(cached.getResult().getOutput().getText()).isEqualTo(firstResponses[i]);
 		}
 
@@ -567,11 +563,11 @@ class SemanticCacheAdvisorIT {
 		// Verify cache is empty
 		for (String prompt : prompts) {
 			ChatResponse afterClear = ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(prompt)
-				.advisors(this.cacheAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(prompt)
+					.advisors(this.cacheAdvisor)
+					.call()
+					.chatResponse();
 			// After clear, we get a fresh response from the model
 			assertThat(afterClear).isNotNull();
 		}
@@ -582,15 +578,15 @@ class SemanticCacheAdvisorIT {
 		// This test demonstrates client-side threshold filtering with KNN search
 		String indexName = "test-knn-threshold-" + System.currentTimeMillis();
 		RedisClient jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 
 		try {
 			// Create a vector store for testing
 			RedisVectorStore vectorStore = RedisVectorStore.builder(jedisClient, this.embeddingModel)
-				.indexName(indexName)
-				.initializeSchema(true)
-				.build();
+					.indexName(indexName)
+					.initializeSchema(true)
+					.build();
 
 			vectorStore.afterPropertiesSet();
 
@@ -605,10 +601,10 @@ class SemanticCacheAdvisorIT {
 			// Test KNN with client-side threshold filtering
 			String unrelatedQuery = "How do you make chocolate chip cookies?";
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query(unrelatedQuery)
-				.topK(1)
-				.similarityThreshold(0.2) // Client-side threshold
-				.build());
+					.query(unrelatedQuery)
+					.topK(1)
+					.similarityThreshold(0.2) // Client-side threshold
+					.build());
 
 			// With strict threshold, unrelated query might return empty results
 			// This demonstrates the difference between KNN (always returns K results)
@@ -619,16 +615,13 @@ class SemanticCacheAdvisorIT {
 				// Verify the score meets our threshold
 				assertThat(score).isGreaterThanOrEqualTo(0.2);
 			}
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-		}
-		finally {
+		} finally {
 			// Clean up
 			try {
 				jedisClient.ftDropIndex(indexName);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// Ignore cleanup errors
 			}
 		}
@@ -647,10 +640,10 @@ class SemanticCacheAdvisorIT {
 		// Create a response and cache it directly
 		String testPrompt = "What is machine learning?";
 		ChatResponse response = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(testPrompt)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(testPrompt)
+				.call()
+				.chatResponse();
 
 		// Cache the response directly
 		this.semanticCache.set(testPrompt, response);
@@ -659,7 +652,7 @@ class SemanticCacheAdvisorIT {
 		Optional<ChatResponse> cachedResponse = this.semanticCache.get(testPrompt);
 		assertThat(cachedResponse).isPresent();
 		assertThat(cachedResponse.get().getResult().getOutput().getText())
-			.isEqualTo(response.getResult().getOutput().getText());
+				.isEqualTo(response.getResult().getOutput().getText());
 
 		// Test with similar query - might hit or miss depending on similarity
 		String similarQuery = "Explain machine learning to me";
@@ -677,13 +670,13 @@ class SemanticCacheAdvisorIT {
 
 		// First query with formal system prompt
 		ChatResponse formalResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system(systemPromptFormal)
-			.user(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system(systemPromptFormal)
+				.user(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(formalResponse).isNotNull();
 		String formalText = formalResponse.getResult().getOutput().getText();
@@ -691,13 +684,13 @@ class SemanticCacheAdvisorIT {
 		// Second query with pirate system prompt - should be a cache MISS
 		// because system prompt is different
 		ChatResponse pirateResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system(systemPromptPirate)
-			.user(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system(systemPromptPirate)
+				.user(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(pirateResponse).isNotNull();
 		String pirateText = pirateResponse.getResult().getOutput().getText();
@@ -708,13 +701,13 @@ class SemanticCacheAdvisorIT {
 
 		// Third query with formal system prompt again - should be a cache HIT
 		ChatResponse formalAgainResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system(systemPromptFormal)
-			.user(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system(systemPromptFormal)
+				.user(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(formalAgainResponse).isNotNull();
 		String formalAgainText = formalAgainResponse.getResult().getOutput().getText();
@@ -724,13 +717,13 @@ class SemanticCacheAdvisorIT {
 
 		// Fourth query with pirate system prompt again - should be a cache HIT
 		ChatResponse pirateAgainResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system(systemPromptPirate)
-			.user(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system(systemPromptPirate)
+				.user(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(pirateAgainResponse).isNotNull();
 		String pirateAgainText = pirateAgainResponse.getResult().getOutput().getText();
@@ -746,22 +739,22 @@ class SemanticCacheAdvisorIT {
 
 		// First query without system prompt
 		ChatResponse firstResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(firstResponse).isNotNull();
 		String firstText = firstResponse.getResult().getOutput().getText();
 
 		// Second query without system prompt - should be a cache HIT
 		ChatResponse secondResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(secondResponse).isNotNull();
 		String secondText = secondResponse.getResult().getOutput().getText();
@@ -779,38 +772,38 @@ class SemanticCacheAdvisorIT {
 		// First query
 		String originalQuestion = "What is the capital of Japan?";
 		ChatResponse originalResponse = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system(systemPrompt)
-			.user(originalQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system(systemPrompt)
+				.user(originalQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		assertThat(originalResponse).isNotNull();
 		String originalText = originalResponse.getResult().getOutput().getText();
 		assertThat(originalText).containsIgnoringCase("Tokyo");
 
 		// Semantically similar questions - should hit cache with same context
-		String[] similarQuestions = { "Tell me Japan's capital city", "What city is the capital of Japan?",
-				"Japan's capital is what?" };
+		String[] similarQuestions = {"Tell me Japan's capital city", "What city is the capital of Japan?",
+				"Japan's capital is what?"};
 
 		for (String similarQuestion : similarQuestions) {
 			ChatResponse similarResponse = ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt()
-				.system(systemPrompt)
-				.user(similarQuestion)
-				.advisors(this.cacheAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt()
+					.system(systemPrompt)
+					.user(similarQuestion)
+					.advisors(this.cacheAdvisor)
+					.call()
+					.chatResponse();
 
 			assertThat(similarResponse).isNotNull();
 			// With same context, semantically similar questions should return cached
 			// response
 			assertThat(similarResponse.getResult().getOutput().getText())
-				.as("Similar question '%s' should hit cache with same system prompt", similarQuestion)
-				.containsIgnoringCase("Tokyo");
+					.as("Similar question '%s' should hit cache with same system prompt", similarQuestion)
+					.containsIgnoringCase("Tokyo");
 		}
 	}
 
@@ -822,17 +815,17 @@ class SemanticCacheAdvisorIT {
 
 		// Make a cached request
 		ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.system(systemPrompt)
-			.user(userQuestion)
-			.advisors(this.cacheAdvisor)
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system(systemPrompt)
+				.user(userQuestion)
+				.advisors(this.cacheAdvisor)
+				.call()
+				.chatResponse();
 
 		// Query the underlying vector store directly to verify metadata
 		List<Document> documents = this.semanticCache.getStore()
-			.similaritySearch(SearchRequest.builder().query(userQuestion).topK(1).build());
+				.similaritySearch(SearchRequest.builder().query(userQuestion).topK(1).build());
 
 		assertThat(documents).isNotEmpty();
 		Document cachedDoc = documents.get(0);
@@ -852,16 +845,16 @@ class SemanticCacheAdvisorIT {
 
 		// Create a mock response
 		ChatResponse mockResponse1 = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt("Say 'Response One'")
-			.call()
-			.chatResponse();
+				.build()
+				.prompt("Say 'Response One'")
+				.call()
+				.chatResponse();
 
 		ChatResponse mockResponse2 = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt("Say 'Response Two'")
-			.call()
-			.chatResponse();
+				.build()
+				.prompt("Say 'Response Two'")
+				.call()
+				.chatResponse();
 
 		// Store with different contexts
 		this.semanticCache.set(query, mockResponse1, contextHash1);
@@ -871,13 +864,13 @@ class SemanticCacheAdvisorIT {
 		Optional<ChatResponse> retrieved1 = this.semanticCache.get(query, contextHash1);
 		assertThat(retrieved1).isPresent();
 		assertThat(retrieved1.get().getResult().getOutput().getText())
-			.isEqualTo(mockResponse1.getResult().getOutput().getText());
+				.isEqualTo(mockResponse1.getResult().getOutput().getText());
 
 		// Retrieve with context2 - should get response2
 		Optional<ChatResponse> retrieved2 = this.semanticCache.get(query, contextHash2);
 		assertThat(retrieved2).isPresent();
 		assertThat(retrieved2.get().getResult().getOutput().getText())
-			.isEqualTo(mockResponse2.getResult().getOutput().getText());
+				.isEqualTo(mockResponse2.getResult().getOutput().getText());
 
 		// Retrieve with unknown context - should be empty
 		Optional<ChatResponse> retrieved3 = this.semanticCache.get(query, "unknown_context");
@@ -897,11 +890,11 @@ class SemanticCacheAdvisorIT {
 
 			// First query with default configuration
 			ChatResponse response1 = ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(testQuestion)
-				.advisors(defaultAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(testQuestion)
+					.advisors(defaultAdvisor)
+					.call()
+					.chatResponse();
 
 			assertThat(response1).isNotNull();
 			String responseText = response1.getResult().getOutput().getText();
@@ -915,17 +908,17 @@ class SemanticCacheAdvisorIT {
 		// Test with custom configuration (different similarity threshold)
 		this.contextRunner.run(context -> {
 			RedisClient jedisClient = RedisClient.builder()
-				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-				.build();
+					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+					.build();
 			EmbeddingModel embModel = context.getBean(EmbeddingModel.class);
 
 			// Create cache with very strict threshold
 			SemanticCache strictCache = DefaultSemanticCache.builder()
-				.embeddingModel(embModel)
-				.jedisClient(jedisClient)
-				.distanceThreshold(0.1) // Very strict
-				.indexName("strict-config-test")
-				.build();
+					.embeddingModel(embModel)
+					.jedisClient(jedisClient)
+					.distanceThreshold(0.1) // Very strict
+					.indexName("strict-config-test")
+					.build();
 
 			strictCache.clear();
 			SemanticCacheAdvisor strictAdvisor = SemanticCacheAdvisor.builder().cache(strictCache).build();
@@ -933,20 +926,20 @@ class SemanticCacheAdvisorIT {
 			// Cache a response
 			String originalQuery = "What is dependency injection?";
 			ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(originalQuery)
-				.advisors(strictAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(originalQuery)
+					.advisors(strictAdvisor)
+					.call()
+					.chatResponse();
 
 			// Try a similar but not identical query
 			String similarQuery = "Explain dependency injection";
 			ChatClient.builder(this.openAiChatModel)
-				.build()
-				.prompt(similarQuery)
-				.advisors(strictAdvisor)
-				.call()
-				.chatResponse();
+					.build()
+					.prompt(similarQuery)
+					.advisors(strictAdvisor)
+					.call()
+					.chatResponse();
 
 			// With strict threshold, these should likely be different responses
 			// Clean up
@@ -960,14 +953,14 @@ class SemanticCacheAdvisorIT {
 		@Bean
 		public SemanticCache semanticCache(EmbeddingModel embeddingModel) {
 			RedisClient jedisClient = RedisClient.builder()
-				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-				.build();
+					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+					.build();
 
 			return DefaultSemanticCache.builder()
-				.embeddingModel(embeddingModel)
-				.jedisClient(jedisClient)
-				.distanceThreshold(DEFAULT_DISTANCE_THRESHOLD)
-				.build();
+					.embeddingModel(embeddingModel)
+					.jedisClient(jedisClient)
+					.distanceThreshold(DEFAULT_DISTANCE_THRESHOLD)
+					.build();
 		}
 
 		@Bean(name = "openAiEmbeddingModel")
@@ -989,15 +982,15 @@ class SemanticCacheAdvisorIT {
 		public OpenAiChatModel openAiChatModel(ObservationRegistry observationRegistry) {
 
 			var openAiChatOptions = OpenAiChatOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model("gpt-3.5-turbo")
-				.temperature(0.4)
-				.maxTokens(200)
-				.build();
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model("gpt-3.5-turbo")
+					.temperature(0.4)
+					.maxTokens(200)
+					.build();
 			return OpenAiChatModel.builder()
-				.options(openAiChatOptions)
-				.observationRegistry(observationRegistry)
-				.build();
+					.options(openAiChatOptions)
+					.observationRegistry(observationRegistry)
+					.build();
 		}
 
 	}

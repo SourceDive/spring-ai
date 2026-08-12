@@ -16,18 +16,17 @@
 
 package org.springframework.ai.model.google.genai.autoconfigure.chat;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.ai.google.genai.common.GoogleGenAiSafetySetting;
 import org.springframework.ai.google.genai.common.GoogleGenAiServiceTier;
 import org.springframework.ai.google.genai.common.GoogleGenAiThinkingLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration properties for Google GenAI Chat.
@@ -290,31 +289,31 @@ public class GoogleGenAiChatProperties {
 
 	public GoogleGenAiChatOptions toOptions() {
 		return GoogleGenAiChatOptions.builder()
-			.model(this.model)
-			.stopSequences(this.stopSequences)
-			.temperature(this.temperature)
-			.topP(this.topP)
-			.topK(this.topK)
-			.candidateCount(this.candidateCount)
-			.maxOutputTokens(this.maxOutputTokens)
-			.responseMimeType(this.responseMimeType)
-			.responseSchema(this.responseSchema)
-			.frequencyPenalty(this.frequencyPenalty)
-			.presencePenalty(this.presencePenalty)
-			.thinkingBudget(this.thinkingBudget)
-			.includeThoughts(this.includeThoughts)
-			.thinkingLevel(this.thinkingLevel)
-			.includeExtendedUsageMetadata(this.includeExtendedUsageMetadata)
-			.cachedContentName(this.cachedContentName)
-			.useCachedContent(this.useCachedContent)
-			.autoCacheThreshold(this.autoCacheThreshold)
-			.autoCacheTtl(this.autoCacheTtl)
-			.googleSearchRetrieval(this.googleSearchRetrieval)
-			.includeServerSideToolInvocations(this.includeServerSideToolInvocations)
-			.safetySettings(this.safetySettings)
-			.labels(this.labels)
-			.serviceTier(this.serviceTier)
-			.build();
+				.model(this.model)
+				.stopSequences(this.stopSequences)
+				.temperature(this.temperature)
+				.topP(this.topP)
+				.topK(this.topK)
+				.candidateCount(this.candidateCount)
+				.maxOutputTokens(this.maxOutputTokens)
+				.responseMimeType(this.responseMimeType)
+				.responseSchema(this.responseSchema)
+				.frequencyPenalty(this.frequencyPenalty)
+				.presencePenalty(this.presencePenalty)
+				.thinkingBudget(this.thinkingBudget)
+				.includeThoughts(this.includeThoughts)
+				.thinkingLevel(this.thinkingLevel)
+				.includeExtendedUsageMetadata(this.includeExtendedUsageMetadata)
+				.cachedContentName(this.cachedContentName)
+				.useCachedContent(this.useCachedContent)
+				.autoCacheThreshold(this.autoCacheThreshold)
+				.autoCacheTtl(this.autoCacheTtl)
+				.googleSearchRetrieval(this.googleSearchRetrieval)
+				.includeServerSideToolInvocations(this.includeServerSideToolInvocations)
+				.safetySettings(this.safetySettings)
+				.labels(this.labels)
+				.serviceTier(this.serviceTier)
+				.build();
 	}
 
 	private Options options = new Options();

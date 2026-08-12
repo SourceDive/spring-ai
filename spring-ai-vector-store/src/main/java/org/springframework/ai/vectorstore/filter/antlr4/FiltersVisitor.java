@@ -28,12 +28,13 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * {@link FiltersParser}.
  *
  * @param <T> The return type of the visit operation. Use {@link Void} for operations with
- * no return type.
+ *            no return type.
  */
 public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 
 	/**
 	 * Visit a parse tree produced by {@link FiltersParser#where}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -42,6 +43,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code NinExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -50,6 +52,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code IsNullExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -58,6 +61,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code IsNotNullExpression} labeled alternative
 	 * in {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -66,6 +70,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code AndExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -74,6 +79,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code InExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -82,6 +88,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code NotExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -90,6 +97,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code CompareExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -98,6 +106,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code OrExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -106,6 +115,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code GroupExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -113,6 +123,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 
 	/**
 	 * Visit a parse tree produced by {@link FiltersParser#constantArray}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -120,6 +131,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 
 	/**
 	 * Visit a parse tree produced by {@link FiltersParser#compare}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -128,6 +140,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code CompoundIdentifier} labeled alternative
 	 * in {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -136,6 +149,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code SimpleIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -144,6 +158,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code QuotedIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -152,6 +167,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code LongConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -160,6 +176,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code IntegerConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -168,6 +185,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code DecimalConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -176,6 +194,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code TextConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -184,6 +203,7 @@ public interface FiltersVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by the {@code BooleanConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */

@@ -76,8 +76,7 @@ class WebMvcSseAsyncServerTransportIT extends AbstractMcpAsyncServerTests {
 		try {
 			this.tomcat.start();
 			this.tomcat.getConnector(); // Create and start the connector
-		}
-		catch (LifecycleException e) {
+		} catch (LifecycleException e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
@@ -105,8 +104,7 @@ class WebMvcSseAsyncServerTransportIT extends AbstractMcpAsyncServerTests {
 			try {
 				this.tomcat.stop();
 				this.tomcat.destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}
@@ -119,9 +117,9 @@ class WebMvcSseAsyncServerTransportIT extends AbstractMcpAsyncServerTests {
 		@Bean
 		public WebMvcSseServerTransportProvider webMvcSseServerTransportProvider() {
 			return WebMvcSseServerTransportProvider.builder()
-				.messageEndpoint(MESSAGE_ENDPOINT)
-				.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
-				.build();
+					.messageEndpoint(MESSAGE_ENDPOINT)
+					.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
+					.build();
 		}
 
 		@Bean

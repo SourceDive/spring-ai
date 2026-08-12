@@ -16,11 +16,6 @@
 
 package org.springframework.ai.reader.pdf.layout;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -29,6 +24,11 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.apache.pdfbox.text.TextPositionComparator;
 import org.jspecify.annotations.Nullable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class extends PDFTextStripper to provide custom text extraction and formatting
@@ -79,8 +79,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 		for (List<TextPosition> textList : charactersByArticle) {
 			try {
 				this.sortTextPositionList(textList);
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				logger.error("Error sorting text positions", e);
 			}
 			this.iterateThroughTextList(textList.iterator());
@@ -118,8 +117,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 				this.setPreviousTextPosition(textPosition);
 				firstCharacterOfLineFound = true;
 			}
-		}
-		else {
+		} else {
 			this.addNewLine(); // white line
 		}
 	}
@@ -132,13 +130,12 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 			int numberOfNewLines = this.getNumberOfNewLinesFromPreviousTextPosition(textPosition);
 			if (numberOfNewLines == 0) {
 				textPositionList.add(textPosition);
-			}
-			else {
+			} else {
 				this.writeTextPositionList(textPositionList);
 				if (numberOfNewLines > 10_000) {
 					// Throw rather than allocate crazy number of line objects
 					throw new IllegalStateException("Unreasonable number of lines (%d) computed from content of pdf"
-						.formatted(numberOfNewLines));
+							.formatted(numberOfNewLines));
 				}
 				this.createNewEmptyNewLines(numberOfNewLines);
 				textPositionList.add(textPosition);
@@ -175,8 +172,7 @@ public class ForkPDFLayoutTextStripper extends PDFTextStripper {
 			int numberOfLines = (int) (Math.floor(textYPosition - previousTextYPosition) / height);
 			numberOfLines = Math.max(1, numberOfLines - 1); // exclude current new line
 			return numberOfLines;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}

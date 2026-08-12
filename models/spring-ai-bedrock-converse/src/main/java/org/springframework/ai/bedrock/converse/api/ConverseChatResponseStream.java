@@ -16,29 +16,9 @@
 
 package org.springframework.ai.bedrock.converse.api;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Sinks;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockDelta;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockDeltaEvent;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockStart;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockStartEvent;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamMetadataEvent;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamRequest;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
-import software.amazon.awssdk.services.bedrockruntime.model.MessageStopEvent;
-import software.amazon.awssdk.services.bedrockruntime.model.TokenUsage;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
@@ -47,6 +27,17 @@ import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.model.*;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Sends a {@link ConverseStreamRequest} to Bedrock and returns {@link ChatResponse}
@@ -60,7 +51,7 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 	private static final Log logger = LogFactory.getLog(ConverseChatResponseStream.class);
 
 	public static final Sinks.EmitFailureHandler DEFAULT_EMIT_FAILURE_HANDLER = Sinks.EmitFailureHandler
-		.busyLooping(Duration.ofSeconds(10));
+			.busyLooping(Duration.ofSeconds(10));
 
 	private final AtomicReference<String> requestIdRef = new AtomicReference<>("Unknown");
 
@@ -83,7 +74,7 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 	private final ConverseStreamRequest converseStreamRequest;
 
 	public ConverseChatResponseStream(BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient,
-			ConverseStreamRequest converseStreamRequest, @Nullable Usage accumulatedUsage) {
+	                                  ConverseStreamRequest converseStreamRequest, @Nullable Usage accumulatedUsage) {
 
 		Assert.notNull(bedrockRuntimeAsyncClient, "'bedrockRuntimeAsyncClient' must not be null");
 		Assert.notNull(converseStreamRequest, "'converseStreamRequest' must not be null");
@@ -105,7 +96,7 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 		if (ContentBlockStart.Type.TOOL_USE.equals(event.start().type())) {
 			this.toolUseMap.put(event.contentBlockIndex(),
 					new StreamingToolCallBuilder().id(event.start().toolUse().toolUseId())
-						.name(event.start().toolUse().name()));
+							.name(event.start().toolUse().name()));
 		}
 	}
 
@@ -115,8 +106,7 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 
 		if (toolCallBuilder != null) {
 			toolCallBuilder.delta(event.delta().toolUse().input());
-		}
-		else if (ContentBlockDelta.Type.TEXT.equals(event.delta().type())) {
+		} else if (ContentBlockDelta.Type.TEXT.equals(event.delta().type())) {
 			this.emitChatResponse(new Generation(AssistantMessage.builder().content(event.delta().text()).build()));
 		}
 	}
@@ -134,21 +124,20 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 		this.mergeNativeTokenUsage(event.usage());
 
 		ChatGenerationMetadata generationMetadata = ChatGenerationMetadata.builder()
-			.finishReason(this.stopReason.get())
-			.build();
+				.finishReason(this.stopReason.get())
+				.build();
 
 		List<AssistantMessage.ToolCall> toolCalls = this.toolUseMap.entrySet()
-			.stream()
-			.sorted(Map.Entry.comparingByKey())
-			.map(Map.Entry::getValue)
-			.map(StreamingToolCallBuilder::build)
-			.toList();
+				.stream()
+				.sorted(Map.Entry.comparingByKey())
+				.map(Map.Entry::getValue)
+				.map(StreamingToolCallBuilder::build)
+				.toList();
 
 		if (!toolCalls.isEmpty()) {
 			this.emitChatResponse(new Generation(AssistantMessage.builder().content("").toolCalls(toolCalls).build(),
 					generationMetadata));
-		}
-		else {
+		} else {
 			this.emitChatResponse(new Generation(AssistantMessage.builder().content("").build(), generationMetadata));
 		}
 	}
@@ -157,15 +146,14 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 		this.tokenUsageRef.accumulateAndGet(tokenUsage, (current, next) -> {
 			if (current == null) {
 				return next;
-			}
-			else {
+			} else {
 				return TokenUsage.builder()
-					.inputTokens(addTokens(current.inputTokens(), next.inputTokens()))
-					.outputTokens(addTokens(current.outputTokens(), next.outputTokens()))
-					.totalTokens(addTokens(current.totalTokens(), next.totalTokens()))
-					.cacheReadInputTokens(addTokens(current.cacheReadInputTokens(), next.cacheReadInputTokens()))
-					.cacheWriteInputTokens(addTokens(current.cacheWriteInputTokens(), next.cacheWriteInputTokens()))
-					.build();
+						.inputTokens(addTokens(current.inputTokens(), next.inputTokens()))
+						.outputTokens(addTokens(current.outputTokens(), next.outputTokens()))
+						.totalTokens(addTokens(current.totalTokens(), next.totalTokens()))
+						.cacheReadInputTokens(addTokens(current.cacheReadInputTokens(), next.cacheReadInputTokens()))
+						.cacheWriteInputTokens(addTokens(current.cacheWriteInputTokens(), next.cacheWriteInputTokens()))
+						.build();
 			}
 		});
 	}
@@ -202,6 +190,7 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 
 	/**
 	 * Invoke the model and return the chat response stream.
+	 *
 	 * @see <a href=
 	 * "https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html">
 	 * https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html</a>
@@ -215,18 +204,18 @@ public class ConverseChatResponseStream implements ConverseStreamResponseHandler
 	public Flux<ChatResponse> stream() {
 
 		ConverseStreamResponseHandler responseHandler = ConverseStreamResponseHandler.builder()
-			.subscriber(this)
-			.onResponse(converseStreamResponse -> this.requestIdRef
-				.set(converseStreamResponse.responseMetadata().requestId()))
-			.onComplete(() -> {
-				this.eventSink.emitComplete(DEFAULT_EMIT_FAILURE_HANDLER);
-				logger.info("Completed streaming response.");
-			})
-			.onError(error -> {
-				logger.error("Error handling Bedrock converse stream response", error);
-				this.eventSink.emitError(error, DEFAULT_EMIT_FAILURE_HANDLER);
-			})
-			.build();
+				.subscriber(this)
+				.onResponse(converseStreamResponse -> this.requestIdRef
+						.set(converseStreamResponse.responseMetadata().requestId()))
+				.onComplete(() -> {
+					this.eventSink.emitComplete(DEFAULT_EMIT_FAILURE_HANDLER);
+					logger.info("Completed streaming response.");
+				})
+				.onError(error -> {
+					logger.error("Error handling Bedrock converse stream response", error);
+					this.eventSink.emitError(error, DEFAULT_EMIT_FAILURE_HANDLER);
+				})
+				.build();
 		this.bedrockRuntimeAsyncClient.converseStream(this.converseStreamRequest, responseHandler);
 
 		return this.eventSink.asFlux();

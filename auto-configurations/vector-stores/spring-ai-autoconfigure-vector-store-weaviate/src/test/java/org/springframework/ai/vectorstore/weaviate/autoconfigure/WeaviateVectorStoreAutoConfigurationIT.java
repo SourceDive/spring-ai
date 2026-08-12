@@ -16,16 +16,8 @@
 
 package org.springframework.ai.vectorstore.weaviate.autoconfigure;
 
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.weaviate.WeaviateContainer;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -40,6 +32,13 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.weaviate.WeaviateContainer;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.ai.test.vectorstore.ObservationTestUtil.assertObservationRegistry;
@@ -56,17 +55,17 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 
 	@Container
 	static WeaviateContainer weaviate = new WeaviateContainer("semitechnologies/weaviate:1.25.4")
-		.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
+			.waitingFor(Wait.forHttp("/v1/.well-known/ready").forPort(8080));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(WeaviateVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.weaviate.scheme=http",
-				"spring.ai.vectorstore.weaviate.host=" + weaviate.getHttpHostAddress(),
-				"spring.ai.vectorstore.weaviate.filter-field.country=TEXT",
-				"spring.ai.vectorstore.weaviate.filter-field.year=NUMBER",
-				"spring.ai.vectorstore.weaviate.filter-field.active=BOOLEAN",
-				"spring.ai.vectorstore.weaviate.filter-field.price=NUMBER");
+			.withConfiguration(AutoConfigurations.of(WeaviateVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.weaviate.scheme=http",
+					"spring.ai.vectorstore.weaviate.host=" + weaviate.getHttpHostAddress(),
+					"spring.ai.vectorstore.weaviate.filter-field.country=TEXT",
+					"spring.ai.vectorstore.weaviate.filter-field.year=NUMBER",
+					"spring.ai.vectorstore.weaviate.filter-field.active=BOOLEAN",
+					"spring.ai.vectorstore.weaviate.filter-field.price=NUMBER");
 
 	@Test
 	public void addAndSearchWithFilters() {
@@ -103,9 +102,9 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Bulgaria'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Bulgaria'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
@@ -113,29 +112,29 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.QUERY);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Netherlands'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Netherlands'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("price > 1.57 && active == true")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("price > 1.57 && active == true")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("year in [2020, 2023]")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("year in [2020, 2023]")
+					.build());
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("year > 2020 && year <= 2023")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("year > 2020 && year <= 2023")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
@@ -179,19 +178,19 @@ public class WeaviateVectorStoreAutoConfigurationIT {
 	@Test
 	public void testMappingPropertiesToOptions() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.weaviate.object-class=CustomObjectClass",
-					"spring.ai.vectorstore.weaviate.content-field-name=customContentFieldName",
-					"spring.ai.vectorstore.weaviate.meta-field-prefix=custom_")
-			.run(context -> {
-				WeaviateVectorStoreAutoConfiguration autoConfiguration = context
-					.getBean(WeaviateVectorStoreAutoConfiguration.class);
-				WeaviateVectorStoreProperties properties = context.getBean(WeaviateVectorStoreProperties.class);
-				WeaviateVectorStoreOptions options = autoConfiguration.mappingPropertiesToOptions(properties);
+				.withPropertyValues("spring.ai.vectorstore.weaviate.object-class=CustomObjectClass",
+						"spring.ai.vectorstore.weaviate.content-field-name=customContentFieldName",
+						"spring.ai.vectorstore.weaviate.meta-field-prefix=custom_")
+				.run(context -> {
+					WeaviateVectorStoreAutoConfiguration autoConfiguration = context
+							.getBean(WeaviateVectorStoreAutoConfiguration.class);
+					WeaviateVectorStoreProperties properties = context.getBean(WeaviateVectorStoreProperties.class);
+					WeaviateVectorStoreOptions options = autoConfiguration.mappingPropertiesToOptions(properties);
 
-				assertThat(options.getObjectClass()).isEqualTo("CustomObjectClass");
-				assertThat(options.getContentFieldName()).isEqualTo("customContentFieldName");
-				assertThat(options.getMetaFieldPrefix()).isEqualTo("custom_");
-			});
+					assertThat(options.getObjectClass()).isEqualTo("CustomObjectClass");
+					assertThat(options.getContentFieldName()).isEqualTo("customContentFieldName");
+					assertThat(options.getMetaFieldPrefix()).isEqualTo("custom_");
+				});
 	}
 
 	@Configuration(proxyBeanMethods = false)

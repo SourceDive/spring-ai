@@ -16,10 +16,7 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure.annotations;
 
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.McpResource;
@@ -37,15 +34,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 /**
  * @author Christian Tzolov
  */
 @AutoConfiguration(after = McpServerAnnotationScannerAutoConfiguration.class)
 @ConditionalOnProperty(prefix = McpServerAnnotationScannerProperties.CONFIG_PREFIX, name = "enabled",
 		havingValue = "true", matchIfMissing = true)
-@Conditional({ McpServerStdioDisabledCondition.class,
+@Conditional({McpServerStdioDisabledCondition.class,
 		McpServerStatelessAutoConfiguration.EnabledStatelessServerCondition.class,
-		StatelessToolCallbackConverterAutoConfiguration.ToolCallbackConverterCondition.class })
+		StatelessToolCallbackConverterAutoConfiguration.ToolCallbackConverterCondition.class})
 public class StatelessServerSpecificationFactoryAutoConfiguration {
 
 	@Configuration(proxyBeanMethods = false)
@@ -57,7 +56,7 @@ public class StatelessServerSpecificationFactoryAutoConfiguration {
 		public List<McpStatelessServerFeatures.SyncResourceSpecification> resourceSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return SyncMcpAnnotationProviders
-				.statelessResourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
+					.statelessResourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
 		}
 
 		@Bean
@@ -71,14 +70,14 @@ public class StatelessServerSpecificationFactoryAutoConfiguration {
 		public List<McpStatelessServerFeatures.SyncPromptSpecification> promptSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return SyncMcpAnnotationProviders
-				.statelessPromptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
+					.statelessPromptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
 		}
 
 		@Bean
 		public List<McpStatelessServerFeatures.SyncCompletionSpecification> completionSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return SyncMcpAnnotationProviders
-				.statelessCompleteSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
+					.statelessCompleteSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
 		}
 
 		@Bean
@@ -86,7 +85,7 @@ public class StatelessServerSpecificationFactoryAutoConfiguration {
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			List<Object> beansByAnnotation = beansWithMcpMethodAnnotations.getBeansByAnnotation(McpTool.class);
 			List<McpStatelessServerFeatures.SyncToolSpecification> syncToolSpecifications = SyncMcpAnnotationProviders
-				.statelessToolSpecifications(beansByAnnotation);
+					.statelessToolSpecifications(beansByAnnotation);
 			return syncToolSpecifications;
 		}
 
@@ -100,7 +99,7 @@ public class StatelessServerSpecificationFactoryAutoConfiguration {
 		public List<McpStatelessServerFeatures.AsyncResourceSpecification> resourceSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.statelessResourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
+					.statelessResourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
 		}
 
 		@Bean
@@ -114,21 +113,21 @@ public class StatelessServerSpecificationFactoryAutoConfiguration {
 		public List<McpStatelessServerFeatures.AsyncPromptSpecification> promptSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.statelessPromptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
+					.statelessPromptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
 		}
 
 		@Bean
 		public List<McpStatelessServerFeatures.AsyncCompletionSpecification> completionSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.statelessCompleteSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
+					.statelessCompleteSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
 		}
 
 		@Bean
 		public List<McpStatelessServerFeatures.AsyncToolSpecification> toolSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.statelessToolSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpTool.class));
+					.statelessToolSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpTool.class));
 		}
 
 	}

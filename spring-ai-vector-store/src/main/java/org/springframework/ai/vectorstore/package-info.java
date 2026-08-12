@@ -45,15 +45,13 @@
  * by providing a clean separation between read and write operations, allowing components
  * to access only the functionality they need.
  *
+ * @author Mark Pollack
  * @see org.springframework.ai.vectorstore.VectorStoreRetriever
  * @see org.springframework.ai.vectorstore.VectorStore
  * @see org.springframework.ai.vectorstore.SearchRequest
  * @see org.springframework.ai.vectorstore.filter.Filter
- *
- * @author Mark Pollack
  * @since 1.0.0
  */
 @NullMarked
 package org.springframework.ai.vectorstore;
 
-import org.jspecify.annotations.NullMarked;

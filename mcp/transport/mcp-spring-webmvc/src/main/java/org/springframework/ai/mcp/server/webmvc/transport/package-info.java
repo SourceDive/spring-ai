@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.mcp.server.webmvc.transport;
 
-import org.jspecify.annotations.NullMarked;

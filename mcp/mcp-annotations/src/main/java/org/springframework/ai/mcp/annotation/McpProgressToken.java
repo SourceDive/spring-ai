@@ -16,11 +16,7 @@
 
 package org.springframework.ai.mcp.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Used to annotate method parameter that should hold the progress token value as received
@@ -28,7 +24,7 @@ import java.lang.annotation.Target;
  *
  * @author Christian Tzolov
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface McpProgressToken {

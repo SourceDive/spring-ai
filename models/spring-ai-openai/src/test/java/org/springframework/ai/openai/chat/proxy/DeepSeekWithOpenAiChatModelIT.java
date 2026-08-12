@@ -16,15 +16,8 @@
 
 package org.springframework.ai.openai.chat.proxy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -49,6 +42,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,11 +96,11 @@ class DeepSeekWithOpenAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}
@@ -117,9 +116,9 @@ class DeepSeekWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -137,9 +136,9 @@ class DeepSeekWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -157,11 +156,11 @@ class DeepSeekWithOpenAiChatModelIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -179,11 +178,11 @@ class DeepSeekWithOpenAiChatModelIT {
 	@Test
 	void validateCallResponseMetadata() {
 		ChatResponse response = ChatClient.create(this.chatModel)
-			.prompt()
-			.options(OpenAiChatOptions.builder().model(DEEPSEEK_DEFAULT_MODEL))
-			.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
-			.call()
-			.chatResponse();
+				.prompt()
+				.options(OpenAiChatOptions.builder().model(DEEPSEEK_DEFAULT_MODEL))
+				.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
+				.call()
+				.chatResponse();
 		assertThat(response.getMetadata().getId()).isNotEmpty();
 		assertThat(response.getMetadata().getUsage().getPromptTokens()).isPositive();
 		assertThat(response.getMetadata().getUsage().getCompletionTokens()).isPositive();
@@ -198,9 +197,9 @@ class DeepSeekWithOpenAiChatModelIT {
 		Map<String, Object> extraBody = Map.of("max_tokens", 2);
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model(DEEPSEEK_DEFAULT_MODEL)
-			.extraBody(extraBody)
-			.build();
+				.model(DEEPSEEK_DEFAULT_MODEL)
+				.extraBody(extraBody)
+				.build();
 
 		Prompt prompt = new Prompt("Tell me a short joke.", options);
 
@@ -247,12 +246,12 @@ class DeepSeekWithOpenAiChatModelIT {
 		@Bean
 		public OpenAiChatModel openAiSdkChatModel() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(DEEPSEEK_BASE_URL)
-					.apiKey(System.getenv("DEEPSEEK_API_KEY"))
-					.model(DEEPSEEK_DEFAULT_MODEL)
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(DEEPSEEK_BASE_URL)
+							.apiKey(System.getenv("DEEPSEEK_API_KEY"))
+							.model(DEEPSEEK_DEFAULT_MODEL)
+							.build())
+					.build();
 		}
 
 	}

@@ -58,9 +58,9 @@ public class MistralAiTestConfiguration {
 	@Bean
 	public MistralAiChatModel mistralAiChatModel(MistralAiApi mistralAiApi) {
 		return MistralAiChatModel.builder()
-			.mistralAiApi(mistralAiApi)
-			.options(MistralAiChatOptions.builder().model(MistralAiApi.ChatModel.MISTRAL_SMALL.getValue()).build())
-			.build();
+				.mistralAiApi(mistralAiApi)
+				.options(MistralAiChatOptions.builder().model(MistralAiApi.ChatModel.MISTRAL_SMALL.getValue()).build())
+				.build();
 	}
 
 	@Bean

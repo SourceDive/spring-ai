@@ -16,15 +16,14 @@
 
 package org.springframework.ai.google.genai.schema;
 
-import java.util.Map;
-
+import org.springframework.ai.util.JacksonUtils;
+import org.springframework.util.Assert;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
-import org.springframework.ai.util.JacksonUtils;
-import org.springframework.util.Assert;
+import java.util.Map;
 
 /**
  * Utility class for converting JSON Schema to OpenAPI schema format.
@@ -42,6 +41,7 @@ public final class JsonSchemaConverter {
 
 	/**
 	 * Parses a JSON string into an ObjectNode.
+	 *
 	 * @param jsonString The JSON string to parse
 	 * @return ObjectNode containing the parsed JSON
 	 * @throws RuntimeException if the JSON string cannot be parsed
@@ -49,14 +49,14 @@ public final class JsonSchemaConverter {
 	public static ObjectNode fromJson(String jsonString) {
 		try {
 			return (ObjectNode) JacksonUtils.getDefaultJsonMapper().readTree(jsonString);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to parse JSON: " + jsonString, e);
 		}
 	}
 
 	/**
 	 * Converts a JSON Schema ObjectNode to OpenAPI schema format.
+	 *
 	 * @param jsonSchemaNode The input JSON Schema as ObjectNode
 	 * @return ObjectNode containing the OpenAPI schema
 	 * @throws IllegalArgumentException if jsonSchemaNode is null
@@ -76,14 +76,14 @@ public final class JsonSchemaConverter {
 			}
 
 			return openApiSchema;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to convert JSON Schema to OpenAPI format: " + e.getMessage(), e);
 		}
 	}
 
 	/**
 	 * Copies common properties from source to target node.
+	 *
 	 * @param source The source ObjectNode containing JSON Schema properties
 	 * @param target The target ObjectNode to copy properties to
 	 */
@@ -95,7 +95,7 @@ public final class JsonSchemaConverter {
 				"format", "description", "default", "maximum", "minimum", "maxLength", "minLength", "pattern", "enum",
 				"multipleOf", "uniqueItems",
 				// OpenAPI specific properties
-				"example", "deprecated", "readOnly", "writeOnly", "discriminator", "xml", "externalDocs" };
+				"example", "deprecated", "readOnly", "writeOnly", "discriminator", "xml", "externalDocs"};
 
 		for (String prop : commonProperties) {
 			if (source.has(prop)) {
@@ -106,8 +106,9 @@ public final class JsonSchemaConverter {
 
 	/**
 	 * Handles JSON Schema specific attributes and converts them to OpenAPI format.
-	 * @param source The source ObjectNode containing JSON Schema
-	 * @param target The target ObjectNode to store OpenAPI schema
+	 *
+	 * @param source  The source ObjectNode containing JSON Schema
+	 * @param target  The target ObjectNode to store OpenAPI schema
 	 * @param factory The JsonNodeFactory to create new nodes
 	 */
 	private static void handleJsonSchemaSpecifics(ObjectNode source, ObjectNode target, JsonNodeFactory factory) {
@@ -124,22 +125,18 @@ public final class JsonSchemaConverter {
 				for (JsonNode typeValue : typeNode) {
 					if (typeValue.isString() && "null".equals(typeValue.asString())) {
 						nullable = true;
-					}
-					else {
+					} else {
 						nonNullTypes.add(typeValue);
 					}
 				}
 				if (nonNullTypes.size() == 1) {
 					target.set("type", nonNullTypes.get(0));
-				}
-				else if (nonNullTypes.size() > 1) {
+				} else if (nonNullTypes.size() > 1) {
 					target.set("type", nonNullTypes);
 				}
-			}
-			else if (typeNode.isString() && "null".equals(typeNode.asString())) {
+			} else if (typeNode.isString() && "null".equals(typeNode.asString())) {
 				nullable = true;
-			}
-			else {
+			} else {
 				target.set("type", typeNode);
 			}
 		}
@@ -172,8 +169,7 @@ public final class JsonSchemaConverter {
 			JsonNode additionalProps = source.get("additionalProperties");
 			if (additionalProps.isBoolean()) {
 				target.put("additionalProperties", additionalProps.asBoolean());
-			}
-			else if (additionalProps.isObject()) {
+			} else if (additionalProps.isObject()) {
 				target.set("additionalProperties", convertSchema((ObjectNode) additionalProps,
 						JacksonUtils.getDefaultJsonMapper().getNodeFactory()));
 			}
@@ -189,7 +185,7 @@ public final class JsonSchemaConverter {
 		}
 
 		// Handle allOf, anyOf, oneOf
-		String[] combiners = { "allOf", "anyOf", "oneOf" };
+		String[] combiners = {"allOf", "anyOf", "oneOf"};
 		for (String combiner : combiners) {
 			if (source.has(combiner)) {
 				JsonNode combinerNode = source.get(combiner);
@@ -202,7 +198,8 @@ public final class JsonSchemaConverter {
 
 	/**
 	 * Recursively converts a JSON Schema node to OpenAPI format.
-	 * @param source The source ObjectNode containing JSON Schema
+	 *
+	 * @param source  The source ObjectNode containing JSON Schema
 	 * @param factory The JsonNodeFactory to create new nodes
 	 * @return The converted OpenAPI schema as ObjectNode
 	 */

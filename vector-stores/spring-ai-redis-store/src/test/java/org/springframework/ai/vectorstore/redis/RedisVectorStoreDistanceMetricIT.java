@@ -16,17 +16,9 @@
 
 package org.springframework.ai.vectorstore.redis;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.redis.testcontainers.RedisStackContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
@@ -38,6 +30,13 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,17 +51,17 @@ class RedisVectorStoreDistanceMetricIT {
 			RedisStackContainer.DEFAULT_IMAGE_NAME.withTag(RedisStackContainer.DEFAULT_TAG));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
-				"spring.data.redis.port=" + redisContainer.getFirstMappedPort());
+			.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
+					"spring.data.redis.port=" + redisContainer.getFirstMappedPort());
 
 	@BeforeEach
 	void cleanDatabase() {
 		// Clean Redis completely before each test
 		try (RedisClient jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build()) {
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build()) {
 			jedisClient.flushAll();
 		}
 	}
@@ -73,17 +72,17 @@ class RedisVectorStoreDistanceMetricIT {
 		this.contextRunner.run(context -> {
 			// Get the base Jedis client for creating a custom store
 			RedisClient jedisClient = RedisClient.builder()
-				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-				.build();
+					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+					.build();
 			EmbeddingModel embeddingModel = context.getBean(EmbeddingModel.class);
 
 			// Create the vector store with explicit COSINE distance metric
 			RedisVectorStore vectorStore = RedisVectorStore.builder(jedisClient, embeddingModel)
-				.indexName("cosine-test-index")
-				.distanceMetric(RedisVectorStore.DistanceMetric.COSINE) // New feature
-				.metadataFields(MetadataField.tag("category"))
-				.initializeSchema(true)
-				.build();
+					.indexName("cosine-test-index")
+					.distanceMetric(RedisVectorStore.DistanceMetric.COSINE) // New feature
+					.metadataFields(MetadataField.tag("category"))
+					.initializeSchema(true)
+					.build();
 
 			// Test basic functionality with the configured distance metric
 			testVectorStoreWithDocuments(vectorStore);
@@ -96,17 +95,17 @@ class RedisVectorStoreDistanceMetricIT {
 		this.contextRunner.run(context -> {
 			// Get the base Jedis client for creating a custom store
 			RedisClient jedisClient = RedisClient.builder()
-				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-				.build();
+					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+					.build();
 			EmbeddingModel embeddingModel = context.getBean(EmbeddingModel.class);
 
 			// Create the vector store with explicit L2 distance metric
 			RedisVectorStore vectorStore = RedisVectorStore.builder(jedisClient, embeddingModel)
-				.indexName("l2-test-index")
-				.distanceMetric(RedisVectorStore.DistanceMetric.L2)
-				.metadataFields(MetadataField.tag("category"))
-				.initializeSchema(true)
-				.build();
+					.indexName("l2-test-index")
+					.distanceMetric(RedisVectorStore.DistanceMetric.L2)
+					.metadataFields(MetadataField.tag("category"))
+					.initializeSchema(true)
+					.build();
 
 			// Initialize the vector store schema
 			vectorStore.afterPropertiesSet();
@@ -122,12 +121,12 @@ class RedisVectorStoreDistanceMetricIT {
 
 			// Test L2 distance metric search with AI query
 			List<Document> aiResults = vectorStore
-				.similaritySearch(SearchRequest.builder().query("AI machine learning").topK(10).build());
+					.similaritySearch(SearchRequest.builder().query("AI machine learning").topK(10).build());
 
 			// Verify we get relevant AI results
 			assertThat(aiResults).isNotEmpty();
 			assertThat(aiResults).hasSizeGreaterThanOrEqualTo(2); // We have 2 AI
-																	// documents
+			// documents
 
 			// The first result should be about AI (closest match)
 			Document topResult = aiResults.get(0);
@@ -136,7 +135,7 @@ class RedisVectorStoreDistanceMetricIT {
 
 			// Test with database query
 			List<Document> dbResults = vectorStore
-				.similaritySearch(SearchRequest.builder().query("database systems").topK(10).build());
+					.similaritySearch(SearchRequest.builder().query("database systems").topK(10).build());
 
 			// Verify we get results and at least one contains database content
 			assertThat(dbResults).isNotEmpty();
@@ -161,17 +160,17 @@ class RedisVectorStoreDistanceMetricIT {
 		this.contextRunner.run(context -> {
 			// Get the base Jedis client for creating a custom store
 			RedisClient jedisClient = RedisClient.builder()
-				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-				.build();
+					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+					.build();
 			EmbeddingModel embeddingModel = context.getBean(EmbeddingModel.class);
 
 			// Create the vector store with explicit IP distance metric
 			RedisVectorStore vectorStore = RedisVectorStore.builder(jedisClient, embeddingModel)
-				.indexName("ip-test-index")
-				.distanceMetric(RedisVectorStore.DistanceMetric.IP) // New feature
-				.metadataFields(MetadataField.tag("category"))
-				.initializeSchema(true)
-				.build();
+					.indexName("ip-test-index")
+					.distanceMetric(RedisVectorStore.DistanceMetric.IP) // New feature
+					.metadataFields(MetadataField.tag("category"))
+					.initializeSchema(true)
+					.build();
 
 			// Test basic functionality with the configured distance metric
 			testVectorStoreWithDocuments(vectorStore);
@@ -202,7 +201,7 @@ class RedisVectorStoreDistanceMetricIT {
 
 		// Test search for AI-related documents
 		List<Document> results = vectorStore
-			.similaritySearch(SearchRequest.builder().query("AI machine learning").topK(2).build());
+				.similaritySearch(SearchRequest.builder().query("AI machine learning").topK(2).build());
 
 		// Verify that we're getting relevant results
 		assertThat(results).isNotEmpty();
@@ -219,12 +218,12 @@ class RedisVectorStoreDistanceMetricIT {
 
 		// Test filtered search - should only return AI documents
 		List<Document> filteredResults = vectorStore
-			.similaritySearch(SearchRequest.builder().query("AI").topK(5).filterExpression("category == 'AI'").build());
+				.similaritySearch(SearchRequest.builder().query("AI").topK(5).filterExpression("category == 'AI'").build());
 
 		// Verify all results are AI documents
 		assertThat(filteredResults).isNotEmpty();
 		assertThat(filteredResults).hasSizeLessThanOrEqualTo(2); // We only have 2 AI
-																	// documents
+		// documents
 
 		// All results should have category=AI
 		for (Document result : filteredResults) {
@@ -248,13 +247,13 @@ class RedisVectorStoreDistanceMetricIT {
 		@Bean
 		public RedisVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			return RedisVectorStore
-				.builder(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build(), embeddingModel)
-				.indexName("default-test-index")
-				.metadataFields(MetadataField.tag("category"))
-				.initializeSchema(true)
-				.build();
+					.builder(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build(), embeddingModel)
+					.indexName("default-test-index")
+					.metadataFields(MetadataField.tag("category"))
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

@@ -16,12 +16,11 @@
 
 package org.springframework.ai.document;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.document.id.IdGenerator;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.document.id.IdGenerator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -43,7 +42,7 @@ class ContentFormatterTests {
 
 		assertThat(this.document.getFormattedContent()).isEqualTo(this.document.getFormattedContent(MetadataMode.ALL));
 		assertThat(this.document.getFormattedContent())
-			.isEqualTo(this.document.getFormattedContent(Document.DEFAULT_CONTENT_FORMATTER, MetadataMode.ALL));
+				.isEqualTo(this.document.getFormattedContent(Document.DEFAULT_CONTENT_FORMATTER, MetadataMode.ALL));
 
 	}
 
@@ -53,38 +52,38 @@ class ContentFormatterTests {
 		DefaultContentFormatter defaultConfigFormatter = DefaultContentFormatter.defaultConfig();
 
 		TextBlockAssertion.assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
-			.isEqualTo("""
-					llmKey2: value4
-					embedKey1: value1
-					embedKey2: value2
-					embedKey3: value3
+				.isEqualTo("""
+						llmKey2: value4
+						embedKey1: value1
+						embedKey2: value2
+						embedKey3: value3
 
-					The World is Big and Salvation Lurks Around the Corner""");
-
-		assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
-			.isEqualTo(this.document.getFormattedContent());
+						The World is Big and Salvation Lurks Around the Corner""");
 
 		assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
-			.isEqualTo(defaultConfigFormatter.format(this.document, MetadataMode.ALL));
+				.isEqualTo(this.document.getFormattedContent());
+
+		assertThat(this.document.getFormattedContent(defaultConfigFormatter, MetadataMode.ALL))
+				.isEqualTo(defaultConfigFormatter.format(this.document, MetadataMode.ALL));
 	}
 
 	@Test
 	void shouldThrowWhenIdIsNull() {
 		assertThatThrownBy(() -> new Document(null, "text", new HashMap<>()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("id cannot be null or empty");
 	}
 
 	@Test
 	void shouldThrowWhenIdIsEmpty() {
 		assertThatThrownBy(() -> new Document("", "text", new HashMap<>())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.hasMessageContaining("id cannot be null or empty");
 	}
 
 	@Test
 	void shouldThrowWhenMetadataIsNull() {
 		assertThatThrownBy(() -> new Document("Sample text", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata cannot be null");
+				.hasMessageContaining("metadata cannot be null");
 	}
 
 	@Test
@@ -93,7 +92,7 @@ class ContentFormatterTests {
 		metadata.put(null, "value");
 
 		assertThatThrownBy(() -> new Document("Sample text", metadata)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata cannot have null keys");
+				.hasMessageContaining("metadata cannot have null keys");
 	}
 
 	@Test
@@ -102,14 +101,14 @@ class ContentFormatterTests {
 		metadata.put("key", null);
 
 		assertThatThrownBy(() -> new Document("Sample text", metadata)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata cannot have null values");
+				.hasMessageContaining("metadata cannot have null values");
 	}
 
 	@Test
 	void shouldThrowWhenNeitherTextNorMediaAreSet() {
 		assertThatThrownBy(() -> Document.builder().id("test-id").metadata("key", "value").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("exactly one of text or media must be specified");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("exactly one of text or media must be specified");
 	}
 
 	@Test
@@ -118,10 +117,10 @@ class ContentFormatterTests {
 		when(mockGenerator.generateId("test text", Map.of("key", "value"))).thenReturn("generated-id");
 
 		Document document = Document.builder()
-			.idGenerator(mockGenerator)
-			.text("test text")
-			.metadata("key", "value")
-			.build();
+				.idGenerator(mockGenerator)
+				.text("test text")
+				.metadata("key", "value")
+				.build();
 
 		assertThat(document.getId()).isEqualTo("generated-id");
 	}
@@ -129,20 +128,20 @@ class ContentFormatterTests {
 	@Test
 	void builderShouldThrowWhenIdGeneratorIsNull() {
 		assertThatThrownBy(() -> Document.builder().idGenerator(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("idGenerator cannot be null");
+				.hasMessageContaining("idGenerator cannot be null");
 	}
 
 	@Test
 	void builderShouldThrowWhenMetadataKeyIsNull() {
 		assertThatThrownBy(() -> Document.builder().metadata(null, "value"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata key cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata key cannot be null");
 	}
 
 	@Test
 	void builderShouldThrowWhenMetadataValueIsNull() {
 		assertThatThrownBy(() -> Document.builder().metadata("key", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata value cannot be null");
+				.hasMessageContaining("metadata value cannot be null");
 	}
 
 	@Test
@@ -162,8 +161,8 @@ class ContentFormatterTests {
 		Document document = new Document("Sample text", Map.of());
 
 		assertThatThrownBy(() -> document.getFormattedContent(null, MetadataMode.ALL))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("formatter must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("formatter must not be null");
 	}
 
 	@Test
@@ -171,7 +170,7 @@ class ContentFormatterTests {
 		Document document = new Document("Sample text", Map.of());
 
 		assertThatThrownBy(() -> document.getFormattedContent(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Metadata mode must not be null");
+				.hasMessageContaining("Metadata mode must not be null");
 	}
 
 	@Test

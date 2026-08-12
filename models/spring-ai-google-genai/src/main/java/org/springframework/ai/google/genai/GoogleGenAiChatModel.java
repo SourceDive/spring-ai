@@ -16,50 +16,18 @@
 
 package org.springframework.ai.google.genai;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.google.genai.Client;
 import com.google.genai.ResponseStream;
-import com.google.genai.types.Candidate;
-import com.google.genai.types.Content;
-import com.google.genai.types.FinishReason;
-import com.google.genai.types.FunctionCall;
-import com.google.genai.types.FunctionDeclaration;
-import com.google.genai.types.FunctionResponse;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
-import com.google.genai.types.GenerateContentResponseUsageMetadata;
-import com.google.genai.types.GoogleSearch;
-import com.google.genai.types.Part;
-import com.google.genai.types.SafetySetting;
-import com.google.genai.types.Schema;
-import com.google.genai.types.ThinkingConfig;
-import com.google.genai.types.ThinkingLevel;
-import com.google.genai.types.Tool;
+import com.google.genai.types.*;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import tools.jackson.databind.annotation.JsonDeserialize;
-import tools.jackson.databind.json.JsonMapper;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.DefaultUsage;
@@ -91,6 +59,13 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Google GenAI Chat Model implementation that provides access to Google's Gemini language
@@ -137,10 +112,10 @@ import org.springframework.util.StringUtils;
  * @author Dan Dobrin
  * @author Thomas Vitale
  * @author Sebastien Deleuze
- * @since 0.8.1
  * @see GoogleGenAiChatOptions
  * @see ToolCallingManager
  * @see ChatModel
+ * @since 0.8.1
  */
 public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
@@ -160,7 +135,8 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	/**
 	 * The cached content service for managing cached content.
 	 */
-	@Nullable private final GoogleGenAiCachedContentService cachedContentService;
+	@Nullable
+	private final GoogleGenAiCachedContentService cachedContentService;
 
 	// GenerationConfig is now built dynamically per request
 
@@ -175,9 +151,9 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	private final ToolCallingManager toolCallingManager;
 
 	private final JsonMapper jsonMapper = JacksonUtils.getDefaultJsonMapper()
-		.rebuild()
-		.addMixIn(Schema.class, SchemaMixin.class)
-		.build();
+			.rebuild()
+			.addMixIn(Schema.class, SchemaMixin.class)
+			.build();
 
 	/**
 	 * Conventions to use for generating observations.
@@ -186,17 +162,18 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 	/**
 	 * Creates a new instance of GoogleGenAiChatModel.
-	 * @param genAiClient the GenAI Client instance to use
-	 * @param options the default options to use
-	 * @param toolCallingManager the tool calling manager to use. It is wrapped in a
-	 * {@link GoogleGenAiToolCallingManager} to ensure compatibility with Vertex AI's
-	 * OpenAPI schema format.
-	 * @param retryTemplate the retry template to use
+	 *
+	 * @param genAiClient         the GenAI Client instance to use
+	 * @param options             the default options to use
+	 * @param toolCallingManager  the tool calling manager to use. It is wrapped in a
+	 *                            {@link GoogleGenAiToolCallingManager} to ensure compatibility with Vertex AI's
+	 *                            OpenAPI schema format.
+	 * @param retryTemplate       the retry template to use
 	 * @param observationRegistry the observation registry to use
 	 */
 	public GoogleGenAiChatModel(Client genAiClient, GoogleGenAiChatOptions options,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                            ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
+	                            ObservationRegistry observationRegistry) {
 
 		Assert.notNull(genAiClient, "GenAI Client must not be null");
 		Assert.notNull(options, "GoogleGenAiChatOptions must not be null");
@@ -213,8 +190,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 		if (toolCallingManager instanceof GoogleGenAiToolCallingManager) {
 			this.toolCallingManager = toolCallingManager;
-		}
-		else {
+		} else {
 			this.toolCallingManager = new GoogleGenAiToolCallingManager(toolCallingManager);
 		}
 	}
@@ -241,8 +217,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 			}
 
 			return parts;
-		}
-		else if (message instanceof UserMessage userMessage) {
+		} else if (message instanceof UserMessage userMessage) {
 			List<Part> parts = new ArrayList<>();
 			if (userMessage.getText() != null) {
 				parts.add(Part.fromText(userMessage.getText()));
@@ -251,8 +226,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 			parts.addAll(mediaToParts(userMessage.getMedia()));
 
 			return parts;
-		}
-		else if (message instanceof AssistantMessage assistantMessage) {
+		} else if (message instanceof AssistantMessage assistantMessage) {
 			List<Part> parts = new ArrayList<>();
 
 			// Check if there are thought signatures to restore.
@@ -282,10 +256,10 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 				for (int i = 0; i < toolCalls.size(); i++) {
 					AssistantMessage.ToolCall toolCall = toolCalls.get(i);
 					Part.Builder partBuilder = Part.builder()
-						.functionCall(FunctionCall.builder()
-							.name(toolCall.name())
-							.args(parseJsonToMap(toolCall.arguments()))
-							.build());
+							.functionCall(FunctionCall.builder()
+									.name(toolCall.name())
+									.args(parseJsonToMap(toolCall.arguments()))
+									.build());
 
 					// Attach thought signature to function call part if available
 					if (thoughtSignatures != null && !thoughtSignatures.isEmpty()) {
@@ -297,20 +271,18 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 			}
 
 			return parts;
-		}
-		else if (message instanceof ToolResponseMessage toolResponseMessage) {
+		} else if (message instanceof ToolResponseMessage toolResponseMessage) {
 
 			return toolResponseMessage.getResponses()
-				.stream()
-				.map(response -> Part.builder()
-					.functionResponse(FunctionResponse.builder()
-						.name(response.name())
-						.response(parseJsonToMap(response.responseData()))
-						.build())
-					.build())
-				.toList();
-		}
-		else {
+					.stream()
+					.map(response -> Part.builder()
+							.functionResponse(FunctionResponse.builder()
+									.name(response.name())
+									.response(parseJsonToMap(response.responseData()))
+									.build())
+							.build())
+					.toList();
+		} else {
 			throw new IllegalArgumentException("Gemini doesn't support message type: " + message.getClass());
 		}
 	}
@@ -324,13 +296,11 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 			if (data instanceof byte[]) {
 				return Part.fromBytes((byte[]) data, mimeType);
-			}
-			else if (data instanceof URI || data instanceof String) {
+			} else if (data instanceof URI || data instanceof String) {
 				// Handle URI or String URLs
 				String uri = data.toString();
 				return Part.fromUri(uri, mimeType);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Unsupported media data type: " + data.getClass());
 			}
 		}).toList();
@@ -352,19 +322,16 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 				Map<String, Object> wrapper = new HashMap<>();
 				wrapper.put("result", parsed);
 				return wrapper;
-			}
-			else if (parsed instanceof Map) {
+			} else if (parsed instanceof Map) {
 				// It's already a map, return it
 				return (Map<String, Object>) parsed;
-			}
-			else {
+			} else {
 				// It's a primitive or other type, wrap it
 				Map<String, Object> wrapper = new HashMap<>();
 				wrapper.put("result", parsed);
 				return wrapper;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to parse JSON: " + json, e);
 		}
 	}
@@ -372,8 +339,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	private String mapToJson(Map<String, Object> map) {
 		try {
 			return this.jsonMapper.writeValueAsString(map);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to convert map to JSON", e);
 		}
 	}
@@ -381,8 +347,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	private Schema jsonToSchema(String json) {
 		try {
 			return this.jsonMapper.readValue(json, Schema.class);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -400,39 +365,39 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 		Assert.notNull(options, "Options must not be null");
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(GoogleGenAiConstants.PROVIDER_NAME)
-			.build();
+				.prompt(prompt)
+				.provider(GoogleGenAiConstants.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				return RetryUtils.execute(this.retryTemplate, () -> {
+					return RetryUtils.execute(this.retryTemplate, () -> {
 
-					var geminiRequest = createGeminiRequest(prompt);
+						var geminiRequest = createGeminiRequest(prompt);
 
-					GenerateContentResponse generateContentResponse = this.getContentResponse(geminiRequest);
+						GenerateContentResponse generateContentResponse = this.getContentResponse(geminiRequest);
 
-					List<Generation> generations = generateContentResponse.candidates()
-						.orElse(List.of())
-						.stream()
-						.map(this::responseCandidateToGeneration)
-						.flatMap(List::stream)
-						.toList();
+						List<Generation> generations = generateContentResponse.candidates()
+								.orElse(List.of())
+								.stream()
+								.map(this::responseCandidateToGeneration)
+								.flatMap(List::stream)
+								.toList();
 
-					var usage = generateContentResponse.usageMetadata();
-					Usage currentUsage = (usage.isPresent()) ? getDefaultUsage(usage.get(), options)
-							: getDefaultUsage(null, options);
-					Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
-					ChatResponse chatResponse = new ChatResponse(generations,
-							toChatResponseMetadata(cumulativeUsage, generateContentResponse.modelVersion().get()));
+						var usage = generateContentResponse.usageMetadata();
+						Usage currentUsage = (usage.isPresent()) ? getDefaultUsage(usage.get(), options)
+								: getDefaultUsage(null, options);
+						Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
+						ChatResponse chatResponse = new ChatResponse(generations,
+								toChatResponseMetadata(cumulativeUsage, generateContentResponse.modelVersion().get()));
 
-					observationContext.setResponse(chatResponse);
-					return chatResponse;
+						observationContext.setResponse(chatResponse);
+						return chatResponse;
+					});
 				});
-			});
 
 		return response;
 
@@ -451,10 +416,10 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 		return Flux.deferContextual(contextView -> {
 
 			ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(GoogleGenAiConstants.PROVIDER_NAME)
-				.streaming(true)
-				.build();
+					.prompt(prompt)
+					.provider(GoogleGenAiConstants.PROVIDER_NAME)
+					.streaming(true)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -471,15 +436,15 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 			try {
 				ResponseStream<GenerateContentResponse> responseStream = this.genAiClient.models
-					.generateContentStream(request.modelName, request.contents, request.config);
+						.generateContentStream(request.modelName, request.contents, request.config);
 
 				Flux<ChatResponse> chatResponseFlux = Flux.fromIterable(responseStream).concatMap(response -> {
 					List<Generation> generations = response.candidates()
-						.orElse(List.of())
-						.stream()
-						.map(this::responseCandidateToGeneration)
-						.flatMap(List::stream)
-						.toList();
+							.orElse(List.of())
+							.stream()
+							.map(this::responseCandidateToGeneration)
+							.flatMap(List::stream)
+							.toList();
 
 					var usage = response.usageMetadata();
 					Usage currentUsage = usage.isPresent() ? getDefaultUsage(usage.get(), options)
@@ -499,11 +464,10 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 						});
 
 				return aggregatedFlux.doOnError(observation::error)
-					.doFinally(s -> observation.stop())
-					.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
+						.doFinally(s -> observation.stop())
+						.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException("Failed to generate content", e);
 			}
 
@@ -524,9 +488,9 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 		if (candidate.content().isPresent() && candidate.content().get().parts().isPresent()) {
 			List<Part> parts = candidate.content().get().parts().get();
 			List<byte[]> thoughtSignatures = parts.stream()
-				.filter(part -> part.thoughtSignature().isPresent())
-				.map(part -> part.thoughtSignature().get())
-				.toList();
+					.filter(part -> part.thoughtSignature().isPresent())
+					.map(part -> part.thoughtSignature().get())
+					.toList();
 
 			if (!thoughtSignatures.isEmpty()) {
 				messageMetadata.put("thoughtSignatures", thoughtSignatures);
@@ -560,60 +524,59 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 		}
 
 		ChatGenerationMetadata chatGenerationMetadata = ChatGenerationMetadata.builder()
-			.finishReason(candidateFinishReason.toString())
-			.build();
+				.finishReason(candidateFinishReason.toString())
+				.build();
 
 		boolean isFunctionCall = candidate.content().isPresent() && candidate.content().get().parts().isPresent()
 				&& candidate.content().get().parts().get().stream().anyMatch(part -> part.functionCall().isPresent());
 
 		if (isFunctionCall) {
 			List<AssistantMessage.ToolCall> assistantToolCalls = candidate.content()
-				.get()
-				.parts()
-				.orElse(List.of())
-				.stream()
-				.filter(part -> part.functionCall().isPresent())
-				.map(part -> {
-					FunctionCall functionCall = part.functionCall().get();
-					var functionName = functionCall.name().orElse("");
-					String functionArguments = mapToJson(functionCall.args().orElse(Map.of()));
-					return new AssistantMessage.ToolCall("", "function", functionName, functionArguments);
-				})
-				.toList();
+					.get()
+					.parts()
+					.orElse(List.of())
+					.stream()
+					.filter(part -> part.functionCall().isPresent())
+					.map(part -> {
+						FunctionCall functionCall = part.functionCall().get();
+						var functionName = functionCall.name().orElse("");
+						String functionArguments = mapToJson(functionCall.args().orElse(Map.of()));
+						return new AssistantMessage.ToolCall("", "function", functionName, functionArguments);
+					})
+					.toList();
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("")
-				.properties(messageMetadata)
-				.toolCalls(assistantToolCalls)
-				.build();
+					.content("")
+					.properties(messageMetadata)
+					.toolCalls(assistantToolCalls)
+					.build();
 
 			return List.of(new Generation(assistantMessage, chatGenerationMetadata));
-		}
-		else {
+		} else {
 			List<Generation> generations = candidate.content()
-				.get()
-				.parts()
-				.orElse(List.of())
-				.stream()
-				.filter(part -> part.toolCall().isEmpty() && part.toolResponse().isEmpty())
-				.map(part -> {
-					var partMessageMetadata = new HashMap<>(messageMetadata);
-					partMessageMetadata.put("isThought", part.thought().orElse(false));
-					return AssistantMessage.builder()
-						.content(part.text().orElse(""))
-						.properties(partMessageMetadata)
-						.build();
-				})
-				.map(assistantMessage -> new Generation(assistantMessage, chatGenerationMetadata))
-				.toList();
+					.get()
+					.parts()
+					.orElse(List.of())
+					.stream()
+					.filter(part -> part.toolCall().isEmpty() && part.toolResponse().isEmpty())
+					.map(part -> {
+						var partMessageMetadata = new HashMap<>(messageMetadata);
+						partMessageMetadata.put("isThought", part.thought().orElse(false));
+						return AssistantMessage.builder()
+								.content(part.text().orElse(""))
+								.properties(partMessageMetadata)
+								.build();
+					})
+					.map(assistantMessage -> new Generation(assistantMessage, chatGenerationMetadata))
+					.toList();
 
 			// If all parts were server-side tool invocations, return a single generation
 			// with empty text but with the server-side tool invocation metadata
 			if (generations.isEmpty()) {
 				AssistantMessage assistantMessage = AssistantMessage.builder()
-					.content("")
-					.properties(messageMetadata)
-					.build();
+						.content("")
+						.properties(messageMetadata)
+						.build();
 				return List.of(new Generation(assistantMessage, chatGenerationMetadata));
 			}
 
@@ -626,21 +589,19 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	}
 
 	private Usage getDefaultUsage(@Nullable GenerateContentResponseUsageMetadata usageMetadata,
-			@Nullable GoogleGenAiChatOptions options) {
+	                              @Nullable GoogleGenAiChatOptions options) {
 		// Check if extended metadata should be included (default to true if not
 		// configured)
 		boolean includeExtended = true;
 		if (options != null && options.getIncludeExtendedUsageMetadata() != null) {
 			includeExtended = options.getIncludeExtendedUsageMetadata();
-		}
-		else if (this.options.getIncludeExtendedUsageMetadata() != null) {
+		} else if (this.options.getIncludeExtendedUsageMetadata() != null) {
 			includeExtended = this.options.getIncludeExtendedUsageMetadata();
 		}
 
 		if (includeExtended) {
 			return GoogleGenAiUsage.from(usageMetadata);
-		}
-		else {
+		} else {
 			// Fall back to basic usage for backward compatibility
 			if (usageMetadata == null) {
 				return new DefaultUsage(0, 0, 0);
@@ -731,12 +692,12 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 		List<ToolDefinition> toolDefinitions = this.toolCallingManager.resolveToolDefinitions(requestOptions);
 		if (!CollectionUtils.isEmpty(toolDefinitions)) {
 			final List<FunctionDeclaration> functionDeclarations = toolDefinitions.stream()
-				.map(toolDefinition -> FunctionDeclaration.builder()
-					.name(toolDefinition.name())
-					.description(toolDefinition.description())
-					.parameters(jsonToSchema(toolDefinition.inputSchema()))
-					.build())
-				.toList();
+					.map(toolDefinition -> FunctionDeclaration.builder()
+							.name(toolDefinition.name())
+							.description(toolDefinition.description())
+							.parameters(jsonToSchema(toolDefinition.inputSchema()))
+							.build())
+					.toList();
 			tools.add(Tool.builder().functionDeclarations(functionDeclarations).build());
 		}
 
@@ -754,7 +715,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 		// Build ToolConfig if includeServerSideToolInvocations is enabled
 		if (Boolean.TRUE.equals(requestOptions.getIncludeServerSideToolInvocations())) {
 			configBuilder
-				.toolConfig(com.google.genai.types.ToolConfig.builder().includeServerSideToolInvocations(true));
+					.toolConfig(com.google.genai.types.ToolConfig.builder().includeServerSideToolInvocations(true));
 		}
 
 		// Handle cached content
@@ -816,7 +777,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 			case BLOCK_NONE -> new com.google.genai.types.HarmBlockThreshold(
 					com.google.genai.types.HarmBlockThreshold.Known.BLOCK_NONE);
 			case OFF ->
-				new com.google.genai.types.HarmBlockThreshold(com.google.genai.types.HarmBlockThreshold.Known.OFF);
+					new com.google.genai.types.HarmBlockThreshold(com.google.genai.types.HarmBlockThreshold.Known.OFF);
 			default -> throw new IllegalArgumentException("Unknown HarmBlockThreshold: " + threshold);
 		};
 	}
@@ -833,6 +794,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 	/**
 	 * Checks if the model name indicates a Gemini 3 Pro model.
+	 *
 	 * @param modelName the model name to check
 	 * @return true if the model is a Gemini 3 Pro model
 	 */
@@ -846,6 +808,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 	/**
 	 * Checks if the model name indicates a Gemini 3 Flash model.
+	 *
 	 * @param modelName the model name to check
 	 * @return true if the model is a Gemini 3 Flash model
 	 */
@@ -860,7 +823,8 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	/**
 	 * Validates ThinkingLevel compatibility with the model. Gemini 3 Pro only supports
 	 * LOW and HIGH. Gemini 3 Flash supports all levels.
-	 * @param level the thinking level to validate
+	 *
+	 * @param level     the thinking level to validate
 	 * @param modelName the model name
 	 * @throws IllegalArgumentException if the level is not supported for the model
 	 */
@@ -880,27 +844,28 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	private List<Content> toGeminiContent(List<Message> instructions) {
 
 		List<Content> contents = instructions.stream()
-			.map(message -> Content.builder()
-				.role(toGeminiMessageType(message.getMessageType()).getValue())
-				.parts(messageToGeminiParts(message))
-				.build())
-			.toList();
+				.map(message -> Content.builder()
+						.role(toGeminiMessageType(message.getMessageType()).getValue())
+						.parts(messageToGeminiParts(message))
+						.build())
+				.toList();
 
 		return contents;
 	}
 
 	private List<SafetySetting> toGeminiSafetySettings(List<GoogleGenAiSafetySetting> safetySettings) {
 		return safetySettings.stream()
-			.map(safetySetting -> SafetySetting.builder()
-				.category(mapToGenAiHarmCategory(safetySetting.getCategory()))
-				.threshold(mapToGenAiHarmBlockThreshold(safetySetting.getThreshold()))
-				.build())
-			.toList();
+				.map(safetySetting -> SafetySetting.builder()
+						.category(mapToGenAiHarmCategory(safetySetting.getCategory()))
+						.threshold(mapToGenAiHarmBlockThreshold(safetySetting.getThreshold()))
+						.build())
+				.toList();
 	}
 
 	/**
 	 * Generates the content response based on the provided Gemini request. Package
 	 * protected for testing purposes.
+	 *
 	 * @param request the GeminiRequest containing the content and model information
 	 * @return a GenerateContentResponse containing the generated content
 	 * @throws RuntimeException if content generation fails
@@ -908,8 +873,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	GenerateContentResponse getContentResponse(GeminiRequest request) {
 		try {
 			return this.genAiClient.models.generateContent(request.modelName, request.contents, request.config);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to generate content", e);
 		}
 	}
@@ -924,6 +888,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 	/**
 	 * Gets the cached content service for managing cached content.
+	 *
 	 * @return the cached content service
 	 */
 	public @Nullable GoogleGenAiCachedContentService getCachedContentService() {
@@ -937,6 +902,7 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -957,19 +923,20 @@ public class GoogleGenAiChatModel implements ChatModel, DisposableBean {
 	private Prompt buildRequestPrompt(Prompt prompt) {
 		if (prompt.getOptions() == null) {
 			return prompt.mutate().chatOptions(this.getOptions()).build();
-		}
-		else {
+		} else {
 			return prompt;
 		}
 	}
 
 	public static final class Builder {
 
-		@Nullable private Client genAiClient;
+		@Nullable
+		private Client genAiClient;
 
 		private GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder().build();
 
-		@Nullable private ToolCallingManager toolCallingManager;
+		@Nullable
+		private ToolCallingManager toolCallingManager;
 
 		private RetryTemplate retryTemplate = RetryUtils.DEFAULT_RETRY_TEMPLATE;
 

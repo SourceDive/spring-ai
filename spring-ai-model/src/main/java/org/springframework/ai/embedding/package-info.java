@@ -21,4 +21,3 @@
 @NullMarked
 package org.springframework.ai.embedding;
 
-import org.jspecify.annotations.NullMarked;

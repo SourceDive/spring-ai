@@ -16,17 +16,6 @@
 
 package org.springframework.ai.vectorstore.azure;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.search.documents.SearchClient;
 import com.azure.search.documents.indexes.SearchIndexClient;
@@ -35,7 +24,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -48,6 +36,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -63,7 +57,7 @@ import static org.hamcrest.Matchers.hasSize;
 public class AzureVectorStoreIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(Config.class);
+			.withUserConfiguration(Config.class);
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -81,8 +75,7 @@ public class AzureVectorStoreIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -97,11 +90,11 @@ public class AzureVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -115,8 +108,8 @@ public class AzureVectorStoreIT {
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
@@ -136,75 +129,75 @@ public class AzureVectorStoreIT {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(3));
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG','NL']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG','NL']")
+					.build());
 
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country not in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country not in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country not in ['BG'])")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country not in ['BG'])")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
@@ -257,8 +250,8 @@ public class AzureVectorStoreIT {
 			SearchRequest fooBarSearchRequest = SearchRequest.builder().query("FooBar").topK(5).build();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
-						equalTo("The World is Big and Salvation Lurks Around the Corner"));
+					.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
+							equalTo("The World is Big and Salvation Lurks Around the Corner"));
 
 			results = vectorStore.similaritySearch(fooBarSearchRequest);
 
@@ -286,12 +279,12 @@ public class AzureVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Depression").topK(50).similarityThresholdAll().build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Depression").topK(50).similarityThresholdAll().build()),
+							hasSize(3));
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -300,10 +293,10 @@ public class AzureVectorStoreIT {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Depression")
-				.topK(5)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Depression")
+					.topK(5)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -316,8 +309,8 @@ public class AzureVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Hello").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
@@ -339,8 +332,8 @@ public class AzureVectorStoreIT {
 		String apiKey = System.getenv("AZURE_AI_SEARCH_API_KEY");
 
 		SearchIndexClient searchIndexClient = new SearchIndexClientBuilder().endpoint(endpoint)
-			.credential(new AzureKeyCredential(apiKey))
-			.buildClient();
+				.credential(new AzureKeyCredential(apiKey))
+				.buildClient();
 
 		TransformersEmbeddingModel embeddingModel = new TransformersEmbeddingModel();
 		embeddingModel.afterPropertiesSet();
@@ -348,19 +341,19 @@ public class AzureVectorStoreIT {
 		// Create vector store with custom field names matching the production index
 		// Index uses: chunk_text (content), embedding, metadata
 		VectorStore vectorStore = AzureVectorStore.builder(searchIndexClient, embeddingModel)
-			.indexName(existingIndexName)
-			.initializeSchema(false) // Don't create - use existing index
-			.contentFieldName("chunk_text") // Custom field name!
-			.embeddingFieldName("embedding") // Standard name
-			.metadataFieldName("metadata") // Standard name
-			.build();
+				.indexName(existingIndexName)
+				.initializeSchema(false) // Don't create - use existing index
+				.contentFieldName("chunk_text") // Custom field name!
+				.embeddingFieldName("embedding") // Standard name
+				.metadataFieldName("metadata") // Standard name
+				.build();
 
 		// Trigger initialization
 		((AzureVectorStore) vectorStore).afterPropertiesSet();
 
 		// Search the existing index
 		List<Document> results = vectorStore
-			.similaritySearch(SearchRequest.builder().query("Azure Databricks").topK(3).build());
+				.similaritySearch(SearchRequest.builder().query("Azure Databricks").topK(3).build());
 
 		// Verify we got results
 		assertThat(results).isNotEmpty();
@@ -380,17 +373,17 @@ public class AzureVectorStoreIT {
 		@Bean
 		public SearchIndexClient searchIndexClient() {
 			return new SearchIndexClientBuilder().endpoint(System.getenv("AZURE_AI_SEARCH_ENDPOINT"))
-				.credential(new AzureKeyCredential(System.getenv("AZURE_AI_SEARCH_API_KEY")))
-				.buildClient();
+					.credential(new AzureKeyCredential(System.getenv("AZURE_AI_SEARCH_API_KEY")))
+					.buildClient();
 		}
 
 		@Bean
 		public VectorStore vectorStore(SearchIndexClient searchIndexClient, EmbeddingModel embeddingModel) {
 			return AzureVectorStore.builder(searchIndexClient, embeddingModel)
-				.initializeSchema(true)
-				.filterMetadataFields(List.of(MetadataField.text("country"), MetadataField.int64("year"),
-						MetadataField.date("activationDate")))
-				.build();
+					.initializeSchema(true)
+					.filterMetadataFields(List.of(MetadataField.text("country"), MetadataField.int64("year"),
+							MetadataField.date("activationDate")))
+					.build();
 		}
 
 		@Bean

@@ -49,43 +49,43 @@ class WeaviateVectorStoreOptionsTests {
 	@Test
 	void shouldFailWithNullObjectClass() {
 		assertThatThrownBy(() -> this.options.setObjectClass(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("objectClass cannot be null or empty");
+				.hasMessage("objectClass cannot be null or empty");
 	}
 
 	@Test
 	void shouldFailWithEmptyObjectClass() {
 		assertThatThrownBy(() -> this.options.setObjectClass("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("objectClass cannot be null or empty");
+				.hasMessage("objectClass cannot be null or empty");
 	}
 
 	@Test
 	void shouldFailWithWhitespaceOnlyObjectClass() {
 		assertThatThrownBy(() -> this.options.setObjectClass("   ")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("objectClass cannot be null or empty");
+				.hasMessage("objectClass cannot be null or empty");
 	}
 
 	@Test
 	void shouldFailWithNullContentFieldName() {
 		assertThatThrownBy(() -> this.options.setContentFieldName(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("contentFieldName cannot be null or empty");
+				.hasMessage("contentFieldName cannot be null or empty");
 	}
 
 	@Test
 	void shouldFailWithEmptyContentFieldName() {
 		assertThatThrownBy(() -> this.options.setContentFieldName("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("contentFieldName cannot be null or empty");
+				.hasMessage("contentFieldName cannot be null or empty");
 	}
 
 	@Test
 	void shouldFailWithWhitespaceOnlyContentFieldName() {
 		assertThatThrownBy(() -> this.options.setContentFieldName("   ")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("contentFieldName cannot be null or empty");
+				.hasMessage("contentFieldName cannot be null or empty");
 	}
 
 	@Test
 	void shouldFailWithNullMetaFieldPrefix() {
 		assertThatThrownBy(() -> this.options.setMetaFieldPrefix(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("metaFieldPrefix can be empty but not null");
+				.hasMessage("metaFieldPrefix can be empty but not null");
 	}
 
 	@Test

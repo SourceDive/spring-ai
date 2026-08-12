@@ -16,18 +16,17 @@
 
 package org.springframework.ai.vertexai.embedding;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
 import org.springframework.util.StringUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Utility class for constructing parameter objects for Vertex AI embedding requests.
@@ -73,7 +72,8 @@ public abstract class VertexAiEmbeddingUtils {
 
 	//////////////////////////////////////////////////////
 	// Text Only
-	//////////////////////////////////////////////////////
+
+	/// ///////////////////////////////////////////////////
 	public static class TextParametersBuilder {
 
 		public @Nullable Integer outputDimensionality;
@@ -154,7 +154,8 @@ public abstract class VertexAiEmbeddingUtils {
 
 	//////////////////////////////////////////////////////
 	// Multimodality
-	//////////////////////////////////////////////////////
+
+	/// ///////////////////////////////////////////////////
 	public static class MultimodalInstanceBuilder {
 
 		/**
@@ -263,11 +264,9 @@ public abstract class VertexAiEmbeddingUtils {
 			Assert.notNull(imageData, "Image data must not be null");
 			if (imageData instanceof byte[] bytes) {
 				return imageBytes(bytes);
-			}
-			else if (imageData instanceof String uri) {
+			} else if (imageData instanceof String uri) {
 				return gcsUri(uri);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Unsupported image data type: " + imageData.getClass());
 			}
 		}
@@ -292,8 +291,7 @@ public abstract class VertexAiEmbeddingUtils {
 				byte[] imageData = Base64.getEncoder().encode(this.imageBytes);
 				String encodedImage = new String(imageData, StandardCharsets.UTF_8);
 				imageBuilder.putFields("bytesBase64Encoded", valueOf(encodedImage));
-			}
-			else if (this.gcsUri != null) {
+			} else if (this.gcsUri != null) {
 				imageBuilder.putFields("gcsUri", valueOf(this.gcsUri));
 			}
 			if (this.mimeType != null) {
@@ -360,11 +358,9 @@ public abstract class VertexAiEmbeddingUtils {
 			Assert.notNull(imageData, "Video data must not be null");
 			if (imageData instanceof byte[] imageBytes) {
 				return videoBytes(imageBytes);
-			}
-			else if (imageData instanceof String uri) {
+			} else if (imageData instanceof String uri) {
 				return gcsUri(uri);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Unsupported image data type: " + imageData.getClass());
 			}
 		}
@@ -411,8 +407,7 @@ public abstract class VertexAiEmbeddingUtils {
 				byte[] imageData = Base64.getEncoder().encode(this.videoBytes);
 				String encodedImage = new String(imageData, StandardCharsets.UTF_8);
 				videoBuilder.putFields("bytesBase64Encoded", valueOf(encodedImage));
-			}
-			else if (this.gcsUri != null) {
+			} else if (this.gcsUri != null) {
 				videoBuilder.putFields("gcsUri", valueOf(this.gcsUri));
 			}
 			if (this.mimeType != null) {

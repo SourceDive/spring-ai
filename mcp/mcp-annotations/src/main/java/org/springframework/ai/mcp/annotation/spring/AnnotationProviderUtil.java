@@ -16,13 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
+import org.springframework.aop.support.AopUtils;
+import org.springframework.util.ReflectionUtils;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Stream;
-
-import org.springframework.aop.support.AopUtils;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Christian Tzolov
@@ -35,13 +35,14 @@ public final class AnnotationProviderUtil {
 	/**
 	 * Returns the declared methods of the given bean, sorted by method name and parameter
 	 * types. This is useful for consistent method ordering in annotation processing.
+	 *
 	 * @param bean The bean instance to inspect
 	 * @return An array of sorted methods
 	 */
 	public static Method[] beanMethods(Object bean) {
 
 		Method[] methods = ReflectionUtils
-			.getUniqueDeclaredMethods(AopUtils.isAopProxy(bean) ? AopUtils.getTargetClass(bean) : bean.getClass());
+				.getUniqueDeclaredMethods(AopUtils.isAopProxy(bean) ? AopUtils.getTargetClass(bean) : bean.getClass());
 
 		methods = Stream.of(methods).filter(ReflectionUtils.USER_DECLARED_METHODS::matches).toArray(Method[]::new);
 
@@ -51,7 +52,7 @@ public final class AnnotationProviderUtil {
 
 		// Sort methods by name and parameter types for consistent ordering
 		Arrays.sort(methods, Comparator.comparing(Method::getName)
-			.thenComparing(method -> Arrays.toString(method.getParameterTypes())));
+				.thenComparing(method -> Arrays.toString(method.getParameterTypes())));
 
 		return methods;
 	}

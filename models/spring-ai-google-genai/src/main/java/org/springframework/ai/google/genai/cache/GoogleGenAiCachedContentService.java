@@ -16,28 +16,21 @@
 
 package org.springframework.ai.google.genai.cache;
 
+import com.google.genai.AsyncCaches;
+import com.google.genai.Caches;
+import com.google.genai.Client;
+import com.google.genai.Pager;
+import com.google.genai.types.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
-import com.google.genai.AsyncCaches;
-import com.google.genai.Caches;
-import com.google.genai.Client;
-import com.google.genai.Pager;
-import com.google.genai.types.CachedContent;
-import com.google.genai.types.CreateCachedContentConfig;
-import com.google.genai.types.DeleteCachedContentConfig;
-import com.google.genai.types.DeleteCachedContentResponse;
-import com.google.genai.types.GetCachedContentConfig;
-import com.google.genai.types.ListCachedContentsConfig;
-import com.google.genai.types.UpdateCachedContentConfig;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * Service for managing cached content in Google GenAI. Provides synchronous and
@@ -69,6 +62,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Creates cached content from the given request.
+	 *
 	 * @param request the cached content creation request
 	 * @return the created cached content
 	 */
@@ -76,7 +70,7 @@ public class GoogleGenAiCachedContentService {
 		Assert.notNull(request, "Request must not be null");
 
 		CreateCachedContentConfig.Builder configBuilder = CreateCachedContentConfig.builder()
-			.contents(request.getContents());
+				.contents(request.getContents());
 
 		if (request.getSystemInstruction() != null) {
 			configBuilder.systemInstruction(request.getSystemInstruction());
@@ -88,8 +82,7 @@ public class GoogleGenAiCachedContentService {
 
 		if (request.getTtl() != null) {
 			configBuilder.ttl(request.getTtl());
-		}
-		else if (request.getExpireTime() != null) {
+		} else if (request.getExpireTime() != null) {
 			configBuilder.expireTime(request.getExpireTime());
 		}
 
@@ -100,8 +93,7 @@ public class GoogleGenAiCachedContentService {
 				logger.debug("Created cached content: " + cachedContent.name().orElse("unknown"));
 			}
 			return GoogleGenAiCachedContent.from(cachedContent);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to create cached content", e);
 			throw new CachedContentException("Failed to create cached content", e);
 		}
@@ -109,10 +101,12 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Retrieves cached content by name.
+	 *
 	 * @param name the cached content name
 	 * @return the cached content, or null if not found
 	 */
-	@Nullable public GoogleGenAiCachedContent get(String name) {
+	@Nullable
+	public GoogleGenAiCachedContent get(String name) {
 		Assert.hasText(name, "Name must not be empty");
 
 		try {
@@ -122,8 +116,7 @@ public class GoogleGenAiCachedContentService {
 				logger.debug("Retrieved cached content: " + name);
 			}
 			return GoogleGenAiCachedContent.from(cachedContent);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to get cached content: " + name, e);
 			}
@@ -133,7 +126,8 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Updates cached content with new TTL or expiration.
-	 * @param name the cached content name
+	 *
+	 * @param name    the cached content name
 	 * @param request the update request
 	 * @return the updated cached content
 	 */
@@ -158,8 +152,7 @@ public class GoogleGenAiCachedContentService {
 				logger.debug("Updated cached content: " + name);
 			}
 			return GoogleGenAiCachedContent.from(cachedContent);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to update cached content: " + name, e);
 			}
@@ -169,6 +162,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Deletes cached content by name.
+	 *
 	 * @param name the cached content name
 	 * @return true if deleted successfully, false otherwise
 	 */
@@ -182,8 +176,7 @@ public class GoogleGenAiCachedContentService {
 				logger.debug("Deleted cached content: " + name);
 			}
 			return true;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete cached content: " + name, e);
 			}
@@ -193,7 +186,8 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Lists all cached content with optional pagination.
-	 * @param pageSize the page size (null for default)
+	 *
+	 * @param pageSize  the page size (null for default)
 	 * @param pageToken the page token for pagination (null for first page)
 	 * @return list of cached content
 	 */
@@ -230,8 +224,7 @@ public class GoogleGenAiCachedContentService {
 			}
 
 			return new CachedContentPage(contents, null);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to list cached content", e);
 			throw new CachedContentException("Failed to list cached content", e);
 		}
@@ -239,6 +232,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Lists all cached content without pagination.
+	 *
 	 * @return list of all cached content
 	 */
 	public List<GoogleGenAiCachedContent> listAll() {
@@ -259,6 +253,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Asynchronously creates cached content from the given request.
+	 *
 	 * @param request the cached content creation request
 	 * @return a future containing the created cached content
 	 */
@@ -266,7 +261,7 @@ public class GoogleGenAiCachedContentService {
 		Assert.notNull(request, "Request must not be null");
 
 		CreateCachedContentConfig.Builder configBuilder = CreateCachedContentConfig.builder()
-			.contents(request.getContents());
+				.contents(request.getContents());
 
 		if (request.getSystemInstruction() != null) {
 			configBuilder.systemInstruction(request.getSystemInstruction());
@@ -278,16 +273,14 @@ public class GoogleGenAiCachedContentService {
 
 		if (request.getTtl() != null) {
 			configBuilder.ttl(request.getTtl());
-		}
-		else if (request.getExpireTime() != null) {
+		} else if (request.getExpireTime() != null) {
 			configBuilder.expireTime(request.getExpireTime());
 		}
 
 		try {
 			CreateCachedContentConfig config = configBuilder.build();
 			return this.asyncCaches.create(request.getModel(), config).thenApply(GoogleGenAiCachedContent::from);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to create cached content asynchronously", e);
 			return CompletableFuture.failedFuture(new CachedContentException("Failed to create cached content", e));
 		}
@@ -295,6 +288,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Asynchronously retrieves cached content by name.
+	 *
 	 * @param name the cached content name
 	 * @return a future containing the cached content
 	 */
@@ -304,8 +298,7 @@ public class GoogleGenAiCachedContentService {
 		try {
 			GetCachedContentConfig config = GetCachedContentConfig.builder().build();
 			return this.asyncCaches.get(name, config).thenApply(GoogleGenAiCachedContent::from);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to get cached content asynchronously: " + name, e);
 			}
@@ -315,7 +308,8 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Asynchronously updates cached content with new TTL or expiration.
-	 * @param name the cached content name
+	 *
+	 * @param name    the cached content name
 	 * @param request the update request
 	 * @return a future containing the updated cached content
 	 */
@@ -336,8 +330,7 @@ public class GoogleGenAiCachedContentService {
 		try {
 			UpdateCachedContentConfig config = configBuilder.build();
 			return this.asyncCaches.update(name, config).thenApply(GoogleGenAiCachedContent::from);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to update cached content asynchronously: " + name, e);
 			}
@@ -347,6 +340,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Asynchronously deletes cached content by name.
+	 *
 	 * @param name the cached content name
 	 * @return a future indicating success
 	 */
@@ -361,8 +355,7 @@ public class GoogleGenAiCachedContentService {
 				}
 				return false;
 			});
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete cached content asynchronously: " + name, e);
 			}
@@ -374,7 +367,8 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Extends the TTL of cached content by the specified duration.
-	 * @param name the cached content name
+	 *
+	 * @param name          the cached content name
 	 * @param additionalTtl the additional TTL to add
 	 * @return the updated cached content
 	 */
@@ -391,15 +385,16 @@ public class GoogleGenAiCachedContentService {
 				: Instant.now().plus(additionalTtl);
 
 		CachedContentUpdateRequest updateRequest = CachedContentUpdateRequest.builder()
-			.expireTime(newExpireTime)
-			.build();
+				.expireTime(newExpireTime)
+				.build();
 
 		return update(name, updateRequest);
 	}
 
 	/**
 	 * Refreshes the expiration of cached content to the maximum TTL.
-	 * @param name the cached content name
+	 *
+	 * @param name   the cached content name
 	 * @param maxTtl the maximum TTL to set
 	 * @return the updated cached content
 	 */
@@ -414,6 +409,7 @@ public class GoogleGenAiCachedContentService {
 
 	/**
 	 * Removes all expired cached content.
+	 *
 	 * @return the number of expired items removed
 	 */
 	public int cleanupExpired() {
@@ -442,7 +438,8 @@ public class GoogleGenAiCachedContentService {
 
 		private final List<GoogleGenAiCachedContent> contents;
 
-		@Nullable private final String nextPageToken;
+		@Nullable
+		private final String nextPageToken;
 
 		public CachedContentPage(List<GoogleGenAiCachedContent> contents, @Nullable String nextPageToken) {
 			this.contents = contents != null ? new ArrayList<>(contents) : new ArrayList<>();

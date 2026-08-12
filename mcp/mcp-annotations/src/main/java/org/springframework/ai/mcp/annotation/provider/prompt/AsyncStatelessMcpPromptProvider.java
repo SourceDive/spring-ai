@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncPromptSpecification;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
@@ -28,16 +23,20 @@ import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.adapter.PromptAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.prompt.AsyncStatelessMcpPromptMethodCallback;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 /**
  * Provider for asynchronous stateless MCP prompt methods.
- *
+ * <p>
  * This provider creates prompt specifications for methods annotated with
  * {@link McpPrompt} that are designed to work in a stateless manner using
  * {@link McpTransportContext} and return reactive types.
@@ -52,8 +51,9 @@ public class AsyncStatelessMcpPromptProvider {
 
 	/**
 	 * Create a new AsyncStatelessMcpPromptProvider.
+	 *
 	 * @param promptObjects the objects containing methods annotated with
-	 * {@link McpPrompt}
+	 *                      {@link McpPrompt}
 	 */
 	public AsyncStatelessMcpPromptProvider(List<Object> promptObjects) {
 		Assert.notNull(promptObjects, "promptObjects cannot be null");
@@ -62,32 +62,33 @@ public class AsyncStatelessMcpPromptProvider {
 
 	/**
 	 * Get the async stateless prompt specifications.
+	 *
 	 * @return the list of async stateless prompt specifications
 	 */
 	public List<AsyncPromptSpecification> getPromptSpecifications() {
 
 		List<AsyncPromptSpecification> promptSpecs = this.promptObjects.stream()
-			.map(promptObject -> Stream.of(doGetClassMethods(promptObject))
-				.filter(method -> method.isAnnotationPresent(McpPrompt.class))
-				.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
-				.filter(McpPredicates.filterMethodWithBidirectionalParameters())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpPromptMethod -> {
-					var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
-					var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
+				.map(promptObject -> Stream.of(doGetClassMethods(promptObject))
+						.filter(method -> method.isAnnotationPresent(McpPrompt.class))
+						.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
+						.filter(McpPredicates.filterMethodWithBidirectionalParameters())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpPromptMethod -> {
+							var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
+							var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
 
-					BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> methodCallback = AsyncStatelessMcpPromptMethodCallback
-						.builder()
-						.method(mcpPromptMethod)
-						.bean(promptObject)
-						.prompt(mcpPrompt)
-						.build();
+							BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> methodCallback = AsyncStatelessMcpPromptMethodCallback
+									.builder()
+									.method(mcpPromptMethod)
+									.bean(promptObject)
+									.prompt(mcpPrompt)
+									.build();
 
-					return new AsyncPromptSpecification(mcpPrompt, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new AsyncPromptSpecification(mcpPrompt, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (promptSpecs.isEmpty()) {
 			if (logger.isWarnEnabled()) {
@@ -100,6 +101,7 @@ public class AsyncStatelessMcpPromptProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

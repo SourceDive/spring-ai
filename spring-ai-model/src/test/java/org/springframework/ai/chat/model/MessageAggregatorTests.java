@@ -16,17 +16,16 @@
 
 package org.springframework.ai.chat.model;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.EmptyRateLimit;
 import org.springframework.ai.chat.metadata.RateLimit;
+import reactor.core.publisher.Flux;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

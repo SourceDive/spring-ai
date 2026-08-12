@@ -16,13 +16,8 @@
 
 package org.springframework.ai.openai.acme;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -41,6 +36,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -106,8 +105,8 @@ public class AcmeIT extends AbstractIT {
 	private Message getSystemMessage(List<Document> similarDocuments) {
 
 		String documents = similarDocuments.stream()
-			.map(entry -> entry.getText())
-			.collect(Collectors.joining(System.lineSeparator()));
+				.map(entry -> entry.getText())
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(this.systemBikePrompt);
 		Message systemMessage = systemPromptTemplate.createMessage(Map.of("documents", documents));

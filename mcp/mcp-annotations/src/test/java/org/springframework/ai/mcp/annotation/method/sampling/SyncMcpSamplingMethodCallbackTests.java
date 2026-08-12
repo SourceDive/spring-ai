@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.sampling;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpSampling;
 import org.springframework.ai.mcp.annotation.method.sampling.AbstractMcpSamplingMethodCallback.McpSamplingMethodException;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,10 +45,10 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		SyncMcpSamplingMethodCallback callback = SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.sampling(annotation)
+				.build();
 
 		CreateMessageRequest request = SamplingTestHelper.createSampleRequest();
 		CreateMessageResult result = callback.apply(request);
@@ -66,13 +65,13 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		SyncMcpSamplingMethodCallback callback = SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.sampling(annotation)
+				.build();
 
 		assertThatThrownBy(() -> callback.apply(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Request must not be null");
+				.hasMessageContaining("Request must not be null");
 	}
 
 	@Test
@@ -82,11 +81,11 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return CreateMessageResult");
+				.method(method)
+				.bean(this.example)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must return CreateMessageResult");
 	}
 
 	@Test
@@ -95,11 +94,11 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type CreateMessageRequest");
+				.method(method)
+				.bean(this.example)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type CreateMessageRequest");
 	}
 
 	@Test
@@ -108,11 +107,11 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have at least 1 parameter");
+				.method(method)
+				.bean(this.example)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have at least 1 parameter");
 	}
 
 	@Test
@@ -122,18 +121,18 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Currently only methods with a single CreateMessageRequest parameter are supported");
+				.method(method)
+				.bean(this.example)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Currently only methods with a single CreateMessageRequest parameter are supported");
 	}
 
 	@Test
 	void testNullMethod() {
 		assertThatThrownBy(() -> SyncMcpSamplingMethodCallback.builder().method(null).bean(this.example).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -141,8 +140,8 @@ public class SyncMcpSamplingMethodCallbackTests {
 		Method method = SyncMcpSamplingMethodCallbackExample.class.getMethod("handleSamplingRequest",
 				CreateMessageRequest.class);
 		assertThatThrownBy(() -> SyncMcpSamplingMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -153,25 +152,25 @@ public class SyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		SyncMcpSamplingMethodCallback callback = SyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(new SyncMcpSamplingMethodCallbackExample() {
-				@Override
-				public CreateMessageResult handleSamplingRequest(CreateMessageRequest request) {
-					throw new RuntimeException("Test exception");
-				}
-			})
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(new SyncMcpSamplingMethodCallbackExample() {
+					@Override
+					public CreateMessageResult handleSamplingRequest(CreateMessageRequest request) {
+						throw new RuntimeException("Test exception");
+					}
+				})
+				.sampling(annotation)
+				.build();
 
 		CreateMessageRequest request = SamplingTestHelper.createSampleRequest();
 		assertThatThrownBy(() -> callback.apply(request)).isInstanceOf(McpSamplingMethodException.class)
-			.hasMessageContaining("Error invoking sampling method")
-			.hasCauseInstanceOf(InvocationTargetException.class)
-			.satisfies(e -> {
-				Throwable cause = e.getCause().getCause();
-				assertThat(cause).isInstanceOf(RuntimeException.class);
-				assertThat(cause.getMessage()).isEqualTo("Test exception");
-			});
+				.hasMessageContaining("Error invoking sampling method")
+				.hasCauseInstanceOf(InvocationTargetException.class)
+				.satisfies(e -> {
+					Throwable cause = e.getCause().getCause();
+					assertThat(cause).isInstanceOf(RuntimeException.class);
+					assertThat(cause.getMessage()).isEqualTo("Test exception");
+				});
 	}
 
 }

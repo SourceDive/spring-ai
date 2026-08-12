@@ -16,15 +16,7 @@
 
 package org.springframework.ai.testcontainers.service.connection.chroma;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import org.testcontainers.chromadb.ChromaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
@@ -38,13 +30,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.chromadb.ChromaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.ai.vectorstore.chroma.collectionName=TestCollection",
-		"spring.ai.vectorstore.chroma.initialize-schema=true" })
+@TestPropertySource(properties = {"spring.ai.vectorstore.chroma.collectionName=TestCollection",
+		"spring.ai.vectorstore.chroma.initialize-schema=true"})
 class ChromaContainerConnectionDetailsFactoryIT {
 
 	@Container
@@ -74,9 +73,9 @@ class ChromaContainerConnectionDetailsFactoryIT {
 		assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 		results = this.vectorStore.similaritySearch(SearchRequest.from(request)
-			.similarityThresholdAll()
-			.filterExpression("country == 'Netherlands'")
-			.build());
+				.similarityThresholdAll()
+				.filterExpression("country == 'Netherlands'")
+				.build());
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 

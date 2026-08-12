@@ -16,18 +16,18 @@
 
 package org.springframework.ai.vectorstore.qdrant;
 
-import java.util.Map;
-
 import io.qdrant.client.grpc.JsonWithInt.NullValue;
 import io.qdrant.client.grpc.JsonWithInt.Value;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests for {@link QdrantObjectFactory}.
- *
+ * <p>
  * ignore: test 10 for github workflow trigger on commit.
  *
  * @author Heonwoo Kim
@@ -95,13 +95,13 @@ class QdrantObjectFactoryTests {
 	@Test
 	void toObjectMapShouldThrowExceptionForNullPayload() {
 		assertThatThrownBy(() -> QdrantObjectFactory.toObjectMap(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Payload map must not be null");
+				.hasMessage("Payload map must not be null");
 	}
 
 	@Test
 	void toObjectMapShouldHandleMixedDataTypes() {
 		Map<String, Value> payload = Map.of("text", Value.newBuilder().setStringValue("").build(), // empty
-																									// string
+				// string
 				"flag", Value.newBuilder().setBoolValue(true).build(), "nullField",
 				Value.newBuilder().setNullValue(NullValue.NULL_VALUE).build(), "number",
 				Value.newBuilder().setIntegerValue(1).build());

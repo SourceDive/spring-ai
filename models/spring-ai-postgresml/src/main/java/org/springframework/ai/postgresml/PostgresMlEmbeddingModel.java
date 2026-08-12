@@ -16,23 +16,10 @@
 
 package org.springframework.ai.postgresml;
 
-import java.sql.Array;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.EmptyUsage;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.AbstractEmbeddingModel;
-import org.springframework.ai.embedding.Embedding;
-import org.springframework.ai.embedding.EmbeddingOptions;
-import org.springframework.ai.embedding.EmbeddingRequest;
-import org.springframework.ai.embedding.EmbeddingResponse;
-import org.springframework.ai.embedding.EmbeddingResponseMetadata;
+import org.springframework.ai.embedding.*;
 import org.springframework.ai.model.EmbeddingUtils;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.util.JsonHelper;
@@ -42,6 +29,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.sql.Array;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <a href="https://postgresml.org">PostgresML</a> EmbeddingModel
@@ -63,6 +57,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 
 	/**
 	 * a constructor
+	 *
 	 * @param jdbcTemplate JdbcTemplate
 	 */
 	public PostgresMlEmbeddingModel(JdbcTemplate jdbcTemplate) {
@@ -75,11 +70,12 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 
 	/**
 	 * a PostgresMlEmbeddingModel constructor
+	 *
 	 * @param jdbcTemplate JdbcTemplate to use to interact with the database.
-	 * @param options PostgresMlEmbeddingOptions to configure the client.
+	 * @param options      PostgresMlEmbeddingOptions to configure the client.
 	 */
 	public PostgresMlEmbeddingModel(JdbcTemplate jdbcTemplate, PostgresMlEmbeddingOptions options,
-			boolean createExtension) {
+	                                boolean createExtension) {
 		Assert.notNull(jdbcTemplate, "jdbc template must not be null.");
 		Assert.notNull(options, "options must not be null.");
 		Assert.notNull(options.getTransformer(), "transformer must not be null.");
@@ -150,6 +146,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 
 	/**
 	 * Merge the default and request options.
+	 *
 	 * @param requestOptions request options to merge.
 	 * @return the merged options.
 	 */
@@ -164,17 +161,16 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 		// PostgresMlEmbeddingOptions disregards base EmbeddingOptions properties
 		if (requestOptions instanceof PostgresMlEmbeddingOptions pgOptions) {
 			builder
-				.transformer(ModelOptionsUtils.mergeOption(pgOptions.getTransformer(), this.options.getTransformer()))
-				.vectorType(ModelOptionsUtils.mergeOption(pgOptions.getVectorType(), this.options.getVectorType()))
-				.kwargs(ModelOptionsUtils.mergeOption(pgOptions.getKwargs(), this.options.getKwargs()))
-				.metadataMode(
-						ModelOptionsUtils.mergeOption(pgOptions.getMetadataMode(), this.options.getMetadataMode()));
-		}
-		else {
+					.transformer(ModelOptionsUtils.mergeOption(pgOptions.getTransformer(), this.options.getTransformer()))
+					.vectorType(ModelOptionsUtils.mergeOption(pgOptions.getVectorType(), this.options.getVectorType()))
+					.kwargs(ModelOptionsUtils.mergeOption(pgOptions.getKwargs(), this.options.getKwargs()))
+					.metadataMode(
+							ModelOptionsUtils.mergeOption(pgOptions.getMetadataMode(), this.options.getMetadataMode()));
+		} else {
 			builder.transformer(this.options.getTransformer())
-				.vectorType(this.options.getVectorType())
-				.kwargs(this.options.getKwargs())
-				.metadataMode(this.options.getMetadataMode());
+					.vectorType(this.options.getVectorType())
+					.kwargs(this.options.getKwargs())
+					.metadataMode(this.options.getMetadataMode());
 		}
 
 		return builder.build();
@@ -202,7 +198,7 @@ public class PostgresMlEmbeddingModel extends AbstractEmbeddingModel implements 
 		PG_VECTOR("::vector", "vector", (rs, i) -> {
 			String embedding = rs.getString("embedding");
 			return EmbeddingUtils.toPrimitive(Arrays.stream((embedding.substring(1, embedding.length() - 1)
-				/* remove leading '[' and trailing ']' */.split(","))).map(Float::parseFloat).toList());
+					/* remove leading '[' and trailing ']' */.split(","))).map(Float::parseFloat).toList());
 		});
 
 		private final String cast;

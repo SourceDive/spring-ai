@@ -16,10 +16,6 @@
 
 package org.springframework.ai.chat.memory.repository.cassandra;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.UUID;
-
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
@@ -28,19 +24,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
 import org.testcontainers.cassandra.CassandraContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Bean;
+import java.time.Duration;
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,7 +53,7 @@ class CassandraChatMemoryRepositoryIT {
 	static CassandraContainer cassandraContainer = new CassandraContainer(CassandraImage.DEFAULT_IMAGE);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(CassandraChatMemoryRepositoryIT.TestApplication.class);
+			.withUserConfiguration(CassandraChatMemoryRepositoryIT.TestApplication.class);
 
 	@Test
 	void ensureBeansGetsCreated() {
@@ -70,7 +65,7 @@ class CassandraChatMemoryRepositoryIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER"})
 	void add_shouldInsertSingleMessage(String content, MessageType messageType) {
 		this.contextRunner.run(context -> {
 			var chatMemory = context.getBean(ChatMemoryRepository.class);
@@ -135,7 +130,7 @@ class CassandraChatMemoryRepositoryIT {
 			assertThat(msgUdts.size()).isEqualTo(2);
 
 			assertThat(msgUdts.get(0).getInstant("msg_timestamp").toEpochMilli())
-				.isLessThanOrEqualTo(msgUdts.get(1).getInstant("msg_timestamp").toEpochMilli());
+					.isLessThanOrEqualTo(msgUdts.get(1).getInstant("msg_timestamp").toEpochMilli());
 
 			assertThat(msgUdts.get(0).getString("msg_type")).isEqualTo(MessageType.ASSISTANT.name());
 			assertThat(msgUdts.get(0).getString("msg_content")).isEqualTo("Message from assistant");
@@ -204,8 +199,8 @@ class CassandraChatMemoryRepositoryIT {
 			var sessionId = UUID.randomUUID().toString();
 			var user = new UserMessage("Hello");
 			var toolResponse = ToolResponseMessage.builder()
-				.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "myTool", "result")))
-				.build();
+					.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "myTool", "result")))
+					.build();
 
 			chatMemory.saveAll(sessionId, List.of(user, toolResponse));
 
@@ -222,8 +217,8 @@ class CassandraChatMemoryRepositoryIT {
 			var sessionId = UUID.randomUUID().toString();
 			var user = new UserMessage("What is the weather?");
 			var toolCallAssistant = AssistantMessage.builder()
-				.toolCalls(List.of(new AssistantMessage.ToolCall("call1", "function", "getWeather", "{}")))
-				.build();
+					.toolCalls(List.of(new AssistantMessage.ToolCall("call1", "function", "getWeather", "{}")))
+					.build();
 			var plainAssistant = new AssistantMessage("It is sunny.");
 
 			chatMemory.saveAll(sessionId, List.of(user, toolCallAssistant, plainAssistant));
@@ -274,11 +269,11 @@ class CassandraChatMemoryRepositoryIT {
 		public CassandraChatMemoryRepository memory(CqlSession cqlSession) {
 
 			var conf = CassandraChatMemoryRepositoryConfig.builder()
-				.withCqlSession(cqlSession)
-				.withKeyspaceName("test_" + CassandraChatMemoryRepositoryConfig.DEFAULT_KEYSPACE_NAME)
-				.withMessagesColumnName("msgs")
-				.withTimeToLive(Duration.ofMinutes(1))
-				.build();
+					.withCqlSession(cqlSession)
+					.withKeyspaceName("test_" + CassandraChatMemoryRepositoryConfig.DEFAULT_KEYSPACE_NAME)
+					.withMessagesColumnName("msgs")
+					.withTimeToLive(Duration.ofMinutes(1))
+					.build();
 
 			conf.dropKeyspace();
 			return CassandraChatMemoryRepository.create(conf);
@@ -287,10 +282,10 @@ class CassandraChatMemoryRepositoryIT {
 		@Bean
 		public CqlSession cqlSession() {
 			return new CqlSessionBuilder()
-				// comment next two lines out to connect to a local C* cluster
-				.addContactPoint(cassandraContainer.getContactPoint())
-				.withLocalDatacenter(cassandraContainer.getLocalDatacenter())
-				.build();
+					// comment next two lines out to connect to a local C* cluster
+					.addContactPoint(cassandraContainer.getContactPoint())
+					.withLocalDatacenter(cassandraContainer.getLocalDatacenter())
+					.build();
 		}
 
 	}

@@ -16,24 +16,16 @@
 
 package org.springframework.ai.vectorstore.elasticsearch;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.vectorstore.filter.Filter;
+import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
+
 import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.vectorstore.filter.Filter;
-import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 class ElasticsearchAiSearchFilterExpressionConverterTest {
 
@@ -65,7 +57,7 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testEQ() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country:\"BG\"");
 	}
 
@@ -92,7 +84,7 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 								new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")),
 								new Filter.Expression(NE, new Filter.Key("city"), new Filter.Value("Sofia")))));
 		assertThat(vectorExpr)
-			.isEqualTo("metadata.year:>=2020 OR metadata.country:\"BG\" AND metadata.city: NOT \"Sofia\"");
+				.isEqualTo("metadata.year:>=2020 OR metadata.country:\"BG\" AND metadata.city: NOT \"Sofia\"");
 	}
 
 	@Test
@@ -129,36 +121,36 @@ class ElasticsearchAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country 1 2 3"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country 1 2 3"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country\\ 1\\ 2\\ 3:\"BG\"");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.'country\\ 1\\ 2\\ 3':\"BG\"");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.\\\"country\\ 1\\ 2\\ 3\\\":\"BG\"");
 	}
 
 	@Test
 	public void metadataKeyDoubleQuoteEscapedInQueryString() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country\"foo"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country\"foo"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country\\\"foo:\"BG\"");
 	}
 
 	@Test
 	public void metadataKeyColonEscapedInQueryString() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("a:b"), new Filter.Value("v")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("a:b"), new Filter.Value("v")));
 		assertThat(vectorExpr).isEqualTo("metadata.a\\:b:\"v\"");
 	}
 
 	@Test
 	public void metadataKeyContainingOrAndSpacesIsEscaped() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("foo OR bar"), new Filter.Value("x")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("foo OR bar"), new Filter.Value("x")));
 		assertThat(vectorExpr).isEqualTo("metadata.foo\\ OR\\ bar:\"x\"");
 	}
 

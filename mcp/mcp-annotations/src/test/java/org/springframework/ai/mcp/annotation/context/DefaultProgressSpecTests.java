@@ -16,10 +16,10 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -126,9 +126,9 @@ public class DefaultProgressSpecTests {
 		spec.meta("key1", "value1").meta("key2", "value2").meta("key3", "value3");
 
 		assertThat(spec.meta).hasSize(3)
-			.containsEntry("key1", "value1")
-			.containsEntry("key2", "value2")
-			.containsEntry("key3", "value3");
+				.containsEntry("key1", "value1")
+				.containsEntry("key2", "value2")
+				.containsEntry("key3", "value3");
 	}
 
 	@Test
@@ -137,9 +137,9 @@ public class DefaultProgressSpecTests {
 		spec.meta = new HashMap<>();
 
 		McpRequestContextTypes.ProgressSpec result = spec.progress(0.75)
-			.total(1.0)
-			.message("Processing...")
-			.meta("key", "value");
+				.total(1.0)
+				.message("Processing...")
+				.meta("key", "value");
 
 		assertThat(result).isSameAs(spec);
 		assertThat(spec.progress).isEqualTo(0.75);

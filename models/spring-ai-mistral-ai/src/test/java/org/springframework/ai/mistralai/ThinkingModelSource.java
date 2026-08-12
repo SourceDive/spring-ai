@@ -16,21 +16,20 @@
 
 package org.springframework.ai.mistralai;
 
+import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatModel;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.junit.jupiter.params.provider.EnumSource;
-
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatModel;
 
 /**
  * @author Nicolas Krier
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@EnumSource(value = ChatModel.class, names = { "MAGISTRAL_MEDIUM", "MISTRAL_MEDIUM", "MISTRAL_SMALL" })
+@EnumSource(value = ChatModel.class, names = {"MAGISTRAL_MEDIUM", "MISTRAL_MEDIUM", "MISTRAL_SMALL"})
 public @interface ThinkingModelSource {
 
 }

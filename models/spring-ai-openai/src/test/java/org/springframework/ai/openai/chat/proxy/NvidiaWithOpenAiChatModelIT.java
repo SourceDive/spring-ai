@@ -16,18 +16,9 @@
 
 package org.springframework.ai.openai.chat.proxy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -54,6 +45,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -103,11 +102,11 @@ class NvidiaWithOpenAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}
@@ -115,9 +114,9 @@ class NvidiaWithOpenAiChatModelIT {
 	@Test
 	void streamingWithTokenUsage() {
 		var promptOptions = OpenAiChatOptions.builder()
-			.streamOptions(OpenAiChatOptions.StreamOptions.builder().includeUsage(true).build())
-			.seed(1)
-			.build();
+				.streamOptions(OpenAiChatOptions.StreamOptions.builder().includeUsage(true).build())
+				.seed(1)
+				.build();
 
 		var prompt = new Prompt("List two colors of the Polish flag. Be brief.", promptOptions);
 
@@ -144,9 +143,9 @@ class NvidiaWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -164,9 +163,9 @@ class NvidiaWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "numbers from 1 to 9 under they key name 'numbers'", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "numbers from 1 to 9 under they key name 'numbers'", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -184,9 +183,9 @@ class NvidiaWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -205,21 +204,21 @@ class NvidiaWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(c -> c != null)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(c -> c != null)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		assertThat(actorsFilms.actor()).isEqualTo("Tom Hanks");
@@ -235,11 +234,11 @@ class NvidiaWithOpenAiChatModelIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -263,11 +262,11 @@ class NvidiaWithOpenAiChatModelIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -288,11 +287,11 @@ class NvidiaWithOpenAiChatModelIT {
 	@Test
 	void validateCallResponseMetadata() {
 		ChatResponse response = ChatClient.create(this.chatModel)
-			.prompt()
-			.options(OpenAiChatOptions.builder().model(DEFAULT_NVIDIA_MODEL))
-			.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
-			.call()
-			.chatResponse();
+				.prompt()
+				.options(OpenAiChatOptions.builder().model(DEFAULT_NVIDIA_MODEL))
+				.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
+				.call()
+				.chatResponse();
 		assertThat(response.getMetadata().getId()).isNotEmpty();
 		assertThat(response.getMetadata().getModel()).containsIgnoringCase(DEFAULT_NVIDIA_MODEL);
 		assertThat(response.getMetadata().getUsage().getPromptTokens()).isPositive();
@@ -308,9 +307,9 @@ class NvidiaWithOpenAiChatModelIT {
 		Map<String, Object> extraBody = Map.of("max_tokens", 2);
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model(DEFAULT_NVIDIA_MODEL)
-			.extraBody(extraBody)
-			.build();
+				.model(DEFAULT_NVIDIA_MODEL)
+				.extraBody(extraBody)
+				.build();
 
 		Prompt prompt = new Prompt("Tell me a short joke.", options);
 
@@ -357,13 +356,13 @@ class NvidiaWithOpenAiChatModelIT {
 		@Bean
 		public OpenAiChatModel openAiSdkChatModel() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(NVIDIA_BASE_URL)
-					.apiKey(System.getenv("NVIDIA_API_KEY"))
-					.maxTokens(2048)
-					.model(DEFAULT_NVIDIA_MODEL)
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(NVIDIA_BASE_URL)
+							.apiKey(System.getenv("NVIDIA_API_KEY"))
+							.maxTokens(2048)
+							.model(DEFAULT_NVIDIA_MODEL)
+							.build())
+					.build();
 		}
 
 	}

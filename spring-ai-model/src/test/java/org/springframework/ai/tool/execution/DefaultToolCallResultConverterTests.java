@@ -16,21 +16,19 @@
 
 package org.springframework.ai.tool.execution;
 
-import java.awt.Color;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.util.JsonHelper;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.util.JsonHelper;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,15 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.resource;
 
+import io.modelcontextprotocol.spec.McpSchema;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import io.modelcontextprotocol.spec.McpSchema;
-
 public record SyncResourceListChangedSpecification(String[] clients,
-		Consumer<List<McpSchema.Resource>> resourceListChangeHandler) {
+                                                   Consumer<List<McpSchema.Resource>> resourceListChangeHandler) {
 
 	public SyncResourceListChangedSpecification {
 		Objects.requireNonNull(clients, "clients must not be null");

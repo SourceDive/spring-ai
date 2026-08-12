@@ -16,13 +16,12 @@
 
 package org.springframework.ai.openai.metadata;
 
-import java.util.Objects;
-
 import com.openai.models.images.ImagesResponse;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.image.ImageResponseMetadata;
 import org.springframework.util.Assert;
+
+import java.util.Objects;
 
 /**
  * Represents the metadata for image response using the OpenAI Java SDK.
@@ -35,6 +34,7 @@ public class OpenAiImageResponseMetadata extends ImageResponseMetadata {
 
 	/**
 	 * Creates a new OpenAiImageResponseMetadata.
+	 *
 	 * @param created the creation timestamp
 	 */
 	protected OpenAiImageResponseMetadata(Long created) {
@@ -43,6 +43,7 @@ public class OpenAiImageResponseMetadata extends ImageResponseMetadata {
 
 	/**
 	 * Creates metadata from an ImagesResponse.
+	 *
 	 * @param imagesResponse the OpenAI images response
 	 * @return the metadata instance
 	 */

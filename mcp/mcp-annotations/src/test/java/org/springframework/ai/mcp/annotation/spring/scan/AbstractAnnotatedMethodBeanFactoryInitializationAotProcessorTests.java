@@ -16,16 +16,7 @@
 
 package org.springframework.ai.mcp.annotation.spring.scan;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aot.generate.GenerationContext;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeHint;
@@ -34,6 +25,10 @@ import org.springframework.beans.factory.aot.BeanFactoryInitializationAotContrib
 import org.springframework.beans.factory.aot.BeanFactoryInitializationCode;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+
+import java.lang.annotation.*;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -78,7 +73,7 @@ class AbstractAnnotatedMethodBeanFactoryInitializationAotProcessorTests {
 
 		TypeReference type = typeHints.get(0).getType();
 		assertThat(type).matches(t -> t.getName().equals(AnnotatedBean.class.getName()))
-			.doesNotMatch(t -> t.getName().equals(PlainBean.class.getName()));
+				.doesNotMatch(t -> t.getName().equals(PlainBean.class.getName()));
 	}
 
 	@Target(ElementType.METHOD)

@@ -16,20 +16,11 @@
 
 package org.springframework.ai.vectorstore.redis;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import com.redis.testcontainers.RedisStackContainer;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
@@ -43,6 +34,14 @@ import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfigurat
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,10 +59,10 @@ public class RedisVectorStoreObservationIT {
 
 	// Use host and port explicitly since getRedisURI() might not be consistent
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.data.redis.url=" + redisContainer.getRedisURI())
-		.withPropertyValues("spring.data.redis.client-type=jedis");
+			.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.data.redis.url=" + redisContainer.getRedisURI())
+			.withPropertyValues("spring.data.redis.client-type=jedis");
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -74,8 +73,7 @@ public class RedisVectorStoreObservationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -97,7 +95,7 @@ public class RedisVectorStoreObservationIT {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -126,15 +124,15 @@ public class RedisVectorStoreObservationIT {
 			// Create RedisClient directly with container properties for more reliable
 			// connection
 			return RedisVectorStore
-				.builder(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build(), embeddingModel)
-				.observationRegistry(observationRegistry)
-				.customObservationConvention(null)
-				.initializeSchema(true)
-				.metadataFields(MetadataField.tag("meta1"), MetadataField.tag("meta2"), MetadataField.tag("country"),
-						MetadataField.numeric("year"))
-				.build();
+					.builder(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build(), embeddingModel)
+					.observationRegistry(observationRegistry)
+					.customObservationConvention(null)
+					.initializeSchema(true)
+					.metadataFields(MetadataField.tag("meta1"), MetadataField.tag("meta2"), MetadataField.tag("country"),
+							MetadataField.numeric("year"))
+					.build();
 		}
 
 		@Bean

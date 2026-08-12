@@ -16,11 +16,8 @@
 
 package org.springframework.ai.model.openai.autoconfigure.tool;
 
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.model.openai.autoconfigure.OpenAiChatAutoConfiguration;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -30,6 +27,8 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,11 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OpenAiFunctionCallback2IT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
-				"spring.ai.openai.chat.model=" + "gpt-4o-mini")
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
-				org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
+					"spring.ai.openai.chat.model=" + "gpt-4o-mini")
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
+					org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
@@ -55,15 +54,15 @@ public class OpenAiFunctionCallback2IT {
 			ToolCallback weatherFunctionInfo = context.getBean("weatherFunctionInfo", ToolCallback.class);
 
 			ChatClient chatClient = ChatClient.builder(chatModel)
-				.defaultTools(weatherFunctionInfo)
-				.defaultUser(u -> u.text(
-						"What's the weather like in {cities}? Please use the provided tools to get the weather for all 3 cities."))
-				.build();
+					.defaultTools(weatherFunctionInfo)
+					.defaultUser(u -> u.text(
+							"What's the weather like in {cities}? Please use the provided tools to get the weather for all 3 cities."))
+					.build();
 
 			String content = chatClient.prompt()
-				.user(u -> u.param("cities", "San Francisco, Tokyo, Paris"))
-				.call()
-				.content();
+					.user(u -> u.param("cities", "San Francisco, Tokyo, Paris"))
+					.call()
+					.content();
 
 			assertThat(content).contains("30", "10", "15");
 		});
@@ -78,16 +77,16 @@ public class OpenAiFunctionCallback2IT {
 			ToolCallback weatherFunctionInfo = context.getBean("weatherFunctionInfo", ToolCallback.class);
 
 			String content = ChatClient.builder(chatModel)
-				.build()
-				.prompt()
-				.tools(weatherFunctionInfo)
-				.user("What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.")
-				.stream()
-				.content()
-				.collectList()
-				.block()
-				.stream()
-				.collect(Collectors.joining());
+					.build()
+					.prompt()
+					.tools(weatherFunctionInfo)
+					.user("What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.")
+					.stream()
+					.content()
+					.collectList()
+					.block()
+					.stream()
+					.collect(Collectors.joining());
 
 			assertThat(content).contains("30", "10", "15");
 		});
@@ -100,9 +99,9 @@ public class OpenAiFunctionCallback2IT {
 		public ToolCallback weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description("Get the weather in location")
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

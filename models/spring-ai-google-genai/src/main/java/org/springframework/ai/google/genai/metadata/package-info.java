@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.google.genai.metadata;
 
-import org.jspecify.annotations.NullMarked;

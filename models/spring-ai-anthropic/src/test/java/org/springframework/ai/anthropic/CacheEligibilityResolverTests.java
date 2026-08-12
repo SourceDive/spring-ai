@@ -42,9 +42,9 @@ class CacheEligibilityResolverTests {
 	@Test
 	void systemCachingRespectsMinLength() {
 		AnthropicCacheOptions options = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
-			.messageTypeMinContentLength(MessageType.SYSTEM, 10)
-			.build();
+				.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
+				.messageTypeMinContentLength(MessageType.SYSTEM, 10)
+				.build();
 		CacheEligibilityResolver resolver = CacheEligibilityResolver.from(options);
 
 		// Below min length -> no cache
@@ -60,8 +60,8 @@ class CacheEligibilityResolverTests {
 	@Test
 	void emptyTextShouldNotBeCachedEvenIfMinIsZero() {
 		AnthropicCacheOptions options = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
-			.build();
+				.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
+				.build();
 		CacheEligibilityResolver resolver = CacheEligibilityResolver.from(options);
 		assertThat(resolver.resolve(MessageType.SYSTEM, "")).isNull();
 		assertThat(resolver.resolve(MessageType.SYSTEM, null)).isNull();
@@ -71,29 +71,29 @@ class CacheEligibilityResolverTests {
 	void toolCacheControlRespectsStrategy() {
 		// NONE -> no tool caching
 		CacheEligibilityResolver none = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.NONE).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.NONE).build());
 		assertThat(none.resolveToolCacheControl()).isNull();
 
 		// SYSTEM_ONLY -> no explicit tool caching
 		CacheEligibilityResolver sys = CacheEligibilityResolver.from(AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
-			.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
-			.build());
+				.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
+				.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
+				.build());
 		assertThat(sys.resolveToolCacheControl()).isNull();
 
 		// TOOLS_ONLY -> tool caching enabled, system messages NOT cached
 		CacheEligibilityResolver toolsOnly = CacheEligibilityResolver.from(AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.TOOLS_ONLY)
-			.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
-			.build());
+				.strategy(AnthropicCacheStrategy.TOOLS_ONLY)
+				.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
+				.build());
 		assertThat(toolsOnly.resolveToolCacheControl()).isNotNull();
 		assertThat(toolsOnly.resolve(MessageType.SYSTEM, "Large system prompt text")).isNull();
 
 		// SYSTEM_AND_TOOLS -> tool caching enabled (uses SYSTEM TTL)
 		CacheEligibilityResolver sysAndTools = CacheEligibilityResolver.from(AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS)
-			.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
-			.build());
+				.strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS)
+				.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
+				.build());
 		CacheControlEphemeral cc = sysAndTools.resolveToolCacheControl();
 		assertThat(cc).isNotNull();
 		assertThat(cc.ttl()).isPresent();
@@ -101,16 +101,16 @@ class CacheEligibilityResolverTests {
 
 		// CONVERSATION_HISTORY -> tool caching enabled
 		CacheEligibilityResolver history = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY).build());
 		assertThat(history.resolveToolCacheControl()).isNotNull();
 	}
 
 	@Test
 	void toolsOnlyStrategyBehavior() {
 		AnthropicCacheOptions options = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.TOOLS_ONLY)
-			.messageTypeMinContentLength(MessageType.SYSTEM, 100)
-			.build();
+				.strategy(AnthropicCacheStrategy.TOOLS_ONLY)
+				.messageTypeMinContentLength(MessageType.SYSTEM, 100)
+				.build();
 		CacheEligibilityResolver resolver = CacheEligibilityResolver.from(options);
 
 		assertThat(resolver.isCachingEnabled()).isTrue();
@@ -127,25 +127,25 @@ class CacheEligibilityResolverTests {
 	void breakpointCountForEachStrategy() {
 		// NONE: 0 breakpoints
 		CacheEligibilityResolver none = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.NONE).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.NONE).build());
 		assertThat(none.resolveToolCacheControl()).isNull();
 		assertThat(none.resolve(MessageType.SYSTEM, "content")).isNull();
 
 		// SYSTEM_ONLY: system cached, tools not explicitly cached
 		CacheEligibilityResolver systemOnly = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_ONLY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_ONLY).build());
 		assertThat(systemOnly.resolveToolCacheControl()).isNull();
 		assertThat(systemOnly.resolve(MessageType.SYSTEM, "content")).isNotNull();
 
 		// TOOLS_ONLY: tools cached, system not cached
 		CacheEligibilityResolver toolsOnly = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.TOOLS_ONLY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.TOOLS_ONLY).build());
 		assertThat(toolsOnly.resolveToolCacheControl()).isNotNull();
 		assertThat(toolsOnly.resolve(MessageType.SYSTEM, "content")).isNull();
 
 		// SYSTEM_AND_TOOLS: both cached
 		CacheEligibilityResolver systemAndTools = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS).build());
 		assertThat(systemAndTools.resolveToolCacheControl()).isNotNull();
 		assertThat(systemAndTools.resolve(MessageType.SYSTEM, "content")).isNotNull();
 	}
@@ -154,7 +154,7 @@ class CacheEligibilityResolverTests {
 	void messageTypeEligibilityPerStrategy() {
 		// NONE: No message types eligible
 		CacheEligibilityResolver none = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.NONE).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.NONE).build());
 		assertThat(none.resolve(MessageType.SYSTEM, "content")).isNull();
 		assertThat(none.resolve(MessageType.USER, "content")).isNull();
 		assertThat(none.resolve(MessageType.ASSISTANT, "content")).isNull();
@@ -162,7 +162,7 @@ class CacheEligibilityResolverTests {
 
 		// SYSTEM_ONLY: Only SYSTEM eligible
 		CacheEligibilityResolver systemOnly = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_ONLY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_ONLY).build());
 		assertThat(systemOnly.resolve(MessageType.SYSTEM, "content")).isNotNull();
 		assertThat(systemOnly.resolve(MessageType.USER, "content")).isNull();
 		assertThat(systemOnly.resolve(MessageType.ASSISTANT, "content")).isNull();
@@ -170,7 +170,7 @@ class CacheEligibilityResolverTests {
 
 		// TOOLS_ONLY: No message types eligible
 		CacheEligibilityResolver toolsOnly = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.TOOLS_ONLY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.TOOLS_ONLY).build());
 		assertThat(toolsOnly.resolve(MessageType.SYSTEM, "content")).isNull();
 		assertThat(toolsOnly.resolve(MessageType.USER, "content")).isNull();
 		assertThat(toolsOnly.resolve(MessageType.ASSISTANT, "content")).isNull();
@@ -178,7 +178,7 @@ class CacheEligibilityResolverTests {
 
 		// SYSTEM_AND_TOOLS: Only SYSTEM eligible
 		CacheEligibilityResolver systemAndTools = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS).build());
 		assertThat(systemAndTools.resolve(MessageType.SYSTEM, "content")).isNotNull();
 		assertThat(systemAndTools.resolve(MessageType.USER, "content")).isNull();
 		assertThat(systemAndTools.resolve(MessageType.ASSISTANT, "content")).isNull();
@@ -186,7 +186,7 @@ class CacheEligibilityResolverTests {
 
 		// CONVERSATION_HISTORY: All message types eligible
 		CacheEligibilityResolver history = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY).build());
 		assertThat(history.resolve(MessageType.SYSTEM, "content")).isNotNull();
 		assertThat(history.resolve(MessageType.USER, "content")).isNotNull();
 		assertThat(history.resolve(MessageType.ASSISTANT, "content")).isNotNull();
@@ -196,7 +196,7 @@ class CacheEligibilityResolverTests {
 	@Test
 	void systemAndToolsIndependentBreakpoints() {
 		CacheEligibilityResolver resolver = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS).build());
 
 		CacheControlEphemeral toolCache = resolver.resolveToolCacheControl();
 		CacheControlEphemeral systemCache = resolver.resolve(MessageType.SYSTEM, "content");
@@ -209,8 +209,8 @@ class CacheEligibilityResolverTests {
 	@Test
 	void breakpointLimitEnforced() {
 		AnthropicCacheOptions options = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
-			.build();
+				.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
+				.build();
 		CacheEligibilityResolver resolver = CacheEligibilityResolver.from(options);
 
 		// Use up breakpoints
@@ -225,28 +225,28 @@ class CacheEligibilityResolverTests {
 
 		// 5th attempt should return null
 		assertThat(resolver.resolve(MessageType.USER, "more content"))
-			.as("Should return null when all 4 breakpoints are used")
-			.isNull();
+				.as("Should return null when all 4 breakpoints are used")
+				.isNull();
 	}
 
 	@Test
 	void emptyAndNullContentHandling() {
 		CacheEligibilityResolver resolver = CacheEligibilityResolver
-			.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY).build());
+				.from(AnthropicCacheOptions.builder().strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY).build());
 
 		assertThat(resolver.resolve(MessageType.SYSTEM, "")).as("Empty string should not be cached").isNull();
 		assertThat(resolver.resolve(MessageType.SYSTEM, null)).as("Null content should not be cached").isNull();
 		assertThat(resolver.resolve(MessageType.SYSTEM, "   "))
-			.as("Whitespace-only content meeting length requirements should be cacheable")
-			.isNotNull();
+				.as("Whitespace-only content meeting length requirements should be cacheable")
+				.isNotNull();
 	}
 
 	@Test
 	void oneHourTtlReturnedForConfiguredMessageType() {
 		AnthropicCacheOptions options = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
-			.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
-			.build();
+				.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
+				.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
+				.build();
 		CacheEligibilityResolver resolver = CacheEligibilityResolver.from(options);
 
 		CacheControlEphemeral cc = resolver.resolve(MessageType.SYSTEM, "enough content");

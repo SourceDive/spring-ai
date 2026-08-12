@@ -16,14 +16,13 @@
 
 package org.springframework.ai.ollama.api;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.embedding.EmbeddingOptions;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.embedding.EmbeddingOptions;
 
 /**
  * Helper class for creating strongly-typed Ollama options.
@@ -32,11 +31,11 @@ import org.springframework.ai.embedding.EmbeddingOptions;
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  * @author Sebastien Deleuze
- * @since 0.8.0
  * @see <a href=
  * "https://github.com/ollama/ollama/blob/main/docs/modelfile.mdx#valid-parameters-and-values">Ollama
  * Valid Parameters and Values</a>
  * @see <a href="https://github.com/ollama/ollama/blob/main/api/types.go">Ollama Types</a>
+ * @since 0.8.0
  */
 public class OllamaEmbeddingOptions implements EmbeddingOptions {
 

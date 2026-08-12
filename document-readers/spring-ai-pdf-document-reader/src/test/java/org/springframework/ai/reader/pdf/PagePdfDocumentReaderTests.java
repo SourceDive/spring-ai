@@ -16,14 +16,13 @@
 
 package org.springframework.ai.reader.pdf;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,16 +38,16 @@ class PagePdfDocumentReaderTests {
 
 		PagePdfDocumentReader pdfReader = new PagePdfDocumentReader("classpath:/sample1.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageTopMargin(0)
-					.withPageBottomMargin(0)
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
-						.withNumberOfTopTextLinesToDelete(0)
-						.withNumberOfBottomTextLinesToDelete(3)
-						.withNumberOfTopPagesToSkipBeforeDelete(0)
-						.overrideLineSeparator("\n")
-						.build())
-					.withPagesPerDocument(1)
-					.build());
+						.withPageTopMargin(0)
+						.withPageBottomMargin(0)
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
+								.withNumberOfTopTextLinesToDelete(0)
+								.withNumberOfBottomTextLinesToDelete(3)
+								.withNumberOfTopPagesToSkipBeforeDelete(0)
+								.overrideLineSeparator("\n")
+								.build())
+						.withPagesPerDocument(1)
+						.build());
 
 		List<Document> docs = pdfReader.get();
 
@@ -64,10 +63,10 @@ class PagePdfDocumentReaderTests {
 	void testIndexOutOfBound() {
 		var documents = new PagePdfDocumentReader("classpath:/sample2.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
-					.withPagesPerDocument(1)
-					.build())
-			.get();
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
+						.withPagesPerDocument(1)
+						.build())
+				.get();
 
 		assertThat(documents).hasSize(64);
 	}
@@ -77,10 +76,10 @@ class PagePdfDocumentReaderTests {
 		// The test pdf contain 64 pages
 		var documents = new PagePdfDocumentReader("classpath:/sample2.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
-					.withPagesPerDocument(32)
-					.build())
-			.get();
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
+						.withPagesPerDocument(32)
+						.build())
+				.get();
 
 		assertThat(documents).hasSize(2);
 	}
@@ -90,10 +89,10 @@ class PagePdfDocumentReaderTests {
 		// The test pdf contain 64 pages
 		var documents = new PagePdfDocumentReader("classpath:/sample2.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
-					.withPagesPerDocument(3)
-					.build())
-			.get();
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
+						.withPagesPerDocument(3)
+						.build())
+				.get();
 
 		assertThat(documents).hasSize(22);
 	}
@@ -103,10 +102,10 @@ class PagePdfDocumentReaderTests {
 		// The test pdf contain 64 pages
 		var documents = new PagePdfDocumentReader("classpath:/sample2.pdf",
 				PdfDocumentReaderConfig.builder()
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
-					.withPagesPerDocument(0) // all pages into one document
-					.build())
-			.get();
+						.withPageExtractedTextFormatter(ExtractedTextFormatter.builder().build())
+						.withPagesPerDocument(0) // all pages into one document
+						.build())
+				.get();
 
 		assertThat(documents).hasSize(1);
 	}

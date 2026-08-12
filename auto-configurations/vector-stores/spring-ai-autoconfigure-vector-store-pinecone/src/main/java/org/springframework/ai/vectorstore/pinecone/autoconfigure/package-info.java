@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.pinecone.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

@@ -16,6 +16,10 @@
 
 package org.springframework.ai.reader.pdf.layout;
 
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.text.TextPosition;
+import org.springframework.util.Assert;
+
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -24,15 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.text.TextPosition;
-
-import org.springframework.util.Assert;
-
 /**
  * Re-implement the PDFLayoutTextStripperByArea on top of the PDFLayoutTextStripper
  * instead the original PDFTextStripper.
- *
+ * <p>
  * This class allows cropping pages (e.g., removing headers, footers, and between-page
  * empty spaces) while extracting layout text, preserving the PDF's internal text
  * formatting.
@@ -51,6 +50,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 
 	/**
 	 * Constructor.
+	 *
 	 * @throws IOException If there is an error loading properties.
 	 */
 	public PDFLayoutTextStripperByArea() throws IOException {
@@ -60,6 +60,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 	/**
 	 * This method does nothing in this derived class, because beads and regions are
 	 * incompatible. Beads are ignored when stripping by area.
+	 *
 	 * @param aShouldSeparateByBeads The new grouping of beads.
 	 */
 	@Override
@@ -68,9 +69,10 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 
 	/**
 	 * Add a new region to group text by.
+	 *
 	 * @param regionName The name of the region.
-	 * @param rect The rectangle area to retrieve the text from. The y-coordinates are
-	 * java coordinates (y == 0 is top), not PDF coordinates (y == 0 is bottom).
+	 * @param rect       The rectangle area to retrieve the text from. The y-coordinates are
+	 *                   java coordinates (y == 0 is top), not PDF coordinates (y == 0 is bottom).
 	 */
 	public void addRegion(String regionName, Rectangle2D rect) {
 		this.regions.add(regionName);
@@ -80,6 +82,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 	/**
 	 * Delete a region to group text by. If the region does not exist, this method does
 	 * nothing.
+	 *
 	 * @param regionName The name of the region to delete.
 	 */
 	public void removeRegion(String regionName) {
@@ -89,6 +92,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 
 	/**
 	 * Get the list of regions that have been setup.
+	 *
 	 * @return A list of java.lang.String objects to identify the region names.
 	 */
 	public List<String> getRegions() {
@@ -97,6 +101,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 
 	/**
 	 * Get the text for the region, this should be called after extractRegions().
+	 *
 	 * @param regionName The name of the region to get the text from.
 	 * @return The text that was identified in that region.
 	 */
@@ -108,6 +113,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 
 	/**
 	 * Process the page to extract the region text.
+	 *
 	 * @param page The page to extract the regions from.
 	 * @throws IOException If there is an error while extracting text.
 	 */
@@ -143,6 +149,7 @@ public class PDFLayoutTextStripperByArea extends ForkPDFLayoutTextStripper {
 
 	/**
 	 * This will print the processed page text to the output stream.
+	 *
 	 * @throws IOException If there is an error writing the text.
 	 */
 	@Override

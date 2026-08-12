@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.content;
 
-import org.jspecify.annotations.NullMarked;

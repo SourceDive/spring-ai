@@ -16,11 +16,11 @@
 
 package org.springframework.ai.anthropic;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Enum representing the pre-built Anthropic Skills available for Claude.
@@ -70,6 +70,7 @@ public enum AnthropicSkill {
 
 	/**
 	 * Look up a pre-built Anthropic skill by its ID.
+	 *
 	 * @param skillId the skill ID (e.g., "xlsx", "pptx", "docx", "pdf")
 	 * @return the matching skill, or null if not found
 	 */
@@ -90,6 +91,7 @@ public enum AnthropicSkill {
 
 	/**
 	 * Convert to an {@link AnthropicSkillRecord} with latest version.
+	 *
 	 * @return skill record
 	 */
 	public AnthropicSkillRecord toSkill() {
@@ -98,6 +100,7 @@ public enum AnthropicSkill {
 
 	/**
 	 * Convert to an {@link AnthropicSkillRecord} with specific version.
+	 *
 	 * @param version version string
 	 * @return skill record
 	 */

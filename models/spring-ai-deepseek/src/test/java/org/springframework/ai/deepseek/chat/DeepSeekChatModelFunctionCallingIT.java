@@ -16,14 +16,8 @@
 
 package org.springframework.ai.deepseek.chat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
@@ -42,6 +36,11 @@ import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -58,30 +57,30 @@ class DeepSeekChatModelFunctionCallingIT {
 
 	private static final DeepSeekApi.FunctionTool FUNCTION_TOOL = new DeepSeekApi.FunctionTool(
 			DeepSeekApi.FunctionTool.Type.FUNCTION, new DeepSeekApi.FunctionTool.Function(
-					"Get the weather in location. Return temperature in 30°F or 30°C format.", "getCurrentWeather", """
-							{
-								"type": "object",
-								"properties": {
-									"location": {
-										"type": "string",
-										"description": "The city and state e.g. San Francisco, CA"
-									},
-									"lat": {
-										"type": "number",
-										"description": "The city latitude"
-									},
-									"lon": {
-										"type": "number",
-										"description": "The city longitude"
-									},
-									"unit": {
-										"type": "string",
-										"enum": ["C", "F"]
-									}
-								},
-								"required": ["location", "lat", "lon", "unit"]
-							}
-							"""));
+			"Get the weather in location. Return temperature in 30°F or 30°C format.", "getCurrentWeather", """
+			{
+				"type": "object",
+				"properties": {
+					"location": {
+						"type": "string",
+						"description": "The city and state e.g. San Francisco, CA"
+					},
+					"lat": {
+						"type": "number",
+						"description": "The city latitude"
+					},
+					"lon": {
+						"type": "number",
+						"description": "The city longitude"
+					},
+					"unit": {
+						"type": "string",
+						"enum": ["C", "F"]
+					}
+				},
+				"required": ["location", "lat", "lon", "unit"]
+			}
+			"""));
 
 	@Test
 	void functionCallTest() {
@@ -92,11 +91,11 @@ class DeepSeekChatModelFunctionCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = DeepSeekChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
@@ -122,11 +121,11 @@ class DeepSeekChatModelFunctionCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = DeepSeekChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
@@ -150,12 +149,12 @@ class DeepSeekChatModelFunctionCallingIT {
 	@Test
 	public void toolFunctionCallWithUsage() {
 		var promptOptions = DeepSeekChatOptions.builder()
-			.tools(Arrays.asList(FUNCTION_TOOL))
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.tools(Arrays.asList(FUNCTION_TOOL))
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
@@ -180,12 +179,12 @@ class DeepSeekChatModelFunctionCallingIT {
 	@Test
 	public void testStreamFunctionCallUsage() {
 		var promptOptions = DeepSeekChatOptions.builder()
-			.tools(Arrays.asList(FUNCTION_TOOL))
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.tools(Arrays.asList(FUNCTION_TOOL))
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
@@ -215,12 +214,12 @@ class DeepSeekChatModelFunctionCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = DeepSeekChatOptions.builder()
-			.model(DeepSeekApi.ChatModel.DEEPSEEK_V4_PRO)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(DeepSeekApi.ChatModel.DEEPSEEK_V4_PRO)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 

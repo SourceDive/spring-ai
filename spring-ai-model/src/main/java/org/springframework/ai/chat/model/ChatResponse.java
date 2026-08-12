@@ -16,17 +16,16 @@
 
 package org.springframework.ai.chat.model;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.model.ModelResponse;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * The chat completion (e.g. generation) response returned by an AI provider.
@@ -49,8 +48,9 @@ public class ChatResponse implements ModelResponse<Generation> {
 
 	/**
 	 * Construct a new {@link ChatResponse} instance without metadata.
+	 *
 	 * @param generations the {@link List} of {@link Generation} returned by the AI
-	 * provider.
+	 *                    provider.
 	 */
 	public ChatResponse(List<Generation> generations) {
 		this(generations, new ChatResponseMetadata());
@@ -58,10 +58,11 @@ public class ChatResponse implements ModelResponse<Generation> {
 
 	/**
 	 * Construct a new {@link ChatResponse} instance.
-	 * @param generations the {@link List} of {@link Generation} returned by the AI
-	 * provider.
+	 *
+	 * @param generations          the {@link List} of {@link Generation} returned by the AI
+	 *                             provider.
 	 * @param chatResponseMetadata {@link ChatResponseMetadata} containing information
-	 * about the use of the AI provider's API.
+	 *                             about the use of the AI provider's API.
 	 */
 	public ChatResponse(List<Generation> generations, ChatResponseMetadata chatResponseMetadata) {
 		Assert.notNull(generations, "'generations' must not be null");
@@ -78,6 +79,7 @@ public class ChatResponse implements ModelResponse<Generation> {
 	 * <p>
 	 * It is a {@link List} of {@link List lists} because the Prompt could request
 	 * multiple output {@link Generation generations}.
+	 *
 	 * @return the {@link List} of {@link Generation generated outputs}.
 	 */
 

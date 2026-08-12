@@ -28,4 +28,3 @@
 @NullMarked
 package org.springframework.ai.model;
 
-import org.jspecify.annotations.NullMarked;

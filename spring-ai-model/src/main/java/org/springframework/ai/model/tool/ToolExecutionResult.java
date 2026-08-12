@@ -16,14 +16,14 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
 import org.springframework.ai.chat.model.Generation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The result of a tool execution.
@@ -68,15 +68,15 @@ public interface ToolExecutionResult {
 		List<Message> conversationHistory = toolExecutionResult.conversationHistory();
 		List<Generation> generations = new ArrayList<>();
 		if (conversationHistory
-			.get(conversationHistory.size() - 1) instanceof ToolResponseMessage toolResponseMessage) {
+				.get(conversationHistory.size() - 1) instanceof ToolResponseMessage toolResponseMessage) {
 			toolResponseMessage.getResponses().forEach(response -> {
 				AssistantMessage assistantMessage = new AssistantMessage(response.responseData());
 				Generation generation = new Generation(assistantMessage,
 						ChatGenerationMetadata.builder()
-							.metadata(METADATA_TOOL_ID, response.id())
-							.metadata(METADATA_TOOL_NAME, response.name())
-							.finishReason(FINISH_REASON)
-							.build());
+								.metadata(METADATA_TOOL_ID, response.id())
+								.metadata(METADATA_TOOL_NAME, response.name())
+								.finishReason(FINISH_REASON)
+								.build());
 				generations.add(generation);
 			});
 		}

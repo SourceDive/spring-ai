@@ -16,24 +16,23 @@
 
 package org.springframework.ai.reader.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,20 +49,20 @@ public class ParagraphPdfDocumentReaderTests {
 
 		assertThatThrownBy(() ->
 
-		new ParagraphPdfDocumentReader("classpath:/sample1.pdf",
-				PdfDocumentReaderConfig.builder()
-					.withPageTopMargin(0)
-					.withPageBottomMargin(0)
-					.withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
-						.withNumberOfTopTextLinesToDelete(0)
-						.withNumberOfBottomTextLinesToDelete(3)
-						.withNumberOfTopPagesToSkipBeforeDelete(0)
-						.build())
-					.withPagesPerDocument(1)
-					.build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Document outline (e.g. TOC) is null. Make sure the PDF document has a table of contents (TOC). If not, consider the PagePdfDocumentReader or the TikaDocumentReader instead.");
+				new ParagraphPdfDocumentReader("classpath:/sample1.pdf",
+						PdfDocumentReaderConfig.builder()
+								.withPageTopMargin(0)
+								.withPageBottomMargin(0)
+								.withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
+										.withNumberOfTopTextLinesToDelete(0)
+										.withNumberOfBottomTextLinesToDelete(3)
+										.withNumberOfTopPagesToSkipBeforeDelete(0)
+										.build())
+								.withPagesPerDocument(1)
+								.build()))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Document outline (e.g. TOC) is null. Make sure the PDF document has a table of contents (TOC). If not, consider the PagePdfDocumentReader or the TikaDocumentReader instead.");
 
 	}
 

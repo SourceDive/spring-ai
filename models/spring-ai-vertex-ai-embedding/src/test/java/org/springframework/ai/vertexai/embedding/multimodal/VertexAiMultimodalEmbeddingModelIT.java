@@ -16,13 +16,8 @@
 
 package org.springframework.ai.vertexai.embedding.multimodal;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.DocumentEmbeddingRequest;
@@ -36,6 +31,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,28 +58,28 @@ class VertexAiMultimodalEmbeddingModelIT {
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getMimeType())
-			.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
+				.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getDocumentId())
-			.isEqualTo(embeddingRequest.getInstructions().get(0).getId());
+				.isEqualTo(embeddingRequest.getInstructions().get(0).getId());
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getResults().get(1).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
 		assertThat(embeddingResponse.getResults().get(1).getMetadata().getMimeType())
-			.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
+				.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
 		assertThat(embeddingResponse.getResults().get(1).getMetadata().getDocumentId())
-			.isEqualTo(embeddingRequest.getInstructions().get(1).getId());
+				.isEqualTo(embeddingRequest.getInstructions().get(1).getId());
 		assertThat(embeddingResponse.getResults().get(1).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getMetadata().getModel())
-			.as("Model in metadata should be 'multimodalembedding@001'")
-			.isEqualTo("multimodalembedding@001");
+				.as("Model in metadata should be 'multimodalembedding@001'")
+				.isEqualTo("multimodalembedding@001");
 
 		assertThat(embeddingResponse.getMetadata().getUsage().getTotalTokens())
-			.as("Total tokens in metadata should be 0")
-			.isEqualTo(0L);
+				.as("Total tokens in metadata should be 0")
+				.isEqualTo(0L);
 
 		assertThat(this.multiModelEmbeddingModel.dimensions()).isEqualTo(1408);
 	}
@@ -96,9 +95,9 @@ class VertexAiMultimodalEmbeddingModelIT {
 		assertThat(embeddingResponse.getResults()).hasSize(1);
 		assertThat(embeddingResponse.getResults().get(0)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getMimeType())
-			.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
+				.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getMetadata().getModel()).isEqualTo("multimodalembedding@001");
@@ -112,11 +111,11 @@ class VertexAiMultimodalEmbeddingModelIT {
 		assertThat(this.multiModelEmbeddingModel).isNotNull();
 
 		var document = Document.builder()
-			.media(Media.builder()
-				.mimeType(MimeTypeUtils.TEXT_PLAIN)
-				.data(URI.create("http://example.com/image.png"))
-				.build())
-			.build();
+				.media(Media.builder()
+						.mimeType(MimeTypeUtils.TEXT_PLAIN)
+						.data(URI.create("http://example.com/image.png"))
+						.build())
+				.build();
 
 		DocumentEmbeddingRequest embeddingRequest = new DocumentEmbeddingRequest(document);
 
@@ -124,9 +123,9 @@ class VertexAiMultimodalEmbeddingModelIT {
 		assertThat(embeddingResponse.getResults()).hasSize(1);
 		assertThat(embeddingResponse.getResults().get(0)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getMimeType())
-			.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
+				.isEqualTo(MimeTypeUtils.TEXT_PLAIN);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getMetadata().getModel()).isEqualTo("multimodalembedding@001");
@@ -139,8 +138,8 @@ class VertexAiMultimodalEmbeddingModelIT {
 	void imageEmbedding() {
 
 		var document = Document.builder()
-			.media(new Media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("/test.image.png")))
-			.build();
+				.media(new Media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("/test.image.png")))
+				.build();
 
 		DocumentEmbeddingRequest embeddingRequest = new DocumentEmbeddingRequest(document);
 
@@ -149,9 +148,9 @@ class VertexAiMultimodalEmbeddingModelIT {
 
 		assertThat(embeddingResponse.getResults().get(0)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.IMAGE);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.IMAGE);
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getMimeType())
-			.isEqualTo(MimeTypeUtils.IMAGE_PNG);
+				.isEqualTo(MimeTypeUtils.IMAGE_PNG);
 
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(1408);
 
@@ -165,8 +164,8 @@ class VertexAiMultimodalEmbeddingModelIT {
 	void videoEmbedding() {
 
 		var document = Document.builder()
-			.media(new Media(new MimeType("video", "mp4"), new ClassPathResource("/test.video.mp4")))
-			.build();
+				.media(new Media(new MimeType("video", "mp4"), new ClassPathResource("/test.video.mp4")))
+				.build();
 
 		DocumentEmbeddingRequest embeddingRequest = new DocumentEmbeddingRequest(document);
 
@@ -175,9 +174,9 @@ class VertexAiMultimodalEmbeddingModelIT {
 
 		assertThat(embeddingResponse.getResults().get(0)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.VIDEO);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.VIDEO);
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getMimeType())
-			.isEqualTo(new MimeType("video", "mp4"));
+				.isEqualTo(new MimeType("video", "mp4"));
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getMetadata().getModel()).isEqualTo("multimodalembedding@001");
@@ -192,12 +191,12 @@ class VertexAiMultimodalEmbeddingModelIT {
 		var textDocument = Document.builder().text("Hello World").build();
 
 		var imageDocument = Document.builder()
-			.media(new Media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("/test.image.png")))
-			.build();
+				.media(new Media(MimeTypeUtils.IMAGE_PNG, new ClassPathResource("/test.image.png")))
+				.build();
 
 		var videoDocument = Document.builder()
-			.media(new Media(new MimeType("video", "mp4"), new ClassPathResource("/test.video.mp4")))
-			.build();
+				.media(new Media(new MimeType("video", "mp4"), new ClassPathResource("/test.video.mp4")))
+				.build();
 
 		DocumentEmbeddingRequest embeddingRequest = new DocumentEmbeddingRequest(
 				List.of(textDocument, imageDocument, videoDocument));
@@ -206,17 +205,17 @@ class VertexAiMultimodalEmbeddingModelIT {
 		assertThat(embeddingResponse.getResults()).hasSize(3);
 		assertThat(embeddingResponse.getResults().get(0)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(0).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.TEXT);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getResults().get(1)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(1).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.IMAGE);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.IMAGE);
 		assertThat(embeddingResponse.getResults().get(1).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getResults().get(2)).isNotNull();
 		assertThat(embeddingResponse.getResults().get(2).getMetadata().getModalityType())
-			.isEqualTo(EmbeddingResultMetadata.ModalityType.VIDEO);
+				.isEqualTo(EmbeddingResultMetadata.ModalityType.VIDEO);
 		assertThat(embeddingResponse.getResults().get(2).getOutput()).hasSize(1408);
 
 		assertThat(embeddingResponse.getMetadata().getModel()).isEqualTo("multimodalembedding@001");
@@ -231,9 +230,9 @@ class VertexAiMultimodalEmbeddingModelIT {
 		@Bean
 		public VertexAiEmbeddingConnectionDetails connectionDetails() {
 			return VertexAiEmbeddingConnectionDetails.builder()
-				.projectId(System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"))
-				.location(System.getenv("VERTEX_AI_GEMINI_LOCATION"))
-				.build();
+					.projectId(System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"))
+					.location(System.getenv("VERTEX_AI_GEMINI_LOCATION"))
+					.build();
 		}
 
 		@Bean
@@ -241,8 +240,8 @@ class VertexAiMultimodalEmbeddingModelIT {
 				VertexAiEmbeddingConnectionDetails connectionDetails) {
 
 			VertexAiMultimodalEmbeddingOptions options = VertexAiMultimodalEmbeddingOptions.builder()
-				.model(VertexAiMultimodalEmbeddingModelName.MULTIMODAL_EMBEDDING_001)
-				.build();
+					.model(VertexAiMultimodalEmbeddingModelName.MULTIMODAL_EMBEDDING_001)
+					.build();
 
 			return new VertexAiMultimodalEmbeddingModel(connectionDetails, options);
 		}

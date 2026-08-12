@@ -52,7 +52,7 @@ import org.springframework.web.reactive.function.client.WebClient;
  * @since 0.8.1
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ MistralAiCommonProperties.class, MistralAiChatProperties.class })
+@EnableConfigurationProperties({MistralAiCommonProperties.class, MistralAiChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.MISTRAL,
 		matchIfMissing = true)
 @ConditionalOnClass(MistralAiApi.class)
@@ -61,11 +61,11 @@ public class MistralAiChatAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MistralAiChatModel mistralAiChatModel(MistralAiCommonProperties commonProperties,
-			MistralAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
-			ObjectProvider<RetryTemplate> retryTemplate, ObjectProvider<ResponseErrorHandler> responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention) {
+	                                             MistralAiChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                             ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
+	                                             ObjectProvider<RetryTemplate> retryTemplate, ObjectProvider<ResponseErrorHandler> responseErrorHandler,
+	                                             ObjectProvider<ObservationRegistry> observationRegistry,
+	                                             ObjectProvider<ChatModelObservationConvention> observationConvention) {
 
 		var mistralAiApi = mistralAiApi(chatProperties.getApiKey(), commonProperties.getApiKey(),
 				chatProperties.getBaseUrl(), commonProperties.getBaseUrl(),
@@ -73,12 +73,12 @@ public class MistralAiChatAutoConfiguration {
 				webClientBuilderProvider.getIfAvailable(WebClient::builder), responseErrorHandler);
 
 		var chatModel = MistralAiChatModel.builder()
-			.mistralAiApi(mistralAiApi)
-			.options(chatProperties.toOptions())
-			.toolCallingManager(toolCallingManager)
-			.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.mistralAiApi(mistralAiApi)
+				.options(chatProperties.toOptions())
+				.toolCallingManager(toolCallingManager)
+				.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
@@ -86,8 +86,8 @@ public class MistralAiChatAutoConfiguration {
 	}
 
 	private MistralAiApi mistralAiApi(@Nullable String apiKey, @Nullable String commonApiKey, @Nullable String baseUrl,
-			@Nullable String commonBaseUrl, RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
+	                                  @Nullable String commonBaseUrl, RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+	                                  ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
 
 		var resolvedApiKey = StringUtils.hasText(apiKey) ? apiKey : commonApiKey;
 		var resoledBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;
@@ -96,12 +96,12 @@ public class MistralAiChatAutoConfiguration {
 		Assert.hasText(resoledBaseUrl, "Mistral base URL must be set");
 
 		return MistralAiApi.builder()
-			.baseUrl(resoledBaseUrl)
-			.apiKey(resolvedApiKey)
-			.restClientBuilder(restClientBuilder)
-			.webClientBuilder(webClientBuilder)
-			.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
-			.build();
+				.baseUrl(resoledBaseUrl)
+				.apiKey(resolvedApiKey)
+				.restClientBuilder(restClientBuilder)
+				.webClientBuilder(webClientBuilder)
+				.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
+				.build();
 	}
 
 }

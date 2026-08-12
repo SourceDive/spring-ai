@@ -16,14 +16,6 @@
 
 package org.springframework.ai.vectorstore.opensearch;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.hc.core5.http.HttpHost;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,9 +26,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.opensearch.testcontainers.OpenSearchContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
@@ -53,6 +42,16 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -91,9 +90,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 	private static void ensureModelIsPresent(final String model) {
 		final OllamaApi api = OllamaApi.builder().baseUrl(OLLAMA_LOCAL_URL).build();
 		final var modelManagementOptions = ModelManagementOptions.builder()
-			.maxRetries(DEFAULT_MAX_RETRIES)
-			.timeout(DEFAULT_TIMEOUT)
-			.build();
+				.maxRetries(DEFAULT_MAX_RETRIES)
+				.timeout(DEFAULT_TIMEOUT)
+				.build();
 		final var ollamaModelManager = new OllamaModelManager(api, modelManagementOptions);
 		ollamaModelManager.pullModel(model, PullModelStrategy.WHEN_MISSING);
 	}
@@ -102,8 +101,7 @@ class OpenSearchVectorStoreWithOllamaIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -124,7 +122,7 @@ class OpenSearchVectorStoreWithOllamaIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l1", "l2", "linf" })
+	@ValueSource(strings = {DEFAULT, "l1", "l2", "linf"})
 	public void addAndSearchTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -137,9 +135,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(
 					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build());
@@ -156,9 +154,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -170,11 +168,10 @@ class OpenSearchVectorStoreWithOllamaIT {
 		public OpenSearchVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			try {
 				OpenSearchClient openSearchClient = new OpenSearchClient(ApacheHttpClient5TransportBuilder
-					.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
-					.build());
+						.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
+						.build());
 				return OpenSearchVectorStore.builder(openSearchClient, embeddingModel).initializeSchema(true).build();
-			}
-			catch (URISyntaxException e) {
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -184,15 +181,14 @@ class OpenSearchVectorStoreWithOllamaIT {
 		public OpenSearchVectorStore anotherVectorStore(EmbeddingModel embeddingModel) {
 			try {
 				OpenSearchClient openSearchClient = new OpenSearchClient(ApacheHttpClient5TransportBuilder
-					.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
-					.build());
+						.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
+						.build());
 				return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-					.index("another_index")
-					.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
-					.initializeSchema(true)
-					.build();
-			}
-			catch (URISyntaxException e) {
+						.index("another_index")
+						.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
+						.initializeSchema(true)
+						.build();
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -200,9 +196,9 @@ class OpenSearchVectorStoreWithOllamaIT {
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return OllamaEmbeddingModel.builder()
-				.ollamaApi(OllamaApi.builder().build())
-				.options(OllamaEmbeddingOptions.builder().model(OllamaModel.MXBAI_EMBED_LARGE).build())
-				.build();
+					.ollamaApi(OllamaApi.builder().build())
+					.options(OllamaEmbeddingOptions.builder().model(OllamaModel.MXBAI_EMBED_LARGE).build())
+					.build();
 		}
 
 	}

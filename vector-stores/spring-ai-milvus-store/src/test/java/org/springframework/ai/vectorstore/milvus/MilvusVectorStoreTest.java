@@ -16,8 +16,6 @@
 
 package org.springframework.ai.vectorstore.milvus;
 
-import java.util.List;
-
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.grpc.MutationResult;
 import io.milvus.grpc.SearchResultData;
@@ -34,19 +32,16 @@ import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.model.EmbeddingUtils;
 import org.springframework.ai.vectorstore.SearchRequest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test class for {@link MilvusVectorStore}.
@@ -73,19 +68,19 @@ class MilvusVectorStoreTest {
 	@Test
 	void shouldPerformSimilaritySearchWithNativeExpression() {
 		try (MockedStatic<EmbeddingUtils> mockedEmbeddingUtils = mockStatic(EmbeddingUtils.class);
-				MockedConstruction<SearchResultsWrapper> mockedSearchResultsWrapper = mockConstruction(
-						SearchResultsWrapper.class,
-						(mock, context) -> when(mock.getRowRecords(0)).thenReturn(List.of()))) {
+		     MockedConstruction<SearchResultsWrapper> mockedSearchResultsWrapper = mockConstruction(
+					 SearchResultsWrapper.class,
+					 (mock, context) -> when(mock.getRowRecords(0)).thenReturn(List.of()))) {
 
 			String query = "sample query";
 			MilvusSearchRequest request = MilvusSearchRequest.milvusBuilder()
-				.query(query)
-				.topK(5)
-				.similarityThreshold(0.7)
-				.nativeExpression("metadata[\"age\"] > 30") // this has higher priority
-				.filterExpression("age <= 30") // this will be ignored
-				.searchParamsJson("{\"nprobe\":128}")
-				.build();
+					.query(query)
+					.topK(5)
+					.similarityThreshold(0.7)
+					.nativeExpression("metadata[\"age\"] > 30") // this has higher priority
+					.filterExpression("age <= 30") // this will be ignored
+					.searchParamsJson("{\"nprobe\":128}")
+					.build();
 
 			SearchParam capturedParam = performSimilaritySearch(mockedEmbeddingUtils, request);
 			assertThat(capturedParam.getTopK()).isEqualTo(request.getTopK());
@@ -97,18 +92,18 @@ class MilvusVectorStoreTest {
 	@Test
 	void shouldPerformSimilaritySearchWithFilterExpression() {
 		try (MockedStatic<EmbeddingUtils> mockedEmbeddingUtils = mockStatic(EmbeddingUtils.class);
-				MockedConstruction<SearchResultsWrapper> mockedSearchResultsWrapper = mockConstruction(
-						SearchResultsWrapper.class,
-						(mock, context) -> when(mock.getRowRecords(0)).thenReturn(List.of()))) {
+		     MockedConstruction<SearchResultsWrapper> mockedSearchResultsWrapper = mockConstruction(
+					 SearchResultsWrapper.class,
+					 (mock, context) -> when(mock.getRowRecords(0)).thenReturn(List.of()))) {
 
 			String query = "sample query";
 			MilvusSearchRequest request = MilvusSearchRequest.milvusBuilder()
-				.query(query)
-				.topK(5)
-				.similarityThreshold(0.7)
-				.filterExpression("age > 30")
-				.searchParamsJson("{\"nprobe\":128}")
-				.build();
+					.query(query)
+					.topK(5)
+					.similarityThreshold(0.7)
+					.filterExpression("age > 30")
+					.searchParamsJson("{\"nprobe\":128}")
+					.build();
 
 			SearchParam capturedParam = performSimilaritySearch(mockedEmbeddingUtils, request);
 
@@ -121,17 +116,17 @@ class MilvusVectorStoreTest {
 	@Test
 	void shouldPerformSimilaritySearchWithOriginalSearchRequest() {
 		try (MockedStatic<EmbeddingUtils> mockedEmbeddingUtils = mockStatic(EmbeddingUtils.class);
-				MockedConstruction<SearchResultsWrapper> mockedSearchResultsWrapper = mockConstruction(
-						SearchResultsWrapper.class,
-						(mock, context) -> when(mock.getRowRecords(0)).thenReturn(List.of()))) {
+		     MockedConstruction<SearchResultsWrapper> mockedSearchResultsWrapper = mockConstruction(
+					 SearchResultsWrapper.class,
+					 (mock, context) -> when(mock.getRowRecords(0)).thenReturn(List.of()))) {
 
 			String query = "sample query";
 			SearchRequest request = SearchRequest.builder()
-				.query(query)
-				.topK(5)
-				.similarityThreshold(0.7)
-				.filterExpression("age > 30")
-				.build();
+					.query(query)
+					.topK(5)
+					.similarityThreshold(0.7)
+					.filterExpression("age > 30")
+					.build();
 
 			SearchParam capturedParam = performSimilaritySearch(mockedEmbeddingUtils, request);
 
@@ -163,7 +158,7 @@ class MilvusVectorStoreTest {
 	}
 
 	private SearchParam performSimilaritySearch(MockedStatic<EmbeddingUtils> mockedEmbeddingUtils,
-			SearchRequest request) {
+	                                            SearchRequest request) {
 		List<Float> mockVector = List.of(1.0f, 2.0f, 3.0f);
 		mockedEmbeddingUtils.when(() -> EmbeddingUtils.toList(any())).thenReturn(mockVector);
 

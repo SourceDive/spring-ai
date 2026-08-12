@@ -16,11 +16,8 @@
 
 package org.springframework.ai.chat.client.observation;
 
-import java.util.List;
-
 import io.micrometer.observation.Observation;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClientAttributes;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -30,6 +27,8 @@ import org.springframework.ai.observation.conventions.AiOperationType;
 import org.springframework.ai.observation.conventions.AiProvider;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Context used to store metadata for chat client workflows.
@@ -53,7 +52,7 @@ public class ChatClientObservationContext extends Observation.Context {
 	private final boolean stream;
 
 	ChatClientObservationContext(ChatClientRequest chatClientRequest, List<? extends Advisor> advisors,
-			boolean isStream) {
+	                             boolean isStream) {
 		Assert.notNull(chatClientRequest, "chatClientRequest cannot be null");
 		Assert.notNull(advisors, "advisors cannot be null");
 		Assert.noNullElements(advisors, "advisors cannot contain null elements");

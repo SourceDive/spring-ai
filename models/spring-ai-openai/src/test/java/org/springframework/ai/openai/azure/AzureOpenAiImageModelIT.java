@@ -20,13 +20,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
-
-import org.springframework.ai.image.Image;
-import org.springframework.ai.image.ImageModel;
-import org.springframework.ai.image.ImageOptionsBuilder;
-import org.springframework.ai.image.ImagePrompt;
-import org.springframework.ai.image.ImageResponse;
-import org.springframework.ai.image.ImageResponseMetadata;
+import org.springframework.ai.image.*;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
@@ -41,8 +35,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * NOTE: use deployment ID gpt-image-1-mini
  */
 @SpringBootTest(classes = AzureOpenAiImageModelIT.TestConfiguration.class)
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+")})
 public class AzureOpenAiImageModelIT {
 
 	@Autowired
@@ -86,10 +80,10 @@ public class AzureOpenAiImageModelIT {
 			String endpoint = System.getenv("AZURE_OPENAI_ENDPOINT");
 
 			return new OpenAiImageModel(OpenAiImageOptions.builder()
-				.baseUrl(endpoint)
-				.apiKey(apiKey)
-				.deploymentName("gpt-image-1-mini")
-				.build());
+					.baseUrl(endpoint)
+					.apiKey(apiKey)
+					.deploymentName("gpt-image-1-mini")
+					.build());
 		}
 
 	}

@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.prompt;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpPromptListChanged;
+import org.springframework.ai.mcp.annotation.method.changed.prompt.AsyncPromptListChangedSpecification;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-import org.springframework.ai.mcp.annotation.method.changed.prompt.AsyncPromptListChangedSpecification;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,8 +47,8 @@ public class AsyncMcpPromptListChangedProviderTests {
 
 		List<AsyncPromptListChangedSpecification> specifications = provider.getPromptListChangedSpecifications();
 		List<Function<List<McpSchema.Prompt>, Mono<Void>>> consumers = specifications.stream()
-			.map(AsyncPromptListChangedSpecification::promptListChangeHandler)
-			.toList();
+				.map(AsyncPromptListChangedSpecification::promptListChangeHandler)
+				.toList();
 
 		// Should find 2 annotated methods (2 Mono<Void>)
 		assertThat(consumers).hasSize(2);
@@ -98,9 +97,9 @@ public class AsyncMcpPromptListChangedProviderTests {
 		AsyncMcpPromptListChangedProvider provider = new AsyncMcpPromptListChangedProvider(List.of());
 
 		List<Function<List<McpSchema.Prompt>, Mono<Void>>> consumers = provider.getPromptListChangedSpecifications()
-			.stream()
-			.map(AsyncPromptListChangedSpecification::promptListChangeHandler)
-			.toList();
+				.stream()
+				.map(AsyncPromptListChangedSpecification::promptListChangeHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -112,9 +111,9 @@ public class AsyncMcpPromptListChangedProviderTests {
 		AsyncMcpPromptListChangedProvider provider = new AsyncMcpPromptListChangedProvider(List.of(handler1, handler2));
 
 		List<Function<List<McpSchema.Prompt>, Mono<Void>>> consumers = provider.getPromptListChangedSpecifications()
-			.stream()
-			.map(AsyncPromptListChangedSpecification::promptListChangeHandler)
-			.toList();
+				.stream()
+				.map(AsyncPromptListChangedSpecification::promptListChangeHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

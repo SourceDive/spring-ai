@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.prompt;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpPromptListChanged;
+import org.springframework.ai.mcp.annotation.method.changed.prompt.SyncPromptListChangedSpecification;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import io.modelcontextprotocol.spec.McpSchema;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-import org.springframework.ai.mcp.annotation.method.changed.prompt.SyncPromptListChangedSpecification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,8 +45,8 @@ public class SyncMcpPromptListChangedProviderTests {
 
 		List<SyncPromptListChangedSpecification> specifications = provider.getPromptListChangedSpecifications();
 		List<Consumer<List<McpSchema.Prompt>>> consumers = specifications.stream()
-			.map(SyncPromptListChangedSpecification::promptListChangeHandler)
-			.toList();
+				.map(SyncPromptListChangedSpecification::promptListChangeHandler)
+				.toList();
 
 		// Should find 2 annotated methods
 		assertThat(consumers).hasSize(2);
@@ -90,9 +89,9 @@ public class SyncMcpPromptListChangedProviderTests {
 		SyncMcpPromptListChangedProvider provider = new SyncMcpPromptListChangedProvider(List.of());
 
 		List<Consumer<List<McpSchema.Prompt>>> consumers = provider.getPromptListChangedSpecifications()
-			.stream()
-			.map(SyncPromptListChangedSpecification::promptListChangeHandler)
-			.toList();
+				.stream()
+				.map(SyncPromptListChangedSpecification::promptListChangeHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -104,9 +103,9 @@ public class SyncMcpPromptListChangedProviderTests {
 		SyncMcpPromptListChangedProvider provider = new SyncMcpPromptListChangedProvider(List.of(handler1, handler2));
 
 		List<Consumer<List<McpSchema.Prompt>>> consumers = provider.getPromptListChangedSpecifications()
-			.stream()
-			.map(SyncPromptListChangedSpecification::promptListChangeHandler)
-			.toList();
+				.stream()
+				.map(SyncPromptListChangedSpecification::promptListChangeHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

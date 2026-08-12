@@ -16,27 +16,19 @@
 
 package org.springframework.ai.model;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.github.victools.jsonschema.generator.FieldScope;
-import com.github.victools.jsonschema.generator.MemberScope;
+import com.github.victools.jsonschema.generator.*;
 import com.github.victools.jsonschema.generator.Module;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigPart;
 import kotlin.jvm.JvmClassMappingKt;
-import kotlin.reflect.KClass;
-import kotlin.reflect.KFunction;
-import kotlin.reflect.KParameter;
-import kotlin.reflect.KProperty;
-import kotlin.reflect.KType;
+import kotlin.reflect.*;
 import kotlin.reflect.full.KClasses;
 import kotlin.reflect.jvm.ReflectJvmMapping;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.core.KotlinDetector;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 public class KotlinModule implements Module {
 

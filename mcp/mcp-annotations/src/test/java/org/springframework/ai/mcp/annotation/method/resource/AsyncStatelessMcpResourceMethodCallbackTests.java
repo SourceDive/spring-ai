@@ -16,33 +16,27 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpError;
-import io.modelcontextprotocol.spec.McpSchema.BlobResourceContents;
-import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
-import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
-import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import io.modelcontextprotocol.util.McpUriTemplateManager;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.adapter.ResourceAdapter;
 import org.springframework.ai.mcp.annotation.context.DefaultMetaProvider;
 import org.springframework.ai.mcp.annotation.context.MetaProvider;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -100,7 +94,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 					@Override
 					public Role[] audience() {
-						return new Role[] { Role.USER };
+						return new Role[]{Role.USER};
 					}
 
 					@Override
@@ -130,11 +124,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Provide a mock McpResource annotation since the method doesn't have one
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -158,11 +152,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Use the builder to provide a mock McpResource annotation
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -186,11 +180,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("users/123/posts/456");
@@ -214,11 +208,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Provide a mock McpResource annotation since the method doesn't have one
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -242,11 +236,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Use the builder to provide a mock McpResource annotation
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -270,11 +264,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("async/users/123/posts/456");
@@ -297,11 +291,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -325,11 +319,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -354,11 +348,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource");
@@ -383,8 +377,8 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncStatelessMcpResourceMethodCallback.builder().method(method).bean(provider).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("URI must not be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("URI must not be null or empty");
 	}
 
 	@Test
@@ -395,8 +389,8 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncStatelessMcpResourceMethodCallback.builder().method(method).bean(provider).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("URI must not be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("URI must not be null or empty");
 	}
 
 	@Test
@@ -450,7 +444,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 					@Override
 					public Role[] audience() {
-						return new Role[] { Role.USER };
+						return new Role[]{Role.USER};
 					}
 
 					@Override
@@ -472,11 +466,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		};
 
 		assertThatThrownBy(() -> AsyncStatelessMcpResourceMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(mockResourceAnnotation))
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have parameters for all URI variables");
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(mockResourceAnnotation))
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have parameters for all URI variables");
 	}
 
 	@Test
@@ -486,20 +480,20 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 
 		Mono<ReadResourceResult> resultMono = callback.apply(context, null);
 
 		StepVerifier.create(resultMono)
-			.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
-					&& throwable.getMessage().contains("Request must not be null"))
-			.verify();
+				.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
+						&& throwable.getMessage().contains("Request must not be null"))
+				.verify();
 	}
 
 	@Test
@@ -509,11 +503,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		// Create a request with a URI that will cause the URI template extraction to
@@ -544,23 +538,25 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		};
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callbackWithMockTemplate = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.uriTemplateManagerFactory(new McpUriTemplateManagerFactory() {
-				public McpUriTemplateManager create(String uriTemplate) {
-					return mockUriTemplateManager;
-				};
-			})
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.uriTemplateManagerFactory(new McpUriTemplateManagerFactory() {
+					public McpUriTemplateManager create(String uriTemplate) {
+						return mockUriTemplateManager;
+					}
+
+					;
+				})
+				.build();
 
 		Mono<ReadResourceResult> resultMono = callbackWithMockTemplate.apply(context, request);
 
 		StepVerifier.create(resultMono)
-			.expectErrorMatches(throwable -> throwable instanceof McpError
-					&& throwable.getMessage().contains("Error invoking resource method"))
-			.verify();
+				.expectErrorMatches(throwable -> throwable instanceof McpError
+						&& throwable.getMessage().contains("Error invoking resource method"))
+				.verify();
 	}
 
 	@Test
@@ -569,15 +565,15 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		Method method = TestAsyncStatelessResourceProvider.class.getMethod("getResourceWithRequest",
 				ReadResourceRequest.class);
 		AsyncStatelessMcpResourceMethodCallback callback = AsyncStatelessMcpResourceMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		// Test that McpTransportContext is recognized as context type
 		// Note: We need to use reflection to access the protected method for testing
 		java.lang.reflect.Method isContextTypeMethod = AsyncStatelessMcpResourceMethodCallback.class
-			.getDeclaredMethod("isExchangeOrContextType", Class.class);
+				.getDeclaredMethod("isExchangeOrContextType", Class.class);
 		isContextTypeMethod.setAccessible(true);
 
 		assertThat((Boolean) isContextTypeMethod.invoke(callback, McpTransportContext.class)).isTrue();
@@ -594,14 +590,14 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Test null method
 		assertThatThrownBy(() -> AsyncStatelessMcpResourceMethodCallback.builder().bean(provider).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Method must not be null");
 
 		// Test null bean
 		assertThatThrownBy(() -> AsyncStatelessMcpResourceMethodCallback.builder()
-			.method(TestAsyncStatelessResourceProvider.class.getMethod("getResourceWithRequest",
-					ReadResourceRequest.class))
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("Bean must not be null");
+				.method(TestAsyncStatelessResourceProvider.class.getMethod("getResourceWithRequest",
+						ReadResourceRequest.class))
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("Bean must not be null");
 	}
 
 	@Test
@@ -612,11 +608,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 
@@ -626,9 +622,9 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		Mono<ReadResourceResult> resultMono = callback.apply(context, invalidRequest);
 
 		StepVerifier.create(resultMono)
-			.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
-					&& throwable.getMessage().contains("Failed to extract all URI variables from request URI"))
-			.verify();
+				.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
+						&& throwable.getMessage().contains("Failed to extract all URI variables from request URI"))
+				.verify();
 	}
 
 	@Test
@@ -638,11 +634,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource", Map.of("testKey", "testValue"));
@@ -665,11 +661,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource", Map.of("testKey", "asyncValue"));
@@ -692,11 +688,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource", null);
@@ -718,11 +714,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		Method method = TestAsyncStatelessResourceProvider.class.getMethod("getResourceWithMetaOnly", McpMeta.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource", Map.of("testKey", "onlyMetaValue"));
@@ -746,11 +742,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("users/123/posts/456", Map.of("testKey", "uriMetaValue"));
@@ -773,11 +769,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				McpTransportContext.class, McpMeta.class, ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("test/resource", Map.of("testKey", "contextMetaValue"));
@@ -790,7 +786,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 			assertThat(result.contents().get(0)).isInstanceOf(TextResourceContents.class);
 			TextResourceContents textContent = (TextResourceContents) result.contents().get(0);
 			assertThat(textContent.text())
-				.isEqualTo("Async content with context and meta: contextMetaValue for test/resource");
+					.isEqualTo("Async content with context and meta: contextMetaValue for test/resource");
 		}).verifyComplete();
 	}
 
@@ -801,11 +797,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 				McpMeta.class, String.class, ReadResourceRequest.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = mock(ReadResourceRequest.class);
@@ -821,7 +817,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 			assertThat(result.contents().get(0)).isInstanceOf(TextResourceContents.class);
 			TextResourceContents textContent = (TextResourceContents) result.contents().get(0);
 			assertThat(textContent.text())
-				.isEqualTo("Content with meta: mixedValue and progress: progress123 for test/resource");
+					.isEqualTo("Content with meta: mixedValue and progress: progress123 for test/resource");
 		}).verifyComplete();
 	}
 
@@ -834,11 +830,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		// This should throw an exception during callback creation due to multiple McpMeta
 		// parameters
 		assertThatThrownBy(() -> AsyncStatelessMcpResourceMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one McpMeta parameter");
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one McpMeta parameter");
 	}
 
 	@Test
@@ -849,11 +845,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		McpResource resourceAnnotation = method.getAnnotation(McpResource.class);
 
 		BiFunction<McpTransportContext, ReadResourceRequest, Mono<ReadResourceResult>> callback = AsyncStatelessMcpResourceMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(resourceAnnotation))
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(resourceAnnotation))
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		ReadResourceRequest request = new ReadResourceRequest("failing-resource://resource");
@@ -862,9 +858,9 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// The new error handling should throw McpError instead of custom exceptions
 		StepVerifier.create(resultMono)
-			.expectErrorMatches(throwable -> throwable instanceof McpError
-					&& throwable.getMessage().contains("Error invoking resource method"))
-			.verify();
+				.expectErrorMatches(throwable -> throwable instanceof McpError
+						&& throwable.getMessage().contains("Error invoking resource method"))
+				.verify();
 	}
 
 	@Test
@@ -875,14 +871,14 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Should fail during callback creation due to parameter validation
 		assertThatThrownBy(() -> AsyncStatelessMcpResourceMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Method parameters must be exchange, ReadResourceRequest, String, McpMeta, or @McpProgressToken")
-			.hasMessageContaining("McpSyncServerExchange");
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build())
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Method parameters must be exchange, ReadResourceRequest, String, McpMeta, or @McpProgressToken")
+				.hasMessageContaining("McpSyncServerExchange");
 	}
 
 	@Test
@@ -893,14 +889,14 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Should fail during callback creation due to parameter validation
 		assertThatThrownBy(() -> AsyncStatelessMcpResourceMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.resource(ResourceAdapter.asResource(createMockMcpResource()))
-			.build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Method parameters must be exchange, ReadResourceRequest, String, McpMeta, or @McpProgressToken")
-			.hasMessageContaining("McpAsyncServerExchange");
+				.method(method)
+				.bean(provider)
+				.resource(ResourceAdapter.asResource(createMockMcpResource()))
+				.build())
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Method parameters must be exchange, ReadResourceRequest, String, McpMeta, or @McpProgressToken")
+				.hasMessageContaining("McpAsyncServerExchange");
 	}
 
 	private static class TestAsyncStatelessResourceProvider {
@@ -936,11 +932,11 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		// Mono return types
 		public Mono<ReadResourceResult> getResourceWithRequestAsync(ReadResourceRequest request) {
 			return Mono.just(new ReadResourceResult(List
-				.of(new TextResourceContents(request.uri(), "text/plain", "Async content for " + request.uri()))));
+					.of(new TextResourceContents(request.uri(), "text/plain", "Async content for " + request.uri()))));
 		}
 
 		public Mono<ReadResourceResult> getResourceWithContextAsync(McpTransportContext context,
-				ReadResourceRequest request) {
+		                                                            ReadResourceRequest request) {
 			return Mono.just(new ReadResourceResult(List.of(new TextResourceContents(request.uri(), "text/plain",
 					"Async content with context for " + request.uri()))));
 		}
@@ -954,7 +950,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		public Mono<List<ResourceContents>> getResourceContentsListAsync(ReadResourceRequest request) {
 			return Mono.just(List
-				.of(new TextResourceContents(request.uri(), "text/plain", "Async content list for " + request.uri())));
+					.of(new TextResourceContents(request.uri(), "text/plain", "Async content list for " + request.uri())));
 		}
 
 		public Mono<String> getSingleStringAsync(ReadResourceRequest request) {
@@ -984,7 +980,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		}
 
 		public Mono<ReadResourceResult> tooManyParameters(McpTransportContext context, ReadResourceRequest request,
-				String extraParam) {
+		                                                  String extraParam) {
 			return Mono.just(new ReadResourceResult(List.of()));
 		}
 
@@ -993,12 +989,12 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		}
 
 		public Mono<ReadResourceResult> duplicateContextParameters(McpTransportContext context1,
-				McpTransportContext context2) {
+		                                                           McpTransportContext context2) {
 			return Mono.just(new ReadResourceResult(List.of()));
 		}
 
 		public Mono<ReadResourceResult> duplicateRequestParameters(ReadResourceRequest request1,
-				ReadResourceRequest request2) {
+		                                                           ReadResourceRequest request2) {
 			return Mono.just(new ReadResourceResult(List.of()));
 		}
 
@@ -1013,7 +1009,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 			String metaValue = (String) meta.get("testKey");
 			String content = "Async content with meta: " + metaValue + " for " + request.uri();
 			return Mono
-				.just(new ReadResourceResult(List.of(new TextResourceContents(request.uri(), "text/plain", content))));
+					.just(new ReadResourceResult(List.of(new TextResourceContents(request.uri(), "text/plain", content))));
 		}
 
 		public ReadResourceResult getResourceWithMetaOnly(McpMeta meta) {
@@ -1031,15 +1027,15 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		}
 
 		public Mono<ReadResourceResult> getResourceWithContextAndMeta(McpTransportContext context, McpMeta meta,
-				ReadResourceRequest request) {
+		                                                              ReadResourceRequest request) {
 			String metaValue = (String) meta.get("testKey");
 			String content = "Async content with context and meta: " + metaValue + " for " + request.uri();
 			return Mono
-				.just(new ReadResourceResult(List.of(new TextResourceContents(request.uri(), "text/plain", content))));
+					.just(new ReadResourceResult(List.of(new TextResourceContents(request.uri(), "text/plain", content))));
 		}
 
 		public ReadResourceResult getResourceWithMetaAndMixedParams(McpMeta meta,
-				@McpProgressToken String progressToken, ReadResourceRequest request) {
+		                                                            @McpProgressToken String progressToken, ReadResourceRequest request) {
 			String metaValue = (String) meta.get("testKey");
 			String content = "Content with meta: " + metaValue + " and progress: " + progressToken + " for "
 					+ request.uri();
@@ -1047,7 +1043,7 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 		}
 
 		public ReadResourceResult getResourceWithMultipleMetas(McpMeta meta1, McpMeta meta2,
-				ReadResourceRequest request) {
+		                                                       ReadResourceRequest request) {
 			// This should cause a validation error during callback creation
 			String content = "Content with multiple metas for " + request.uri();
 			return new ReadResourceResult(List.of(new TextResourceContents(request.uri(), "text/plain", content)));
@@ -1060,12 +1056,12 @@ public class AsyncStatelessMcpResourceMethodCallbackTests {
 
 		// Invalid parameter types for stateless methods
 		public Mono<ReadResourceResult> invalidSyncExchangeParameter(McpSyncServerExchange exchange,
-				ReadResourceRequest request) {
+		                                                             ReadResourceRequest request) {
 			return Mono.just(new ReadResourceResult(List.of()));
 		}
 
 		public Mono<ReadResourceResult> invalidAsyncExchangeParameter(McpAsyncServerExchange exchange,
-				ReadResourceRequest request) {
+		                                                              ReadResourceRequest request) {
 			return Mono.just(new ReadResourceResult(List.of()));
 		}
 

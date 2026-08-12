@@ -44,11 +44,11 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Soby Chacko
  * @author Sebastien Deleuze
- * @since 1.1.0
  * @see BedrockCacheStrategy
  * @see <a href=
  * "https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">AWS Bedrock
  * Prompt Caching</a>
+ * @since 1.1.0
  */
 public class BedrockCacheOptions {
 
@@ -63,6 +63,7 @@ public class BedrockCacheOptions {
 
 	/**
 	 * Creates a new builder for constructing BedrockCacheOptions.
+	 *
 	 * @return a new Builder instance
 	 */
 	public static BedrockCacheOptions.Builder builder() {
@@ -71,6 +72,7 @@ public class BedrockCacheOptions {
 
 	/**
 	 * Gets the caching strategy.
+	 *
 	 * @return the configured BedrockCacheStrategy
 	 */
 	public BedrockCacheStrategy getStrategy() {
@@ -86,6 +88,7 @@ public class BedrockCacheOptions {
 	 * context) in the last block can change freely without invalidating the cache. When
 	 * disabled (default), the cache point is placed after the last system block, so any
 	 * change to the last block invalidates the cache.
+	 *
 	 * @return {@code true} if each system message is emitted as a separate content block
 	 * with the cache point placed before the last block; {@code false} otherwise
 	 */
@@ -104,6 +107,7 @@ public class BedrockCacheOptions {
 
 		/**
 		 * Sets the caching strategy.
+		 *
 		 * @param strategy the BedrockCacheStrategy to use
 		 * @return this Builder instance
 		 */
@@ -118,8 +122,9 @@ public class BedrockCacheOptions {
 		 * separate {@code SystemContentBlock} and the cache point is placed after the
 		 * second-to-last block, allowing a static prefix to be cached while the last
 		 * (dynamic) block can change freely.
+		 *
 		 * @param multiBlockSystemCaching {@code true} to enable multi-block system
-		 * caching; defaults to {@code false}
+		 *                                caching; defaults to {@code false}
 		 * @return this Builder instance
 		 */
 		public Builder multiBlockSystemCaching(boolean multiBlockSystemCaching) {
@@ -129,6 +134,7 @@ public class BedrockCacheOptions {
 
 		/**
 		 * Builds the BedrockCacheOptions instance.
+		 *
 		 * @return the configured BedrockCacheOptions
 		 */
 		public BedrockCacheOptions build() {

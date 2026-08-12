@@ -16,14 +16,17 @@
 
 package org.springframework.ai.tool.toolsearch.index.regex;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.ai.tool.toolsearch.ToolIndex;
+import org.springframework.ai.tool.toolsearch.ToolReference;
+import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
+import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
+import org.springframework.ai.tool.toolsearch.ToolSearchResponse.SearchMetadata;
+
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,15 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.ai.tool.toolsearch.ToolIndex;
-import org.springframework.ai.tool.toolsearch.ToolReference;
-import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
-import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
-import org.springframework.ai.tool.toolsearch.ToolSearchResponse.SearchMetadata;
 
 /**
  * Regex-based tool searcher that converts natural-language queries into case-insensitive
@@ -72,6 +66,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Gets or creates a SessionIndex for the given sessionId.
+	 *
 	 * @param sessionId the session identifier
 	 * @return the SessionIndex for the session
 	 */
@@ -146,6 +141,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 	 * joined as {@code (?i)(token1|token2|...)}. The pattern is truncated if it would
 	 * exceed 200 characters. Subclasses may override to apply a different conversion
 	 * strategy.
+	 *
 	 * @param query the natural-language query
 	 * @return a valid regex pattern string; never {@code null}
 	 */
@@ -169,22 +165,22 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 		// Filter and process tokens
 		List<String> processedTokens = Arrays.stream(tokens)
-			.map(String::trim)
-			.filter(token -> !token.isEmpty())
-			.filter(token -> token.length() >= 2) // Filter out single characters
-			.filter(token -> !stopWords.contains(token))
-			.map(this::escapeRegexSpecialChars) // Escape special regex characters
-			.distinct()
-			.collect(Collectors.toList());
+				.map(String::trim)
+				.filter(token -> !token.isEmpty())
+				.filter(token -> token.length() >= 2) // Filter out single characters
+				.filter(token -> !stopWords.contains(token))
+				.map(this::escapeRegexSpecialChars) // Escape special regex characters
+				.distinct()
+				.collect(Collectors.toList());
 
 		if (processedTokens.isEmpty()) {
 			// If all tokens were filtered, use original query words
 			processedTokens = Arrays.stream(tokens)
-				.map(String::trim)
-				.filter(token -> !token.isEmpty())
-				.map(this::escapeRegexSpecialChars)
-				.distinct()
-				.collect(Collectors.toList());
+					.map(String::trim)
+					.filter(token -> !token.isEmpty())
+					.map(this::escapeRegexSpecialChars)
+					.distinct()
+					.collect(Collectors.toList());
 		}
 
 		if (processedTokens.isEmpty()) {
@@ -211,6 +207,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Escapes special regex characters in a string.
+	 *
 	 * @param input the input string
 	 * @return the escaped string safe for use in regex patterns
 	 */
@@ -221,14 +218,15 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Searches for tools matching the regex pattern.
-	 * @param sessionIndex the session index to search
+	 *
+	 * @param sessionIndex  the session index to search
 	 * @param originalQuery the original natural language query (for metadata)
-	 * @param regexPattern the regex pattern to match against tool names and descriptions
-	 * @param maxResults maximum number of results to return
+	 * @param regexPattern  the regex pattern to match against tool names and descriptions
+	 * @param maxResults    maximum number of results to return
 	 * @return the search response with matching tools
 	 */
 	private ToolSearchResponse doSearch(SessionIndex sessionIndex, String originalQuery, String regexPattern,
-			int maxResults) {
+	                                    int maxResults) {
 		long startTime = System.currentTimeMillis();
 
 		Pattern pattern;
@@ -237,18 +235,17 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 			// the pattern
 			// e.g., "(?i)weather" for case-insensitive matching
 			pattern = Pattern.compile(regexPattern);
-		}
-		catch (PatternSyntaxException e) {
+		} catch (PatternSyntaxException e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Invalid regex pattern: '" + regexPattern + "'. Error: " + e.getMessage());
 			}
 			return ToolSearchResponse.builder()
-				.searchMetadata(SearchMetadata.builder()
-					.searchType(this.getClass().getSimpleName())
-					.query(originalQuery)
-					.searchTimeMs(System.currentTimeMillis() - startTime)
-					.build())
-				.build();
+					.searchMetadata(SearchMetadata.builder()
+							.searchType(this.getClass().getSimpleName())
+							.query(originalQuery)
+							.searchTimeMs(System.currentTimeMillis() - startTime)
+							.build())
+					.build();
 		}
 
 		List<MatchedTool> matchedTools = new ArrayList<>();
@@ -264,25 +261,25 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 		matchedTools.sort((a, b) -> Double.compare(b.score(), a.score()));
 
 		List<ToolReference> toolReferences = matchedTools.stream()
-			.limit(maxResults)
-			.map(matched -> ToolReference.builder()
-				.toolName(matched.entry().toolName())
-				.relevanceScore(matched.score())
-				.summary(matched.entry().toolDescription())
-				.build())
-			.toList();
+				.limit(maxResults)
+				.map(matched -> ToolReference.builder()
+						.toolName(matched.entry().toolName())
+						.relevanceScore(matched.score())
+						.summary(matched.entry().toolDescription())
+						.build())
+				.toList();
 
 		long searchTimeMs = System.currentTimeMillis() - startTime;
 
 		return ToolSearchResponse.builder()
-			.toolReferences(toolReferences)
-			.totalMatches(toolReferences.size())
-			.searchMetadata(SearchMetadata.builder()
-				.searchType(this.getClass().getSimpleName())
-				.query(originalQuery)
-				.searchTimeMs(searchTimeMs)
-				.build())
-			.build();
+				.toolReferences(toolReferences)
+				.totalMatches(toolReferences.size())
+				.searchMetadata(SearchMetadata.builder()
+						.searchType(this.getClass().getSimpleName())
+						.query(originalQuery)
+						.searchTimeMs(searchTimeMs)
+						.build())
+				.build();
 	}
 
 	/**
@@ -293,8 +290,9 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 	 * <li>Higher weight for tool name matches (2x)</li>
 	 * <li>Match position (earlier matches score higher)</li>
 	 * </ul>
+	 *
 	 * @param pattern the compiled regex pattern
-	 * @param entry the tool entry to match
+	 * @param entry   the tool entry to match
 	 * @return the calculated score, or 0 if no match
 	 */
 	private double calculateMatchScore(Pattern pattern, ToolEntry entry) {
@@ -338,6 +336,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Returns the number of tools in the index for the specified session.
+	 *
 	 * @param sessionId the session ID
 	 * @return tool count, or 0 if session not found
 	 */
@@ -351,6 +350,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Returns the total number of tools across all session indexes.
+	 *
 	 * @return total tool count
 	 */
 	public int totalSize() {
@@ -363,6 +363,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Validates a regex pattern without performing a search.
+	 *
 	 * @param regexPattern the pattern to validate
 	 * @return true if the pattern is valid, false otherwise
 	 */
@@ -376,8 +377,7 @@ public class RegexToolIndex implements Closeable, ToolIndex {
 		try {
 			Pattern.compile(regexPattern);
 			return true;
-		}
-		catch (PatternSyntaxException e) {
+		} catch (PatternSyntaxException e) {
 			return false;
 		}
 	}

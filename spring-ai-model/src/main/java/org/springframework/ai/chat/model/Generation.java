@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chat.model;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
 import org.springframework.ai.model.ModelResult;
+
+import java.util.Objects;
 
 /**
  * Represents a response returned by the AI.

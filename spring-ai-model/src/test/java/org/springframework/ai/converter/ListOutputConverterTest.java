@@ -16,14 +16,13 @@
 
 package org.springframework.ai.converter;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import org.springframework.core.convert.support.DefaultConversionService;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -107,7 +106,7 @@ class ListOutputConverterTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "a,b,c", "1,2,3", "X,Y,Z", "alpha,beta,gamma" })
+	@ValueSource(strings = {"a,b,c", "1,2,3", "X,Y,Z", "alpha,beta,gamma"})
 	void csvWithVariousInputs(String csvString) {
 		List<String> result = this.listOutputConverter.convert(csvString);
 		assertThat(result).hasSize(3);

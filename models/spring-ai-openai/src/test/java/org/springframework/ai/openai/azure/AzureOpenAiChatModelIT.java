@@ -16,20 +16,9 @@
 
 package org.springframework.ai.openai.azure;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -52,12 +41,22 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = AzureOpenAiChatModelIT.TestConfiguration.class)
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+")})
 class AzureOpenAiChatModelIT {
 
 	@Autowired
@@ -112,11 +111,11 @@ class AzureOpenAiChatModelIT {
 
 		final var counter = new AtomicInteger();
 		String content = this.chatModel.stream(prompt)
-			.doOnEach(listSignal -> counter.getAndIncrement())
-			.collectList()
-			.block()
-			.stream()
-			.collect(Collectors.joining());
+				.doOnEach(listSignal -> counter.getAndIncrement())
+				.collectList()
+				.block()
+				.stream()
+				.collect(Collectors.joining());
 		assertThat(counter.get()).withFailMessage("More than 8 chunks because there are 8 planets").isGreaterThan(8);
 
 		assertThat(content).contains("Earth", "Mars", "Jupiter");
@@ -133,9 +132,9 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -154,10 +153,10 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -177,9 +176,9 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -198,9 +197,9 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -220,21 +219,21 @@ class AzureOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(Objects::nonNull)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = converter.convert(generationTextFromStream);
 		assertThat(actorsFilms.actor()).isEqualTo("Tom Hanks");
@@ -346,10 +345,10 @@ class AzureOpenAiChatModelIT {
 	void testMaxCompletionTokensOptionsBuilder() {
 		// Test that maxCompletionTokens can be set via builder and is properly retrieved
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.deploymentName("gpt-4o")
-			.maxCompletionTokens(100)
-			.temperature(0.7)
-			.build();
+				.deploymentName("gpt-4o")
+				.maxCompletionTokens(100)
+				.temperature(0.7)
+				.build();
 
 		assertThat(options.getMaxCompletionTokens()).isEqualTo(100);
 		assertThat(options.getDeploymentName()).isEqualTo("gpt-4o");
@@ -384,7 +383,7 @@ class AzureOpenAiChatModelIT {
 			// limit)
 			if (usage.getTotalTokens() != null) {
 				assertThat(usage.getTotalTokens()).isLessThanOrEqualTo(150); // Allow some
-																				// tolerance
+				// tolerance
 			}
 		}
 	}
@@ -418,11 +417,11 @@ class AzureOpenAiChatModelIT {
 		assertThat(model).containsIgnoringCase("gpt");
 
 		String content = responses.stream()
-			.flatMap(r -> r.getResults().stream())
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(Objects::nonNull)
-			.collect(Collectors.joining());
+				.flatMap(r -> r.getResults().stream())
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(Objects::nonNull)
+				.collect(Collectors.joining());
 
 		assertThat(content).isNotEmpty();
 	}
@@ -441,12 +440,12 @@ class AzureOpenAiChatModelIT {
 		@Bean
 		public OpenAiChatModel azureOpenAiChatModel() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
-					.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
-					.deploymentName("gpt-4o")
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
+							.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
+							.deploymentName("gpt-4o")
+							.build())
+					.build();
 		}
 
 	}

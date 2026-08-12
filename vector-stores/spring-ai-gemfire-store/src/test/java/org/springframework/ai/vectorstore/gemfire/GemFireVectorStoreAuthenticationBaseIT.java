@@ -16,11 +16,6 @@
 
 package org.springframework.ai.vectorstore.gemfire;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
@@ -29,13 +24,17 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
 
@@ -61,7 +60,7 @@ public abstract class GemFireVectorStoreAuthenticationBaseIT {
 	static GemFireCluster gemFireCluster;
 
 	final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(getTestApplicationClass());
+			.withUserConfiguration(getTestApplicationClass());
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -81,7 +80,7 @@ public abstract class GemFireVectorStoreAuthenticationBaseIT {
 		gemFireCluster = new GemFireCluster(GemFireImage.DEFAULT_IMAGE, LOCATOR_COUNT, SERVER_COUNT);
 		gemFireCluster.withConfiguration(GemFireCluster.SERVER_GLOB,
 				container -> container.withExposedPorts(HTTP_SERVICE_PORT)
-					.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
+						.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
 		gemFireCluster.withGemFireProperty(GemFireCluster.SERVER_GLOB, "http-service-port",
 				Integer.toString(HTTP_SERVICE_PORT));
 		gemFireCluster.withGemFireProperty(GemFireCluster.ALL_GLOB, "security-manager",
@@ -99,8 +98,7 @@ public abstract class GemFireVectorStoreAuthenticationBaseIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -112,9 +110,9 @@ public abstract class GemFireVectorStoreAuthenticationBaseIT {
 			vectorStore.add(this.documents);
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(3).build()), hasSize(0));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(3).build()), hasSize(0));
 		});
 	}
 

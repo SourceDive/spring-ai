@@ -16,16 +16,15 @@
 
 package org.springframework.ai.openai;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.Map;
-
 import com.openai.azure.AzureOpenAIServiceVersion;
 import com.openai.credential.Credential;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ApiKey;
 import org.springframework.ai.model.NoopApiKey;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.Map;
 
 public class AbstractOpenAiOptions {
 
@@ -108,10 +107,10 @@ public class AbstractOpenAiOptions {
 	private final @Nullable Map<String, String> customHeaders;
 
 	protected AbstractOpenAiOptions(@Nullable String baseUrl, @Nullable String apiKey, @Nullable Credential credential,
-			@Nullable String model, @Nullable String microsoftDeploymentName,
-			@Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
-			@Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
-			@Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders) {
+	                                @Nullable String model, @Nullable String microsoftDeploymentName,
+	                                @Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
+	                                @Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
+	                                @Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders) {
 		this.baseUrl = baseUrl;
 		this.apiKey = apiKey;
 		this.credential = credential;
@@ -233,6 +232,7 @@ public class AbstractOpenAiOptions {
 		 * Sets the API key using an {@link ApiKey} instance. Pass a {@link NoopApiKey} to
 		 * disable authentication (no {@code Authorization} header will be sent), which is
 		 * the same behavior as setting an empty string via {@link #apiKey(String)}.
+		 *
 		 * @param apiKey the API key instance; if {@code null}, the key is cleared
 		 */
 		public B apiKey(@Nullable ApiKey apiKey) {

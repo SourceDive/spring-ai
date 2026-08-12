@@ -16,14 +16,6 @@
 
 package org.springframework.ai.vectorstore.milvus;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -39,13 +31,7 @@ import io.milvus.param.MetricType;
 import io.milvus.param.R;
 import io.milvus.param.R.Status;
 import io.milvus.param.RpcStatus;
-import io.milvus.param.collection.CollectionSchemaParam;
-import io.milvus.param.collection.CreateCollectionParam;
-import io.milvus.param.collection.DropCollectionParam;
-import io.milvus.param.collection.FieldType;
-import io.milvus.param.collection.HasCollectionParam;
-import io.milvus.param.collection.LoadCollectionParam;
-import io.milvus.param.collection.ReleaseCollectionParam;
+import io.milvus.param.collection.*;
 import io.milvus.param.dml.DeleteParam;
 import io.milvus.param.dml.InsertParam;
 import io.milvus.param.dml.SearchParam;
@@ -56,7 +42,6 @@ import io.milvus.response.QueryResultsWrapper.RowRecord;
 import io.milvus.response.SearchResultsWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -74,6 +59,10 @@ import org.springframework.ai.vectorstore.observation.VectorStoreObservationCont
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Milvus implementation of the {@link org.springframework.ai.vectorstore.VectorStore}
@@ -227,6 +216,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 	/**
 	 * Creates a new MilvusBuilder instance with the specified Milvus client. This is the
 	 * recommended way to instantiate a MilvusBuilder.
+	 *
 	 * @return a new MilvusBuilder instance
 	 */
 	public static Builder builder(MilvusServiceClient milvusServiceClient, EmbeddingModel embeddingModel) {
@@ -269,10 +259,10 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		fields.add(new InsertParam.Field(this.embeddingFieldName, embeddingArray));
 
 		InsertParam insertParam = InsertParam.newBuilder()
-			.withDatabaseName(this.databaseName)
-			.withCollectionName(this.collectionName)
-			.withFields(fields)
-			.build();
+				.withDatabaseName(this.databaseName)
+				.withCollectionName(this.collectionName)
+				.withFields(fields)
+				.build();
 
 		R<MutationResult> status = this.milvusClient.insert(insertParam);
 		if (status.getException() != null) {
@@ -290,14 +280,14 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		// chars cannot break out of the string literal and inject filter syntax.
 		String deleteExpression = String.format("%s in [%s]", this.idFieldName,
 				idList.stream()
-					.map(MilvusFilterExpressionConverter::toFilterExpressionLiteral)
-					.collect(Collectors.joining(",")));
+						.map(MilvusFilterExpressionConverter::toFilterExpressionLiteral)
+						.collect(Collectors.joining(",")));
 
 		R<MutationResult> status = this.milvusClient.delete(DeleteParam.newBuilder()
-			.withDatabaseName(this.databaseName)
-			.withCollectionName(this.collectionName)
-			.withExpr(deleteExpression)
-			.build());
+				.withDatabaseName(this.databaseName)
+				.withCollectionName(this.collectionName)
+				.withExpr(deleteExpression)
+				.build());
 
 		long deleteCount = status.getData().getDeleteCnt();
 		if (logger.isWarnEnabled() && deleteCount != idList.size()) {
@@ -313,10 +303,10 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 			String nativeFilterExpression = this.filterExpressionConverter.convertExpression(filterExpression);
 
 			R<MutationResult> status = this.milvusClient.delete(DeleteParam.newBuilder()
-				.withDatabaseName(this.databaseName)
-				.withCollectionName(this.collectionName)
-				.withExpr(nativeFilterExpression)
-				.build());
+					.withDatabaseName(this.databaseName)
+					.withCollectionName(this.collectionName)
+					.withExpr(nativeFilterExpression)
+					.build());
 
 			if (status.getStatus() != Status.Success.getCode()) {
 				throw new IllegalStateException("Failed to delete documents by filter: " + status.getMessage());
@@ -326,8 +316,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 			if (logger.isDebugEnabled()) {
 				logger.debug("Deleted " + deleteCount + " documents matching filter expression");
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete documents by filter: " + e.getMessage(), e);
 			}
@@ -345,8 +334,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 			searchParamsJson = StringUtils.hasText(milvusReq.getSearchParamsJson()) ? milvusReq.getSearchParamsJson()
 					: null;
-		}
-		else {
+		} else {
 			nativeFilterExpressions = getConvertedFilterExpression(request);
 		}
 
@@ -358,14 +346,14 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		float[] embedding = this.embeddingModel.embed(request.getQuery());
 
 		var searchParamBuilder = SearchParam.newBuilder()
-			.withDatabaseName(this.databaseName)
-			.withCollectionName(this.collectionName)
-			.withConsistencyLevel(ConsistencyLevelEnum.STRONG)
-			.withMetricType(this.metricType)
-			.withOutFields(outFieldNames)
-			.withTopK(request.getTopK())
-			.withFloatVectors(List.of(EmbeddingUtils.toList(embedding)))
-			.withVectorFieldName(this.embeddingFieldName);
+				.withDatabaseName(this.databaseName)
+				.withCollectionName(this.collectionName)
+				.withConsistencyLevel(ConsistencyLevelEnum.STRONG)
+				.withMetricType(this.metricType)
+				.withOutFields(outFieldNames)
+				.withTopK(request.getTopK())
+				.withFloatVectors(List.of(EmbeddingUtils.toList(embedding)))
+				.withVectorFieldName(this.embeddingFieldName);
 
 		if (StringUtils.hasText(nativeFilterExpressions)) {
 			searchParamBuilder.withExpr(nativeFilterExpressions);
@@ -384,34 +372,33 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		SearchResultsWrapper wrapperSearch = new SearchResultsWrapper(respSearch.getData().getResults());
 
 		return wrapperSearch.getRowRecords(0)
-			.stream()
-			.filter(rowRecord -> getResultSimilarity(rowRecord) >= request.getSimilarityThreshold())
-			.map(rowRecord -> {
-				String docId = String.valueOf(rowRecord.get(this.idFieldName));
-				String content = (String) rowRecord.get(this.contentFieldName);
-				JsonObject metadata = new JsonObject();
-				try {
-					metadata = (JsonObject) rowRecord.get(this.metadataFieldName);
-					if (metadata != null) {
-						// inject the distance into the metadata.
-						metadata.addProperty(DocumentMetadata.DISTANCE.value(), 1 - getResultSimilarity(rowRecord));
+				.stream()
+				.filter(rowRecord -> getResultSimilarity(rowRecord) >= request.getSimilarityThreshold())
+				.map(rowRecord -> {
+					String docId = String.valueOf(rowRecord.get(this.idFieldName));
+					String content = (String) rowRecord.get(this.contentFieldName);
+					JsonObject metadata = new JsonObject();
+					try {
+						metadata = (JsonObject) rowRecord.get(this.metadataFieldName);
+						if (metadata != null) {
+							// inject the distance into the metadata.
+							metadata.addProperty(DocumentMetadata.DISTANCE.value(), 1 - getResultSimilarity(rowRecord));
+						}
+					} catch (ParamException e) {
+						// skip the ParamException if metadata doesn't exist for the custom
+						// collection
 					}
-				}
-				catch (ParamException e) {
-					// skip the ParamException if metadata doesn't exist for the custom
-					// collection
-				}
-				Gson gson = new Gson();
-				Type type = new TypeToken<Map<String, Object>>() {
-				}.getType();
-				return Document.builder()
-					.id(docId)
-					.text(content)
-					.metadata((metadata != null) ? gson.fromJson(metadata, type) : Map.of())
-					.score((double) getResultSimilarity(rowRecord))
-					.build();
-			})
-			.toList();
+					Gson gson = new Gson();
+					Type type = new TypeToken<Map<String, Object>>() {
+					}.getType();
+					return Document.builder()
+							.id(docId)
+							.text(content)
+							.metadata((metadata != null) ? gson.fromJson(metadata, type) : Map.of())
+							.score((double) getResultSimilarity(rowRecord))
+							.build();
+				})
+				.toList();
 	}
 
 	private String getConvertedFilterExpression(SearchRequest request) {
@@ -440,17 +427,17 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 	void releaseCollection() {
 		if (isDatabaseCollectionExists()) {
 			this.milvusClient
-				.releaseCollection(ReleaseCollectionParam.newBuilder().withCollectionName(this.collectionName).build());
+					.releaseCollection(ReleaseCollectionParam.newBuilder().withCollectionName(this.collectionName).build());
 		}
 	}
 
 	private boolean isDatabaseCollectionExists() {
 		return this.milvusClient
-			.hasCollection(HasCollectionParam.newBuilder()
-				.withDatabaseName(this.databaseName)
-				.withCollectionName(this.collectionName)
-				.build())
-			.getData();
+				.hasCollection(HasCollectionParam.newBuilder()
+						.withDatabaseName(this.databaseName)
+						.withCollectionName(this.collectionName)
+						.build())
+				.getData();
 	}
 
 	// used by the test as well
@@ -464,10 +451,10 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		}
 
 		R<DescribeIndexResponse> indexDescriptionResponse = this.milvusClient
-			.describeIndex(DescribeIndexParam.newBuilder()
-				.withDatabaseName(this.databaseName)
-				.withCollectionName(this.collectionName)
-				.build());
+				.describeIndex(DescribeIndexParam.newBuilder()
+						.withDatabaseName(this.databaseName)
+						.withCollectionName(this.collectionName)
+						.build());
 
 		if (indexDescriptionResponse.getData() == null) {
 			createIndex(this.databaseName, this.collectionName, this.embeddingFieldName, this.indexType,
@@ -475,9 +462,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		}
 
 		R<RpcStatus> loadCollectionStatus = this.milvusClient.loadCollection(LoadCollectionParam.newBuilder()
-			.withDatabaseName(this.databaseName)
-			.withCollectionName(this.collectionName)
-			.build());
+				.withDatabaseName(this.databaseName)
+				.withCollectionName(this.collectionName)
+				.build());
 
 		if (loadCollectionStatus.getException() != null) {
 			throw new RuntimeException("Collection loading failed!", loadCollectionStatus.getException());
@@ -485,42 +472,42 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 	}
 
 	void createCollection(String databaseName, String collectionName, String idFieldName, boolean isAutoId,
-			String contentFieldName, String metadataFieldName, String embeddingFieldName) {
+	                      String contentFieldName, String metadataFieldName, String embeddingFieldName) {
 		FieldType docIdFieldType = FieldType.newBuilder()
-			.withName(idFieldName)
-			.withDataType(DataType.VarChar)
-			.withMaxLength(36)
-			.withPrimaryKey(true)
-			.withAutoID(isAutoId)
-			.build();
+				.withName(idFieldName)
+				.withDataType(DataType.VarChar)
+				.withMaxLength(36)
+				.withPrimaryKey(true)
+				.withAutoID(isAutoId)
+				.build();
 		FieldType contentFieldType = FieldType.newBuilder()
-			.withName(contentFieldName)
-			.withDataType(DataType.VarChar)
-			.withMaxLength(65535)
-			.build();
+				.withName(contentFieldName)
+				.withDataType(DataType.VarChar)
+				.withMaxLength(65535)
+				.build();
 		FieldType metadataFieldType = FieldType.newBuilder()
-			.withName(metadataFieldName)
-			.withDataType(DataType.JSON)
-			.build();
+				.withName(metadataFieldName)
+				.withDataType(DataType.JSON)
+				.build();
 		FieldType embeddingFieldType = FieldType.newBuilder()
-			.withName(embeddingFieldName)
-			.withDataType(DataType.FloatVector)
-			.withDimension(this.embeddingDimensions())
-			.build();
+				.withName(embeddingFieldName)
+				.withDataType(DataType.FloatVector)
+				.withDimension(this.embeddingDimensions())
+				.build();
 
 		CreateCollectionParam createCollectionReq = CreateCollectionParam.newBuilder()
-			.withDatabaseName(databaseName)
-			.withCollectionName(collectionName)
-			.withDescription("Spring AI Vector Store")
-			.withConsistencyLevel(ConsistencyLevelEnum.STRONG)
-			.withShardsNum(2)
-			.withSchema(CollectionSchemaParam.newBuilder()
-				.addFieldType(docIdFieldType)
-				.addFieldType(contentFieldType)
-				.addFieldType(metadataFieldType)
-				.addFieldType(embeddingFieldType)
-				.build())
-			.build();
+				.withDatabaseName(databaseName)
+				.withCollectionName(collectionName)
+				.withDescription("Spring AI Vector Store")
+				.withConsistencyLevel(ConsistencyLevelEnum.STRONG)
+				.withShardsNum(2)
+				.withSchema(CollectionSchemaParam.newBuilder()
+						.addFieldType(docIdFieldType)
+						.addFieldType(contentFieldType)
+						.addFieldType(metadataFieldType)
+						.addFieldType(embeddingFieldType)
+						.build())
+				.build();
 
 		R<RpcStatus> collectionStatus = this.milvusClient.createCollection(createCollectionReq);
 		if (collectionStatus.getException() != null) {
@@ -530,16 +517,16 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 	}
 
 	void createIndex(String databaseName, String collectionName, String embeddingFieldName, IndexType indexType,
-			MetricType metricType, String indexParameters) {
+	                 MetricType metricType, String indexParameters) {
 		R<RpcStatus> indexStatus = this.milvusClient.createIndex(CreateIndexParam.newBuilder()
-			.withDatabaseName(databaseName)
-			.withCollectionName(collectionName)
-			.withFieldName(embeddingFieldName)
-			.withIndexType(indexType)
-			.withMetricType(metricType)
-			.withExtraParam(indexParameters)
-			.withSyncMode(Boolean.FALSE)
-			.build());
+				.withDatabaseName(databaseName)
+				.withCollectionName(collectionName)
+				.withFieldName(embeddingFieldName)
+				.withIndexType(indexType)
+				.withMetricType(metricType)
+				.withExtraParam(indexParameters)
+				.withSyncMode(Boolean.FALSE)
+				.build());
 
 		if (indexStatus.getException() != null) {
 			throw new RuntimeException("Failed to create Index", indexStatus.getException());
@@ -555,8 +542,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 			if (embeddingDimensions > 0) {
 				return embeddingDimensions;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isWarnEnabled()) {
 				logger.warn(
 						"Failed to obtain the embedding dimensions from the embedding model and fall backs to default: "
@@ -571,23 +557,23 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 	void dropCollection() {
 
 		R<RpcStatus> status = this.milvusClient
-			.releaseCollection(ReleaseCollectionParam.newBuilder().withCollectionName(this.collectionName).build());
+				.releaseCollection(ReleaseCollectionParam.newBuilder().withCollectionName(this.collectionName).build());
 
 		if (status.getException() != null) {
 			throw new RuntimeException("Release collection failed!", status.getException());
 		}
 
 		status = this.milvusClient
-			.dropIndex(DropIndexParam.newBuilder().withCollectionName(this.collectionName).build());
+				.dropIndex(DropIndexParam.newBuilder().withCollectionName(this.collectionName).build());
 
 		if (status.getException() != null) {
 			throw new RuntimeException("Drop Index failed!", status.getException());
 		}
 
 		status = this.milvusClient.dropCollection(DropCollectionParam.newBuilder()
-			.withDatabaseName(this.databaseName)
-			.withCollectionName(this.collectionName)
-			.build());
+				.withDatabaseName(this.databaseName)
+				.withCollectionName(this.collectionName)
+				.build());
 
 		if (status.getException() != null) {
 			throw new RuntimeException("Drop Collection failed!", status.getException());
@@ -599,10 +585,10 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 			String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.MILVUS.value(), operationName)
-			.collectionName(this.collectionName)
-			.dimensions(this.embeddingModel.dimensions())
-			.similarityMetric(getSimilarityMetric())
-			.namespace(this.databaseName);
+				.collectionName(this.collectionName)
+				.dimensions(this.embeddingModel.dimensions())
+				.similarityMetric(getSimilarityMetric())
+				.namespace(this.databaseName);
 	}
 
 	private String getSimilarityMetric() {
@@ -660,10 +646,11 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		/**
 		 * Configures the Milvus metric type to use for similarity calculations. See:
 		 * https://milvus.io/docs/metric.md#floating for details on metric types.
+		 *
 		 * @param metricType the metric type to use (IP, L2, or COSINE)
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if metricType is null or not one of IP, L2, or
-		 * COSINE
+		 *                                  COSINE
 		 */
 		public Builder metricType(MetricType metricType) {
 			Assert.notNull(metricType, "metricType must not be null");
@@ -675,6 +662,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the Milvus index type to use for vector search optimization.
+		 *
 		 * @param indexType the index type to use (defaults to IVF_FLAT if not specified)
 		 * @return this builder instance
 		 */
@@ -685,8 +673,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the Milvus index parameters as a JSON string.
+		 *
 		 * @param indexParameters the index parameters to use (defaults to {"nlist":1024}
-		 * if not specified)
+		 *                        if not specified)
 		 * @return this builder instance
 		 */
 		public Builder indexParameters(String indexParameters) {
@@ -696,8 +685,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the Milvus database name.
+		 *
 		 * @param databaseName the database name to use (defaults to DEFAULT_DATABASE_NAME
-		 * if not specified)
+		 *                     if not specified)
 		 * @return this builder instance
 		 */
 		public Builder databaseName(String databaseName) {
@@ -707,8 +697,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the Milvus collection name.
+		 *
 		 * @param collectionName the collection name to use (defaults to
-		 * DEFAULT_COLLECTION_NAME if not specified)
+		 *                       DEFAULT_COLLECTION_NAME if not specified)
 		 * @return this builder instance
 		 */
 		public Builder collectionName(String collectionName) {
@@ -718,8 +709,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the dimension size of the embedding vectors.
+		 *
 		 * @param newEmbeddingDimension The dimension of the embedding (must be between 1
-		 * and 32768)
+		 *                              and 32768)
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if dimension is not between 1 and 32768
 		 */
@@ -732,6 +724,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the name of the field used for document IDs.
+		 *
 		 * @param idFieldName The name for the ID field (defaults to DOC_ID_FIELD_NAME)
 		 * @return this builder instance
 		 */
@@ -742,6 +735,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures whether to use auto-generated IDs for documents.
+		 *
 		 * @param isAutoId true to enable auto-generated IDs, false to use provided IDs
 		 * @return this builder instance
 		 */
@@ -752,8 +746,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the name of the field used for document content.
+		 *
 		 * @param contentFieldName The name for the content field (defaults to
-		 * CONTENT_FIELD_NAME)
+		 *                         CONTENT_FIELD_NAME)
 		 * @return this builder instance
 		 */
 		public Builder contentFieldName(String contentFieldName) {
@@ -763,8 +758,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the name of the field used for document metadata.
+		 *
 		 * @param metadataFieldName The name for the metadata field (defaults to
-		 * METADATA_FIELD_NAME)
+		 *                          METADATA_FIELD_NAME)
 		 * @return this builder instance
 		 */
 		public Builder metadataFieldName(String metadataFieldName) {
@@ -774,8 +770,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the name of the field used for embedding vectors.
+		 *
 		 * @param embeddingFieldName The name for the embedding field (defaults to
-		 * EMBEDDING_FIELD_NAME)
+		 *                           EMBEDDING_FIELD_NAME)
 		 * @return this builder instance
 		 */
 		public Builder embeddingFieldName(String embeddingFieldName) {
@@ -785,8 +782,9 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures whether to initialize the collection schema automatically.
+		 *
 		 * @param initializeSchema true to initialize schema automatically, false to use
-		 * existing schema
+		 *                         existing schema
 		 * @return this builder instance
 		 */
 		public Builder initializeSchema(boolean initializeSchema) {
@@ -797,6 +795,7 @@ public class MilvusVectorStore extends AbstractObservationVectorStore implements
 		/**
 		 * Builds and returns a new MilvusVectorStore instance with the configured
 		 * settings.
+		 *
 		 * @return a new MilvusVectorStore instance
 		 * @throws IllegalStateException if the builder configuration is invalid
 		 */

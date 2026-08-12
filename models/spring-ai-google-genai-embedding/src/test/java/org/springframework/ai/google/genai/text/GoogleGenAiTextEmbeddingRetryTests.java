@@ -16,9 +16,6 @@
 
 package org.springframework.ai.google.genai.text;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import com.google.genai.Client;
 import com.google.genai.Models;
 import com.google.genai.types.ContentEmbedding;
@@ -29,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.embedding.EmbeddingOptions;
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
@@ -41,14 +37,15 @@ import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Mark Pollack
@@ -86,7 +83,7 @@ public class GoogleGenAiTextEmbeddingRetryTests {
 		// Set up the mock connection details to return the mock client
 		given(this.mockConnectionDetails.getGenAiClient()).willReturn(this.mockGenAiClient);
 		given(this.mockConnectionDetails.getModelEndpointName(anyString()))
-			.willAnswer(invocation -> invocation.getArgument(0));
+				.willAnswer(invocation -> invocation.getArgument(0));
 
 		this.embeddingModel = new GoogleGenAiTextEmbeddingModel(this.mockConnectionDetails,
 				GoogleGenAiTextEmbeddingOptions.builder().build(), this.retryTemplate);
@@ -104,16 +101,16 @@ public class GoogleGenAiTextEmbeddingRetryTests {
 
 		// Setup the mock client to throw transient errors then succeed
 		given(this.mockModels.embedContent(anyString(), any(List.class), any(EmbedContentConfig.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(mockResponse);
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(mockResponse);
 
 		EmbeddingOptions options = GoogleGenAiTextEmbeddingOptions.builder().model("model").build();
 		EmbeddingResponse result = this.embeddingModel.call(new EmbeddingRequest(List.of("text1", "text2"), options));
 
 		assertThat(result).isNotNull();
 		assertThat(result.getResults()).hasSize(1);
-		assertThat(result.getResults().get(0).getOutput()).isEqualTo(new float[] { 9.9f, 8.8f });
+		assertThat(result.getResults().get(0).getOutput()).isEqualTo(new float[]{9.9f, 8.8f});
 		assertThat(this.retryListener.onSuccessRetryCount).isEqualTo(1);
 		assertThat(this.retryListener.onErrorRetryCount).isEqualTo(2);
 
@@ -124,12 +121,12 @@ public class GoogleGenAiTextEmbeddingRetryTests {
 	public void vertexAiEmbeddingNonTransientError() {
 		// Setup the mock client to throw a non-transient error
 		given(this.mockModels.embedContent(anyString(), any(List.class), any(EmbedContentConfig.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 
 		EmbeddingOptions options = GoogleGenAiTextEmbeddingOptions.builder().model("model").build();
 		// Assert that a RuntimeException is thrown and not retried
 		assertThatThrownBy(() -> this.embeddingModel.call(new EmbeddingRequest(List.of("text1", "text2"), options)))
-			.isInstanceOf(RuntimeException.class);
+				.isInstanceOf(RuntimeException.class);
 
 		// Verify that embedContent was called only once (no retries for non-transient
 		// errors)

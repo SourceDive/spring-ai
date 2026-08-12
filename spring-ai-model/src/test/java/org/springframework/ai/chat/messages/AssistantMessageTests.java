@@ -30,22 +30,22 @@ class AssistantMessageTests {
 	@Test
 	void whenMediaIsNullThenThrow() {
 		assertThatThrownBy(() -> AssistantMessage.builder().media(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Media must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Media must not be null");
 	}
 
 	@Test
 	void whenMetadataIsNullThenThrow() {
 		assertThatThrownBy(() -> AssistantMessage.builder().properties(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Metadata must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Metadata must not be null");
 	}
 
 	@Test
 	void whenToolCallsIsNullThenThrow() {
 		assertThatThrownBy(() -> AssistantMessage.builder().toolCalls(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Tool calls must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Tool calls must not be null");
 	}
 
 }

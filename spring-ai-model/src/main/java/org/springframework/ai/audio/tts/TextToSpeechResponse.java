@@ -16,12 +16,11 @@
 
 package org.springframework.ai.audio.tts;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.model.ModelResponse;
+
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.model.ModelResponse;
 
 /**
  * Implementation of the {@link ModelResponse} interface for the text to speech response.

@@ -16,11 +16,8 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientBuilderCustomizer;
 import org.springframework.ai.model.chat.client.autoconfigure.ChatClientAutoConfiguration;
@@ -29,6 +26,8 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,10 +39,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChatClientAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
-				"spring.ai.openai.chat.model=gpt-4o")
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ChatClientAutoConfiguration.class,
-				ToolCallingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
+					"spring.ai.openai.chat.model=gpt-4o")
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ChatClientAutoConfiguration.class,
+					ToolCallingAutoConfiguration.class));
 
 	@Test
 	void implicitlyEnabled() {
@@ -53,13 +52,13 @@ public class ChatClientAutoConfigurationIT {
 	@Test
 	void explicitlyEnabled() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.client.enabled=true")
-			.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isNotEmpty());
+				.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isNotEmpty());
 	}
 
 	@Test
 	void explicitlyDisabled() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.client.enabled=false")
-			.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isEmpty());
+				.run(context -> assertThat(context.getBeansOfType(ChatClient.Builder.class)).isEmpty());
 	}
 
 	@Test
@@ -88,9 +87,9 @@ public class ChatClientAutoConfigurationIT {
 			assertThat(chatClient).isNotNull();
 
 			ActorsFilms actorsFilms = chatClient.prompt()
-				.user(u -> u.param("actor", "Tom Hanks"))
-				.call()
-				.entity(ActorsFilms.class);
+					.user(u -> u.param("actor", "Tom Hanks"))
+					.call()
+					.entity(ActorsFilms.class);
 			assertThat(actorsFilms.actor()).isEqualTo("Tom Hanks");
 			assertThat(actorsFilms.movies()).hasSize(5);
 		});
@@ -106,7 +105,7 @@ public class ChatClientAutoConfigurationIT {
 		@Bean
 		public ChatClientBuilderCustomizer chatClientCustomizer() {
 			return b -> b.defaultSystem("You are a movie expert.")
-				.defaultUser("Generate the filmography of 5 movies for {actor}.");
+					.defaultUser("Generate the filmography of 5 movies for {actor}.");
 		}
 
 	}

@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncPromptSpecification;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
@@ -28,16 +23,20 @@ import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.adapter.PromptAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.prompt.AsyncMcpPromptMethodCallback;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 /**
  * Provider for asynchronous MCP prompt methods.
- *
+ * <p>
  * This provider creates prompt specifications for methods annotated with
  * {@link McpPrompt} that return reactive types and work with
  * {@link McpAsyncServerExchange}.
@@ -52,8 +51,9 @@ public class AsyncMcpPromptProvider {
 
 	/**
 	 * Create a new AsyncMcpPromptProvider.
+	 *
 	 * @param promptObjects the objects containing methods annotated with
-	 * {@link McpPrompt}
+	 *                      {@link McpPrompt}
 	 */
 	public AsyncMcpPromptProvider(List<Object> promptObjects) {
 		Assert.notNull(promptObjects, "promptObjects cannot be null");
@@ -62,31 +62,32 @@ public class AsyncMcpPromptProvider {
 
 	/**
 	 * Get the async prompt specifications.
+	 *
 	 * @return the list of async prompt specifications
 	 */
 	public List<AsyncPromptSpecification> getPromptSpecifications() {
 
 		List<AsyncPromptSpecification> promptSpecs = this.promptObjects.stream()
-			.map(promptObject -> Stream.of(doGetClassMethods(promptObject))
-				.filter(method -> method.isAnnotationPresent(McpPrompt.class))
-				.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpPromptMethod -> {
-					var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
-					var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
+				.map(promptObject -> Stream.of(doGetClassMethods(promptObject))
+						.filter(method -> method.isAnnotationPresent(McpPrompt.class))
+						.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpPromptMethod -> {
+							var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
+							var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
 
-					BiFunction<McpAsyncServerExchange, GetPromptRequest, Mono<GetPromptResult>> methodCallback = AsyncMcpPromptMethodCallback
-						.builder()
-						.method(mcpPromptMethod)
-						.bean(promptObject)
-						.prompt(mcpPrompt)
-						.build();
+							BiFunction<McpAsyncServerExchange, GetPromptRequest, Mono<GetPromptResult>> methodCallback = AsyncMcpPromptMethodCallback
+									.builder()
+									.method(mcpPromptMethod)
+									.bean(promptObject)
+									.prompt(mcpPrompt)
+									.build();
 
-					return new AsyncPromptSpecification(mcpPrompt, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new AsyncPromptSpecification(mcpPrompt, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (promptSpecs.isEmpty()) {
 			if (logger.isWarnEnabled()) {
@@ -99,6 +100,7 @@ public class AsyncMcpPromptProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

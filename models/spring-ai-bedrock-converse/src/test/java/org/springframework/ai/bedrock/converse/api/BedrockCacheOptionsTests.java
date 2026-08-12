@@ -49,9 +49,9 @@ class BedrockCacheOptionsTests {
 	@Test
 	void builderEnablesMultiBlockSystemCaching() {
 		BedrockCacheOptions options = BedrockCacheOptions.builder()
-			.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
-			.multiBlockSystemCaching(true)
-			.build();
+				.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+				.multiBlockSystemCaching(true)
+				.build();
 		assertThat(options.isMultiBlockSystemCaching()).isTrue();
 	}
 

@@ -16,12 +16,11 @@
 
 package org.springframework.ai.model.tool;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.tool.ToolCallback;
+
 import java.util.List;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.tool.ToolCallback;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,8 +58,8 @@ class DefaultToolCallingChatOptionsTests {
 	@Test
 	void builderShouldRejectNullToolCallbacksVarargs() {
 		assertThatThrownBy(() -> ToolCallingChatOptions.builder().toolCallbacks((ToolCallback[]) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("toolCallbacks cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("toolCallbacks cannot be null");
 	}
 
 	@Test
@@ -76,14 +75,14 @@ class DefaultToolCallingChatOptionsTests {
 	void gettersShouldReturnImmutableCollections() {
 		ToolCallback callback = mock(ToolCallback.class);
 		ToolCallingChatOptions options = ToolCallingChatOptions.builder()
-			.toolCallbacks(List.of(callback))
-			.toolContext(Map.of("key", "value"))
-			.build();
+				.toolCallbacks(List.of(callback))
+				.toolContext(Map.of("key", "value"))
+				.build();
 
 		assertThatThrownBy(() -> options.getToolCallbacks().add(mock(ToolCallback.class)))
-			.isInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 		assertThatThrownBy(() -> options.getToolContext().put("key2", "value2"))
-			.isInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -92,17 +91,17 @@ class DefaultToolCallingChatOptionsTests {
 		Map<String, Object> context = Map.of("key", "value");
 
 		ToolCallingChatOptions options = DefaultToolCallingChatOptions.builder()
-			.toolCallbacks(List.of(callback))
-			.toolContext(context)
-			.model("gpt-4")
-			.temperature(0.7)
-			.maxTokens(100)
-			.frequencyPenalty(0.5)
-			.presencePenalty(0.3)
-			.stopSequences(List.of("stop"))
-			.topK(3)
-			.topP(0.9)
-			.build();
+				.toolCallbacks(List.of(callback))
+				.toolContext(context)
+				.model("gpt-4")
+				.temperature(0.7)
+				.maxTokens(100)
+				.frequencyPenalty(0.5)
+				.presencePenalty(0.3)
+				.stopSequences(List.of("stop"))
+				.topK(3)
+				.topP(0.9)
+				.build();
 
 		assertThat(options).satisfies(o -> {
 			assertThat(o.getToolCallbacks()).containsExactly(callback);
@@ -121,9 +120,9 @@ class DefaultToolCallingChatOptionsTests {
 	@Test
 	void builderShouldSupportToolContextAddition() {
 		ToolCallingChatOptions options = DefaultToolCallingChatOptions.builder()
-			.toolContext("key1", "value1")
-			.toolContext("key2", "value2")
-			.build();
+				.toolContext("key1", "value1")
+				.toolContext("key2", "value2")
+				.build();
 
 		assertThat(options.getToolContext()).containsEntry("key1", "value1").containsEntry("key2", "value2");
 	}
@@ -131,7 +130,7 @@ class DefaultToolCallingChatOptionsTests {
 	@Test
 	void defaultConstructorShouldInitializeWithNullCollections() {
 		DefaultToolCallingChatOptions options = (DefaultToolCallingChatOptions) DefaultToolCallingChatOptions.builder()
-			.build();
+				.build();
 
 		assertThat(options.getToolCallbacks()).isNull();
 		assertThat(options.getToolContext()).isNull();
@@ -140,9 +139,9 @@ class DefaultToolCallingChatOptionsTests {
 	@Test
 	void builderShouldHandleEmptyCollections() {
 		ToolCallingChatOptions options = DefaultToolCallingChatOptions.builder()
-			.toolCallbacks(List.of())
-			.toolContext(Map.of())
-			.build();
+				.toolCallbacks(List.of())
+				.toolContext(Map.of())
+				.build();
 
 		assertThat(options.getToolCallbacks()).isEmpty();
 		assertThat(options.getToolContext()).isEmpty();

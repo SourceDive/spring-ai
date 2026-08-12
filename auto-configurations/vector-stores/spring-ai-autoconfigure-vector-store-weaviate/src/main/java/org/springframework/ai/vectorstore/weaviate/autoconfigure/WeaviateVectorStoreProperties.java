@@ -16,12 +16,12 @@
 
 package org.springframework.ai.vectorstore.weaviate.autoconfigure;
 
-import java.util.Map;
-
 import org.springframework.ai.vectorstore.weaviate.WeaviateVectorStore;
 import org.springframework.ai.vectorstore.weaviate.WeaviateVectorStore.ConsistentLevel;
 import org.springframework.ai.vectorstore.weaviate.WeaviateVectorStore.MetadataField;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.Map;
 
 /**
  * Configuration properties for Weaviate Vector Store.

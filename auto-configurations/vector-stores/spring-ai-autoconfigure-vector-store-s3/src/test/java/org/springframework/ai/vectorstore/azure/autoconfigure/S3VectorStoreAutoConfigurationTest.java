@@ -18,10 +18,6 @@ package org.springframework.ai.vectorstore.azure.autoconfigure;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
-
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -32,6 +28,9 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,10 +41,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class S3VectorStoreAutoConfigurationTest {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(S3VectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.s3.vector-bucket-name=testBucket")
-		.withPropertyValues("spring.ai.vectorstore.s3.index-name=testIndex");
+			.withConfiguration(AutoConfigurations.of(S3VectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.s3.vector-bucket-name=testBucket")
+			.withPropertyValues("spring.ai.vectorstore.s3.index-name=testIndex");
 
 	@Test
 	public void autoConfigurationDisabledWhenTypeIsNone() {
@@ -79,9 +78,9 @@ public class S3VectorStoreAutoConfigurationTest {
 		@Bean
 		public S3VectorsClient s3VectorsClient() {
 			return S3VectorsClient.builder()
-				.region(Region.US_EAST_1)
-				.credentialsProvider(DefaultCredentialsProvider.builder().build())
-				.build();
+					.region(Region.US_EAST_1)
+					.credentialsProvider(DefaultCredentialsProvider.builder().build())
+					.build();
 		}
 
 		@Bean

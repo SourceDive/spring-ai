@@ -16,22 +16,21 @@
 
 package org.springframework.ai.model.google.genai.autoconfigure.embedding;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.google.genai.text.GoogleGenAiTextEmbeddingModel;
 import org.springframework.ai.retry.autoconfigure.SpringAiRetryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for Google GenAI Text Embedding autoconfiguration.
- *
+ * <p>
  * This test can run in two modes: 1. With GOOGLE_API_KEY environment variable (Gemini
  * Developer API mode) 2. With GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION environment
  * variables (Vertex AI mode)
@@ -42,9 +41,9 @@ public class GoogleGenAiTextEmbeddingAutoConfigurationIT {
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_API_KEY", matches = ".+")
 	void embeddingWithApiKey() {
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.google.genai.embedding.api-key=" + System.getenv("GOOGLE_API_KEY"))
-			.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
-					GoogleGenAiEmbeddingConnectionAutoConfiguration.class, SpringAiRetryAutoConfiguration.class));
+				.withPropertyValues("spring.ai.google.genai.embedding.api-key=" + System.getenv("GOOGLE_API_KEY"))
+				.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
+						GoogleGenAiEmbeddingConnectionAutoConfiguration.class, SpringAiRetryAutoConfiguration.class));
 
 		contextRunner.run(context -> {
 			GoogleGenAiTextEmbeddingModel embeddingModel = context.getBean(GoogleGenAiTextEmbeddingModel.class);
@@ -62,16 +61,16 @@ public class GoogleGenAiTextEmbeddingAutoConfigurationIT {
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_CLOUD_LOCATION", matches = ".+")
 	void embeddingWithVertexAi() {
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.google.genai.embedding.project-id=" + System.getenv("GOOGLE_CLOUD_PROJECT"),
-					"spring.ai.google.genai.embedding.location=" + System.getenv("GOOGLE_CLOUD_LOCATION"))
-			.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
-					GoogleGenAiEmbeddingConnectionAutoConfiguration.class, SpringAiRetryAutoConfiguration.class));
+				.withPropertyValues("spring.ai.google.genai.embedding.project-id=" + System.getenv("GOOGLE_CLOUD_PROJECT"),
+						"spring.ai.google.genai.embedding.location=" + System.getenv("GOOGLE_CLOUD_LOCATION"))
+				.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
+						GoogleGenAiEmbeddingConnectionAutoConfiguration.class, SpringAiRetryAutoConfiguration.class));
 
 		contextRunner.run(context -> {
 			GoogleGenAiTextEmbeddingModel embeddingModel = context.getBean(GoogleGenAiTextEmbeddingModel.class);
 
 			EmbeddingResponse embeddingResponse = embeddingModel
-				.embedForResponse(List.of("Hello World", "World is big"));
+					.embedForResponse(List.of("Hello World", "World is big"));
 			assertThat(embeddingResponse.getResults()).hasSize(2);
 			assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 			assertThat(embeddingResponse.getResults().get(1).getOutput()).isNotEmpty();
@@ -83,27 +82,27 @@ public class GoogleGenAiTextEmbeddingAutoConfigurationIT {
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_API_KEY", matches = ".+")
 	void embeddingModelActivation() {
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.google.genai.embedding.api-key=" + System.getenv("GOOGLE_API_KEY"));
+				.withPropertyValues("spring.ai.google.genai.embedding.api-key=" + System.getenv("GOOGLE_API_KEY"));
 
 		// Test that embedding model is not activated when disabled
 		contextRunner
-			.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
-					GoogleGenAiEmbeddingConnectionAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding.text=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingModel.class)).isEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
+						GoogleGenAiEmbeddingConnectionAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.embedding.text=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingModel.class)).isEmpty();
+				});
 
 		// Test that embedding model is activated when enabled
 		contextRunner
-			.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
-					GoogleGenAiEmbeddingConnectionAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding.text=google-genai")
-			.run(context -> {
-				assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingModel.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(GoogleGenAiTextEmbeddingAutoConfiguration.class,
+						GoogleGenAiEmbeddingConnectionAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.embedding.text=google-genai")
+				.run(context -> {
+					assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(GoogleGenAiTextEmbeddingModel.class)).isNotEmpty();
+				});
 	}
 
 }

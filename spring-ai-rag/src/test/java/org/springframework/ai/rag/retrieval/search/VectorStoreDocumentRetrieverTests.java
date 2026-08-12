@@ -16,13 +16,9 @@
 
 package org.springframework.ai.rag.retrieval.search;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.internal.verification.Times;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.Query;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -31,12 +27,13 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.util.Assert;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
 
 /**
@@ -49,44 +46,44 @@ class VectorStoreDocumentRetrieverTests {
 	@Test
 	void whenVectorStoreIsNullThenThrow() {
 		assertThatThrownBy(() -> VectorStoreDocumentRetriever.builder().vectorStore(null).build())
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("vectorStore cannot be null");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("vectorStore cannot be null");
 	}
 
 	@Test
 	void whenTopKIsZeroThenThrow() {
 		assertThatThrownBy(
 				() -> VectorStoreDocumentRetriever.builder().topK(0).vectorStore(mock(VectorStore.class)).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("topK must be greater than 0");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("topK must be greater than 0");
 	}
 
 	@Test
 	void whenTopKIsNegativeThenThrow() {
 		assertThatThrownBy(
 				() -> VectorStoreDocumentRetriever.builder().topK(-1).vectorStore(mock(VectorStore.class)).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("topK must be greater than 0");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("topK must be greater than 0");
 	}
 
 	@Test
 	void whenSimilarityThresholdIsNegativeThenThrow() {
 		assertThatThrownBy(() -> VectorStoreDocumentRetriever.builder()
-			.similarityThreshold(-1.0)
-			.vectorStore(mock(VectorStore.class))
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("similarityThreshold must be equal to or greater than 0.0");
+				.similarityThreshold(-1.0)
+				.vectorStore(mock(VectorStore.class))
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("similarityThreshold must be equal to or greater than 0.0");
 	}
 
 	@Test
 	void searchRequestParameters() {
 		var mockVectorStore = mock(VectorStore.class);
 		var documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(mockVectorStore)
-			.similarityThreshold(0.73)
-			.topK(5)
-			.filterExpression(new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Rivendell")))
-			.build();
+				.vectorStore(mockVectorStore)
+				.similarityThreshold(0.73)
+				.topK(5)
+				.filterExpression(new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Rivendell")))
+				.build();
 
 		documentRetriever.retrieve(new Query("query"));
 
@@ -98,18 +95,18 @@ class VectorStoreDocumentRetrieverTests {
 		assertThat(searchRequest.getSimilarityThreshold()).isEqualTo(0.73);
 		assertThat(searchRequest.getTopK()).isEqualTo(5);
 		assertThat(searchRequest.getFilterExpression())
-			.isEqualTo(new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Rivendell")));
+				.isEqualTo(new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Rivendell")));
 	}
 
 	@Test
 	void dynamicFilterExpressions() {
 		var mockVectorStore = mock(VectorStore.class);
 		var documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(mockVectorStore)
-			.filterExpression(
-					() -> new FilterExpressionBuilder().eq("tenantId", TenantContextHolder.getTenantIdentifier())
-						.build())
-			.build();
+				.vectorStore(mockVectorStore)
+				.filterExpression(
+						() -> new FilterExpressionBuilder().eq("tenantId", TenantContextHolder.getTenantIdentifier())
+								.build())
+				.build();
 
 		TenantContextHolder.setTenantIdentifier("tenant1");
 		documentRetriever.retrieve(new Query("query"));
@@ -125,11 +122,11 @@ class VectorStoreDocumentRetrieverTests {
 
 		var searchRequest1 = searchRequestCaptor.getAllValues().get(0);
 		assertThat(searchRequest1.getFilterExpression())
-			.isEqualTo(new Filter.Expression(EQ, new Filter.Key("tenantId"), new Filter.Value("tenant1")));
+				.isEqualTo(new Filter.Expression(EQ, new Filter.Key("tenantId"), new Filter.Value("tenant1")));
 
 		var searchRequest2 = searchRequestCaptor.getAllValues().get(1);
 		assertThat(searchRequest2.getFilterExpression())
-			.isEqualTo(new Filter.Expression(EQ, new Filter.Key("tenantId"), new Filter.Value("tenant2")));
+				.isEqualTo(new Filter.Expression(EQ, new Filter.Key("tenantId"), new Filter.Value("tenant2")));
 	}
 
 	@Test
@@ -139,7 +136,7 @@ class VectorStoreDocumentRetrieverTests {
 
 		Query nullQuery = null;
 		assertThatThrownBy(() -> documentRetriever.retrieve(nullQuery)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("query cannot be null");
+				.hasMessageContaining("query cannot be null");
 	}
 
 	@Test
@@ -162,11 +159,11 @@ class VectorStoreDocumentRetrieverTests {
 	void retrieveWithQueryObject() {
 		var mockVectorStore = mock(VectorStore.class);
 		var documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(mockVectorStore)
-			.similarityThreshold(0.85)
-			.topK(3)
-			.filterExpression(new Filter.Expression(EQ, new Filter.Key("category"), new Filter.Value("books")))
-			.build();
+				.vectorStore(mockVectorStore)
+				.similarityThreshold(0.85)
+				.topK(3)
+				.filterExpression(new Filter.Expression(EQ, new Filter.Key("category"), new Filter.Value("books")))
+				.build();
 
 		var query = new Query("test query");
 		documentRetriever.retrieve(query);
@@ -179,7 +176,7 @@ class VectorStoreDocumentRetrieverTests {
 		assertThat(searchRequest.getSimilarityThreshold()).isEqualTo(0.85);
 		assertThat(searchRequest.getTopK()).isEqualTo(3);
 		assertThat(searchRequest.getFilterExpression())
-			.isEqualTo(new Filter.Expression(EQ, new Filter.Key("category"), new Filter.Value("books")));
+				.isEqualTo(new Filter.Expression(EQ, new Filter.Key("category"), new Filter.Value("books")));
 	}
 
 	@Test
@@ -216,9 +213,9 @@ class VectorStoreDocumentRetrieverTests {
 		var documentRetriever = VectorStoreDocumentRetriever.builder().vectorStore(mockVectorStore).build();
 
 		var query = Query.builder()
-			.text("test query")
-			.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Rivendell'"))
-			.build();
+				.text("test query")
+				.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Rivendell'"))
+				.build();
 		documentRetriever.retrieve(query);
 
 		// Verify the mock interaction
@@ -231,7 +228,7 @@ class VectorStoreDocumentRetrieverTests {
 		assertThat(searchRequest.getSimilarityThreshold()).isEqualTo(SearchRequest.SIMILARITY_THRESHOLD_ACCEPT_ALL);
 		assertThat(searchRequest.getTopK()).isEqualTo(SearchRequest.DEFAULT_TOP_K);
 		assertThat(searchRequest.getFilterExpression())
-			.isEqualTo(new FilterExpressionBuilder().eq("location", "Rivendell").build());
+				.isEqualTo(new FilterExpressionBuilder().eq("location", "Rivendell").build());
 	}
 
 	@Test
@@ -243,9 +240,9 @@ class VectorStoreDocumentRetrieverTests {
 		var filterExpression = new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Rivendell"));
 
 		var query = Query.builder()
-			.text("test query")
-			.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, filterExpression))
-			.build();
+				.text("test query")
+				.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, filterExpression))
+				.build();
 		documentRetriever.retrieve(query);
 
 		// Verify the mock interaction

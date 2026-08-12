@@ -16,10 +16,10 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.List;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * Default implementation of {@link ToolExecutionResult}.
@@ -28,14 +28,16 @@ import org.springframework.util.Assert;
  * @since 1.0.0
  */
 public record DefaultToolExecutionResult(List<Message> conversationHistory,
-		boolean returnDirect) implements ToolExecutionResult {
+                                         boolean returnDirect) implements
+
+ToolExecutionResult {
 
 	public DefaultToolExecutionResult {
 		Assert.notNull(conversationHistory, "conversationHistory cannot be null");
 		Assert.noNullElements(conversationHistory, "conversationHistory cannot contain null elements");
 	}
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

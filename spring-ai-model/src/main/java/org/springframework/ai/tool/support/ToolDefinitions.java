@@ -16,12 +16,12 @@
 
 package org.springframework.ai.tool.support;
 
-import java.lang.reflect.Method;
-
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.Method;
 
 /**
  * Utility class for creating {@link ToolDefinition} builders and instances from Java
@@ -47,9 +47,9 @@ public final class ToolDefinitions {
 	public static DefaultToolDefinition.Builder builder(Method method) {
 		Assert.notNull(method, "method cannot be null");
 		return DefaultToolDefinition.builder()
-			.name(ToolUtils.getToolName(method))
-			.description(ToolUtils.getToolDescription(method))
-			.inputSchema(JsonSchemaGenerator.generateForMethodInput(method));
+				.name(ToolUtils.getToolName(method))
+				.description(ToolUtils.getToolDescription(method))
+				.inputSchema(JsonSchemaGenerator.generateForMethodInput(method));
 	}
 
 	/**

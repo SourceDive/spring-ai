@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mistralai.ocr;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.model.ModelOptions;
+
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.model.ModelOptions;
 
 /**
  * Options for Mistral AI OCR requests. These options are used at runtime when making an
@@ -65,7 +64,7 @@ public class MistralAiOcrOptions implements ModelOptions {
 	private final @Nullable Integer imageMinSize;
 
 	protected MistralAiOcrOptions(@Nullable String model, @Nullable String id, @Nullable List<Integer> pages,
-			@Nullable Boolean includeImageBase64, @Nullable Integer imageLimit, @Nullable Integer imageMinSize) {
+	                              @Nullable Boolean includeImageBase64, @Nullable Integer imageLimit, @Nullable Integer imageMinSize) {
 		this.model = (model != null ? model : MistralOcrApi.OCRModel.MISTRAL_OCR_LATEST.getValue());
 		this.id = id;
 		this.pages = (pages != null ? List.copyOf(pages) : null);

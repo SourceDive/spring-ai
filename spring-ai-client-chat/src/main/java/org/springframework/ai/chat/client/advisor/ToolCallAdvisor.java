@@ -28,8 +28,8 @@ import org.springframework.ai.model.tool.ToolExecutionEligibilityChecker;
 public class ToolCallAdvisor extends ToolCallingAdvisor {
 
 	protected ToolCallAdvisor(ToolCallingManager toolCallingManager,
-			ToolExecutionEligibilityChecker toolExecutionEligibilityChecker, int advisorOrder,
-			boolean conversationHistoryEnabled) {
+	                          ToolExecutionEligibilityChecker toolExecutionEligibilityChecker, int advisorOrder,
+	                          boolean conversationHistoryEnabled) {
 		super(toolCallingManager, toolExecutionEligibilityChecker, advisorOrder, conversationHistoryEnabled);
 	}
 

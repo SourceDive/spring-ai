@@ -64,7 +64,7 @@ public final class GoogleGenAiEmbeddingConnectionDetails {
 	private final Client genAiClient;
 
 	private GoogleGenAiEmbeddingConnectionDetails(@Nullable String projectId, @Nullable String location,
-			@Nullable String apiKey, Client genAiClient) {
+	                                              @Nullable String apiKey, Client genAiClient) {
 		this.projectId = projectId;
 		this.location = location;
 		this.apiKey = apiKey;
@@ -93,6 +93,7 @@ public final class GoogleGenAiEmbeddingConnectionDetails {
 
 	/**
 	 * Constructs the model endpoint name in the format expected by the embedding models.
+	 *
 	 * @param modelName the model name (e.g., "text-embedding-004")
 	 * @return the full model endpoint name
 	 */
@@ -163,8 +164,7 @@ public final class GoogleGenAiEmbeddingConnectionDetails {
 			if (StringUtils.hasText(this.apiKey)) {
 				// Use Gemini Developer API mode
 				clientBuilder.apiKey(this.apiKey);
-			}
-			else {
+			} else {
 				// Use Vertex AI mode
 				Assert.hasText(this.projectId, "Project ID must be provided for Vertex AI mode");
 

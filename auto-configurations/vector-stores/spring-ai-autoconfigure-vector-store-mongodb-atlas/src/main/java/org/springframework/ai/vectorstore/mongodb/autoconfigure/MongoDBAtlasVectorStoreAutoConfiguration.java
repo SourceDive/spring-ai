@@ -16,11 +16,7 @@
 
 package org.springframework.ai.vectorstore.mongodb.autoconfigure;
 
-import java.util.Arrays;
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -41,6 +37,9 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeType;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * {@link AutoConfiguration Auto-configuration} for MongoDB Atlas Vector Store.
  *
@@ -51,7 +50,7 @@ import org.springframework.util.MimeType;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ MongoDBAtlasVectorStore.class, EmbeddingModel.class, MongoTemplate.class })
+@ConditionalOnClass({MongoDBAtlasVectorStore.class, EmbeddingModel.class, MongoTemplate.class})
 @EnableConfigurationProperties(MongoDBAtlasVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.MONGODB_ATLAS,
 		matchIfMissing = true)
@@ -66,15 +65,15 @@ public class MongoDBAtlasVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	MongoDBAtlasVectorStore vectorStore(MongoTemplate mongoTemplate, EmbeddingModel embeddingModel,
-			MongoDBAtlasVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                    MongoDBAtlasVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                    ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                    BatchingStrategy batchingStrategy) {
 
 		MongoDBAtlasVectorStore.Builder builder = MongoDBAtlasVectorStore.builder(mongoTemplate, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy);
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy);
 
 		PropertyMapper mapper = PropertyMapper.get();
 		mapper.from(properties::getCollectionName).whenHasText().to(builder::collectionName);

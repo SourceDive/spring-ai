@@ -16,9 +16,9 @@
 
 package org.springframework.ai.docker.compose.service.connection.opensearch;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Map;
 
 class OpenSearchEnvironment {
 
@@ -28,7 +28,8 @@ class OpenSearchEnvironment {
 		this.password = env.get("OPENSEARCH_INITIAL_ADMIN_PASSWORD");
 	}
 
-	@Nullable String getPassword() {
+	@Nullable
+	String getPassword() {
 		return this.password;
 	}
 

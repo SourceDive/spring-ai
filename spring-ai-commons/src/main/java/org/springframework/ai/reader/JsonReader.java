@@ -16,20 +16,19 @@
 
 package org.springframework.ai.reader;
 
+import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentReader;
+import org.springframework.core.io.Resource;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
-
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.document.DocumentReader;
-import org.springframework.core.io.Resource;
 
 /**
  * A class that reads JSON documents and converts them into a list of {@link Document}
@@ -75,14 +74,12 @@ public class JsonReader implements DocumentReader {
 
 			if (rootNode.isArray()) {
 				return StreamSupport.stream(rootNode.spliterator(), true)
-					.map(jsonNode -> parseJsonNode(jsonNode, JsonMapper.shared()))
-					.toList();
-			}
-			else {
+						.map(jsonNode -> parseJsonNode(jsonNode, JsonMapper.shared()))
+						.toList();
+			} else {
 				return Collections.singletonList(parseJsonNode(rootNode, JsonMapper.shared()));
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -94,8 +91,8 @@ public class JsonReader implements DocumentReader {
 		var sb = new StringBuilder();
 
 		this.jsonKeysToUse.stream()
-			.filter(item::containsKey)
-			.forEach(key -> sb.append(key).append(": ").append(item.get(key)).append(System.lineSeparator()));
+				.filter(item::containsKey)
+				.forEach(key -> sb.append(key).append(": ").append(item.get(key)).append(System.lineSeparator()));
 
 		Map<String, Object> metadata = this.jsonMetadataGenerator.generate(item);
 		String content = sb.isEmpty() ? item.toString() : sb.toString();
@@ -105,16 +102,16 @@ public class JsonReader implements DocumentReader {
 	protected List<Document> get(JsonNode rootNode) {
 		if (rootNode.isArray()) {
 			return StreamSupport.stream(rootNode.spliterator(), true)
-				.map(jsonNode -> parseJsonNode(jsonNode, JsonMapper.shared()))
-				.toList();
-		}
-		else {
+					.map(jsonNode -> parseJsonNode(jsonNode, JsonMapper.shared()))
+					.toList();
+		} else {
 			return Collections.singletonList(parseJsonNode(rootNode, JsonMapper.shared()));
 		}
 	}
 
 	/**
 	 * Retrieves documents from the JSON resource using a JSON Pointer.
+	 *
 	 * @param pointer A JSON Pointer string (RFC 6901) to locate the desired element
 	 * @return A list of Documents parsed from the located JSON element
 	 * @throws RuntimeException if the JSON cannot be parsed or the pointer is invalid
@@ -129,8 +126,7 @@ public class JsonReader implements DocumentReader {
 			}
 
 			return get(targetNode);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Error reading JSON resource", e);
 		}
 	}

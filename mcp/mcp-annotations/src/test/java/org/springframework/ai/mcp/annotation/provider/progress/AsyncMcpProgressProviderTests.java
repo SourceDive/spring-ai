@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.provider.progress;
 
+import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpProgress;
+import org.springframework.ai.mcp.annotation.method.progress.AsyncProgressSpecification;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import org.springframework.ai.mcp.annotation.McpProgress;
-import org.springframework.ai.mcp.annotation.method.progress.AsyncProgressSpecification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,8 +45,8 @@ public class AsyncMcpProgressProviderTests {
 
 		List<AsyncProgressSpecification> specifications = provider.getProgressSpecifications();
 		List<Function<ProgressNotification, Mono<Void>>> handlers = specifications.stream()
-			.map(AsyncProgressSpecification::progressHandler)
-			.toList();
+				.map(AsyncProgressSpecification::progressHandler)
+				.toList();
 
 		// Should find 2 valid annotated methods (only Mono<Void> methods are valid for
 		// async)
@@ -62,8 +61,7 @@ public class AsyncMcpProgressProviderTests {
 		try {
 			// Wait for progress notifications to be processed
 			latch.await(3, TimeUnit.SECONDS);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
@@ -87,9 +85,9 @@ public class AsyncMcpProgressProviderTests {
 		AsyncMcpProgressProvider provider = new AsyncMcpProgressProvider(List.of());
 
 		List<Function<ProgressNotification, Mono<Void>>> handlers = provider.getProgressSpecifications()
-			.stream()
-			.map(AsyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(AsyncProgressSpecification::progressHandler)
+				.toList();
 
 		assertThat(handlers).isEmpty();
 	}
@@ -101,9 +99,9 @@ public class AsyncMcpProgressProviderTests {
 		AsyncMcpProgressProvider provider = new AsyncMcpProgressProvider(List.of(handler1, handler2));
 
 		List<Function<ProgressNotification, Mono<Void>>> handlers = provider.getProgressSpecifications()
-			.stream()
-			.map(AsyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(AsyncProgressSpecification::progressHandler)
+				.toList();
 
 		// Should find 4 valid annotated methods (2 from each handler - only Mono<Void>
 		// methods)
@@ -115,9 +113,9 @@ public class AsyncMcpProgressProviderTests {
 		AsyncMcpProgressProvider provider = new AsyncMcpProgressProvider(null);
 
 		List<Function<ProgressNotification, Mono<Void>>> handlers = provider.getProgressSpecifications()
-			.stream()
-			.map(AsyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(AsyncProgressSpecification::progressHandler)
+				.toList();
 
 		assertThat(handlers).isEmpty();
 	}
@@ -149,9 +147,9 @@ public class AsyncMcpProgressProviderTests {
 		AsyncMcpProgressProvider provider = new AsyncMcpProgressProvider(List.of(errorHandler));
 
 		List<Function<ProgressNotification, Mono<Void>>> handlers = provider.getProgressSpecifications()
-			.stream()
-			.map(AsyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(AsyncProgressSpecification::progressHandler)
+				.toList();
 
 		assertThat(handlers).hasSize(1);
 

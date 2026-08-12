@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.provider.logging;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpLogging;
 import org.springframework.ai.mcp.annotation.method.logging.SyncLoggingSpecification;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,8 +41,8 @@ public class SyncMcpLoggingProviderTests {
 
 		List<SyncLoggingSpecification> specifications = provider.getLoggingSpecifications();
 		List<Consumer<LoggingMessageNotification>> consumers = specifications.stream()
-			.map(SyncLoggingSpecification::loggingHandler)
-			.toList();
+				.map(SyncLoggingSpecification::loggingHandler)
+				.toList();
 
 		// Should find 2 annotated methods
 		assertThat(consumers).hasSize(2);
@@ -70,9 +69,9 @@ public class SyncMcpLoggingProviderTests {
 		SyncMcpLoggingProvider provider = new SyncMcpLoggingProvider(List.of());
 
 		List<Consumer<LoggingMessageNotification>> consumers = provider.getLoggingSpecifications()
-			.stream()
-			.map(SyncLoggingSpecification::loggingHandler)
-			.toList();
+				.stream()
+				.map(SyncLoggingSpecification::loggingHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -84,9 +83,9 @@ public class SyncMcpLoggingProviderTests {
 		SyncMcpLoggingProvider provider = new SyncMcpLoggingProvider(List.of(handler1, handler2));
 
 		List<Consumer<LoggingMessageNotification>> consumers = provider.getLoggingSpecifications()
-			.stream()
-			.map(SyncLoggingSpecification::loggingHandler)
-			.toList();
+				.stream()
+				.map(SyncLoggingSpecification::loggingHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

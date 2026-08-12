@@ -16,12 +16,12 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.time.Instant;
-import java.util.List;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
+
+import java.time.Instant;
+import java.util.List;
 
 /**
  * Redis-specific extended interface for ChatMemoryRepository with advanced query
@@ -46,42 +46,47 @@ public interface AdvancedRedisChatMemoryRepository extends ChatMemoryRepository 
 
 	/**
 	 * Find messages by content across all conversations.
+	 *
 	 * @param contentPattern The text pattern to search for in message content
-	 * @param limit Maximum number of results to return
+	 * @param limit          Maximum number of results to return
 	 * @return List of messages matching the pattern
 	 */
 	List<MessageWithConversation> findByContent(String contentPattern, int limit);
 
 	/**
 	 * Find messages by type across all conversations.
+	 *
 	 * @param messageType The message type to filter by
-	 * @param limit Maximum number of results to return
+	 * @param limit       Maximum number of results to return
 	 * @return List of messages of the specified type
 	 */
 	List<MessageWithConversation> findByType(MessageType messageType, int limit);
 
 	/**
 	 * Find messages by timestamp range.
+	 *
 	 * @param conversationId Optional conversation ID to filter by (null for all
-	 * conversations)
-	 * @param fromTime Start of time range (inclusive)
-	 * @param toTime End of time range (inclusive)
-	 * @param limit Maximum number of results to return
+	 *                       conversations)
+	 * @param fromTime       Start of time range (inclusive)
+	 * @param toTime         End of time range (inclusive)
+	 * @param limit          Maximum number of results to return
 	 * @return List of messages within the time range
 	 */
 	List<MessageWithConversation> findByTimeRange(String conversationId, Instant fromTime, Instant toTime, int limit);
 
 	/**
 	 * Find messages with a specific metadata key-value pair.
-	 * @param metadataKey The metadata key to search for
+	 *
+	 * @param metadataKey   The metadata key to search for
 	 * @param metadataValue The metadata value to match
-	 * @param limit Maximum number of results to return
+	 * @param limit         Maximum number of results to return
 	 * @return List of messages with matching metadata
 	 */
 	List<MessageWithConversation> findByMetadata(String metadataKey, Object metadataValue, int limit);
 
 	/**
 	 * Execute a custom query using Redis Search syntax.
+	 *
 	 * @param query The Redis Search query string
 	 * @param limit Maximum number of results to return
 	 * @return List of messages matching the query
@@ -92,8 +97,8 @@ public interface AdvancedRedisChatMemoryRepository extends ChatMemoryRepository 
 	 * A wrapper class to return messages with their conversation context.
 	 *
 	 * @param conversationId the conversation identifier
-	 * @param message the message content
-	 * @param timestamp the message timestamp
+	 * @param message        the message content
+	 * @param timestamp      the message timestamp
 	 */
 	record MessageWithConversation(String conversationId, Message message, long timestamp) {
 	}

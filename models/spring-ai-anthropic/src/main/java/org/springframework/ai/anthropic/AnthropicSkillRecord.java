@@ -16,11 +16,10 @@
 
 package org.springframework.ai.anthropic;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 /**
  * Represents a Claude Skill - either pre-built Anthropic skill or custom skill. Skills
@@ -39,7 +38,8 @@ public class AnthropicSkillRecord {
 
 	/**
 	 * Create a skill with a specific version.
-	 * @param type skill type
+	 *
+	 * @param type    skill type
 	 * @param skillId skill identifier
 	 * @param version version string (e.g., "latest", "20251013")
 	 */
@@ -54,7 +54,8 @@ public class AnthropicSkillRecord {
 
 	/**
 	 * Create a skill with default "latest" version.
-	 * @param type skill type
+	 *
+	 * @param type    skill type
 	 * @param skillId skill identifier
 	 */
 	public AnthropicSkillRecord(AnthropicSkillType type, String skillId) {
@@ -75,6 +76,7 @@ public class AnthropicSkillRecord {
 
 	/**
 	 * Convert to a map suitable for JSON serialization via {@code JsonValue.from()}.
+	 *
 	 * @return map with type, skill_id, and version keys
 	 */
 	public Map<String, Object> toJsonMap() {

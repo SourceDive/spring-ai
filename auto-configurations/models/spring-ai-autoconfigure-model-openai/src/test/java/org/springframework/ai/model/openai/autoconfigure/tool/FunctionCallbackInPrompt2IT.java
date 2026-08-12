@@ -16,13 +16,8 @@
 
 package org.springframework.ai.model.openai.autoconfigure.tool;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.model.openai.autoconfigure.OpenAiChatAutoConfiguration;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -30,15 +25,19 @@ import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".*")
 public class FunctionCallbackInPrompt2IT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
-				org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
+					org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
@@ -71,7 +70,7 @@ public class FunctionCallbackInPrompt2IT {
 	void lambdaFunctionCallTest() {
 		Map<String, Object> state = new ConcurrentHashMap<>();
 
-		record LightInfo(String roomName, boolean isOn) {
+		record LightInfo (String roomName,boolean isOn){
 		}
 
 		this.contextRunner.run(context -> {

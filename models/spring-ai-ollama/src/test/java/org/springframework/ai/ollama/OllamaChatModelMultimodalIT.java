@@ -16,11 +16,7 @@
 
 package org.springframework.ai.ollama;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
@@ -39,6 +35,9 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
 import org.springframework.util.MimeTypeUtils;
 
+import java.time.Duration;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -55,12 +54,12 @@ class OllamaChatModelMultimodalIT extends BaseOllamaIT {
 		var imageData = new ClassPathResource("/something.adoc");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see in this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see in this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		assertThatThrownBy(() -> this.chatModel.call(new Prompt(List.of(userMessage))))
-			.isInstanceOf(RuntimeException.class);
+				.isInstanceOf(RuntimeException.class);
 	}
 
 	@Test
@@ -68,9 +67,9 @@ class OllamaChatModelMultimodalIT extends BaseOllamaIT {
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see in this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see in this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage)));
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -88,24 +87,24 @@ class OllamaChatModelMultimodalIT extends BaseOllamaIT {
 		@Bean
 		public OllamaChatModel ollamaChat(OllamaApi ollamaApi) {
 			RetryPolicy retryPolicy = RetryPolicy.builder()
-				.maxRetries(1)
-				.includes(TransientAiException.class)
-				.delay(Duration.ofSeconds(1))
-				.build();
+					.maxRetries(1)
+					.includes(TransientAiException.class)
+					.delay(Duration.ofSeconds(1))
+					.build();
 
 			RetryTemplate retryTemplate = new RetryTemplate(retryPolicy);
 			retryTemplate.setRetryListener(new RetryListener() {
 
 				@Override
 				public void onRetryFailure(final RetryPolicy policy, final Retryable<?> retryable,
-						final Throwable throwable) {
+				                           final Throwable throwable) {
 				}
 			});
 			return OllamaChatModel.builder()
-				.ollamaApi(ollamaApi)
-				.options(OllamaChatOptions.builder().model(MODEL).temperature(0.9).build())
-				.retryTemplate(retryTemplate)
-				.build();
+					.ollamaApi(ollamaApi)
+					.options(OllamaChatOptions.builder().model(MODEL).temperature(0.9).build())
+					.retryTemplate(retryTemplate)
+					.build();
 		}
 
 	}

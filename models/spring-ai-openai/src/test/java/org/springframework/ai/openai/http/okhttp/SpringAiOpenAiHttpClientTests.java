@@ -55,12 +55,12 @@ class SpringAiOpenAiHttpClientTests {
 			// First response closes the keep-alive connection, leaving a stale entry in
 			// OkHttp's pool; the second request must transparently recover (gh-6318).
 			server.enqueue(new MockResponse().setResponseCode(200)
-				.setHeader("Content-Type", "application/json")
-				.setBody(CHAT_COMPLETION_RESPONSE)
-				.setSocketPolicy(SocketPolicy.DISCONNECT_AT_END));
+					.setHeader("Content-Type", "application/json")
+					.setBody(CHAT_COMPLETION_RESPONSE)
+					.setSocketPolicy(SocketPolicy.DISCONNECT_AT_END));
 			server.enqueue(new MockResponse().setResponseCode(200)
-				.setHeader("Content-Type", "application/json")
-				.setBody(CHAT_COMPLETION_RESPONSE));
+					.setHeader("Content-Type", "application/json")
+					.setBody(CHAT_COMPLETION_RESPONSE));
 			server.start();
 
 			OkHttpClient client = SpringAiOpenAiHttpClient.builder().build().getOkHttpClient();

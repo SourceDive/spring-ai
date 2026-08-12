@@ -31,6 +31,7 @@ public interface MetaProvider {
 	 * Returns metadata key-value pairs that will be included in the "_meta" field. These
 	 * metadata values provide additional context and information for tools, prompts, and
 	 * resource declarations.
+	 *
 	 * @return A Map containing metadata key-value pairs, where keys are strings and
 	 * values can be any object type.
 	 */

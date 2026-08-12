@@ -22,9 +22,11 @@ package org.springframework.ai.tool.metadata;
  * @author Thomas Vitale
  * @since 1.0.0
  */
-public record DefaultToolMetadata(boolean returnDirect) implements ToolMetadata {
+public record DefaultToolMetadata(boolean returnDirect) implements
 
-	public static Builder builder() {
+ToolMetadata {
+
+	public static Builder builder () {
 		return new Builder();
 	}
 

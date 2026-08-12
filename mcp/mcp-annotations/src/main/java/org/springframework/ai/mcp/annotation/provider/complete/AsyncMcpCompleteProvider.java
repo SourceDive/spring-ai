@@ -16,24 +16,23 @@
 
 package org.springframework.ai.mcp.annotation.provider.complete;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncCompletionSpecification;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.adapter.CompleteAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.complete.AsyncMcpCompleteMethodCallback;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Stream;
+
 /**
  * Provider for asynchronous MCP complete methods.
- *
+ * <p>
  * This provider creates completion specifications for methods annotated with
  * {@link McpComplete} that return reactive types and work with
  * {@link McpAsyncServerExchange}.
@@ -48,8 +47,9 @@ public class AsyncMcpCompleteProvider {
 
 	/**
 	 * Create a new AsyncMcpCompletionProvider.
+	 *
 	 * @param completeObjects the objects containing methods annotated with
-	 * {@link McpComplete}
+	 *                        {@link McpComplete}
 	 */
 	public AsyncMcpCompleteProvider(List<Object> completeObjects) {
 		Assert.notNull(completeObjects, "completeObjects cannot be null");
@@ -58,36 +58,37 @@ public class AsyncMcpCompleteProvider {
 
 	/**
 	 * Get the async completion specifications.
+	 *
 	 * @return the list of async completion specifications
 	 */
 	public List<AsyncCompletionSpecification> getCompleteSpecifications() {
 
 		List<AsyncCompletionSpecification> asyncCompleteSpecification = this.completeObjects.stream()
-			.map(completeObject -> Stream.of(doGetClassMethods(completeObject))
-				.filter(method -> method.isAnnotationPresent(McpComplete.class))
-				.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpCompleteMethod -> {
-					var completeAnnotation = mcpCompleteMethod.getAnnotation(McpComplete.class);
-					var completeRef = CompleteAdapter.asCompleteReference(completeAnnotation, mcpCompleteMethod);
+				.map(completeObject -> Stream.of(doGetClassMethods(completeObject))
+						.filter(method -> method.isAnnotationPresent(McpComplete.class))
+						.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpCompleteMethod -> {
+							var completeAnnotation = mcpCompleteMethod.getAnnotation(McpComplete.class);
+							var completeRef = CompleteAdapter.asCompleteReference(completeAnnotation, mcpCompleteMethod);
 
-					var methodCallback = AsyncMcpCompleteMethodCallback.builder()
-						.method(mcpCompleteMethod)
-						.bean(completeObject)
-						.prompt(completeAnnotation.prompt().isEmpty() ? null : completeAnnotation.prompt())
-						.uri(completeAnnotation.uri().isEmpty() ? null : completeAnnotation.uri())
-						.build();
+							var methodCallback = AsyncMcpCompleteMethodCallback.builder()
+									.method(mcpCompleteMethod)
+									.bean(completeObject)
+									.prompt(completeAnnotation.prompt().isEmpty() ? null : completeAnnotation.prompt())
+									.uri(completeAnnotation.uri().isEmpty() ? null : completeAnnotation.uri())
+									.build();
 
-					return new AsyncCompletionSpecification(completeRef, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new AsyncCompletionSpecification(completeRef, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (asyncCompleteSpecification.isEmpty()) {
 			if (logger.isWarnEnabled()) {
 				logger
-					.warn("No async complete methods found in the provided complete objects: " + this.completeObjects);
+						.warn("No async complete methods found in the provided complete objects: " + this.completeObjects);
 			}
 		}
 
@@ -96,6 +97,7 @@ public class AsyncMcpCompleteProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

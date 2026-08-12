@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link OpenAiAutoConfigurationUtil#resolveCommonProperties}.
- *
+ * <p>
  * Specifically verifies that an explicitly-set empty {@code apiKey} (the no-auth /
  * {@code NoopApiKey} signal) is preserved and not silently replaced by the common-level
  * key.
@@ -73,7 +73,7 @@ public class OpenAiAutoConfigurationUtilTests {
 		var resolved = OpenAiAutoConfigurationUtil.resolveCommonProperties(common, model);
 
 		assertThat(resolved.getApiKey()).as("empty common apiKey must be preserved when model apiKey is absent")
-			.isEmpty();
+				.isEmpty();
 	}
 
 	@Test

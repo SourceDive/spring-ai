@@ -17,11 +17,10 @@
 package org.springframework.ai.model.bedrock.cohere.autoconfigure;
 
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.bedrock.cohere.BedrockCohereEmbeddingModel;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,13 +33,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BedrockCohereModelConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
-		.withBean(JsonMapper.class, JsonMapper::new);
+			.withConfiguration(AutoConfigurations.of(BedrockCohereEmbeddingAutoConfiguration.class))
+			.withBean(JsonMapper.class, JsonMapper::new);
 
 	@Test
 	void embeddingModelActivation() {
 		this.contextRunner
-			.run(context -> assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty());
+				.run(context -> assertThat(context.getBeansOfType(BedrockCohereEmbeddingModel.class)).isNotEmpty());
 
 		this.contextRunner.withPropertyValues("spring.ai.model.embedding=none").run(context -> {
 			assertThat(context.getBeansOfType(BedrockCohereEmbeddingProperties.class)).isEmpty();

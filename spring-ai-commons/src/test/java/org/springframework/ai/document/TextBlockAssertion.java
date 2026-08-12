@@ -16,11 +16,11 @@
 
 package org.springframework.ai.document;
 
-import java.util.Arrays;
-
 import org.assertj.core.api.AbstractCharSequenceAssert;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Arrays;
 
 public class TextBlockAssertion extends AbstractCharSequenceAssert<TextBlockAssertion, String> {
 

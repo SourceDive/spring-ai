@@ -16,13 +16,12 @@
 
 package org.springframework.ai.evaluation;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.document.Document;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.document.Document;
 
 /**
  * Represents an evaluation request, which includes the user's text, a list of content

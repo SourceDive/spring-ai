@@ -16,37 +16,24 @@
 
 package org.springframework.ai.chat.client.advisor.vectorstore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-
 import org.springframework.ai.chat.client.ChatClientMessageAggregator;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
-import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
-import org.springframework.ai.chat.client.advisor.api.BaseChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.client.advisor.api.*;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Memory is retrieved from a VectorStore added into the prompt's system text.
@@ -103,7 +90,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 	private final VectorStore vectorStore;
 
 	private VectorStoreChatMemoryAdvisor(PromptTemplate systemPromptTemplate, int defaultTopK, int order,
-			Scheduler scheduler, VectorStore vectorStore) {
+	                                     Scheduler scheduler, VectorStore vectorStore) {
 		Assert.notNull(systemPromptTemplate, "systemPromptTemplate cannot be null");
 		Assert.isTrue(defaultTopK > 0, "topK must be greater than 0");
 		Assert.notNull(scheduler, "scheduler cannot be null");
@@ -146,11 +133,11 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		SystemMessage systemMessage = request.prompt().getSystemMessage();
 		String augmentedSystemText = this.systemPromptTemplate
-			.render(Map.of("instructions", systemMessage.getText(), "long_term_memory", longTermMemory));
+				.render(Map.of("instructions", systemMessage.getText(), "long_term_memory", longTermMemory));
 
 		ChatClientRequest processedChatClientRequest = request.mutate()
-			.prompt(request.prompt().augmentSystemMessage(augmentedSystemText))
-			.build();
+				.prompt(request.prompt().augmentSystemMessage(augmentedSystemText))
+				.build();
 
 		UserMessage userMessage = processedChatClientRequest.prompt().getUserMessage();
 		if (userMessage != null) {
@@ -164,8 +151,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 		Object fromCtx = context.get(TOP_K);
 		if (fromCtx != null) {
 			return Integer.parseInt(fromCtx.toString());
-		}
-		else {
+		} else {
 			return this.defaultTopK;
 		}
 	}
@@ -175,10 +161,10 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 		List<Message> assistantMessages = new ArrayList<>();
 		if (chatClientResponse.chatResponse() != null) {
 			assistantMessages = chatClientResponse.chatResponse()
-				.getResults()
-				.stream()
-				.map(g -> (Message) g.getOutput())
-				.toList();
+					.getResults()
+					.stream()
+					.map(g -> (Message) g.getOutput())
+					.toList();
 		}
 		this.vectorStore.write(toDocuments(assistantMessages, this.getConversationId(chatClientResponse.context())));
 		return chatClientResponse;
@@ -186,16 +172,16 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		// Get the scheduler from BaseAdvisor
 		Scheduler scheduler = this.getScheduler();
 		// Process the request with the before method
 		return Mono.just(chatClientRequest)
-			.publishOn(scheduler)
-			.map(request -> this.before(request, streamAdvisorChain))
-			.flatMapMany(streamAdvisorChain::nextStream)
-			.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
-					response -> this.after(response, streamAdvisorChain)));
+				.publishOn(scheduler)
+				.map(request -> this.before(request, streamAdvisorChain))
+				.flatMapMany(streamAdvisorChain::nextStream)
+				.transform(flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux,
+						response -> this.after(response, streamAdvisorChain)));
 	}
 
 	private static String escapeXml(@Nullable String text) {
@@ -203,36 +189,35 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 			return "";
 		}
 		return text.replace("&", "&amp;")
-			.replace("<", "&lt;")
-			.replace(">", "&gt;")
-			.replace("\"", "&quot;")
-			.replace("'", "&apos;");
+				.replace("<", "&lt;")
+				.replace(">", "&gt;")
+				.replace("\"", "&quot;")
+				.replace("'", "&apos;");
 	}
 
 	private List<Document> toDocuments(List<Message> messages, String conversationId) {
 		return messages.stream()
-			.filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
-			.map(message -> {
-				Map<String, Object> metadata = new HashMap<>(
-						message.getMetadata() != null ? message.getMetadata() : new HashMap<>());
-				metadata.put(DOCUMENT_METADATA_CONVERSATION_ID, conversationId);
-				metadata.put(DOCUMENT_METADATA_MESSAGE_TYPE, message.getMessageType().name());
-				if (message instanceof UserMessage userMessage) {
-					return Document.builder()
-						.text(userMessage.getText())
-						// userMessage.getMedia().get(0).getId()
-						// TODO vector store for memory would not store this into the
-						// vector store, could store an 'id' instead
-						// .media(userMessage.getMedia())
-						.metadata(metadata)
-						.build();
-				}
-				else if (message instanceof AssistantMessage assistantMessage) {
-					return Document.builder().text(assistantMessage.getText()).metadata(metadata).build();
-				}
-				throw new RuntimeException("Unknown message type: " + message.getMessageType());
-			})
-			.toList();
+				.filter(m -> m.getMessageType() == MessageType.USER || m.getMessageType() == MessageType.ASSISTANT)
+				.map(message -> {
+					Map<String, Object> metadata = new HashMap<>(
+							message.getMetadata() != null ? message.getMetadata() : new HashMap<>());
+					metadata.put(DOCUMENT_METADATA_CONVERSATION_ID, conversationId);
+					metadata.put(DOCUMENT_METADATA_MESSAGE_TYPE, message.getMessageType().name());
+					if (message instanceof UserMessage userMessage) {
+						return Document.builder()
+								.text(userMessage.getText())
+								// userMessage.getMedia().get(0).getId()
+								// TODO vector store for memory would not store this into the
+								// vector store, could store an 'id' instead
+								// .media(userMessage.getMedia())
+								.metadata(metadata)
+								.build();
+					} else if (message instanceof AssistantMessage assistantMessage) {
+						return Document.builder().text(assistantMessage.getText()).metadata(metadata).build();
+					}
+					throw new RuntimeException("Unknown message type: " + message.getMessageType());
+				})
+				.toList();
 	}
 
 	/**
@@ -252,6 +237,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Creates a new builder instance.
+		 *
 		 * @param vectorStore the vector store to use
 		 */
 		Builder(VectorStore vectorStore) {
@@ -260,6 +246,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the system prompt template.
+		 *
 		 * @param systemPromptTemplate the system prompt template
 		 * @return this builder
 		 */
@@ -270,6 +257,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the chat memory retrieve size.
+		 *
 		 * @param defaultTopK the chat memory retrieve size
 		 * @return this builder
 		 */
@@ -285,6 +273,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Set the order.
+		 *
 		 * @param order the order
 		 * @return the builder
 		 */
@@ -295,6 +284,7 @@ public final class VectorStoreChatMemoryAdvisor implements BaseChatMemoryAdvisor
 
 		/**
 		 * Build the advisor.
+		 *
 		 * @return the advisor
 		 */
 		public VectorStoreChatMemoryAdvisor build() {

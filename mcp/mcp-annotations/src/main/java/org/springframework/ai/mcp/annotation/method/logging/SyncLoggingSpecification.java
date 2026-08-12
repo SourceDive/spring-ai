@@ -16,11 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
+import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 
 public record SyncLoggingSpecification(String[] clients, Consumer<LoggingMessageNotification> loggingHandler) {
 

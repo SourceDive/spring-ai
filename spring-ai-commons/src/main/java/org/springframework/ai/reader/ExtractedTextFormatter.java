@@ -28,30 +28,41 @@ import org.springframework.util.StringUtils;
  * <li>Removal of specified lines from the beginning and end of content</li>
  * <li>Consolidation of consecutive blank lines</li>
  * </ul>
- *
+ * <p>
  * An instance of this formatter can be customized using the {@link Builder} nested class.
  *
  * @author Christian Tzolov
  */
 public final class ExtractedTextFormatter {
 
-	/** Flag indicating if the text should be left-aligned */
+	/**
+	 * Flag indicating if the text should be left-aligned
+	 */
 	private final boolean leftAlignment;
 
-	/** Number of top pages to skip before performing delete operations */
+	/**
+	 * Number of top pages to skip before performing delete operations
+	 */
 	private final int numberOfTopPagesToSkipBeforeDelete;
 
-	/** Number of top text lines to delete from a page */
+	/**
+	 * Number of top text lines to delete from a page
+	 */
 	private final int numberOfTopTextLinesToDelete;
 
-	/** Number of bottom text lines to delete from a page */
+	/**
+	 * Number of bottom text lines to delete from a page
+	 */
 	private final int numberOfBottomTextLinesToDelete;
 
-	/** Line separator */
+	/**
+	 * Line separator
+	 */
 	private final String lineSeparator;
 
 	/**
 	 * Private constructor to initialize the formatter from the builder.
+	 *
 	 * @param builder Builder used to initialize the formatter.
 	 */
 	private ExtractedTextFormatter(Builder builder) {
@@ -64,6 +75,7 @@ public final class ExtractedTextFormatter {
 
 	/**
 	 * Provides an instance of the builder for this formatter.
+	 *
 	 * @return an instance of the builder.
 	 */
 	public static Builder builder() {
@@ -72,6 +84,7 @@ public final class ExtractedTextFormatter {
 
 	/**
 	 * Provides a default instance of the formatter.
+	 *
 	 * @return default instance of the formatter.
 	 */
 	public static ExtractedTextFormatter defaults() {
@@ -80,6 +93,7 @@ public final class ExtractedTextFormatter {
 
 	/**
 	 * Replaces multiple, adjacent blank lines into a single blank line.
+	 *
 	 * @param pageText text to adjust the blank lines for.
 	 * @return Returns the same text but with blank lines trimmed.
 	 */
@@ -97,7 +111,8 @@ public final class ExtractedTextFormatter {
 
 	/**
 	 * Removes the specified number of lines from the bottom part of the text.
-	 * @param pageText Text to remove lines from.
+	 *
+	 * @param pageText      Text to remove lines from.
 	 * @param numberOfLines Number of lines to remove.
 	 * @param lineSeparator The line separator to use when identifying lines in the text.
 	 * @return Returns the text striped from last lines.
@@ -132,11 +147,12 @@ public final class ExtractedTextFormatter {
 	 * The method identifies lines based on the system's line separator, making it
 	 * compatible with different platforms.
 	 * </p>
-	 * @param pageText The text from which the top lines need to be removed. If this is
-	 * null, empty, or consists only of whitespace, it will be returned unchanged.
+	 *
+	 * @param pageText      The text from which the top lines need to be removed. If this is
+	 *                      null, empty, or consists only of whitespace, it will be returned unchanged.
 	 * @param numberOfLines The number of lines to remove from the top of the text. If
-	 * this exceeds the actual number of lines in the text, an empty string will be
-	 * returned.
+	 *                      this exceeds the actual number of lines in the text, an empty string will be
+	 *                      returned.
 	 * @param lineSeparator The line separator to use when identifying lines in the text.
 	 * @return The text with the specified number of lines removed from the top.
 	 */
@@ -158,6 +174,7 @@ public final class ExtractedTextFormatter {
 
 	/**
 	 * Formats the provided text according to the formatter's configuration.
+	 *
 	 * @param pageText Text to be formatted.
 	 * @return Formatted text.
 	 */
@@ -168,7 +185,8 @@ public final class ExtractedTextFormatter {
 	/**
 	 * Formats the provided text based on the formatter's configuration, considering the
 	 * page number.
-	 * @param pageText Text to be formatted.
+	 *
+	 * @param pageText   Text to be formatted.
 	 * @param pageNumber Page number of the provided text.
 	 * @return Formatted text.
 	 */
@@ -200,8 +218,8 @@ public final class ExtractedTextFormatter {
 	 * and the number of top pages to skip before deletion. Each configuration method in
 	 * the builder returns the builder instance itself, enabling method chaining.
 	 * </p>
-	 *
-	 *
+	 * <p>
+	 * <p>
 	 * By default, the builder sets:
 	 * <ul>
 	 * <li>Left alignment to {@code false}</li>
@@ -232,6 +250,7 @@ public final class ExtractedTextFormatter {
 
 		/**
 		 * Align the document text to the left. Defaults to false.
+		 *
 		 * @param leftAlignment Flag to align the text to the left.
 		 * @return this builder
 		 */
@@ -242,8 +261,9 @@ public final class ExtractedTextFormatter {
 
 		/**
 		 * Withdraw the top N pages from the text top/bottom line deletion. Defaults to 0.
+		 *
 		 * @param numberOfTopPagesToSkipBeforeDelete Number of pages to skip from
-		 * top/bottom line deletion policy.
+		 *                                           top/bottom line deletion policy.
 		 * @return this builder
 		 */
 		public Builder withNumberOfTopPagesToSkipBeforeDelete(int numberOfTopPagesToSkipBeforeDelete) {
@@ -253,6 +273,7 @@ public final class ExtractedTextFormatter {
 
 		/**
 		 * Remove the top N lines from the page text. Defaults to 0.
+		 *
 		 * @param numberOfTopTextLinesToDelete Number of top text lines to delete.
 		 * @return this builder
 		 */
@@ -263,6 +284,7 @@ public final class ExtractedTextFormatter {
 
 		/**
 		 * Remove the bottom N lines from the page text. Defaults to 0.
+		 *
 		 * @param numberOfBottomTextLinesToDelete Number of bottom text lines to delete.
 		 * @return this builder
 		 */
@@ -274,6 +296,7 @@ public final class ExtractedTextFormatter {
 		/**
 		 * Set the line separator to use when formatting the text. Defaults to the system
 		 * line separator.
+		 *
 		 * @param lineSeparator The line separator to use.
 		 * @return this builder
 		 */
@@ -296,6 +319,7 @@ public final class ExtractedTextFormatter {
 		 * It's recommended to use this method only once per builder instance to ensure
 		 * that each {@link ExtractedTextFormatter} object is configured as intended.
 		 * </p>
+		 *
 		 * @return a new instance of {@link ExtractedTextFormatter} configured with the
 		 * values set on this builder.
 		 */

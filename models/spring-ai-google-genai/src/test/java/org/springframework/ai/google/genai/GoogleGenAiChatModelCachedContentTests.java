@@ -16,9 +16,6 @@
 
 package org.springframework.ai.google.genai;
 
-import java.time.Duration;
-import java.util.List;
-
 import com.google.genai.Client;
 import com.google.genai.types.Candidate;
 import com.google.genai.types.Content;
@@ -28,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -37,6 +33,9 @@ import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContent;
 import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContentService;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,9 +67,9 @@ public class GoogleGenAiChatModelCachedContentTests {
 
 		// Initialize chat model with default options
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("gemini-2.0-flash")
-			.temperature(0.7)
-			.build();
+				.model("gemini-2.0-flash")
+				.temperature(0.7)
+				.build();
 
 		this.chatModel = new TestGoogleGenAiGeminiChatModelWithCache(this.mockClient, options, this.retryTemplate,
 				this.cachedContentService);
@@ -80,20 +79,20 @@ public class GoogleGenAiChatModelCachedContentTests {
 	void testChatWithCachedContent() {
 		// Create cached content
 		Content systemContent = Content.builder()
-			.parts(Part.builder().text("You are a helpful assistant specialized in Java programming.").build())
-			.build();
+				.parts(Part.builder().text("You are a helpful assistant specialized in Java programming.").build())
+				.build();
 
 		Content contextContent = Content.builder()
-			.parts(Part.builder().text("Java programming context and documentation.").build())
-			.build();
+				.parts(Part.builder().text("Java programming context and documentation.").build())
+				.build();
 
 		CachedContentRequest cacheRequest = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("Java Assistant Context")
-			.systemInstruction(systemContent)
-			.addContent(contextContent)
-			.ttl(Duration.ofHours(1))
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("Java Assistant Context")
+				.systemInstruction(systemContent)
+				.addContent(contextContent)
+				.ttl(Duration.ofHours(1))
+				.build();
 
 		GoogleGenAiCachedContent cachedContent = this.cachedContentService.create(cacheRequest);
 		assertThat(cachedContent).isNotNull();
@@ -101,24 +100,24 @@ public class GoogleGenAiChatModelCachedContentTests {
 
 		// Create mock response
 		Content responseContent = Content.builder()
-			.parts(Part.builder().text("Java is a high-level programming language.").build())
-			.build();
+				.parts(Part.builder().text("Java is a high-level programming language.").build())
+				.build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
 		// Create chat request with cached content
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("gemini-2.0-flash")
-			.useCachedContent(true)
-			.cachedContentName(cachedContent.getName())
-			.build();
+				.model("gemini-2.0-flash")
+				.useCachedContent(true)
+				.cachedContentName(cachedContent.getName())
+				.build();
 
 		UserMessage userMessage = new UserMessage("What is Java?");
 		Prompt prompt = new Prompt(List.of(userMessage), options);
@@ -140,23 +139,23 @@ public class GoogleGenAiChatModelCachedContentTests {
 	void testChatWithoutCachedContent() {
 		// Create mock response
 		Content responseContent = Content.builder()
-			.parts(Part.builder().text("Hello! How can I help you?").build())
-			.build();
+				.parts(Part.builder().text("Hello! How can I help you?").build())
+				.build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
 		// Create chat request without cached content
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("gemini-2.0-flash")
-			.useCachedContent(false)
-			.build();
+				.model("gemini-2.0-flash")
+				.useCachedContent(false)
+				.build();
 
 		UserMessage userMessage = new UserMessage("Hello");
 		Prompt prompt = new Prompt(List.of(userMessage), options);
@@ -178,12 +177,12 @@ public class GoogleGenAiChatModelCachedContentTests {
 		Content content = Content.builder().parts(Part.builder().text("Temporary context").build()).build();
 
 		CachedContentRequest cacheRequest = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("Short-lived Cache")
-			.addContent(content)
-			.expireTime(java.time.Instant.now().minus(Duration.ofHours(1))) // Already
-																			// expired
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("Short-lived Cache")
+				.addContent(content)
+				.expireTime(java.time.Instant.now().minus(Duration.ofHours(1))) // Already
+				// expired
+				.build();
 
 		GoogleGenAiCachedContent cachedContent = this.cachedContentService.create(cacheRequest);
 
@@ -199,11 +198,11 @@ public class GoogleGenAiChatModelCachedContentTests {
 			Content content = Content.builder().parts(Part.builder().text("Context " + i).build()).build();
 
 			CachedContentRequest request = CachedContentRequest.builder()
-				.model("gemini-2.0-flash")
-				.displayName("Cache " + i)
-				.addContent(content)
-				.ttl(Duration.ofHours(i + 1))
-				.build();
+					.model("gemini-2.0-flash")
+					.displayName("Cache " + i)
+					.addContent(content)
+					.ttl(Duration.ofHours(i + 1))
+					.build();
 
 			this.cachedContentService.create(request);
 		}
@@ -230,7 +229,7 @@ public class GoogleGenAiChatModelCachedContentTests {
 		private GoogleGenAiChatModel.GeminiRequest lastRequest;
 
 		TestGoogleGenAiGeminiChatModelWithCache(Client genAiClient, GoogleGenAiChatOptions options,
-				RetryTemplate retryTemplate, TestGoogleGenAiCachedContentService cachedContentService) {
+		                                        RetryTemplate retryTemplate, TestGoogleGenAiCachedContentService cachedContentService) {
 			super(genAiClient, options, retryTemplate);
 			this.cachedContentService = cachedContentService;
 		}

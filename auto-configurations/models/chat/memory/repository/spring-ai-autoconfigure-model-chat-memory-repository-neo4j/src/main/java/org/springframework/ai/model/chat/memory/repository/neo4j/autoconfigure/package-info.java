@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.chat.memory.repository.neo4j.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chat.memory.repository.cassandra;
 
-import org.jspecify.annotations.NullMarked;

@@ -16,11 +16,8 @@
 
 package org.springframework.ai.model.bedrock.converse.autoconfigure.tool;
 
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -35,48 +32,50 @@ import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiresAwsCredentials
 public class FunctionCallWithPromptFunctionIT {
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class,
-				ToolCallingAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class,
+					ToolCallingAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.bedrock.converse.chat.model=" + "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			.run(context -> {
+				.withPropertyValues(
+						"spring.ai.bedrock.converse.chat.model=" + "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				.run(context -> {
 
-				BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
-				ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
+					BedrockProxyChatModel chatModel = context.getBean(BedrockProxyChatModel.class);
+					ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 
-				var chatClient = org.springframework.ai.chat.client.ChatClient
-					.builder(chatModel, ObservationRegistry.NOOP, null, null,
-							org.springframework.ai.chat.client.advisor.ToolCallingAdvisor.builder()
-								.toolCallingManager(toolCallingManager))
-					.build();
+					var chatClient = org.springframework.ai.chat.client.ChatClient
+							.builder(chatModel, ObservationRegistry.NOOP, null, null,
+									org.springframework.ai.chat.client.advisor.ToolCallingAdvisor.builder()
+											.toolCallingManager(toolCallingManager))
+							.build();
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, in Paris and in Tokyo? Return the temperature in Celsius.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, in Paris and in Tokyo? Return the temperature in Celsius.");
 
-				var promptOptions = BedrockChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = BedrockChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
-					.call()
-					.chatResponse();
+					ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
+							.call()
+							.chatResponse();
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 }

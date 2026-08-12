@@ -16,14 +16,13 @@
 
 package org.springframework.ai.testcontainers.service.connection.opensearch;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
 import org.opensearch.testcontainers.OpenSearchContainer;
-
 import org.springframework.ai.vectorstore.opensearch.autoconfigure.OpenSearchConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+
+import java.util.List;
 
 /**
  * @author Eddú Meléndez

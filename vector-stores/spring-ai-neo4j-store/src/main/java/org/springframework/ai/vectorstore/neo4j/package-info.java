@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.neo4j;
 
-import org.jspecify.annotations.NullMarked;

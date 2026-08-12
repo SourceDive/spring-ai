@@ -16,12 +16,7 @@
 
 package org.springframework.ai.model.bedrock.converse.autoconfigure;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -33,6 +28,10 @@ import org.springframework.ai.model.bedrock.autoconfigure.RequiresAwsCredentials
 import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,10 +39,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BedrockConverseProxyChatAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = BedrockTestUtils.getContextRunner()
-		.withPropertyValues("spring.ai.bedrock.converse.chat.model=" + "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
-				"spring.ai.bedrock.converse.chat.temperature=0.5")
-		.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class,
-				ToolCallingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.bedrock.converse.chat.model=" + "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+					"spring.ai.bedrock.converse.chat.temperature=0.5")
+			.withConfiguration(AutoConfigurations.of(BedrockConverseProxyChatAutoConfiguration.class,
+					ToolCallingAutoConfiguration.class));
 
 	@Test
 	void call() {
@@ -61,13 +60,13 @@ public class BedrockConverseProxyChatAutoConfigurationIT {
 			Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
 
 			String response = responseFlux.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(response).isNotEmpty();
 		});

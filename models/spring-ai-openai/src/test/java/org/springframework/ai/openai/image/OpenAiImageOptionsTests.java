@@ -16,14 +16,13 @@
 
 package org.springframework.ai.openai.image;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.image.ImageOptions;
 import org.springframework.ai.image.ImageOptionsBuilder;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.openai.OpenAiImageOptions;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,13 +36,13 @@ class OpenAiImageOptionsTests {
 	@Test
 	void genericImageOptionsAreMerged() {
 		ImageOptions source = ImageOptionsBuilder.builder()
-			.model("generic-model")
-			.n(2)
-			.width(1024)
-			.height(1024)
-			.responseFormat("b64_json")
-			.style("vivid")
-			.build();
+				.model("generic-model")
+				.n(2)
+				.width(1024)
+				.height(1024)
+				.responseFormat("b64_json")
+				.style("vivid")
+				.build();
 
 		OpenAiImageOptions merged = OpenAiImageOptions.builder().merge(source).build();
 
@@ -58,9 +57,9 @@ class OpenAiImageOptionsTests {
 	@Test
 	void customHeadersArePropagatedToImageGenerateParams() {
 		OpenAiImageOptions options = OpenAiImageOptions.builder()
-			.model("gpt-image-1")
-			.customHeaders(Map.of("x-budget-id", "BUDGET_123"))
-			.build();
+				.model("gpt-image-1")
+				.customHeaders(Map.of("x-budget-id", "BUDGET_123"))
+				.build();
 
 		var params = options.toOpenAiImageGenerateParams(new ImagePrompt("a ducati motorcycle", options));
 
@@ -70,21 +69,21 @@ class OpenAiImageOptionsTests {
 	@Test
 	void testOptionsBuilderMergeCustomHeaders() {
 		OpenAiImageOptions defaultOptions = OpenAiImageOptions.builder()
-			.customHeaders(Map.of("default-header", "default-value"))
-			.build();
+				.customHeaders(Map.of("default-header", "default-value"))
+				.build();
 
 		OpenAiImageOptions requestOptions = OpenAiImageOptions.builder()
-			.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
-			.build();
+				.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
+				.build();
 
 		OpenAiImageOptions mergedOptions = OpenAiImageOptions.builder()
-			.from(defaultOptions)
-			.merge(requestOptions)
-			.build();
+				.from(defaultOptions)
+				.merge(requestOptions)
+				.build();
 
 		assertThat(mergedOptions.getCustomHeaders()).containsEntry("default-header", "default-value")
-			.containsEntry("merged-header1", "merged-value1")
-			.containsEntry("merged-header2", "merged-value2");
+				.containsEntry("merged-header1", "merged-value1")
+				.containsEntry("merged-header2", "merged-value2");
 	}
 
 }

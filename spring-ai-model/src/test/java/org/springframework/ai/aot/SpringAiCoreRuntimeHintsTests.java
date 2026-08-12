@@ -17,14 +17,7 @@
 package org.springframework.ai.aot;
 
 import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.messages.AbstractMessage;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.aot.hint.RuntimeHints;
@@ -47,29 +40,29 @@ class SpringAiCoreRuntimeHintsTests {
 
 		// Verify chat message types are registered
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(AbstractMessage.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(AbstractMessage.class)));
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(AssistantMessage.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(AssistantMessage.class)));
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(Message.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(Message.class)));
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(MessageType.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(MessageType.class)));
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(SystemMessage.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(SystemMessage.class)));
 		assertThat(runtimeHints.reflection().typeHints()).anySatisfy(
 				typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(ToolResponseMessage.class)));
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(UserMessage.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(UserMessage.class)));
 
 		// Verify tool types are registered
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(ToolCallback.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(ToolCallback.class)));
 		assertThat(runtimeHints.reflection().typeHints())
-			.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(ToolDefinition.class)));
+				.anySatisfy(typeHint -> assertThat(typeHint.getType()).isEqualTo(TypeReference.of(ToolDefinition.class)));
 
 		// Verify resources are registered
 		assertThat(runtimeHints.resources().resourcePatternHints()).anySatisfy(hint -> assertThat(hint.getIncludes())
-			.anyMatch(include -> include.getPattern().contains("embedding-model-dimensions.properties")));
+				.anyMatch(include -> include.getPattern().contains("embedding-model-dimensions.properties")));
 	}
 
 }

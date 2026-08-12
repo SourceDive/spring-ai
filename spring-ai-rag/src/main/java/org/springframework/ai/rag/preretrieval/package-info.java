@@ -23,4 +23,3 @@
 @NullMarked
 package org.springframework.ai.rag.preretrieval;
 
-import org.jspecify.annotations.NullMarked;

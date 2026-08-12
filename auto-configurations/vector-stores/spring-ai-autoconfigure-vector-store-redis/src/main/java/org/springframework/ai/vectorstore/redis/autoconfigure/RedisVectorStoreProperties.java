@@ -67,6 +67,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Returns the index name.
+	 *
 	 * @return the index name
 	 */
 	public final String getIndexName() {
@@ -75,6 +76,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Sets the index name.
+	 *
 	 * @param name the index name
 	 */
 	public final void setIndexName(final String name) {
@@ -83,6 +85,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Returns the key prefix.
+	 *
 	 * @return the key prefix
 	 */
 	public final String getPrefix() {
@@ -91,6 +94,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Sets the key prefix.
+	 *
 	 * @param keyPrefix the key prefix
 	 */
 	public final void setPrefix(final String keyPrefix) {
@@ -99,6 +103,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Returns the HNSW properties.
+	 *
 	 * @return the HNSW properties
 	 */
 	public final HnswProperties getHnsw() {
@@ -107,6 +112,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Sets the HNSW properties.
+	 *
 	 * @param hnswProperties the HNSW properties
 	 */
 	public final void setHnsw(final HnswProperties hnswProperties) {
@@ -156,6 +162,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 		/**
 		 * Returns the M parameter.
+		 *
 		 * @return the M parameter
 		 */
 		public Integer getM() {
@@ -164,6 +171,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 		/**
 		 * Sets the M parameter.
+		 *
 		 * @param mValue the M parameter value
 		 */
 		public void setM(final Integer mValue) {
@@ -172,6 +180,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 		/**
 		 * Returns the EF_CONSTRUCTION parameter.
+		 *
 		 * @return the EF_CONSTRUCTION parameter
 		 */
 		public Integer getEfConstruction() {
@@ -180,6 +189,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 		/**
 		 * Sets the EF_CONSTRUCTION parameter.
+		 *
 		 * @param construction the EF_CONSTRUCTION parameter value
 		 */
 		public void setEfConstruction(final Integer construction) {
@@ -188,6 +198,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 		/**
 		 * Returns the EF_RUNTIME parameter.
+		 *
 		 * @return the EF_RUNTIME parameter
 		 */
 		public Integer getEfRuntime() {
@@ -196,6 +207,7 @@ public class RedisVectorStoreProperties extends CommonVectorStoreProperties {
 
 		/**
 		 * Sets the EF_RUNTIME parameter.
+		 *
 		 * @param runtime the EF_RUNTIME parameter value
 		 */
 		public void setEfRuntime(final Integer runtime) {

@@ -16,16 +16,9 @@
 
 package org.springframework.ai.tool.function;
 
-import java.lang.reflect.Type;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
@@ -40,6 +33,12 @@ import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Type;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * A {@link ToolCallback} implementation to invoke functions as tools.
@@ -69,8 +68,8 @@ public class FunctionToolCallback<I, O> implements ToolCallback {
 	private final ToolCallResultConverter toolCallResultConverter;
 
 	public FunctionToolCallback(ToolDefinition toolDefinition, @Nullable ToolMetadata toolMetadata, Type toolInputType,
-			BiFunction<@Nullable I, @Nullable ToolContext, O> toolFunction,
-			@Nullable ToolCallResultConverter toolCallResultConverter) {
+	                            BiFunction<@Nullable I, @Nullable ToolContext, O> toolFunction,
+	                            @Nullable ToolCallResultConverter toolCallResultConverter) {
 		Assert.notNull(toolDefinition, "toolDefinition cannot be null");
 		Assert.notNull(toolInputType, "toolInputType cannot be null");
 		Assert.notNull(toolFunction, "toolFunction cannot be null");
@@ -118,11 +117,9 @@ public class FunctionToolCallback<I, O> implements ToolCallback {
 	private O callMethod(@Nullable I request, @Nullable ToolContext toolContext) {
 		try {
 			return this.toolFunction.apply(request, toolContext);
-		}
-		catch (ToolExecutionException ex) {
+		} catch (ToolExecutionException ex) {
 			throw ex;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new ToolExecutionException(this.toolDefinition, ex);
 		}
 	}
@@ -137,7 +134,7 @@ public class FunctionToolCallback<I, O> implements ToolCallback {
 	 * Build a {@link FunctionToolCallback} from a {@link BiFunction}.
 	 */
 	public static <I, O> Builder<I, O> builder(String name,
-			BiFunction<@Nullable I, @Nullable ToolContext, O> function) {
+	                                           BiFunction<@Nullable I, @Nullable ToolContext, O> function) {
 		return new Builder<>(name, function);
 	}
 
@@ -228,12 +225,12 @@ public class FunctionToolCallback<I, O> implements ToolCallback {
 		public FunctionToolCallback<I, O> build() {
 			Assert.notNull(this.inputType, "inputType cannot be null");
 			var toolDefinition = DefaultToolDefinition.builder()
-				.name(this.name)
-				.description(StringUtils.hasText(this.description) ? this.description
-						: ToolUtils.getToolDescriptionFromName(this.name))
-				.inputSchema(StringUtils.hasText(this.inputSchema) ? this.inputSchema
-						: JsonSchemaGenerator.generateForType(this.inputType))
-				.build();
+					.name(this.name)
+					.description(StringUtils.hasText(this.description) ? this.description
+							: ToolUtils.getToolDescriptionFromName(this.name))
+					.inputSchema(StringUtils.hasText(this.inputSchema) ? this.inputSchema
+							: JsonSchemaGenerator.generateForType(this.inputType))
+					.build();
 			return new FunctionToolCallback<>(toolDefinition, this.toolMetadata, this.inputType, this.toolFunction,
 					this.toolCallResultConverter);
 		}

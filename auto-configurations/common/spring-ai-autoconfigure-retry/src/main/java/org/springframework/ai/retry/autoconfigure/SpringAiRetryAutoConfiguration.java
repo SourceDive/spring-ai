@@ -16,14 +16,8 @@
 
 package org.springframework.ai.retry.autoconfigure;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.retry.TransientAiException;
@@ -43,6 +37,11 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.ResponseErrorHandler;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * {@link AutoConfiguration Auto-configuration} for AI Retry. Provides beans for retry
  * template and response error handling. Handles transient and non-transient exceptions
@@ -54,7 +53,7 @@ import org.springframework.web.client.ResponseErrorHandler;
  */
 @AutoConfiguration
 @ConditionalOnClass(RetryUtils.class)
-@EnableConfigurationProperties({ SpringAiRetryProperties.class })
+@EnableConfigurationProperties({SpringAiRetryProperties.class})
 public class SpringAiRetryAutoConfiguration {
 
 	private static final Log logger = LogFactory.getLog(SpringAiRetryAutoConfiguration.class);
@@ -63,13 +62,13 @@ public class SpringAiRetryAutoConfiguration {
 	@ConditionalOnMissingBean
 	public RetryTemplate retryTemplate(SpringAiRetryProperties properties) {
 		RetryPolicy retryPolicy = RetryPolicy.builder()
-			.maxRetries(properties.getMaxAttempts())
-			.includes(TransientAiException.class)
-			.includes(ResourceAccessException.class)
-			.delay(properties.getBackoff().getInitialInterval())
-			.multiplier(properties.getBackoff().getMultiplier())
-			.maxDelay(properties.getBackoff().getMaxInterval())
-			.build();
+				.maxRetries(properties.getMaxAttempts())
+				.includes(TransientAiException.class)
+				.includes(ResourceAccessException.class)
+				.delay(properties.getBackoff().getInitialInterval())
+				.multiplier(properties.getBackoff().getMultiplier())
+				.maxDelay(properties.getBackoff().getMaxInterval())
+				.build();
 
 		RetryTemplate retryTemplate = new RetryTemplate(retryPolicy);
 		retryTemplate.setRetryListener(new RetryListener() {

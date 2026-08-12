@@ -16,6 +16,19 @@
 
 package org.springframework.ai.tool.toolsearch.index;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.tool.toolsearch.ToolReference;
+import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
+import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,27 +37,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.tool.toolsearch.ToolReference;
-import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
-import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for
@@ -99,13 +95,13 @@ class VectorToolIndexTests {
 		List<Document> added = captor.getValue();
 		assertThat(added).hasSize(1);
 		assertThat(added.get(0)
-			.getMetadata()
-			.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME))
-			.isEqualTo("weatherTool");
+				.getMetadata()
+				.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME))
+				.isEqualTo("weatherTool");
 		assertThat(added.get(0)
-			.getMetadata()
-			.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION))
-			.isEqualTo("Returns current weather conditions");
+				.getMetadata()
+				.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION))
+				.isEqualTo("Returns current weather conditions");
 		assertThat(added.get(0).getMetadata().get("sessionId")).isEqualTo(SESSION);
 	}
 
@@ -148,11 +144,11 @@ class VectorToolIndexTests {
 
 		Document doc = captor.getValue().get(0);
 		assertThat(doc.getMetadata()
-			.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME))
-			.isEqualTo("weatherTool");
+				.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME))
+				.isEqualTo("weatherTool");
 		assertThat(doc.getMetadata()
-			.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION))
-			.isEqualTo("Weather forecast service");
+				.get(org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION))
+				.isEqualTo("Weather forecast service");
 		assertThat(doc.getMetadata().get("sessionId")).isEqualTo(SESSION);
 		assertThat(doc.getText()).isEqualTo("Weather forecast service");
 	}
@@ -238,15 +234,15 @@ class VectorToolIndexTests {
 	@Test
 	void searchMapsDocumentMetadataToToolReferences() {
 		Document doc = Document.builder()
-			.id("1")
-			.text("Provides weather data")
-			.metadata(Map.of(
-					org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME,
-					"weatherTool",
-					org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION,
-					"Provides weather data", "sessionId", SESSION, "id", "1"))
-			.score(0.92)
-			.build();
+				.id("1")
+				.text("Provides weather data")
+				.metadata(Map.of(
+						org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME,
+						"weatherTool",
+						org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION,
+						"Provides weather data", "sessionId", SESSION, "id", "1"))
+				.score(0.92)
+				.build();
 		when(this.vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(doc));
 
 		ToolSearchResponse response = search("weather");
@@ -280,32 +276,32 @@ class VectorToolIndexTests {
 	@Test
 	void searchWithMultipleResultsReturnsAllMapped() {
 		List<Document> docs = List.of(Document.builder()
-			.id("1")
-			.text("Weather data")
-			.metadata(Map.of(
-					org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME,
-					"weatherTool",
-					org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION,
-					"Weather data", "sessionId", SESSION, "id", "1"))
-			.score(0.9)
-			.build(),
+						.id("1")
+						.text("Weather data")
+						.metadata(Map.of(
+								org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME,
+								"weatherTool",
+								org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION,
+								"Weather data", "sessionId", SESSION, "id", "1"))
+						.score(0.9)
+						.build(),
 				Document.builder()
-					.id("2")
-					.text("Calculator")
-					.metadata(Map.of(
-							org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME,
-							"calculatorTool",
-							org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION,
-							"Calculator", "sessionId", SESSION, "id", "2"))
-					.score(0.7)
-					.build());
+						.id("2")
+						.text("Calculator")
+						.metadata(Map.of(
+								org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_NAME,
+								"calculatorTool",
+								org.springframework.ai.tool.toolsearch.index.vectorstore.VectorToolIndex.METADATA_TOOL_DESCRIPTION,
+								"Calculator", "sessionId", SESSION, "id", "2"))
+						.score(0.7)
+						.build());
 		when(this.vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(docs);
 
 		ToolSearchResponse response = search("tools");
 
 		assertThat(response.toolReferences()).hasSize(2);
 		assertThat(response.toolReferences()).extracting(ToolReference::toolName)
-			.containsExactly("weatherTool", "calculatorTool");
+				.containsExactly("weatherTool", "calculatorTool");
 		assertThat(response.totalMatches()).isEqualTo(2);
 		assertThat(response.searchMetadata().searchType()).isEqualTo("VectorToolIndex");
 	}
@@ -364,11 +360,9 @@ class VectorToolIndexTests {
 						refs.add(ref("tool-" + threadIdx + "-" + i, "desc " + threadIdx + " " + i));
 					}
 					this.toolIndex.indexTools(SESSION, refs);
-				}
-				catch (InterruptedException e) {
+				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
-				}
-				finally {
+				} finally {
 					done.countDown();
 				}
 			});

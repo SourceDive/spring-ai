@@ -16,21 +16,20 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -325,7 +324,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		McpTransportContext context = mock(McpTransportContext.class);
 
 		assertThatThrownBy(() -> callback.apply(context, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Request must not be null");
+				.hasMessage("Request must not be null");
 	}
 
 	@Test
@@ -358,7 +357,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		// Test that McpTransportContext is recognized as context type
 		// Note: We need to use reflection to access the protected method for testing
 		java.lang.reflect.Method isContextTypeMethod = SyncStatelessMcpToolMethodCallback.class
-			.getDeclaredMethod("isExchangeOrContextType", Class.class);
+				.getDeclaredMethod("isExchangeOrContextType", Class.class);
 		isContextTypeMethod.setAccessible(true);
 
 		assertThat((Boolean) isContextTypeMethod.invoke(callback, McpTransportContext.class)).isTrue();
@@ -483,7 +482,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Received tool: call-tool-request-tool with 2 arguments");
+				.isEqualTo("Received tool: call-tool-request-tool with 2 arguments");
 	}
 
 	@Test
@@ -503,7 +502,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Action: process, Tool: mixed-params-tool");
+				.isEqualTo("Action: process, Tool: mixed-params-tool");
 	}
 
 	@Test
@@ -524,7 +523,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Context present, Tool: context-and-request-tool");
+				.isEqualTo("Context present, Tool: context-and-request-tool");
 	}
 
 	@Test
@@ -539,10 +538,10 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 
 		// Create request with meta data
 		CallToolRequest request = CallToolRequest.builder()
-			.name("meta-tool")
-			.arguments(Map.of("input", "test-input"))
-			.meta(Map.of("userId", "user123", "sessionId", "session456"))
-			.build();
+				.name("meta-tool")
+				.arguments(Map.of("input", "test-input"))
+				.meta(Map.of("userId", "user123", "sessionId", "session456"))
+				.build();
 
 		CallToolResult result = callback.apply(context, request);
 
@@ -551,7 +550,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text()).contains("Input: test-input")
-			.contains("Meta: {userId=user123, sessionId=session456}");
+				.contains("Meta: {userId=user123, sessionId=session456}");
 	}
 
 	@Test
@@ -591,8 +590,8 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		@McpTool(name = "complex-tool", description = "A complex tool")
 		public CallToolResult complexTool(String name, int age, boolean active) {
 			return CallToolResult.builder()
-				.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
-				.build();
+					.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
+					.build();
 		}
 
 		@McpTool(name = "context-tool", description = "Tool with context parameter")
@@ -612,7 +611,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 
 		@McpTool(name = "optional-params-tool", description = "Tool with optional parameters")
 		public String toolWithOptionalParams(@McpToolParam(required = true) String required,
-				@McpToolParam(required = false) String optional) {
+		                                     @McpToolParam(required = false) String optional) {
 			return "Required: " + required + ", Optional: " + (optional != null ? optional : "null");
 		}
 
@@ -685,7 +684,7 @@ public class SyncStatelessMcpToolMethodCallbackTests {
 		 */
 		@McpTool(name = "meta-tool", description = "Tool with meta parameter")
 		public String metaTool(@McpToolParam(description = "Input parameter", required = true) String input,
-				McpMeta meta) {
+		                       McpMeta meta) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return "Input: " + input + ", Meta: " + metaInfo;
 		}

@@ -16,17 +16,8 @@
 
 package org.springframework.ai.openai.chat.client;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.openai.OpenAiTestConfiguration;
@@ -39,6 +30,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
+import reactor.core.publisher.Flux;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,8 +53,7 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 		return (T t) -> {
 			try {
 				return (R) method.invoke(obj, t);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		};
@@ -131,11 +129,9 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -172,11 +168,9 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -234,13 +228,13 @@ class OpenAiChatClientMultipleFunctionCallsIT extends AbstractIT {
 		Function<MyFunction.Req, Object> function = createFunction(myFunction, currentTemp);
 
 		String content = chatClient.prompt()
-			.user("What's the weather like in Shanghai?")
-			.tools(FunctionToolCallback.builder("currentTemp", function)
-				.description("get current temp")
-				.inputType(MyFunction.Req.class)
-				.build())
-			.call()
-			.content();
+				.user("What's the weather like in Shanghai?")
+				.tools(FunctionToolCallback.builder("currentTemp", function)
+						.description("get current temp")
+						.inputType(MyFunction.Req.class)
+						.build())
+				.call()
+				.content();
 
 		assertThat(content).contains("23");
 	}

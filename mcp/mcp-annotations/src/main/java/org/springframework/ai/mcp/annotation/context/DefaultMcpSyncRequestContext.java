@@ -16,32 +16,22 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
-import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
-import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.ListRootsResult;
-import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.method.tool.utils.McpJsonSchemaGenerator;
 import org.springframework.ai.util.JsonHelper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.ConcurrentReferenceHashMap;
+
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author Christian Tzolov
@@ -159,7 +149,7 @@ public final class DefaultMcpSyncRequestContext implements McpSyncRequestContext
 
 	@Override
 	public <T> StructuredElicitResult<T> elicit(Consumer<ElicitationSpec> params,
-			ParameterizedTypeReference<T> returnType) {
+	                                            ParameterizedTypeReference<T> returnType) {
 
 		if (!this.elicitEnabled()) {
 			throw new IllegalStateException(
@@ -203,10 +193,10 @@ public final class DefaultMcpSyncRequestContext implements McpSyncRequestContext
 		Map<String, Object> schema = typeSchemaCache.computeIfAbsent(type, t -> this.generateElicitSchema(t));
 
 		ElicitRequest elicitRequest = ElicitRequest.builder()
-			.message(message)
-			.requestedSchema(schema)
-			.meta(meta)
-			.build();
+				.message(message)
+				.requestedSchema(schema)
+				.meta(meta)
+				.build();
 
 		return this.exchange.createElicitation(elicitRequest);
 	}
@@ -246,17 +236,17 @@ public final class DefaultMcpSyncRequestContext implements McpSyncRequestContext
 		var progressToken = this.request.progressToken();
 
 		return this.sample(McpSchema.CreateMessageRequest.builder()
-			.messages(spec.messages)
-			.modelPreferences(spec.modelPreferences)
-			.systemPrompt(spec.systemPrompt)
-			.temperature(spec.temperature)
-			.maxTokens(spec.maxTokens != null && spec.maxTokens > 0 ? spec.maxTokens : 500)
-			.stopSequences(spec.stopSequences.isEmpty() ? null : spec.stopSequences)
-			.includeContext(spec.includeContextStrategy)
-			.meta(spec.metadata.isEmpty() ? null : spec.metadata)
-			.progressToken(progressToken)
-			.meta(spec.meta.isEmpty() ? null : spec.meta)
-			.build());
+				.messages(spec.messages)
+				.modelPreferences(spec.modelPreferences)
+				.systemPrompt(spec.systemPrompt)
+				.temperature(spec.temperature)
+				.maxTokens(spec.maxTokens != null && spec.maxTokens > 0 ? spec.maxTokens : 500)
+				.stopSequences(spec.stopSequences.isEmpty() ? null : spec.stopSequences)
+				.includeContext(spec.includeContextStrategy)
+				.meta(spec.metadata.isEmpty() ? null : spec.metadata)
+				.progressToken(progressToken)
+				.meta(spec.meta.isEmpty() ? null : spec.meta)
+				.build());
 	}
 
 	@Override
@@ -316,11 +306,11 @@ public final class DefaultMcpSyncRequestContext implements McpSyncRequestContext
 		logSpec.accept(spec);
 
 		this.exchange.loggingNotification(LoggingMessageNotification.builder()
-			.data(spec.message)
-			.level(spec.level)
-			.logger(spec.logger)
-			.meta(spec.meta)
-			.build());
+				.data(spec.message)
+				.level(spec.level)
+				.logger(spec.logger)
+				.meta(spec.meta)
+				.build());
 	}
 
 	@Override

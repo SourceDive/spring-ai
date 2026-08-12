@@ -16,16 +16,15 @@
 
 package org.springframework.ai.stabilityai;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.ai.stabilityai.api.StabilityAiApi;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import org.springframework.ai.stabilityai.api.StabilityAiApi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,17 +52,17 @@ public class StabilityAiApiIT {
 	void generateImage() throws IOException {
 
 		List<StabilityAiApi.GenerateImageRequest.TextPrompts> textPrompts = List
-			.of(new StabilityAiApi.GenerateImageRequest.TextPrompts(
-					"A light cream colored mini golden doodle holding a sign that says 'Heading to BARCADE !'", 0.5f));
+				.of(new StabilityAiApi.GenerateImageRequest.TextPrompts(
+						"A light cream colored mini golden doodle holding a sign that says 'Heading to BARCADE !'", 0.5f));
 		var builder = StabilityAiApi.GenerateImageRequest.builder()
-			.textPrompts(textPrompts)
-			.height(1024)
-			.width(1024)
-			.cfgScale(7f)
-			.samples(1)
-			.seed(123L)
-			.steps(30)
-			.stylePreset("photographic");
+				.textPrompts(textPrompts)
+				.height(1024)
+				.width(1024)
+				.cfgScale(7f)
+				.samples(1)
+				.seed(123L)
+				.steps(30)
+				.stylePreset("photographic");
 		StabilityAiApi.GenerateImageRequest request = builder.build();
 		StabilityAiApi.GenerateImageResponse response = this.stabilityAiApi.generateImage(request);
 

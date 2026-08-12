@@ -16,13 +16,6 @@
 
 package org.springframework.ai.openai;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import com.openai.client.OpenAIClient;
 import com.openai.core.MultipartField;
 import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
@@ -31,16 +24,18 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.audio.transcription.AudioTranscription;
-import org.springframework.ai.audio.transcription.AudioTranscriptionPrompt;
-import org.springframework.ai.audio.transcription.AudioTranscriptionResponse;
-import org.springframework.ai.audio.transcription.AudioTranscriptionResponseMetadata;
-import org.springframework.ai.audio.transcription.TranscriptionModel;
+import org.springframework.ai.audio.transcription.*;
 import org.springframework.ai.openai.http.okhttp.OpenAiHttpClientBuilderCustomizer;
 import org.springframework.ai.openai.setup.OpenAiSetup;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * OpenAI audio transcription model implementation using the OpenAI Java SDK. You provide
@@ -63,6 +58,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 
 	/**
 	 * Creates a new builder for {@link OpenAiAudioTranscriptionModel}.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder() {
@@ -71,6 +67,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 
 	/**
 	 * Creates a builder initialized with this model's configuration.
+	 *
 	 * @return a builder for creating a modified copy
 	 */
 	public Builder mutate() {
@@ -91,6 +88,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 
 	/**
 	 * Gets the transcription options for this model.
+	 *
 	 * @return the transcription options
 	 */
 	public OpenAiAudioTranscriptionOptions getOptions() {
@@ -103,8 +101,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 		if (transcriptionPrompt.getOptions() != null) {
 			if (transcriptionPrompt.getOptions() instanceof OpenAiAudioTranscriptionOptions runtimeOptions) {
 				options = merge(runtimeOptions, options);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Prompt options are not of type OpenAiAudioTranscriptionOptions: "
 						+ transcriptionPrompt.getOptions().getClass().getSimpleName());
 			}
@@ -131,16 +128,15 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 	}
 
 	private TranscriptionCreateParams buildParams(OpenAiAudioTranscriptionOptions options, byte[] audioBytes,
-			String filename) {
+	                                              String filename) {
 		MultipartField<InputStream> fileField = MultipartField.<InputStream>builder()
-			.value(new ByteArrayInputStream(audioBytes))
-			.filename(filename)
-			.build();
+				.value(new ByteArrayInputStream(audioBytes))
+				.filename(filename)
+				.build();
 		String model;
 		if (options.getDeploymentName() != null) {
 			model = options.getDeploymentName();
-		}
-		else {
+		} else {
 			model = options.getModel();
 		}
 		Assert.notNull(model, "Model must not be null");
@@ -181,14 +177,13 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 		Assert.notNull(resource, "Resource must not be null");
 		try {
 			return resource.getInputStream().readAllBytes();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IllegalArgumentException("Failed to read resource: " + resource, e);
 		}
 	}
 
 	private static OpenAiAudioTranscriptionOptions merge(OpenAiAudioTranscriptionOptions source,
-			OpenAiAudioTranscriptionOptions target) {
+	                                                     OpenAiAudioTranscriptionOptions target) {
 		return OpenAiAudioTranscriptionOptions.builder().from(target).merge(source).build();
 	}
 
@@ -213,6 +208,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 
 		/**
 		 * Sets the OpenAI client.
+		 *
 		 * @param openAiClient the OpenAI client
 		 * @return this builder
 		 */
@@ -223,6 +219,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 
 		/**
 		 * Sets the transcription options.
+		 *
 		 * @param options the transcription options
 		 * @return this builder
 		 */
@@ -258,6 +255,7 @@ public final class OpenAiAudioTranscriptionModel implements TranscriptionModel {
 
 		/**
 		 * Builds a new {@link OpenAiAudioTranscriptionModel} instance.
+		 *
 		 * @return the configured transcription model
 		 */
 		public OpenAiAudioTranscriptionModel build() {

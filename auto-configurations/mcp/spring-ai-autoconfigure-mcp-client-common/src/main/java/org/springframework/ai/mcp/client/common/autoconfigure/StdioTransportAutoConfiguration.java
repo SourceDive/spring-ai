@@ -16,21 +16,20 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpClientCommonProperties;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpStdioClientProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Auto-configuration for Standard Input/Output (stdio) transport in the Model Context
@@ -52,7 +51,7 @@ import org.springframework.context.annotation.Bean;
  * @see McpStdioClientProperties
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ McpStdioClientProperties.class, McpClientCommonProperties.class })
+@EnableConfigurationProperties({McpStdioClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 public class StdioTransportAutoConfiguration {
@@ -66,6 +65,7 @@ public class StdioTransportAutoConfiguration {
 	 * <li>Server-specific parameters from properties
 	 * <li>Unique connection name for identification
 	 * </ul>
+	 *
 	 * @param stdioProperties the stdio client properties containing server configurations
 	 * @return list of named MCP transports
 	 */

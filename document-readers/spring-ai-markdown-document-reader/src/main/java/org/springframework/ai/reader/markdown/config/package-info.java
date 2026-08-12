@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.reader.markdown.config;
 
-import org.jspecify.annotations.NullMarked;

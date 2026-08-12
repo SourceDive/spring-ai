@@ -16,14 +16,12 @@
 
 package org.springframework.ai.chat.memory.repository.jdbc;
 
-import java.sql.DatabaseMetaData;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.jdbc.support.JdbcUtils;
+
+import javax.sql.DataSource;
+import java.sql.DatabaseMetaData;
 
 /**
  * Abstraction for database-specific SQL for chat memory repository.
@@ -67,8 +65,7 @@ public interface JdbcChatMemoryRepositoryDialect {
 		String productName = null;
 		try {
 			productName = JdbcUtils.extractDatabaseMetaData(dataSource, DatabaseMetaData::getDatabaseProductName);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.warn("Due to failure in establishing JDBC connection or parsing metadata, the JDBC database vendor "
 					+ "could not be determined", e);
 		}
@@ -85,7 +82,7 @@ public interface JdbcChatMemoryRepositoryDialect {
 			case "H2" -> new H2ChatMemoryRepositoryDialect();
 			case "Oracle" -> new OracleChatMemoryRepositoryDialect();
 			default -> // Add more as needed
-				new PostgresChatMemoryRepositoryDialect();
+					new PostgresChatMemoryRepositoryDialect();
 		};
 	}
 

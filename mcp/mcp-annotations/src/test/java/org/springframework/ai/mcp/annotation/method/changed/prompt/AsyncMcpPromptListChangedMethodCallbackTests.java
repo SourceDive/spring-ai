@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpPromptListChanged;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,9 +46,9 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handlePromptListChanged", List.class);
 
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_PROMPTS)).verifyComplete();
 
@@ -65,9 +64,9 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handlePromptListChangedVoid", List.class);
 
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_PROMPTS)).verifyComplete();
 
@@ -83,8 +82,8 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", List.class);
 
 		assertThatThrownBy(() -> AsyncMcpPromptListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have void or Mono<Void> return type");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have void or Mono<Void> return type");
 	}
 
 	@Test
@@ -94,9 +93,9 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 
 		// This will pass validation since we can't check the generic type at runtime
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		// But it will fail at runtime when we try to cast the result
 		StepVerifier.create(callback.apply(TEST_PROMPTS)).verifyError(ClassCastException.class);
@@ -108,8 +107,8 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterCount", List.class, String.class);
 
 		assertThatThrownBy(() -> AsyncMcpPromptListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Prompt>)");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Prompt>)");
 	}
 
 	@Test
@@ -118,8 +117,8 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> AsyncMcpPromptListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Parameter must be of type List<McpSchema.Prompt>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Parameter must be of type List<McpSchema.Prompt>");
 	}
 
 	@Test
@@ -128,8 +127,8 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("noParameters");
 
 		assertThatThrownBy(() -> AsyncMcpPromptListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Prompt>)");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Prompt>)");
 	}
 
 	@Test
@@ -138,13 +137,13 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handlePromptListChanged", List.class);
 
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(null))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Updated prompts list must not be null"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
+						.hasMessageContaining("Updated prompts list must not be null"));
 	}
 
 	@Test
@@ -153,9 +152,9 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handlePromptListChanged", List.class);
 
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		List<McpSchema.Prompt> emptyList = List.of();
 		StepVerifier.create(callback.apply(emptyList)).verifyComplete();
@@ -169,8 +168,8 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		ValidMethods bean = new ValidMethods();
 
 		assertThatThrownBy(() -> AsyncMcpPromptListChangedMethodCallback.builder().method(null).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -178,8 +177,8 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handlePromptListChanged", List.class);
 
 		assertThatThrownBy(() -> AsyncMcpPromptListChangedMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -200,9 +199,9 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ThrowingMethod.class.getMethod("handlePromptListChanged", List.class);
 
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_PROMPTS)).verifyError(RuntimeException.class);
 	}
@@ -223,15 +222,15 @@ public class AsyncMcpPromptListChangedMethodCallbackTests {
 		Method method = ThrowingVoidMethod.class.getMethod("handlePromptListChanged", List.class);
 
 		Function<List<McpSchema.Prompt>, Mono<Void>> callback = AsyncMcpPromptListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_PROMPTS))
-			.verifyErrorSatisfies(e -> assertThat(e)
-				.isInstanceOf(
-						AbstractMcpPromptListChangedMethodCallback.McpPromptListChangedConsumerMethodException.class)
-				.hasMessageContaining("Error invoking prompt list changed consumer method"));
+				.verifyErrorSatisfies(e -> assertThat(e)
+						.isInstanceOf(
+								AbstractMcpPromptListChangedMethodCallback.McpPromptListChangedConsumerMethodException.class)
+						.hasMessageContaining("Error invoking prompt list changed consumer method"));
 	}
 
 	/**

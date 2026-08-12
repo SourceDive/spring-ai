@@ -19,14 +19,13 @@ package org.springframework.ai.model.chat.memory.redis.autoconfigure;
 import com.redis.testcontainers.RedisStackContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.redis.RedisChatMemoryRepository;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,20 +35,20 @@ class RedisChatMemoryAutoConfigurationIT {
 	@Container
 	static RedisStackContainer redisContainer = new RedisStackContainer(
 			RedisStackContainer.DEFAULT_IMAGE_NAME.withTag(RedisStackContainer.DEFAULT_TAG))
-		.withExposedPorts(6379);
+			.withExposedPorts(6379);
 
 	@BeforeAll
 	static void setup() {
 	}
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(
-				AutoConfigurations.of(RedisChatMemoryAutoConfiguration.class, DataRedisAutoConfiguration.class))
-		.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
-				"spring.data.redis.port=" + redisContainer.getFirstMappedPort(),
-				// Pass the same Redis connection properties to our chat memory properties
-				"spring.ai.chat.memory.redis.host=" + redisContainer.getHost(),
-				"spring.ai.chat.memory.redis.port=" + redisContainer.getFirstMappedPort());
+			.withConfiguration(
+					AutoConfigurations.of(RedisChatMemoryAutoConfiguration.class, DataRedisAutoConfiguration.class))
+			.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
+					"spring.data.redis.port=" + redisContainer.getFirstMappedPort(),
+					// Pass the same Redis connection properties to our chat memory properties
+					"spring.ai.chat.memory.redis.host=" + redisContainer.getHost(),
+					"spring.ai.chat.memory.redis.port=" + redisContainer.getFirstMappedPort());
 
 	@Test
 	void autoConfigurationRegistersExpectedBeans() {
@@ -62,13 +61,13 @@ class RedisChatMemoryAutoConfigurationIT {
 	@Test
 	void customPropertiesAreApplied() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.chat.memory.redis.index-name=custom-index",
-					"spring.ai.chat.memory.redis.key-prefix=custom-prefix:",
-					"spring.ai.chat.memory.redis.time-to-live=300s")
-			.run(context -> {
-				RedisChatMemoryRepository chatMemory = context.getBean(RedisChatMemoryRepository.class);
-				assertThat(chatMemory).isNotNull();
-			});
+				.withPropertyValues("spring.ai.chat.memory.redis.index-name=custom-index",
+						"spring.ai.chat.memory.redis.key-prefix=custom-prefix:",
+						"spring.ai.chat.memory.redis.time-to-live=300s")
+				.run(context -> {
+					RedisChatMemoryRepository chatMemory = context.getBean(RedisChatMemoryRepository.class);
+					assertThat(chatMemory).isNotNull();
+				});
 	}
 
 	@Test

@@ -21,12 +21,11 @@ import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import org.junit.jupiter.api.Timeout;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
 
 /**
  * Tests for {@link McpSyncServer} using {@link WebFluxSseServerTransportProvider}.
@@ -49,7 +48,7 @@ class WebFluxSseMcpSyncServerIT extends AbstractMcpSyncServerTests {
 
 	private McpServerTransportProvider createMcpTransportProvider() {
 		this.transportProvider = new WebFluxSseServerTransportProvider.Builder().messageEndpoint(MESSAGE_ENDPOINT)
-			.build();
+				.build();
 		return this.transportProvider;
 	}
 

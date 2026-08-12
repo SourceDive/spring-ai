@@ -16,19 +16,19 @@
 
 package org.springframework.ai.mcp.annotation.provider.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.server.McpServerFeatures.SyncPromptSpecification;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.adapter.PromptAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.prompt.SyncMcpPromptMethodCallback;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Stream;
+
 /**
+ *
  */
 public class SyncMcpPromptProvider {
 
@@ -42,31 +42,32 @@ public class SyncMcpPromptProvider {
 	public List<SyncPromptSpecification> getPromptSpecifications() {
 
 		List<SyncPromptSpecification> syncPromptSpecification = this.promptObjects.stream()
-			.map(resourceObject -> Stream.of(doGetClassMethods(resourceObject))
-				.filter(method -> method.isAnnotationPresent(McpPrompt.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpPromptMethod -> {
-					var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
-					var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
+				.map(resourceObject -> Stream.of(doGetClassMethods(resourceObject))
+						.filter(method -> method.isAnnotationPresent(McpPrompt.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpPromptMethod -> {
+							var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
+							var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
 
-					var methodCallback = SyncMcpPromptMethodCallback.builder()
-						.method(mcpPromptMethod)
-						.bean(resourceObject)
-						.prompt(mcpPrompt)
-						.build();
+							var methodCallback = SyncMcpPromptMethodCallback.builder()
+									.method(mcpPromptMethod)
+									.bean(resourceObject)
+									.prompt(mcpPrompt)
+									.build();
 
-					return new SyncPromptSpecification(mcpPrompt, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncPromptSpecification(mcpPrompt, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return syncPromptSpecification;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

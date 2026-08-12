@@ -38,30 +38,30 @@ public class OpenAiEmbeddingPropertiesTests {
 	public void embeddingProperties() {
 
 		this.contextRunner.withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.openai.base-url=http://TEST.BASE.URL",
 				"spring.ai.openai.api-key=abc123",
 				"spring.ai.openai.embedding.options.model=MODEL_XYZ",
 				"spring.ai.openai.embedding.options.dimensions=512")
 				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(OpenAiEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(OpenAiEmbeddingProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(AutoConfigurations.of(OpenAiEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(OpenAiEmbeddingProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
 
-				assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(embeddingProperties.getDimensions()).isEqualTo(512);
-			});
+					assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(embeddingProperties.getDimensions()).isEqualTo(512);
+				});
 	}
 
 	@Test
 	public void embeddingOptionsTest() {
 
 		this.contextRunner
-			.withPropertyValues(// @formatter:off
+				.withPropertyValues(// @formatter:off
 				"spring.ai.openai.api-key=API_KEY",
 				"spring.ai.openai.base-url=http://TEST.BASE.URL",
 
@@ -71,19 +71,19 @@ public class OpenAiEmbeddingPropertiesTests {
 				"spring.ai.openai.embedding.metadata-mode=NONE"
 			)
 			// @formatter:on
-			.withConfiguration(AutoConfigurations.of(OpenAiEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(OpenAiEmbeddingProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(AutoConfigurations.of(OpenAiEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(OpenAiEmbeddingProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
-				assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
 
-				assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(embeddingProperties.getUser()).isEqualTo("userXYZ");
-				assertThat(embeddingProperties.getDimensions()).isEqualTo(1024);
-				assertThat(embeddingProperties.getMetadataMode()).isEqualTo(MetadataMode.NONE);
-			});
+					assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(embeddingProperties.getUser()).isEqualTo("userXYZ");
+					assertThat(embeddingProperties.getDimensions()).isEqualTo(1024);
+					assertThat(embeddingProperties.getMetadataMode()).isEqualTo(MetadataMode.NONE);
+				});
 	}
 
 }

@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.AbstractMcpClientServerIntegrationTests;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
@@ -32,9 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.provider.Arguments;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebFluxSseClientTransport;
 import org.springframework.ai.mcp.server.webflux.transport.WebFluxSseServerTransportProvider;
 import org.springframework.http.server.reactive.HttpHandler;
@@ -42,6 +35,12 @@ import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Timeout(45)
 class WebFluxSseIT extends AbstractMcpClientServerIntegrationTests {
@@ -55,7 +54,7 @@ class WebFluxSseIT extends AbstractMcpClientServerIntegrationTests {
 	private WebFluxSseServerTransportProvider mcpServerTransportProvider;
 
 	static McpTransportContextExtractor<ServerRequest> TEST_CONTEXT_EXTRACTOR = r -> McpTransportContext
-		.create(Map.of("important", "value"));
+			.create(Map.of("important", "value"));
 
 	static Stream<Arguments> clientsForTesting() {
 		return Stream.of(Arguments.of("httpclient"), Arguments.of("webflux"));
@@ -65,17 +64,17 @@ class WebFluxSseIT extends AbstractMcpClientServerIntegrationTests {
 	protected void prepareClients(int port, String mcpEndpoint) {
 
 		clientBuilders
-			.put("httpclient",
-					McpClient.sync(HttpClientSseClientTransport.builder("http://127.0.0.1:" + port)
-						.sseEndpoint(CUSTOM_SSE_ENDPOINT)
-						.build()).requestTimeout(Duration.ofHours(10)));
+				.put("httpclient",
+						McpClient.sync(HttpClientSseClientTransport.builder("http://127.0.0.1:" + port)
+								.sseEndpoint(CUSTOM_SSE_ENDPOINT)
+								.build()).requestTimeout(Duration.ofHours(10)));
 
 		clientBuilders.put("webflux",
 				McpClient
-					.sync(WebFluxSseClientTransport.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
-						.sseEndpoint(CUSTOM_SSE_ENDPOINT)
-						.build())
-					.requestTimeout(Duration.ofHours(10)));
+						.sync(WebFluxSseClientTransport.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
+								.sseEndpoint(CUSTOM_SSE_ENDPOINT)
+								.build())
+						.requestTimeout(Duration.ofHours(10)));
 
 	}
 
@@ -93,10 +92,10 @@ class WebFluxSseIT extends AbstractMcpClientServerIntegrationTests {
 	public void before() {
 
 		this.mcpServerTransportProvider = new WebFluxSseServerTransportProvider.Builder()
-			.messageEndpoint(CUSTOM_MESSAGE_ENDPOINT)
-			.sseEndpoint(CUSTOM_SSE_ENDPOINT)
-			.contextExtractor(TEST_CONTEXT_EXTRACTOR)
-			.build();
+				.messageEndpoint(CUSTOM_MESSAGE_ENDPOINT)
+				.sseEndpoint(CUSTOM_SSE_ENDPOINT)
+				.contextExtractor(TEST_CONTEXT_EXTRACTOR)
+				.build();
 
 		HttpHandler httpHandler = RouterFunctions.toHttpHandler(this.mcpServerTransportProvider.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);

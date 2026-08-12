@@ -16,9 +16,8 @@
 
 package org.springframework.ai.vectorstore.s3;
 
-import software.amazon.awssdk.core.document.Document;
-
 import org.springframework.ai.vectorstore.filter.Filter;
+import software.amazon.awssdk.core.document.Document;
 
 /**
  * FilterExpression DLS converter specific for AWS S3 Vector Store since SDK required AWS
@@ -30,6 +29,7 @@ public interface S3VectorFilterExpressionConverter {
 
 	/**
 	 * Convert the given {@link Filter.Expression} into a {@link Document} representation.
+	 *
 	 * @param expression the expression to convert
 	 * @return the converted expression
 	 */

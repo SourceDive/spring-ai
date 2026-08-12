@@ -16,19 +16,18 @@
 
 package org.springframework.ai.vectorstore.bedrockknowledgebase;
 
-import java.util.List;
-import java.util.Objects;
-
-import software.amazon.awssdk.core.document.Document;
-import software.amazon.awssdk.services.bedrockagentruntime.model.FilterAttribute;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalFilter;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterHelper;
+import software.amazon.awssdk.core.document.Document;
+import software.amazon.awssdk.services.bedrockagentruntime.model.FilterAttribute;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalFilter;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Converts Spring AI {@link Filter.Expression} to Bedrock Knowledge Base
@@ -41,6 +40,7 @@ public class BedrockKnowledgeBaseFilterExpressionConverter {
 
 	/**
 	 * Converts a Spring AI filter expression to a Bedrock RetrievalFilter.
+	 *
 	 * @param expression the Spring AI filter expression
 	 * @return the Bedrock RetrievalFilter
 	 */

@@ -16,9 +16,9 @@
 
 package org.springframework.ai.audio.tts;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Default implementation of the {@link TextToSpeechOptions} interface.
@@ -37,7 +37,7 @@ public class DefaultTextToSpeechOptions implements TextToSpeechOptions {
 	private final @Nullable Double speed;
 
 	protected DefaultTextToSpeechOptions(@Nullable String model, @Nullable String voice, @Nullable String format,
-			@Nullable Double speed) {
+	                                     @Nullable Double speed) {
 		this.model = model;
 		this.voice = voice;
 		this.format = format;

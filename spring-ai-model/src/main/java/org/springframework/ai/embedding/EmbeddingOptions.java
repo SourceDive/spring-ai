@@ -28,9 +28,11 @@ import org.springframework.ai.model.ModelOptions;
  */
 public interface EmbeddingOptions extends ModelOptions {
 
-	@Nullable String getModel();
+	@Nullable
+	String getModel();
 
-	@Nullable Integer getDimensions();
+	@Nullable
+	Integer getDimensions();
 
 	static Builder builder() {
 		return new DefaultEmbeddingOptionsBuilder();

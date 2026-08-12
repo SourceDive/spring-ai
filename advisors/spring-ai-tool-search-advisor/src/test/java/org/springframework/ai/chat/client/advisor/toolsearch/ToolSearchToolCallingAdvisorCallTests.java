@@ -16,12 +16,6 @@
 
 package org.springframework.ai.chat.client.advisor.toolsearch;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.quality.Strictness;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.DefaultAroundAdvisorChain;
@@ -38,11 +31,7 @@ import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.ChatOptions;
@@ -58,15 +47,17 @@ import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
 import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
 import org.springframework.ai.tool.toolsearch.eviction.LruEvictionStrategy;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ToolSearchToolCallingAdvisor}.
@@ -85,7 +76,7 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void whenToolIndexIsNullThenThrow() {
 		assertThatThrownBy(() -> ToolSearchToolCallingAdvisor.builder().build())
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -96,14 +87,14 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		String customSuffix = "\n\nCustom suffix";
 
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(customManager)
-			.advisorOrder(customOrder)
-			.toolIndex(customSearcher)
-			.systemMessageSuffix(customSuffix)
-			.referenceToolNameAccumulation(false)
-			.maxResults(10)
-			.evictionStrategy(new LruEvictionStrategy(50))
-			.build();
+				.toolCallingManager(customManager)
+				.advisorOrder(customOrder)
+				.toolIndex(customSearcher)
+				.systemMessageSuffix(customSuffix)
+				.referenceToolNameAccumulation(false)
+				.maxResults(10)
+				.evictionStrategy(new LruEvictionStrategy(50))
+				.build();
 
 		assertThat(advisor).isNotNull();
 		assertThat(advisor.getOrder()).isEqualTo(customOrder);
@@ -122,25 +113,25 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testInitializeLoopIndexesTools() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.systemMessageSuffix("\n\nTest suffix")
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.systemMessageSuffix("\n\nTest suffix")
+				.build();
 
 		// Create mock tool definitions
 		ToolDefinition toolDef1 = DefaultToolDefinition.builder()
-			.name("tool1")
-			.description("Description for tool1")
-			.inputSchema("{}")
-			.build();
+				.name("tool1")
+				.description("Description for tool1")
+				.inputSchema("{}")
+				.build();
 		ToolDefinition toolDef2 = DefaultToolDefinition.builder()
-			.name("tool2")
-			.description("Description for tool2")
-			.inputSchema("{}")
-			.build();
+				.name("tool2")
+				.description("Description for tool2")
+				.inputSchema("{}")
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(toolDef1, toolDef2));
+				.thenReturn(List.of(toolDef1, toolDef2));
 
 		ChatClientRequest request = createMockRequest(true);
 		ChatClientResponse response = createMockResponse(false);
@@ -148,8 +139,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		CallAdvisor terminalAdvisor = new TerminalCallAdvisor((req, chain) -> response);
 
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, terminalAdvisor))
-			.build();
+				.pushAll(List.of(advisor, terminalAdvisor))
+				.build();
 
 		advisor.adviseCall(request, realChain);
 
@@ -169,10 +160,10 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	void testInitializeLoopAugmentsSystemMessage() {
 		String customSuffix = "\n\nCUSTOM SUFFIX FOR TESTING";
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.systemMessageSuffix(customSuffix)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.systemMessageSuffix(customSuffix)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
@@ -187,11 +178,11 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		Map<String, Object> augmentContext = new ConcurrentHashMap<>();
 		augmentContext.put(ChatMemory.CONVERSATION_ID, "test-session-id");
 		ChatClientRequest request = ChatClientRequest.builder()
-			.prompt(prompt)
-			.build()
-			.mutate()
-			.context(augmentContext)
-			.build();
+				.prompt(prompt)
+				.build()
+				.mutate()
+				.context(augmentContext)
+				.build();
 
 		ChatClientResponse response = createMockResponse(false);
 
@@ -203,8 +194,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		});
 
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, capturingAdvisor))
-			.build();
+				.pushAll(List.of(advisor, capturingAdvisor))
+				.build();
 
 		advisor.adviseCall(request, realChain);
 
@@ -224,9 +215,9 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testFirstRequest_indexesToolsOnce() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
@@ -235,8 +226,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		CallAdvisor terminalAdvisor = new TerminalCallAdvisor((req, chain) -> response);
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, terminalAdvisor))
-			.build();
+				.pushAll(List.of(advisor, terminalAdvisor))
+				.build();
 
 		advisor.adviseCall(request, realChain);
 
@@ -252,24 +243,24 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testSecondRequest_sameTools_skipsReindexing() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		ToolDefinition toolDef = DefaultToolDefinition.builder()
-			.name("weatherTool")
-			.description("Gets the weather")
-			.inputSchema("{}")
-			.build();
+				.name("weatherTool")
+				.description("Gets the weather")
+				.inputSchema("{}")
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(toolDef));
+				.thenReturn(List.of(toolDef));
 
 		ChatClientRequest request = createMockRequest(true, "conv-1");
 		ChatClientResponse response = createMockResponse(false);
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 
 		// First request — indexes once
 		advisor.adviseCall(request, chain);
@@ -277,12 +268,12 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		// Second request — same session, same tools → no re-indexing
 		chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "conv-1"), chain);
 
 		verify(this.toolIndex, times(1)).indexTools(anyString(), any()); // still only
-																			// 1
+		// 1
 		verify(this.toolIndex, times(1)).clearIndex(anyString()); // still only 1
 	}
 
@@ -293,43 +284,43 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testSecondRequest_differentTools_reindexes() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		ToolDefinition toolDef1 = DefaultToolDefinition.builder()
-			.name("weatherTool")
-			.description("Gets the weather")
-			.inputSchema("{}")
-			.build();
+				.name("weatherTool")
+				.description("Gets the weather")
+				.inputSchema("{}")
+				.build();
 		ToolDefinition toolDef2 = DefaultToolDefinition.builder()
-			.name("calculatorTool")
-			.description("Does math")
-			.inputSchema("{}")
-			.build();
+				.name("calculatorTool")
+				.description("Does math")
+				.inputSchema("{}")
+				.build();
 
 		// First request: only weatherTool
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(toolDef1));
+				.thenReturn(List.of(toolDef1));
 
 		ChatClientResponse response = createMockResponse(false);
 		CallAdvisorChain chain1 = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "conv-1"), chain1);
 		verify(this.toolIndex, times(1)).indexTools(anyString(), any());
 
 		// Second request: different tool set → re-index
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(toolDef1, toolDef2));
+				.thenReturn(List.of(toolDef1, toolDef2));
 		CallAdvisorChain chain2 = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "conv-1"), chain2);
 
 		verify(this.toolIndex, times(2)).indexTools(anyString(), any()); // re-indexed
 		verify(this.toolIndex, times(2)).clearIndex(anyString()); // clear before each
-																	// index
+		// index
 	}
 
 	/**
@@ -338,10 +329,10 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testLruEviction_evictsLruSessionWhenCapacityExceeded() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.evictionStrategy(new LruEvictionStrategy(1))
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.evictionStrategy(new LruEvictionStrategy(1))
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
@@ -349,8 +340,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		// Session A
 		CallAdvisorChain chainA = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "session-A"), chainA);
 
 		// Verify session A was indexed (clearIndex + indexTools for fingerprint miss)
@@ -360,8 +351,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		// Session B — should evict session A (capacity = 1)
 		CallAdvisorChain chainB = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "session-B"), chainB);
 
 		// clearIndex called twice: once for session-A eviction, once for session-B
@@ -378,24 +369,24 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testEvictSession_forcesReindexOnNextRequest() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		ToolDefinition toolDef = DefaultToolDefinition.builder()
-			.name("tool1")
-			.description("desc")
-			.inputSchema("{}")
-			.build();
+				.name("tool1")
+				.description("desc")
+				.inputSchema("{}")
+				.build();
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(toolDef));
+				.thenReturn(List.of(toolDef));
 
 		ChatClientResponse response = createMockResponse(false);
 
 		// First request — indexes
 		CallAdvisorChain chain1 = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "conv-1"), chain1);
 		verify(this.toolIndex, times(1)).indexTools(anyString(), any());
 
@@ -405,8 +396,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		// Next request must re-index (fingerprint was removed)
 		CallAdvisorChain chain2 = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 		advisor.adviseCall(createMockRequest(true, "conv-1"), chain2);
 		verify(this.toolIndex, times(2)).indexTools(anyString(), any());
 	}
@@ -414,9 +405,9 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testBeforeCallExtractsToolReferences() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
@@ -424,8 +415,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		ToolResponseMessage.ToolResponse toolSearchResponse = new ToolResponseMessage.ToolResponse("id1",
 				"toolSearchTool", "[\"weatherTool\", \"calculatorTool\"]");
 		ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-			.responses(List.of(toolSearchResponse))
-			.build();
+				.responses(List.of(toolSearchResponse))
+				.build();
 
 		SystemMessage systemMessage = new SystemMessage("System message");
 		UserMessage userMessage = new UserMessage("test");
@@ -439,11 +430,11 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		Map<String, Object> extractContext = new ConcurrentHashMap<>();
 		extractContext.put(ChatMemory.CONVERSATION_ID, "test-session-id");
 		ChatClientRequest request = ChatClientRequest.builder()
-			.prompt(prompt)
-			.build()
-			.mutate()
-			.context(extractContext)
-			.build();
+				.prompt(prompt)
+				.build()
+				.mutate()
+				.context(extractContext)
+				.build();
 
 		ChatClientResponse response = createMockResponse(false);
 
@@ -455,8 +446,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		});
 
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, capturingAdvisor))
-			.build();
+				.pushAll(List.of(advisor, capturingAdvisor))
+				.build();
 
 		advisor.adviseCall(request, realChain);
 
@@ -472,17 +463,17 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	void testConversationIdFromContext() {
 		String expectedConversationId = "test-conversation-123";
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
 		ChatClientResponse response = createMockResponse(false);
 		CallAdvisor terminalAdvisor = new TerminalCallAdvisor((req, chain) -> response);
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, terminalAdvisor))
-			.build();
+				.pushAll(List.of(advisor, terminalAdvisor))
+				.build();
 
 		advisor.adviseCall(createMockRequest(true, expectedConversationId), realChain);
 
@@ -496,9 +487,9 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testToolSearchToolCallbackIsRegistered() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
@@ -513,8 +504,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		});
 
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, capturingAdvisor))
-			.build();
+				.pushAll(List.of(advisor, capturingAdvisor))
+				.build();
 
 		advisor.adviseCall(request, realChain);
 
@@ -524,8 +515,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		// Find the toolSearchTool callback
 		boolean foundToolSearchTool = capturedOptions.getToolCallbacks()
-			.stream()
-			.anyMatch(callback -> "toolSearchTool".equals(callback.getToolDefinition().name()));
+				.stream()
+				.anyMatch(callback -> "toolSearchTool".equals(callback.getToolDefinition().name()));
 
 		assertThat(foundToolSearchTool).isTrue();
 	}
@@ -533,17 +524,17 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testCachedToolCallbacksAreUsed() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		// Create a mock tool callback
 		ToolCallback mockToolCallback = mock(ToolCallback.class);
 		ToolDefinition mockToolDef = DefaultToolDefinition.builder()
-			.name("weatherTool")
-			.description("Gets weather")
-			.inputSchema("{}")
-			.build();
+				.name("weatherTool")
+				.description("Gets weather")
+				.inputSchema("{}")
+				.build();
 		when(mockToolCallback.getToolDefinition()).thenReturn(mockToolDef);
 
 		// Use real TestToolCallingChatOptions with the tool callback configured
@@ -551,14 +542,14 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		toolOptions.setToolCallbacks(List.of(mockToolCallback));
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(mockToolDef));
+				.thenReturn(List.of(mockToolDef));
 
 		// Create a request with tool response message referencing the weatherTool
 		ToolResponseMessage.ToolResponse toolSearchResponse = new ToolResponseMessage.ToolResponse("id1",
 				"toolSearchTool", "[\"weatherTool\"]");
 		ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-			.responses(List.of(toolSearchResponse))
-			.build();
+				.responses(List.of(toolSearchResponse))
+				.build();
 
 		UserMessage userMessage = new UserMessage("test");
 
@@ -566,11 +557,11 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		Map<String, Object> cachedContext = new ConcurrentHashMap<>();
 		cachedContext.put(ChatMemory.CONVERSATION_ID, "test-session-id");
 		ChatClientRequest request = ChatClientRequest.builder()
-			.prompt(prompt)
-			.build()
-			.mutate()
-			.context(cachedContext)
-			.build();
+				.prompt(prompt)
+				.build()
+				.mutate()
+				.context(cachedContext)
+				.build();
 
 		ChatClientResponse response = createMockResponse(false);
 
@@ -582,8 +573,8 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		});
 
 		CallAdvisorChain realChain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, capturingAdvisor))
-			.build();
+				.pushAll(List.of(advisor, capturingAdvisor))
+				.build();
 
 		advisor.adviseCall(request, realChain);
 
@@ -598,21 +589,21 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		ToolCallingChatOptions capturedOptions = (ToolCallingChatOptions) capturedRequest[0].prompt().getOptions();
 
 		assertThat(capturedOptions.getToolCallbacks()
-			.stream()
-			.anyMatch(cb -> "toolSearchTool".equals(cb.getToolDefinition().name()))).isTrue();
+				.stream()
+				.anyMatch(cb -> "toolSearchTool".equals(cb.getToolDefinition().name()))).isTrue();
 
 		assertThat(capturedOptions.getToolCallbacks()
-			.stream()
-			.anyMatch(cb -> "weatherTool".equals(cb.getToolDefinition().name()))).isTrue();
+				.stream()
+				.anyMatch(cb -> "weatherTool".equals(cb.getToolDefinition().name()))).isTrue();
 	}
 
 	@Test
 	void toolSearchToolUsesLlmMaxResultsOverAdvisorDefault() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.maxResults(3)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.maxResults(3)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any())).thenReturn(List.of());
 		when(this.toolIndex.search(any())).thenReturn(new ToolSearchResponse(List.of(), null, null));
@@ -628,10 +619,10 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void toolSearchToolFallsBackToAdvisorMaxResultsWhenLlmOmits() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.maxResults(3)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.maxResults(3)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any())).thenReturn(List.of());
 		when(this.toolIndex.search(any())).thenReturn(new ToolSearchResponse(List.of(), null, null));
@@ -650,16 +641,16 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	@Test
 	void testFinalizeLoop_doesNotClearIndex() {
 		ToolSearchToolCallingAdvisor advisor = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.build();
 
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class))).thenReturn(List.of());
 
 		ChatClientResponse response = createMockResponse(false);
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, c) -> response)))
+				.build();
 
 		advisor.adviseCall(createMockRequest(true), chain);
 
@@ -672,21 +663,21 @@ public class ToolSearchToolCallingAdvisorCallTests {
 	private ToolCallingChatOptions captureToolOptions(ToolSearchToolCallingAdvisor advisor) {
 		ChatClientRequest[] captured = new ChatClientRequest[1];
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalCallAdvisor((req, ch) -> {
-				captured[0] = req;
-				return createMockResponse(false);
-			})))
-			.build();
+				.pushAll(List.of(advisor, new TerminalCallAdvisor((req, ch) -> {
+					captured[0] = req;
+					return createMockResponse(false);
+				})))
+				.build();
 		advisor.adviseCall(createMockRequest(true), chain);
 		return (ToolCallingChatOptions) captured[0].prompt().getOptions();
 	}
 
 	private void invokeToolSearchTool(ToolCallingChatOptions opts, String toolInputQuery, Integer toolInputMaxResults) {
 		ToolCallback callback = opts.getToolCallbacks()
-			.stream()
-			.filter(cb -> "toolSearchTool".equals(cb.getToolDefinition().name()))
-			.findFirst()
-			.orElseThrow();
+				.stream()
+				.filter(cb -> "toolSearchTool".equals(cb.getToolDefinition().name()))
+				.findFirst()
+				.orElseThrow();
 		String schema = callback.getToolDefinition().inputSchema();
 		String queryParam = schema.contains("\"query\"") ? "query" : "arg0";
 		String maxResultsParam = schema.contains("\"maxResults\"") ? "maxResults" : "arg1";
@@ -695,8 +686,7 @@ public class ToolSearchToolCallingAdvisorCallTests {
 		if (toolInputMaxResults != null) {
 			toolInput = "{\"" + queryParam + "\":\"" + toolInputQuery + "\",\"" + maxResultsParam + "\":"
 					+ toolInputMaxResults + "}";
-		}
-		else {
+		} else {
 			toolInput = "{\"" + queryParam + "\":\"" + toolInputQuery + "\"}";
 		}
 
@@ -734,11 +724,10 @@ public class ToolSearchToolCallingAdvisorCallTests {
 			// Create an assistant message with a tool call to make hasToolCalls() return
 			// true
 			assistantMessage = AssistantMessage.builder()
-				.content("response")
-				.toolCalls(List.of(new AssistantMessage.ToolCall("id1", "tool", "toolName", "{}")))
-				.build();
-		}
-		else {
+					.content("response")
+					.toolCalls(List.of(new AssistantMessage.ToolCall("id1", "tool", "toolName", "{}")))
+					.build();
+		} else {
 			assistantMessage = new AssistantMessage("response");
 		}
 		Generation generation = new Generation(assistantMessage);
@@ -749,9 +738,9 @@ public class ToolSearchToolCallingAdvisorCallTests {
 
 		// Create a real ChatClientResponse using the builder with context from request
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponse)
-			.context(context != null ? context : new ConcurrentHashMap<>())
-			.build();
+				.chatResponse(chatResponse)
+				.context(context != null ? context : new ConcurrentHashMap<>())
+				.build();
 	}
 
 	private ChatClientResponse createMockResponse(boolean hasToolCalls) {

@@ -16,9 +16,9 @@
 
 package org.springframework.ai.chat.memory.repository.neo4j;
 
-import java.util.Map;
-
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 /**
  * Convenience interface for retrieving named attributes out of result maps.

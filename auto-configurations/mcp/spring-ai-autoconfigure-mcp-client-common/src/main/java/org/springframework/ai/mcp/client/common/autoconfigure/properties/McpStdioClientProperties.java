@@ -16,21 +16,20 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.properties;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.modelcontextprotocol.client.transport.ServerParameters;
+import org.jspecify.annotations.Nullable;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.Resource;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.modelcontextprotocol.client.transport.ServerParameters;
-import org.jspecify.annotations.Nullable;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.json.JsonMapper;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.Resource;
 
 /**
  * Configuration properties for the Model Context Protocol (MCP) stdio client.
@@ -81,20 +80,19 @@ public class McpStdioClientProperties {
 		}
 		try {
 			Map<String, Map<String, Parameters>> stdioConnection = JsonMapper.shared()
-				.readValue(this.serversConfiguration.getInputStream(), new TypeReference<>() {
-				});
+					.readValue(this.serversConfiguration.getInputStream(), new TypeReference<>() {
+					});
 
 			Map<String, Parameters> mcpServerJsonConfig = stdioConnection.entrySet().iterator().next().getValue();
 
 			return mcpServerJsonConfig.entrySet().stream().collect(Collectors.toMap(kv -> kv.getKey(), kv -> {
 				Parameters parameters = kv.getValue();
 				return ServerParameters.builder(parameters.command())
-					.args(parameters.args())
-					.env(parameters.env())
-					.build();
+						.args(parameters.args())
+						.env(parameters.env())
+						.build();
 			}));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to read stdio connection resource", e);
 		}
 	}
@@ -129,7 +127,7 @@ public class McpStdioClientProperties {
 			 */
 			@JsonProperty("env") @Nullable Map<String, String> env) {
 
-		public ServerParameters toServerParameters() {
+		public ServerParameters toServerParameters () {
 			return ServerParameters.builder(this.command()).args(this.args()).env(this.env()).build();
 		}
 

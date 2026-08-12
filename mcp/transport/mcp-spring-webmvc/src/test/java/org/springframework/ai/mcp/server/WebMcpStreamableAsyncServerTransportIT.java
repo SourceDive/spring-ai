@@ -24,8 +24,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.jupiter.api.Timeout;
-import reactor.netty.DisposableServer;
-
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcSseServerTransportProvider;
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcStreamableServerTransportProvider;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +33,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+import reactor.netty.DisposableServer;
 
 /**
  * Tests for {@link McpAsyncServer} using {@link WebMvcSseServerTransportProvider}.
@@ -86,8 +85,7 @@ class WebMcpStreamableAsyncServerTransportIT extends AbstractMcpAsyncServerTests
 		try {
 			this.tomcat.start();
 			this.tomcat.getConnector(); // Create and start the connector
-		}
-		catch (LifecycleException e) {
+		} catch (LifecycleException e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 

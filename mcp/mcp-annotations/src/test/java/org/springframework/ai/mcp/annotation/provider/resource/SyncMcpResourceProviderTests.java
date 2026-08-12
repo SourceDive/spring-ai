@@ -16,9 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.resource;
 
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceTemplateSpecification;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -27,10 +24,12 @@ import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.context.MetaProvider;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,7 +47,7 @@ public class SyncMcpResourceProviderTests {
 	@Test
 	void testConstructorWithNullResourceObjects() {
 		assertThatThrownBy(() -> new SyncMcpResourceProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resourceObjects cannot be null");
+				.hasMessageContaining("resourceObjects cannot be null");
 	}
 
 	@Test
@@ -292,7 +291,7 @@ public class SyncMcpResourceProviderTests {
 		assertThat(resourceTemplateSpecs).hasSize(1);
 
 		assertThat(resourceTemplateSpecs.get(0).resourceTemplate().uriTemplate())
-			.isEqualTo("variable://resource/{id}/{type}");
+				.isEqualTo("variable://resource/{id}/{type}");
 		assertThat(resourceTemplateSpecs.get(0).resourceTemplate().name()).isEqualTo("variable-resource");
 
 		// Test that the handler works with URI variables
@@ -466,7 +465,7 @@ public class SyncMcpResourceProviderTests {
 		ResourceContents content = result.contents().get(0);
 		assertThat(content).isInstanceOf(TextResourceContents.class);
 		assertThat(((TextResourceContents) content).text())
-			.isEqualTo("Resource with exchange: present, URI: exchange://resource");
+				.isEqualTo("Resource with exchange: present, URI: exchange://resource");
 	}
 
 	@Test

@@ -16,18 +16,8 @@
 
 package org.springframework.ai.vectorstore.oracle.autoconfigure;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.oracle.OracleContainer;
-import org.testcontainers.utility.MountableFile;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -44,6 +34,15 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.oracle.OracleContainer;
+import org.testcontainers.utility.MountableFile;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,21 +56,21 @@ public class OracleVectorStoreAutoConfigurationIT {
 
 	@Container
 	static OracleContainer oracle23aiContainer = new OracleContainer("gvenzl/oracle-free:23-slim")
-		.withCopyFileToContainer(MountableFile.forClasspathResource("/oracle/initialize.sql"),
-				"/container-entrypoint-initdb.d/initialize.sql");
+			.withCopyFileToContainer(MountableFile.forClasspathResource("/oracle/initialize.sql"),
+					"/container-entrypoint-initdb.d/initialize.sql");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(OracleVectorStoreAutoConfiguration.class,
-				JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("test.spring.ai.vectorstore.oracle.distance-type=COSINE",
-				"spring.ai.vectorstore.oracle.initialize-schema=true",
-				"test.spring.ai.vectorstore.oracle.dimensions=384",
-				// JdbcTemplate configuration
-				String.format("spring.datasource.url=%s", oracle23aiContainer.getJdbcUrl()),
-				String.format("spring.datasource.username=%s", oracle23aiContainer.getUsername()),
-				String.format("spring.datasource.password=%s", oracle23aiContainer.getPassword()),
-				"spring.datasource.type=oracle.jdbc.pool.OracleDataSource");
+			.withConfiguration(AutoConfigurations.of(OracleVectorStoreAutoConfiguration.class,
+					JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("test.spring.ai.vectorstore.oracle.distance-type=COSINE",
+					"spring.ai.vectorstore.oracle.initialize-schema=true",
+					"test.spring.ai.vectorstore.oracle.dimensions=384",
+					// JdbcTemplate configuration
+					String.format("spring.datasource.url=%s", oracle23aiContainer.getJdbcUrl()),
+					String.format("spring.datasource.username=%s", oracle23aiContainer.getUsername()),
+					String.format("spring.datasource.password=%s", oracle23aiContainer.getPassword()),
+					"spring.datasource.type=oracle.jdbc.pool.OracleDataSource");
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -82,8 +81,7 @@ public class OracleVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -102,7 +100,7 @@ public class OracleVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);

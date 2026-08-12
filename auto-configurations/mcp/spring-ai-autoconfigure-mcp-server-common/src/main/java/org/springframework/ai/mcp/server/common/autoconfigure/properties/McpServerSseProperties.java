@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure.properties;
 
-import java.time.Duration;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
+
+import java.time.Duration;
 
 /**
  * @author Christian Tzolov
@@ -33,6 +32,7 @@ public class McpServerSseProperties {
 	public static final String CONFIG_PREFIX = "spring.ai.mcp.server";
 
 	/**
+	 *
 	 */
 	private String baseUrl = "";
 

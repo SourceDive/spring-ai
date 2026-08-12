@@ -16,19 +16,9 @@
 
 package org.springframework.ai.bedrock.converse.client;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.RequiresAwsCredentials;
@@ -44,6 +34,15 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import reactor.core.publisher.Flux;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -64,12 +63,12 @@ public class BedrockNovaChatClientIT {
 	void pdfMultiModalityTest() throws IOException {
 
 		String response = ChatClient.create(this.chatModel)
-			.prompt()
-			.user(u -> u.text(
-					"You are a very professional document summarization specialist. Please summarize the given document.")
-				.media(Media.Format.DOC_PDF, new ClassPathResource("/spring-ai-reference-overview.pdf")))
-			.call()
-			.content();
+				.prompt()
+				.user(u -> u.text(
+								"You are a very professional document summarization specialist. Please summarize the given document.")
+						.media(Media.Format.DOC_PDF, new ClassPathResource("/spring-ai-reference-overview.pdf")))
+				.call()
+				.content();
 		assertThat(response).containsAnyOf("Spring AI", "portable API");
 	}
 
@@ -77,11 +76,11 @@ public class BedrockNovaChatClientIT {
 	void imageMultiModalityTest() throws IOException {
 
 		String response = ChatClient.create(this.chatModel)
-			.prompt()
-			.user(u -> u.text("Explain what do you see on this picture?")
-				.media(Media.Format.IMAGE_PNG, new ClassPathResource("/test.png")))
-			.call()
-			.content();
+				.prompt()
+				.user(u -> u.text("Explain what do you see on this picture?")
+						.media(Media.Format.IMAGE_PNG, new ClassPathResource("/test.png")))
+				.call()
+				.content();
 		assertThat(response).containsAnyOf("bananas", "apple", "bowl", "basket", "fruit stand", "fruit", "fruits");
 	}
 
@@ -95,22 +94,22 @@ public class BedrockNovaChatClientIT {
 				"hatchling", "hatchlings");
 
 		String response = ChatClient.create(this.chatModel)
-			.prompt()
-			.user(u -> u.text("Explain what do you see in this video?")
-				.media(Media.Format.VIDEO_MP4, new ClassPathResource("/test.video.mp4")))
-			.call()
-			.content();
+				.prompt()
+				.user(u -> u.text("Explain what do you see in this video?")
+						.media(Media.Format.VIDEO_MP4, new ClassPathResource("/test.video.mp4")))
+				.call()
+				.content();
 
 		// Convert response to lowercase for case-insensitive matching
 		String lowerResponse = response.toLowerCase();
 
 		// Test for presence of young/small descriptors
 		boolean hasYoungDescriptor = youngDescriptors.stream()
-			.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
+				.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
 
 		// Test for presence of bird/chicken descriptors
 		boolean hasBirdDescriptor = birdDescriptors.stream()
-			.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
+				.anyMatch(word -> lowerResponse.contains(word.toLowerCase()));
 
 		// Additional semantic checks
 		boolean describesMovement = lowerResponse.contains("mov") || lowerResponse.contains("walk")
@@ -167,10 +166,10 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		String response = chatClient.prompt()
-			.tools(new DummyWeatherForecastTools())
-			.user("Get current weather in Amsterdam")
-			.call()
-			.content();
+				.tools(new DummyWeatherForecastTools())
+				.user("Get current weather in Amsterdam")
+				.call()
+				.content();
 
 		assertThat(response).isNotEmpty();
 		assertThat(response).contains("20");
@@ -178,24 +177,24 @@ public class BedrockNovaChatClientIT {
 
 	// https://github.com/spring-projects/spring-ai/issues/1878
 	@ParameterizedTest
-	@ValueSource(strings = { "us.amazon.nova-pro-v1:0", "us.anthropic.claude-haiku-4-5-20251001-v1:0" })
+	@ValueSource(strings = {"us.amazon.nova-pro-v1:0", "us.anthropic.claude-haiku-4-5-20251001-v1:0"})
 	void toolAnnotationWeatherForecastStreaming(String modelName) {
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		Flux<ChatResponse> responses = chatClient.prompt()
-			.options(ToolCallingChatOptions.builder().model(modelName))
-			.tools(new DummyWeatherForecastTools())
-			.user("Get current weather in Amsterdam")
-			.stream()
-			.chatResponse();
+				.options(ToolCallingChatOptions.builder().model(modelName))
+				.tools(new DummyWeatherForecastTools())
+				.user("Get current weather in Amsterdam")
+				.stream()
+				.chatResponse();
 
 		String content = responses.collectList()
-			.block()
-			.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 
 		assertThat(content).contains("20");
 	}
@@ -207,13 +206,13 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		WeatherService.Response response = chatClient.prompt()
-			.tools(FunctionToolCallback.builder("weather", new WeatherService())
-				.description("Get the current weather")
-				.inputType(Void.class)
-				.build())
-			.user("Get current weather in Amsterdam")
-			.call()
-			.entity(WeatherService.Response.class);
+				.tools(FunctionToolCallback.builder("weather", new WeatherService())
+						.description("Get the current weather")
+						.inputType(Void.class)
+						.build())
+				.user("Get current weather in Amsterdam")
+				.call()
+				.entity(WeatherService.Response.class);
 
 		assertThat(response).isNotNull();
 		assertThat(response.temp()).isEqualTo(30);
@@ -225,20 +224,20 @@ public class BedrockNovaChatClientIT {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		Flux<ChatResponse> responses = chatClient.prompt()
-			.tools(FunctionToolCallback.builder("weather", new WeatherService())
-				.description("Get the current weather")
-				.inputType(Void.class)
-				.build())
-			.user("Get current weather in Amsterdam")
-			.stream()
-			.chatResponse();
+				.tools(FunctionToolCallback.builder("weather", new WeatherService())
+						.description("Get the current weather")
+						.inputType(Void.class)
+						.build())
+				.user("Get current weather in Amsterdam")
+				.stream()
+				.chatResponse();
 
 		String content = responses.collectList()
-			.block()
-			.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 
 		assertThat(content).contains("30");
 	}
@@ -252,11 +251,11 @@ public class BedrockNovaChatClientIT {
 			String modelId = "us.amazon.nova-pro-v1:0";
 
 			return BedrockProxyChatModel.builder()
-				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-				.region(Region.US_EAST_1)
-				.timeout(Duration.ofSeconds(120))
-				.options(BedrockChatOptions.builder().model(modelId).build())
-				.build();
+					.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+					.region(Region.US_EAST_1)
+					.timeout(Duration.ofSeconds(120))
+					.options(BedrockChatOptions.builder().model(modelId).build())
+					.build();
 		}
 
 	}

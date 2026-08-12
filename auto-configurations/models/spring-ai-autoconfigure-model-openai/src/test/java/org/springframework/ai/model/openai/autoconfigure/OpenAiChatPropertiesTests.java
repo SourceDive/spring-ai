@@ -42,32 +42,32 @@ public class OpenAiChatPropertiesTests {
 	public void chatProperties() {
 
 		this.contextRunner.withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.openai.base-url=http://TEST.BASE.URL",
 				"spring.ai.openai.api-key=abc123",
 				"spring.ai.openai.chat.model=MODEL_XYZ",
 				"spring.ai.openai.chat.temperature=0.55")
 				// @formatter:on
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(OpenAiChatProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(OpenAiChatProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
 
-				var options = chatProperties.toOptions();
-				assertThat(options.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(options.getTemperature()).isEqualTo(0.55);
-			});
+					var options = chatProperties.toOptions();
+					assertThat(options.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(options.getTemperature()).isEqualTo(0.55);
+				});
 	}
 
 	@Test
 	public void chatOptionsTest() {
 
 		this.contextRunner
-			.withPropertyValues(// @formatter:off
+				.withPropertyValues(// @formatter:off
 				"spring.ai.openai.api-key=API_KEY",
 				"spring.ai.openai.base-url=http://TEST.BASE.URL",
 
@@ -90,38 +90,38 @@ public class OpenAiChatPropertiesTests {
 
 			)
 			// @formatter:on
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(OpenAiChatProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(OpenAiChatProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
-				assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
 
-				var options = chatProperties.toOptions();
-				assertThat(options.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(options.getFrequencyPenalty()).isEqualTo(-1.5);
-				assertThat(options.getLogitBias().get("myTokenId")).isEqualTo(-5);
-				assertThat(options.getMaxTokens()).isEqualTo(123);
-				assertThat(options.getN()).isEqualTo(10);
-				assertThat(options.getPresencePenalty()).isEqualTo(0);
-				assertThat(options.getSeed()).isEqualTo(66);
-				assertThat(options.getStop()).contains("boza", "koza");
-				assertThat(options.getTemperature()).isEqualTo(0.55);
-				assertThat(options.getTopP()).isEqualTo(0.56);
+					var options = chatProperties.toOptions();
+					assertThat(options.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(options.getFrequencyPenalty()).isEqualTo(-1.5);
+					assertThat(options.getLogitBias().get("myTokenId")).isEqualTo(-5);
+					assertThat(options.getMaxTokens()).isEqualTo(123);
+					assertThat(options.getN()).isEqualTo(10);
+					assertThat(options.getPresencePenalty()).isEqualTo(0);
+					assertThat(options.getSeed()).isEqualTo(66);
+					assertThat(options.getStop()).contains("boza", "koza");
+					assertThat(options.getTemperature()).isEqualTo(0.55);
+					assertThat(options.getTopP()).isEqualTo(0.56);
 
-				JSONAssert.assertEquals("{\"type\":\"function\",\"function\":{\"name\":\"toolChoiceFunctionName\"}}",
-						"" + options.getToolChoice(), JSONCompareMode.LENIENT);
+					JSONAssert.assertEquals("{\"type\":\"function\",\"function\":{\"name\":\"toolChoiceFunctionName\"}}",
+							"" + options.getToolChoice(), JSONCompareMode.LENIENT);
 
-				assertThat(options.getUser()).isEqualTo("userXYZ");
+					assertThat(options.getUser()).isEqualTo("userXYZ");
 
-				assertThat(options.getStreamOptions()).isNotNull();
-				assertThat(options.getStreamOptions().includeObfuscation()).isTrue();
-				assertThat(options.getStreamOptions().additionalProperties().get("foo")).isEqualTo("bar");
+					assertThat(options.getStreamOptions()).isNotNull();
+					assertThat(options.getStreamOptions().includeObfuscation()).isTrue();
+					assertThat(options.getStreamOptions().additionalProperties().get("foo")).isEqualTo("bar");
 
-				assertThat(options.getPromptCacheKey()).isEqualTo("test-cache-key");
-			});
+					assertThat(options.getPromptCacheKey()).isEqualTo("test-cache-key");
+				});
 	}
 
 }

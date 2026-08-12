@@ -16,14 +16,13 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure.properties;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.util.Assert;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.Assert;
 
 /**
  * Configuration properties for the Model Context Protocol (MCP) server.
@@ -38,11 +37,11 @@ import org.springframework.util.Assert;
  * All properties are prefixed with {@code spring.ai.mcp.server}.
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration
  * @see org.springframework.ai.mcp.server.common.autoconfigure.McpServerStatelessAutoConfiguration
  * @see org.springframework.ai.mcp.server.common.autoconfigure.StatelessToolCallbackConverterAutoConfiguration
  * @see org.springframework.ai.mcp.server.common.autoconfigure.ToolCallbackConverterAutoConfiguration
+ * @since 1.0.0
  */
 @ConfigurationProperties(McpServerProperties.CONFIG_PREFIX)
 public class McpServerProperties {

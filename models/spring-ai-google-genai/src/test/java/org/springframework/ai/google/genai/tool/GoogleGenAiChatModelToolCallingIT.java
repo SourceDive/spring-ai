@@ -16,15 +16,9 @@
 
 package org.springframework.ai.google.genai.tool;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-
 import com.google.genai.Client;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -40,6 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,15 +76,15 @@ public class GoogleGenAiChatModelToolCallingIT {
 					},
 					"required": ["location", "unit"]
 					}
-					""";
+				""";
 
 		var options = GoogleGenAiChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputSchema(openApiSchema)
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputSchema(openApiSchema)
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var prompt = new Prompt(messages, options);
 
@@ -108,17 +107,17 @@ public class GoogleGenAiChatModelToolCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.toolCallbacks(List.of(
-					FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-						.description("Get the current weather in a given location.")
-						.inputType(MockWeatherService.Request.class)
-						.build(),
-					FunctionToolCallback.builder("get_payment_status", new PaymentStatus())
-						.description(
-								"Retrieves the payment status for transaction. For example what is the payment status for transaction 700?")
-						.inputType(PaymentInfoRequest.class)
-						.build()))
-			.build();
+				.toolCallbacks(List.of(
+						FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
+								.description("Get the current weather in a given location.")
+								.inputType(MockWeatherService.Request.class)
+								.build(),
+						FunctionToolCallback.builder("get_payment_status", new PaymentStatus())
+								.description(
+										"Retrieves the payment status for transaction. For example what is the payment status for transaction 700?")
+								.inputType(PaymentInfoRequest.class)
+								.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 		ChatResponse chatResponse = this.chatModel.call(prompt);
@@ -157,11 +156,11 @@ public class GoogleGenAiChatModelToolCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 
@@ -190,17 +189,17 @@ public class GoogleGenAiChatModelToolCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.toolCallbacks(List.of(
-					FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-						.description("Get the current weather in a given location.")
-						.inputType(MockWeatherService.Request.class)
-						.build(),
-					FunctionToolCallback.builder("get_payment_status", new PaymentStatus())
-						.description(
-								"Retrieves the payment status for transaction. For example what is the payment status for transaction 700?")
-						.inputType(PaymentInfoRequest.class)
-						.build()))
-			.build();
+				.toolCallbacks(List.of(
+						FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
+								.description("Get the current weather in a given location.")
+								.inputType(MockWeatherService.Request.class)
+								.build(),
+						FunctionToolCallback.builder("get_payment_status", new PaymentStatus())
+								.description(
+										"Retrieves the payment status for transaction. For example what is the payment status for transaction 700?")
+								.inputType(PaymentInfoRequest.class)
+								.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 
@@ -232,18 +231,18 @@ public class GoogleGenAiChatModelToolCallingIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
-			.toolCallbacks(List.of(
-					FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-						.description("Get the current weather in a given location.")
-						.inputType(MockWeatherService.Request.class)
-						.build(),
-					FunctionToolCallback.builder("get_payment_status", new PaymentStatus())
-						.description(
-								"Retrieves the payment status for transaction. For example what is the payment status for transaction 700?")
-						.inputType(PaymentInfoRequest.class)
-						.build()))
-			.build();
+				.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
+				.toolCallbacks(List.of(
+						FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
+								.description("Get the current weather in a given location.")
+								.inputType(MockWeatherService.Request.class)
+								.build(),
+						FunctionToolCallback.builder("get_payment_status", new PaymentStatus())
+								.description(
+										"Retrieves the payment status for transaction. For example what is the payment status for transaction 700?")
+								.inputType(PaymentInfoRequest.class)
+								.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 
@@ -296,12 +295,12 @@ public class GoogleGenAiChatModelToolCallingIT {
 		@Bean
 		public GoogleGenAiChatModel vertexAiEmbedding(Client genAiClient) {
 			return GoogleGenAiChatModel.builder()
-				.genAiClient(genAiClient)
-				.options(GoogleGenAiChatOptions.builder()
-					.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
-					.temperature(0.9)
-					.build())
-				.build();
+					.genAiClient(genAiClient)
+					.options(GoogleGenAiChatOptions.builder()
+							.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
+							.temperature(0.9)
+							.build())
+					.build();
 		}
 
 	}

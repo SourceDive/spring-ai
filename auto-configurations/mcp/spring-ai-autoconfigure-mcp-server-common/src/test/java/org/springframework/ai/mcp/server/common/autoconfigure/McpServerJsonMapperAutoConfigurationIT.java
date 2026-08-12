@@ -17,13 +17,12 @@
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.context.annotation.UserConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class McpServerJsonMapperAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpServerJsonMapperAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpServerJsonMapperAutoConfiguration.class));
 
 	@Test
 	void defaultMcpServerJsonMapper() {

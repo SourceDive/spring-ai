@@ -16,18 +16,9 @@
 
 package org.springframework.ai.bedrock.converse.client;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockConverseTestConfiguration;
 import org.springframework.ai.bedrock.converse.MockWeatherService;
@@ -50,6 +41,14 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -250,7 +249,7 @@ class BedrockConverseChatClientIT {
 		assertThat(metadata.getUsage().getCompletionTokens()).isLessThan(1500);
 
 		assertThat(metadata.getUsage().getTotalTokens())
-			.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
+				.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
 		assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 	}
 
@@ -316,12 +315,12 @@ class BedrockConverseChatClientIT {
 		assertThat(metadata.getUsage().getCompletionTokens()).isLessThan(600);
 
 		assertThat(metadata.getUsage().getTotalTokens())
-			.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
+				.isEqualTo(metadata.getUsage().getPromptTokens() + metadata.getUsage().getCompletionTokens());
 
 		String content = chatResponses.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(content).contains("30", "10", "15");
 	}
 
@@ -344,7 +343,7 @@ class BedrockConverseChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "us.anthropic.claude-haiku-4-5-20251001-v1:0" })
+	@ValueSource(strings = {"us.anthropic.claude-haiku-4-5-20251001-v1:0"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		// @formatter:off
@@ -359,7 +358,7 @@ class BedrockConverseChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "us.anthropic.claude-haiku-4-5-20251001-v1:0" })
+	@ValueSource(strings = {"us.anthropic.claude-haiku-4-5-20251001-v1:0"})
 	void multiModalityImageUrl2(String modelName) throws IOException {
 
 		// TODO: add url method that wraps the checked exception.
@@ -377,7 +376,7 @@ class BedrockConverseChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "us.anthropic.claude-haiku-4-5-20251001-v1:0" })
+	@ValueSource(strings = {"us.anthropic.claude-haiku-4-5-20251001-v1:0"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		// TODO: add url method that wraps the checked exception.

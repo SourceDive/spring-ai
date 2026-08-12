@@ -33,79 +33,79 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GoogleGenAiPropertiesTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(PropertiesTestConfiguration.class);
+			.withUserConfiguration(PropertiesTestConfiguration.class);
 
 	@Test
 	void connectionPropertiesBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.google.genai.api-key=test-key",
-					"spring.ai.google.genai.project-id=test-project", "spring.ai.google.genai.location=us-central1")
-			.run(context -> {
-				GoogleGenAiConnectionProperties connectionProperties = context
-					.getBean(GoogleGenAiConnectionProperties.class);
-				assertThat(connectionProperties.getApiKey()).isEqualTo("test-key");
-				assertThat(connectionProperties.getProjectId()).isEqualTo("test-project");
-				assertThat(connectionProperties.getLocation()).isEqualTo("us-central1");
-			});
+				.withPropertyValues("spring.ai.google.genai.api-key=test-key",
+						"spring.ai.google.genai.project-id=test-project", "spring.ai.google.genai.location=us-central1")
+				.run(context -> {
+					GoogleGenAiConnectionProperties connectionProperties = context
+							.getBean(GoogleGenAiConnectionProperties.class);
+					assertThat(connectionProperties.getApiKey()).isEqualTo("test-key");
+					assertThat(connectionProperties.getProjectId()).isEqualTo("test-project");
+					assertThat(connectionProperties.getLocation()).isEqualTo("us-central1");
+				});
 	}
 
 	@Test
 	void chatPropertiesBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.google.genai.chat.model=gemini-2.0-flash",
-					"spring.ai.google.genai.chat.temperature=0.5", "spring.ai.google.genai.chat.max-output-tokens=2048",
-					"spring.ai.google.genai.chat.top-p=0.9",
-					"spring.ai.google.genai.chat.response-mime-type=application/json")
-			.run(context -> {
-				GoogleGenAiChatProperties chatProperties = context.getBean(GoogleGenAiChatProperties.class);
-				assertThat(chatProperties.toOptions().getModel()).isEqualTo("gemini-2.0-flash");
-				assertThat(chatProperties.toOptions().getTemperature()).isEqualTo(0.5);
-				assertThat(chatProperties.toOptions().getMaxOutputTokens()).isEqualTo(2048);
-				assertThat(chatProperties.toOptions().getTopP()).isEqualTo(0.9);
-				assertThat(chatProperties.toOptions().getResponseMimeType()).isEqualTo("application/json");
-			});
+				.withPropertyValues("spring.ai.google.genai.chat.model=gemini-2.0-flash",
+						"spring.ai.google.genai.chat.temperature=0.5", "spring.ai.google.genai.chat.max-output-tokens=2048",
+						"spring.ai.google.genai.chat.top-p=0.9",
+						"spring.ai.google.genai.chat.response-mime-type=application/json")
+				.run(context -> {
+					GoogleGenAiChatProperties chatProperties = context.getBean(GoogleGenAiChatProperties.class);
+					assertThat(chatProperties.toOptions().getModel()).isEqualTo("gemini-2.0-flash");
+					assertThat(chatProperties.toOptions().getTemperature()).isEqualTo(0.5);
+					assertThat(chatProperties.toOptions().getMaxOutputTokens()).isEqualTo(2048);
+					assertThat(chatProperties.toOptions().getTopP()).isEqualTo(0.9);
+					assertThat(chatProperties.toOptions().getResponseMimeType()).isEqualTo("application/json");
+				});
 	}
 
 	@Test
 	void embeddingPropertiesBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.google.genai.embedding.api-key=embedding-key",
-					"spring.ai.google.genai.embedding.project-id=embedding-project",
-					"spring.ai.google.genai.embedding.location=europe-west1")
-			.run(context -> {
-				GoogleGenAiEmbeddingConnectionProperties embeddingProperties = context
-					.getBean(GoogleGenAiEmbeddingConnectionProperties.class);
-				assertThat(embeddingProperties.getApiKey()).isEqualTo("embedding-key");
-				assertThat(embeddingProperties.getProjectId()).isEqualTo("embedding-project");
-				assertThat(embeddingProperties.getLocation()).isEqualTo("europe-west1");
-			});
+				.withPropertyValues("spring.ai.google.genai.embedding.api-key=embedding-key",
+						"spring.ai.google.genai.embedding.project-id=embedding-project",
+						"spring.ai.google.genai.embedding.location=europe-west1")
+				.run(context -> {
+					GoogleGenAiEmbeddingConnectionProperties embeddingProperties = context
+							.getBean(GoogleGenAiEmbeddingConnectionProperties.class);
+					assertThat(embeddingProperties.getApiKey()).isEqualTo("embedding-key");
+					assertThat(embeddingProperties.getProjectId()).isEqualTo("embedding-project");
+					assertThat(embeddingProperties.getLocation()).isEqualTo("europe-west1");
+				});
 	}
 
 	@Test
 	void cachedContentPropertiesBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.google.genai.chat.use-cached-content=true",
-					"spring.ai.google.genai.chat.cached-content-name=cachedContent/test123",
-					"spring.ai.google.genai.chat.auto-cache-threshold=100000",
-					"spring.ai.google.genai.chat.auto-cache-ttl=PT1H")
-			.run(context -> {
-				GoogleGenAiChatProperties chatProperties = context.getBean(GoogleGenAiChatProperties.class);
-				assertThat(chatProperties.toOptions().getUseCachedContent()).isTrue();
-				assertThat(chatProperties.toOptions().getCachedContentName()).isEqualTo("cachedContent/test123");
-				assertThat(chatProperties.toOptions().getAutoCacheThreshold()).isEqualTo(100000);
-				// The Duration keeps its original ISO-8601 format
-				assertThat(chatProperties.toOptions().getAutoCacheTtl()).isNotNull();
-				assertThat(chatProperties.toOptions().getAutoCacheTtl().toString()).isEqualTo("PT1H");
-			});
+				.withPropertyValues("spring.ai.google.genai.chat.use-cached-content=true",
+						"spring.ai.google.genai.chat.cached-content-name=cachedContent/test123",
+						"spring.ai.google.genai.chat.auto-cache-threshold=100000",
+						"spring.ai.google.genai.chat.auto-cache-ttl=PT1H")
+				.run(context -> {
+					GoogleGenAiChatProperties chatProperties = context.getBean(GoogleGenAiChatProperties.class);
+					assertThat(chatProperties.toOptions().getUseCachedContent()).isTrue();
+					assertThat(chatProperties.toOptions().getCachedContentName()).isEqualTo("cachedContent/test123");
+					assertThat(chatProperties.toOptions().getAutoCacheThreshold()).isEqualTo(100000);
+					// The Duration keeps its original ISO-8601 format
+					assertThat(chatProperties.toOptions().getAutoCacheTtl()).isNotNull();
+					assertThat(chatProperties.toOptions().getAutoCacheTtl().toString()).isEqualTo("PT1H");
+				});
 	}
 
 	@Test
 	void extendedUsageMetadataPropertiesBinding() {
 		this.contextRunner.withPropertyValues("spring.ai.google.genai.chat.include-extended-usage-metadata=true")
-			.run(context -> {
-				GoogleGenAiChatProperties chatProperties = context.getBean(GoogleGenAiChatProperties.class);
-				assertThat(chatProperties.toOptions().getIncludeExtendedUsageMetadata()).isTrue();
-			});
+				.run(context -> {
+					GoogleGenAiChatProperties chatProperties = context.getBean(GoogleGenAiChatProperties.class);
+					assertThat(chatProperties.toOptions().getIncludeExtendedUsageMetadata()).isTrue();
+				});
 	}
 
 	@Test
@@ -150,8 +150,8 @@ public class GoogleGenAiPropertiesTests {
 	}
 
 	@Configuration
-	@EnableConfigurationProperties({ GoogleGenAiConnectionProperties.class, GoogleGenAiChatProperties.class,
-			GoogleGenAiEmbeddingConnectionProperties.class })
+	@EnableConfigurationProperties({GoogleGenAiConnectionProperties.class, GoogleGenAiChatProperties.class,
+			GoogleGenAiEmbeddingConnectionProperties.class})
 	static class PropertiesTestConfiguration {
 
 	}

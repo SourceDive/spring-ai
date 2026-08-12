@@ -16,11 +16,11 @@
 
 package org.springframework.ai.mcp.annotation;
 
+import io.modelcontextprotocol.spec.McpSchema;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import io.modelcontextprotocol.spec.McpSchema;
 
 /**
  * Special object used to represent the {@link McpSchema.Request#meta()},
@@ -36,7 +36,7 @@ public record McpMeta(Map<String, Object> meta) {
 		meta = meta == null ? Collections.emptyMap() : Collections.unmodifiableMap(new HashMap<>(meta));
 	}
 
-	public Object get(String key) {
+	public Object get (String key){
 		return this.meta.get(key);
 	}
 }

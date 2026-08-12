@@ -16,10 +16,10 @@
 
 package org.springframework.ai.tool.toolsearch.eviction;
 
+import org.junit.jupiter.api.Test;
+
 import java.time.Duration;
 import java.util.Set;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -207,7 +207,7 @@ class ToolIndexEvictionStrategyTests {
 	void ttl_mustBePositive() {
 		assertThatThrownBy(() -> new TtlEvictionStrategy(Duration.ZERO)).isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> new TtlEvictionStrategy(Duration.ofSeconds(-1)))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	// -------------------------------------------------------------------------

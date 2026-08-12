@@ -16,19 +16,14 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.DefaultChatOptions;
 import org.springframework.ai.chat.prompt.DefaultChatOptionsBuilder;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * Default implementation of {@link ToolCallingChatOptions}.
@@ -45,9 +40,9 @@ public class DefaultToolCallingChatOptions extends DefaultChatOptions implements
 	private final @Nullable Map<String, Object> toolContext;
 
 	protected DefaultToolCallingChatOptions(@Nullable List<ToolCallback> toolCallbacks,
-			@Nullable Map<String, Object> toolContext, @Nullable String model, @Nullable Double frequencyPenalty,
-			@Nullable Integer maxTokens, @Nullable Double presencePenalty, @Nullable List<String> stopSequences,
-			@Nullable Double temperature, @Nullable Integer topK, @Nullable Double topP) {
+	                                        @Nullable Map<String, Object> toolContext, @Nullable String model, @Nullable Double frequencyPenalty,
+	                                        @Nullable Integer maxTokens, @Nullable Double presencePenalty, @Nullable List<String> stopSequences,
+	                                        @Nullable Double temperature, @Nullable Integer topK, @Nullable Double topP) {
 		super(model, frequencyPenalty, maxTokens, presencePenalty, stopSequences, temperature, topK, topP);
 		this.toolCallbacks = (toolCallbacks != null ? List.copyOf(toolCallbacks) : null);
 		this.toolContext = (toolContext != null ? Map.copyOf(toolContext) : null);
@@ -66,16 +61,16 @@ public class DefaultToolCallingChatOptions extends DefaultChatOptions implements
 	@Override
 	public ToolCallingChatOptions.Builder<?> mutate() {
 		return DefaultToolCallingChatOptions.builder()
-			.model(getModel())
-			.frequencyPenalty(getFrequencyPenalty())
-			.maxTokens(getMaxTokens())
-			.presencePenalty(getPresencePenalty())
-			.stopSequences(getStopSequences())
-			.temperature(getTemperature())
-			.topK(getTopK())
-			.topP(getTopP())
-			.toolCallbacks(getToolCallbacks())
-			.toolContext(getToolContext());
+				.model(getModel())
+				.frequencyPenalty(getFrequencyPenalty())
+				.maxTokens(getMaxTokens())
+				.presencePenalty(getPresencePenalty())
+				.stopSequences(getStopSequences())
+				.temperature(getTemperature())
+				.topK(getTopK())
+				.topP(getTopP())
+				.toolCallbacks(getToolCallbacks())
+				.toolContext(getToolContext());
 	}
 
 	@Override
@@ -125,8 +120,7 @@ public class DefaultToolCallingChatOptions extends DefaultChatOptions implements
 		public B toolCallbacks(@Nullable List<ToolCallback> toolCallbacks) {
 			if (toolCallbacks != null) {
 				this.toolCallbacks = new ArrayList<>(toolCallbacks);
-			}
-			else {
+			} else {
 				this.toolCallbacks = null;
 			}
 			return self();
@@ -149,8 +143,7 @@ public class DefaultToolCallingChatOptions extends DefaultChatOptions implements
 					this.toolContext = new HashMap<>();
 				}
 				this.toolContext.putAll(context);
-			}
-			else {
+			} else {
 				this.toolContext = null;
 			}
 			return self();
@@ -181,8 +174,7 @@ public class DefaultToolCallingChatOptions extends DefaultChatOptions implements
 				if (that.toolCallbacks != null) {
 					if (this.toolCallbacks == null) {
 						this.toolCallbacks = new ArrayList<>(that.toolCallbacks);
-					}
-					else {
+					} else {
 						List<ToolCallback> merged = new ArrayList<>(this.toolCallbacks);
 						merged.addAll(that.toolCallbacks);
 						this.toolCallbacks = merged;
@@ -191,8 +183,7 @@ public class DefaultToolCallingChatOptions extends DefaultChatOptions implements
 				if (that.toolContext != null) {
 					if (this.toolContext == null) {
 						this.toolContext = new HashMap<>(that.toolContext);
-					}
-					else {
+					} else {
 						Map<String, Object> merged = new HashMap<>(this.toolContext);
 						merged.putAll(that.toolContext);
 						this.toolContext = merged;

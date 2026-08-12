@@ -31,7 +31,7 @@ public final class ElevenLabsITUtil {
 	}
 
 	public static AutoConfigurations elevenLabsAutoConfig(Class<?>... additionalAutoConfigurations) {
-		Class<?>[] dependencies = new Class[] { RestClientAutoConfiguration.class, WebClientAutoConfiguration.class };
+		Class<?>[] dependencies = new Class[]{RestClientAutoConfiguration.class, WebClientAutoConfiguration.class};
 		Class<?>[] allAutoConfigurations = new Class[dependencies.length + additionalAutoConfigurations.length];
 		System.arraycopy(dependencies, 0, allAutoConfigurations, 0, dependencies.length);
 		System.arraycopy(additionalAutoConfigurations, 0, allAutoConfigurations, dependencies.length,

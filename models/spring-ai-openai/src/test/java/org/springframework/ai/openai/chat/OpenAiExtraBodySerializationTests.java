@@ -16,12 +16,11 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import tools.jackson.databind.json.JsonMapper;
 
-import org.springframework.ai.openai.OpenAiChatOptions;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,9 +38,9 @@ class OpenAiExtraBodySerializationTests {
 	void testExtraBodySerializationFlattensToTopLevel() throws Exception {
 		// Arrange: Create request with extraBody containing parameters
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model("gpt-4")
-			.extraBody(Map.of("top_k", 50, "repetition_penalty", 1.1))
-			.build();
+				.model("gpt-4")
+				.extraBody(Map.of("top_k", 50, "repetition_penalty", 1.1))
+				.build();
 
 		// Act: Serialize to JSON
 		String json = JsonMapper.shared().writerWithDefaultPrettyPrinter().writeValueAsString(options);
@@ -81,13 +80,13 @@ class OpenAiExtraBodySerializationTests {
 	void testMergeWithExtraBody() {
 		// Arrange: Create options with extraBody
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model("test-model")
-			.extraBody(Map.of("enable_thinking", true, "max_depth", 10))
-			.build();
+				.model("test-model")
+				.extraBody(Map.of("enable_thinking", true, "max_depth", 10))
+				.build();
 
 		OpenAiChatOptions.Builder runtimeOptions = OpenAiChatOptions.builder()
-			.temperature(0.9)
-			.extraBody(Map.of("enable_thinking", false, "top_k", 50));
+				.temperature(0.9)
+				.extraBody(Map.of("enable_thinking", false, "top_k", 50));
 
 		// Act: Merge options using the builder's combineWith method, which is the actual
 		// mechanism used by OpenAiChatModel

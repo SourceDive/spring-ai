@@ -16,17 +16,12 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -38,6 +33,10 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.ActiveProfiles;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -47,7 +46,7 @@ import static org.mockito.Mockito.when;
  * @author Christian Tzolov
  * @author Sebastien Deleuze
  */
-@ExtendWith({ MockitoExtension.class, OutputCaptureExtension.class })
+@ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 @ActiveProfiles("logging-test")
 public class SimpleLoggerAdvisorTests {
 
@@ -61,7 +60,7 @@ public class SimpleLoggerAdvisorTests {
 	public void callLogging(CapturedOutput output) {
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("Your answer is ZXY")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("Your answer is ZXY")))));
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 
 		var loggerAdvisor = new SimpleLoggerAdvisor();

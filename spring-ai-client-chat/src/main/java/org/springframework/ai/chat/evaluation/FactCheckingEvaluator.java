@@ -16,15 +16,14 @@
 
 package org.springframework.ai.chat.evaluation;
 
-import java.util.Collections;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.evaluation.EvaluationRequest;
 import org.springframework.ai.evaluation.EvaluationResponse;
 import org.springframework.ai.evaluation.Evaluator;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
 
 /**
  * Implementation of {@link Evaluator} used to evaluate the factual accuracy of Large
@@ -97,9 +96,10 @@ public class FactCheckingEvaluator implements Evaluator {
 	/**
 	 * Constructs a new FactCheckingEvaluator with the provided ChatClient.Builder and
 	 * evaluation prompt.
+	 *
 	 * @param chatClientBuilder The builder for the ChatClient used to perform the
-	 * evaluation
-	 * @param evaluationPrompt The prompt text to use for evaluation
+	 *                          evaluation
+	 * @param evaluationPrompt  The prompt text to use for evaluation
 	 */
 	protected FactCheckingEvaluator(ChatClient.Builder chatClientBuilder, @Nullable String evaluationPrompt) {
 		Assert.notNull(chatClientBuilder, "chatClientBuilder cannot be null");
@@ -110,21 +110,23 @@ public class FactCheckingEvaluator implements Evaluator {
 	/**
 	 * Creates a FactCheckingEvaluator configured for use with the Bespoke Minicheck
 	 * model.
+	 *
 	 * @param chatClientBuilder The builder for the ChatClient used to perform the
-	 * evaluation
+	 *                          evaluation
 	 * @return A FactCheckingEvaluator configured for Bespoke Minicheck
 	 */
 	public static FactCheckingEvaluator forBespokeMinicheck(ChatClient.Builder chatClientBuilder) {
 		return FactCheckingEvaluator.builder(chatClientBuilder)
-			.evaluationPrompt(BESPOKE_EVALUATION_PROMPT_TEXT)
-			.build();
+				.evaluationPrompt(BESPOKE_EVALUATION_PROMPT_TEXT)
+				.build();
 	}
 
 	/**
 	 * Evaluates whether the response content in the EvaluationRequest is factually
 	 * supported by the context provided in the same request.
+	 *
 	 * @param evaluationRequest The request containing the response to be evaluated and
-	 * the supporting context
+	 *                          the supporting context
 	 * @return An EvaluationResponse indicating whether the claim is supported by the
 	 * document
 	 */
@@ -134,10 +136,10 @@ public class FactCheckingEvaluator implements Evaluator {
 		var context = doGetSupportingData(evaluationRequest);
 
 		String evaluationResponse = this.chatClientBuilder.build()
-			.prompt()
-			.user(userSpec -> userSpec.text(this.evaluationPrompt).param("document", context).param("claim", response))
-			.call()
-			.content();
+				.prompt()
+				.user(userSpec -> userSpec.text(this.evaluationPrompt).param("document", context).param("claim", response))
+				.call()
+				.content();
 
 		String normalizedResponse = (evaluationResponse != null) ? evaluationResponse.strip() : "";
 		boolean passing = "yes".equalsIgnoreCase(normalizedResponse);

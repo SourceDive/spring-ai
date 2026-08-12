@@ -34,68 +34,68 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OpenAiImageAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 
 	@Test
 	void generateImage() {
 		this.contextRunner.withPropertyValues("spring.ai.openai.image.options.size=1024x1024")
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				OpenAiImageModel imageModel = context.getBean(OpenAiImageModel.class);
-				ImageResponse imageResponse = imageModel.call(new ImagePrompt("forest"));
-				assertThat(imageResponse.getResults()).hasSize(1);
-				assertThat(imageResponse.getResult().getOutput().getB64Json()).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					OpenAiImageModel imageModel = context.getBean(OpenAiImageModel.class);
+					ImageResponse imageResponse = imageModel.call(new ImagePrompt("forest"));
+					assertThat(imageResponse.getResults()).hasSize(1);
+					assertThat(imageResponse.getResult().getOutput().getB64Json()).isNotEmpty();
+				});
 	}
 
 	@Test
 	void generateImageWithModel() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.image.options.model=gpt-image-1-mini",
-					"spring.ai.openai.image.options.size=1024x1024")
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				OpenAiImageModel imageModel = context.getBean(OpenAiImageModel.class);
-				ImageResponse imageResponse = imageModel.call(new ImagePrompt("forest"));
-				assertThat(imageResponse.getResults()).hasSize(1);
-				assertThat(imageResponse.getResult().getOutput().getB64Json()).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.image.options.model=gpt-image-1-mini",
+						"spring.ai.openai.image.options.size=1024x1024")
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					OpenAiImageModel imageModel = context.getBean(OpenAiImageModel.class);
+					ImageResponse imageResponse = imageModel.call(new ImagePrompt("forest"));
+					assertThat(imageResponse.getResults()).hasSize(1);
+					assertThat(imageResponse.getResult().getOutput().getB64Json()).isNotEmpty();
+				});
 	}
 
 	@Test
 	void imageActivation() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://TEST.BASE.URL",
-					"spring.ai.model.image=none")
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OpenAiImageProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAiImageModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://TEST.BASE.URL",
+						"spring.ai.model.image=none")
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(OpenAiImageProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAiImageModel.class)).isEmpty();
+				});
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://TEST.BASE.URL")
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OpenAiImageProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAiImageModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://TEST.BASE.URL")
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(OpenAiImageProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAiImageModel.class)).isNotEmpty();
+				});
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://TEST.BASE.URL",
-					"spring.ai.model.image=openai")
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OpenAiImageProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAiImageModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://TEST.BASE.URL",
+						"spring.ai.model.image=openai")
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(OpenAiImageProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAiImageModel.class)).isNotEmpty();
+				});
 
 	}
 
 	@Test
 	public void imageOptionsTest() {
 		this.contextRunner.withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 			"spring.ai.openai.api-key=API_KEY",
 			"spring.ai.openai.base-url=http://TEST.BASE.URL",
 			"spring.ai.openai.image.options.n=3",
@@ -107,24 +107,24 @@ public class OpenAiImageAutoConfigurationIT {
 			"spring.ai.openai.image.options.height=1024",
 			"spring.ai.openai.image.options.style=vivid",
 			"spring.ai.openai.image.options.user=userXYZ") // @formatter:on
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				var imageProperties = context.getBean(OpenAiImageProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					var imageProperties = context.getBean(OpenAiImageProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
-				assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
 
-				assertThat(imageProperties.getN()).isEqualTo(3);
-				assertThat(imageProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(imageProperties.getQuality()).isEqualTo("hd");
-				assertThat(imageProperties.getResponseFormat()).isEqualTo("url");
-				assertThat(imageProperties.getSize()).isEqualTo("1024x1024");
-				assertThat(imageProperties.getWidth()).isEqualTo(1024);
-				assertThat(imageProperties.getHeight()).isEqualTo(1024);
-				assertThat(imageProperties.getStyle()).isEqualTo("vivid");
-				assertThat(imageProperties.getUser()).isEqualTo("userXYZ");
-			});
+					assertThat(imageProperties.getN()).isEqualTo(3);
+					assertThat(imageProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(imageProperties.getQuality()).isEqualTo("hd");
+					assertThat(imageProperties.getResponseFormat()).isEqualTo("url");
+					assertThat(imageProperties.getSize()).isEqualTo("1024x1024");
+					assertThat(imageProperties.getWidth()).isEqualTo(1024);
+					assertThat(imageProperties.getHeight()).isEqualTo(1024);
+					assertThat(imageProperties.getStyle()).isEqualTo("vivid");
+					assertThat(imageProperties.getUser()).isEqualTo("userXYZ");
+				});
 	}
 
 }

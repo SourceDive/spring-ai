@@ -16,10 +16,10 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure;
 
-import java.util.Map;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpSseClientProperties;
 import org.springframework.boot.autoconfigure.service.connection.ConnectionDetails;
+
+import java.util.Map;
 
 /**
  * Connection details for an MCP client.

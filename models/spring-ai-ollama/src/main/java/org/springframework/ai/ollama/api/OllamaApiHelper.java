@@ -16,16 +16,15 @@
 
 package org.springframework.ai.ollama.api;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.ollama.api.OllamaApi.ChatResponse;
+import org.springframework.lang.Contract;
+import org.springframework.util.CollectionUtils;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.ollama.api.OllamaApi.ChatResponse;
-import org.springframework.lang.Contract;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author Christian Tzolov
@@ -95,12 +94,12 @@ public final class OllamaApiHelper {
 		String toolName = mergeToolName(previous, current);
 
 		return OllamaApi.Message.builder(role)
-			.content(content)
-			.thinking(thinking)
-			.images(images)
-			.toolCalls(toolCalls)
-			.toolName(toolName)
-			.build();
+				.content(content)
+				.thinking(thinking)
+				.images(images)
+				.toolCalls(toolCalls)
+				.toolName(toolName)
+				.build();
 	}
 
 	@Contract("_, !null -> !null; !null, _ -> !null")
@@ -142,7 +141,7 @@ public final class OllamaApiHelper {
 	}
 
 	private static @Nullable String mergeContent(OllamaApi.@Nullable Message previous,
-			OllamaApi.@Nullable Message current) {
+	                                             OllamaApi.@Nullable Message current) {
 		if (previous == null || previous.content() == null) {
 			return (current != null ? current.content() : null);
 		}
@@ -154,7 +153,7 @@ public final class OllamaApiHelper {
 	}
 
 	private static @Nullable List<OllamaApi.Message.ToolCall> mergeToolCall(OllamaApi.@Nullable Message previous,
-			OllamaApi.@Nullable Message current) {
+	                                                                        OllamaApi.@Nullable Message current) {
 		if (previous == null) {
 			return (current != null ? current.toolCalls() : null);
 		}
@@ -165,7 +164,7 @@ public final class OllamaApiHelper {
 	}
 
 	private static @Nullable String mergeThinking(OllamaApi.@Nullable Message previous,
-			OllamaApi.@Nullable Message current) {
+	                                              OllamaApi.@Nullable Message current) {
 		if (previous == null || previous.thinking() == null) {
 			return (current != null ? current.thinking() : null);
 		}
@@ -177,7 +176,7 @@ public final class OllamaApiHelper {
 	}
 
 	private static @Nullable String mergeToolName(OllamaApi.@Nullable Message previous,
-			OllamaApi.@Nullable Message current) {
+	                                              OllamaApi.@Nullable Message current) {
 		if (previous == null || previous.toolName() == null) {
 			return (current != null ? current.toolName() : null);
 		}
@@ -189,7 +188,7 @@ public final class OllamaApiHelper {
 	}
 
 	private static @Nullable List<String> mergeImages(OllamaApi.@Nullable Message previous,
-			OllamaApi.@Nullable Message current) {
+	                                                  OllamaApi.@Nullable Message current) {
 		if (previous == null) {
 			return (current != null ? current.images() : null);
 		}

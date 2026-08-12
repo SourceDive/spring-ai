@@ -16,9 +16,9 @@
 
 package org.springframework.ai.moderation;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Represents a single message intended for moderation, encapsulating the text content.

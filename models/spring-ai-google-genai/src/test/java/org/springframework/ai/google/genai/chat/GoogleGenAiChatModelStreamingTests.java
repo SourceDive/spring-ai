@@ -16,12 +16,6 @@
 
 package org.springframework.ai.google.genai.chat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
-
 import com.google.genai.Client;
 import com.google.genai.Models;
 import com.google.genai.ResponseStream;
@@ -35,15 +29,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.test.util.ReflectionTestUtils;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,16 +71,16 @@ public class GoogleGenAiChatModelStreamingTests {
 			Content content = Content.builder().parts(List.of(part)).build();
 			Candidate candidate = Candidate.builder().content(content).build();
 			GenerateContentResponse response = GenerateContentResponse.builder()
-				.candidates(List.of(candidate))
-				.modelVersion("v1")
-				.build();
+					.candidates(List.of(candidate))
+					.modelVersion("v1")
+					.build();
 			chunks.add(response);
 		}
 
 		ResponseStream<GenerateContentResponse> iterable = Mockito.mock(ResponseStream.class);
 		given(iterable.iterator()).willReturn(chunks.stream().map(r -> {
 			int i = Integer
-				.parseInt(r.candidates().get().get(0).content().get().parts().get().get(0).text().get().trim());
+					.parseInt(r.candidates().get().get(0).content().get().parts().get().get(0).text().get().trim());
 			if (i == 256) {
 				latch.countDown();
 			}
@@ -133,11 +132,11 @@ public class GoogleGenAiChatModelStreamingTests {
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 		ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
 		this.chatModel = GoogleGenAiChatModel.builder()
-			.genAiClient(this.client)
-			.options(GoogleGenAiChatOptions.builder().model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH).build())
-			.toolCallingManager(toolCallingManager)
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.genAiClient(this.client)
+				.options(GoogleGenAiChatOptions.builder().model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH).build())
+				.toolCallingManager(toolCallingManager)
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 	}
 
 }

@@ -16,15 +16,14 @@
 
 package org.springframework.ai.document;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.document.id.IdGenerator;
 import org.springframework.util.MimeTypeUtils;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,12 +53,12 @@ public class DocumentTests {
 		Double score = 0.95;
 
 		Document original = Document.builder()
-			.id("customId")
-			.text("Test content")
-			.media(null)
-			.metadata(metadata)
-			.score(score)
-			.build();
+				.id("customId")
+				.text("Test content")
+				.media(null)
+				.metadata(metadata)
+				.score(score)
+				.build();
 
 		Document mutated = original.mutate().build();
 
@@ -78,11 +77,11 @@ public class DocumentTests {
 		Document doc2 = Document.builder().id("customId").text("Test text").metadata(metadata).score(score).build();
 
 		Document differentDoc = Document.builder()
-			.id("differentId")
-			.text("Different content")
-			.metadata(metadata)
-			.score(score)
-			.build();
+				.id("differentId")
+				.text("Different content")
+				.metadata(metadata)
+				.score(score)
+				.build();
 
 		assertThat(doc1).isEqualTo(doc2).isNotEqualTo(differentDoc).isNotEqualTo(null).isNotEqualTo(new Object());
 
@@ -102,19 +101,19 @@ public class DocumentTests {
 		Double score = 0.95;
 
 		Document document = Document.builder()
-			.id("customId")
-			.text("Test content")
-			.media(null)
-			.metadata(metadata)
-			.score(score)
-			.build();
+				.id("customId")
+				.text("Test content")
+				.media(null)
+				.metadata(metadata)
+				.score(score)
+				.build();
 
 		String toString = document.toString();
 
 		assertThat(toString).contains("id='customId'")
-			.contains("text='Test content'")
-			.contains("metadata=" + metadata)
-			.contains("score=" + score);
+				.contains("text='Test content'")
+				.contains("metadata=" + metadata)
+				.contains("score=" + score);
 	}
 
 	@Test
@@ -201,10 +200,10 @@ public class DocumentTests {
 	@Test
 	void testMetadataKeyValueAddition() {
 		Document document = Document.builder()
-			.text("test")
-			.metadata("key1", "value1")
-			.metadata("key2", "value2")
-			.build();
+				.text("test")
+				.metadata("key1", "value1")
+				.metadata("key2", "value2")
+				.build();
 
 		assertThat(document.getMetadata()).containsEntry("key1", "value1").containsEntry("key2", "value2");
 	}
@@ -246,11 +245,11 @@ public class DocumentTests {
 		metadata.put("chain", "test");
 
 		Document document = Document.builder()
-			.text("Chain test")
-			.metadata(metadata)
-			.metadata("additional", "value")
-			.score(0.85)
-			.build();
+				.text("Chain test")
+				.metadata(metadata)
+				.metadata("additional", "value")
+				.score(0.85)
+				.build();
 
 		assertThat(document.getText()).isEqualTo("Chain test");
 		assertThat(document.getMetadata()).containsEntry("chain", "test");

@@ -16,14 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.method.progress;
 
+import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-
 /**
  * Synchronous implementation of a progress method callback.
- *
+ * <p>
  * This class creates a Consumer that invokes a method annotated with @McpProgress
  * synchronously when a progress notification is received.
  *
@@ -49,10 +49,11 @@ public final class SyncMcpProgressMethodCallback extends AbstractMcpProgressMeth
 	 * Accept the progress notification and process it.
 	 * <p>
 	 * This method builds the arguments for the method call and invokes the method.
+	 *
 	 * @param notification The progress notification, must not be null
 	 * @throws McpProgressMethodException if there is an error invoking the progress
-	 * method
-	 * @throws IllegalArgumentException if the notification is null
+	 *                                    method
+	 * @throws IllegalArgumentException   if the notification is null
 	 */
 	@Override
 	public void accept(ProgressNotification notification) {
@@ -67,14 +68,14 @@ public final class SyncMcpProgressMethodCallback extends AbstractMcpProgressMeth
 			// Invoke the method
 			this.method.setAccessible(true);
 			this.method.invoke(this.bean, args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new McpProgressMethodException("Error invoking progress method: " + this.method.getName(), e);
 		}
 	}
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -91,6 +92,7 @@ public final class SyncMcpProgressMethodCallback extends AbstractMcpProgressMeth
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new SyncMcpProgressMethodCallback instance
 		 */
 		@Override

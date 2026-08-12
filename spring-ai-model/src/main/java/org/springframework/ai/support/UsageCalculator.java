@@ -36,17 +36,17 @@ public final class UsageCalculator {
 	/**
 	 * Accumulate usage tokens from the previous chat response to the current usage
 	 * tokens.
-	 * @param currentUsage the current usage.
+	 *
+	 * @param currentUsage         the current usage.
 	 * @param previousChatResponse the previous chat response.
 	 * @return accumulated usage.
 	 */
 	public static Usage getCumulativeUsage(final Usage currentUsage,
-			final @Nullable ChatResponse previousChatResponse) {
+	                                       final @Nullable ChatResponse previousChatResponse) {
 		Usage usageFromPreviousChatResponse = null;
 		if (previousChatResponse != null) {
 			usageFromPreviousChatResponse = previousChatResponse.getMetadata().getUsage();
-		}
-		else {
+		} else {
 			// Return the current usage when the previous chat response usage is empty or
 			// null.
 			return currentUsage;
@@ -68,7 +68,7 @@ public final class UsageCalculator {
 				cacheRead = (currentUsage.getCacheReadInputTokens() != null ? currentUsage.getCacheReadInputTokens()
 						: 0L)
 						+ (usageFromPreviousChatResponse.getCacheReadInputTokens() != null
-								? usageFromPreviousChatResponse.getCacheReadInputTokens() : 0L);
+						? usageFromPreviousChatResponse.getCacheReadInputTokens() : 0L);
 			}
 			Long cacheWrite = null;
 			if (currentUsage.getCacheWriteInputTokens() != null
@@ -76,7 +76,7 @@ public final class UsageCalculator {
 				cacheWrite = (currentUsage.getCacheWriteInputTokens() != null ? currentUsage.getCacheWriteInputTokens()
 						: 0L)
 						+ (usageFromPreviousChatResponse.getCacheWriteInputTokens() != null
-								? usageFromPreviousChatResponse.getCacheWriteInputTokens() : 0L);
+						? usageFromPreviousChatResponse.getCacheWriteInputTokens() : 0L);
 			}
 			return new DefaultUsage(promptTokens, generationTokens, totalTokens, null, cacheRead, cacheWrite);
 		}
@@ -87,6 +87,7 @@ public final class UsageCalculator {
 	/**
 	 * Check if the {@link Usage} is empty. Returns true when the {@link Usage} is null.
 	 * Returns true when the {@link Usage} has zero tokens.
+	 *
 	 * @param usage the usage to check against.
 	 * @return the boolean value to represent if it is empty.
 	 */

@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -29,13 +24,17 @@ import io.modelcontextprotocol.spec.McpSchema.ErrorCodes;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
-
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.common.ErrorUtils;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+
 /**
  * Class for creating BiFunction callbacks around resource methods for stateless contexts.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpResource} into
  * callback functions that can be used to handle resource requests in stateless
  * environments. It supports various method signatures and return types, and handles URI
@@ -74,11 +73,9 @@ public final class SyncStatelessMcpResourceMethodCallback extends AbstractMcpRes
 		if (McpTransportContext.class.isAssignableFrom(paramType)) {
 			if (exchange instanceof McpTransportContext transportContext) {
 				return transportContext;
-			}
-			else if (exchange instanceof McpSyncServerExchange syncServerExchange) {
+			} else if (exchange instanceof McpSyncServerExchange syncServerExchange) {
 				return syncServerExchange.transportContext();
-			}
-			else if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
+			} else if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
 				throw new IllegalArgumentException("Unsupported Async exchange type: "
 						+ asyncServerExchange.getClass().getName() + " for Sync method: " + method.getName() + " in "
 						+ method.getDeclaringClass().getName());
@@ -96,12 +93,13 @@ public final class SyncStatelessMcpResourceMethodCallback extends AbstractMcpRes
 	 * This method extracts URI variable values from the request URI, builds the arguments
 	 * for the method call, invokes the method, and converts the result to a
 	 * ReadResourceResult.
+	 *
 	 * @param context The transport context, may be null if the method doesn't require it
 	 * @param request The resource request, must not be null
 	 * @return The resource result
-	 * @throws McpError if there is an error invoking the resource method
+	 * @throws McpError                 if there is an error invoking the resource method
 	 * @throws IllegalArgumentException if the request is null or if URI variable
-	 * extraction fails
+	 *                                  extraction fails
 	 */
 	@Override
 	public ReadResourceResult apply(McpTransportContext context, ReadResourceRequest request) {
@@ -130,18 +128,17 @@ public final class SyncStatelessMcpResourceMethodCallback extends AbstractMcpRes
 			// Convert the result to a ReadResourceResult using the converter
 			return this.resultConverter.convertToReadResourceResult(result, request.uri(), this.mimeType,
 					this.contentType, this.meta);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (e instanceof McpError mcpError && mcpError.getJsonRpcError() != null) {
 				throw mcpError;
 			}
 
 			throw McpError.builder(ErrorCodes.INVALID_PARAMS)
-				.message("Error invoking resource method: " + this.method.getName() + " in "
-						+ this.bean.getClass().getName() + ". /nCause: "
-						+ ErrorUtils.findCauseUsingPlainJava(e).getMessage())
-				.data(ErrorUtils.findCauseUsingPlainJava(e).getMessage())
-				.build();
+					.message("Error invoking resource method: " + this.method.getName() + " in "
+							+ this.bean.getClass().getName() + ". /nCause: "
+							+ ErrorUtils.findCauseUsingPlainJava(e).getMessage())
+					.data(ErrorUtils.findCauseUsingPlainJava(e).getMessage())
+					.build();
 		}
 	}
 
@@ -168,6 +165,7 @@ public final class SyncStatelessMcpResourceMethodCallback extends AbstractMcpRes
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {

@@ -16,11 +16,10 @@
 
 package org.springframework.ai.stabilityai;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.image.ImageGenerationMetadata;
+
+import java.util.Objects;
 
 /**
  * Represents metadata associated with the image generation process in the StabilityAI

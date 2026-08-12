@@ -27,8 +27,8 @@ package org.springframework.ai.chat.client.advisor.api;
  * auto-registering a duplicate.
  *
  * @author Christian Tzolov
- * @since 2.0.0
  * @see org.springframework.ai.chat.client.advisor.ToolCallingAdvisor
+ * @since 2.0.0
  */
 public interface ToolAdvisor extends Advisor {
 

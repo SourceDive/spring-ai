@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.server;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.AbstractMcpClientServerIntegrationTests;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
@@ -34,8 +30,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.provider.Arguments;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebFluxSseClientTransport;
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcSseServerTransportProvider;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +39,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
+import reactor.core.scheduler.Schedulers;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +55,7 @@ class WebMvcSseIT extends AbstractMcpClientServerIntegrationTests {
 	private WebMvcSseServerTransportProvider mcpServerTransportProvider;
 
 	static McpTransportContextExtractor<ServerRequest> TEST_CONTEXT_EXTRACTOR = r -> McpTransportContext
-		.create(Map.of("important", "value"));
+			.create(Map.of("important", "value"));
 
 	static Stream<Arguments> clientsForTesting() {
 		return Stream.of(Arguments.of("httpclient"), Arguments.of("webflux"));
@@ -67,11 +66,11 @@ class WebMvcSseIT extends AbstractMcpClientServerIntegrationTests {
 
 		clientBuilders.put("httpclient",
 				McpClient.sync(HttpClientSseClientTransport.builder("http://127.0.0.1:" + port).build())
-					.requestTimeout(Duration.ofHours(10)));
+						.requestTimeout(Duration.ofHours(10)));
 
 		clientBuilders.put("webflux", McpClient
-			.sync(WebFluxSseClientTransport.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port)).build())
-			.requestTimeout(Duration.ofHours(10)));
+				.sync(WebFluxSseClientTransport.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port)).build())
+				.requestTimeout(Duration.ofHours(10)));
 	}
 
 	private TomcatTestUtil.TomcatServer tomcatServer;
@@ -84,8 +83,7 @@ class WebMvcSseIT extends AbstractMcpClientServerIntegrationTests {
 		try {
 			this.tomcatServer.tomcat().start();
 			assertThat(this.tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
@@ -94,7 +92,7 @@ class WebMvcSseIT extends AbstractMcpClientServerIntegrationTests {
 
 		// Get the transport from Spring context
 		this.mcpServerTransportProvider = this.tomcatServer.appContext()
-			.getBean(WebMvcSseServerTransportProvider.class);
+				.getBean(WebMvcSseServerTransportProvider.class);
 
 	}
 
@@ -112,8 +110,7 @@ class WebMvcSseIT extends AbstractMcpClientServerIntegrationTests {
 			try {
 				this.tomcatServer.tomcat().stop();
 				this.tomcatServer.tomcat().destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}
@@ -136,9 +133,9 @@ class WebMvcSseIT extends AbstractMcpClientServerIntegrationTests {
 		@Bean
 		public WebMvcSseServerTransportProvider webMvcSseServerTransportProvider() {
 			return WebMvcSseServerTransportProvider.builder()
-				.messageEndpoint(MESSAGE_ENDPOINT)
-				.contextExtractor(TEST_CONTEXT_EXTRACTOR)
-				.build();
+					.messageEndpoint(MESSAGE_ENDPOINT)
+					.contextExtractor(TEST_CONTEXT_EXTRACTOR)
+					.build();
 		}
 
 		@Bean

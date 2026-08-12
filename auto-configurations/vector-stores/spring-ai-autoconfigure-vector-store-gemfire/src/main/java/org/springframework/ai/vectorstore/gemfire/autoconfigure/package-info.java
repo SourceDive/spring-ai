@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.gemfire.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

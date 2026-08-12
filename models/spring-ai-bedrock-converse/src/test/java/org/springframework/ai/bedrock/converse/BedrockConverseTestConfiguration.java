@@ -16,13 +16,12 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.time.Duration;
-
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.context.annotation.Bean;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.context.annotation.Bean;
+import java.time.Duration;
 
 @SpringBootConfiguration
 public class BedrockConverseTestConfiguration {
@@ -33,12 +32,12 @@ public class BedrockConverseTestConfiguration {
 		String modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
 
 		return BedrockProxyChatModel.builder()
-			.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-			.region(Region.US_EAST_1)
-			// .region(Region.US_EAST_1)
-			.timeout(Duration.ofSeconds(120))
-			.options(BedrockChatOptions.builder().model(modelId).build())
-			.build();
+				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+				.region(Region.US_EAST_1)
+				// .region(Region.US_EAST_1)
+				.timeout(Duration.ofSeconds(120))
+				.options(BedrockChatOptions.builder().model(modelId).build())
+				.build();
 	}
 
 }

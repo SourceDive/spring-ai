@@ -16,13 +16,12 @@
 
 package org.springframework.ai.moderation;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.model.ModelResponse;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.model.ModelResponse;
 
 /**
  * Represents a response from a moderation process, encapsulating the moderation metadata

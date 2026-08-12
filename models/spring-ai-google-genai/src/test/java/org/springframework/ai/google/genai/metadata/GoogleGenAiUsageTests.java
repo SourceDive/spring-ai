@@ -16,14 +16,14 @@
 
 package org.springframework.ai.google.genai.metadata;
 
-import java.util.List;
-
 import com.google.genai.types.GenerateContentResponseUsageMetadata;
 import com.google.genai.types.MediaModality;
 import com.google.genai.types.ModalityTokenCount;
 import com.google.genai.types.TrafficType;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,10 +39,10 @@ public class GoogleGenAiUsageTests {
 	void testBasicUsageExtraction() {
 		// Create mock usage metadata
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(150)
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(150)
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -57,11 +57,11 @@ public class GoogleGenAiUsageTests {
 	@Test
 	void testThinkingTokensExtraction() {
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(175)
-			.thoughtsTokenCount(25)
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(175)
+				.thoughtsTokenCount(25)
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -74,11 +74,11 @@ public class GoogleGenAiUsageTests {
 	@Test
 	void testCachedContentTokensExtraction() {
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(200)
-			.candidatesTokenCount(50)
-			.totalTokenCount(250)
-			.cachedContentTokenCount(80)
-			.build();
+				.promptTokenCount(200)
+				.candidatesTokenCount(50)
+				.totalTokenCount(250)
+				.cachedContentTokenCount(80)
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -89,11 +89,11 @@ public class GoogleGenAiUsageTests {
 	@Test
 	void testToolUseTokensExtraction() {
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(180)
-			.toolUsePromptTokenCount(30)
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(180)
+				.toolUsePromptTokenCount(30)
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -103,22 +103,22 @@ public class GoogleGenAiUsageTests {
 	@Test
 	void testModalityDetailsExtraction() {
 		ModalityTokenCount textModality = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(100)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(100)
+				.build();
 
 		ModalityTokenCount imageModality = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.IMAGE))
-			.tokenCount(50)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.IMAGE))
+				.tokenCount(50)
+				.build();
 
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(150)
-			.candidatesTokenCount(50)
-			.totalTokenCount(200)
-			.promptTokensDetails(List.of(textModality, imageModality))
-			.candidatesTokensDetails(List.of(textModality))
-			.build();
+				.promptTokenCount(150)
+				.candidatesTokenCount(50)
+				.totalTokenCount(200)
+				.promptTokensDetails(List.of(textModality, imageModality))
+				.candidatesTokensDetails(List.of(textModality))
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -135,11 +135,11 @@ public class GoogleGenAiUsageTests {
 	@Test
 	void testTrafficTypeExtraction() {
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(150)
-			.trafficType(new TrafficType(TrafficType.Known.ON_DEMAND))
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(150)
+				.trafficType(new TrafficType(TrafficType.Known.ON_DEMAND))
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -149,11 +149,11 @@ public class GoogleGenAiUsageTests {
 	@Test
 	void testProvisionedThroughputTrafficType() {
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(150)
-			.trafficType(new TrafficType(TrafficType.Known.PROVISIONED_THROUGHPUT))
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(150)
+				.trafficType(new TrafficType(TrafficType.Known.PROVISIONED_THROUGHPUT))
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -164,37 +164,37 @@ public class GoogleGenAiUsageTests {
 	void testCompleteMetadataExtraction() {
 		// Create modality details
 		ModalityTokenCount textPrompt = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(80)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(80)
+				.build();
 
 		ModalityTokenCount imagePrompt = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.IMAGE))
-			.tokenCount(20)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.IMAGE))
+				.tokenCount(20)
+				.build();
 
 		ModalityTokenCount textCandidate = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(50)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(50)
+				.build();
 
 		ModalityTokenCount cachedText = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(30)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(30)
+				.build();
 
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(200)
-			.thoughtsTokenCount(25)
-			.cachedContentTokenCount(30)
-			.toolUsePromptTokenCount(25)
-			.promptTokensDetails(List.of(textPrompt, imagePrompt))
-			.candidatesTokensDetails(List.of(textCandidate))
-			.cacheTokensDetails(List.of(cachedText))
-			.trafficType(new TrafficType(TrafficType.Known.ON_DEMAND))
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(200)
+				.thoughtsTokenCount(25)
+				.cachedContentTokenCount(30)
+				.toolUsePromptTokenCount(25)
+				.promptTokensDetails(List.of(textPrompt, imagePrompt))
+				.candidatesTokensDetails(List.of(textCandidate))
+				.cacheTokensDetails(List.of(cachedText))
+				.trafficType(new TrafficType(TrafficType.Known.ON_DEMAND))
+				.build();
 
 		GoogleGenAiUsage usage = GoogleGenAiUsage.from(usageMetadata);
 
@@ -252,11 +252,11 @@ public class GoogleGenAiUsageTests {
 	void testBackwardCompatibility() {
 		// Test that GoogleGenAiUsage can be used as a Usage interface
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(150)
-			.thoughtsTokenCount(25)
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(150)
+				.thoughtsTokenCount(25)
+				.build();
 
 		org.springframework.ai.chat.metadata.Usage usage = GoogleGenAiUsage.from(usageMetadata);
 

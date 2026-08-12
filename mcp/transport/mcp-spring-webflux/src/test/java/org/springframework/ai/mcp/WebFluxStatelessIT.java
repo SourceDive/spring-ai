@@ -16,9 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.time.Duration;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.AbstractStatelessIntegrationTests;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
@@ -29,15 +26,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.provider.Arguments;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebClientStreamableHttpTransport;
 import org.springframework.ai.mcp.server.webflux.transport.WebFluxStatelessServerTransport;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
+import java.time.Duration;
+import java.util.stream.Stream;
 
 @Timeout(15)
 class WebFluxStatelessIT extends AbstractStatelessIntegrationTests {
@@ -55,17 +54,17 @@ class WebFluxStatelessIT extends AbstractStatelessIntegrationTests {
 	@Override
 	protected void prepareClients(int port, String mcpEndpoint) {
 		clientBuilders
-			.put("httpclient",
-					McpClient.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
-						.endpoint(CUSTOM_MESSAGE_ENDPOINT)
-						.build()).initializationTimeout(Duration.ofHours(10)).requestTimeout(Duration.ofHours(10)));
+				.put("httpclient",
+						McpClient.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
+								.endpoint(CUSTOM_MESSAGE_ENDPOINT)
+								.build()).initializationTimeout(Duration.ofHours(10)).requestTimeout(Duration.ofHours(10)));
 		clientBuilders
-			.put("webflux", McpClient
-				.sync(WebClientStreamableHttpTransport.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
-					.endpoint(CUSTOM_MESSAGE_ENDPOINT)
-					.build())
-				.initializationTimeout(Duration.ofHours(10))
-				.requestTimeout(Duration.ofHours(10)));
+				.put("webflux", McpClient
+						.sync(WebClientStreamableHttpTransport.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
+								.endpoint(CUSTOM_MESSAGE_ENDPOINT)
+								.build())
+						.initializationTimeout(Duration.ofHours(10))
+						.requestTimeout(Duration.ofHours(10)));
 	}
 
 	@Override
@@ -81,8 +80,8 @@ class WebFluxStatelessIT extends AbstractStatelessIntegrationTests {
 	@BeforeEach
 	public void before() {
 		this.mcpStreamableServerTransport = WebFluxStatelessServerTransport.builder()
-			.messageEndpoint(CUSTOM_MESSAGE_ENDPOINT)
-			.build();
+				.messageEndpoint(CUSTOM_MESSAGE_ENDPOINT)
+				.build();
 
 		HttpHandler httpHandler = RouterFunctions.toHttpHandler(this.mcpStreamableServerTransport.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);

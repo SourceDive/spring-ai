@@ -16,15 +16,14 @@
 
 package org.springframework.ai.model.bedrock.converse.autoconfigure;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration properties for Bedrock Converse.
@@ -166,17 +165,17 @@ public class BedrockConverseProxyChatProperties {
 
 	public BedrockChatOptions toOptions() {
 		return BedrockChatOptions.builder()
-			.model(this.model)
-			.frequencyPenalty(this.frequencyPenalty)
-			.maxTokens(this.maxTokens)
-			.presencePenalty(this.presencePenalty)
-			.requestParameters(this.requestParameters)
-			.stopSequences(this.stopSequences)
-			.temperature(this.temperature)
-			.topK(this.topK)
-			.topP(this.topP)
-			.cacheOptions(this.cacheOptions != null ? this.cacheOptions.toOptions() : null)
-			.build();
+				.model(this.model)
+				.frequencyPenalty(this.frequencyPenalty)
+				.maxTokens(this.maxTokens)
+				.presencePenalty(this.presencePenalty)
+				.requestParameters(this.requestParameters)
+				.stopSequences(this.stopSequences)
+				.temperature(this.temperature)
+				.topK(this.topK)
+				.topP(this.topP)
+				.cacheOptions(this.cacheOptions != null ? this.cacheOptions.toOptions() : null)
+				.build();
 	}
 
 	public class Options {

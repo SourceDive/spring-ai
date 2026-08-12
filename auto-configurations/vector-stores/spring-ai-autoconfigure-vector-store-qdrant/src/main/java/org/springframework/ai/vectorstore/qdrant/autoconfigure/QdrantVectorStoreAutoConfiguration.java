@@ -45,7 +45,7 @@ import org.springframework.context.annotation.Bean;
  * @since 0.8.1
  */
 @AutoConfiguration
-@ConditionalOnClass({ QdrantVectorStore.class, EmbeddingModel.class })
+@ConditionalOnClass({QdrantVectorStore.class, EmbeddingModel.class})
 @EnableConfigurationProperties(QdrantVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.QDRANT,
 		matchIfMissing = true)
@@ -60,7 +60,7 @@ public class QdrantVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public QdrantClient qdrantClient(QdrantVectorStoreProperties properties,
-			QdrantConnectionDetails connectionDetails) {
+	                                 QdrantConnectionDetails connectionDetails) {
 		QdrantGrpcClient.Builder grpcClientBuilder = QdrantGrpcClient.newBuilder(connectionDetails.getHost(),
 				connectionDetails.getPort(), properties.isUseTls());
 
@@ -79,17 +79,17 @@ public class QdrantVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public QdrantVectorStore vectorStore(EmbeddingModel embeddingModel, QdrantVectorStoreProperties properties,
-			QdrantClient qdrantClient, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                     QdrantClient qdrantClient, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                     BatchingStrategy batchingStrategy) {
 		return QdrantVectorStore.builder(qdrantClient, embeddingModel)
-			.collectionName(properties.getCollectionName())
-			.contentFieldName(properties.getContentFieldName())
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.collectionName(properties.getCollectionName())
+				.contentFieldName(properties.getContentFieldName())
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 	static class PropertiesQdrantConnectionDetails implements QdrantConnectionDetails {

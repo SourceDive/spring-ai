@@ -21,10 +21,10 @@ package org.springframework.ai.observation.conventions;
  * events). Based on the OpenTelemetry Semantic Conventions for Vector Databases.
  *
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href=
  * "https://github.com/open-telemetry/semantic-conventions/tree/main/docs/database">DB
  * Semantic Conventions</a>.
+ * @since 1.0.0
  */
 public enum VectorStoreObservationAttributes {
 

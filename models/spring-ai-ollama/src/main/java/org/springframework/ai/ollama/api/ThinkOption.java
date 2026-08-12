@@ -16,8 +16,6 @@
 
 package org.springframework.ai.ollama.api;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
@@ -27,8 +25,8 @@ import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.ValueSerializer;
-import tools.jackson.databind.annotation.JsonDeserialize;
-import tools.jackson.databind.annotation.JsonSerialize;
+
+import java.util.List;
 
 /**
  * Represents the thinking option for Ollama models. The think option controls whether
@@ -38,13 +36,15 @@ import tools.jackson.databind.annotation.JsonSerialize;
  * GPT-OSS model requires string levels: "low", "medium", or "high".
  *
  * @author Mark Pollack
- * @since 1.1.0
  * @see ThinkBoolean
  * @see ThinkLevel
+ * @since 1.1.0
  */
 @JsonSerialize(using = ThinkOption.ThinkOptionSerializer.class)
 @JsonDeserialize(using = ThinkOption.ThinkOptionDeserializer.class)
-public sealed interface ThinkOption {
+public sealed
+
+interface ThinkOption {
 
 	/**
 	 * Converts this think option to its JSON representation.
@@ -61,8 +61,7 @@ public sealed interface ThinkOption {
 		public void serialize(ThinkOption value, JsonGenerator gen, SerializationContext ctxt) throws JacksonException {
 			if (value == null) {
 				gen.writeNull();
-			}
-			else {
+			} else {
 				gen.writePOJO(value.toJsonValue());
 			}
 		}
@@ -79,14 +78,11 @@ public sealed interface ThinkOption {
 			JsonToken token = p.currentToken();
 			if (token == JsonToken.VALUE_TRUE) {
 				return ThinkBoolean.ENABLED;
-			}
-			else if (token == JsonToken.VALUE_FALSE) {
+			} else if (token == JsonToken.VALUE_FALSE) {
 				return ThinkBoolean.DISABLED;
-			}
-			else if (token == JsonToken.VALUE_STRING) {
+			} else if (token == JsonToken.VALUE_STRING) {
 				return new ThinkLevel(p.getValueAsString());
-			}
-			else if (token == JsonToken.VALUE_NULL) {
+			} else if (token == JsonToken.VALUE_NULL) {
 				return null;
 			}
 			throw new IllegalStateException("Cannot deserialize ThinkOption from token: " + token);
@@ -100,7 +96,9 @@ public sealed interface ThinkOption {
 	 *
 	 * @param enabled whether thinking is enabled
 	 */
-	record ThinkBoolean(boolean enabled) implements ThinkOption {
+	record ThinkBoolean(boolean enabled) implements
+
+	ThinkOption {
 
 		/**
 		 * Constant for enabled thinking.
@@ -113,7 +111,7 @@ public sealed interface ThinkOption {
 		public static final ThinkBoolean DISABLED = new ThinkBoolean(false);
 
 		@Override
-		public Object toJsonValue() {
+		public Object toJsonValue () {
 			return this.enabled;
 		}
 
@@ -124,7 +122,9 @@ public sealed interface ThinkOption {
 	 *
 	 * @param level the thinking level: "low", "medium", or "high"
 	 */
-	record ThinkLevel(String level) implements ThinkOption {
+	record ThinkLevel(String level) implements
+
+	ThinkOption {
 
 		private static final List<String> VALID_LEVELS = List.of("low", "medium", "high");
 
@@ -154,7 +154,7 @@ public sealed interface ThinkOption {
 		}
 
 		@Override
-		public Object toJsonValue() {
+		public Object toJsonValue () {
 			return this.level;
 		}
 

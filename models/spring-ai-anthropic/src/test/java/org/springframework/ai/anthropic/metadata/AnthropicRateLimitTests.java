@@ -16,14 +16,13 @@
 
 package org.springframework.ai.anthropic.metadata;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-
 import com.anthropic.core.http.Headers;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.metadata.EmptyRateLimit;
 import org.springframework.ai.chat.metadata.RateLimit;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,13 +46,13 @@ class AnthropicRateLimitTests {
 	void fromReturnsAnthropicRateLimitWhenStandardHeadersPresent() {
 		Instant resetAt = Instant.now().plus(60, ChronoUnit.SECONDS);
 		Headers headers = Headers.builder()
-			.put("anthropic-ratelimit-requests-limit", "1000")
-			.put("anthropic-ratelimit-requests-remaining", "999")
-			.put("anthropic-ratelimit-requests-reset", resetAt.toString())
-			.put("anthropic-ratelimit-tokens-limit", "100000")
-			.put("anthropic-ratelimit-tokens-remaining", "99000")
-			.put("anthropic-ratelimit-tokens-reset", resetAt.toString())
-			.build();
+				.put("anthropic-ratelimit-requests-limit", "1000")
+				.put("anthropic-ratelimit-requests-remaining", "999")
+				.put("anthropic-ratelimit-requests-reset", resetAt.toString())
+				.put("anthropic-ratelimit-tokens-limit", "100000")
+				.put("anthropic-ratelimit-tokens-remaining", "99000")
+				.put("anthropic-ratelimit-tokens-reset", resetAt.toString())
+				.build();
 
 		RateLimit rateLimit = AnthropicRateLimit.from(headers);
 
@@ -86,13 +85,13 @@ class AnthropicRateLimitTests {
 	void fromExposesInputAndOutputTokenFamilies() {
 		Instant resetAt = Instant.now().plus(60, ChronoUnit.SECONDS);
 		Headers headers = Headers.builder()
-			.put("anthropic-ratelimit-input-tokens-limit", "50000")
-			.put("anthropic-ratelimit-input-tokens-remaining", "49500")
-			.put("anthropic-ratelimit-input-tokens-reset", resetAt.toString())
-			.put("anthropic-ratelimit-output-tokens-limit", "50000")
-			.put("anthropic-ratelimit-output-tokens-remaining", "49500")
-			.put("anthropic-ratelimit-output-tokens-reset", resetAt.toString())
-			.build();
+				.put("anthropic-ratelimit-input-tokens-limit", "50000")
+				.put("anthropic-ratelimit-input-tokens-remaining", "49500")
+				.put("anthropic-ratelimit-input-tokens-reset", resetAt.toString())
+				.put("anthropic-ratelimit-output-tokens-limit", "50000")
+				.put("anthropic-ratelimit-output-tokens-remaining", "49500")
+				.put("anthropic-ratelimit-output-tokens-reset", resetAt.toString())
+				.build();
 
 		RateLimit rateLimit = AnthropicRateLimit.from(headers);
 

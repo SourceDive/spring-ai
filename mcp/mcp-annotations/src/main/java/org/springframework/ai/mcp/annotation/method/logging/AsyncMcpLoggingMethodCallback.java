@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
+import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
+import org.springframework.ai.mcp.annotation.McpLogging;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpLogging;
-
 /**
  * Class for creating Function callbacks around logging consumer methods that return Mono.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpLogging} into
  * callback functions that can be used to handle logging message notifications in a
  * reactive way. It supports methods with either a single LoggingMessageNotification
@@ -46,11 +45,12 @@ public final class AsyncMcpLoggingMethodCallback extends AbstractMcpLoggingMetho
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns a Mono that completes when the method execution is done.
+	 *
 	 * @param notification The logging message notification, must not be null
 	 * @return A Mono that completes when the method execution is done
 	 * @throws McpLoggingConsumerMethodException if there is an error invoking the logging
-	 * consumer method
-	 * @throws IllegalArgumentException if the notification is null
+	 *                                           consumer method
+	 * @throws IllegalArgumentException          if the notification is null
 	 */
 	@Override
 	public Mono<Void> apply(LoggingMessageNotification notification) {
@@ -85,8 +85,7 @@ public final class AsyncMcpLoggingMethodCallback extends AbstractMcpLoggingMetho
 			}
 			// If the method returns void, return an empty Mono
 			return Mono.empty();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return Mono.error(new McpLoggingConsumerMethodException(
 					"Error invoking logging consumer method: " + this.method.getName(), e));
 		}
@@ -95,6 +94,7 @@ public final class AsyncMcpLoggingMethodCallback extends AbstractMcpLoggingMetho
 	/**
 	 * Validates that the method return type is compatible with the logging consumer
 	 * callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -110,6 +110,7 @@ public final class AsyncMcpLoggingMethodCallback extends AbstractMcpLoggingMetho
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -126,6 +127,7 @@ public final class AsyncMcpLoggingMethodCallback extends AbstractMcpLoggingMetho
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpLoggingConsumerMethodCallback instance
 		 */
 		@Override

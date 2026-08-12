@@ -16,15 +16,14 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+import redis.clients.jedis.RedisClient;
+
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.jspecify.annotations.Nullable;
-import redis.clients.jedis.RedisClient;
-
-import org.springframework.util.Assert;
 
 /**
  * Configuration class for RedisChatMemoryRepository.
@@ -44,19 +43,29 @@ public final class RedisChatMemoryConfig {
 	 */
 	public static final int DEFAULT_MAX_RESULTS = 1000;
 
-	/** The Redis client */
+	/**
+	 * The Redis client
+	 */
 	private final RedisClient jedisClient;
 
-	/** The index name for Redis Search */
+	/**
+	 * The index name for Redis Search
+	 */
 	private final String indexName;
 
-	/** The key prefix for stored messages */
+	/**
+	 * The key prefix for stored messages
+	 */
 	private final String keyPrefix;
 
-	/** The time-to-live in seconds for stored messages */
+	/**
+	 * The time-to-live in seconds for stored messages
+	 */
 	private final Integer timeToLiveSeconds;
 
-	/** Whether to automatically initialize the schema */
+	/**
+	 * Whether to automatically initialize the schema
+	 */
 	private final boolean initializeSchema;
 
 	/**
@@ -116,6 +125,7 @@ public final class RedisChatMemoryConfig {
 
 	/**
 	 * Gets the maximum number of conversation IDs to return.
+	 *
 	 * @return maximum number of conversation IDs
 	 */
 	public int getMaxConversationIds() {
@@ -124,6 +134,7 @@ public final class RedisChatMemoryConfig {
 
 	/**
 	 * Gets the maximum number of messages to return per conversation.
+	 *
 	 * @return maximum number of messages per conversation
 	 */
 	public int getMaxMessagesPerConversation() {
@@ -132,6 +143,7 @@ public final class RedisChatMemoryConfig {
 
 	/**
 	 * Gets the metadata field definitions.
+	 *
 	 * @return list of metadata field definitions in RedisVL-compatible format
 	 */
 	public List<Map<String, String>> getMetadataFields() {
@@ -143,32 +155,49 @@ public final class RedisChatMemoryConfig {
 	 */
 	public static class Builder {
 
-		/** The Redis client */
+		/**
+		 * The Redis client
+		 */
 		private @Nullable RedisClient jedisClient;
 
-		/** The index name */
+		/**
+		 * The index name
+		 */
 		private String indexName = DEFAULT_INDEX_NAME;
 
-		/** The key prefix */
+		/**
+		 * The key prefix
+		 */
 		private String keyPrefix = DEFAULT_KEY_PREFIX;
 
-		/** The time-to-live in seconds */
+		/**
+		 * The time-to-live in seconds
+		 */
 		private Integer timeToLiveSeconds = -1;
 
-		/** Whether to initialize the schema */
+		/**
+		 * Whether to initialize the schema
+		 */
 		private boolean initializeSchema = true;
 
-		/** Maximum number of conversation IDs to return */
+		/**
+		 * Maximum number of conversation IDs to return
+		 */
 		private int maxConversationIds = DEFAULT_MAX_RESULTS;
 
-		/** Maximum number of messages per conversation */
+		/**
+		 * Maximum number of messages per conversation
+		 */
 		private int maxMessagesPerConversation = DEFAULT_MAX_RESULTS;
 
-		/** Optional metadata field definitions for indexing */
+		/**
+		 * Optional metadata field definitions for indexing
+		 */
 		private List<Map<String, String>> metadataFields = Collections.emptyList();
 
 		/**
 		 * Sets the Redis client.
+		 *
 		 * @param jedisClient the Redis client to use
 		 * @return the builder instance
 		 */
@@ -179,6 +208,7 @@ public final class RedisChatMemoryConfig {
 
 		/**
 		 * Sets the index name.
+		 *
 		 * @param indexName the index name to use
 		 * @return the builder instance
 		 */
@@ -189,6 +219,7 @@ public final class RedisChatMemoryConfig {
 
 		/**
 		 * Sets the key prefix.
+		 *
 		 * @param keyPrefix the key prefix to use
 		 * @return the builder instance
 		 */
@@ -199,6 +230,7 @@ public final class RedisChatMemoryConfig {
 
 		/**
 		 * Sets the time-to-live duration.
+		 *
 		 * @param ttl the time-to-live duration
 		 * @return the builder instance
 		 */
@@ -211,6 +243,7 @@ public final class RedisChatMemoryConfig {
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initialize true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -222,6 +255,7 @@ public final class RedisChatMemoryConfig {
 		/**
 		 * Sets the maximum number of conversation IDs to return. Default is 1000, which
 		 * is Redis's default cursor read size.
+		 *
 		 * @param maxConversationIds maximum number of conversation IDs
 		 * @return the builder instance
 		 */
@@ -233,6 +267,7 @@ public final class RedisChatMemoryConfig {
 		/**
 		 * Sets the maximum number of messages to return per conversation. Default is
 		 * 1000, which is Redis's default cursor read size.
+		 *
 		 * @param maxMessagesPerConversation maximum number of messages
 		 * @return the builder instance
 		 */
@@ -244,7 +279,7 @@ public final class RedisChatMemoryConfig {
 		/**
 		 * Sets the metadata field definitions for proper indexing. Format is compatible
 		 * with RedisVL schema format. Each map should contain "name" and "type" keys.
-		 *
+		 * <p>
 		 * Example: <pre>
 		 * List.of(
 		 *     Map.of("name", "priority", "type", "tag"),
@@ -252,6 +287,7 @@ public final class RedisChatMemoryConfig {
 		 *     Map.of("name", "category", "type", "tag")
 		 * )
 		 * </pre>
+		 *
 		 * @param metadataFields list of field definitions
 		 * @return the builder instance
 		 */
@@ -262,6 +298,7 @@ public final class RedisChatMemoryConfig {
 
 		/**
 		 * Builds a new RedisChatMemoryConfig instance.
+		 *
 		 * @return the new configuration instance
 		 */
 		public RedisChatMemoryConfig build() {

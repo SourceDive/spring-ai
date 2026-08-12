@@ -16,13 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.method.progress;
 
-import java.lang.reflect.Method;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpProgress;
+
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,9 +47,9 @@ public class SyncMcpProgressMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleProgressNotification", ProgressNotification.class);
 
 		Consumer<ProgressNotification> callback = SyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		callback.accept(TEST_NOTIFICATION);
 
@@ -64,9 +63,9 @@ public class SyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		Consumer<ProgressNotification> callback = SyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		callback.accept(TEST_NOTIFICATION);
 
@@ -82,9 +81,9 @@ public class SyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		Consumer<ProgressNotification> callback = SyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		callback.accept(TEST_NOTIFICATION);
 
@@ -99,8 +98,8 @@ public class SyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", ProgressNotification.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Synchronous progress methods must return void");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Synchronous progress methods must return void");
 	}
 
 	@Test
@@ -110,8 +109,8 @@ public class SyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have either 1 parameter (ProgressNotification) or 3 parameters");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have either 1 parameter (ProgressNotification) or 3 parameters");
 	}
 
 	@Test
@@ -120,8 +119,8 @@ public class SyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type ProgressNotification");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type ProgressNotification");
 	}
 
 	@Test
@@ -130,8 +129,8 @@ public class SyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterTypes", String.class, int.class, boolean.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("First parameter must be of type Double or double");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("First parameter must be of type Double or double");
 	}
 
 	@Test
@@ -141,8 +140,8 @@ public class SyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("First parameter must be of type Double or double");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("First parameter must be of type Double or double");
 	}
 
 	@Test
@@ -152,8 +151,8 @@ public class SyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Second parameter must be of type String");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Second parameter must be of type String");
 	}
 
 	@Test
@@ -163,8 +162,8 @@ public class SyncMcpProgressMethodCallbackTests {
 				int.class);
 
 		assertThatThrownBy(() -> SyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Third parameter must be of type String");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Third parameter must be of type String");
 	}
 
 	@Test
@@ -173,12 +172,12 @@ public class SyncMcpProgressMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleProgressNotification", ProgressNotification.class);
 
 		Consumer<ProgressNotification> callback = SyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		assertThatThrownBy(() -> callback.accept(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Notification must not be null");
+				.hasMessageContaining("Notification must not be null");
 	}
 
 	/**

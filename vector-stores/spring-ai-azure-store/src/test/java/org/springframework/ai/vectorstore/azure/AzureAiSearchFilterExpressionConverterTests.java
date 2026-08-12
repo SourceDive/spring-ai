@@ -16,11 +16,7 @@
 
 package org.springframework.ai.vectorstore.azure;
 
-import java.util.Date;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.azure.AzureVectorStore.MetadataField;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
@@ -28,18 +24,12 @@ import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 
+import java.util.Date;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Christian Tzolov
@@ -52,8 +42,8 @@ public class AzureAiSearchFilterExpressionConverterTests {
 		FilterExpressionConverter converter = new AzureAiSearchFilterExpressionConverter(List.of());
 
 		assertThatThrownBy(() -> converter.convertExpression(new Expression(EQ, new Key("country"), new Value("BG"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name: country");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name: country");
 	}
 
 	@Test
@@ -63,11 +53,11 @@ public class AzureAiSearchFilterExpressionConverterTests {
 
 		// country >= 1970-01-01T00:00:02Z
 		String vectorExpr = converter
-			.convertExpression(new Expression(EQ, new Key("activationDate"), new Value(new Date(2000))));
+				.convertExpression(new Expression(EQ, new Key("activationDate"), new Value(new Date(2000))));
 		assertThat(vectorExpr).isEqualTo("meta_activationDate eq 1970-01-01T00:00:02Z");
 
 		vectorExpr = converter
-			.convertExpression(new Expression(EQ, new Key("activationDate"), new Value("1970-01-01T00:00:02Z")));
+				.convertExpression(new Expression(EQ, new Key("activationDate"), new Value("1970-01-01T00:00:02Z")));
 		assertThat(vectorExpr).isEqualTo("meta_activationDate eq 1970-01-01T00:00:02Z");
 	}
 
@@ -90,8 +80,8 @@ public class AzureAiSearchFilterExpressionConverterTests {
 		// genre == "drama" AND year >= 2020
 		String expected = "meta_genre eq 'drama' and meta_year ge 2020";
 		String vectorExpr = converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo(expected);
 	}
 
@@ -127,9 +117,9 @@ public class AzureAiSearchFilterExpressionConverterTests {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String expected = "meta_year ge 2020 or meta_country eq 'BG' and meta_city ne 'Sofia'";
 		String vectorExpr = converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo(expected);
 	}
 
@@ -168,8 +158,8 @@ public class AzureAiSearchFilterExpressionConverterTests {
 
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 		String expected = "meta_temperature ge -15.6 and meta_temperature le 20.13";
 	}
 
@@ -180,7 +170,7 @@ public class AzureAiSearchFilterExpressionConverterTests {
 
 		String expected = "'meta_country 1 2 3' eq 'BG'";
 		String vectorExpr = converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo(expected);
 
 		vectorExpr = converter.convertExpression(new Expression(EQ, new Key("'country 1 2 3'"), new Value("BG")));

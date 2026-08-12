@@ -16,18 +16,17 @@
 
 package org.springframework.ai.openai.moderation;
 
-import java.time.Duration;
-import java.util.Map;
-
 import com.openai.client.OpenAIClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.moderation.ModerationOptions;
 import org.springframework.ai.openai.OpenAiModerationModel;
 import org.springframework.ai.openai.OpenAiModerationOptions;
+
+import java.time.Duration;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -67,9 +66,9 @@ class OpenAiModerationModelTests {
 		OpenAiModerationOptions options = OpenAiModerationOptions.builder().model("text-moderation-stable").build();
 
 		OpenAiModerationModel model = OpenAiModerationModel.builder()
-			.openAiClient(this.mockClient)
-			.options(options)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(options)
+				.build();
 
 		assertThat(model).isNotNull();
 		assertThat(model.getOptions().getModel()).isEqualTo("text-moderation-stable");
@@ -78,8 +77,8 @@ class OpenAiModerationModelTests {
 	@Test
 	void testBuilderWithNullClient() {
 		OpenAiModerationModel model = OpenAiModerationModel.builder()
-			.options(OpenAiModerationOptions.builder().apiKey("test-key").build())
-			.build();
+				.options(OpenAiModerationOptions.builder().apiKey("test-key").build())
+				.build();
 		assertThat(model).isNotNull();
 		assertThat(model.getOptions()).isNotNull();
 	}
@@ -87,14 +86,14 @@ class OpenAiModerationModelTests {
 	@Test
 	void testMutateCreatesBuilderWithSameConfiguration() {
 		OpenAiModerationOptions options = OpenAiModerationOptions.builder()
-			.model("text-moderation-latest")
-			.baseUrl("https://custom.example.com")
-			.build();
+				.model("text-moderation-latest")
+				.baseUrl("https://custom.example.com")
+				.build();
 
 		OpenAiModerationModel model = OpenAiModerationModel.builder()
-			.openAiClient(this.mockClient)
-			.options(options)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(options)
+				.build();
 
 		OpenAiModerationModel mutatedModel = model.mutate().build();
 
@@ -107,9 +106,9 @@ class OpenAiModerationModelTests {
 		OpenAiModerationOptions options = OpenAiModerationOptions.builder().model("text-moderation-stable").build();
 
 		OpenAiModerationModel model = OpenAiModerationModel.builder()
-			.openAiClient(this.mockClient)
-			.options(options)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(options)
+				.build();
 
 		OpenAiModerationOptions newOptions = OpenAiModerationOptions.builder().model("omni-moderation-latest").build();
 
@@ -122,13 +121,13 @@ class OpenAiModerationModelTests {
 	@Test
 	void testOptionsBuilder() {
 		OpenAiModerationOptions options = OpenAiModerationOptions.builder()
-			.model("omni-moderation-latest")
-			.baseUrl("https://api.example.com")
-			.apiKey("test-key")
-			.organizationId("org-123")
-			.timeout(Duration.ofSeconds(30))
-			.maxRetries(5)
-			.build();
+				.model("omni-moderation-latest")
+				.baseUrl("https://api.example.com")
+				.apiKey("test-key")
+				.organizationId("org-123")
+				.timeout(Duration.ofSeconds(30))
+				.maxRetries(5)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("omni-moderation-latest");
 		assertThat(options.getBaseUrl()).isEqualTo("https://api.example.com");
@@ -141,11 +140,11 @@ class OpenAiModerationModelTests {
 	@Test
 	void testOptionsFrom() {
 		OpenAiModerationOptions original = OpenAiModerationOptions.builder()
-			.model("text-moderation-stable")
-			.baseUrl("https://api.example.com")
-			.apiKey("test-key")
-			.organizationId("org-123")
-			.build();
+				.model("text-moderation-stable")
+				.baseUrl("https://api.example.com")
+				.apiKey("test-key")
+				.organizationId("org-123")
+				.build();
 
 		OpenAiModerationOptions copied = OpenAiModerationOptions.builder().from(original).build();
 
@@ -183,14 +182,14 @@ class OpenAiModerationModelTests {
 	@Test
 	void testOptionsEqualsAndHashCode() {
 		OpenAiModerationOptions options1 = OpenAiModerationOptions.builder()
-			.model("omni-moderation-latest")
-			.baseUrl("https://api.example.com")
-			.build();
+				.model("omni-moderation-latest")
+				.baseUrl("https://api.example.com")
+				.build();
 
 		OpenAiModerationOptions options2 = OpenAiModerationOptions.builder()
-			.model("omni-moderation-latest")
-			.baseUrl("https://api.example.com")
-			.build();
+				.model("omni-moderation-latest")
+				.baseUrl("https://api.example.com")
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -219,21 +218,21 @@ class OpenAiModerationModelTests {
 	@Test
 	void testOptionsBuilderMergeCustomHeaders() {
 		OpenAiModerationOptions defaultOptions = OpenAiModerationOptions.builder()
-			.customHeaders(Map.of("default-header", "default-value"))
-			.build();
+				.customHeaders(Map.of("default-header", "default-value"))
+				.build();
 
 		OpenAiModerationOptions requestOptions = OpenAiModerationOptions.builder()
-			.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
-			.build();
+				.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
+				.build();
 
 		OpenAiModerationOptions mergedOptions = OpenAiModerationOptions.builder()
-			.from(defaultOptions)
-			.merge(requestOptions)
-			.build();
+				.from(defaultOptions)
+				.merge(requestOptions)
+				.build();
 
 		assertThat(mergedOptions.getCustomHeaders()).containsEntry("default-header", "default-value")
-			.containsEntry("merged-header1", "merged-value1")
-			.containsEntry("merged-header2", "merged-value2");
+				.containsEntry("merged-header1", "merged-value1")
+				.containsEntry("merged-header2", "merged-value2");
 	}
 
 }

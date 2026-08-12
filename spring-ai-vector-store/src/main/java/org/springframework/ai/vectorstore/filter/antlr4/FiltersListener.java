@@ -31,12 +31,14 @@ public interface FiltersListener extends ParseTreeListener {
 
 	/**
 	 * Enter a parse tree produced by {@link FiltersParser#where}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterWhere(FiltersParser.WhereContext ctx);
 
 	/**
 	 * Exit a parse tree produced by {@link FiltersParser#where}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitWhere(FiltersParser.WhereContext ctx);
@@ -44,6 +46,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code NinExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterNinExpression(FiltersParser.NinExpressionContext ctx);
@@ -51,6 +54,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code NinExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitNinExpression(FiltersParser.NinExpressionContext ctx);
@@ -58,6 +62,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code IsNullExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterIsNullExpression(FiltersParser.IsNullExpressionContext ctx);
@@ -65,6 +70,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code IsNullExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitIsNullExpression(FiltersParser.IsNullExpressionContext ctx);
@@ -72,6 +78,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code IsNotNullExpression} labeled alternative
 	 * in {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterIsNotNullExpression(FiltersParser.IsNotNullExpressionContext ctx);
@@ -79,6 +86,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code IsNotNullExpression} labeled alternative
 	 * in {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitIsNotNullExpression(FiltersParser.IsNotNullExpressionContext ctx);
@@ -86,6 +94,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code AndExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterAndExpression(FiltersParser.AndExpressionContext ctx);
@@ -93,6 +102,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code AndExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitAndExpression(FiltersParser.AndExpressionContext ctx);
@@ -100,6 +110,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code InExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterInExpression(FiltersParser.InExpressionContext ctx);
@@ -107,6 +118,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code InExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitInExpression(FiltersParser.InExpressionContext ctx);
@@ -114,6 +126,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code NotExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterNotExpression(FiltersParser.NotExpressionContext ctx);
@@ -121,6 +134,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code NotExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitNotExpression(FiltersParser.NotExpressionContext ctx);
@@ -128,6 +142,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code CompareExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterCompareExpression(FiltersParser.CompareExpressionContext ctx);
@@ -135,6 +150,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code CompareExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitCompareExpression(FiltersParser.CompareExpressionContext ctx);
@@ -142,6 +158,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code OrExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterOrExpression(FiltersParser.OrExpressionContext ctx);
@@ -149,6 +166,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code OrExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitOrExpression(FiltersParser.OrExpressionContext ctx);
@@ -156,6 +174,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code GroupExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterGroupExpression(FiltersParser.GroupExpressionContext ctx);
@@ -163,30 +182,35 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code GroupExpression} labeled alternative in
 	 * {@link FiltersParser#booleanExpression}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitGroupExpression(FiltersParser.GroupExpressionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link FiltersParser#constantArray}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterConstantArray(FiltersParser.ConstantArrayContext ctx);
 
 	/**
 	 * Exit a parse tree produced by {@link FiltersParser#constantArray}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitConstantArray(FiltersParser.ConstantArrayContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link FiltersParser#compare}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterCompare(FiltersParser.CompareContext ctx);
 
 	/**
 	 * Exit a parse tree produced by {@link FiltersParser#compare}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitCompare(FiltersParser.CompareContext ctx);
@@ -194,6 +218,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code CompoundIdentifier} labeled alternative
 	 * in {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterCompoundIdentifier(FiltersParser.CompoundIdentifierContext ctx);
@@ -201,6 +226,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code CompoundIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitCompoundIdentifier(FiltersParser.CompoundIdentifierContext ctx);
@@ -208,6 +234,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code SimpleIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterSimpleIdentifier(FiltersParser.SimpleIdentifierContext ctx);
@@ -215,6 +242,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code SimpleIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitSimpleIdentifier(FiltersParser.SimpleIdentifierContext ctx);
@@ -222,6 +250,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code QuotedIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterQuotedIdentifier(FiltersParser.QuotedIdentifierContext ctx);
@@ -229,6 +258,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code QuotedIdentifier} labeled alternative in
 	 * {@link FiltersParser#identifier}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitQuotedIdentifier(FiltersParser.QuotedIdentifierContext ctx);
@@ -236,6 +266,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code LongConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterLongConstant(FiltersParser.LongConstantContext ctx);
@@ -243,6 +274,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code LongConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitLongConstant(FiltersParser.LongConstantContext ctx);
@@ -250,6 +282,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code IntegerConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterIntegerConstant(FiltersParser.IntegerConstantContext ctx);
@@ -257,6 +290,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code IntegerConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitIntegerConstant(FiltersParser.IntegerConstantContext ctx);
@@ -264,6 +298,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code DecimalConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterDecimalConstant(FiltersParser.DecimalConstantContext ctx);
@@ -271,6 +306,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code DecimalConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitDecimalConstant(FiltersParser.DecimalConstantContext ctx);
@@ -278,6 +314,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code TextConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterTextConstant(FiltersParser.TextConstantContext ctx);
@@ -285,6 +322,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code TextConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitTextConstant(FiltersParser.TextConstantContext ctx);
@@ -292,6 +330,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the {@code BooleanConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void enterBooleanConstant(FiltersParser.BooleanConstantContext ctx);
@@ -299,6 +338,7 @@ public interface FiltersListener extends ParseTreeListener {
 	/**
 	 * Exit a parse tree produced by the {@code BooleanConstant} labeled alternative in
 	 * {@link FiltersParser#constant}.
+	 *
 	 * @param ctx the parse tree
 	 */
 	void exitBooleanConstant(FiltersParser.BooleanConstantContext ctx);

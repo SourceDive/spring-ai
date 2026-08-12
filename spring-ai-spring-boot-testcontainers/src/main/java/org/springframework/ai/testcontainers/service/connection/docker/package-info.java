@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.testcontainers.service.connection.docker;
 
-import org.jspecify.annotations.NullMarked;

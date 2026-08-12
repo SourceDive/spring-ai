@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mistralai;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,15 +42,15 @@ class MistralAiEmbeddingModelTests {
 		MistralAiApi mockApi = createMockApiWithEmbeddingResponse(1024);
 
 		MistralAiEmbeddingOptions options = MistralAiEmbeddingOptions.builder()
-			.model(MistralAiApi.EmbeddingModel.EMBED.getValue())
-			.build();
+				.model(MistralAiApi.EmbeddingModel.EMBED.getValue())
+				.build();
 
 		MistralAiEmbeddingModel model = MistralAiEmbeddingModel.builder()
-			.mistralAiApi(mockApi)
-			.metadataMode(MetadataMode.EMBED)
-			.options(options)
-			.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-			.build();
+				.mistralAiApi(mockApi)
+				.metadataMode(MetadataMode.EMBED)
+				.options(options)
+				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+				.build();
 
 		assertThat(model.dimensions()).isEqualTo(1024);
 	}
@@ -61,15 +60,15 @@ class MistralAiEmbeddingModelTests {
 		MistralAiApi mockApi = createMockApiWithEmbeddingResponse(1536);
 
 		MistralAiEmbeddingOptions options = MistralAiEmbeddingOptions.builder()
-			.model(MistralAiApi.EmbeddingModel.CODESTRAL_EMBED.getValue())
-			.build();
+				.model(MistralAiApi.EmbeddingModel.CODESTRAL_EMBED.getValue())
+				.build();
 
 		MistralAiEmbeddingModel model = MistralAiEmbeddingModel.builder()
-			.mistralAiApi(mockApi)
-			.metadataMode(MetadataMode.EMBED)
-			.options(options)
-			.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-			.build();
+				.mistralAiApi(mockApi)
+				.metadataMode(MetadataMode.EMBED)
+				.options(options)
+				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+				.build();
 
 		assertThat(model.dimensions()).isEqualTo(1536);
 	}
@@ -82,11 +81,11 @@ class MistralAiEmbeddingModelTests {
 		MistralAiEmbeddingOptions options = MistralAiEmbeddingOptions.builder().model("unknown-model").build();
 
 		MistralAiEmbeddingModel model = MistralAiEmbeddingModel.builder()
-			.mistralAiApi(mockApi)
-			.metadataMode(MetadataMode.EMBED)
-			.options(options)
-			.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-			.build();
+				.mistralAiApi(mockApi)
+				.metadataMode(MetadataMode.EMBED)
+				.options(options)
+				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+				.build();
 
 		// Should fall back to super.dimensions() which detects dimensions from the API
 		// response
@@ -103,19 +102,19 @@ class MistralAiEmbeddingModelTests {
 		for (MistralAiApi.EmbeddingModel embeddingModel : MistralAiApi.EmbeddingModel.values()) {
 			MistralAiApi mockApi = createMockApiWithEmbeddingResponse(1024);
 			MistralAiEmbeddingOptions options = MistralAiEmbeddingOptions.builder()
-				.model(embeddingModel.getValue())
-				.build();
+					.model(embeddingModel.getValue())
+					.build();
 
 			MistralAiEmbeddingModel model = MistralAiEmbeddingModel.builder()
-				.mistralAiApi(mockApi)
-				.metadataMode(MetadataMode.EMBED)
-				.options(options)
-				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-				.build();
+					.mistralAiApi(mockApi)
+					.metadataMode(MetadataMode.EMBED)
+					.options(options)
+					.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+					.build();
 
 			// Each model should have a valid dimension (not the fallback -1)
 			assertThat(model.dimensions()).as("Model %s should have a dimension mapping", embeddingModel.getValue())
-				.isGreaterThan(0);
+					.isGreaterThan(0);
 		}
 	}
 
@@ -124,11 +123,11 @@ class MistralAiEmbeddingModelTests {
 		MistralAiApi mockApi = createMockApiWithEmbeddingResponse(1536);
 
 		MistralAiEmbeddingModel model = MistralAiEmbeddingModel.builder()
-			.mistralAiApi(mockApi)
-			.options(MistralAiEmbeddingOptions.builder()
-				.model(MistralAiApi.EmbeddingModel.CODESTRAL_EMBED.getValue())
-				.build())
-			.build();
+				.mistralAiApi(mockApi)
+				.options(MistralAiEmbeddingOptions.builder()
+						.model(MistralAiApi.EmbeddingModel.CODESTRAL_EMBED.getValue())
+						.build())
+				.build();
 
 		assertThat(model).isNotNull();
 		assertThat(model.dimensions()).isEqualTo(1536);

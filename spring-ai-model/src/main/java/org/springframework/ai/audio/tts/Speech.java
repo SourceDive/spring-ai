@@ -16,13 +16,12 @@
 
 package org.springframework.ai.audio.tts;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ModelResult;
 import org.springframework.ai.model.ResultMetadata;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Implementation of the {@link ModelResult} interface for the speech model.

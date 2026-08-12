@@ -16,16 +16,15 @@
 
 package org.springframework.ai.google.genai;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions.Builder;
 import org.springframework.ai.google.genai.common.GoogleGenAiSafetySetting;
 import org.springframework.ai.google.genai.common.GoogleGenAiServiceTier;
 import org.springframework.ai.google.genai.common.GoogleGenAiThinkingLevel;
 import org.springframework.ai.test.options.AbstractChatOptionsTests;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,9 +49,9 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testThinkingBudgetWithBuilder() {
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingBudget(15000)
-			.build();
+				.model("test-model")
+				.thinkingBudget(15000)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getThinkingBudget()).isEqualTo(15000);
@@ -61,19 +60,19 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testEqualsAndHashCodeWithThinkingBudget() {
 		GoogleGenAiChatOptions options1 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingBudget(12853)
-			.build();
+				.model("test-model")
+				.thinkingBudget(12853)
+				.build();
 
 		GoogleGenAiChatOptions options2 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingBudget(12853)
-			.build();
+				.model("test-model")
+				.thinkingBudget(12853)
+				.build();
 
 		GoogleGenAiChatOptions options3 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingBudget(25000)
-			.build();
+				.model("test-model")
+				.thinkingBudget(25000)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -84,19 +83,19 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testEqualsAndHashCodeWithLabels() {
 		GoogleGenAiChatOptions options1 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.labels(Map.of("org", "my-org"))
-			.build();
+				.model("test-model")
+				.labels(Map.of("org", "my-org"))
+				.build();
 
 		GoogleGenAiChatOptions options2 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.labels(Map.of("org", "my-org"))
-			.build();
+				.model("test-model")
+				.labels(Map.of("org", "my-org"))
+				.build();
 
 		GoogleGenAiChatOptions options3 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.labels(Map.of("org", "other-org"))
-			.build();
+				.model("test-model")
+				.labels(Map.of("org", "other-org"))
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -121,9 +120,9 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testThinkingLevelWithBuilder() {
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
-			.build();
+				.model("test-model")
+				.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getThinkingLevel()).isEqualTo(GoogleGenAiThinkingLevel.HIGH);
@@ -132,19 +131,19 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testEqualsAndHashCodeWithThinkingLevel() {
 		GoogleGenAiChatOptions options1 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
-			.build();
+				.model("test-model")
+				.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
+				.build();
 
 		GoogleGenAiChatOptions options2 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
-			.build();
+				.model("test-model")
+				.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
+				.build();
 
 		GoogleGenAiChatOptions options3 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingLevel(GoogleGenAiThinkingLevel.LOW)
-			.build();
+				.model("test-model")
+				.thinkingLevel(GoogleGenAiThinkingLevel.LOW)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -154,11 +153,11 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testThinkingLevelWithBudgetAndIncludeThoughts() {
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.thinkingBudget(8192)
-			.includeThoughts(true)
-			.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
-			.build();
+				.model("test-model")
+				.thinkingBudget(8192)
+				.includeThoughts(true)
+				.thinkingLevel(GoogleGenAiThinkingLevel.HIGH)
+				.build();
 
 		assertThat(options.getThinkingBudget()).isEqualTo(8192);
 		assertThat(options.getIncludeThoughts()).isTrue();
@@ -170,9 +169,9 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 		// Test all enum values work correctly
 		for (GoogleGenAiThinkingLevel level : GoogleGenAiThinkingLevel.values()) {
 			GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-				.model("test-model")
-				.thinkingLevel(level)
-				.build();
+					.model("test-model")
+					.thinkingLevel(level)
+					.build();
 			assertThat(options.getThinkingLevel()).isEqualTo(level);
 		}
 	}
@@ -180,9 +179,9 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testIncludeServerSideToolInvocationsWithBuilder() {
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.includeServerSideToolInvocations(true)
-			.build();
+				.model("test-model")
+				.includeServerSideToolInvocations(true)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getIncludeServerSideToolInvocations()).isTrue();
@@ -191,19 +190,19 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testEqualsAndHashCodeWithIncludeServerSideToolInvocations() {
 		GoogleGenAiChatOptions options1 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.includeServerSideToolInvocations(true)
-			.build();
+				.model("test-model")
+				.includeServerSideToolInvocations(true)
+				.build();
 
 		GoogleGenAiChatOptions options2 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.includeServerSideToolInvocations(true)
-			.build();
+				.model("test-model")
+				.includeServerSideToolInvocations(true)
+				.build();
 
 		GoogleGenAiChatOptions options3 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.includeServerSideToolInvocations(false)
-			.build();
+				.model("test-model")
+				.includeServerSideToolInvocations(false)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -213,9 +212,9 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testServiceTierWithBuilder() {
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.serviceTier(GoogleGenAiServiceTier.PRIORITY)
-			.build();
+				.model("test-model")
+				.serviceTier(GoogleGenAiServiceTier.PRIORITY)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getServiceTier()).isEqualTo(GoogleGenAiServiceTier.PRIORITY);
@@ -224,19 +223,19 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testEqualsAndHashCodeWithServiceTier() {
 		GoogleGenAiChatOptions options1 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.serviceTier(GoogleGenAiServiceTier.PRIORITY)
-			.build();
+				.model("test-model")
+				.serviceTier(GoogleGenAiServiceTier.PRIORITY)
+				.build();
 
 		GoogleGenAiChatOptions options2 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.serviceTier(GoogleGenAiServiceTier.PRIORITY)
-			.build();
+				.model("test-model")
+				.serviceTier(GoogleGenAiServiceTier.PRIORITY)
+				.build();
 
 		GoogleGenAiChatOptions options3 = GoogleGenAiChatOptions.builder()
-			.model("test-model")
-			.serviceTier(GoogleGenAiServiceTier.STANDARD)
-			.build();
+				.model("test-model")
+				.serviceTier(GoogleGenAiServiceTier.STANDARD)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -246,22 +245,22 @@ public class GoogleGenAiChatOptionsTest extends AbstractChatOptionsTests<GoogleG
 	@Test
 	public void testCombineWithCollections() {
 		GoogleGenAiSafetySetting baseSafetySetting = new GoogleGenAiSafetySetting.Builder()
-			.withCategory(GoogleGenAiSafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT)
-			.withThreshold(GoogleGenAiSafetySetting.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE)
-			.build();
+				.withCategory(GoogleGenAiSafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT)
+				.withThreshold(GoogleGenAiSafetySetting.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE)
+				.build();
 		GoogleGenAiChatOptions base = GoogleGenAiChatOptions.builder()
-			.labels(Map.of("base-key", "base-value"))
-			.safetySettings(List.of(baseSafetySetting))
-			.build();
+				.labels(Map.of("base-key", "base-value"))
+				.safetySettings(List.of(baseSafetySetting))
+				.build();
 
 		GoogleGenAiSafetySetting overrideSafetySetting = new GoogleGenAiSafetySetting.Builder()
-			.withCategory(GoogleGenAiSafetySetting.HarmCategory.HARM_CATEGORY_HARASSMENT)
-			.withThreshold(GoogleGenAiSafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE)
-			.build();
+				.withCategory(GoogleGenAiSafetySetting.HarmCategory.HARM_CATEGORY_HARASSMENT)
+				.withThreshold(GoogleGenAiSafetySetting.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE)
+				.build();
 		GoogleGenAiChatOptions override = GoogleGenAiChatOptions.builder()
-			.labels(Map.of("override-key", "override-value"))
-			.safetySettings(List.of(overrideSafetySetting))
-			.build();
+				.labels(Map.of("override-key", "override-value"))
+				.safetySettings(List.of(overrideSafetySetting))
+				.build();
 
 		GoogleGenAiChatOptions merged = base.mutate().combineWith(override.mutate()).build();
 

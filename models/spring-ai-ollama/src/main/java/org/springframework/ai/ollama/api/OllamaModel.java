@@ -55,6 +55,7 @@ public enum OllamaModel implements ChatModelDescription {
 	/**
 	 * Qwen3 4B with thinking support. This variant auto-enables thinking by default in
 	 * Ollama 0.12+, providing separate reasoning traces in the response.
+	 *
 	 * @see OllamaChatOptions#thinkOption
 	 */
 	QWEN3_4B_THINKING("qwen3:4b-thinking"),

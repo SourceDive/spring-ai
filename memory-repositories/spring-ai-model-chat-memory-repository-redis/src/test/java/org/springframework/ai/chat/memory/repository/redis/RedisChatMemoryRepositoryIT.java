@@ -16,16 +16,10 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.util.List;
-
 import com.redis.testcontainers.RedisContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -33,6 +27,11 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +49,7 @@ class RedisChatMemoryRepositoryIT {
 	static RedisContainer redisContainer = new RedisContainer("redis/redis-stack:latest");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	private ChatMemoryRepository chatMemoryRepository;
 
@@ -61,13 +60,13 @@ class RedisChatMemoryRepositoryIT {
 		// Create RedisClient directly with container properties for more reliable
 		// connection
 		this.jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 
 		this.chatMemoryRepository = RedisChatMemoryRepository.builder()
-			.jedisClient(this.jedisClient)
-			.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
-			.build();
+				.jedisClient(this.jedisClient)
+				.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
+				.build();
 
 		// Clear any existing data
 		for (String conversationId : this.chatMemoryRepository.findConversationIds()) {
@@ -184,11 +183,11 @@ class RedisChatMemoryRepositoryIT {
 		@Bean
 		ChatMemoryRepository chatMemoryRepository() {
 			return RedisChatMemoryRepository.builder()
-				.jedisClient(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build())
-				.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
-				.build();
+					.jedisClient(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build())
+					.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
+					.build();
 		}
 
 	}

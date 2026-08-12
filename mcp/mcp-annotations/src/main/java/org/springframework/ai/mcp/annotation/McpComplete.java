@@ -16,22 +16,18 @@
 
 package org.springframework.ai.mcp.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotates a method used for completion functionality in the MCP framework. This
  * annotation can be used in two mutually exclusive ways: 1. To complete an expression
  * within a URI template of a resource 2. To complete a prompt argument
- *
+ * <p>
  * Note: You must use either the prompt or the uri attribute, but not both simultaneously.
  *
  * @author Christian Tzolov
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface McpComplete {

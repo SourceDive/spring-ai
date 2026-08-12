@@ -16,18 +16,8 @@
 
 package org.springframework.ai.chroma.vectorstore;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.chromadb.ChromaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.chroma.ChromaImage;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
@@ -42,6 +32,15 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
+import org.testcontainers.chromadb.ChromaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,8 +63,8 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 	}
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
 
 	List<Document> documents = List.of(
 			new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!",
@@ -94,7 +93,7 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -107,7 +106,7 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 			assertThat(results2).hasSize(0);
 		});
 	}
@@ -121,9 +120,9 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 			resetCollection(vectorStore);
 
 			var document = Document.builder()
-				.id("simpleDoc")
-				.text("The sky is blue because of Rayleigh scattering.")
-				.build();
+					.id("simpleDoc")
+					.text("The sky is blue because of Rayleigh scattering.")
+					.build();
 
 			vectorStore.add(List.of(document));
 
@@ -164,23 +163,23 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 			assertThat(results).hasSize(2);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Bulgaria'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Bulgaria'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("country == 'Netherlands'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("country == 'Netherlands'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country == 'Netherlands')")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("NOT(country == 'Netherlands')")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
@@ -205,7 +204,7 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(document));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -247,7 +246,7 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 
 			var request = SearchRequest.builder().query("Great").topK(5).build();
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.from(request).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.from(request).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -256,7 +255,7 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.from(request).similarityThreshold(similarityThreshold).build());
+					.similaritySearch(SearchRequest.from(request).similarityThreshold(similarityThreshold).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -288,17 +287,17 @@ public class ChromaVectorStoreIT extends BaseVectorStoreTests {
 		@Bean
 		public VectorStore chromaVectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi) {
 			return ChromaVectorStore.builder(chromaApi, embeddingModel)
-				.collectionName("TestCollection")
-				.initializeSchema(true)
-				.build();
+					.collectionName("TestCollection")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

@@ -40,6 +40,7 @@ public interface AnthropicHttpClientBuilderCustomizer {
 	 * idempotent; side effects that must fire exactly once (for example, registering an
 	 * {@code EventListenerFactory} or binding external state) should guard against
 	 * re-execution.
+	 *
 	 * @param builder the builder to customize
 	 */
 	void customize(SpringAiAnthropicHttpClient.Builder builder);

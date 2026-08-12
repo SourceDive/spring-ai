@@ -31,6 +31,7 @@ public interface ChromaConnectionDetails extends ConnectionDetails {
 
 	int getPort();
 
-	@Nullable String getKeyToken();
+	@Nullable
+	String getKeyToken();
 
 }

@@ -16,16 +16,8 @@
 
 package org.springframework.ai.tool.support;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.execution.DefaultToolCallResultConverter;
@@ -34,6 +26,13 @@ import org.springframework.ai.util.ParsingUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Miscellaneous tool utility methods. Mainly for internal use within the framework.
@@ -60,8 +59,7 @@ public final class ToolUtils {
 		String toolName;
 		if (tool == null) {
 			toolName = method.getName();
-		}
-		else {
+		} else {
 			toolName = StringUtils.hasText(tool.name()) ? tool.name() : method.getName();
 		}
 		validateToolName(toolName);
@@ -97,8 +95,7 @@ public final class ToolUtils {
 		var type = tool.resultConverter();
 		try {
 			return type.getDeclaredConstructor().newInstance();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to instantiate ToolCallResultConverter: " + type, e);
 		}
 	}
@@ -106,13 +103,13 @@ public final class ToolUtils {
 	public static List<String> getDuplicateToolNames(List<ToolCallback> toolCallbacks) {
 		Assert.notNull(toolCallbacks, "toolCallbacks cannot be null");
 		return toolCallbacks.stream()
-			.collect(Collectors.groupingBy(toolCallback -> toolCallback.getToolDefinition().name(),
-					Collectors.counting()))
-			.entrySet()
-			.stream()
-			.filter(entry -> entry.getValue() > 1)
-			.map(Map.Entry::getKey)
-			.toList();
+				.collect(Collectors.groupingBy(toolCallback -> toolCallback.getToolDefinition().name(),
+						Collectors.counting()))
+				.entrySet()
+				.stream()
+				.filter(entry -> entry.getValue() > 1)
+				.map(Map.Entry::getKey)
+				.toList();
 	}
 
 	public static List<String> getDuplicateToolNames(ToolCallback... toolCallbacks) {
@@ -123,6 +120,7 @@ public final class ToolUtils {
 	/**
 	 * Validates that a tool name follows recommended naming conventions. Logs a warning
 	 * if the tool name contains characters that may not be compatible with some LLMs.
+	 *
 	 * @param toolName the tool name to validate
 	 */
 	private static void validateToolName(String toolName) {

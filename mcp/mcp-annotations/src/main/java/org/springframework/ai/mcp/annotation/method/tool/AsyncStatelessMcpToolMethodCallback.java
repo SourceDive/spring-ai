@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
+import reactor.core.publisher.Mono;
+
+import java.util.function.BiFunction;
 
 /**
  * Class for creating Function callbacks around async stateless tool methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpTool} into
  * callback functions that can be used to handle tool requests asynchronously in a
  * stateless manner using McpTransportContext.
@@ -40,12 +39,12 @@ public final class AsyncStatelessMcpToolMethodCallback
 		implements BiFunction<McpTransportContext, CallToolRequest, Mono<CallToolResult>> {
 
 	public AsyncStatelessMcpToolMethodCallback(ReturnMode returnMode, java.lang.reflect.Method toolMethod,
-			Object toolObject) {
+	                                           Object toolObject) {
 		super(returnMode, toolMethod, toolObject, Exception.class);
 	}
 
 	public AsyncStatelessMcpToolMethodCallback(ReturnMode returnMode, java.lang.reflect.Method toolMethod,
-			Object toolObject, Class<? extends Throwable> toolCallExceptionClass) {
+	                                           Object toolObject, Class<? extends Throwable> toolCallExceptionClass) {
 		super(returnMode, toolMethod, toolObject, toolCallExceptionClass);
 	}
 
@@ -71,8 +70,9 @@ public final class AsyncStatelessMcpToolMethodCallback
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns the result asynchronously.
+	 *
 	 * @param mcpTransportContext The transport context
-	 * @param request The tool call request, must not be null
+	 * @param request             The tool call request, must not be null
 	 * @return A Mono containing the result of the method invocation
 	 */
 	@Override
@@ -89,8 +89,7 @@ public final class AsyncStatelessMcpToolMethodCallback
 				// Handle reactive types - method return types should always be reactive
 				return this.convertToCallToolResult(result);
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				if (this.toolCallExceptionClass.isInstance(e)) {
 					return this.createAsyncErrorResult(e);
 				}

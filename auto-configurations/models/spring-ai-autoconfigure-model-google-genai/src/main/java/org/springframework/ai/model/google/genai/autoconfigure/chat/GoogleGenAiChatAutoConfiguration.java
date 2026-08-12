@@ -16,15 +16,12 @@
 
 package org.springframework.ai.model.google.genai.autoconfigure.chat;
 
-import java.io.IOException;
-
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.genai.Client;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.observation.ChatModelObservationConvention;
 import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContentService;
@@ -46,6 +43,8 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+
 /**
  * Auto-configuration for Google GenAI Chat.
  *
@@ -58,10 +57,10 @@ import org.springframework.util.StringUtils;
  * @since 1.1.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ Client.class, GoogleGenAiChatModel.class })
+@ConditionalOnClass({Client.class, GoogleGenAiChatModel.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.GOOGLE_GEN_AI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ GoogleGenAiChatProperties.class, GoogleGenAiConnectionProperties.class })
+@EnableConfigurationProperties({GoogleGenAiChatProperties.class, GoogleGenAiConnectionProperties.class})
 public class GoogleGenAiChatAutoConfiguration {
 
 	private static final Log logger = LogFactory.getLog(GoogleGenAiChatAutoConfiguration.class);
@@ -81,8 +80,7 @@ public class GoogleGenAiChatAutoConfiguration {
 			if (properties.isVertexAi()) {
 				logger.info(
 						"Both API Key and Vertex AI config detected. Vertex AI mode is explicitly enabled; the API key will be ignored.");
-			}
-			else {
+			} else {
 				logger.warn("Both API Key and Vertex AI config detected. Defaulting to Gemini Developer API (API Key). "
 						+ "To use Vertex AI instead, set 'spring.ai.google.genai.vertex-ai=true'.");
 			}
@@ -95,15 +93,12 @@ public class GoogleGenAiChatAutoConfiguration {
 						"Vertex AI mode requires both 'project-id' and 'location' to be configured.");
 			}
 			configureVertexAi(builder, properties);
-		}
-		else if (hasApiKey) {
+		} else if (hasApiKey) {
 			builder.apiKey(properties.getApiKey());
-		}
-		else if (hasVertexConfig) {
+		} else if (hasVertexConfig) {
 			logger.debug("Project ID and Location detected. Defaulting to Vertex AI mode.");
 			configureVertexAi(builder, properties);
-		}
-		else {
+		} else {
 			throw new IllegalStateException("Incomplete Google GenAI configuration: Provide 'api-key' for Gemini API "
 					+ "or 'project-id' and 'location' for Vertex AI.");
 		}
@@ -132,17 +127,17 @@ public class GoogleGenAiChatAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public GoogleGenAiChatModel googleGenAiChatModel(Client googleGenAiClient, GoogleGenAiChatProperties chatProperties,
-			ToolCallingManager toolCallingManager, ApplicationContext context,
-			ObjectProvider<RetryTemplate> retryTemplate, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention) {
+	                                                 ToolCallingManager toolCallingManager, ApplicationContext context,
+	                                                 ObjectProvider<RetryTemplate> retryTemplate, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                 ObjectProvider<ChatModelObservationConvention> observationConvention) {
 
 		GoogleGenAiChatModel chatModel = GoogleGenAiChatModel.builder()
-			.genAiClient(googleGenAiClient)
-			.options(chatProperties.toOptions())
-			.toolCallingManager(toolCallingManager)
-			.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.genAiClient(googleGenAiClient)
+				.options(chatProperties.toOptions())
+				.toolCallingManager(toolCallingManager)
+				.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 

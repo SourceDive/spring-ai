@@ -16,11 +16,10 @@
 
 package org.springframework.ai.tool.support;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.annotation.Tool;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

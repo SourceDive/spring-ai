@@ -16,29 +16,23 @@
 
 package org.springframework.ai.vectorstore.coherence;
 
-import java.util.List;
-
 import com.tangosol.util.Filter;
 import com.tangosol.util.Filters;
 import com.tangosol.util.ValueExtractor;
 import com.tangosol.util.extractor.ChainedExtractor;
 import com.tangosol.util.extractor.UniversalExtractor;
-
-import org.springframework.ai.vectorstore.filter.Filter.Expression;
-import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
-import org.springframework.ai.vectorstore.filter.Filter.Group;
-import org.springframework.ai.vectorstore.filter.Filter.Key;
-import org.springframework.ai.vectorstore.filter.Filter.Operand;
-import org.springframework.ai.vectorstore.filter.Filter.Value;
+import org.springframework.ai.vectorstore.filter.Filter.*;
 import org.springframework.ai.vectorstore.filter.FilterHelper;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * Converts Spring AI {@link Expression} into Coherence {@link Filter}.
  *
  * @author Aleks Seovic
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CoherenceFilterExpressionConverter {
 
 	public Filter<?> convert(Operand expression) {
@@ -66,7 +60,7 @@ public class CoherenceFilterExpressionConverter {
 			case LTE -> Filters.lessEqual(extractor(expression.left()), value(expression.right()));
 			case IN -> Filters.in(extractor(expression.left()), ((List) value(expression.right())).toArray());
 			case NIN ->
-				Filters.not(Filters.in(extractor(expression.left()), ((List) value(expression.right())).toArray()));
+					Filters.not(Filters.in(extractor(expression.left()), ((List) value(expression.right())).toArray()));
 			case AND -> Filters.all(convert(expression.left()), convert(expression.right()));
 			case OR -> Filters.any(convert(expression.left()), convert(expression.right()));
 			default -> throw new IllegalStateException("Unexpected value: " + expression.type());

@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
+import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import org.reactivestreams.Publisher;
+import org.springframework.util.ConcurrentReferenceHashMap;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Optional;
-
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import org.springframework.util.ConcurrentReferenceHashMap;
 
 public final class ReactiveUtils {
 

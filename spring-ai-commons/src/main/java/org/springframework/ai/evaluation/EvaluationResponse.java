@@ -16,10 +16,10 @@
 
 package org.springframework.ai.evaluation;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
 
 public class EvaluationResponse {
 

@@ -51,7 +51,7 @@ class GemFireVectorStorePropertiesTests {
 		props.setPort(9090);
 		props.setBeamWidth(10);
 		props.setMaxConnections(10);
-		props.setFields(new String[] { "test" });
+		props.setFields(new String[]{"test"});
 		props.setBuckets(10);
 		props.setUsername("username");
 		props.setPassword("password");
@@ -62,7 +62,7 @@ class GemFireVectorStorePropertiesTests {
 		assertThat(props.getPort()).isEqualTo(9090);
 		assertThat(props.getBeamWidth()).isEqualTo(10);
 		assertThat(props.getMaxConnections()).isEqualTo(10);
-		assertThat(props.getFields()).isEqualTo(new String[] { "test" });
+		assertThat(props.getFields()).isEqualTo(new String[]{"test"});
 		assertThat(props.getBuckets()).isEqualTo(10);
 		assertThat(props.getUsername()).isEqualTo("username");
 		assertThat(props.getPassword()).isEqualTo("password");

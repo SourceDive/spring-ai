@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.anthropic.autoconfigure;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.anthropic.AnthropicCacheOptions;
 import org.springframework.ai.anthropic.AnthropicCacheStrategy;
 import org.springframework.ai.anthropic.AnthropicCacheTtl;
 import org.springframework.ai.chat.messages.MessageType;
+
+import java.util.Map;
 
 public class AnthropicCacheProperties {
 
@@ -69,11 +68,11 @@ public class AnthropicCacheProperties {
 
 	public AnthropicCacheOptions toOptions() {
 		return AnthropicCacheOptions.builder()
-			.strategy(this.strategy)
-			.messageTypeTtl(this.messageTypeTtl)
-			.messageTypeMinContentLengths(this.messageTypeMinContentLengths)
-			.multiBlockSystemCaching(this.multiBlockSystemCaching)
-			.build();
+				.strategy(this.strategy)
+				.messageTypeTtl(this.messageTypeTtl)
+				.messageTypeMinContentLengths(this.messageTypeMinContentLengths)
+				.multiBlockSystemCaching(this.multiBlockSystemCaching)
+				.build();
 	}
 
 }

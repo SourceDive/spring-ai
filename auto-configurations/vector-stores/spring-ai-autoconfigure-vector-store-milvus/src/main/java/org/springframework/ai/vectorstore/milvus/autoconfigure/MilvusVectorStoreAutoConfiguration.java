@@ -16,14 +16,11 @@
 
 package org.springframework.ai.vectorstore.milvus.autoconfigure;
 
-import java.util.concurrent.TimeUnit;
-
 import io.micrometer.observation.ObservationRegistry;
 import io.milvus.client.MilvusServiceClient;
 import io.milvus.param.ConnectParam;
 import io.milvus.param.IndexType;
 import io.milvus.param.MetricType;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -39,6 +36,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.context.annotation.Bean;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * {@link AutoConfiguration Auto-configuration} for Milvus Vector Store.
  *
@@ -48,8 +47,8 @@ import org.springframework.context.annotation.Bean;
  * @author Ilayaperumal Gopinathan
  */
 @AutoConfiguration
-@ConditionalOnClass({ MilvusVectorStore.class, EmbeddingModel.class })
-@EnableConfigurationProperties({ MilvusServiceClientProperties.class, MilvusVectorStoreProperties.class })
+@ConditionalOnClass({MilvusVectorStore.class, EmbeddingModel.class})
+@EnableConfigurationProperties({MilvusServiceClientProperties.class, MilvusVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.MILVUS,
 		matchIfMissing = true)
 public class MilvusVectorStoreAutoConfiguration {
@@ -70,45 +69,45 @@ public class MilvusVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MilvusVectorStore vectorStore(MilvusServiceClient milvusClient, EmbeddingModel embeddingModel,
-			MilvusVectorStoreProperties properties, BatchingStrategy batchingStrategy,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention) {
+	                                     MilvusVectorStoreProperties properties, BatchingStrategy batchingStrategy,
+	                                     ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<VectorStoreObservationConvention> customObservationConvention) {
 
 		return MilvusVectorStore.builder(milvusClient, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.databaseName(properties.getDatabaseName())
-			.collectionName(properties.getCollectionName())
-			.embeddingDimension(properties.getEmbeddingDimension())
-			.indexType(IndexType.valueOf(properties.getIndexType().name()))
-			.metricType(MetricType.valueOf(properties.getMetricType().name()))
-			.indexParameters(properties.getIndexParameters())
-			.iDFieldName(properties.getIdFieldName())
-			.autoId(properties.isAutoId())
-			.contentFieldName(properties.getContentFieldName())
-			.metadataFieldName(properties.getMetadataFieldName())
-			.embeddingFieldName(properties.getEmbeddingFieldName())
-			.batchingStrategy(batchingStrategy)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.build();
+				.initializeSchema(properties.isInitializeSchema())
+				.databaseName(properties.getDatabaseName())
+				.collectionName(properties.getCollectionName())
+				.embeddingDimension(properties.getEmbeddingDimension())
+				.indexType(IndexType.valueOf(properties.getIndexType().name()))
+				.metricType(MetricType.valueOf(properties.getMetricType().name()))
+				.indexParameters(properties.getIndexParameters())
+				.iDFieldName(properties.getIdFieldName())
+				.autoId(properties.isAutoId())
+				.contentFieldName(properties.getContentFieldName())
+				.metadataFieldName(properties.getMetadataFieldName())
+				.embeddingFieldName(properties.getEmbeddingFieldName())
+				.batchingStrategy(batchingStrategy)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.build();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MilvusServiceClient milvusClient(MilvusVectorStoreProperties serverProperties,
-			MilvusServiceClientProperties clientProperties, MilvusServiceClientConnectionDetails connectionDetails) {
+	                                        MilvusServiceClientProperties clientProperties, MilvusServiceClientConnectionDetails connectionDetails) {
 
 		var builder = ConnectParam.newBuilder()
-			.withHost(connectionDetails.getHost())
-			.withPort(connectionDetails.getPort())
-			.withDatabaseName(serverProperties.getDatabaseName())
-			.withConnectTimeout(clientProperties.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
-			.withKeepAliveTime(clientProperties.getKeepAliveTimeMs(), TimeUnit.MILLISECONDS)
-			.withKeepAliveTimeout(clientProperties.getKeepAliveTimeoutMs(), TimeUnit.MILLISECONDS)
-			.withRpcDeadline(clientProperties.getRpcDeadlineMs(), TimeUnit.MILLISECONDS)
-			.withSecure(clientProperties.isSecure())
-			.withIdleTimeout(clientProperties.getIdleTimeoutMs(), TimeUnit.MILLISECONDS)
-			.withAuthorization(clientProperties.getUsername(), clientProperties.getPassword());
+				.withHost(connectionDetails.getHost())
+				.withPort(connectionDetails.getPort())
+				.withDatabaseName(serverProperties.getDatabaseName())
+				.withConnectTimeout(clientProperties.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
+				.withKeepAliveTime(clientProperties.getKeepAliveTimeMs(), TimeUnit.MILLISECONDS)
+				.withKeepAliveTimeout(clientProperties.getKeepAliveTimeoutMs(), TimeUnit.MILLISECONDS)
+				.withRpcDeadline(clientProperties.getRpcDeadlineMs(), TimeUnit.MILLISECONDS)
+				.withSecure(clientProperties.isSecure())
+				.withIdleTimeout(clientProperties.getIdleTimeoutMs(), TimeUnit.MILLISECONDS)
+				.withAuthorization(clientProperties.getUsername(), clientProperties.getPassword());
 
 		if (clientProperties.isSecure()) {
 			PropertyMapper mapper = PropertyMapper.get();

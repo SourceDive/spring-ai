@@ -16,33 +16,24 @@
 
 package org.springframework.ai.mistralai.api;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.*;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk.ImageUrl;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk.ImageUrl.ImageDetail;
+import org.springframework.boot.test.json.BasicJsonTester;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.core.io.ClassPathResource;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import tools.jackson.databind.json.JsonMapper;
-
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ContentChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ContentDeserializer;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ContentSerializer;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk.ImageUrl;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk.ImageUrl.ImageDetail;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ReferenceChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.Role;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.TextChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ThinkChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ThinkingContentChunk;
-import org.springframework.boot.test.json.BasicJsonTester;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.core.io.ClassPathResource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -127,8 +118,7 @@ class MistralAiChatCompletionMessageTests {
 	private static String extractResourceContent(String path) {
 		try {
 			return new ClassPathResource(path).getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException ioException) {
+		} catch (IOException ioException) {
 			throw new IllegalStateException("Unable to extract file content!", ioException);
 		}
 	}
@@ -139,13 +129,13 @@ class MistralAiChatCompletionMessageTests {
 		@Test
 		void serializeChatCompletionMessageWithStringContent() throws IOException {
 			assertThat(chatCompletionMessageTester.write(CHAT_COMPLETION_MESSAGE_WITH_STRING_CONTENT))
-				.isEqualToJson(CHAT_COMPLETION_MESSAGE_WITH_STRING_CONTENT_AS_STRING);
+					.isEqualToJson(CHAT_COMPLETION_MESSAGE_WITH_STRING_CONTENT_AS_STRING);
 		}
 
 		@Test
 		void serializeChatCompletionMessageWithContentChunksContent() throws IOException {
 			assertThat(chatCompletionMessageTester.write(CHAT_COMPLETION_MESSAGE_WITH_CONTENT_CHUNKS_CONTENT))
-				.isEqualToJson(CHAT_COMPLETION_MESSAGE_WITH_CONTENT_CHUNKS_CONTENT_AS_STRING);
+					.isEqualToJson(CHAT_COMPLETION_MESSAGE_WITH_CONTENT_CHUNKS_CONTENT_AS_STRING);
 		}
 
 	}
@@ -156,14 +146,14 @@ class MistralAiChatCompletionMessageTests {
 		@Test
 		void deserializeChatCompletionMessageWithStringContent() throws IOException {
 			assertThat(chatCompletionMessageTester.parse(CHAT_COMPLETION_MESSAGE_WITH_STRING_CONTENT_AS_STRING))
-				.isEqualTo(CHAT_COMPLETION_MESSAGE_WITH_STRING_CONTENT);
+					.isEqualTo(CHAT_COMPLETION_MESSAGE_WITH_STRING_CONTENT);
 
 		}
 
 		@Test
 		void deserializeChatCompletionMessageWithContentChunksContent() throws IOException {
 			assertThat(chatCompletionMessageTester.parse(CHAT_COMPLETION_MESSAGE_WITH_CONTENT_CHUNKS_CONTENT_AS_STRING))
-				.isEqualTo(CHAT_COMPLETION_MESSAGE_WITH_CONTENT_CHUNKS_CONTENT);
+					.isEqualTo(CHAT_COMPLETION_MESSAGE_WITH_CONTENT_CHUNKS_CONTENT);
 		}
 
 	}
@@ -339,8 +329,8 @@ class MistralAiChatCompletionMessageTests {
 			// @formatter:on
 			var chatCompletionMessage = new ChatCompletionMessage(contentChunks, Role.ASSISTANT);
 			assertThat(chatCompletionMessage.extractTextContent()).startsWith(CONTENT_TEXT)
-				.contains(System.lineSeparator())
-				.endsWith(anotherContentText);
+					.contains(System.lineSeparator())
+					.endsWith(anotherContentText);
 		}
 
 	}
@@ -434,8 +424,8 @@ class MistralAiChatCompletionMessageTests {
 			var contentChunks = createContentChunks(thinkingContentChunks);
 			var chatCompletionMessage = new ChatCompletionMessage(contentChunks, Role.ASSISTANT);
 			assertThat(chatCompletionMessage.extractThinkingTextContent()).startsWith(THINKING_TEXT)
-				.contains(System.lineSeparator())
-				.endsWith(anotherThinkingText);
+					.contains(System.lineSeparator())
+					.endsWith(anotherThinkingText);
 		}
 
 	}

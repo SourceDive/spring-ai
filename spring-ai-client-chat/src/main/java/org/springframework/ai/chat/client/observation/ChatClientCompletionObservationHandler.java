@@ -16,17 +16,16 @@
 
 package org.springframework.ai.chat.client.observation;
 
-import java.util.List;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.observation.ObservabilityHelper;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Handler for emitting the chat client completion content to logs.
@@ -51,13 +50,13 @@ public class ChatClientCompletionObservationHandler implements ObservationHandle
 		}
 
 		return context.getResponse()
-			.chatResponse()
-			.getResults()
-			.stream()
-			.map(Generation::getOutput)
-			.map(Message::getText)
-			.filter(StringUtils::hasText)
-			.toList();
+				.chatResponse()
+				.getResults()
+				.stream()
+				.map(Generation::getOutput)
+				.map(Message::getText)
+				.filter(StringUtils::hasText)
+				.toList();
 	}
 
 	@Override

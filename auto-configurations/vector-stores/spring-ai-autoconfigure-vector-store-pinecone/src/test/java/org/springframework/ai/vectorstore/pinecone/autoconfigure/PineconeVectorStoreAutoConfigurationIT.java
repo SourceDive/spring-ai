@@ -16,19 +16,11 @@
 
 package org.springframework.ai.vectorstore.pinecone.autoconfigure;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -44,6 +36,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -56,12 +55,12 @@ import static org.hamcrest.Matchers.hasSize;
 public class PineconeVectorStoreAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(PineconeVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.pinecone.api-key=" + System.getenv("PINECONE_API_KEY"),
-				"spring.ai.vectorstore.pinecone.index-name=spring-ai-test-index",
-				"spring.ai.vectorstore.pinecone.content-field-name=customContentField",
-				"spring.ai.vectorstore.pinecone.distance-metadata-field-name=customDistanceField");
+			.withConfiguration(AutoConfigurations.of(PineconeVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.pinecone.api-key=" + System.getenv("PINECONE_API_KEY"),
+					"spring.ai.vectorstore.pinecone.index-name=spring-ai-test-index",
+					"spring.ai.vectorstore.pinecone.content-field-name=customContentField",
+					"spring.ai.vectorstore.pinecone.distance-metadata-field-name=customDistanceField");
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -72,8 +71,7 @@ public class PineconeVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -99,12 +97,12 @@ public class PineconeVectorStoreAutoConfigurationIT {
 					VectorStoreObservationContext.Operation.ADD);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+							hasSize(1));
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -126,8 +124,8 @@ public class PineconeVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+							hasSize(0));
 		});
 	}
 

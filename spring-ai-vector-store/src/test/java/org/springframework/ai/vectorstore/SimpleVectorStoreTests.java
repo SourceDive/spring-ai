@@ -16,22 +16,10 @@
 
 package org.springframework.ai.vectorstore;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -41,11 +29,15 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeType;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -63,8 +55,8 @@ class SimpleVectorStoreTests {
 	void setUp() {
 		this.mockEmbeddingModel = mock(EmbeddingModel.class);
 		when(this.mockEmbeddingModel.dimensions()).thenReturn(3);
-		when(this.mockEmbeddingModel.embed(any(String.class))).thenReturn(new float[] { 0.1f, 0.2f, 0.3f });
-		when(this.mockEmbeddingModel.embed(any(Document.class))).thenReturn(new float[] { 0.1f, 0.2f, 0.3f });
+		when(this.mockEmbeddingModel.embed(any(String.class))).thenReturn(new float[]{0.1f, 0.2f, 0.3f});
+		when(this.mockEmbeddingModel.embed(any(Document.class))).thenReturn(new float[]{0.1f, 0.2f, 0.3f});
 		this.vectorStore = new SimpleVectorStore(SimpleVectorStore.builder(this.mockEmbeddingModel));
 	}
 
@@ -96,14 +88,14 @@ class SimpleVectorStoreTests {
 	@Test
 	void shouldHandleEmptyDocumentList() {
 		assertThatThrownBy(() -> this.vectorStore.add(Collections.emptyList()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Documents list cannot be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Documents list cannot be empty");
 	}
 
 	@Test
 	void shouldHandleNullDocumentList() {
 		assertThatThrownBy(() -> this.vectorStore.add(null)).isInstanceOf(NullPointerException.class)
-			.hasMessage("Documents list cannot be null");
+				.hasMessage("Documents list cannot be null");
 	}
 
 	@Test
@@ -142,7 +134,7 @@ class SimpleVectorStoreTests {
 	@Test
 	void shouldPerformSimilaritySearchWithThreshold() {
 		// Configure mock to return different embeddings for different queries
-		when(this.mockEmbeddingModel.embed("query")).thenReturn(new float[] { 0.9f, 0.9f, 0.9f });
+		when(this.mockEmbeddingModel.embed("query")).thenReturn(new float[]{0.9f, 0.9f, 0.9f});
 
 		Document doc = Document.builder().id("1").text("test content").build();
 
@@ -157,10 +149,10 @@ class SimpleVectorStoreTests {
 	@Test
 	void shouldSaveAndLoadVectorStore() throws IOException {
 		Document doc = Document.builder()
-			.id("1")
-			.text("test content")
-			.metadata(new HashMap<>(Map.of("key", "value")))
-			.build();
+				.id("1")
+				.text("test content")
+				.metadata(new HashMap<>(Map.of("key", "value")))
+				.build();
 
 		this.vectorStore.add(List.of(doc));
 
@@ -184,8 +176,8 @@ class SimpleVectorStoreTests {
 		when(mockResource.getInputStream()).thenThrow(new IOException("Resource not found"));
 
 		assertThatThrownBy(() -> this.vectorStore.load(mockResource)).isInstanceOf(RuntimeException.class)
-			.hasCauseInstanceOf(IOException.class)
-			.hasMessageContaining("Resource not found");
+				.hasCauseInstanceOf(IOException.class)
+				.hasMessageContaining("Resource not found");
 	}
 
 	@Test
@@ -193,7 +185,7 @@ class SimpleVectorStoreTests {
 		File invalidFile = new File("/invalid/path/file.json");
 
 		assertThatThrownBy(() -> this.vectorStore.save(invalidFile)).isInstanceOf(RuntimeException.class)
-			.hasCauseInstanceOf(IOException.class);
+				.hasCauseInstanceOf(IOException.class);
 	}
 
 	@Test
@@ -237,53 +229,53 @@ class SimpleVectorStoreTests {
 	@Test
 	void shouldRejectInvalidSimilarityThreshold() {
 		assertThatThrownBy(() -> SearchRequest.builder().query("test").similarityThreshold(2.0f).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Similarity threshold must be in [0,1] range.");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Similarity threshold must be in [0,1] range.");
 	}
 
 	@Test
 	void shouldRejectNegativeTopK() {
 		assertThatThrownBy(() -> SearchRequest.builder().query("test").topK(-1).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("TopK should be positive.");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("TopK should be positive.");
 	}
 
 	@Test
 	void shouldHandleCosineSimilarityEdgeCases() {
-		float[] zeroVector = new float[] { 0f, 0f, 0f };
-		float[] normalVector = new float[] { 1f, 1f, 1f };
+		float[] zeroVector = new float[]{0f, 0f, 0f};
+		float[] normalVector = new float[]{1f, 1f, 1f};
 
 		assertThatThrownBy(() -> SimpleVectorStore.EmbeddingMath.cosineSimilarity(zeroVector, normalVector))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Vectors cannot have zero norm");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Vectors cannot have zero norm");
 	}
 
 	@Test
 	void shouldHandleVectorLengthMismatch() {
-		float[] vector1 = new float[] { 1f, 2f };
-		float[] vector2 = new float[] { 1f, 2f, 3f };
+		float[] vector1 = new float[]{1f, 2f};
+		float[] vector2 = new float[]{1f, 2f, 3f};
 
 		assertThatThrownBy(() -> SimpleVectorStore.EmbeddingMath.cosineSimilarity(vector1, vector2))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Vectors lengths must be equal");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Vectors lengths must be equal");
 	}
 
 	@Test
 	void shouldHandleNullVectors() {
-		float[] vector = new float[] { 1f, 2f, 3f };
+		float[] vector = new float[]{1f, 2f, 3f};
 
 		assertThatThrownBy(() -> SimpleVectorStore.EmbeddingMath.cosineSimilarity(null, vector))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessage("Vectors must not be null");
+				.isInstanceOf(RuntimeException.class)
+				.hasMessage("Vectors must not be null");
 
 		assertThatThrownBy(() -> SimpleVectorStore.EmbeddingMath.cosineSimilarity(vector, null))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessage("Vectors must not be null");
+				.isInstanceOf(RuntimeException.class)
+				.hasMessage("Vectors must not be null");
 	}
 
 	@Test
 	void shouldFailNonTextDocuments() {
-		Media media = new Media(MimeType.valueOf("image/png"), new ByteArrayResource(new byte[] { 0x00 }));
+		Media media = new Media(MimeType.valueOf("image/png"), new ByteArrayResource(new byte[]{0x00}));
 
 		Document imgDoc = Document.builder().media(media).metadata(Map.of("fileName", "pixel.png")).build();
 

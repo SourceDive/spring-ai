@@ -32,7 +32,7 @@ public class OllamaChatAutoConfigurationTests {
 	public void propertiesTest() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.ollama.base-url=TEST_BASE_URL",
 				"spring.ai.ollama.chat.model=MODEL_XYZ",
 				"spring.ai.ollama.chat.temperature=0.55",
@@ -41,24 +41,24 @@ public class OllamaChatAutoConfigurationTests {
 				"spring.ai.ollama.chat.think=high")
 			// @formatter:on
 
-			.withConfiguration(BaseOllamaIT.ollamaAutoConfig(OllamaChatAutoConfiguration.class))
-			.run(context -> {
-				var chatProperties = context.getBean(OllamaChatProperties.class);
-				var connectionProperties = context.getBean(OllamaConnectionProperties.class);
+				.withConfiguration(BaseOllamaIT.ollamaAutoConfig(OllamaChatAutoConfiguration.class))
+				.run(context -> {
+					var chatProperties = context.getBean(OllamaChatProperties.class);
+					var connectionProperties = context.getBean(OllamaConnectionProperties.class);
 
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(chatProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(chatProperties.getModel()).isEqualTo("MODEL_XYZ");
 
-				assertThat(chatProperties.toOptions().getTemperature()).isEqualTo(0.55);
-				assertThat(chatProperties.toOptions().getTopP()).isEqualTo(0.56);
+					assertThat(chatProperties.toOptions().getTemperature()).isEqualTo(0.55);
+					assertThat(chatProperties.toOptions().getTopP()).isEqualTo(0.56);
 
-				assertThat(chatProperties.toOptions().getTopK()).isEqualTo(123);
+					assertThat(chatProperties.toOptions().getTopK()).isEqualTo(123);
 
-				assertThat(chatProperties.getThink()).isEqualTo(OllamaThinkProperties.HIGH);
-				assertThat(chatProperties.toOptions().getThinkOption())
-					.isEqualTo(org.springframework.ai.ollama.api.ThinkOption.ThinkLevel.HIGH);
-			});
+					assertThat(chatProperties.getThink()).isEqualTo(OllamaThinkProperties.HIGH);
+					assertThat(chatProperties.toOptions().getThinkOption())
+							.isEqualTo(org.springframework.ai.ollama.api.ThinkOption.ThinkLevel.HIGH);
+				});
 	}
 
 }

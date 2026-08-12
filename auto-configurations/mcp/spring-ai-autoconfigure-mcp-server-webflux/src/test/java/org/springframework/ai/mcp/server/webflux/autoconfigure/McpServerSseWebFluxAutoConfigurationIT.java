@@ -18,8 +18,6 @@ package org.springframework.ai.mcp.server.webflux.autoconfigure;
 
 import io.modelcontextprotocol.server.McpSyncServer;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerJsonMapperAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerSseProperties;
@@ -27,6 +25,7 @@ import org.springframework.ai.mcp.server.webflux.transport.WebFluxSseServerTrans
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.web.reactive.function.server.RouterFunction;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -35,8 +34,8 @@ import static org.mockito.Mockito.mockingDetails;
 class McpServerSseWebFluxAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpServerSseWebFluxAutoConfiguration.class,
-				McpServerAutoConfiguration.class, McpServerJsonMapperAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpServerSseWebFluxAutoConfiguration.class,
+					McpServerAutoConfiguration.class, McpServerJsonMapperAutoConfiguration.class));
 
 	@Test
 	void defaultConfiguration() {
@@ -56,19 +55,19 @@ class McpServerSseWebFluxAutoConfigurationIT {
 	@Test
 	void endpointConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.base-url=http://localhost:8080",
-					"spring.ai.mcp.server.sse-endpoint=/events",
-					"spring.ai.mcp.server.sse-message-endpoint=/api/mcp/message")
-			.run(context -> {
-				McpServerSseProperties sseProperties = context.getBean(McpServerSseProperties.class);
-				assertThat(sseProperties.getBaseUrl()).isEqualTo("http://localhost:8080");
-				assertThat(sseProperties.getSseEndpoint()).isEqualTo("/events");
-				assertThat(sseProperties.getSseMessageEndpoint()).isEqualTo("/api/mcp/message");
+				.withPropertyValues("spring.ai.mcp.server.base-url=http://localhost:8080",
+						"spring.ai.mcp.server.sse-endpoint=/events",
+						"spring.ai.mcp.server.sse-message-endpoint=/api/mcp/message")
+				.run(context -> {
+					McpServerSseProperties sseProperties = context.getBean(McpServerSseProperties.class);
+					assertThat(sseProperties.getBaseUrl()).isEqualTo("http://localhost:8080");
+					assertThat(sseProperties.getSseEndpoint()).isEqualTo("/events");
+					assertThat(sseProperties.getSseMessageEndpoint()).isEqualTo("/api/mcp/message");
 
-				// Verify the server is configured with the endpoints
-				McpSyncServer server = context.getBean(McpSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					// Verify the server is configured with the endpoints
+					McpSyncServer server = context.getBean(McpSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
@@ -82,7 +81,7 @@ class McpServerSseWebFluxAutoConfigurationIT {
 	@Test
 	void stdioEnabledConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.stdio=true")
-			.run(context -> assertThat(context).doesNotHaveBean(WebFluxSseServerTransportProvider.class));
+				.run(context -> assertThat(context).doesNotHaveBean(WebFluxSseServerTransportProvider.class));
 	}
 
 	@Test
@@ -96,8 +95,8 @@ class McpServerSseWebFluxAutoConfigurationIT {
 	@Test
 	void serverBaseUrlConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.base-url=/test")
-			.run(context -> assertThat(context.getBean(WebFluxSseServerTransportProvider.class)).extracting("baseUrl")
-				.isEqualTo("/test"));
+				.run(context -> assertThat(context.getBean(WebFluxSseServerTransportProvider.class)).extracting("baseUrl")
+						.isEqualTo("/test"));
 	}
 
 	@Test
@@ -108,7 +107,7 @@ class McpServerSseWebFluxAutoConfigurationIT {
 
 			// Verify that the RouterFunction is created from the provider
 			WebFluxSseServerTransportProvider serverTransport = context
-				.getBean(WebFluxSseServerTransportProvider.class);
+					.getBean(WebFluxSseServerTransportProvider.class);
 			RouterFunction<?> routerFunction = context.getBean(RouterFunction.class);
 			assertThat(routerFunction).isNotNull().isEqualTo(serverTransport.getRouterFunction());
 		});
@@ -117,13 +116,13 @@ class McpServerSseWebFluxAutoConfigurationIT {
 	@Test
 	void routerFunctionIsCustom() {
 		this.contextRunner
-			.withBean("webfluxSseServerRouterFunction", RouterFunction.class, () -> mock(RouterFunction.class))
-			.run(context -> {
-				assertThat(context).hasSingleBean(RouterFunction.class);
+				.withBean("webfluxSseServerRouterFunction", RouterFunction.class, () -> mock(RouterFunction.class))
+				.run(context -> {
+					assertThat(context).hasSingleBean(RouterFunction.class);
 
-				RouterFunction<?> routerFunction = context.getBean(RouterFunction.class);
-				assertThat(mockingDetails(routerFunction).isMock()).isTrue();
-			});
+					RouterFunction<?> routerFunction = context.getBean(RouterFunction.class);
+					assertThat(mockingDetails(routerFunction).isMock()).isTrue();
+				});
 	}
 
 }

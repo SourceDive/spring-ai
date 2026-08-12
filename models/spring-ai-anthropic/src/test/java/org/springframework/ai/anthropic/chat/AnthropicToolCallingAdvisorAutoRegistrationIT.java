@@ -43,11 +43,11 @@ class AnthropicToolCallingAdvisorAutoRegistrationIT extends AbstractToolCallingA
 	@Override
 	protected ChatModel getChatModel() {
 		return AnthropicChatModel.builder()
-			.options(AnthropicChatOptions.builder()
-				.apiKey(System.getenv("ANTHROPIC_API_KEY"))
-				.model(Model.CLAUDE_SONNET_4_6.asString())
-				.build())
-			.build();
+				.options(AnthropicChatOptions.builder()
+						.apiKey(System.getenv("ANTHROPIC_API_KEY"))
+						.model(Model.CLAUDE_SONNET_4_6.asString())
+						.build())
+				.build();
 	}
 
 	@SpringBootConfiguration

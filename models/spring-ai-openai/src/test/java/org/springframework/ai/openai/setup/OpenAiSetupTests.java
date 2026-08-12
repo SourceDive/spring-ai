@@ -16,22 +16,20 @@
 
 package org.springframework.ai.openai.setup;
 
-import java.lang.reflect.Field;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.openai.azure.credential.AzureApiKeyCredential;
 import com.openai.client.OpenAIClient;
 import com.openai.core.ClientOptions;
 import com.openai.models.ChatModel;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OpenAiSetupTests {
 

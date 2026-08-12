@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.adapter;
 
-import java.util.List;
-
 import io.modelcontextprotocol.spec.McpSchema;
-
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.common.MetaUtils;
+
+import java.util.List;
 
 /**
  * Utility class that converts {@link McpResource} annotations into MCP schema objects.
@@ -47,10 +46,10 @@ public final class ResourceAdapter {
 		var meta = MetaUtils.getMeta(mcpResourceAnnotation.metaProvider());
 
 		var resourceBuilder = McpSchema.Resource.builder(mcpResourceAnnotation.uri(), name)
-			.title(mcpResourceAnnotation.title())
-			.description(mcpResourceAnnotation.description())
-			.mimeType(mcpResourceAnnotation.mimeType())
-			.meta(meta);
+				.title(mcpResourceAnnotation.title())
+				.description(mcpResourceAnnotation.description())
+				.mimeType(mcpResourceAnnotation.mimeType())
+				.meta(meta);
 
 		// Only set annotations if not default value is provided
 		// This is a workaround since Java annotations do not support null default values
@@ -60,7 +59,7 @@ public final class ResourceAdapter {
 		var annotations = mcpResourceAnnotation.annotations();
 		if (annotations != null && annotations.lastModified() != null && !annotations.lastModified().isEmpty()) {
 			resourceBuilder
-				.annotations(new McpSchema.Annotations(List.of(annotations.audience()), annotations.priority()));
+					.annotations(new McpSchema.Annotations(List.of(annotations.audience()), annotations.priority()));
 		}
 
 		return resourceBuilder.build();
@@ -74,10 +73,10 @@ public final class ResourceAdapter {
 		var meta = MetaUtils.getMeta(mcpResource.metaProvider());
 
 		return McpSchema.ResourceTemplate.builder(mcpResource.uri(), name)
-			.description(mcpResource.description())
-			.mimeType(mcpResource.mimeType())
-			.meta(meta)
-			.build();
+				.description(mcpResource.description())
+				.mimeType(mcpResource.mimeType())
+				.meta(meta)
+				.build();
 	}
 
 }

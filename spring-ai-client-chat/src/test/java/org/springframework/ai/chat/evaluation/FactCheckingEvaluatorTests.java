@@ -16,8 +16,6 @@
 
 package org.springframework.ai.chat.evaluation;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +24,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatModel;
@@ -36,6 +33,8 @@ import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.evaluation.EvaluationRequest;
 import org.springframework.ai.evaluation.EvaluationResponse;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,29 +60,29 @@ class FactCheckingEvaluatorTests {
 	@Test
 	void whenChatClientBuilderIsNullThenThrow() {
 		assertThatThrownBy(() -> FactCheckingEvaluator.builder(null).build()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("ChatClientBuilder cannot be null");
+				.hasMessageContaining("ChatClientBuilder cannot be null");
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	void whenEvaluationPromptIsNullThenUseDefaultEvaluationPromptText() {
 		FactCheckingEvaluator evaluator = FactCheckingEvaluator.builder(ChatClient.builder(mock(ChatModel.class)))
-			.build();
+				.build();
 		assertThat(evaluator).isNotNull();
 	}
 
 	@Test
 	void whenForBespokeMinicheckThenUseBespokeEvaluationPromptText() {
 		FactCheckingEvaluator evaluator = FactCheckingEvaluator
-			.forBespokeMinicheck(ChatClient.builder(mock(ChatModel.class)));
+				.forBespokeMinicheck(ChatClient.builder(mock(ChatModel.class)));
 		assertThat(evaluator).isNotNull();
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "yes", " yes", "yes ", " yes ", "YES", " YES\n", "\tYes\t" })
+	@ValueSource(strings = {"yes", " yes", "yes ", " yes ", "YES", " YES\n", "\tYes\t"})
 	void whenEvaluationResponseIsYesWithWhitespaceThenPass(String response) {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(response)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(response)))));
 		given(this.chatModel.getOptions()).willReturn(ChatOptions.builder().build());
 
 		FactCheckingEvaluator evaluator = FactCheckingEvaluator.builder(ChatClient.builder(this.chatModel)).build();
@@ -93,10 +92,10 @@ class FactCheckingEvaluatorTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "no", " no ", "yes and more", "maybe" })
+	@ValueSource(strings = {"no", " no ", "yes and more", "maybe"})
 	void whenEvaluationResponseIsNotYesThenFail(String response) {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(response)))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage(response)))));
 		given(this.chatModel.getOptions()).willReturn(ChatOptions.builder().build());
 
 		FactCheckingEvaluator evaluator = FactCheckingEvaluator.builder(ChatClient.builder(this.chatModel)).build();

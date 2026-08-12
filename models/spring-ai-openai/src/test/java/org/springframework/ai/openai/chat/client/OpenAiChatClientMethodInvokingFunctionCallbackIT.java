@@ -16,13 +16,9 @@
 
 package org.springframework.ai.openai.chat.client;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ToolContext;
@@ -33,6 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.ReflectionUtils;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -223,11 +222,9 @@ class OpenAiChatClientMethodInvokingFunctionCallbackIT {
 			double temperature = 0;
 			if (city.contains("Paris")) {
 				temperature = 15;
-			}
-			else if (city.contains("Tokyo")) {
+			} else if (city.contains("Tokyo")) {
 				temperature = 10;
-			}
-			else if (city.contains("San Francisco")) {
+			} else if (city.contains("San Francisco")) {
 				temperature = 30;
 			}
 

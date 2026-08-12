@@ -31,25 +31,25 @@ class QueryTests {
 	@Test
 	void whenTextIsNullThenThrow() {
 		assertThatThrownBy(() -> new Query(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("text cannot be null or empty");
+				.hasMessageContaining("text cannot be null or empty");
 	}
 
 	@Test
 	void whenTextIsEmptyThenThrow() {
 		assertThatThrownBy(() -> new Query("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("text cannot be null or empty");
+				.hasMessageContaining("text cannot be null or empty");
 	}
 
 	@Test
 	void whenTextIsBlankThenThrow() {
 		assertThatThrownBy(() -> new Query("   ")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("text cannot be null or empty");
+				.hasMessageContaining("text cannot be null or empty");
 	}
 
 	@Test
 	void whenTextIsTabsAndSpacesThenThrow() {
 		assertThatThrownBy(() -> new Query("\t\n  \r")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("text cannot be null or empty");
+				.hasMessageContaining("text cannot be null or empty");
 	}
 
 	@Test

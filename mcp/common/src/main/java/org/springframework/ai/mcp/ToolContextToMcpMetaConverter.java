@@ -16,11 +16,11 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.util.CollectionUtils;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Strategy interface for converting a {@link ToolContext} to a map of metadata to be sent
@@ -38,6 +38,7 @@ public interface ToolContextToMcpMetaConverter {
 	 * The default implementation ignores the
 	 * {@link McpToolUtils#TOOL_CONTEXT_MCP_EXCHANGE_KEY} entry and any entries with null
 	 * values.
+	 *
 	 * @param toolContext the tool context to convert
 	 * @return a map of metadata to be sent as part of the MCP tool call
 	 */
@@ -51,16 +52,17 @@ public interface ToolContextToMcpMetaConverter {
 			}
 
 			return toolContext.getContext()
-				.entrySet()
-				.stream()
-				.filter(entry -> !McpToolUtils.TOOL_CONTEXT_MCP_EXCHANGE_KEY.equals(entry.getKey())
-						&& entry.getValue() != null)
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+					.entrySet()
+					.stream()
+					.filter(entry -> !McpToolUtils.TOOL_CONTEXT_MCP_EXCHANGE_KEY.equals(entry.getKey())
+							&& entry.getValue() != null)
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		};
 	}
 
 	/**
 	 * Static factory method to create a no-op converter that returns an empty map.
+	 *
 	 * @return a no-op converter
 	 */
 	static ToolContextToMcpMetaConverter noOp() {

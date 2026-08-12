@@ -16,16 +16,7 @@
 
 package org.springframework.ai.chat.client.advisor.vectorstore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
@@ -40,6 +31,14 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Context for the question is retrieved from a Vector Store and added to the prompt's
@@ -85,7 +84,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 	private final int order;
 
 	QuestionAnswerAdvisor(VectorStore vectorStore, SearchRequest searchRequest, @Nullable PromptTemplate promptTemplate,
-			@Nullable Scheduler scheduler, int order) {
+	                      @Nullable Scheduler scheduler, int order) {
 		Assert.notNull(vectorStore, "vectorStore cannot be null");
 		Assert.notNull(searchRequest, "searchRequest cannot be null");
 
@@ -109,7 +108,7 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 	public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
 		// 1. Search for similar documents in the vector store.
 		var searchRequestBuilder = SearchRequest.from(this.searchRequest)
-			.query(Objects.requireNonNullElse(chatClientRequest.prompt().getUserMessage().getText(), ""));
+				.query(Objects.requireNonNullElse(chatClientRequest.prompt().getUserMessage().getText(), ""));
 
 		var filterExpr = doGetFilterExpression(chatClientRequest.context());
 		if (filterExpr != null) {
@@ -125,19 +124,19 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 		context.put(RETRIEVED_DOCUMENTS, documents);
 
 		String documentContext = documents.stream()
-			.map(Document::getText)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.map(Document::getText)
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		// 3. Augment the user prompt with the document context.
 		UserMessage userMessage = chatClientRequest.prompt().getUserMessage();
 		String augmentedUserText = this.promptTemplate
-			.render(Map.of("query", userMessage.getText(), "question_answer_context", documentContext));
+				.render(Map.of("query", userMessage.getText(), "question_answer_context", documentContext));
 
 		// 4. Update ChatClientRequest with augmented prompt.
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
-			.context(context)
-			.build();
+				.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
+				.context(context)
+				.build();
 	}
 
 	@Override
@@ -150,9 +149,9 @@ public class QuestionAnswerAdvisor implements BaseAdvisor {
 			chatResponseBuilder.metadata(RETRIEVED_DOCUMENTS, chatClientResponse.context().get(RETRIEVED_DOCUMENTS));
 		}
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponseBuilder.build())
-			.context(chatClientResponse.context())
-			.build();
+				.chatResponse(chatResponseBuilder.build())
+				.context(chatClientResponse.context())
+				.build();
 	}
 
 	protected Filter.@Nullable Expression doGetFilterExpression(Map<String, @Nullable Object> context) {

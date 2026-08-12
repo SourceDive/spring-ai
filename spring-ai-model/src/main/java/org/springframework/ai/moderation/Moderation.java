@@ -16,14 +16,13 @@
 
 package org.springframework.ai.moderation;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * The Moderation class represents the result of a moderation process. It contains the

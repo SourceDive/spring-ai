@@ -16,11 +16,7 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -34,6 +30,9 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.metadata.ToolMetadata;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,8 +51,8 @@ class DefaultChatClientUtilsTests {
 	@Test
 	void whenInputRequestIsNullThenThrows() {
 		assertThatThrownBy(() -> DefaultChatClientUtils.toChatClientRequest(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("inputRequest cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("inputRequest cannot be null");
 	}
 
 	@Test
@@ -62,9 +61,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(systemText);
+				.create(chatModel)
+				.prompt()
+				.system(systemText);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -81,9 +80,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(s -> s.text(systemText).params(systemParams));
+				.create(chatModel)
+				.prompt()
+				.system(s -> s.text(systemText).params(systemParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -99,9 +98,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.messages(messages);
+				.create(chatModel)
+				.prompt()
+				.messages(messages);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -117,9 +116,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(userText);
+				.create(chatModel)
+				.prompt()
+				.user(userText);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -136,9 +135,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(s -> s.text(userText).params(userParams));
+				.create(chatModel)
+				.prompt()
+				.user(s -> s.text(userText).params(userParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -155,9 +154,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(s -> s.text(userText).media(media));
+				.create(chatModel)
+				.prompt()
+				.user(s -> s.text(userText).media(media));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -176,10 +175,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(systemText)
-			.messages(messages);
+				.create(chatModel)
+				.prompt()
+				.system(systemText)
+				.messages(messages);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -196,10 +195,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.user(userText)
-			.messages(messages);
+				.create(chatModel)
+				.prompt()
+				.user(userText)
+				.messages(messages);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -216,10 +215,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.tools(toolCallback);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.tools(toolCallback);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -237,10 +236,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolContext(toolContext);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolContext(toolContext);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -259,10 +258,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.tools(toolCallback2);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.tools(toolCallback2);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -280,10 +279,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(ToolCallingChatOptions.builder().toolContext(toolContext1))
-			.toolContext(toolContext2);
+				.create(chatModel)
+				.prompt()
+				.options(ToolCallingChatOptions.builder().toolContext(toolContext1))
+				.toolContext(toolContext2);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -292,7 +291,7 @@ class DefaultChatClientUtilsTests {
 		ToolCallingChatOptions resultOptions = (ToolCallingChatOptions) result.prompt().getOptions();
 		assertThat(resultOptions).isNotNull();
 		assertThat(resultOptions.getToolContext()).containsAllEntriesOf(toolContext1)
-			.containsAllEntriesOf(toolContext2);
+				.containsAllEntriesOf(toolContext2);
 	}
 
 	@Test
@@ -302,10 +301,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.tools(toolCallback1);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.tools(toolCallback1);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -323,10 +322,10 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.options(chatOptions)
-			.toolContext(toolContext1);
+				.create(chatModel)
+				.prompt()
+				.options(chatOptions)
+				.toolContext(toolContext1);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 		assertThat(result.prompt().getOptions()).isInstanceOf(ToolCallingChatOptions.class);
@@ -341,9 +340,9 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.advisors(a -> a.params(advisorParams));
+				.create(chatModel)
+				.prompt()
+				.advisors(a -> a.params(advisorParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -356,16 +355,16 @@ class DefaultChatClientUtilsTests {
 		String systemText = "Instructions <name>";
 		Map<String, Object> systemParams = Map.of("name", "Spring AI");
 		TemplateRenderer customRenderer = StTemplateRenderer.builder()
-			.startDelimiterToken('<')
-			.endDelimiterToken('>')
-			.build();
+				.startDelimiterToken('<')
+				.endDelimiterToken('>')
+				.build();
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(s -> s.text(systemText).params(systemParams))
-			.templateRenderer(customRenderer);
+				.create(chatModel)
+				.prompt()
+				.system(s -> s.text(systemText).params(systemParams))
+				.templateRenderer(customRenderer);
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 
@@ -396,15 +395,15 @@ class DefaultChatClientUtilsTests {
 		ChatModel chatModel = mock(ChatModel.class);
 		when(chatModel.getOptions()).thenReturn(ToolCallingChatOptions.builder().build());
 		DefaultChatClient.DefaultChatClientRequestSpec inputRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ChatClient
-			.create(chatModel)
-			.prompt()
-			.system(s -> s.text(systemText).params(systemParams))
-			.user(u -> u.text(userText).params(userParams).media(media))
-			.messages(messages)
-			.toolCallbacks(toolCallback)
-			.toolContext(toolContext)
-			.options(chatOptions)
-			.advisors(a -> a.params(advisorParams));
+				.create(chatModel)
+				.prompt()
+				.system(s -> s.text(systemText).params(systemParams))
+				.user(u -> u.text(userText).params(userParams).media(media))
+				.messages(messages)
+				.toolCallbacks(toolCallback)
+				.toolContext(toolContext)
+				.options(chatOptions)
+				.advisors(a -> a.params(advisorParams));
 
 		ChatClientRequest result = DefaultChatClientUtils.toChatClientRequest(inputRequest);
 

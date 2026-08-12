@@ -16,16 +16,7 @@
 
 package org.springframework.ai.testcontainers.service.connection.qdrant;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.qdrant.QdrantContainer;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
@@ -40,13 +31,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.qdrant.QdrantContainer;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @Testcontainers
-@TestPropertySource(properties = { "spring.ai.vectorstore.qdrant.collectionName=test_collection",
-		"spring.ai.vectorstore.qdrant.initialize-schema=true" })
+@TestPropertySource(properties = {"spring.ai.vectorstore.qdrant.collectionName=test_collection",
+		"spring.ai.vectorstore.qdrant.initialize-schema=true"})
 public class QdrantContainerWithApiKeyConnectionDetailsFactoryIT {
 
 	@Container
@@ -65,8 +64,7 @@ public class QdrantContainerWithApiKeyConnectionDetailsFactoryIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -76,7 +74,7 @@ public class QdrantContainerWithApiKeyConnectionDetailsFactoryIT {
 		this.vectorStore.add(this.documents);
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
+				.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
 
 		assertThat(results).hasSize(1);
 		Document resultDoc = results.get(0);

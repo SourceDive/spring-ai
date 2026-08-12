@@ -16,29 +16,18 @@
 
 package org.springframework.ai.reader.markdown;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.commonmark.node.AbstractVisitor;
-import org.commonmark.node.BlockQuote;
-import org.commonmark.node.Code;
-import org.commonmark.node.FencedCodeBlock;
-import org.commonmark.node.HardLineBreak;
-import org.commonmark.node.Heading;
-import org.commonmark.node.ListItem;
-import org.commonmark.node.Node;
-import org.commonmark.node.SoftLineBreak;
-import org.commonmark.node.Text;
-import org.commonmark.node.ThematicBreak;
+import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
 import org.springframework.ai.reader.markdown.config.MarkdownDocumentReaderConfig;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reads the given Markdown resource and groups headers, paragraphs, or text divided by
@@ -67,8 +56,9 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance.
+	 *
 	 * @param markdownResources the resources to read, will be resolved via
-	 * {@link PathMatchingResourcePatternResolver}
+	 *                          {@link PathMatchingResourcePatternResolver}
 	 */
 	public MarkdownDocumentReader(String markdownResources) {
 		this(markdownResources, MarkdownDocumentReaderConfig.defaultConfig());
@@ -76,9 +66,10 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance.
+	 *
 	 * @param markdownResources the resources to read, will be resolved via
-	 * {@link PathMatchingResourcePatternResolver}
-	 * @param config the configuration to use
+	 *                          {@link PathMatchingResourcePatternResolver}
+	 * @param config            the configuration to use
 	 */
 	public MarkdownDocumentReader(String markdownResources, MarkdownDocumentReaderConfig config) {
 		this(resolveResources(markdownResources), config);
@@ -87,6 +78,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance using a single
 	 * {@link Resource}.
+	 *
 	 * @param markdownResource the resource to read
 	 */
 	public MarkdownDocumentReader(Resource markdownResource, MarkdownDocumentReaderConfig config) {
@@ -96,6 +88,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 	/**
 	 * Create a new {@link MarkdownDocumentReader} instance using already resolved
 	 * {@link Resource resources}.
+	 *
 	 * @param markdownResources the resources to read
 	 */
 	public MarkdownDocumentReader(List<Resource> markdownResources, MarkdownDocumentReaderConfig config) {
@@ -107,14 +100,14 @@ public class MarkdownDocumentReader implements DocumentReader {
 	private static List<Resource> resolveResources(String markdownResources) {
 		try {
 			return List.of(new PathMatchingResourcePatternResolver().getResources(markdownResources));
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Extracts and returns a list of documents from the resource.
+	 *
 	 * @return List of extracted {@link Document}
 	 */
 	@Override
@@ -127,8 +120,7 @@ public class MarkdownDocumentReader implements DocumentReader {
 
 				node.accept(documentVisitor);
 				documents.addAll(documentVisitor.getDocuments());
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -232,9 +224,8 @@ public class MarkdownDocumentReader implements DocumentReader {
 		public void visit(Text text) {
 			if (text.getParent() instanceof Heading heading) {
 				this.currentDocumentBuilder.metadata("category", "header_%d".formatted(heading.getLevel()))
-					.metadata("title", text.getLiteral());
-			}
-			else {
+						.metadata("title", text.getLiteral());
+			} else {
 				this.currentParagraphs.add(text.getLiteral());
 			}
 

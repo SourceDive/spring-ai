@@ -44,7 +44,7 @@ public class OpenSearchNonAwsCondition extends SpringBootCondition {
 		String awsEnabled = context.getEnvironment().getProperty(AWS_ENABLED_PROPERTY);
 		if ("false".equalsIgnoreCase(awsEnabled)) {
 			return ConditionOutcome.match(ConditionMessage.forCondition("OpenSearchNonAwsCondition")
-				.because("Property 'spring.ai.vectorstore.opensearch.aws.enabled' is false"));
+					.because("Property 'spring.ai.vectorstore.opensearch.aws.enabled' is false"));
 		}
 		// 2. If AWS SDK classes are missing, match
 		boolean awsClassesPresent = isPresent("software.amazon.awssdk.auth.credentials.AwsCredentialsProvider")
@@ -56,15 +56,14 @@ public class OpenSearchNonAwsCondition extends SpringBootCondition {
 		}
 		// 3. Otherwise, do not match
 		return ConditionOutcome.noMatch(ConditionMessage.forCondition("OpenSearchNonAwsCondition")
-			.because("AWS SDK classes are present and property is not false"));
+				.because("AWS SDK classes are present and property is not false"));
 	}
 
 	private boolean isPresent(String className) {
 		try {
 			Class.forName(className, false, getClass().getClassLoader());
 			return true;
-		}
-		catch (ClassNotFoundException ex) {
+		} catch (ClassNotFoundException ex) {
 			return false;
 		}
 	}

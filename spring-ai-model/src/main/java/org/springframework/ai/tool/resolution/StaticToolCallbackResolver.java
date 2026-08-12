@@ -16,16 +16,15 @@
 
 package org.springframework.ai.tool.resolution;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link ToolCallbackResolver} that resolves tool callbacks from a static registry.
@@ -44,7 +43,7 @@ public class StaticToolCallbackResolver implements ToolCallbackResolver {
 		Assert.noNullElements(toolCallbacks, "toolCallbacks cannot contain null elements");
 
 		toolCallbacks
-			.forEach(toolCallback -> this.toolCallbacks.put(toolCallback.getToolDefinition().name(), toolCallback));
+				.forEach(toolCallback -> this.toolCallbacks.put(toolCallback.getToolDefinition().name(), toolCallback));
 	}
 
 	@Override

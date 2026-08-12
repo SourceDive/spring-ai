@@ -16,11 +16,11 @@
 
 package org.springframework.ai.google.genai.cache;
 
-import java.time.Duration;
-import java.time.Instant;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
+
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * Request for updating cached content in Google GenAI.
@@ -31,10 +31,12 @@ import org.jspecify.annotations.Nullable;
 public final class CachedContentUpdateRequest {
 
 	@JsonProperty("ttl")
-	@Nullable private final Duration ttl;
+	@Nullable
+	private final Duration ttl;
 
 	@JsonProperty("expire_time")
-	@Nullable private final Instant expireTime;
+	@Nullable
+	private final Instant expireTime;
 
 	private CachedContentUpdateRequest(Builder builder) {
 		this.ttl = builder.ttl;
@@ -60,9 +62,11 @@ public final class CachedContentUpdateRequest {
 
 	public static final class Builder {
 
-		@Nullable private Duration ttl;
+		@Nullable
+		private Duration ttl;
 
-		@Nullable private Instant expireTime;
+		@Nullable
+		private Instant expireTime;
 
 		private Builder() {
 		}

@@ -16,12 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.method.elicitation;
 
+import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
+import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
-
-import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 
 public record SyncElicitationSpecification(String[] clients, Function<ElicitRequest, ElicitResult> elicitationHandler) {
 	public SyncElicitationSpecification {

@@ -31,6 +31,7 @@ public interface AudioTranscriptionMetadata extends ResultMetadata {
 
 	/**
 	 * Factory method used to construct a new {@link AudioTranscriptionMetadata}
+	 *
 	 * @return a new {@link AudioTranscriptionMetadata}
 	 */
 	static AudioTranscriptionMetadata create() {

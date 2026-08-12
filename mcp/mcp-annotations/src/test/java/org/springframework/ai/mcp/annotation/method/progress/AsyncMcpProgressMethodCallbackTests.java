@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.method.progress;
 
-import java.lang.reflect.Method;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpProgress;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpProgress;
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,9 +49,9 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleProgressVoid", ProgressNotification.class);
 
 		Function<ProgressNotification, Mono<Void>> callback = AsyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -65,9 +64,9 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleProgressMono", ProgressNotification.class);
 
 		Function<ProgressNotification, Mono<Void>> callback = AsyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -81,9 +80,9 @@ public class AsyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		Function<ProgressNotification, Mono<Void>> callback = AsyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -99,9 +98,9 @@ public class AsyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		Function<ProgressNotification, Mono<Void>> callback = AsyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -117,9 +116,9 @@ public class AsyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		Function<ProgressNotification, Mono<Void>> callback = AsyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -134,8 +133,8 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", ProgressNotification.class);
 
 		assertThatThrownBy(() -> AsyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Asynchronous progress methods must return void or Mono<Void>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Asynchronous progress methods must return void or Mono<Void>");
 	}
 
 	@Test
@@ -144,8 +143,8 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidMonoReturnType", ProgressNotification.class);
 
 		assertThatThrownBy(() -> AsyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Mono return type must be Mono<Void>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Mono return type must be Mono<Void>");
 	}
 
 	@Test
@@ -155,8 +154,8 @@ public class AsyncMcpProgressMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> AsyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have either 1 parameter (ProgressNotification) or 3 parameters");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have either 1 parameter (ProgressNotification) or 3 parameters");
 	}
 
 	@Test
@@ -165,8 +164,8 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> AsyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type ProgressNotification");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type ProgressNotification");
 	}
 
 	@Test
@@ -175,8 +174,8 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterTypes", String.class, int.class, boolean.class);
 
 		assertThatThrownBy(() -> AsyncMcpProgressMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("First parameter must be of type Double or double");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("First parameter must be of type Double or double");
 	}
 
 	@Test
@@ -185,9 +184,9 @@ public class AsyncMcpProgressMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleProgressMono", ProgressNotification.class);
 
 		Function<ProgressNotification, Mono<Void>> callback = AsyncMcpProgressMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(null)).expectError(IllegalArgumentException.class).verify();
 	}

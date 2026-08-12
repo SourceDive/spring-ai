@@ -16,20 +16,10 @@
 
 package org.springframework.ai.vectorstore.mariadb.autoconfigure;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -47,6 +37,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.ai.test.vectorstore.ObservationTestUtil.assertObservationRegistry;
@@ -64,16 +63,16 @@ public class MariaDbStoreAutoConfigurationIT {
 	static MariaDBContainer<?> mariadbContainer = new MariaDBContainer<>(DEFAULT_IMAGE);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(
-				org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreAutoConfiguration.class,
-				JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.mariadb.distance-type=COSINE",
-				"spring.ai.vectorstore.mariadb.initialize-schema=true",
-				// JdbcTemplate configuration
-				"spring.datasource.url=" + mariadbContainer.getJdbcUrl(),
-				"spring.datasource.username=" + mariadbContainer.getUsername(),
-				"spring.datasource.password=" + mariadbContainer.getPassword());
+			.withConfiguration(AutoConfigurations.of(
+					org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreAutoConfiguration.class,
+					JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.mariadb.distance-type=COSINE",
+					"spring.ai.vectorstore.mariadb.initialize-schema=true",
+					// JdbcTemplate configuration
+					"spring.datasource.url=" + mariadbContainer.getJdbcUrl(),
+					"spring.datasource.username=" + mariadbContainer.getUsername(),
+					"spring.datasource.password=" + mariadbContainer.getPassword());
 
 	List<Document> documents = List.of(
 			new Document(getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -84,20 +83,18 @@ public class MariaDbStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private static boolean isFullyQualifiedTableExists(ApplicationContext context, String schemaName,
-			String tableName) {
+	                                                   String tableName) {
 		JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
 		if (schemaName == null) {
 			String sqlWithoutSchema = "SELECT EXISTS (SELECT * FROM information_schema.tables WHERE table_schema = SCHEMA() AND table_name = ?) as results";
 			return jdbcTemplate.queryForObject(sqlWithoutSchema, Boolean.class, tableName);
-		}
-		else {
+		} else {
 			String sqlWithSchema = "SELECT EXISTS (SELECT * FROM information_schema.tables WHERE table_schema = ? AND table_name = ?) as results";
 			return jdbcTemplate.queryForObject(sqlWithSchema, Boolean.class, schemaName, tableName);
 		}
@@ -120,7 +117,7 @@ public class MariaDbStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("What is Great Depression?").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -144,8 +141,8 @@ public class MariaDbStoreAutoConfigurationIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "test:vector_store:id:metadata:embedding:content",
-			"test:my_table:my_id:my_metadata:my_embedding:my_content" })
+	@ValueSource(strings = {"test:vector_store:id:metadata:embedding:content",
+			"test:my_table:my_id:my_metadata:my_embedding:my_content"})
 	public void customSchemaNames(String schemaTableName) {
 		String schemaName = schemaTableName.split(":")[0];
 		String tableName = schemaTableName.split(":")[1];
@@ -155,26 +152,26 @@ public class MariaDbStoreAutoConfigurationIT {
 		String contentName = schemaTableName.split(":")[5];
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.mariadb.schema-name=" + schemaName,
-					"spring.ai.vectorstore.mariadb.table-name=" + tableName,
-					"spring.ai.vectorstore.mariadb.id-field-name=" + idName,
-					"spring.ai.vectorstore.mariadb.metadata-field-name=" + metaName,
-					"spring.ai.vectorstore.mariadb.embedding-field-name=" + embeddingName,
-					"spring.ai.vectorstore.mariadb.content-field-name=" + contentName)
-			.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isTrue());
+				.withPropertyValues("spring.ai.vectorstore.mariadb.schema-name=" + schemaName,
+						"spring.ai.vectorstore.mariadb.table-name=" + tableName,
+						"spring.ai.vectorstore.mariadb.id-field-name=" + idName,
+						"spring.ai.vectorstore.mariadb.metadata-field-name=" + metaName,
+						"spring.ai.vectorstore.mariadb.embedding-field-name=" + embeddingName,
+						"spring.ai.vectorstore.mariadb.content-field-name=" + contentName)
+				.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isTrue());
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "test:vector_store", "test:my_table" })
+	@ValueSource(strings = {"test:vector_store", "test:my_table"})
 	public void disableSchemaInitialization(String schemaTableName) {
 		String schemaName = schemaTableName.split(":")[0];
 		String tableName = schemaTableName.split(":")[1];
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.mariadb.schema-name=" + schemaName,
-					"spring.ai.vectorstore.mariadb.table-name=" + tableName,
-					"spring.ai.vectorstore.mariadb.initialize-schema=false")
-			.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isFalse());
+				.withPropertyValues("spring.ai.vectorstore.mariadb.schema-name=" + schemaName,
+						"spring.ai.vectorstore.mariadb.table-name=" + tableName,
+						"spring.ai.vectorstore.mariadb.initialize-schema=false")
+				.run(context -> assertThat(isFullyQualifiedTableExists(context, schemaName, tableName)).isFalse());
 	}
 
 	@Test

@@ -16,32 +16,27 @@
 
 package org.springframework.ai.model.chat.memory.repository.neo4j.autoconfigure;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.Neo4jContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.neo4j.Neo4jChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.neo4j.Neo4jChatMemoryRepositoryConfig;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.messages.ToolResponseMessage.ToolResponse;
-import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.content.Media;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.neo4j.autoconfigure.Neo4jAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.util.MimeType;
+import org.testcontainers.containers.Neo4jContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,11 +51,11 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 
 	static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("neo4j");
 
-	@SuppressWarnings({ "rawtypes", "resource" })
+	@SuppressWarnings({"rawtypes", "resource"})
 	@Container
 	static Neo4jContainer neo4jContainer = (Neo4jContainer) new Neo4jContainer(DEFAULT_IMAGE_NAME.withTag("5"))
-		.withoutAuthentication()
-		.withExposedPorts(7474, 7687);
+			.withoutAuthentication()
+			.withExposedPorts(7474, 7687);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withConfiguration(
 			AutoConfigurations.of(Neo4jChatMemoryRepositoryAutoConfiguration.class, Neo4jAutoConfiguration.class));
@@ -84,10 +79,10 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 			assertThat(memory.findByConversationId(sessionId)).isEmpty();
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("test answer")
-				.properties(Map.of())
-				.toolCalls(List.of(new AssistantMessage.ToolCall("id", "type", "name", "arguments")))
-				.build();
+					.content("test answer")
+					.properties(Map.of())
+					.toolCalls(List.of(new AssistantMessage.ToolCall("id", "type", "name", "arguments")))
+					.build();
 
 			memory.saveAll(sessionId, List.of(userMessage, assistantMessage));
 			messages = memory.findByConversationId(sessionId);
@@ -99,11 +94,11 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 			MimeType textPlain = MimeType.valueOf("text/plain");
 			List<Media> media = List.of(
 					Media.builder()
-						.name("some media")
-						.id(UUID.randomUUID().toString())
-						.mimeType(textPlain)
-						.data("hello".getBytes(StandardCharsets.UTF_8))
-						.build(),
+							.name("some media")
+							.id(UUID.randomUUID().toString())
+							.mimeType(textPlain)
+							.data("hello".getBytes(StandardCharsets.UTF_8))
+							.build(),
 					Media.builder().data(URI.create("http://www.google.com")).mimeType(textPlain).build());
 			UserMessage userMessageWithMedia = UserMessage.builder().text("Message with media").media(media).build();
 			memory.saveAll(sessionId, List.of(userMessageWithMedia));
@@ -113,13 +108,13 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 			assertThat(messages.get(0)).isEqualTo(userMessageWithMedia);
 			assertThat(((UserMessage) messages.get(0)).getMedia()).hasSize(2);
 			assertThat(((UserMessage) messages.get(0)).getMedia()).usingRecursiveFieldByFieldElementComparator()
-				.isEqualTo(media);
+					.isEqualTo(media);
 			memory.deleteByConversationId(sessionId);
 			ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-				.responses(List.of(new ToolResponse("id", "name", "responseData"),
-						new ToolResponse("id2", "name2", "responseData2")))
-				.metadata(Map.of("id", "id", "metadataKey", "metadata"))
-				.build();
+					.responses(List.of(new ToolResponse("id", "name", "responseData"),
+							new ToolResponse("id2", "name2", "responseData2")))
+					.metadata(Map.of("id", "id", "metadataKey", "metadata"))
+					.build();
 			memory.saveAll(sessionId, List.of(toolResponseMessage));
 			messages = memory.findByConversationId(sessionId);
 			assertThat(messages.size()).isEqualTo(1);
@@ -145,23 +140,23 @@ class Neo4jChatMemoryRepositoryAutoConfigurationIT {
 
 		final String propertyBase = "spring.ai.chat.memory.repository.neo4j.%s=%s";
 		this.contextRunner
-			.withPropertyValues("spring.neo4j.uri=" + neo4jContainer.getBoltUrl(),
-					propertyBase.formatted("sessionlabel", sessionLabel),
-					propertyBase.formatted("toolcallLabel", toolCallLabel),
-					propertyBase.formatted("metadatalabel", metadataLabel),
-					propertyBase.formatted("messagelabel", messageLabel),
-					propertyBase.formatted("toolresponselabel", toolResponseLabel),
-					propertyBase.formatted("medialabel", mediaLabel))
-			.run(context -> {
-				Neo4jChatMemoryRepository chatMemory = context.getBean(Neo4jChatMemoryRepository.class);
-				Neo4jChatMemoryRepositoryConfig config = chatMemory.getConfig();
-				assertThat(config.getMessageLabel()).isEqualTo(messageLabel);
-				assertThat(config.getMediaLabel()).isEqualTo(mediaLabel);
-				assertThat(config.getMetadataLabel()).isEqualTo(metadataLabel);
-				assertThat(config.getSessionLabel()).isEqualTo(sessionLabel);
-				assertThat(config.getToolResponseLabel()).isEqualTo(toolResponseLabel);
-				assertThat(config.getToolCallLabel()).isEqualTo(toolCallLabel);
-			});
+				.withPropertyValues("spring.neo4j.uri=" + neo4jContainer.getBoltUrl(),
+						propertyBase.formatted("sessionlabel", sessionLabel),
+						propertyBase.formatted("toolcallLabel", toolCallLabel),
+						propertyBase.formatted("metadatalabel", metadataLabel),
+						propertyBase.formatted("messagelabel", messageLabel),
+						propertyBase.formatted("toolresponselabel", toolResponseLabel),
+						propertyBase.formatted("medialabel", mediaLabel))
+				.run(context -> {
+					Neo4jChatMemoryRepository chatMemory = context.getBean(Neo4jChatMemoryRepository.class);
+					Neo4jChatMemoryRepositoryConfig config = chatMemory.getConfig();
+					assertThat(config.getMessageLabel()).isEqualTo(messageLabel);
+					assertThat(config.getMediaLabel()).isEqualTo(mediaLabel);
+					assertThat(config.getMetadataLabel()).isEqualTo(metadataLabel);
+					assertThat(config.getSessionLabel()).isEqualTo(sessionLabel);
+					assertThat(config.getToolResponseLabel()).isEqualTo(toolResponseLabel);
+					assertThat(config.getToolCallLabel()).isEqualTo(toolCallLabel);
+				});
 	}
 
 }

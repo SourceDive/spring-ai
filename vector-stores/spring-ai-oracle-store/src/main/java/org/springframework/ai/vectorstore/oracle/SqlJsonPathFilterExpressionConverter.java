@@ -83,8 +83,7 @@ public class SqlJsonPathFilterExpressionConverter extends AbstractFilterExpressi
 			context.append(" in ");
 			this.convertOperand(expression.right(), context);
 			context.append(" )");
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
@@ -149,7 +148,8 @@ public class SqlJsonPathFilterExpressionConverter extends AbstractFilterExpressi
 	 * Serialize values for Oracle JSONPath expressions with proper escaping.
 	 * <p>
 	 * Values are JSON-serialized.
-	 * @param value the value to serialize
+	 *
+	 * @param value   the value to serialize
 	 * @param context the context to append the representation to
 	 */
 	@Override

@@ -16,17 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.progress;
 
+import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import reactor.core.publisher.Mono;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import reactor.core.publisher.Mono;
-
 /**
  * Specification for asynchronous progress handlers.
  *
- * @param clients The client IDs for the progress handler
+ * @param clients         The client IDs for the progress handler
  * @param progressHandler The function that handles progress notifications asynchronously
  * @author Christian Tzolov
  */

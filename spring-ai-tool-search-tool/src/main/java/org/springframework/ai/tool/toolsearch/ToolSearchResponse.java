@@ -16,13 +16,13 @@
 
 package org.springframework.ai.tool.toolsearch;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Response containing a list of ToolReferences matching the search criteria, total
@@ -34,9 +34,9 @@ import org.jspecify.annotations.Nullable;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ToolSearchResponse(List<ToolReference> toolReferences, @Nullable Integer totalMatches,
-		@Nullable SearchMetadata searchMetadata) {
+                                 @Nullable SearchMetadata searchMetadata) {
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 
@@ -44,9 +44,11 @@ public record ToolSearchResponse(List<ToolReference> toolReferences, @Nullable I
 
 		private List<ToolReference> toolReferences = new ArrayList<>();
 
-		@Nullable private Integer totalMatches;
+		@Nullable
+		private Integer totalMatches;
 
-		@Nullable private SearchMetadata searchMetadata;
+		@Nullable
+		private SearchMetadata searchMetadata;
 
 		public Builder toolReferences(List<ToolReference> toolReferences) {
 			this.toolReferences = toolReferences;
@@ -87,19 +89,22 @@ public record ToolSearchResponse(List<ToolReference> toolReferences, @Nullable I
 	 */
 	@JsonInclude(JsonInclude.Include.NON_ABSENT)
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public record SearchMetadata(String searchType, String query, @Nullable Long searchTimeMs) {
+	public record SearchMetadata (String searchType, String query, @Nullable Long searchTimeMs){
 
-		public static Builder builder() {
+		public static Builder builder () {
 			return new Builder();
 		}
 
 		public static class Builder {
 
-			@Nullable private String searchType;
+			@Nullable
+			private String searchType;
 
-			@Nullable private String query;
+			@Nullable
+			private String query;
 
-			@Nullable private Long searchTimeMs;
+			@Nullable
+			private Long searchTimeMs;
 
 			public Builder searchType(String searchType) {
 				this.searchType = searchType;

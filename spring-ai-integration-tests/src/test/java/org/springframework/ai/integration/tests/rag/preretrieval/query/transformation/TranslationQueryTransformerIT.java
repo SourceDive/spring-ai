@@ -46,9 +46,9 @@ class TranslationQueryTransformerIT {
 	void whenTransformerWithDefaults() {
 		Query query = new Query("Hvad er Danmarks hovedstad?");
 		QueryTransformer queryTransformer = TranslationQueryTransformer.builder()
-			.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
-			.targetLanguage("english")
-			.build();
+				.chatClientBuilder(ChatClient.builder(this.openAiChatModel))
+				.targetLanguage("english")
+				.build();
 
 		Query transformedQuery = queryTransformer.apply(query);
 

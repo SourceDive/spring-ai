@@ -18,8 +18,6 @@ package org.springframework.ai.mcp.server.webflux.autoconfigure;
 
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.spec.McpSchema;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerStatelessAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerStdioDisabledCondition;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerStreamableHttpProperties;
@@ -32,6 +30,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.web.reactive.function.server.RouterFunction;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * @author Christian Tzolov
@@ -40,8 +39,8 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 @AutoConfiguration(before = McpServerStatelessAutoConfiguration.class)
 @ConditionalOnClass(McpSchema.class)
 @EnableConfigurationProperties(McpServerStreamableHttpProperties.class)
-@Conditional({ McpServerStdioDisabledCondition.class,
-		McpServerStatelessAutoConfiguration.EnabledStatelessServerCondition.class })
+@Conditional({McpServerStdioDisabledCondition.class,
+		McpServerStatelessAutoConfiguration.EnabledStatelessServerCondition.class})
 public class McpServerStatelessWebFluxAutoConfiguration {
 
 	@Bean
@@ -51,9 +50,9 @@ public class McpServerStatelessWebFluxAutoConfiguration {
 			McpServerStreamableHttpProperties serverProperties) {
 
 		return WebFluxStatelessServerTransport.builder()
-			.jsonMapper(new JacksonMcpJsonMapper(jsonMapper))
-			.messageEndpoint(serverProperties.getMcpEndpoint())
-			.build();
+				.jsonMapper(new JacksonMcpJsonMapper(jsonMapper))
+				.messageEndpoint(serverProperties.getMcpEndpoint())
+				.build();
 	}
 
 	// Router function for stateless http transport used by Spring WebFlux to start an

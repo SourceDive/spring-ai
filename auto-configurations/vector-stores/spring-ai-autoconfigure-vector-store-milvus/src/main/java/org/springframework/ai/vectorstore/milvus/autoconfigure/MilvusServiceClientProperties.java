@@ -16,11 +16,10 @@
 
 package org.springframework.ai.vectorstore.milvus.autoconfigure;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Parameters for Milvus client connection.

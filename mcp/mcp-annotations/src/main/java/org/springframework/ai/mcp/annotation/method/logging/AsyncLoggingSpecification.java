@@ -16,15 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
+import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
+import reactor.core.publisher.Mono;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
-import reactor.core.publisher.Mono;
-
 public record AsyncLoggingSpecification(String[] clients,
-		Function<LoggingMessageNotification, Mono<Void>> loggingHandler) {
+                                        Function<LoggingMessageNotification, Mono<Void>> loggingHandler) {
 
 	public AsyncLoggingSpecification {
 		Objects.requireNonNull(clients, "clients must not be null");

@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpTool;
-import org.springframework.ai.mcp.annotation.McpToolParam;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -58,7 +57,7 @@ public class AsyncCallToolRequestSupportTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Async processed action: analyze for tool: async-dynamic-tool");
+					.isEqualTo("Async processed action: analyze for tool: async-dynamic-tool");
 		}).verifyComplete();
 	}
 
@@ -70,8 +69,8 @@ public class AsyncCallToolRequestSupportTests {
 
 		McpAsyncServerExchange exchange = mock(McpAsyncServerExchange.class);
 		CallToolRequest request = new CallToolRequest("async-dynamic-tool", Map.of("data", "test-data")); // Missing
-																											// 'action'
-																											// parameter
+		// 'action'
+		// parameter
 
 		Mono<CallToolResult> resultMono = callback.apply(exchange, request);
 
@@ -96,9 +95,9 @@ public class AsyncCallToolRequestSupportTests {
 
 		// When a method returns Mono.error(), it propagates as an error
 		StepVerifier.create(resultMono)
-			.expectErrorMatches(throwable -> throwable instanceof RuntimeException
-					&& throwable.getMessage().contains("Async tool execution failed"))
-			.verify();
+				.expectErrorMatches(throwable -> throwable instanceof RuntimeException
+						&& throwable.getMessage().contains("Async tool execution failed"))
+				.verify();
 	}
 
 	@Test
@@ -119,7 +118,7 @@ public class AsyncCallToolRequestSupportTests {
 			assertThat(result.isError()).isFalse();
 			assertThat(result.content()).hasSize(1);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Async Required: test-value, Optional: 42, Total args: 3, Tool: async-mixed-params-tool");
+					.isEqualTo("Async Required: test-value, Optional: 42, Total args: 3, Tool: async-mixed-params-tool");
 		}).verifyComplete();
 	}
 
@@ -140,7 +139,7 @@ public class AsyncCallToolRequestSupportTests {
 			assertThat(result.isError()).isFalse();
 			assertThat(result.content()).hasSize(1);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Async Required: test-value, Optional: 0, Total args: 1, Tool: async-mixed-params-tool");
+					.isEqualTo("Async Required: test-value, Optional: 0, Total args: 1, Tool: async-mixed-params-tool");
 		}).verifyComplete();
 	}
 
@@ -161,12 +160,12 @@ public class AsyncCallToolRequestSupportTests {
 		StepVerifier.create(validResultMono).assertNext(result -> {
 			assertThat(result.isError()).isFalse();
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Async schema validation successful for: async-schema-validator");
+					.isEqualTo("Async schema validation successful for: async-schema-validator");
 		}).verifyComplete();
 
 		// Test with invalid schema
 		CallToolRequest invalidRequest = new CallToolRequest("async-schema-validator", Map.of("data", "test-data")); // Missing
-																														// 'format'
+		// 'format'
 
 		Mono<CallToolResult> invalidResultMono = callback.apply(exchange, invalidRequest);
 
@@ -279,15 +278,15 @@ public class AsyncCallToolRequestSupportTests {
 			// Custom validation
 			if (!arguments.containsKey("action")) {
 				return Mono.just(CallToolResult.builder()
-					.isError(true)
-					.addTextContent("Missing required 'action' parameter")
-					.build());
+						.isError(true)
+						.addTextContent("Missing required 'action' parameter")
+						.build());
 			}
 
 			String action = (String) arguments.get("action");
 			return Mono.just(CallToolResult.builder()
-				.addTextContent("Async processed action: " + action + " for tool: " + toolName)
-				.build());
+					.addTextContent("Async processed action: " + action + " for tool: " + toolName)
+					.build());
 		}
 
 		/**
@@ -299,8 +298,8 @@ public class AsyncCallToolRequestSupportTests {
 			Map<String, Object> arguments = request.arguments();
 
 			return Mono.just(CallToolResult.builder()
-				.addTextContent("Async Exchange available: " + (exchange != null) + ", Args: " + arguments.size())
-				.build());
+					.addTextContent("Async Exchange available: " + (exchange != null) + ", Args: " + arguments.size())
+					.build());
 		}
 
 		/**
@@ -308,15 +307,15 @@ public class AsyncCallToolRequestSupportTests {
 		 */
 		@McpTool(name = "async-mixed-params-tool", description = "Async tool with mixed parameters")
 		public Mono<CallToolResult> asyncMixedParamsTool(CallToolRequest request,
-				@McpToolParam(description = "Required string parameter", required = true) String requiredParam,
-				@McpToolParam(description = "Optional integer parameter", required = false) Integer optionalParam) {
+		                                                 @McpToolParam(description = "Required string parameter", required = true) String requiredParam,
+		                                                 @McpToolParam(description = "Optional integer parameter", required = false) Integer optionalParam) {
 
 			Map<String, Object> allArguments = request.arguments();
 
 			return Mono.just(CallToolResult.builder()
-				.addTextContent(String.format("Async Required: %s, Optional: %d, Total args: %d, Tool: %s",
-						requiredParam, optionalParam != null ? optionalParam : 0, allArguments.size(), request.name()))
-				.build());
+					.addTextContent(String.format("Async Required: %s, Optional: %d, Total args: %d, Tool: %s",
+							requiredParam, optionalParam != null ? optionalParam : 0, allArguments.size(), request.name()))
+					.build());
 		}
 
 		/**
@@ -331,14 +330,14 @@ public class AsyncCallToolRequestSupportTests {
 
 			if (!hasRequiredFields) {
 				return Mono.just(CallToolResult.builder()
-					.isError(true)
-					.addTextContent("Async schema validation failed: missing required fields 'data' and 'format'")
-					.build());
+						.isError(true)
+						.addTextContent("Async schema validation failed: missing required fields 'data' and 'format'")
+						.build());
 			}
 
 			return Mono.just(CallToolResult.builder()
-				.addTextContent("Async schema validation successful for: " + request.name())
-				.build());
+					.addTextContent("Async schema validation successful for: " + request.name())
+					.build());
 		}
 
 		/**

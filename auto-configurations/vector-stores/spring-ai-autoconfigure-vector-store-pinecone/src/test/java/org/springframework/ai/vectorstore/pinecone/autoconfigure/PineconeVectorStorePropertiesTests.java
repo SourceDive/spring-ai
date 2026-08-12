@@ -16,12 +16,11 @@
 
 package org.springframework.ai.vectorstore.pinecone.autoconfigure;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.vectorstore.pinecone.PineconeVectorStore;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

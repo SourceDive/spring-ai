@@ -16,14 +16,10 @@
 
 package org.springframework.ai.tool.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.springframework.ai.tool.execution.DefaultToolCallResultConverter;
 import org.springframework.ai.tool.execution.ToolCallResultConverter;
+
+import java.lang.annotation.*;
 
 /**
  * Marks a method as a tool in Spring AI.
@@ -31,7 +27,7 @@ import org.springframework.ai.tool.execution.ToolCallResultConverter;
  * @author Thomas Vitale
  * @since 1.0.0
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Tool {

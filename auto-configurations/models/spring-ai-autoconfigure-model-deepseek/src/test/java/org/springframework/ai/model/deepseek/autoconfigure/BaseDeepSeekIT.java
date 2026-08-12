@@ -16,13 +16,13 @@
 
 package org.springframework.ai.model.deepseek.autoconfigure;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration;
 import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Base utility class for DeepSeek integration tests.
@@ -32,8 +32,8 @@ import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfigurati
 public abstract class BaseDeepSeekIT {
 
 	public static AutoConfigurations deepSeekAutoConfig(Class<?>... additional) {
-		Class<?>[] dependencies = { ToolCallingAutoConfiguration.class, RestClientAutoConfiguration.class,
-				WebClientAutoConfiguration.class };
+		Class<?>[] dependencies = {ToolCallingAutoConfiguration.class, RestClientAutoConfiguration.class,
+				WebClientAutoConfiguration.class};
 		Class<?>[] all = Stream.concat(Arrays.stream(dependencies), Arrays.stream(additional)).toArray(Class<?>[]::new);
 		return AutoConfigurations.of(all);
 	}

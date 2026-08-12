@@ -16,17 +16,16 @@
 
 package org.springframework.ai.ollama;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.AfterAll;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.ollama.OllamaContainer;
-
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.ollama.management.OllamaModelManager;
 import org.springframework.ai.ollama.management.PullModelStrategy;
 import org.springframework.util.Assert;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.ollama.OllamaContainer;
+
+import java.time.Duration;
 
 @Testcontainers
 public abstract class BaseOllamaIT {
@@ -40,7 +39,7 @@ public abstract class BaseOllamaIT {
 	// Environment variable to control whether to create a new container or use existing
 	// Ollama instance
 	private static final boolean SKIP_CONTAINER_CREATION = Boolean
-		.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
+			.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
 
 	private static OllamaContainer ollamaContainer;
 
@@ -49,6 +48,7 @@ public abstract class BaseOllamaIT {
 	/**
 	 * Initialize the Ollama container and API with the specified model. This method
 	 * should be called from @BeforeAll in subclasses.
+	 *
 	 * @param models the Ollama models to initialize (must not be null or empty)
 	 * @return configured OllamaApi instance
 	 * @throws IllegalArgumentException if model is null or empty
@@ -68,6 +68,7 @@ public abstract class BaseOllamaIT {
 
 	/**
 	 * Get the initialized OllamaApi instance.
+	 *
 	 * @return the OllamaApi instance
 	 * @throws IllegalStateException if called before initialization
 	 */
@@ -93,9 +94,9 @@ public abstract class BaseOllamaIT {
 
 	private static void ensureModelIsPresent(final OllamaApi ollamaApi, String... models) {
 		final var modelManagementOptions = ModelManagementOptions.builder()
-			.maxRetries(DEFAULT_MAX_RETRIES)
-			.timeout(DEFAULT_TIMEOUT)
-			.build();
+				.maxRetries(DEFAULT_MAX_RETRIES)
+				.timeout(DEFAULT_TIMEOUT)
+				.build();
 		final var ollamaModelManager = new OllamaModelManager(ollamaApi, modelManagementOptions);
 		for (String model : models) {
 			ollamaModelManager.pullModel(model, PullModelStrategy.WHEN_MISSING);

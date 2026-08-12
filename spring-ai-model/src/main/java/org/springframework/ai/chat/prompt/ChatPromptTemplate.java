@@ -16,11 +16,11 @@
 
 package org.springframework.ai.chat.prompt;
 
+import org.springframework.ai.chat.messages.Message;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.ai.chat.messages.Message;
 
 /**
  * A PromptTemplate that lets you specify the role as a string should the current

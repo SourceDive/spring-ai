@@ -16,20 +16,19 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Stream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.AsyncMcpToolCallback;
 import org.springframework.ai.mcp.SyncMcpToolCallback;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.ObjectProvider;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 /**
  * @author Daniel Garnier-Moiroux
@@ -42,10 +41,10 @@ final class ToolCallbackUtils {
 	}
 
 	static List<ToolCallback> aggregateToolCallbacks(ObjectProvider<List<ToolCallback>> toolCalls,
-			List<ToolCallback> toolCallbackList, ObjectProvider<List<ToolCallbackProvider>> tcbProviderList,
-			ObjectProvider<ToolCallbackProvider> tcbProviders, boolean includeMcpTools) {
+	                                                 List<ToolCallback> toolCallbackList, ObjectProvider<List<ToolCallbackProvider>> tcbProviderList,
+	                                                 ObjectProvider<ToolCallbackProvider> tcbProviders, boolean includeMcpTools) {
 		var allToolCallbacks = Stream.concat(toolCalls.stream().flatMap(List::stream), toolCallbackList.stream())
-			.filter(toolCallback -> includeMcpTools || !isMcpToolCallback(toolCallback));
+				.filter(toolCallback -> includeMcpTools || !isMcpToolCallback(toolCallback));
 
 		var allCallbackProviders = Stream.concat(tcbProviderList.stream().flatMap(List::stream), tcbProviders.stream());
 		AtomicBoolean hasExcludedToolProvider = new AtomicBoolean(false);
@@ -57,8 +56,8 @@ final class ToolCallbackUtils {
 			return includeProvider;
 		}).distinct();
 		var toolCallbacksFromProviders = filteredProviders.map(pr -> List.of(pr.getToolCallbacks()))
-			.flatMap(List::stream)
-			.filter(Objects::nonNull);
+				.flatMap(List::stream)
+				.filter(Objects::nonNull);
 
 		var toolCallbacks = Stream.concat(allToolCallbacks, toolCallbacksFromProviders).toList();
 

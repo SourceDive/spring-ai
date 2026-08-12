@@ -16,20 +16,19 @@
 
 package org.springframework.ai.elevenlabs.api;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
-
 import org.springframework.ai.elevenlabs.ElevenLabsTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,9 +52,9 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeech() throws IOException {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("Hello, world!")
-			.modelId("eleven_turbo_v2_5")
-			.build();
+				.text("Hello, world!")
+				.modelId("eleven_turbo_v2_5")
+				.build();
 
 		String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 		ResponseEntity<byte[]> response = this.elevenLabsApi.textToSpeech(request, validVoiceId, null);
@@ -67,10 +66,10 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechWithVoiceSettings() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("Hello, with Voice settings!")
-			.modelId("eleven_turbo_v2_5")
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.7, 0.0, true, 1.0))
-			.build();
+				.text("Hello, with Voice settings!")
+				.modelId("eleven_turbo_v2_5")
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.7, 0.0, true, 1.0))
+				.build();
 
 		String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 		ResponseEntity<byte[]> response = this.elevenLabsApi.textToSpeech(request, validVoiceId, null);
@@ -82,9 +81,9 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechWithQueryParams() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("Hello, testing query params!")
-			.modelId("eleven_turbo_v2_5")
-			.build();
+				.text("Hello, testing query params!")
+				.modelId("eleven_turbo_v2_5")
+				.build();
 
 		String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
@@ -101,9 +100,9 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechVoiceIdNull() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("This should fail.")
-			.modelId("eleven_turbo_v2_5")
-			.build();
+				.text("This should fail.")
+				.modelId("eleven_turbo_v2_5")
+				.build();
 
 		Exception exception = assertThrows(IllegalArgumentException.class,
 				() -> this.elevenLabsApi.textToSpeech(request, null, null));
@@ -122,9 +121,9 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechStream() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("This is a longer text to ensure multiple chunks are received through the streaming API.")
-			.modelId("eleven_turbo_v2_5")
-			.build();
+				.text("This is a longer text to ensure multiple chunks are received through the streaming API.")
+				.modelId("eleven_turbo_v2_5")
+				.build();
 
 		String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 		Flux<ResponseEntity<byte[]>> responseFlux = this.elevenLabsApi.textToSpeechStream(request, validVoiceId, null);
@@ -148,10 +147,10 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechStreamWithVoiceSettings() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("Hello, with Voice settings in streaming mode!")
-			.modelId("eleven_turbo_v2_5")
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.7, null, null, null))
-			.build();
+				.text("Hello, with Voice settings in streaming mode!")
+				.modelId("eleven_turbo_v2_5")
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.7, null, null, null))
+				.build();
 
 		String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 		Flux<ResponseEntity<byte[]>> responseFlux = this.elevenLabsApi.textToSpeechStream(request, validVoiceId, null);
@@ -166,9 +165,9 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechStreamWithQueryParams() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("Hello, testing streaming with query params!")
-			.modelId("eleven_turbo_v2_5")
-			.build();
+				.text("Hello, testing streaming with query params!")
+				.modelId("eleven_turbo_v2_5")
+				.build();
 
 		String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 		MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
@@ -189,9 +188,9 @@ public class ElevenLabsApiIT {
 	@Test
 	public void testTextToSpeechStreamVoiceIdNull() {
 		ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-			.text("This should fail.")
-			.modelId("eleven_turbo_v2_5")
-			.build();
+				.text("This should fail.")
+				.modelId("eleven_turbo_v2_5")
+				.build();
 
 		Exception exception = assertThrows(IllegalArgumentException.class,
 				() -> this.elevenLabsApi.textToSpeechStream(request, null, null));
@@ -211,9 +210,9 @@ public class ElevenLabsApiIT {
 	public void testTextToSpeechStreamTextEmpty() {
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
 			ElevenLabsApi.SpeechRequest request = ElevenLabsApi.SpeechRequest.builder()
-				.text("")
-				.modelId("eleven_turbo_v2_5")
-				.build();
+					.text("")
+					.modelId("eleven_turbo_v2_5")
+					.build();
 
 			String validVoiceId = "9BWtsMINqrJLrRacOk9x";
 			this.elevenLabsApi.textToSpeechStream(request, validVoiceId, null);

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.retry;
 
-import org.jspecify.annotations.NullMarked;

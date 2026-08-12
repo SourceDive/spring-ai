@@ -33,6 +33,7 @@ public interface TypesenseConnectionDetails extends ConnectionDetails {
 
 	int getPort();
 
-	@Nullable String getApiKey();
+	@Nullable
+	String getApiKey();
 
 }

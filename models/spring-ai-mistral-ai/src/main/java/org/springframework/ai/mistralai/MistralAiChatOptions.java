@@ -16,13 +16,7 @@
 
 package org.springframework.ai.mistralai;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ReasoningEffort;
@@ -34,6 +28,11 @@ import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.util.JsonHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Options for the Mistral AI Chat API.
@@ -153,12 +152,12 @@ public class MistralAiChatOptions implements ToolCallingChatOptions, StructuredO
 	private final @Nullable Map<String, Object> toolContext;
 
 	protected MistralAiChatOptions(@Nullable String model, @Nullable Double temperature, @Nullable Double topP,
-			@Nullable Integer maxTokens, @Nullable Boolean safePrompt, @Nullable Integer randomSeed,
-			@Nullable ResponseFormat responseFormat, @Nullable List<String> stop,
-			@Nullable ReasoningEffort reasoningEffort, @Nullable Double frequencyPenalty,
-			@Nullable Double presencePenalty, @Nullable Integer n, @Nullable List<FunctionTool> tools,
-			@Nullable ToolChoice toolChoice, @Nullable List<ToolCallback> toolCallbacks,
-			@Nullable Map<String, Object> toolContext) {
+	                               @Nullable Integer maxTokens, @Nullable Boolean safePrompt, @Nullable Integer randomSeed,
+	                               @Nullable ResponseFormat responseFormat, @Nullable List<String> stop,
+	                               @Nullable ReasoningEffort reasoningEffort, @Nullable Double frequencyPenalty,
+	                               @Nullable Double presencePenalty, @Nullable Integer n, @Nullable List<FunctionTool> tools,
+	                               @Nullable ToolChoice toolChoice, @Nullable List<ToolCallback> toolCallbacks,
+	                               @Nullable Map<String, Object> toolContext) {
 
 		this.model = model != null ? model : MistralAiApi.ChatModel.MISTRAL_SMALL.getValue();
 		this.temperature = temperature != null ? temperature : 0.7;
@@ -274,28 +273,28 @@ public class MistralAiChatOptions implements ToolCallingChatOptions, StructuredO
 
 	public Builder mutate() {
 		return builder()
-			// ChatOptions
-			.model(this.model)
-			.frequencyPenalty(this.frequencyPenalty)
-			.maxTokens(this.maxTokens)
-			.presencePenalty(this.presencePenalty)
-			// @formatter:off
+				// ChatOptions
+				.model(this.model)
+				.frequencyPenalty(this.frequencyPenalty)
+				.maxTokens(this.maxTokens)
+				.presencePenalty(this.presencePenalty)
+				// @formatter:off
 			.stop(this.stop != null ? List.copyOf(this.stop) : null) // stopSequences alias for Mistral AI
 			// @formatter:on
-			.temperature(this.temperature)
-			.topP(this.topP)
-			.topK(this.getTopK()) // always null but here for consistency
-			// ToolCallingChatOptions
-			.toolCallbacks(this.getToolCallbacks())
-			.toolContext(this.getToolContext())
-			// Mistral AI specific
-			.safePrompt(this.safePrompt)
-			.randomSeed(this.randomSeed)
-			.reasoningEffort(this.reasoningEffort)
-			.responseFormat(this.responseFormat)
-			.n(this.n)
-			.tools(this.tools)
-			.toolChoice(this.toolChoice);
+				.temperature(this.temperature)
+				.topP(this.topP)
+				.topK(this.getTopK()) // always null but here for consistency
+				// ToolCallingChatOptions
+				.toolCallbacks(this.getToolCallbacks())
+				.toolContext(this.getToolContext())
+				// Mistral AI specific
+				.safePrompt(this.safePrompt)
+				.randomSeed(this.randomSeed)
+				.reasoningEffort(this.reasoningEffort)
+				.responseFormat(this.responseFormat)
+				.n(this.n)
+				.tools(this.tools)
+				.toolChoice(this.toolChoice);
 	}
 
 	@Override
@@ -370,8 +369,7 @@ public class MistralAiChatOptions implements ToolCallingChatOptions, StructuredO
 		public B model(MistralAiApi.@Nullable ChatModel chatModel) {
 			if (chatModel != null) {
 				this.model(chatModel.getName());
-			}
-			else {
+			} else {
 				this.model((String) null);
 			}
 			return self();
@@ -421,11 +419,10 @@ public class MistralAiChatOptions implements ToolCallingChatOptions, StructuredO
 		public B outputSchema(@Nullable String outputSchema) {
 			if (outputSchema != null) {
 				this.responseFormat = ResponseFormat.builder()
-					.type(ResponseFormat.Type.JSON_SCHEMA)
-					.jsonSchema(outputSchema)
-					.build();
-			}
-			else {
+						.type(ResponseFormat.Type.JSON_SCHEMA)
+						.jsonSchema(outputSchema)
+						.build();
+			} else {
 				this.responseFormat = null;
 			}
 			return self();
@@ -450,8 +447,7 @@ public class MistralAiChatOptions implements ToolCallingChatOptions, StructuredO
 				if (that.tools != null) {
 					if (this.tools == null) {
 						this.tools = new ArrayList<>(that.tools);
-					}
-					else {
+					} else {
 						List<MistralAiApi.FunctionTool> merged = new ArrayList<>(this.tools);
 						merged.addAll(that.tools);
 						this.tools = merged;

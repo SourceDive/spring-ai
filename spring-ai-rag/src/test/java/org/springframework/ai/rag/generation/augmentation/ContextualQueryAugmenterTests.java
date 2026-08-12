@@ -16,14 +16,13 @@
 
 package org.springframework.ai.rag.generation.augmentation;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.Query;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,25 +38,25 @@ class ContextualQueryAugmenterTests {
 	void whenPromptHasMissingContextPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("You are the boss. Query: {query}");
 		assertThatThrownBy(() -> ContextualQueryAugmenter.builder().promptTemplate(customPromptTemplate).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("context");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("context");
 	}
 
 	@Test
 	void whenPromptHasMissingQueryPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("You are the boss. Context: {context}");
 		assertThatThrownBy(() -> ContextualQueryAugmenter.builder().promptTemplate(customPromptTemplate).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("query");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("query");
 	}
 
 	@Test
 	void whenQueryIsNullThenThrow() {
 		QueryAugmenter augmenter = ContextualQueryAugmenter.builder().build();
 		assertThatThrownBy(() -> augmenter.augment(null, List.of())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("query cannot be null");
+				.hasMessageContaining("query cannot be null");
 	}
 
 	@Test
@@ -65,7 +64,7 @@ class ContextualQueryAugmenterTests {
 		QueryAugmenter augmenter = ContextualQueryAugmenter.builder().build();
 		Query query = new Query("test query");
 		assertThatThrownBy(() -> augmenter.augment(query, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("documents cannot be null");
+				.hasMessageContaining("documents cannot be null");
 	}
 
 	@Test
@@ -80,8 +79,8 @@ class ContextualQueryAugmenterTests {
 	void whenDocumentsIsEmptyAndNotAllowEmptyContextThenReturnAugmentedQueryWithCustomTemplate() {
 		PromptTemplate emptyContextPromptTemplate = new PromptTemplate("No context available.");
 		QueryAugmenter augmenter = ContextualQueryAugmenter.builder()
-			.emptyContextPromptTemplate(emptyContextPromptTemplate)
-			.build();
+				.emptyContextPromptTemplate(emptyContextPromptTemplate)
+				.build();
 		Query query = new Query("test query");
 		Query augmentedQuery = augmenter.augment(query, List.of());
 		assertThat(augmentedQuery.text()).isEqualTo(emptyContextPromptTemplate.getTemplate());

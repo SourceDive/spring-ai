@@ -16,15 +16,7 @@
 
 package org.springframework.ai.vectorstore.typesense.autoconfigure;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
-import org.typesense.api.Client;
-import org.typesense.api.Configuration;
-import org.typesense.resources.Node;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -38,6 +30,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.typesense.api.Client;
+import org.typesense.api.Configuration;
+import org.typesense.resources.Node;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for Typesense Vector Store.
@@ -47,8 +46,8 @@ import org.springframework.context.annotation.Bean;
  * @author Soby Chacko
  */
 @AutoConfiguration
-@ConditionalOnClass({ TypesenseVectorStore.class, EmbeddingModel.class })
-@EnableConfigurationProperties({ TypesenseServiceClientProperties.class, TypesenseVectorStoreProperties.class })
+@ConditionalOnClass({TypesenseVectorStore.class, EmbeddingModel.class})
+@EnableConfigurationProperties({TypesenseServiceClientProperties.class, TypesenseVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.TYPESENSE,
 		matchIfMissing = true)
 public class TypesenseVectorStoreAutoConfiguration {
@@ -69,18 +68,18 @@ public class TypesenseVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public TypesenseVectorStore vectorStore(Client typesenseClient, EmbeddingModel embeddingModel,
-			TypesenseVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                        TypesenseVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                        ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                        BatchingStrategy batchingStrategy) {
 
 		return TypesenseVectorStore.builder(typesenseClient, embeddingModel)
-			.collectionName(properties.getCollectionName())
-			.embeddingDimension(properties.getEmbeddingDimension())
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.collectionName(properties.getCollectionName())
+				.embeddingDimension(properties.getEmbeddingDimension())
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 	@Bean

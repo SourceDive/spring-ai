@@ -16,13 +16,8 @@
 
 package org.springframework.ai.integration.tests.tool;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -39,6 +34,10 @@ import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,8 +60,8 @@ public class ToolCallingManagerIT {
 	@Test
 	void explicitToolCallingExecutionWithNewOptions() {
 		OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(this.tools))
-			.build();
+				.toolCallbacks(ToolCallbacks.from(this.tools))
+				.build();
 		Prompt prompt = new Prompt(
 				new UserMessage("What books written by %s are available in the library?".formatted("J.R.R. Tolkien")),
 				chatOptions);
@@ -72,10 +71,10 @@ public class ToolCallingManagerIT {
 	@Test
 	void explicitToolCallingExecutionWithNewOptionsStream() {
 		OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
-			.toolCallbacks(ToolCallbacks.from(this.tools))
-			.build();
+				.toolCallbacks(ToolCallbacks.from(this.tools))
+				.build();
 		Prompt prompt = new Prompt(new UserMessage("What books written by %s, %s, and %s are available in the library?"
-			.formatted("J.R.R. Tolkien", "Philip Pullman", "C.S. Lewis")), chatOptions);
+				.formatted("J.R.R. Tolkien", "Philip Pullman", "C.S. Lewis")), chatOptions);
 		runExplicitToolCallingExecutionWithOptionsStream(chatOptions, prompt);
 	}
 
@@ -89,7 +88,7 @@ public class ToolCallingManagerIT {
 
 		assertThat(toolExecutionResult.conversationHistory()).isNotEmpty();
 		assertThat(toolExecutionResult.conversationHistory().stream().anyMatch(m -> m instanceof ToolResponseMessage))
-			.isTrue();
+				.isTrue();
 
 		Prompt secondPrompt = new Prompt(toolExecutionResult.conversationHistory(), chatOptions);
 
@@ -97,38 +96,38 @@ public class ToolCallingManagerIT {
 
 		assertThat(secondChatResponse).isNotNull();
 		assertThat(secondChatResponse.getResult().getOutput().getText()).isNotEmpty()
-			.contains("The Hobbit")
-			.contains("The Lord of The Rings")
-			.contains("The Silmarillion");
+				.contains("The Hobbit")
+				.contains("The Lord of The Rings")
+				.contains("The Silmarillion");
 	}
 
 	private void runExplicitToolCallingExecutionWithOptionsStream(OpenAiChatOptions chatOptions, Prompt prompt) {
 		String joinedTextResponse = this.openAiChatModel.stream(prompt).flatMap(response -> {
-			if (response.hasToolCalls()) {
-				ToolExecutionResult toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, response);
+					if (response.hasToolCalls()) {
+						ToolExecutionResult toolExecutionResult = this.toolCallingManager.executeToolCalls(prompt, response);
 
-				assertThat(toolExecutionResult.conversationHistory()).isNotEmpty();
-				assertThat(toolExecutionResult.conversationHistory()
-					.stream()
-					.anyMatch(m -> m instanceof ToolResponseMessage)).isTrue();
+						assertThat(toolExecutionResult.conversationHistory()).isNotEmpty();
+						assertThat(toolExecutionResult.conversationHistory()
+								.stream()
+								.anyMatch(m -> m instanceof ToolResponseMessage)).isTrue();
 
-				Prompt secondPrompt = new Prompt(toolExecutionResult.conversationHistory(), chatOptions);
-				return this.openAiChatModel.stream(secondPrompt);
-			}
-			return Flux.just(response);
-		})
-			.mapNotNull(it -> (it.getResult() == null || it.getResult().getOutput() == null) ? null
-					: it.getResult().getOutput().getText())
-			.collect(Collectors.joining())
-			.block();
+						Prompt secondPrompt = new Prompt(toolExecutionResult.conversationHistory(), chatOptions);
+						return this.openAiChatModel.stream(secondPrompt);
+					}
+					return Flux.just(response);
+				})
+				.mapNotNull(it -> (it.getResult() == null || it.getResult().getOutput() == null) ? null
+						: it.getResult().getOutput().getText())
+				.collect(Collectors.joining())
+				.block();
 
 		assertThat(joinedTextResponse).isNotNull();
 		assertThat(joinedTextResponse).isNotEmpty()
-			.contains("His Dark Materials")
-			.contains("The Lion, the Witch and the Wardrob")
-			.contains("The Hobbit")
-			.contains("The Lord of The Rings")
-			.contains("The Silmarillion");
+				.contains("His Dark Materials")
+				.contains("The Lion, the Witch and the Wardrob")
+				.contains("The Hobbit")
+				.contains("The Lord of The Rings")
+				.contains("The Silmarillion");
 	}
 
 	static class Tools {

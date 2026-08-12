@@ -87,12 +87,12 @@ public class OpenAiAudioSpeechProperties extends AbstractOpenAiProperties {
 
 	public OpenAiAudioSpeechOptions toOptions() {
 		return OpenAiAudioSpeechOptions.builder()
-			.model(this.getModel())
-			.input(this.input)
-			.voice(this.voice)
-			.responseFormat(this.responseFormat)
-			.speed(this.speed)
-			.build();
+				.model(this.getModel())
+				.input(this.input)
+				.voice(this.voice)
+				.responseFormat(this.responseFormat)
+				.speed(this.speed)
+				.build();
 	}
 
 	private Options options = new Options();

@@ -16,10 +16,7 @@
 
 package org.springframework.ai.ollama;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -32,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,7 +51,7 @@ class OllamaEmbeddingModelIT extends BaseOllamaIT {
 	void embeddings() {
 		assertThat(this.embeddingModel).isNotNull();
 		EmbeddingResponse embeddingResponse = this.embeddingModel
-			.call(new EmbeddingRequest(List.of("Hello World", "Something else"), null));
+				.call(new EmbeddingRequest(List.of("Hello World", "Something else"), null));
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 		assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
@@ -61,9 +60,9 @@ class OllamaEmbeddingModelIT extends BaseOllamaIT {
 		assertThat(embeddingResponse.getMetadata().getModel()).isEqualTo(MODEL);
 		// Token count varies by Ollama version and tokenizer implementation
 		assertThat(embeddingResponse.getMetadata().getUsage().getPromptTokens()).isGreaterThan(0)
-			.isLessThanOrEqualTo(10);
+				.isLessThanOrEqualTo(10);
 		assertThat(embeddingResponse.getMetadata().getUsage().getTotalTokens()).isGreaterThan(0)
-			.isLessThanOrEqualTo(10);
+				.isLessThanOrEqualTo(10);
 
 		assertThat(this.embeddingModel.dimensions()).isEqualTo(768);
 	}
@@ -87,9 +86,9 @@ class OllamaEmbeddingModelIT extends BaseOllamaIT {
 		assertThat(embeddingResponse.getMetadata().getModel()).contains(ADDITIONAL_MODEL);
 		// Token count varies by Ollama version and tokenizer implementation
 		assertThat(embeddingResponse.getMetadata().getUsage().getPromptTokens()).isGreaterThan(0)
-			.isLessThanOrEqualTo(20);
+				.isLessThanOrEqualTo(20);
 		assertThat(embeddingResponse.getMetadata().getUsage().getTotalTokens()).isGreaterThan(0)
-			.isLessThanOrEqualTo(20);
+				.isLessThanOrEqualTo(20);
 
 		assertThat(this.embeddingModel.dimensions()).isEqualTo(768);
 
@@ -107,13 +106,13 @@ class OllamaEmbeddingModelIT extends BaseOllamaIT {
 		@Bean
 		public OllamaEmbeddingModel ollamaEmbedding(OllamaApi ollamaApi) {
 			return OllamaEmbeddingModel.builder()
-				.ollamaApi(ollamaApi)
-				.options(OllamaEmbeddingOptions.builder().model(MODEL).build())
-				.modelManagementOptions(ModelManagementOptions.builder()
-					.pullModelStrategy(PullModelStrategy.WHEN_MISSING)
-					.additionalModels(List.of(ADDITIONAL_MODEL))
-					.build())
-				.build();
+					.ollamaApi(ollamaApi)
+					.options(OllamaEmbeddingOptions.builder().model(MODEL).build())
+					.modelManagementOptions(ModelManagementOptions.builder()
+							.pullModelStrategy(PullModelStrategy.WHEN_MISSING)
+							.additionalModels(List.of(ADDITIONAL_MODEL))
+							.build())
+					.build();
 		}
 
 	}

@@ -16,17 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.mcp.annotation.method.changed.prompt.SyncPromptListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.resource.SyncResourceListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.tool.SyncToolListChangedSpecification;
@@ -34,6 +29,10 @@ import org.springframework.ai.mcp.annotation.method.elicitation.SyncElicitationS
 import org.springframework.ai.mcp.annotation.method.logging.SyncLoggingSpecification;
 import org.springframework.ai.mcp.annotation.method.progress.SyncProgressSpecification;
 import org.springframework.ai.mcp.annotation.method.sampling.SyncSamplingSpecification;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,7 +57,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpServerFeatures.SyncToolSpecification> result = SyncMcpAnnotationProviders
-				.toolSpecifications(toolObjects);
+					.toolSpecifications(toolObjects);
 
 			assertNotNull(result);
 		}
@@ -69,7 +68,7 @@ class SyncMcpAnnotationProvidersTests {
 		List<Object> toolObjects = new ArrayList<>();
 
 		List<McpServerFeatures.SyncToolSpecification> result = SyncMcpAnnotationProviders
-			.toolSpecifications(toolObjects);
+				.toolSpecifications(toolObjects);
 
 		assertNotNull(result);
 		assertTrue(result.isEmpty());
@@ -84,7 +83,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpStatelessServerFeatures.SyncToolSpecification> result = SyncMcpAnnotationProviders
-				.statelessToolSpecifications(toolObjects);
+					.statelessToolSpecifications(toolObjects);
 
 			assertNotNull(result);
 		}
@@ -95,7 +94,7 @@ class SyncMcpAnnotationProvidersTests {
 		List<Object> toolObjects = new ArrayList<>();
 
 		List<McpStatelessServerFeatures.SyncToolSpecification> result = SyncMcpAnnotationProviders
-			.statelessToolSpecifications(toolObjects);
+				.statelessToolSpecifications(toolObjects);
 
 		assertNotNull(result);
 		assertTrue(result.isEmpty());
@@ -110,7 +109,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpServerFeatures.SyncCompletionSpecification> result = SyncMcpAnnotationProviders
-				.completeSpecifications(completeObjects);
+					.completeSpecifications(completeObjects);
 
 			assertNotNull(result);
 		}
@@ -125,7 +124,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpStatelessServerFeatures.SyncCompletionSpecification> result = SyncMcpAnnotationProviders
-				.statelessCompleteSpecifications(completeObjects);
+					.statelessCompleteSpecifications(completeObjects);
 
 			assertNotNull(result);
 		}
@@ -140,7 +139,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpServerFeatures.SyncPromptSpecification> result = SyncMcpAnnotationProviders
-				.promptSpecifications(promptObjects);
+					.promptSpecifications(promptObjects);
 
 			assertNotNull(result);
 		}
@@ -155,7 +154,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpStatelessServerFeatures.SyncPromptSpecification> result = SyncMcpAnnotationProviders
-				.statelessPromptSpecifications(promptObjects);
+					.statelessPromptSpecifications(promptObjects);
 
 			assertNotNull(result);
 		}
@@ -170,7 +169,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpServerFeatures.SyncResourceSpecification> result = SyncMcpAnnotationProviders
-				.resourceSpecifications(resourceObjects);
+					.resourceSpecifications(resourceObjects);
 
 			assertNotNull(result);
 		}
@@ -185,7 +184,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<McpStatelessServerFeatures.SyncResourceSpecification> result = SyncMcpAnnotationProviders
-				.statelessResourceSpecifications(resourceObjects);
+					.statelessResourceSpecifications(resourceObjects);
 
 			assertNotNull(result);
 		}
@@ -228,7 +227,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<SyncElicitationSpecification> result = SyncMcpAnnotationProviders
-				.elicitationSpecifications(elicitationObjects);
+					.elicitationSpecifications(elicitationObjects);
 
 			assertNotNull(result);
 		}
@@ -257,7 +256,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<SyncToolListChangedSpecification> result = SyncMcpAnnotationProviders
-				.toolListChangedSpecifications(toolListChangedObjects);
+					.toolListChangedSpecifications(toolListChangedObjects);
 
 			assertNotNull(result);
 		}
@@ -272,7 +271,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<SyncResourceListChangedSpecification> result = SyncMcpAnnotationProviders
-				.resourceListChangedSpecifications(resourceListChangedObjects);
+					.resourceListChangedSpecifications(resourceListChangedObjects);
 
 			assertNotNull(result);
 		}
@@ -287,7 +286,7 @@ class SyncMcpAnnotationProvidersTests {
 			mockedUtil.when(() -> AnnotationProviderUtil.beanMethods(any())).thenReturn(new Method[0]);
 
 			List<SyncPromptListChangedSpecification> result = SyncMcpAnnotationProviders
-				.promptListChangedSpecifications(promptListChangedObjects);
+					.promptListChangedSpecifications(promptListChangedObjects);
 
 			assertNotNull(result);
 		}

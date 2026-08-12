@@ -16,14 +16,10 @@
 
 package org.springframework.ai.integration.tests.rag.retrieval.search;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.integration.tests.TestApplication;
 import org.springframework.ai.rag.Query;
@@ -33,6 +29,9 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
@@ -78,12 +77,12 @@ class VectorStoreDocumentRetrieverIT {
 	@Test
 	void withBuildFilter() {
 		DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(this.pgVectorStore)
-			.similarityThreshold(0.50)
-			.topK(3)
-			.filterExpression(
-					new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Whispering Woods")))
-			.build();
+				.vectorStore(this.pgVectorStore)
+				.similarityThreshold(0.50)
+				.topK(3)
+				.filterExpression(
+						new Filter.Expression(EQ, new Filter.Key("location"), new Filter.Value("Whispering Woods")))
+				.build();
 
 		List<Document> retrievedDocuments = documentRetriever.retrieve(new Query("Who is Anacletus?"));
 
@@ -98,10 +97,10 @@ class VectorStoreDocumentRetrieverIT {
 	@Test
 	void withNoBuildFilter() {
 		DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(this.pgVectorStore)
-			.similarityThreshold(0.50)
-			.topK(3)
-			.build();
+				.vectorStore(this.pgVectorStore)
+				.similarityThreshold(0.50)
+				.topK(3)
+				.build();
 
 		List<Document> retrievedDocuments = documentRetriever.retrieve(new Query("Who is Anacletus?"));
 
@@ -114,15 +113,15 @@ class VectorStoreDocumentRetrieverIT {
 	@Test
 	void withRequestFilter() {
 		DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-			.vectorStore(this.pgVectorStore)
-			.similarityThreshold(0.50)
-			.topK(3)
-			.build();
+				.vectorStore(this.pgVectorStore)
+				.similarityThreshold(0.50)
+				.topK(3)
+				.build();
 
 		Query query = Query.builder()
-			.text("Who is Anacletus?")
-			.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Whispering Woods'"))
-			.build();
+				.text("Who is Anacletus?")
+				.context(Map.of(VectorStoreDocumentRetriever.FILTER_EXPRESSION, "location == 'Whispering Woods'"))
+				.build();
 		List<Document> retrievedDocuments = documentRetriever.retrieve(query);
 
 		assertThat(retrievedDocuments).hasSize(2);

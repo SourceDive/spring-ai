@@ -16,21 +16,6 @@
 
 package org.springframework.ai.vectorstore.elasticsearch;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.cat.indices.IndicesRecord;
 import co.elastic.clients.elasticsearch.indices.stats.IndicesStats;
@@ -45,13 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.elasticsearch.ElasticsearchContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.cfg.DateTimeFeature;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -65,6 +43,21 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -77,7 +70,7 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 	@Container
 	private static final ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(
 			ElasticsearchImage.DEFAULT_IMAGE)
-		.withEnv("xpack.security.enabled", "false");
+			.withEnv("xpack.security.enabled", "false");
 
 	private final List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -95,8 +88,7 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -126,7 +118,7 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "cosine", "custom_embedding_field" })
+	@ValueSource(strings = {"cosine", "custom_embedding_field"})
 	public void addAndDeleteDocumentsTest(String vectorStoreBeanName) {
 		getContextRunner().run(context -> {
 			ElasticsearchVectorStore vectorStore = context.getBean("vectorStore_" + vectorStoreBeanName,
@@ -134,32 +126,32 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			ElasticsearchClient elasticsearchClient = context.getBean(ElasticsearchClient.class);
 
 			IndicesStats stats = elasticsearchClient.indices()
-				.stats(s -> s.index("spring-ai-document-index"))
-				.indices()
-				.get("spring-ai-document-index");
+					.stats(s -> s.index("spring-ai-document-index"))
+					.indices()
+					.get("spring-ai-document-index");
 
 			assertThat(stats.total().docs().count()).isEqualTo(0L);
 
 			vectorStore.add(this.documents);
 			elasticsearchClient.indices().refresh();
 			stats = elasticsearchClient.indices()
-				.stats(s -> s.index("spring-ai-document-index"))
-				.indices()
-				.get("spring-ai-document-index");
+					.stats(s -> s.index("spring-ai-document-index"))
+					.indices()
+					.get("spring-ai-document-index");
 			assertThat(stats.total().docs().count()).isEqualTo(3L);
 
 			vectorStore.doDelete(List.of("1", "2", "3"));
 			elasticsearchClient.indices().refresh();
 			stats = elasticsearchClient.indices()
-				.stats(s -> s.index("spring-ai-document-index"))
-				.indices()
-				.get("spring-ai-document-index");
+					.stats(s -> s.index("spring-ai-document-index"))
+					.indices()
+					.get("spring-ai-document-index");
 			assertThat(stats.total().docs().count()).isEqualTo(0L);
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "cosine", "l2_norm", "dot_product", "custom_embedding_field" })
+	@ValueSource(strings = {"cosine", "l2_norm", "dot_product", "custom_embedding_field"})
 	public void addAndSearchTest(String vectorStoreBeanName) {
 
 		getContextRunner().run(context -> {
@@ -170,9 +162,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(
 					SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build());
@@ -189,14 +181,14 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "cosine", "l2_norm", "dot_product", "custom_embedding_field" })
+	@ValueSource(strings = {"cosine", "l2_norm", "dot_product", "custom_embedding_field"})
 	public void searchWithFilters(String vectorStoreBeanName) {
 
 		getContextRunner().run(context -> {
@@ -213,89 +205,89 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
+							hasSize(3));
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG','NL']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG','NL']")
+					.build());
 
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country not in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country not in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country not in ['BG'])")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country not in ['BG'])")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(
-						"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(
+							"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
@@ -304,13 +296,13 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "cosine", "l2_norm", "dot_product", "custom_embedding_field" })
+	@ValueSource(strings = {"cosine", "l2_norm", "dot_product", "custom_embedding_field"})
 	public void documentUpdateTest(String vectorStoreBeanName) {
 
 		getContextRunner().run(context -> {
@@ -322,12 +314,12 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(document));
 
 			Awaitility.await()
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").similarityThresholdAll().topK(5).build()),
-						hasSize(1));
+					.until(() -> vectorStore
+									.similaritySearch(SearchRequest.builder().query("Spring").similarityThresholdAll().topK(5).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").similarityThresholdAll().topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").similarityThresholdAll().topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -341,14 +333,14 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 
 			vectorStore.add(List.of(sameIdDocument));
 			SearchRequest fooBarSearchRequest = SearchRequest.builder()
-				.query("FooBar")
-				.topK(5)
-				.similarityThresholdAll()
-				.build();
+					.query("FooBar")
+					.topK(5)
+					.similarityThresholdAll()
+					.build();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
-						equalTo("The World is Big and Salvation Lurks Around the Corner"));
+					.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
+							equalTo("The World is Big and Salvation Lurks Around the Corner"));
 
 			results = vectorStore.similaritySearch(fooBarSearchRequest);
 
@@ -368,7 +360,7 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "cosine", "l2_norm", "dot_product", "custom_embedding_field" })
+	@ValueSource(strings = {"cosine", "l2_norm", "dot_product", "custom_embedding_field"})
 	public void searchThresholdTest(String vectorStoreBeanName) {
 		getContextRunner().run(context -> {
 			ElasticsearchVectorStore vectorStore = context.getBean("vectorStore_" + vectorStoreBeanName,
@@ -377,10 +369,10 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			SearchRequest query = SearchRequest.builder()
-				.query("Great Depression")
-				.topK(50)
-				.similarityThresholdAll()
-				.build();
+					.query("Great Depression")
+					.topK(50)
+					.similarityThresholdAll()
+					.build();
 
 			Awaitility.await().until(() -> vectorStore.similaritySearch(query), hasSize(3));
 
@@ -393,10 +385,10 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Great Depression")
-				.topK(50)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Great Depression")
+					.topK(50)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -410,9 +402,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(50).similarityThresholdAll().build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(50).similarityThresholdAll().build()),
+							hasSize(0));
 		});
 	}
 
@@ -432,28 +424,28 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
+							hasSize(3));
 
 			// with text filter expression
 			List<Document> resultWithText = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("year IS NULL")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("year IS NULL")
+					.build());
 
 			assertThat(resultWithText).hasSize(1);
 			assertThat(resultWithText.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			// with filter expression builder
 			List<Document> resultsWithBuilder = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(new FilterExpressionBuilder().isNull("year").build())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(new FilterExpressionBuilder().isNull("year").build())
+					.build());
 
 			assertThat(resultsWithBuilder).hasSize(1);
 			assertThat(resultsWithBuilder.get(0).getId()).isEqualTo(nlDocument.getId());
@@ -476,19 +468,19 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
+							hasSize(3));
 
 			Set<String> expectedResultSet = Set.of(bgDocument.getId(), bgDocument2.getId());
 
 			// with text filter expression
 			List<Document> resultWithText = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("year IS NOT NULL")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("year IS NOT NULL")
+					.build());
 
 			assertThat(resultWithText).hasSize(2);
 			assertThat(resultWithText.get(0).getId()).isIn(expectedResultSet);
@@ -496,11 +488,11 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 
 			// with filter expression builder
 			List<Document> resultsWithBuilder = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(new FilterExpressionBuilder().isNotNull("year").build())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(new FilterExpressionBuilder().isNotNull("year").build())
+					.build());
 
 			assertThat(resultsWithBuilder).hasSize(2);
 			assertThat(resultsWithBuilder.get(0).getId()).isIn(expectedResultSet);
@@ -525,15 +517,15 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(testDocs);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Great Depression")
-				.topK(overDefaultSize)
-				.similarityThresholdAll()
-				.build());
+					.query("Great Depression")
+					.topK(overDefaultSize)
+					.similarityThresholdAll()
+					.build());
 
 			assertThat(results).hasSize(overDefaultSize);
 
@@ -541,9 +533,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(testDocs.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThresholdAll().build()),
+							hasSize(0));
 		});
 	}
 
@@ -560,9 +552,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			// Verify client functionality
 			ElasticsearchClient client = nativeClient.get();
 			IndicesStats stats = client.indices()
-				.stats(s -> s.index("spring-ai-document-index"))
-				.indices()
-				.get("spring-ai-document-index");
+					.stats(s -> s.index("spring-ai-document-index"))
+					.indices()
+					.get("spring-ai-document-index");
 			assertThat(stats).isNotNull();
 		});
 	}
@@ -581,9 +573,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			options.setIndexName("index_l2");
 			options.setSimilarity(SimilarityFunction.l2_norm);
 			return ElasticsearchVectorStore.builder(restClient, embeddingModel)
-				.initializeSchema(true)
-				.options(options)
-				.build();
+					.initializeSchema(true)
+					.options(options)
+					.build();
 		}
 
 		@Bean("vectorStore_dot_product")
@@ -592,9 +584,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			options.setIndexName("index_dot_product");
 			options.setSimilarity(SimilarityFunction.dot_product);
 			return ElasticsearchVectorStore.builder(restClient, embeddingModel)
-				.initializeSchema(true)
-				.options(options)
-				.build();
+					.initializeSchema(true)
+					.options(options)
+					.build();
 		}
 
 		@Bean("vectorStore_custom_embedding_field")
@@ -602,17 +594,17 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 			ElasticsearchVectorStoreOptions options = new ElasticsearchVectorStoreOptions();
 			options.setEmbeddingFieldName("custom_embedding_field");
 			return ElasticsearchVectorStore.builder(restClient, embeddingModel)
-				.initializeSchema(true)
-				.options(options)
-				.build();
+					.initializeSchema(true)
+					.options(options)
+					.build();
 		}
 
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 		@Bean
@@ -623,9 +615,9 @@ class ElasticsearchVectorStoreIT extends BaseVectorStoreTests {
 		@Bean
 		ElasticsearchClient elasticsearchClient(Rest5Client restClient) {
 			JsonMapper jsonMapper = JsonMapper.builder()
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.enable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.build();
+					.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+					.enable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+					.build();
 			return new ElasticsearchClient(new Rest5ClientTransport(restClient, new Jackson3JsonpMapper(jsonMapper)));
 		}
 

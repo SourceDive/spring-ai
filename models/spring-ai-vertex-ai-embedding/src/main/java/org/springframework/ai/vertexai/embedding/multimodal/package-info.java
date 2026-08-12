@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vertexai.embedding.multimodal;
 
-import org.jspecify.annotations.NullMarked;

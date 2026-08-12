@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.complete;
 
-import java.util.List;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncCompletionSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
@@ -26,10 +24,11 @@ import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
 import io.modelcontextprotocol.spec.McpSchema.PromptReference;
 import io.modelcontextprotocol.spec.McpSchema.ResourceReference;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpComplete;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpComplete;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,8 +44,8 @@ public class AsyncStatelessMcpCompleteProviderTests {
 	@Test
 	void testConstructorWithNullCompleteObjects() {
 		assertThatThrownBy(() -> new AsyncStatelessMcpCompleteProvider(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("completeObjects cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("completeObjects cannot be null");
 	}
 
 	@Test
@@ -357,7 +356,7 @@ public class AsyncStatelessMcpCompleteProviderTests {
 			assertThat(completeResult.completion()).isNotNull();
 			assertThat(completeResult.completion().values()).hasSize(1);
 			assertThat(completeResult.completion().values().get(0))
-				.isEqualTo("Completion with context: present, value: value");
+					.isEqualTo("Completion with context: present, value: value");
 		}).verifyComplete();
 	}
 

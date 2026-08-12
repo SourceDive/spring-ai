@@ -16,14 +16,13 @@
 
 package org.springframework.ai.chat.metadata;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.metadata.ChatGenerationMetadata.Builder;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.metadata.ChatGenerationMetadata.Builder;
 
 /**
  * @author Christian Tzolov

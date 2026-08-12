@@ -21,12 +21,11 @@ import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.spec.McpStreamableServerTransportProvider;
 import org.junit.jupiter.api.Timeout;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
 
 /**
  * Tests for {@link McpAsyncServer} using
@@ -44,8 +43,8 @@ class WebFluxStreamableMcpSyncServerIT extends AbstractMcpSyncServerTests {
 
 	private McpStreamableServerTransportProvider createMcpTransportProvider() {
 		var transportProvider = WebFluxStreamableServerTransportProvider.builder()
-			.messageEndpoint(MESSAGE_ENDPOINT)
-			.build();
+				.messageEndpoint(MESSAGE_ENDPOINT)
+				.build();
 
 		HttpHandler httpHandler = RouterFunctions.toHttpHandler(transportProvider.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);

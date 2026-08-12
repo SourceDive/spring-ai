@@ -16,16 +16,10 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
@@ -44,6 +38,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,20 +64,20 @@ public class OpenAiPaymentTransactionIT {
 	List<ToolCallback> toolCallbacks;
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "paymentStatus", "paymentStatuses" })
+	@ValueSource(strings = {"paymentStatus", "paymentStatuses"})
 	public void transactionPaymentStatuses(String functionName) {
 		ToolCallback toolCallback = findToolCallback(functionName);
 
 		List<TransactionStatusResponse> content = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.tools(toolCallback)
-			.user("""
-					What is the status of my payment transactions 001, 002 and 003?
-					""")
-			.call()
-			.entity(new ParameterizedTypeReference<List<TransactionStatusResponse>>() {
+				.advisors(new SimpleLoggerAdvisor())
+				.tools(toolCallback)
+				.user("""
+						What is the status of my payment transactions 001, 002 and 003?
+						""")
+				.call()
+				.entity(new ParameterizedTypeReference<List<TransactionStatusResponse>>() {
 
-			});
+				});
 
 		assertThat(content.get(0).id()).isEqualTo("001");
 		assertThat(content.get(0).status()).isEqualTo("pending");
@@ -91,7 +90,7 @@ public class OpenAiPaymentTransactionIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "paymentStatus", "paymentStatuses" })
+	@ValueSource(strings = {"paymentStatus", "paymentStatuses"})
 	public void streamingPaymentStatuses(String functionName) {
 		ToolCallback toolCallback = findToolCallback(functionName);
 
@@ -100,15 +99,15 @@ public class OpenAiPaymentTransactionIT {
 		});
 
 		Flux<String> flux = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.tools(toolCallback)
-			.user(u -> u.text("""
-					What is the status of my payment transactions 001, 002 and 003?
+				.advisors(new SimpleLoggerAdvisor())
+				.tools(toolCallback)
+				.user(u -> u.text("""
+						What is the status of my payment transactions 001, 002 and 003?
 
-					{format}
-					""").param("format", converter.getFormat()))
-			.stream()
-			.content();
+						{format}
+						""").param("format", converter.getFormat()))
+				.stream()
+				.content();
 
 		String content = flux.collectList().block().stream().collect(Collectors.joining());
 
@@ -126,9 +125,9 @@ public class OpenAiPaymentTransactionIT {
 
 	private ToolCallback findToolCallback(String name) {
 		return this.toolCallbacks.stream()
-			.filter(tc -> tc.getToolDefinition().name().equals(name))
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("No ToolCallback found for name: " + name));
+				.filter(tc -> tc.getToolDefinition().name().equals(name))
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException("No ToolCallback found for name: " + name));
 	}
 
 	record TransactionStatusResponse(String id, String status) {
@@ -157,39 +156,39 @@ public class OpenAiPaymentTransactionIT {
 		@Bean
 		ToolCallback paymentStatus() {
 			return FunctionToolCallback.builder("paymentStatus", (Transaction transaction) -> DATASET.get(transaction))
-				.description("Get the status of a single payment transaction")
-				.inputType(Transaction.class)
-				.build();
+					.description("Get the status of a single payment transaction")
+					.inputType(Transaction.class)
+					.build();
 		}
 
 		@Bean
 		ToolCallback paymentStatuses() {
 			return FunctionToolCallback
-				.builder("paymentStatuses",
-						(Transactions transactions) -> new Statuses(
-								transactions.transactions().stream().map(t -> DATASET.get(t)).toList()))
-				.description("Get the list statuses of a list of payment transactions")
-				.inputType(Transactions.class)
-				.build();
+					.builder("paymentStatuses",
+							(Transactions transactions) -> new Statuses(
+									transactions.transactions().stream().map(t -> DATASET.get(t)).toList()))
+					.description("Get the list statuses of a list of payment transactions")
+					.inputType(Transactions.class)
+					.build();
 		}
 
 		@Bean
 		public ChatClient chatClient(OpenAiChatModel chatModel, ToolCallingManager toolCallingManager) {
 			return ChatClient
-				.builder(chatModel, ObservationRegistry.NOOP, null, null,
-						ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-				.build();
+					.builder(chatModel, ObservationRegistry.NOOP, null, null,
+							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+					.build();
 		}
 
 		@Bean
 		public OpenAiChatModel openAiClient() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.apiKey(System.getenv("OPENAI_API_KEY"))
-					.model("gpt-4o-mini")
-					.temperature(0.1)
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.apiKey(System.getenv("OPENAI_API_KEY"))
+							.model("gpt-4o-mini")
+							.temperature(0.1)
+							.build())
+					.build();
 		}
 
 		@Bean
@@ -201,11 +200,11 @@ public class OpenAiPaymentTransactionIT {
 		@Bean
 		@ConditionalOnMissingBean
 		ToolCallingManager toolCallingManager(ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
-				ObjectProvider<ObservationRegistry> observationRegistry) {
+		                                      ObjectProvider<ObservationRegistry> observationRegistry) {
 			return ToolCallingManager.builder()
-				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-				.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
-				.build();
+					.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+					.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
+					.build();
 		}
 
 	}

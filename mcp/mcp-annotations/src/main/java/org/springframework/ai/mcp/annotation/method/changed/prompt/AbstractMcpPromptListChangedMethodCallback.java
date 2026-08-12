@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.prompt;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.util.Assert;
+import org.springframework.ai.mcp.annotation.McpPromptListChanged;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.util.Assert;
-
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-
 /**
  * Abstract base class for creating callbacks around prompt list changed consumer methods.
- *
+ * <p>
  * This class provides common functionality for both synchronous and asynchronous prompt
  * list changed consumer method callbacks. It contains shared logic for method validation,
  * argument building, and other common operations.
@@ -42,8 +41,9 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 	/**
 	 * Constructor for AbstractMcpPromptListChangedMethodCallback.
+	 *
 	 * @param method The method to create a callback for
-	 * @param bean The bean instance that contains the method
+	 * @param bean   The bean instance that contains the method
 	 */
 	protected AbstractMcpPromptListChangedMethodCallback(Method method, Object bean) {
 		Assert.notNull(method, "Method can't be null!");
@@ -60,6 +60,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 	 * <p>
 	 * This method checks that the return type is valid and that the parameters match the
 	 * expected pattern.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the method signature is not compatible
 	 */
@@ -76,6 +77,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 	 * Validates that the method return type is compatible with the prompt list changed
 	 * consumer callback. This method should be implemented by subclasses to handle
 	 * specific return type validation.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -83,6 +85,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 	/**
 	 * Validates method parameters. This method provides common validation logic.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the parameters are not compatible
 	 */
@@ -109,8 +112,9 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 	 * <p>
 	 * This method constructs an array of arguments based on the method's parameter types
 	 * and the available values.
-	 * @param method The method to build arguments for
-	 * @param exchange The server exchange
+	 *
+	 * @param method         The method to build arguments for
+	 * @param exchange       The server exchange
 	 * @param updatedPrompts The updated list of prompts
 	 * @return An array of arguments for the method invocation
 	 */
@@ -134,8 +138,9 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message and cause.
+		 *
 		 * @param message The detail message
-		 * @param cause The cause
+		 * @param cause   The cause
 		 */
 		public McpPromptListChangedConsumerMethodException(String message, Throwable cause) {
 			super(message, cause);
@@ -143,6 +148,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message.
+		 *
 		 * @param message The detail message
 		 */
 		public McpPromptListChangedConsumerMethodException(String message) {
@@ -168,6 +174,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Set the method to create a callback for.
+		 *
 		 * @param method The method to create a callback for
 		 * @return This builder
 		 */
@@ -179,6 +186,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Set the bean instance that contains the method.
+		 *
 		 * @param bean The bean instance
 		 * @return This builder
 		 */
@@ -190,6 +198,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Set the prompt list changed annotation.
+		 *
 		 * @param promptListChanged The prompt list changed annotation
 		 * @return This builder
 		 */
@@ -201,6 +210,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Validate the builder state.
+		 *
 		 * @throws IllegalArgumentException if the builder state is invalid
 		 */
 		protected void validate() {
@@ -214,6 +224,7 @@ public abstract class AbstractMcpPromptListChangedMethodCallback {
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new callback instance
 		 */
 		public abstract R build();

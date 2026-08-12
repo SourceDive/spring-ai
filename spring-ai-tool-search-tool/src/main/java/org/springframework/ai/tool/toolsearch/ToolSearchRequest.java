@@ -23,19 +23,19 @@ import org.jspecify.annotations.Nullable;
 /**
  * Request for searching tools within a session's index.
  *
- * @param sessionId identifies the session whose tool index is searched
- * @param query natural-language description of the needed capability
- * @param maxResults maximum number of results to return; {@code null} lets the tool index
- * apply its own default
+ * @param sessionId      identifies the session whose tool index is searched
+ * @param query          natural-language description of the needed capability
+ * @param maxResults     maximum number of results to return; {@code null} lets the tool index
+ *                       apply its own default
  * @param categoryFilter optional hint to narrow the search to a specific tool category;
- * support depends on the
- * {@link org.springframework.ai.chat.client.advisor.toolsearch.ToolIndex} implementation
+ *                       support depends on the
+ *                       {@link org.springframework.ai.chat.client.advisor.toolsearch.ToolIndex} implementation
  * @author Christian Tzolov
  * @since 2.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ToolSearchRequest(String sessionId, String query, @Nullable Integer maxResults,
-		@Nullable String categoryFilter) {
+                                @Nullable String categoryFilter) {
 
 }

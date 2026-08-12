@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.tool;
 
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpToolListChanged;
 import org.springframework.ai.mcp.annotation.method.changed.tool.SyncToolListChangedSpecification;
+
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,15 +37,15 @@ public class SyncMcpToolListChangedProviderTests {
 
 	private static final List<McpSchema.Tool> TEST_TOOLS = List.of(
 			McpSchema.Tool.builder()
-				.name("test-tool-1")
-				.description("Test Tool 1")
-				.inputSchema(McpJsonDefaults.getMapper(), "{}")
-				.build(),
+					.name("test-tool-1")
+					.description("Test Tool 1")
+					.inputSchema(McpJsonDefaults.getMapper(), "{}")
+					.build(),
 			McpSchema.Tool.builder()
-				.name("test-tool-2")
-				.description("Test Tool 2")
-				.inputSchema(McpJsonDefaults.getMapper(), "{}")
-				.build());
+					.name("test-tool-2")
+					.description("Test Tool 2")
+					.inputSchema(McpJsonDefaults.getMapper(), "{}")
+					.build());
 
 	@Test
 	void testGetToolListChangedSpecifications() {
@@ -55,8 +54,8 @@ public class SyncMcpToolListChangedProviderTests {
 
 		List<SyncToolListChangedSpecification> specifications = provider.getToolListChangedSpecifications();
 		List<Consumer<List<McpSchema.Tool>>> consumers = specifications.stream()
-			.map(SyncToolListChangedSpecification::toolListChangeHandler)
-			.toList();
+				.map(SyncToolListChangedSpecification::toolListChangeHandler)
+				.toList();
 
 		// Should find 2 annotated methods
 		assertThat(consumers).hasSize(2);
@@ -99,9 +98,9 @@ public class SyncMcpToolListChangedProviderTests {
 		SyncMcpToolListChangedProvider provider = new SyncMcpToolListChangedProvider(List.of());
 
 		List<Consumer<List<McpSchema.Tool>>> consumers = provider.getToolListChangedSpecifications()
-			.stream()
-			.map(SyncToolListChangedSpecification::toolListChangeHandler)
-			.toList();
+				.stream()
+				.map(SyncToolListChangedSpecification::toolListChangeHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -113,9 +112,9 @@ public class SyncMcpToolListChangedProviderTests {
 		SyncMcpToolListChangedProvider provider = new SyncMcpToolListChangedProvider(List.of(handler1, handler2));
 
 		List<Consumer<List<McpSchema.Tool>>> consumers = provider.getToolListChangedSpecifications()
-			.stream()
-			.map(SyncToolListChangedSpecification::toolListChangeHandler)
-			.toList();
+				.stream()
+				.map(SyncToolListChangedSpecification::toolListChangeHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

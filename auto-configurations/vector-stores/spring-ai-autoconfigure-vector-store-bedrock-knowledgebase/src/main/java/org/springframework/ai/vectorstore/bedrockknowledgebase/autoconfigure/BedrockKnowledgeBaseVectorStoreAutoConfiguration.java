@@ -16,12 +16,6 @@
 
 package org.springframework.ai.vectorstore.bedrockknowledgebase.autoconfigure;
 
-import java.util.Objects;
-
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
-import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClientBuilder;
-
 import org.springframework.ai.vectorstore.SpringAIVectorStoreTypes;
 import org.springframework.ai.vectorstore.bedrockknowledgebase.BedrockKnowledgeBaseVectorStore;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -31,6 +25,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClientBuilder;
+
+import java.util.Objects;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for Amazon Bedrock Knowledge Base Vector
@@ -71,12 +70,12 @@ import org.springframework.util.StringUtils;
  * </pre>
  *
  * @author Yuriy Bezsonov
- * @since 2.0.0
  * @see BedrockKnowledgeBaseVectorStore
  * @see BedrockKnowledgeBaseVectorStoreProperties
+ * @since 2.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ BedrockAgentRuntimeClient.class, BedrockKnowledgeBaseVectorStore.class })
+@ConditionalOnClass({BedrockAgentRuntimeClient.class, BedrockKnowledgeBaseVectorStore.class})
 @EnableConfigurationProperties(BedrockKnowledgeBaseVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE,
 		havingValue = SpringAIVectorStoreTypes.BEDROCK_KNOWLEDGE_BASE, matchIfMissing = true)
@@ -85,6 +84,7 @@ public class BedrockKnowledgeBaseVectorStoreAutoConfiguration {
 	/**
 	 * Creates a BedrockAgentRuntimeClient using default AWS credentials. This bean is
 	 * only created if no other BedrockAgentRuntimeClient is defined.
+	 *
 	 * @param properties the configuration properties
 	 * @return the BedrockAgentRuntimeClient
 	 */
@@ -104,7 +104,8 @@ public class BedrockKnowledgeBaseVectorStoreAutoConfiguration {
 	 * Creates a BedrockKnowledgeBaseVectorStore configured from properties. This bean is
 	 * only created if no other BedrockKnowledgeBaseVectorStore is defined and the
 	 * knowledge-base-id property is set.
-	 * @param client the BedrockAgentRuntimeClient
+	 *
+	 * @param client     the BedrockAgentRuntimeClient
 	 * @param properties the configuration properties
 	 * @return the BedrockKnowledgeBaseVectorStore
 	 */
@@ -112,13 +113,13 @@ public class BedrockKnowledgeBaseVectorStoreAutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnProperty(prefix = BedrockKnowledgeBaseVectorStoreProperties.CONFIG_PREFIX, name = "knowledge-base-id")
 	BedrockKnowledgeBaseVectorStore bedrockKnowledgeBaseVectorStore(BedrockAgentRuntimeClient client,
-			BedrockKnowledgeBaseVectorStoreProperties properties) {
+	                                                                BedrockKnowledgeBaseVectorStoreProperties properties) {
 
 		var builder = BedrockKnowledgeBaseVectorStore
-			.builder(client,
-					Objects.requireNonNull(properties.getKnowledgeBaseId(), "knowledgeBaseId must not be null"))
-			.topK(properties.getTopK())
-			.similarityThreshold(properties.getSimilarityThreshold());
+				.builder(client,
+						Objects.requireNonNull(properties.getKnowledgeBaseId(), "knowledgeBaseId must not be null"))
+				.topK(properties.getTopK())
+				.similarityThreshold(properties.getSimilarityThreshold());
 
 		if (properties.getSearchType() != null) {
 			builder.searchType(properties.getSearchType());

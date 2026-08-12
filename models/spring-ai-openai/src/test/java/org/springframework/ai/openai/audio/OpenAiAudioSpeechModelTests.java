@@ -68,14 +68,14 @@ class OpenAiAudioSpeechModelTests {
 	@Test
 	void testConstructorWithClientAndOptions() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1")
-			.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
-			.build();
+				.model("tts-1")
+				.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder()
-			.openAiClient(this.mockClient)
-			.options(options)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(options)
+				.build();
 
 		assertThat(model).isNotNull();
 		assertThat(model.getOptions()).isEqualTo(options);
@@ -84,15 +84,15 @@ class OpenAiAudioSpeechModelTests {
 	@Test
 	void testConstructorWithAllParameters() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1-hd")
-			.voice(OpenAiAudioSpeechOptions.Voice.SHIMMER)
-			.speed(1.5)
-			.build();
+				.model("tts-1-hd")
+				.voice(OpenAiAudioSpeechOptions.Voice.SHIMMER)
+				.speed(1.5)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder()
-			.openAiClient(this.mockClient)
-			.options(options)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(options)
+				.build();
 
 		assertThat(model).isNotNull();
 		assertThat(model.getOptions()).isEqualTo(options);
@@ -128,7 +128,7 @@ class OpenAiAudioSpeechModelTests {
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().openAiClient(this.mockClient).build();
 
 		assertThatThrownBy(() -> model.call((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Text must not be null");
+				.hasMessageContaining("Text must not be null");
 	}
 
 	@Test
@@ -136,7 +136,7 @@ class OpenAiAudioSpeechModelTests {
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().openAiClient(this.mockClient).build();
 
 		assertThatThrownBy(() -> model.call("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Text must not be null or empty");
+				.hasMessageContaining("Text must not be null or empty");
 	}
 
 	@Test
@@ -144,18 +144,18 @@ class OpenAiAudioSpeechModelTests {
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().openAiClient(this.mockClient).build();
 
 		assertThatThrownBy(() -> model.call((org.springframework.ai.audio.tts.TextToSpeechPrompt) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prompt must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prompt must not be null");
 	}
 
 	@Test
 	void testOptionsBuilder() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1")
-			.voice(OpenAiAudioSpeechOptions.Voice.ECHO)
-			.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.OPUS)
-			.speed(2.0)
-			.build();
+				.model("tts-1")
+				.voice(OpenAiAudioSpeechOptions.Voice.ECHO)
+				.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.OPUS)
+				.speed(2.0)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("tts-1");
 		assertThat(options.getVoice()).isEqualTo("echo");
@@ -191,23 +191,23 @@ class OpenAiAudioSpeechModelTests {
 	@Test
 	void testOptionsMerging() {
 		OpenAiAudioSpeechOptions source = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1-hd")
-			.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
-			.speed(1.5)
-			.build();
+				.model("tts-1-hd")
+				.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
+				.speed(1.5)
+				.build();
 
 		OpenAiAudioSpeechOptions target = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1")
-			.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
-			.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.WAV)
-			.speed(1.0)
-			.build();
+				.model("tts-1")
+				.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
+				.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.WAV)
+				.speed(1.0)
+				.build();
 
 		// Create model with target defaults
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder()
-			.openAiClient(this.mockClient)
-			.options(target)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(target)
+				.build();
 
 		// Verify that default options are set
 		OpenAiAudioSpeechOptions defaults = (OpenAiAudioSpeechOptions) model.getOptions();
@@ -220,15 +220,15 @@ class OpenAiAudioSpeechModelTests {
 	@Test
 	void testBuilder() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1-hd")
-			.voice(OpenAiAudioSpeechOptions.Voice.SHIMMER)
-			.speed(1.5)
-			.build();
+				.model("tts-1-hd")
+				.voice(OpenAiAudioSpeechOptions.Voice.SHIMMER)
+				.speed(1.5)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder()
-			.openAiClient(this.mockClient)
-			.options(options)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(options)
+				.build();
 
 		assertThat(model).isNotNull();
 		assertThat(model.getOptions()).isEqualTo(options);
@@ -252,20 +252,20 @@ class OpenAiAudioSpeechModelTests {
 	@Test
 	void testBuilderMutate() {
 		OpenAiAudioSpeechOptions originalOptions = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1")
-			.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
-			.build();
+				.model("tts-1")
+				.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
+				.build();
 
 		OpenAiAudioSpeechModel originalModel = OpenAiAudioSpeechModel.builder()
-			.openAiClient(this.mockClient)
-			.options(originalOptions)
-			.build();
+				.openAiClient(this.mockClient)
+				.options(originalOptions)
+				.build();
 
 		// Create a modified copy using mutate
 		OpenAiAudioSpeechOptions newOptions = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1-hd")
-			.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
-			.build();
+				.model("tts-1-hd")
+				.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
+				.build();
 
 		OpenAiAudioSpeechModel modifiedModel = originalModel.mutate().options(newOptions).build();
 

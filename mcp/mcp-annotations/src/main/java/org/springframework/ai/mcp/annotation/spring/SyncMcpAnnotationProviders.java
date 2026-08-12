@@ -16,16 +16,8 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import io.modelcontextprotocol.server.McpServerFeatures.SyncCompletionSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.SyncPromptSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceTemplateSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.*;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
-
 import org.springframework.ai.mcp.annotation.method.changed.prompt.SyncPromptListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.resource.SyncResourceListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.tool.SyncToolListChangedSpecification;
@@ -48,6 +40,9 @@ import org.springframework.ai.mcp.annotation.provider.resource.SyncStatelessMcpR
 import org.springframework.ai.mcp.annotation.provider.sampling.SyncMcpSamplingProvider;
 import org.springframework.ai.mcp.annotation.provider.tool.SyncMcpToolProvider;
 import org.springframework.ai.mcp.annotation.provider.tool.SyncStatelessMcpToolProvider;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Christian Tzolov
@@ -141,14 +136,14 @@ public final class SyncMcpAnnotationProviders {
 	public static List<SyncResourceListChangedSpecification> resourceListChangedSpecifications(
 			List<Object> resourceListChangedObjects) {
 		return new SpringAiSyncMcpResourceListChangedProvider(resourceListChangedObjects)
-			.getResourceListChangedSpecifications();
+				.getResourceListChangedSpecifications();
 	}
 
 	// PROMPT LIST CHANGED
 	public static List<SyncPromptListChangedSpecification> promptListChangedSpecifications(
 			List<Object> promptListChangedObjects) {
 		return new SpringAiSyncMcpPromptListChangedProvider(promptListChangedObjects)
-			.getPromptListChangedSpecifications();
+				.getPromptListChangedSpecifications();
 	}
 
 	// COMPLETE

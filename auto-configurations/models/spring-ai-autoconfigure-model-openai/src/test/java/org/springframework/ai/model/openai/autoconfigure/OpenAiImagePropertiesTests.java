@@ -37,30 +37,30 @@ public class OpenAiImagePropertiesTests {
 	public void imageProperties() {
 
 		this.contextRunner.withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 				"spring.ai.openai.base-url=http://TEST.BASE.URL",
 				"spring.ai.openai.api-key=abc123",
 				"spring.ai.openai.image.options.model=MODEL_XYZ",
 				"spring.ai.openai.image.options.n=2")
 				// @formatter:on
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				var imageProperties = context.getBean(OpenAiImageProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					var imageProperties = context.getBean(OpenAiImageProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
 
-				assertThat(imageProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(imageProperties.getN()).isEqualTo(2);
-			});
+					assertThat(imageProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(imageProperties.getN()).isEqualTo(2);
+				});
 	}
 
 	@Test
 	public void imageOptionsTest() {
 
 		this.contextRunner
-			.withPropertyValues(// @formatter:off
+				.withPropertyValues(// @formatter:off
 				"spring.ai.openai.api-key=API_KEY",
 				"spring.ai.openai.base-url=http://TEST.BASE.URL",
 
@@ -75,24 +75,24 @@ public class OpenAiImagePropertiesTests {
 				"spring.ai.openai.image.options.user=userXYZ"
 			)
 			// @formatter:on
-			.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
-			.run(context -> {
-				var imageProperties = context.getBean(OpenAiImageProperties.class);
-				var commonProperties = context.getBean(OpenAiCommonProperties.class);
+				.withConfiguration(AutoConfigurations.of(OpenAiImageAutoConfiguration.class))
+				.run(context -> {
+					var imageProperties = context.getBean(OpenAiImageProperties.class);
+					var commonProperties = context.getBean(OpenAiCommonProperties.class);
 
-				assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
-				assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(commonProperties.getBaseUrl()).isEqualTo("http://TEST.BASE.URL");
+					assertThat(commonProperties.getApiKey()).isEqualTo("API_KEY");
 
-				assertThat(imageProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(imageProperties.getN()).isEqualTo(3);
-				assertThat(imageProperties.getWidth()).isEqualTo(1024);
-				assertThat(imageProperties.getHeight()).isEqualTo(1792);
-				assertThat(imageProperties.getQuality()).isEqualTo("hd");
-				assertThat(imageProperties.getResponseFormat()).isEqualTo("url");
-				assertThat(imageProperties.getSize()).isEqualTo("1024x1792");
-				assertThat(imageProperties.getStyle()).isEqualTo("vivid");
-				assertThat(imageProperties.getUser()).isEqualTo("userXYZ");
-			});
+					assertThat(imageProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(imageProperties.getN()).isEqualTo(3);
+					assertThat(imageProperties.getWidth()).isEqualTo(1024);
+					assertThat(imageProperties.getHeight()).isEqualTo(1792);
+					assertThat(imageProperties.getQuality()).isEqualTo("hd");
+					assertThat(imageProperties.getResponseFormat()).isEqualTo("url");
+					assertThat(imageProperties.getSize()).isEqualTo("1024x1792");
+					assertThat(imageProperties.getStyle()).isEqualTo("vivid");
+					assertThat(imageProperties.getUser()).isEqualTo("userXYZ");
+				});
 	}
 
 }

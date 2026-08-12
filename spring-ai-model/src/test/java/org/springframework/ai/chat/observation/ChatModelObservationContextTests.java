@@ -33,9 +33,9 @@ class ChatModelObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -43,9 +43,9 @@ class ChatModelObservationContextTests {
 	@Test
 	void whenStreamingNotSetThenDefaultToFalse() {
 		var observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
-			.provider("superprovider")
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(observationContext.isStreaming()).isFalse();
 	}
@@ -53,10 +53,10 @@ class ChatModelObservationContextTests {
 	@Test
 	void whenStreamingTrueThenReturn() {
 		var observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
-			.provider("superprovider")
-			.streaming(true)
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
+				.provider("superprovider")
+				.streaming(true)
+				.build();
 
 		assertThat(observationContext.isStreaming()).isTrue();
 	}
@@ -64,10 +64,10 @@ class ChatModelObservationContextTests {
 	@Test
 	void whenStreamingFalseThenReturn() {
 		var observationContext = ChatModelObservationContext.builder()
-			.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
-			.provider("superprovider")
-			.streaming(false)
-			.build();
+				.prompt(generatePrompt(ChatOptions.builder().model("supermodel").build()))
+				.provider("superprovider")
+				.streaming(false)
+				.build();
 
 		assertThat(observationContext.isStreaming()).isFalse();
 	}

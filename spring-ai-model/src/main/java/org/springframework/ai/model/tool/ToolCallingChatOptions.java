@@ -16,16 +16,15 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.List;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.support.ToolUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A set of options that can be used to configure the interaction with a chat model,
@@ -41,18 +40,21 @@ public interface ToolCallingChatOptions extends ChatOptions {
 	/**
 	 * ToolCallbacks to be registered with the ChatModel.
 	 */
-	@Nullable List<ToolCallback> getToolCallbacks();
+	@Nullable
+	List<ToolCallback> getToolCallbacks();
 
 	/**
 	 * Get the configured tool context.
+	 *
 	 * @return the tool context map.
 	 */
-	@Nullable Map<String, Object> getToolContext();
+	@Nullable
+	Map<String, Object> getToolContext();
 
 	/**
 	 * Returns a new {@link ToolCallingChatOptions.Builder} initialized with the values of
 	 * this {@link ToolCallingChatOptions}.
-	 *
+	 * <p>
 	 * Narrows the return type of {@link ChatOptions#mutate()} so generic tool calling
 	 * code can chain methods without casting.
 	 */
@@ -67,7 +69,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 	}
 
 	static @Nullable List<ToolCallback> mergeToolCallbacks(@Nullable List<ToolCallback> runtimeToolCallbacks,
-			@Nullable List<ToolCallback> defaultToolCallbacks) {
+	                                                       @Nullable List<ToolCallback> defaultToolCallbacks) {
 		if (CollectionUtils.isEmpty(runtimeToolCallbacks)) {
 			return defaultToolCallbacks != null ? List.copyOf(defaultToolCallbacks) : null;
 		}
@@ -75,7 +77,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 	}
 
 	static @Nullable Map<String, Object> mergeToolContext(@Nullable Map<String, Object> runtimeToolContext,
-			@Nullable Map<String, Object> defaultToolContext) {
+	                                                      @Nullable Map<String, Object> defaultToolContext) {
 		if (CollectionUtils.isEmpty(runtimeToolContext)) {
 			return defaultToolContext != null ? Map.copyOf(defaultToolContext) : null;
 		}
@@ -96,7 +98,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 		List<String> duplicateToolNames = ToolUtils.getDuplicateToolNames(toolCallbacks);
 		if (!duplicateToolNames.isEmpty()) {
 			throw new IllegalStateException("Multiple tools with the same name (%s) found in ToolCallingChatOptions"
-				.formatted(String.join(", ", duplicateToolNames)));
+					.formatted(String.join(", ", duplicateToolNames)));
 		}
 	}
 
@@ -117,6 +119,7 @@ public interface ToolCallingChatOptions extends ChatOptions {
 
 		/**
 		 * Add a {@link Map} of context values into tool context.
+		 *
 		 * @param context the map representing the tool context.
 		 * @return the {@link ToolCallingChatOptions} Builder.
 		 */
@@ -124,7 +127,8 @@ public interface ToolCallingChatOptions extends ChatOptions {
 
 		/**
 		 * Add a specific key/value pair to the tool context.
-		 * @param key the key to use.
+		 *
+		 * @param key   the key to use.
 		 * @param value the corresponding value.
 		 * @return the {@link ToolCallingChatOptions} Builder.
 		 */

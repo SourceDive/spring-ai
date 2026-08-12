@@ -48,7 +48,7 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ ElasticsearchVectorStore.class, EmbeddingModel.class, Rest5Client.class })
+@ConditionalOnClass({ElasticsearchVectorStore.class, EmbeddingModel.class, Rest5Client.class})
 @EnableConfigurationProperties(ElasticsearchVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.ELASTICSEARCH,
 		matchIfMissing = true)
@@ -63,9 +63,9 @@ public class ElasticsearchVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	ElasticsearchVectorStore vectorStore(ElasticsearchVectorStoreProperties properties, Rest5Client restClient,
-			EmbeddingModel embeddingModel, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                     EmbeddingModel embeddingModel, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                     BatchingStrategy batchingStrategy) {
 		ElasticsearchVectorStoreOptions elasticsearchVectorStoreOptions = new ElasticsearchVectorStoreOptions();
 
 		PropertyMapper mapper = PropertyMapper.get();
@@ -73,16 +73,16 @@ public class ElasticsearchVectorStoreAutoConfiguration {
 		mapper.from(properties::getDimensions).to(elasticsearchVectorStoreOptions::setDimensions);
 		mapper.from(properties::getSimilarity).to(elasticsearchVectorStoreOptions::setSimilarity);
 		mapper.from(properties::getEmbeddingFieldName)
-			.whenHasText()
-			.to(elasticsearchVectorStoreOptions::setEmbeddingFieldName);
+				.whenHasText()
+				.to(elasticsearchVectorStoreOptions::setEmbeddingFieldName);
 
 		return ElasticsearchVectorStore.builder(restClient, embeddingModel)
-			.options(elasticsearchVectorStoreOptions)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.options(elasticsearchVectorStoreOptions)
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 }

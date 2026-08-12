@@ -16,11 +16,10 @@
 
 package org.springframework.ai.audio.tts;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ModelRequest;
+
+import java.util.Objects;
 
 /**
  * Implementation of the {@link ModelRequest} interface for the text to speech prompt.

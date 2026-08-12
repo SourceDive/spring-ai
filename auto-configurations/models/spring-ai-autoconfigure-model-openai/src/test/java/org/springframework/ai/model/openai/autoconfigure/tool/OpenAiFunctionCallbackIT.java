@@ -16,13 +16,8 @@
 
 package org.springframework.ai.model.openai.autoconfigure.tool;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -38,6 +33,10 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,11 +47,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OpenAiFunctionCallbackIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
-				"spring.ai.openai.chat.model=" + "gpt-4o-mini")
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
-				org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
+					"spring.ai.openai.chat.model=" + "gpt-4o-mini")
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
+					org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
@@ -67,10 +66,10 @@ public class OpenAiFunctionCallbackIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.");
 
 			ChatResponse response = chatClient
-				.prompt(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().build()))
-				.tools(weatherFunctionInfo)
-				.call()
-				.chatResponse();
+					.prompt(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().build()))
+					.tools(weatherFunctionInfo)
+					.call()
+					.chatResponse();
 
 			assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
 
@@ -88,19 +87,19 @@ public class OpenAiFunctionCallbackIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities. You can call the following functions 'WeatherInfo'");
 
 			Flux<ChatResponse> response = ChatClient.create(chatModel)
-				.prompt(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().build()))
-				.tools(weatherFunctionInfo)
-				.stream()
-				.chatResponse();
+					.prompt(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().build()))
+					.tools(weatherFunctionInfo)
+					.stream()
+					.chatResponse();
 
 			String content = response.collectList()
-				.block()
-				.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.block()
+					.stream()
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(content).containsAnyOf("30.0", "30");
 			assertThat(content).containsAnyOf("10.0", "10");
@@ -116,9 +115,9 @@ public class OpenAiFunctionCallbackIT {
 		public ToolCallback weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description("Get the weather in location")
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

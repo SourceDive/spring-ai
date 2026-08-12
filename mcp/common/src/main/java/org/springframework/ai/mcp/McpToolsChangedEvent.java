@@ -16,11 +16,10 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.List;
-
 import io.modelcontextprotocol.spec.McpSchema.Tool;
-
 import org.springframework.context.ApplicationEvent;
+
+import java.util.List;
 
 /**
  * Event published when the MCP Tools have changed for a given MCP connection.

@@ -16,13 +16,8 @@
 
 package org.springframework.ai.model.ollama.autoconfigure.tool;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -36,6 +31,10 @@ import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.ai.ollama.api.OllamaModel;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,13 +49,13 @@ class FunctionCallbackInPromptIT extends BaseOllamaIT {
 	private static final String TOOL_NAME = "CurrentWeatherService";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 				"spring.ai.ollama.base-url=" + getBaseUrl(),
 				"spring.ai.ollama.chat.model=" + MODEL_NAME,
 				"spring.ai.ollama.chat.temperature=0.5",
 				"spring.ai.ollama.chat.top-k=10")
 				// @formatter:on
-		.withConfiguration(ollamaAutoConfig(OllamaChatAutoConfiguration.class));
+			.withConfiguration(ollamaAutoConfig(OllamaChatAutoConfiguration.class));
 
 	@BeforeAll
 	static void beforeAll() {
@@ -73,15 +72,15 @@ class FunctionCallbackInPromptIT extends BaseOllamaIT {
 
 			var promptOptions = mergeOptions(chatModel,
 					OllamaChatOptions.builder()
-						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_NAME, new MockWeatherService())
-							.description(TOOL_DESCRIPTION)
-							.inputType(MockWeatherService.Request.class)
-							.build())));
+							.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_NAME, new MockWeatherService())
+									.description(TOOL_DESCRIPTION)
+									.inputType(MockWeatherService.Request.class)
+									.build())));
 
 			ChatResponse response = ChatClient.create(chatModel)
-				.prompt(new Prompt(List.of(userMessage), promptOptions))
-				.call()
-				.chatResponse();
+					.prompt(new Prompt(List.of(userMessage), promptOptions))
+					.call()
+					.chatResponse();
 
 			var result = response.getResult();
 			assertThat(result).isNotNull();
@@ -99,25 +98,25 @@ class FunctionCallbackInPromptIT extends BaseOllamaIT {
 
 			var promptOptions = mergeOptions(chatModel,
 					OllamaChatOptions.builder()
-						.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_NAME, new MockWeatherService())
-							.description(TOOL_DESCRIPTION)
-							.inputType(MockWeatherService.Request.class)
-							.build())));
+							.toolCallbacks(List.of(FunctionToolCallback.builder(TOOL_NAME, new MockWeatherService())
+									.description(TOOL_DESCRIPTION)
+									.inputType(MockWeatherService.Request.class)
+									.build())));
 
 			Flux<ChatResponse> response = ChatClient.create(chatModel)
-				.prompt(new Prompt(List.of(userMessage), promptOptions))
-				.stream()
-				.chatResponse();
+					.prompt(new Prompt(List.of(userMessage), promptOptions))
+					.stream()
+					.chatResponse();
 
 			String content = response.collectList()
-				.blockOptional()
-				.stream()
-				.flatMap(List::stream)
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.blockOptional()
+					.stream()
+					.flatMap(List::stream)
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(content).containsAnyOf("30.0", "30");
 			assertThat(content).containsAnyOf("10.0", "10");

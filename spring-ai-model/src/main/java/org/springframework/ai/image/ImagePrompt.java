@@ -16,13 +16,12 @@
 
 package org.springframework.ai.image;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.model.ModelRequest;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.model.ModelRequest;
 
 public class ImagePrompt implements ModelRequest<List<ImageMessage>> {
 

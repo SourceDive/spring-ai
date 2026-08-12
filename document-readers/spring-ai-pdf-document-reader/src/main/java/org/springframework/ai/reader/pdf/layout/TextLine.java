@@ -36,8 +36,7 @@ class TextLine {
 	TextLine(int lineLength) {
 		if (lineLength < 0) {
 			throw new IllegalArgumentException("Line length cannot be negative");
-		}
-		else if (lineLength > 14_400) {
+		} else if (lineLength > 14_400) {
 			// Cap to a reasonable limit to prevent attack via excessive char allocation
 			// below.
 			// 14_400 pdf units is the recommendation for the max dimension of a page by
@@ -74,16 +73,13 @@ class TextLine {
 
 		if (!this.indexIsInBounds(index)) {
 			return -1;
-		}
-		else {
+		} else {
 			if (isCharacterPartOfPreviousWord && !isCharacterAtTheBeginningOfNewLine) {
 				index = this.findMinimumIndexWithSpaceCharacterFromIndex(index);
-			}
-			else if (isCharacterCloseToPreviousWord) {
+			} else if (isCharacterCloseToPreviousWord) {
 				if (this.line[index] != SPACE_CHARACTER) {
 					index = index + 1;
-				}
-				else {
+				} else {
 					index = this.findMinimumIndexWithSpaceCharacterFromIndex(index) + 1;
 				}
 			}

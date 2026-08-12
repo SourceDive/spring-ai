@@ -35,9 +35,9 @@ class ImageModelObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("supersun").build()))
-			.provider("superprovider")
-			.build();
+				.imagePrompt(generateImagePrompt(ImageOptionsBuilder.builder().model("supersun").build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -48,9 +48,9 @@ class ImageModelObservationContextTests {
 		var imagePrompt = new ImagePrompt("test prompt", imageOptions);
 
 		var observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(imagePrompt)
-			.provider("test-provider")
-			.build();
+				.imagePrompt(imagePrompt)
+				.provider("test-provider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -59,8 +59,8 @@ class ImageModelObservationContextTests {
 	void shouldThrowExceptionWhenImagePromptIsNull() {
 		assertThatThrownBy(
 				() -> ImageModelObservationContext.builder().imagePrompt(null).provider("test-provider").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("imagePrompt cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("imagePrompt cannot be null");
 	}
 
 	@Test
@@ -68,8 +68,8 @@ class ImageModelObservationContextTests {
 		var imagePrompt = new ImagePrompt("test prompt");
 
 		assertThatThrownBy(() -> ImageModelObservationContext.builder().imagePrompt(imagePrompt).provider(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("provider cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("provider cannot be null or empty");
 	}
 
 	@Test
@@ -77,8 +77,8 @@ class ImageModelObservationContextTests {
 		var imagePrompt = new ImagePrompt("test prompt");
 
 		assertThatThrownBy(() -> ImageModelObservationContext.builder().imagePrompt(imagePrompt).provider("").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("provider cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("provider cannot be null or empty");
 	}
 
 	@Test
@@ -87,8 +87,8 @@ class ImageModelObservationContextTests {
 
 		assertThatThrownBy(
 				() -> ImageModelObservationContext.builder().imagePrompt(imagePrompt).provider("   ").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("provider cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("provider cannot be null or empty");
 	}
 
 	@Test
@@ -97,14 +97,14 @@ class ImageModelObservationContextTests {
 		var imagePrompt2 = new ImagePrompt("second prompt");
 
 		var context1 = ImageModelObservationContext.builder()
-			.imagePrompt(imagePrompt1)
-			.provider("provider-alpha")
-			.build();
+				.imagePrompt(imagePrompt1)
+				.provider("provider-alpha")
+				.build();
 
 		var context2 = ImageModelObservationContext.builder()
-			.imagePrompt(imagePrompt2)
-			.provider("provider-beta")
-			.build();
+				.imagePrompt(imagePrompt2)
+				.provider("provider-beta")
+				.build();
 
 		assertThat(context1).isNotNull();
 		assertThat(context2).isNotNull();

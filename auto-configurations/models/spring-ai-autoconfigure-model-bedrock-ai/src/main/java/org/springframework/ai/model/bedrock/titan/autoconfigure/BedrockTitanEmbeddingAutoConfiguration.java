@@ -17,10 +17,6 @@
 package org.springframework.ai.model.bedrock.titan.autoconfigure;
 
 import io.micrometer.observation.ObservationRegistry;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.regions.providers.AwsRegionProvider;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.bedrock.titan.BedrockTitanEmbeddingModel;
 import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi;
 import org.springframework.ai.model.SpringAIModelProperties;
@@ -36,6 +32,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for Bedrock Titan Embedding Model.
@@ -47,7 +46,7 @@ import org.springframework.context.annotation.Import;
  */
 @AutoConfiguration
 @ConditionalOnClass(TitanEmbeddingBedrockApi.class)
-@EnableConfigurationProperties({ BedrockTitanEmbeddingProperties.class, BedrockAwsConnectionProperties.class })
+@EnableConfigurationProperties({BedrockTitanEmbeddingProperties.class, BedrockAwsConnectionProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.BEDROCK_TITAN,
 		matchIfMissing = true)
 @Import(BedrockAwsConnectionConfiguration.class)
@@ -55,10 +54,10 @@ public class BedrockTitanEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnBean({ AwsCredentialsProvider.class, AwsRegionProvider.class })
+	@ConditionalOnBean({AwsCredentialsProvider.class, AwsRegionProvider.class})
 	public TitanEmbeddingBedrockApi titanEmbeddingBedrockApi(AwsCredentialsProvider credentialsProvider,
-			AwsRegionProvider regionProvider, BedrockTitanEmbeddingProperties properties,
-			BedrockAwsConnectionProperties awsProperties, JsonMapper jsonMapper) {
+	                                                         AwsRegionProvider regionProvider, BedrockTitanEmbeddingProperties properties,
+	                                                         BedrockAwsConnectionProperties awsProperties, JsonMapper jsonMapper) {
 
 		// Validate required properties
 		if (properties.getModel() == null || awsProperties.getTimeout() == null) {
@@ -73,7 +72,7 @@ public class BedrockTitanEmbeddingAutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnBean(TitanEmbeddingBedrockApi.class)
 	public BedrockTitanEmbeddingModel titanEmbeddingModel(TitanEmbeddingBedrockApi titanEmbeddingApi,
-			BedrockTitanEmbeddingProperties properties, ObjectProvider<ObservationRegistry> observationRegistry) {
+	                                                      BedrockTitanEmbeddingProperties properties, ObjectProvider<ObservationRegistry> observationRegistry) {
 
 		// Validate required properties
 		if (properties.getInputType() == null) {
@@ -82,7 +81,7 @@ public class BedrockTitanEmbeddingAutoConfiguration {
 
 		return new BedrockTitanEmbeddingModel(titanEmbeddingApi,
 				observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.withInputType(properties.getInputType());
+				.withInputType(properties.getInputType());
 	}
 
 }

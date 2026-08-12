@@ -16,16 +16,10 @@
 
 package org.springframework.ai.google.genai.client;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import com.google.genai.Client;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
@@ -34,6 +28,11 @@ import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
 import org.springframework.ai.test.chat.client.advisor.AbstractToolCallingAdvisorIT;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,10 +53,10 @@ class GoogleGenAiToolCallingAdvisorIT extends AbstractToolCallingAdvisorIT {
 		var chatClient = ChatClient.builder(getChatModel()).build();
 
 		Flux<String> response = chatClient.prompt()
-			.user("What's the weather like in San Francisco, Tokyo, and Paris in Celsius?")
-			.tools(createWeatherToolCallback())
-			.stream()
-			.content();
+				.user("What's the weather like in San Francisco, Tokyo, and Paris in Celsius?")
+				.tools(createWeatherToolCallback())
+				.stream()
+				.content();
 
 		List<String> chunks = response.collectList().block();
 		String content = Objects.requireNonNull(chunks).stream().collect(Collectors.joining());
@@ -75,9 +74,9 @@ class GoogleGenAiToolCallingAdvisorIT extends AbstractToolCallingAdvisorIT {
 		var genAiClient = Client.builder().project(projectId).location(location).vertexAI(true).build();
 
 		return GoogleGenAiChatModel.builder()
-			.genAiClient(genAiClient)
-			.options(GoogleGenAiChatOptions.builder().model(model).build())
-			.build();
+				.genAiClient(genAiClient)
+				.options(GoogleGenAiChatOptions.builder().model(model).build())
+				.build();
 
 	}
 

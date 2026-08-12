@@ -16,18 +16,17 @@
 
 package org.springframework.ai.vectorstore.qdrant;
 
+import io.qdrant.client.ValueFactory;
+import io.qdrant.client.grpc.JsonWithInt.Struct;
+import io.qdrant.client.grpc.JsonWithInt.Value;
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import io.qdrant.client.ValueFactory;
-import io.qdrant.client.grpc.JsonWithInt.Struct;
-import io.qdrant.client.grpc.JsonWithInt.Value;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * Utility methods for building io.qdrant.client.grpc.JsonWithInt.Value from Java objects.
@@ -76,7 +75,7 @@ final class QdrantValueFactory {
 			case "Integer" -> ValueFactory.value((Integer) value);
 			case "Long" ->
 				// use String representation
-				ValueFactory.value(String.valueOf(value));
+					ValueFactory.value(String.valueOf(value));
 			case "Double" -> ValueFactory.value((Double) value);
 			case "Float" -> ValueFactory.value((Float) value);
 			case "Boolean" -> ValueFactory.value((Boolean) value);

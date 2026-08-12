@@ -16,14 +16,13 @@
 
 package org.springframework.ai.chat.messages;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.core.io.Resource;
-import org.springframework.util.StringUtils;
 
 /**
  * A message of the type 'system' passed as input. The system message gives high level
@@ -114,8 +113,7 @@ public class SystemMessage extends AbstractMessage {
 		public SystemMessage build() {
 			if (StringUtils.hasText(this.textContent) && this.resource != null) {
 				throw new IllegalArgumentException("textContent and resource cannot be set at the same time");
-			}
-			else if (this.resource != null) {
+			} else if (this.resource != null) {
 				this.textContent = MessageUtils.readResource(this.resource);
 			}
 			return new SystemMessage(this.textContent, this.metadata);

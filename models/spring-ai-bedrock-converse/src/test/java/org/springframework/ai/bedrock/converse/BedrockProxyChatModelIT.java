@@ -16,24 +16,11 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.bedrock.converse.api.BedrockCacheOptions;
 import org.springframework.ai.bedrock.converse.api.BedrockCacheStrategy;
 import org.springframework.ai.chat.client.ChatClient;
@@ -41,11 +28,7 @@ import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
-import org.springframework.ai.chat.model.MessageAggregator;
-import org.springframework.ai.chat.model.StreamingChatModel;
+import org.springframework.ai.chat.model.*;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -64,6 +47,14 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,8 +81,8 @@ class BedrockProxyChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "us.anthropic.claude-haiku-4-5-20251001-v1:0", "us.anthropic.claude-sonnet-4-6",
-			"us.anthropic.claude-opus-4-6-v1" })
+	@ValueSource(strings = {"us.anthropic.claude-haiku-4-5-20251001-v1:0", "us.anthropic.claude-sonnet-4-6",
+			"us.anthropic.claude-opus-4-6-v1"})
 	void roleTest(String modelName) {
 		UserMessage userMessage = new UserMessage(
 				"Tell me about 3 famous pirates from the Golden Age of Piracy and why they did.");
@@ -104,8 +95,8 @@ class BedrockProxyChatModelIT {
 		assertThat(response.getMetadata().getUsage().getCompletionTokens()).isGreaterThan(0);
 		assertThat(response.getMetadata().getUsage().getPromptTokens()).isGreaterThan(0);
 		assertThat(response.getMetadata().getUsage().getTotalTokens())
-			.isEqualTo(response.getMetadata().getUsage().getPromptTokens()
-					+ response.getMetadata().getUsage().getCompletionTokens());
+				.isEqualTo(response.getMetadata().getUsage().getPromptTokens()
+						+ response.getMetadata().getUsage().getCompletionTokens());
 		Generation generation = response.getResults().get(0);
 		assertThat(generation.getOutput().getText()).contains("Blackbeard");
 		assertThat(generation.getMetadata().getFinishReason()).isEqualTo("end_turn");
@@ -144,7 +135,7 @@ class BedrockProxyChatModelIT {
 		assertThat(streamingTokenUsage.getCompletionTokens()).isGreaterThan(0);
 		assertThat(streamingTokenUsage.getTotalTokens()).isGreaterThan(0);
 		assertThat(streamingTokenUsage.getTotalTokens())
-			.isEqualTo(streamingTokenUsage.getPromptTokens() + streamingTokenUsage.getCompletionTokens());
+				.isEqualTo(streamingTokenUsage.getPromptTokens() + streamingTokenUsage.getCompletionTokens());
 
 	}
 
@@ -159,9 +150,9 @@ class BedrockProxyChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -179,10 +170,10 @@ class BedrockProxyChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
-					format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "an array of numbers from 1 to 9 under they key name 'numbers'", "format",
+						format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -202,9 +193,9 @@ class BedrockProxyChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -224,20 +215,20 @@ class BedrockProxyChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.streamingChatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = beanOutputConverter.convert(generationTextFromStream);
 		assertThat(actorsFilms.actor()).isEqualTo("Tom Hanks");
@@ -250,9 +241,9 @@ class BedrockProxyChatModelIT {
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel.call(new Prompt(List.of(userMessage)));
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
@@ -270,11 +261,11 @@ class BedrockProxyChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var options = BedrockChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location. Return in 36°C format")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location. Return in 36°C format")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var mergedOptions = options.mutate().combineWith(this.chatModel.getOptions().mutate()).build();
 
@@ -302,11 +293,11 @@ class BedrockProxyChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = BedrockChatOptions.builder()
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location. Return in 36°C format")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location. Return in 36°C format")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var mergedOptions = promptOptions.mutate().combineWith(this.chatModel.getOptions().mutate()).build();
 
@@ -336,13 +327,13 @@ class BedrockProxyChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = BedrockChatOptions.builder()
-			.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 
@@ -361,7 +352,7 @@ class BedrockProxyChatModelIT {
 	}
 
 	@ParameterizedTest(name = "{displayName} - {0} ")
-	@ValueSource(ints = { 50, 60 })
+	@ValueSource(ints = {50, 60})
 	void streamFunctionCallTestWithMaxTokens(int maxTokens) {
 
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
@@ -372,14 +363,14 @@ class BedrockProxyChatModelIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = BedrockChatOptions.builder()
-			.maxTokens(maxTokens)
-			.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.maxTokens(maxTokens)
+				.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Get the weather in location. Return temperature in 36°F or 36°C format. Use multi-turn if needed.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 
@@ -457,14 +448,14 @@ class BedrockProxyChatModelIT {
 				+ "When answering questions, provide clear, structured responses with examples.";
 
 		BedrockCacheOptions cacheOptions = BedrockCacheOptions.builder()
-			.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
-			.build();
+				.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+				.build();
 
 		BedrockChatOptions chatOptions = BedrockChatOptions.builder()
-			.model(model)
-			.cacheOptions(cacheOptions)
-			.maxTokens(500)
-			.build();
+				.model(model)
+				.cacheOptions(cacheOptions)
+				.maxTokens(500)
+				.build();
 
 		// Send requests with the same system prompt until a cache read is observed.
 		// With cross-region inference profiles, initial requests may route to different
@@ -483,14 +474,14 @@ class BedrockProxyChatModelIT {
 			Integer cacheWrite = response.getMetadata().get("cacheWriteInputTokens");
 			assertThat(cacheRead).as("Should eventually read from cache").isNotNull().isPositive();
 			assertThat(cacheRead).as("Cache read should meet the 4096 token minimum for Claude Haiku 4.5")
-				.isGreaterThan(4096);
+					.isGreaterThan(4096);
 			assertThat(cacheWrite).as("A cache read hit should not also write").isIn(null, 0);
 
 			// Verify unified Usage interface reports the same cache metrics
 			org.springframework.ai.chat.metadata.Usage springUsage = response.getMetadata().getUsage();
 			assertThat(springUsage.getCacheReadInputTokens())
-				.as("Usage interface should report same cache read tokens as metadata")
-				.isEqualTo(cacheRead.longValue());
+					.as("Usage interface should report same cache read tokens as metadata")
+					.isEqualTo(cacheRead.longValue());
 		});
 	}
 
@@ -520,15 +511,15 @@ class BedrockProxyChatModelIT {
 				+ "When answering questions, provide clear, structured responses with examples.";
 
 		BedrockCacheOptions cacheOptions = BedrockCacheOptions.builder()
-			.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
-			.multiBlockSystemCaching(true)
-			.build();
+				.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+				.multiBlockSystemCaching(true)
+				.build();
 
 		BedrockChatOptions chatOptions = BedrockChatOptions.builder()
-			.model(model)
-			.cacheOptions(cacheOptions)
-			.maxTokens(500)
-			.build();
+				.model(model)
+				.cacheOptions(cacheOptions)
+				.maxTokens(500)
+				.build();
 
 		// Each call mutates the trailing dynamic system block. With
 		// multiBlockSystemCaching, the static prefix should still get a cache read
@@ -549,10 +540,10 @@ class BedrockProxyChatModelIT {
 			Integer cacheRead = response.getMetadata().get("cacheReadInputTokens");
 			Integer cacheWrite = response.getMetadata().get("cacheWriteInputTokens");
 			assertThat(cacheRead).as("Static prefix should eventually be read from cache despite dynamic block changes")
-				.isNotNull()
-				.isPositive();
+					.isNotNull()
+					.isPositive();
 			assertThat(cacheRead).as("Cache read should meet the 4096 token minimum for Claude Haiku 4.5")
-				.isGreaterThan(4096);
+					.isGreaterThan(4096);
 		});
 	}
 
@@ -571,15 +562,15 @@ class BedrockProxyChatModelIT {
 		List<FunctionToolCallback> toolCallbacks = createLargeToolCallbacks();
 
 		BedrockCacheOptions cacheOptions = BedrockCacheOptions.builder()
-			.strategy(BedrockCacheStrategy.TOOLS_ONLY)
-			.build();
+				.strategy(BedrockCacheStrategy.TOOLS_ONLY)
+				.build();
 
 		BedrockChatOptions chatOptions = BedrockChatOptions.builder()
-			.model(model)
-			.cacheOptions(cacheOptions)
-			.toolCallbacks(List.copyOf(toolCallbacks))
-			.maxTokens(500)
-			.build();
+				.model(model)
+				.cacheOptions(cacheOptions)
+				.toolCallbacks(List.copyOf(toolCallbacks))
+				.maxTokens(500)
+				.build();
 
 		// Send requests with the same tools until a cache read is observed.
 		// With cross-region inference profiles, initial requests may write to different
@@ -605,7 +596,7 @@ class BedrockProxyChatModelIT {
 			Integer cacheWrite = response.getMetadata().get("cacheWriteInputTokens");
 			assertThat(cacheRead).as("Should eventually read tool definitions from cache").isNotNull().isPositive();
 			assertThat(cacheRead).as("Cache read should meet the 4096 token minimum for Claude Haiku 4.5")
-				.isGreaterThan(4096);
+					.isGreaterThan(4096);
 			assertThat(cacheWrite).as("A cache read hit should not also write").isIn(null, 0);
 		});
 	}
@@ -646,15 +637,15 @@ class BedrockProxyChatModelIT {
 		List<FunctionToolCallback> toolCallbacks = createLargeToolCallbacks();
 
 		BedrockCacheOptions cacheOptions = BedrockCacheOptions.builder()
-			.strategy(BedrockCacheStrategy.SYSTEM_AND_TOOLS)
-			.build();
+				.strategy(BedrockCacheStrategy.SYSTEM_AND_TOOLS)
+				.build();
 
 		BedrockChatOptions chatOptions = BedrockChatOptions.builder()
-			.model(model)
-			.cacheOptions(cacheOptions)
-			.toolCallbacks(List.copyOf(toolCallbacks))
-			.maxTokens(500)
-			.build();
+				.model(model)
+				.cacheOptions(cacheOptions)
+				.toolCallbacks(List.copyOf(toolCallbacks))
+				.maxTokens(500)
+				.build();
 
 		// Send requests with the same tools and system prompt until a cache read is
 		// observed. With cross-region inference profiles, initial requests may write to
@@ -682,7 +673,7 @@ class BedrockProxyChatModelIT {
 			Integer cacheWrite = response.getMetadata().get("cacheWriteInputTokens");
 			assertThat(cacheRead).as("Should eventually read from cache").isNotNull().isPositive();
 			assertThat(cacheRead).as("Cache read should meet the 4096 token minimum for Claude Haiku 4.5")
-				.isGreaterThan(4096);
+					.isGreaterThan(4096);
 			assertThat(cacheWrite).as("A cache read hit should not also write").isIn(null, 0);
 		});
 	}
@@ -735,7 +726,7 @@ class BedrockProxyChatModelIT {
 		List<Message> conversationHistory = new ArrayList<>();
 		conversationHistory.add(new SystemMessage(largeSystemPrompt));
 		conversationHistory
-			.add(new UserMessage("My name is Alice and I work as a data scientist at TechCorp in San Francisco."));
+				.add(new UserMessage("My name is Alice and I work as a data scientist at TechCorp in San Francisco."));
 		conversationHistory.add(new AssistantMessage(verboseAssistantTurn));
 		conversationHistory.add(new UserMessage(
 				"I've been there for 3 years. I specialize in machine learning and natural language processing."));
@@ -749,17 +740,17 @@ class BedrockProxyChatModelIT {
 		// at 8 repetitions each (~560 tokens/turn), the prefix exceeds the 4,096 token
 		// minimum required by Claude Haiku 4.5 for a messages cache checkpoint.
 		conversationHistory
-			.add(new UserMessage("Based on what I've told you about my work, what career advice would you give me?"));
+				.add(new UserMessage("Based on what I've told you about my work, what career advice would you give me?"));
 
 		BedrockCacheOptions cacheOptions = BedrockCacheOptions.builder()
-			.strategy(BedrockCacheStrategy.CONVERSATION_HISTORY)
-			.build();
+				.strategy(BedrockCacheStrategy.CONVERSATION_HISTORY)
+				.build();
 
 		BedrockChatOptions chatOptions = BedrockChatOptions.builder()
-			.model(model)
-			.cacheOptions(cacheOptions)
-			.maxTokens(500)
-			.build();
+				.model(model)
+				.cacheOptions(cacheOptions)
+				.maxTokens(500)
+				.build();
 
 		// Send the identical conversation history on every attempt until a cache read is
 		// observed. The cache key is derived from the full message list including the
@@ -777,7 +768,7 @@ class BedrockProxyChatModelIT {
 			Integer cacheWrite = response.getMetadata().get("cacheWriteInputTokens");
 			assertThat(cacheRead).as("Should eventually read conversation history from cache").isNotNull().isPositive();
 			assertThat(cacheRead).as("Cache read should meet the 4096 token minimum for Claude Haiku 4.5")
-				.isGreaterThan(4096);
+					.isGreaterThan(4096);
 			assertThat(cacheWrite).as("A cache read hit should not also write").isIn(null, 0);
 		});
 	}
@@ -883,25 +874,25 @@ class BedrockProxyChatModelIT {
 				""".repeat(10);
 		return List.of(
 				FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-					.description(weatherDesc)
-					.inputType(MockWeatherService.Request.class)
-					.build(),
+						.description(weatherDesc)
+						.inputType(MockWeatherService.Request.class)
+						.build(),
 				FunctionToolCallback.builder("getWeatherForecast", new MockWeatherService())
-					.description(forecastDesc)
-					.inputType(MockWeatherService.Request.class)
-					.build(),
+						.description(forecastDesc)
+						.inputType(MockWeatherService.Request.class)
+						.build(),
 				FunctionToolCallback.builder("getHistoricalWeather", new MockWeatherService())
-					.description(historicalDesc)
-					.inputType(MockWeatherService.Request.class)
-					.build(),
+						.description(historicalDesc)
+						.inputType(MockWeatherService.Request.class)
+						.build(),
 				FunctionToolCallback.builder("getWeatherAlerts", new MockWeatherService())
-					.description(alertsDesc)
-					.inputType(MockWeatherService.Request.class)
-					.build(),
+						.description(alertsDesc)
+						.inputType(MockWeatherService.Request.class)
+						.build(),
 				FunctionToolCallback.builder("getClimateData", new MockWeatherService())
-					.description(climateDesc)
-					.inputType(MockWeatherService.Request.class)
-					.build());
+						.description(climateDesc)
+						.inputType(MockWeatherService.Request.class)
+						.build());
 	}
 
 	@Test
@@ -924,12 +915,12 @@ class BedrockProxyChatModelIT {
 
 		// The key assertion: response text should NOT be null
 		assertThat(generation.getOutput().getText()).as("gpt-oss model should return non-null text content")
-			.isNotNull()
-			.isNotEmpty();
+				.isNotNull()
+				.isNotEmpty();
 
 		// Verify the response contains the expected answer
 		assertThat(generation.getOutput().getText()).as("gpt-oss should correctly answer the math question")
-			.containsAnyOf("4", "four");
+				.containsAnyOf("4", "four");
 
 		// Verify metadata
 		assertThat(generation.getMetadata().getFinishReason()).isEqualTo("end_turn");
@@ -950,18 +941,18 @@ class BedrockProxyChatModelIT {
 		Flux<ChatResponse> responseFlux = this.chatModel.stream(prompt);
 
 		String fullResponse = responseFlux.collectList()
-			.block()
-			.stream()
-			.filter(cr -> cr.getResult() != null)
-			.map(cr -> cr.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.block()
+				.stream()
+				.filter(cr -> cr.getResult() != null)
+				.map(cr -> cr.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 
 		// Verify streaming response is not null or empty
 		assertThat(fullResponse).as("gpt-oss streaming response should not be null or empty").isNotNull().isNotEmpty();
 
 		// Verify the response contains expected gpt-oss identification
 		assertThat(fullResponse.toLowerCase()).as("gpt-oss model should identify itself")
-			.containsAnyOf("chatgpt", "gpt", "openai", "language model", "ai");
+				.containsAnyOf("chatgpt", "gpt", "openai", "language model", "ai");
 	}
 
 	record ActorsFilmsRecord(String actor, List<String> movies) {

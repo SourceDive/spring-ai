@@ -16,23 +16,15 @@
 
 package org.springframework.ai.vectorstore.opensearch;
 
-import java.util.Date;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 
+import java.util.Date;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 class OpenSearchAiSearchFilterExpressionConverterTest {
 
@@ -52,7 +44,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testEQ() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country:BG");
 	}
 
@@ -89,7 +81,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 						new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")))),
 				new Filter.Expression(NIN, new Filter.Key("city"), new Filter.Value(List.of("Sofia", "Plovdiv")))));
 		assertThat(vectorExpr)
-			.isEqualTo("(metadata.year:>=2020 OR metadata.country:BG) AND NOT metadata.city:(Sofia OR Plovdiv)");
+				.isEqualTo("(metadata.year:>=2020 OR metadata.country:BG) AND NOT metadata.city:(Sofia OR Plovdiv)");
 	}
 
 	@Test
@@ -100,7 +92,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 				new Filter.Expression(IN, new Filter.Key("country"), new Filter.Value(List.of("BG", "NL", "US")))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("metadata.isOpen:true AND metadata.year:>=2020 AND metadata.country:(BG OR NL OR US)");
+				.isEqualTo("metadata.isOpen:true AND metadata.year:>=2020 AND metadata.country:(BG OR NL OR US)");
 	}
 
 	@Test
@@ -115,15 +107,15 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country 1 2 3"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country 1 2 3"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.country\\ 1\\ 2\\ 3:BG");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.'country\\ 1\\ 2\\ 3':BG");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata.\\\"country\\ 1\\ 2\\ 3\\\":BG");
 	}
 
@@ -131,7 +123,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	public void testEmptyList() {
 		// category IN []
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(IN, new Filter.Key("category"), new Filter.Value(List.of())));
+				.convertExpression(new Filter.Expression(IN, new Filter.Key("category"), new Filter.Value(List.of())));
 		assertThat(vectorExpr).isEqualTo("metadata.category:()");
 	}
 
@@ -147,7 +139,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	public void testNullValue() {
 		// description == null
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("description"), new Filter.Value(null)));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("description"), new Filter.Value(null)));
 		assertThat(vectorExpr).isEqualTo("metadata.description:null");
 	}
 
@@ -163,7 +155,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	public void testNumericStringValue() {
 		// id == "1"
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("id"), new Filter.Value("1")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("id"), new Filter.Value("1")));
 		assertThat(vectorExpr).isEqualTo("metadata.id:1");
 	}
 
@@ -171,7 +163,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	public void testZeroValue() {
 		// count == 0
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("count"), new Filter.Value(0)));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("count"), new Filter.Value(0)));
 		assertThat(vectorExpr).isEqualTo("metadata.count:0");
 	}
 
@@ -219,7 +211,7 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	public void testEmptyStringValue() {
 		// description != ""
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(NE, new Filter.Key("description"), new Filter.Value("")));
+				.convertExpression(new Filter.Expression(NE, new Filter.Key("description"), new Filter.Value("")));
 		assertThat(vectorExpr).isEqualTo("metadata.description: NOT ");
 	}
 
@@ -227,28 +219,28 @@ class OpenSearchAiSearchFilterExpressionConverterTest {
 	public void testArrayIndexAccess() {
 		// tags[0] == "important"
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("tags[0]"), new Filter.Value("important")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("tags[0]"), new Filter.Value("important")));
 		assertThat(vectorExpr).isEqualTo("metadata.tags\\[0\\]:important");
 	}
 
 	@Test
 	public void testKeyWithSingleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("x' OR 1=1--"), new Filter.Value("dummy")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("x' OR 1=1--"), new Filter.Value("dummy")));
 		assertThat(vectorExpr).isEqualTo("metadata.x'\\ OR\\ 1\\=1\\-\\-:dummy");
 	}
 
 	@Test
 	public void testKeyWithDoubleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("key\"inject"), new Filter.Value("v")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("key\"inject"), new Filter.Value("v")));
 		assertThat(vectorExpr).isEqualTo("metadata.key\\\"inject:v");
 	}
 
 	@Test
 	public void testKeyWithColon() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("key:name"), new Filter.Value("v")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("key:name"), new Filter.Value("v")));
 		assertThat(vectorExpr).isEqualTo("metadata.key\\:name:v");
 	}
 

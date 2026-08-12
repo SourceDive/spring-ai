@@ -24,10 +24,10 @@ import com.anthropic.models.messages.CacheControlEphemeral;
  *
  * @author Austin Dase
  * @author Soby Chacko
- * @since 1.1.0
  * @see <a href=
  * "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#1-hour-cache-duration">Anthropic
  * Prompt Caching</a>
+ * @since 1.1.0
  */
 public enum AnthropicCacheTtl {
 

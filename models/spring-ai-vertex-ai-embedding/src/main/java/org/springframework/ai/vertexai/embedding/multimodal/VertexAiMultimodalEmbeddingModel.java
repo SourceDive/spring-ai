@@ -16,13 +16,6 @@
 
 package org.springframework.ai.vertexai.embedding.multimodal;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.cloud.aiplatform.v1.EndpointName;
 import com.google.cloud.aiplatform.v1.PredictRequest;
 import com.google.cloud.aiplatform.v1.PredictResponse;
@@ -31,18 +24,11 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Value;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.DocumentEmbeddingModel;
-import org.springframework.ai.embedding.DocumentEmbeddingRequest;
-import org.springframework.ai.embedding.Embedding;
-import org.springframework.ai.embedding.EmbeddingOptions;
-import org.springframework.ai.embedding.EmbeddingResponse;
-import org.springframework.ai.embedding.EmbeddingResponseMetadata;
-import org.springframework.ai.embedding.EmbeddingResultMetadata;
+import org.springframework.ai.embedding.*;
 import org.springframework.ai.embedding.EmbeddingResultMetadata.ModalityType;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.util.JsonHelper;
@@ -55,6 +41,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implementation of the Vertex AI Multimodal Embedding Model. Note: This implementation
@@ -81,16 +74,16 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 			MimeTypeUtils.IMAGE_GIF, MimeTypeUtils.IMAGE_PNG, MimeTypeUtils.parseMimeType("image/bmp"));
 
 	private static final Map<String, Integer> KNOWN_EMBEDDING_DIMENSIONS = Stream
-		.of(VertexAiMultimodalEmbeddingModelName.values())
-		.collect(Collectors.toMap(VertexAiMultimodalEmbeddingModelName::getName,
-				VertexAiMultimodalEmbeddingModelName::getDimensions));
+			.of(VertexAiMultimodalEmbeddingModelName.values())
+			.collect(Collectors.toMap(VertexAiMultimodalEmbeddingModelName::getName,
+					VertexAiMultimodalEmbeddingModelName::getDimensions));
 
 	public final VertexAiMultimodalEmbeddingOptions options;
 
 	private final VertexAiEmbeddingConnectionDetails connectionDetails;
 
 	public VertexAiMultimodalEmbeddingModel(VertexAiEmbeddingConnectionDetails connectionDetails,
-			VertexAiMultimodalEmbeddingOptions defaultEmbeddingOptions) {
+	                                        VertexAiMultimodalEmbeddingOptions defaultEmbeddingOptions) {
 
 		Assert.notNull(defaultEmbeddingOptions, "VertexAiMultimodalEmbeddingOptions must not be null");
 		this.options = defaultEmbeddingOptions;
@@ -107,23 +100,22 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 
 		if (requestOptions != null) {
 			VertexAiMultimodalEmbeddingOptions.Builder builder = VertexAiMultimodalEmbeddingOptions.builder()
-				.model(ModelOptionsUtils.mergeOption(requestOptions.getModel(), this.options.getModel()))
-				.dimensions(
-						ModelOptionsUtils.mergeOption(requestOptions.getDimensions(), this.options.getDimensions()));
+					.model(ModelOptionsUtils.mergeOption(requestOptions.getModel(), this.options.getModel()))
+					.dimensions(
+							ModelOptionsUtils.mergeOption(requestOptions.getDimensions(), this.options.getDimensions()));
 
 			if (requestOptions instanceof VertexAiMultimodalEmbeddingOptions vertexOptions) {
 				builder
-					.videoStartOffsetSec(ModelOptionsUtils.mergeOption(vertexOptions.getVideoStartOffsetSec(),
-							this.options.getVideoStartOffsetSec()))
-					.videoEndOffsetSec(ModelOptionsUtils.mergeOption(vertexOptions.getVideoEndOffsetSec(),
-							this.options.getVideoEndOffsetSec()))
-					.videoIntervalSec(ModelOptionsUtils.mergeOption(vertexOptions.getVideoIntervalSec(),
-							this.options.getVideoIntervalSec()));
-			}
-			else {
+						.videoStartOffsetSec(ModelOptionsUtils.mergeOption(vertexOptions.getVideoStartOffsetSec(),
+								this.options.getVideoStartOffsetSec()))
+						.videoEndOffsetSec(ModelOptionsUtils.mergeOption(vertexOptions.getVideoEndOffsetSec(),
+								this.options.getVideoEndOffsetSec()))
+						.videoIntervalSec(ModelOptionsUtils.mergeOption(vertexOptions.getVideoIntervalSec(),
+								this.options.getVideoIntervalSec()));
+			} else {
 				builder.videoStartOffsetSec(this.options.getVideoStartOffsetSec())
-					.videoEndOffsetSec(this.options.getVideoEndOffsetSec())
-					.videoIntervalSec(this.options.getVideoIntervalSec());
+						.videoEndOffsetSec(this.options.getVideoEndOffsetSec())
+						.videoIntervalSec(this.options.getVideoIntervalSec());
 			}
 			mergedOptions = builder.build();
 		}
@@ -133,7 +125,7 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 
 		// Create the Vertex AI Prediction Service client.
 		try (PredictionServiceClient client = PredictionServiceClient
-			.create(this.connectionDetails.getPredictionServiceSettings())) {
+				.create(this.connectionDetails.getPredictionServiceSettings())) {
 
 			EndpointName endpointName = this.connectionDetails.getEndpointName(model);
 
@@ -145,8 +137,7 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 				finalResponse = new EmbeddingResponse(mergedEmbeddings, singleDocResponse.getMetadata());
 			}
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
@@ -154,7 +145,7 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 	}
 
 	private EmbeddingResponse doSingleDocumentPrediction(PredictionServiceClient client, EndpointName endpointName,
-			Document document, VertexAiMultimodalEmbeddingOptions mergedOptions) throws InvalidProtocolBufferException {
+	                                                     Document document, VertexAiMultimodalEmbeddingOptions mergedOptions) throws InvalidProtocolBufferException {
 
 		var instanceBuilder = MultimodalInstanceBuilder.of();
 
@@ -182,29 +173,25 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 				if (logger.isWarnEnabled() && StringUtils.hasText(documentText)) {
 					logger.warn("Media type String overrides the Document text content!");
 				}
-			}
-			else if (media.getMimeType().isCompatibleWith(IMAGE_MIME_TYPE)) {
+			} else if (media.getMimeType().isCompatibleWith(IMAGE_MIME_TYPE)) {
 				if (SUPPORTED_IMAGE_MIME_SUB_TYPES.contains(media.getMimeType())) {
 					instanceBuilder.image(ImageBuilder.of(media.getMimeType()).imageData(media.getData()).build());
 					documentMetadata.put(ModalityType.IMAGE,
 							new DocumentMetadata(document.getId(), media.getMimeType(), media.getData()));
-				}
-				else if (logger.isWarnEnabled()) {
+				} else if (logger.isWarnEnabled()) {
 					logger.warn("Unsupported image mime type: " + media.getMimeType());
 					throw new IllegalArgumentException("Unsupported image mime type: " + media.getMimeType());
 				}
-			}
-			else if (media.getMimeType().isCompatibleWith(VIDEO_MIME_TYPE)) {
+			} else if (media.getMimeType().isCompatibleWith(VIDEO_MIME_TYPE)) {
 				instanceBuilder.video(VideoBuilder.of(media.getMimeType())
-					.videoData(media.getData())
-					.startOffsetSec(mergedOptions.getVideoStartOffsetSec())
-					.endOffsetSec(mergedOptions.getVideoEndOffsetSec())
-					.intervalSec(mergedOptions.getVideoIntervalSec())
-					.build());
+						.videoData(media.getData())
+						.startOffsetSec(mergedOptions.getVideoStartOffsetSec())
+						.endOffsetSec(mergedOptions.getVideoEndOffsetSec())
+						.intervalSec(mergedOptions.getVideoIntervalSec())
+						.build());
 				documentMetadata.put(ModalityType.VIDEO,
 						new DocumentMetadata(document.getId(), media.getMimeType(), media.getData()));
-			}
-			else {
+			} else {
 				if (logger.isWarnEnabled()) {
 					logger.warn("Unsupported media type: " + media.getMimeType());
 				}
@@ -215,9 +202,9 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 		List<Value> instances = List.of(VertexAiEmbeddingUtils.valueOf(instanceBuilder.build()));
 
 		PredictRequest.Builder predictRequestBuilder = PredictRequest.newBuilder()
-			.setEndpoint(endpointName.toString())
-			.setParameters(VertexAiEmbeddingUtils.jsonToValue(jsonHelper.toJson(Map.of())))
-			.addAllInstances(instances);
+				.setEndpoint(endpointName.toString())
+				.setParameters(VertexAiEmbeddingUtils.jsonToValue(jsonHelper.toJson(Map.of())))
+				.addAllInstances(instances);
 
 		PredictResponse embeddingResponse = client.predict(predictRequestBuilder.build());
 
@@ -240,23 +227,23 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 				DocumentMetadata docMetadata = documentMetadata.get(ModalityType.IMAGE);
 				Assert.state(docMetadata != null, "IMAGE document metadata must not be null");
 				embeddingList
-					.add(new Embedding(imageVector, index++, new EmbeddingResultMetadata(docMetadata.documentId,
-							ModalityType.IMAGE, docMetadata.mimeType, docMetadata.data)));
+						.add(new Embedding(imageVector, index++, new EmbeddingResultMetadata(docMetadata.documentId,
+								ModalityType.IMAGE, docMetadata.mimeType, docMetadata.data)));
 			}
 			if (prediction.getStructValue().containsFields("videoEmbeddings")) {
 				Value videoEmbeddings = prediction.getStructValue().getFieldsOrThrow("videoEmbeddings");
 				if (videoEmbeddings.getListValue().getValues(0).getStructValue().containsFields("embedding")) {
 					Value embeddings = videoEmbeddings.getListValue()
-						.getValues(0)
-						.getStructValue()
-						.getFieldsOrThrow("embedding");
+							.getValues(0)
+							.getStructValue()
+							.getFieldsOrThrow("embedding");
 					float[] videoVector = VertexAiEmbeddingUtils.toVector(embeddings);
 
 					DocumentMetadata docMetadata = documentMetadata.get(ModalityType.VIDEO);
 					Assert.state(docMetadata != null, "VIDEO document metadata must not be null");
 					embeddingList
-						.add(new Embedding(videoVector, index++, new EmbeddingResultMetadata(docMetadata.documentId,
-								ModalityType.VIDEO, docMetadata.mimeType, docMetadata.data)));
+							.add(new Embedding(videoVector, index++, new EmbeddingResultMetadata(docMetadata.documentId,
+									ModalityType.VIDEO, docMetadata.mimeType, docMetadata.data)));
 				}
 			}
 		}
@@ -273,7 +260,7 @@ public class VertexAiMultimodalEmbeddingModel implements DocumentEmbeddingModel 
 	}
 
 	private EmbeddingResponseMetadata generateResponseMetadata(String model, Integer totalTokens,
-			Map<String, Object> metadataToUse) {
+	                                                           Map<String, Object> metadataToUse) {
 		Usage usage = getDefaultUsage(totalTokens);
 		return new EmbeddingResponseMetadata(model, usage, metadataToUse);
 	}

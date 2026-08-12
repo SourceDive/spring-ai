@@ -16,15 +16,15 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Converts {@link Expression} into PgVector metadata filter expression format.
@@ -58,11 +58,9 @@ public class PgVectorFilterExpressionConverter extends AbstractFilterExpressionC
 		Assert.state(expression.right() != null, "expression should have a right operand");
 		if (expression.type() == Filter.ExpressionType.IN) {
 			handleIn(expression, context);
-		}
-		else if (expression.type() == Filter.ExpressionType.NIN) {
+		} else if (expression.type() == Filter.ExpressionType.NIN) {
 			handleNotIn(expression, context);
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
@@ -157,7 +155,8 @@ public class PgVectorFilterExpressionConverter extends AbstractFilterExpressionC
 	 * Serialize values for PostgreSQL JSONPath expressions with proper escaping.
 	 * <p>
 	 * Values are JSON-serialized, then single quotes are escaped for SQL embedding.
-	 * @param value the value to serialize
+	 *
+	 * @param value   the value to serialize
 	 * @param context the context to append the representation to
 	 */
 	@Override
@@ -165,8 +164,7 @@ public class PgVectorFilterExpressionConverter extends AbstractFilterExpressionC
 		StringBuilder jsonBuffer = new StringBuilder();
 		if (value instanceof Date date) {
 			emitJsonValue(ISO_DATE_FORMATTER.format(date.toInstant()), jsonBuffer);
-		}
-		else {
+		} else {
 			emitJsonValue(value, jsonBuffer);
 		}
 		// Escape single quotes for SQL string literal embedding

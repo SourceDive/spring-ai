@@ -16,15 +16,6 @@
 
 package org.springframework.ai.vectorstore.gemfire;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
@@ -34,8 +25,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -47,6 +36,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -74,7 +69,7 @@ public class GemFireVectorStoreIT {
 	private static GemFireCluster gemFireCluster;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -94,7 +89,7 @@ public class GemFireVectorStoreIT {
 		gemFireCluster = new GemFireCluster(GemFireImage.DEFAULT_IMAGE, LOCATOR_COUNT, SERVER_COUNT);
 		gemFireCluster.withConfiguration(GemFireCluster.SERVER_GLOB,
 				container -> container.withExposedPorts(HTTP_SERVICE_PORT)
-					.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
+						.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPortBindings(mappedPort)));
 		gemFireCluster.withGemFireProperty(GemFireCluster.SERVER_GLOB, "http-service-port",
 				Integer.toString(HTTP_SERVICE_PORT));
 		gemFireCluster.acceptLicense().start();
@@ -107,8 +102,7 @@ public class GemFireVectorStoreIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -120,9 +114,9 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(this.documents);
 			vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(3).build()), hasSize(0));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(3).build()), hasSize(0));
 		});
 	}
 
@@ -133,12 +127,12 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great Depression").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(5).build());
 			Document resultDoc = results.get(0);
 			assertThat(resultDoc.getId()).isEqualTo(this.documents.get(2).getId());
 			assertThat(resultDoc.getText()).contains("The Great Depression (1929–1939)" + " was an economic shock");
@@ -158,9 +152,9 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(List.of(document));
 			SearchRequest springSearchRequest = SearchRequest.builder().query("Spring").topK(5).build();
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore
+							.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).build()), hasSize(1));
 			List<Document> results = vectorStore.similaritySearch(springSearchRequest);
 			Document resultDoc = results.get(0);
 			assertThat(resultDoc.getId()).isEqualTo(document.getId());
@@ -193,22 +187,22 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(5).similarityThresholdAll().build()),
-						hasSize(3));
+					.atMost(1, java.util.concurrent.TimeUnit.MINUTES)
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(5).similarityThresholdAll().build()),
+							hasSize(3));
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Depression").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 			assertThat(scores).hasSize(3);
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Depression")
-				.topK(5)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Depression")
+					.topK(5)
+					.similarityThreshold(similarityThreshold)
+					.build());
 			for (Document result : results) {
 				assertThat(result.getScore()).isGreaterThanOrEqualTo(similarityThreshold);
 			}
@@ -223,7 +217,7 @@ public class GemFireVectorStoreIT {
 					Map.of("country", "BG", "year", "2020", "activationDate",
 							String.valueOf(new Date(1000).toInstant().toEpochMilli())));
 			var nlDocument = new Document("2", "The World is Big and Salvation Lurks Around the Corner", Map
-				.of("country", "NL", "activationDate", String.valueOf(new Date(2000).toInstant().toEpochMilli())));
+					.of("country", "NL", "activationDate", String.valueOf(new Date(2000).toInstant().toEpochMilli())));
 			var bgDocument2 = new Document("3", "The World is Big and Salvation Lurks Around the Corner",
 					Map.of("country", "BG", "year", "2023", "activationDate",
 							String.valueOf(new Date(3000).toInstant().toEpochMilli())));
@@ -236,144 +230,144 @@ public class GemFireVectorStoreIT {
 			vectorStore.add(filterDocuments);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
-						hasSize(4));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build()),
+							hasSize(4));
 
 			List<Document> tresults = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great Depression").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Great Depression").topK(5).build());
 			Document tresultDoc = tresults.get(0);
 			assertThat(tresultDoc.getFormattedContent()).contains("The World");
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == '2020'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == '2020'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' AND year == '2020'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' AND year == '2020'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' || year == '2025'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' || year == '2025'")
+					.build());
 			assertThat(results).hasSize(3);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId(), usDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' OR year == '2025'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' OR year == '2025'")
+					.build());
 			assertThat(results).hasSize(3);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId(), usDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG']")
+					.build());
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG','NL']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG','NL']")
+					.build());
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['*'] AND country not in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['*'] AND country not in ['BG']")
+					.build());
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(nlDocument.getId(), usDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country not in ['BG'])")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country not in ['BG'])")
+					.build());
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(
-						"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(
+							"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
+					.build());
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument2.getId(), usDocument.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument2.getId(), usDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(
-						"activationDate <= " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(
+							"activationDate <= " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
+					.build());
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(nlDocument.getId(), bgDocument.getId());
 			assertThat(results.get(1).getId()).isIn(nlDocument.getId(), bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("activationDate < " + new Date(3000).toInstant().toEpochMilli()
-						+ " AND activationDate > " + new Date(1000).toInstant().toEpochMilli())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("activationDate < " + new Date(3000).toInstant().toEpochMilli()
+							+ " AND activationDate > " + new Date(1000).toInstant().toEpochMilli())
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isIn(nlDocument.getId());
 
 			// Remove all documents from the store
 			vectorStore.delete(filterDocuments.stream().map(Document::getId).toList());
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
@@ -384,12 +378,12 @@ public class GemFireVectorStoreIT {
 		@Bean
 		public GemFireVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			return GemFireVectorStore.builder(embeddingModel)
-				.host("localhost")
-				.port(HTTP_SERVICE_PORT)
-				.indexName(INDEX_NAME)
-				.fields(new String[] { "year", "country", "activationDate" })
-				.initializeSchema(true)
-				.build();
+					.host("localhost")
+					.port(HTTP_SERVICE_PORT)
+					.indexName(INDEX_NAME)
+					.fields(new String[]{"year", "country", "activationDate"})
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

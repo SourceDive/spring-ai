@@ -16,9 +16,9 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure;
 
-import java.util.Map;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpSseClientProperties;
+
+import java.util.Map;
 
 @Deprecated(since = "2.0.0", forRemoval = true)
 public class PropertiesMcpSseClientConnectionDetails implements McpSseClientConnectionDetails {

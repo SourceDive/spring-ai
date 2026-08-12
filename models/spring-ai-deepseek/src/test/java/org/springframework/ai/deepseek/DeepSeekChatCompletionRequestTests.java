@@ -16,14 +16,13 @@
 
 package org.springframework.ai.deepseek;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.deepseek.api.DeepSeekApi;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,9 +62,9 @@ public class DeepSeekChatCompletionRequestTests {
 		var client = DeepSeekChatModel.builder().deepSeekApi(DeepSeekApi.builder().apiKey("TEST").build()).build();
 
 		DeepSeekAssistantMessage assistantMessage = DeepSeekAssistantMessage.builder()
-			.content("The answer is 42")
-			.reasoningContent("Let me think about this step by step...")
-			.build();
+				.content("The answer is 42")
+				.reasoningContent("Let me think about this step by step...")
+				.build();
 
 		var prompt = new Prompt(List.of(assistantMessage),
 				DeepSeekChatOptions.builder().model("deepseek-reasoner").build());
@@ -84,8 +83,8 @@ public class DeepSeekChatCompletionRequestTests {
 		var client = DeepSeekChatModel.builder().deepSeekApi(DeepSeekApi.builder().apiKey("TEST").build()).build();
 
 		DeepSeekAssistantMessage assistantMessage = DeepSeekAssistantMessage.builder()
-			.content("The answer is 42")
-			.build();
+				.content("The answer is 42")
+				.build();
 
 		var prompt = new Prompt(List.of(assistantMessage),
 				DeepSeekChatOptions.builder().model("deepseek-reasoner").build());
@@ -122,10 +121,10 @@ public class DeepSeekChatCompletionRequestTests {
 		var client = DeepSeekChatModel.builder().deepSeekApi(DeepSeekApi.builder().apiKey("TEST").build()).build();
 
 		DeepSeekAssistantMessage assistantMessage = DeepSeekAssistantMessage.builder()
-			.content("")
-			.reasoningContent("Thinking in progress...")
-			.prefix(true)
-			.build();
+				.content("")
+				.reasoningContent("Thinking in progress...")
+				.prefix(true)
+				.build();
 
 		var prompt = new Prompt(List.of(assistantMessage),
 				DeepSeekChatOptions.builder().model("deepseek-reasoner").build());

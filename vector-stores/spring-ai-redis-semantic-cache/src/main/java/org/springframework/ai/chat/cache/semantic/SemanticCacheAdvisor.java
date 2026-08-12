@@ -16,14 +16,7 @@
 
 package org.springframework.ai.chat.cache.semantic;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.client.ChatClientMessageAggregator;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -33,6 +26,12 @@ import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
 import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * An advisor implementation that provides semantic caching capabilities for chat
@@ -58,17 +57,24 @@ import org.springframework.util.Assert;
  */
 public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
-	/** The underlying semantic cache implementation. */
+	/**
+	 * The underlying semantic cache implementation.
+	 */
 	private final SemanticCache cache;
 
-	/** The order of this advisor in the chain. */
+	/**
+	 * The order of this advisor in the chain.
+	 */
 	private final int order;
 
-	/** The scheduler for async operations. */
+	/**
+	 * The scheduler for async operations.
+	 */
 	private final Scheduler scheduler;
 
 	/**
 	 * Creates a new semantic cache advisor with default order and scheduler.
+	 *
 	 * @param cache The semantic cache implementation to use
 	 */
 	public SemanticCacheAdvisor(SemanticCache cache) {
@@ -77,6 +83,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 	/**
 	 * Creates a new semantic cache advisor with specified order and default scheduler.
+	 *
 	 * @param cache The semantic cache implementation to use
 	 * @param order The order of this advisor in the chain
 	 */
@@ -86,8 +93,9 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 	/**
 	 * Creates a new semantic cache advisor with specified order and scheduler.
-	 * @param cache The semantic cache implementation to use
-	 * @param order The order of this advisor in the chain
+	 *
+	 * @param cache     The semantic cache implementation to use
+	 * @param order     The order of this advisor in the chain
 	 * @param scheduler The scheduler for async operations
 	 */
 	public SemanticCacheAdvisor(SemanticCache cache, int order, Scheduler scheduler) {
@@ -110,8 +118,9 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 	 * Handles synchronous chat requests by checking the cache before proceeding. If a
 	 * semantically similar response is found in the cache, it is returned immediately.
 	 * Otherwise, the request proceeds through the chain and the response is cached.
+	 *
 	 * @param request The chat client request to process
-	 * @param chain The advisor chain to continue processing if needed
+	 * @param chain   The advisor chain to continue processing if needed
 	 * @return The response, either from cache or from the model
 	 */
 	@Override
@@ -146,8 +155,9 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 	 * item flux. Otherwise, the request proceeds through the chain with true streaming -
 	 * tokens are returned to the user as they arrive, while the response is aggregated
 	 * and cached asynchronously when the stream completes.
+	 *
 	 * @param request The chat client request to process
-	 * @param chain The advisor chain to continue processing if needed
+	 * @param chain   The advisor chain to continue processing if needed
 	 * @return A Flux of responses, either from cache or from the model
 	 */
 	@Override
@@ -163,20 +173,20 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 		if (cached.isPresent()) {
 			// Create a new ChatClientResponse with the cached response
 			return Flux
-				.just(ChatClientResponse.builder().chatResponse(cached.get()).context(request.context()).build());
+					.just(ChatClientResponse.builder().chatResponse(cached.get()).context(request.context()).build());
 		}
 
 		// Cache miss - stream from model with true streaming behavior.
 		// Tokens are returned to the user immediately as they arrive.
 		// The response is aggregated and cached asynchronously when the stream completes.
 		return chain.nextStream(request)
-			.transform(
-					flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux, aggregatedResponse -> {
-						// Cache the aggregated response when the stream completes
-						if (aggregatedResponse.chatResponse() != null) {
-							this.cache.set(userText, aggregatedResponse.chatResponse(), contextHash);
-						}
-					}));
+				.transform(
+						flux -> new ChatClientMessageAggregator().aggregateChatClientResponse(flux, aggregatedResponse -> {
+							// Cache the aggregated response when the stream completes
+							if (aggregatedResponse.chatResponse() != null) {
+								this.cache.set(userText, aggregatedResponse.chatResponse(), contextHash);
+							}
+						}));
 	}
 
 	/**
@@ -198,6 +208,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 	/**
 	 * Extracts the user message text from the ChatClientRequest to use for semantic
 	 * similarity search.
+	 *
 	 * @param request the chat client request containing the prompt
 	 * @return the user message text, or empty string if not present
 	 */
@@ -209,6 +220,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 	 * Extracts a context hash from the ChatClientRequest for cache isolation. Different
 	 * system prompts will produce different hashes, ensuring that cached responses are
 	 * only returned for queries with matching context.
+	 *
 	 * @param request the chat client request containing the prompt
 	 * @return the context hash if a system prompt is present, null otherwise
 	 */
@@ -223,6 +235,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 	/**
 	 * Computes a deterministic hash for the given string. Uses the first 8 characters of
 	 * the SHA-256 hash to create a compact but unique identifier.
+	 *
 	 * @param text the text to hash
 	 * @return an 8-character hash string
 	 */
@@ -244,8 +257,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 				hexString.append(hex);
 			}
 			return hexString.toString();
-		}
-		catch (java.security.NoSuchAlgorithmException e) {
+		} catch (java.security.NoSuchAlgorithmException e) {
 			// SHA-256 is always available in Java, but fallback to hashCode if needed
 			return Integer.toHexString(text.hashCode());
 		}
@@ -253,6 +265,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 	/**
 	 * Creates a new builder for constructing SemanticCacheAdvisor instances.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -273,6 +286,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Sets the semantic cache implementation.
+		 *
 		 * @param cache The cache implementation to use
 		 * @return This builder instance
 		 */
@@ -283,6 +297,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Sets the advisor order.
+		 *
 		 * @param order The order value for this advisor
 		 * @return This builder instance
 		 */
@@ -293,6 +308,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Sets the scheduler for async operations.
+		 *
 		 * @param scheduler The scheduler to use
 		 * @return This builder instance
 		 */
@@ -303,6 +319,7 @@ public class SemanticCacheAdvisor implements BaseChatMemoryAdvisor {
 
 		/**
 		 * Builds and returns a new SemanticCacheAdvisor instance.
+		 *
 		 * @return A new SemanticCacheAdvisor configured with this builder's settings
 		 */
 		public SemanticCacheAdvisor build() {

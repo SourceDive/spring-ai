@@ -16,17 +16,16 @@
 
 package org.springframework.ai.vectorstore.observation;
 
-import java.util.List;
-
 import io.micrometer.common.KeyValue;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.observation.conventions.SpringAiKind;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationDocumentation.HighCardinalityKeyNames;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationDocumentation.LowCardinalityKeyNames;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,22 +42,22 @@ class DefaultVectorStoreObservationConventionTests {
 	@Test
 	void shouldHaveName() {
 		assertThat(this.observationConvention.getName())
-			.isEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME);
+				.isEqualTo(DefaultVectorStoreObservationConvention.DEFAULT_NAME);
 	}
 
 	@Test
 	void shouldHaveContextualName() {
 		VectorStoreObservationContext observationContext = VectorStoreObservationContext
-			.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
-			.build();
+				.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
+				.build();
 		assertThat(this.observationConvention.getContextualName(observationContext)).isEqualTo("my-database query");
 	}
 
 	@Test
 	void supportsOnlyVectorStoreObservationContext() {
 		VectorStoreObservationContext observationContext = VectorStoreObservationContext
-			.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
-			.build();
+				.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
+				.build();
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
 	}
@@ -66,8 +65,8 @@ class DefaultVectorStoreObservationConventionTests {
 	@Test
 	void shouldHaveRequiredKeyValues() {
 		VectorStoreObservationContext observationContext = VectorStoreObservationContext
-			.builder("my_database", VectorStoreObservationContext.Operation.QUERY)
-			.build();
+				.builder("my_database", VectorStoreObservationContext.Operation.QUERY)
+				.build();
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(LowCardinalityKeyNames.SPRING_AI_KIND.asString(), SpringAiKind.VECTOR_STORE.value()),
 				KeyValue.of(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(), "query"),
@@ -77,25 +76,25 @@ class DefaultVectorStoreObservationConventionTests {
 	@Test
 	void shouldHaveOptionalKeyValues() {
 		VectorStoreObservationContext observationContext = VectorStoreObservationContext
-			.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
-			.collectionName("COLLECTION_NAME")
-			.dimensions(696)
-			.fieldName("FIELD_NAME")
-			.namespace("NAMESPACE")
-			.similarityMetric("SIMILARITY_METRIC")
-			.queryRequest(SearchRequest.builder()
-				.query("VDB QUERY")
-				.filterExpression("country == 'UK' && year >= 2020")
-				.build())
-			.build();
+				.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
+				.collectionName("COLLECTION_NAME")
+				.dimensions(696)
+				.fieldName("FIELD_NAME")
+				.namespace("NAMESPACE")
+				.similarityMetric("SIMILARITY_METRIC")
+				.queryRequest(SearchRequest.builder()
+						.query("VDB QUERY")
+						.filterExpression("country == 'UK' && year >= 2020")
+						.build())
+				.build();
 
 		List<Document> queryResponseDocs = List.of(new Document("doc1"), new Document("doc2"));
 
 		observationContext.setQueryResponse(queryResponseDocs);
 
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext))
-			.contains(KeyValue.of(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(),
-					VectorStoreObservationContext.Operation.QUERY.value));
+				.contains(KeyValue.of(LowCardinalityKeyNames.DB_OPERATION_NAME.asString(),
+						VectorStoreObservationContext.Operation.QUERY.value));
 
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(), "COLLECTION_NAME"),
@@ -111,19 +110,19 @@ class DefaultVectorStoreObservationConventionTests {
 	@Test
 	void shouldNotHaveKeyValuesWhenMissing() {
 		VectorStoreObservationContext observationContext = VectorStoreObservationContext
-			.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
-			.build();
+				.builder("my-database", VectorStoreObservationContext.Operation.QUERY)
+				.build();
 
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)
-			.stream()
-			.map(KeyValue::getKey)
-			.toList()).doesNotContain(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
-					HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(),
-					HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(),
-					HighCardinalityKeyNames.DB_NAMESPACE.asString(),
-					HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
-					HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
-					HighCardinalityKeyNames.DB_VECTOR_QUERY_FILTER.asString());
+				.stream()
+				.map(KeyValue::getKey)
+				.toList()).doesNotContain(HighCardinalityKeyNames.DB_COLLECTION_NAME.asString(),
+				HighCardinalityKeyNames.DB_VECTOR_DIMENSION_COUNT.asString(),
+				HighCardinalityKeyNames.DB_VECTOR_FIELD_NAME.asString(),
+				HighCardinalityKeyNames.DB_NAMESPACE.asString(),
+				HighCardinalityKeyNames.DB_SEARCH_SIMILARITY_METRIC.asString(),
+				HighCardinalityKeyNames.DB_VECTOR_QUERY_CONTENT.asString(),
+				HighCardinalityKeyNames.DB_VECTOR_QUERY_FILTER.asString());
 	}
 
 }

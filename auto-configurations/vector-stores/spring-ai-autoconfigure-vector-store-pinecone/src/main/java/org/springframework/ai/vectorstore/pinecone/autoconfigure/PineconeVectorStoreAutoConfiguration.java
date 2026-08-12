@@ -16,10 +16,7 @@
 
 package org.springframework.ai.vectorstore.pinecone.autoconfigure;
 
-import java.util.Objects;
-
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -34,6 +31,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Objects;
+
 /**
  * {@link AutoConfiguration Auto-configuration} for Pinecone Vector Store.
  *
@@ -41,7 +40,7 @@ import org.springframework.context.annotation.Bean;
  * @author Soby Chacko
  */
 @AutoConfiguration
-@ConditionalOnClass({ PineconeVectorStore.class, EmbeddingModel.class })
+@ConditionalOnClass({PineconeVectorStore.class, EmbeddingModel.class})
 @EnableConfigurationProperties(PineconeVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.PINECONE,
 		matchIfMissing = true)
@@ -56,20 +55,20 @@ public class PineconeVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PineconeVectorStore vectorStore(EmbeddingModel embeddingModel, PineconeVectorStoreProperties properties,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                       ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                       BatchingStrategy batchingStrategy) {
 
 		return PineconeVectorStore.builder(embeddingModel)
-			.apiKey(Objects.requireNonNull(properties.getApiKey(), "api key is required"))
-			.indexName(Objects.requireNonNull(properties.getIndexName(), "index name is required"))
-			.namespace(properties.getNamespace())
-			.contentFieldName(properties.getContentFieldName())
-			.distanceMetadataFieldName(properties.getDistanceMetadataFieldName())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.apiKey(Objects.requireNonNull(properties.getApiKey(), "api key is required"))
+				.indexName(Objects.requireNonNull(properties.getIndexName(), "index name is required"))
+				.namespace(properties.getNamespace())
+				.contentFieldName(properties.getContentFieldName())
+				.distanceMetadataFieldName(properties.getDistanceMetadataFieldName())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 }

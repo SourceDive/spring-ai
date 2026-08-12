@@ -16,17 +16,6 @@
 
 package org.springframework.ai.vectorstore.filter.converter;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
@@ -34,6 +23,16 @@ import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Operand;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 import org.springframework.ai.vectorstore.filter.FilterHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * AbstractFilterExpressionConverter is an abstract class that implements the
@@ -56,14 +55,14 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 	 * recognize and normalize date strings before passing to converters.
 	 */
 	protected static final Pattern ISO_DATE_PATTERN = Pattern
-		.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z");
+			.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z");
 
 	/**
 	 * Formatter for parsing and normalizing ISO date strings.
 	 */
 	protected static final DateTimeFormatter ISO_DATE_FORMATTER = DateTimeFormatter
-		.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS]'Z'")
-		.withZone(ZoneOffset.UTC);
+			.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS]'Z'")
+			.withZone(ZoneOffset.UTC);
 
 	/**
 	 * Create a new AbstractFilterExpressionConverter.
@@ -78,6 +77,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given operand into a string representation.
+	 *
 	 * @param operand the operand to convert
 	 * @return the string representation of the operand
 	 */
@@ -89,6 +89,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given operand into a string representation.
+	 *
 	 * @param operand the operand to convert
 	 * @param context the context to append the string representation to
 	 */
@@ -96,14 +97,11 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 		if (operand instanceof Filter.Group group) {
 			this.doGroup(group, context);
-		}
-		else if (operand instanceof Filter.Key key) {
+		} else if (operand instanceof Filter.Key key) {
 			this.doKey(key, context);
-		}
-		else if (operand instanceof Filter.Value value) {
+		} else if (operand instanceof Filter.Value value) {
 			this.doValue(value, context);
-		}
-		else if (operand instanceof Filter.Expression expression) {
+		} else if (operand instanceof Filter.Expression expression) {
 			if ((expression.type() != ExpressionType.NOT && expression.type() != ExpressionType.AND
 					&& expression.type() != ExpressionType.OR) && !(expression.right() instanceof Filter.Value)
 					&& !(expression.type() == ExpressionType.ISNULL || expression.type() == ExpressionType.ISNOTNULL)) {
@@ -111,8 +109,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 			}
 			if (expression.type() == ExpressionType.NOT) {
 				this.doNot(expression, context);
-			}
-			else {
+			} else {
 				this.doExpression(expression, context);
 			}
 		}
@@ -120,8 +117,9 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given expression into a string representation.
+	 *
 	 * @param expression the expression to convert
-	 * @param context the context to append the string representation to
+	 * @param context    the context to append the string representation to
 	 */
 	protected void doNot(Filter.Expression expression, StringBuilder context) {
 		// Default behavior is to convert the NOT expression into its semantically
@@ -133,22 +131,25 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given expression into a string representation.
+	 *
 	 * @param expression the expression to convert
-	 * @param context the context to append the string representation to
+	 * @param context    the context to append the string representation to
 	 */
 	protected abstract void doExpression(Filter.Expression expression, StringBuilder context);
 
 	/**
 	 * Convert the given key into a string representation.
+	 *
 	 * @param filterKey the key to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected abstract void doKey(Filter.Key filterKey, StringBuilder context);
 
 	/**
 	 * Convert the given value into a string representation.
+	 *
 	 * @param filterValue the value to convert
-	 * @param context the context to append the string representation to
+	 * @param context     the context to append the string representation to
 	 */
 	protected void doValue(Filter.Value filterValue, StringBuilder context) {
 		if (filterValue.value() instanceof List list) {
@@ -161,8 +162,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 				}
 			}
 			this.doEndValueRange(filterValue, context);
-		}
-		else {
+		} else {
 			this.doSingleValue(normalizeDateString(filterValue.value()), context);
 		}
 	}
@@ -171,6 +171,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 	 * If the value is a string matching the ISO date pattern, parse and return as
 	 * {@link Date} so that all converters that handle {@code Date} automatically support
 	 * date strings. Otherwise return the value unchanged.
+	 *
 	 * @param value the value (possibly a date string)
 	 * @return the value, or a {@code Date} if the value was a parseable date string
 	 */
@@ -180,8 +181,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 		}
 		try {
 			return Date.from(Instant.from(ISO_DATE_FORMATTER.parse(text)));
-		}
-		catch (DateTimeParseException e) {
+		} catch (DateTimeParseException e) {
 			throw new IllegalArgumentException("Invalid date type: " + text, e);
 		}
 	}
@@ -195,7 +195,8 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 	 * {@link #emitJsonValue(Object, StringBuilder)} for JSON-based filters,
 	 * {@link #emitLuceneString(String, StringBuilder)} for Lucene-based filters, or
 	 * implement their own format-specific escaping logic as needed.
-	 * @param value the value to convert
+	 *
+	 * @param value   the value to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected abstract void doSingleValue(Object value, StringBuilder context);
@@ -207,7 +208,8 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 	 * <p>
 	 * Lucene/Elasticsearch query strings require backslash-escaping of special
 	 * characters: {@code + - = ! ( ) { } [ ] ^ " ~ * ? : \ / & | < > } as well as spaces.
-	 * @param value the string value to format
+	 *
+	 * @param value   the string value to format
 	 * @param context the context to append the escaped string to
 	 * @see <a href=
 	 * "https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_reserved_characters">Elasticsearch
@@ -269,21 +271,22 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 	 * <li>null: formatted as JSON literal {@code null}</li>
 	 * <li>Other types: handled according to Jackson's default serialization</li>
 	 * </ul>
-	 * @param value the value to format (can be any type)
+	 *
+	 * @param value   the value to format (can be any type)
 	 * @param context the context to append the JSON representation to
 	 */
 	protected static void emitJsonValue(Object value, StringBuilder context) {
 		try {
 			context.append(OBJECT_MAPPER.writeValueAsString(value));
-		}
-		catch (JacksonException e) {
+		} catch (JacksonException e) {
 			throw new RuntimeException("Error serializing value to JSON.", e);
 		}
 	}
 
 	/**
 	 * Convert the given group into a string representation.
-	 * @param group the group to convert
+	 *
+	 * @param group   the group to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doGroup(Group group, StringBuilder context) {
@@ -294,7 +297,8 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given group into a string representation.
-	 * @param group the group to convert
+	 *
+	 * @param group   the group to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doStartGroup(Group group, StringBuilder context) {
@@ -302,7 +306,8 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given group into a string representation.
-	 * @param group the group to convert
+	 *
+	 * @param group   the group to convert
 	 * @param context the context to append the string representation to
 	 */
 	protected void doEndGroup(Group group, StringBuilder context) {
@@ -310,8 +315,9 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given value range into a string representation.
+	 *
 	 * @param listValue the value range to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected void doStartValueRange(Filter.Value listValue, StringBuilder context) {
 		context.append("[");
@@ -319,8 +325,9 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given value range into a string representation.
+	 *
 	 * @param listValue the value range to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected void doEndValueRange(Filter.Value listValue, StringBuilder context) {
 		context.append("]");
@@ -328,16 +335,19 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Convert the given value range into a string representation.
+	 *
 	 * @param listValue the value range to convert
-	 * @param context the context to append the string representation to
+	 * @param context   the context to append the string representation to
 	 */
 	protected void doAddValueRangeSpitter(Filter.Value listValue, StringBuilder context) {
 		context.append(",");
 	}
 
 	// Utilities
+
 	/**
 	 * Check if the given string has outer quotes.
+	 *
 	 * @param str the string to check
 	 * @return true if the string has outer quotes, false otherwise
 	 */
@@ -348,6 +358,7 @@ public abstract class AbstractFilterExpressionConverter implements FilterExpress
 
 	/**
 	 * Remove the outer quotes from the given string.
+	 *
 	 * @param in the string to remove the outer quotes from
 	 * @return the string without the outer quotes
 	 */

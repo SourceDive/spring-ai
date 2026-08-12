@@ -32,6 +32,7 @@ public interface TranscriptionModel extends Model<AudioTranscriptionPrompt, Audi
 
 	/**
 	 * Transcribes the audio from the given prompt.
+	 *
 	 * @param transcriptionPrompt The prompt containing the audio resource and options.
 	 * @return The transcription response.
 	 */
@@ -39,6 +40,7 @@ public interface TranscriptionModel extends Model<AudioTranscriptionPrompt, Audi
 
 	/**
 	 * A convenience method for transcribing an audio resource.
+	 *
 	 * @param resource The audio resource to transcribe.
 	 * @return The transcribed text.
 	 */
@@ -48,8 +50,9 @@ public interface TranscriptionModel extends Model<AudioTranscriptionPrompt, Audi
 
 	/**
 	 * A convenience method for transcribing an audio resource with the given options.
+	 *
 	 * @param resource The audio resource to transcribe.
-	 * @param options The transcription options.
+	 * @param options  The transcription options.
 	 * @return The transcribed text.
 	 */
 	default String transcribe(Resource resource, @Nullable AudioTranscriptionOptions options) {

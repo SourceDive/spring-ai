@@ -16,19 +16,18 @@
 
 package org.springframework.ai.embedding;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.MetadataMode;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,7 +53,7 @@ public class AbstractEmbeddingModelTests {
 
 			@Override
 			public float[] embed(String text) {
-				return new float[] { 0.1f, 0.1f, 0.1f };
+				return new float[]{0.1f, 0.1f, 0.1f};
 			}
 
 			@Override
@@ -85,16 +84,16 @@ public class AbstractEmbeddingModelTests {
 	@CsvFileSource(resources = "/embedding/embedding-model-dimensions.properties", numLinesToSkip = 1, delimiter = '=')
 	public void testKnownEmbeddingModelDimensions(String model, String dimension) {
 		assertThat(AbstractEmbeddingModel.dimensions(this.embeddingModel, model, "Hello world!"))
-			.isEqualTo(Integer.valueOf(dimension));
+				.isEqualTo(Integer.valueOf(dimension));
 		verify(this.embeddingModel, never()).embed(any(String.class));
 		verify(this.embeddingModel, never()).embed(any(Document.class));
 	}
 
 	@Test
 	public void testUnknownModelDimension() {
-		given(this.embeddingModel.embed(eq("Hello world!"))).willReturn(new float[] { 0.1f, 0.1f, 0.1f });
+		given(this.embeddingModel.embed(eq("Hello world!"))).willReturn(new float[]{0.1f, 0.1f, 0.1f});
 		assertThat(AbstractEmbeddingModel.dimensions(this.embeddingModel, "unknown_model", "Hello world!"))
-			.isEqualTo(3);
+				.isEqualTo(3);
 	}
 
 	@Test
@@ -154,14 +153,14 @@ public class AbstractEmbeddingModelTests {
 
 			@Override
 			public float[] embed(String text) {
-				return new float[] { 0.1f, 0.2f, 0.3f };
+				return new float[]{0.1f, 0.2f, 0.3f};
 			}
 
 			@Override
 			public EmbeddingResponse call(EmbeddingRequest request) {
 				List<Embedding> embeddings = new ArrayList<>();
 				for (int i = 0; i < request.getInstructions().size(); i++) {
-					embeddings.add(new Embedding(new float[] { 0.1f, 0.2f, 0.3f }, i));
+					embeddings.add(new Embedding(new float[]{0.1f, 0.2f, 0.3f}, i));
 				}
 				return new EmbeddingResponse(embeddings);
 			}

@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.model.embedding.observation.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

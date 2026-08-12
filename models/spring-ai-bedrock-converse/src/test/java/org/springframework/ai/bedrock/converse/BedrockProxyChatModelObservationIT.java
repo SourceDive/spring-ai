@@ -16,18 +16,11 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistryAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.observation.ChatModelObservationDocumentation.HighCardinalityKeyNames;
@@ -40,6 +33,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Flux;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,13 +67,13 @@ public class BedrockProxyChatModelObservationIT {
 	@Test
 	void observationForChatOperation() {
 		var options = BedrockChatOptions.builder()
-			.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			.maxTokens(2048)
-			.stopSequences(List.of("this-is-the-end"))
-			// .temperature(0.7)
-			// .withTopK(1)
-			.topP(1.0)
-			.build();
+				.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				.maxTokens(2048)
+				.stopSequences(List.of("this-is-the-end"))
+				// .temperature(0.7)
+				// .withTopK(1)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -91,12 +90,12 @@ public class BedrockProxyChatModelObservationIT {
 	@Test
 	void observationForStreamingChatOperation() {
 		var options = BedrockChatOptions.builder()
-			.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			.maxTokens(2048)
-			.stopSequences(List.of("this-is-the-end"))
-			// .temperature(0.7)
-			.topP(1.0)
-			.build();
+				.model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				.maxTokens(2048)
+				.stopSequences(List.of("this-is-the-end"))
+				// .temperature(0.7)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -107,10 +106,10 @@ public class BedrockProxyChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(3);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.filter(r -> r.getResult() != null)
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.filter(r -> r.getResult() != null)
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -123,44 +122,43 @@ public class BedrockProxyChatModelObservationIT {
 
 	private void validate(ChatResponseMetadata responseMetadata, String finishReasons, boolean streaming) {
 		var observationAssert = TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("chat " + "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.BEDROCK_CONVERSE.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					"us.anthropic.claude-haiku-4-5-20251001-v1:0")
-			// .hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
-			// responseMetadata.getModel())
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(),
-			// "0.7")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_ID.asString(),
-			// responseMetadata.getId())
-			// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-			// finishReasons)
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("chat " + "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.BEDROCK_CONVERSE.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						"us.anthropic.claude-haiku-4-5-20251001-v1:0")
+				// .hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(),
+				// responseMetadata.getModel())
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_FREQUENCY_PENALTY.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_PRESENCE_PENALTY.asString())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(),
+				// "0.7")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_ID.asString(),
+				// responseMetadata.getId())
+				// .hasHighCardinalityKeyValue(HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+				// finishReasons)
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 		if (streaming) {
 			observationAssert.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_STREAM.asString(), "true");
-		}
-		else {
+		} else {
 			observationAssert
-				.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_STREAM.asString());
+					.doesNotHaveHighCardinalityKeyValueWithKey(HighCardinalityKeyNames.REQUEST_STREAM.asString());
 		}
 	}
 
@@ -178,11 +176,11 @@ public class BedrockProxyChatModelObservationIT {
 			String modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
 
 			return BedrockProxyChatModel.builder()
-				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-				.region(Region.US_EAST_1)
-				.observationRegistry(observationRegistry)
-				.options(BedrockChatOptions.builder().model(modelId).build())
-				.build();
+					.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+					.region(Region.US_EAST_1)
+					.observationRegistry(observationRegistry)
+					.options(BedrockChatOptions.builder().model(modelId).build())
+					.build();
 		}
 
 	}

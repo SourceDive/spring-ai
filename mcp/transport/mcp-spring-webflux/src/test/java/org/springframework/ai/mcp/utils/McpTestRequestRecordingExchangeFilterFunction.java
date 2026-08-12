@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Simple {@link HandlerFilterFunction} which records calls made to an MCP server.
@@ -42,10 +41,10 @@ public class McpTestRequestRecordingExchangeFilterFunction implements HandlerFil
 	@Override
 	public Mono<ServerResponse> filter(ServerRequest request, HandlerFunction next) {
 		Map<String, String> headers = request.headers()
-			.asHttpHeaders()
-			.headerSet()
-			.stream()
-			.collect(Collectors.toMap(e -> e.getKey().toLowerCase(), e -> String.join(",", e.getValue())));
+				.asHttpHeaders()
+				.headerSet()
+				.stream()
+				.collect(Collectors.toMap(e -> e.getKey().toLowerCase(), e -> String.join(",", e.getValue())));
 
 		var cr = request.bodyToMono(String.class).defaultIfEmpty("").map(body -> {
 			this.calls.add(new Call(request.method(), headers, body));

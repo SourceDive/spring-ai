@@ -16,26 +16,11 @@
 
 package org.springframework.ai.mcp.server.webflux.autoconfigure;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.mcp.annotation.McpLogging;
 import org.springframework.ai.mcp.annotation.McpProgress;
@@ -72,6 +57,20 @@ import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.test.util.TestSocketUtils;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,23 +82,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StreamableMcpAnnotationsWithLLMIT {
 
 	private final ApplicationContextRunner serverContextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mcp.server.protocol=STREAMABLE")
-		.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
-				McpServerJsonMapperAutoConfiguration.class, ToolCallbackConverterAutoConfiguration.class,
-				McpServerStreamableHttpWebFluxAutoConfiguration.class,
-				McpServerAnnotationScannerAutoConfiguration.class,
-				McpServerSpecificationFactoryAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mcp.server.protocol=STREAMABLE")
+			.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
+					McpServerJsonMapperAutoConfiguration.class, ToolCallbackConverterAutoConfiguration.class,
+					McpServerStreamableHttpWebFluxAutoConfiguration.class,
+					McpServerAnnotationScannerAutoConfiguration.class,
+					McpServerSpecificationFactoryAutoConfiguration.class));
 
 	private final ApplicationContextRunner clientApplicationContext = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
-		.withConfiguration(anthropicAutoConfig(McpToolCallbackAutoConfiguration.class, McpClientAutoConfiguration.class,
-				StreamableHttpWebFluxTransportAutoConfiguration.class,
-				McpClientAnnotationScannerAutoConfiguration.class, AnthropicChatAutoConfiguration.class,
-				ChatClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
+			.withConfiguration(anthropicAutoConfig(McpToolCallbackAutoConfiguration.class, McpClientAutoConfiguration.class,
+					StreamableHttpWebFluxTransportAutoConfiguration.class,
+					McpClientAnnotationScannerAutoConfiguration.class, AnthropicChatAutoConfiguration.class,
+					ChatClientAutoConfiguration.class));
 
 	private static AutoConfigurations anthropicAutoConfig(Class<?>... additional) {
-		Class<?>[] dependencies = { ToolCallingAutoConfiguration.class, RestClientAutoConfiguration.class,
-				WebClientAutoConfiguration.class };
+		Class<?>[] dependencies = {ToolCallingAutoConfiguration.class, RestClientAutoConfiguration.class,
+				WebClientAutoConfiguration.class};
 		Class<?>[] all = Stream.concat(Arrays.stream(dependencies), Arrays.stream(additional)).toArray(Class<?>[]::new);
 		return AutoConfigurations.of(all);
 	}
@@ -112,100 +111,100 @@ public class StreamableMcpAnnotationsWithLLMIT {
 		int serverPort = TestSocketUtils.findAvailableTcpPort();
 
 		this.serverContextRunner.withUserConfiguration(TestMcpServerConfiguration.class)
-			.withPropertyValues(// @formatter:off
+				.withPropertyValues(// @formatter:off
 						"spring.ai.mcp.server.name=test-mcp-server",
 						"spring.ai.mcp.server.version=1.0.0",
 						"spring.ai.mcp.server.streamable-http.keep-alive-interval=1s",
 						"spring.ai.mcp.server.streamable-http.mcp-endpoint=/mcp") // @formatter:on
-			.run(serverContext -> {
-				// Verify all required beans are present
-				assertThat(serverContext).hasSingleBean(WebFluxStreamableServerTransportProvider.class);
-				assertThat(serverContext).hasSingleBean(RouterFunction.class);
-				assertThat(serverContext).hasSingleBean(McpSyncServer.class);
+				.run(serverContext -> {
+					// Verify all required beans are present
+					assertThat(serverContext).hasSingleBean(WebFluxStreamableServerTransportProvider.class);
+					assertThat(serverContext).hasSingleBean(RouterFunction.class);
+					assertThat(serverContext).hasSingleBean(McpSyncServer.class);
 
-				// Verify server properties are configured correctly
-				McpServerProperties properties = serverContext.getBean(McpServerProperties.class);
-				assertThat(properties.getName()).isEqualTo("test-mcp-server");
-				assertThat(properties.getVersion()).isEqualTo("1.0.0");
+					// Verify server properties are configured correctly
+					McpServerProperties properties = serverContext.getBean(McpServerProperties.class);
+					assertThat(properties.getName()).isEqualTo("test-mcp-server");
+					assertThat(properties.getVersion()).isEqualTo("1.0.0");
 
-				McpServerStreamableHttpProperties streamableHttpProperties = serverContext
-					.getBean(McpServerStreamableHttpProperties.class);
-				assertThat(streamableHttpProperties.getMcpEndpoint()).isEqualTo("/mcp");
-				assertThat(streamableHttpProperties.getKeepAliveInterval()).isEqualTo(Duration.ofSeconds(1));
+					McpServerStreamableHttpProperties streamableHttpProperties = serverContext
+							.getBean(McpServerStreamableHttpProperties.class);
+					assertThat(streamableHttpProperties.getMcpEndpoint()).isEqualTo("/mcp");
+					assertThat(streamableHttpProperties.getKeepAliveInterval()).isEqualTo(Duration.ofSeconds(1));
 
-				var httpServer = startHttpServer(serverContext, serverPort);
+					var httpServer = startHttpServer(serverContext, serverPort);
 
-				this.clientApplicationContext.withUserConfiguration(TestMcpClientConfiguration.class)
-					.withUserConfiguration(TestMcpClientHandlers.class)
-					.withPropertyValues(// @formatter:off
+					this.clientApplicationContext.withUserConfiguration(TestMcpClientConfiguration.class)
+							.withUserConfiguration(TestMcpClientHandlers.class)
+							.withPropertyValues(// @formatter:off
 									"spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:" + serverPort,
 									"spring.ai.mcp.client.initialized=false") // @formatter:on
-					.run(clientContext -> {
+							.run(clientContext -> {
 
-						ChatClient.Builder builder = clientContext.getBean(ChatClient.Builder.class);
+								ChatClient.Builder builder = clientContext.getBean(ChatClient.Builder.class);
 
-						ToolCallbackProvider tcp = clientContext.getBean(ToolCallbackProvider.class);
+								ToolCallbackProvider tcp = clientContext.getBean(ToolCallbackProvider.class);
 
-						assertThat(builder).isNotNull();
+								assertThat(builder).isNotNull();
 
-						ChatClient chatClient = builder.defaultTools(tcp)
-							.defaultToolContext(Map.of("progressToken", "test-progress-token"))
-							.build();
+								ChatClient chatClient = builder.defaultTools(tcp)
+										.defaultToolContext(Map.of("progressToken", "test-progress-token"))
+										.build();
 
-						String cResponse = chatClient.prompt()
-							.user("What is the weather in Amsterdam right now")
-							.call()
-							.content();
+								String cResponse = chatClient.prompt()
+										.user("What is the weather in Amsterdam right now")
+										.call()
+										.content();
 
-						assertThat(cResponse).isNotEmpty();
-						assertThat(cResponse).contains("22");
+								assertThat(cResponse).isNotEmpty();
+								assertThat(cResponse).contains("22");
 
-						assertThat(toolCounter.get()).isEqualTo(1);
+								assertThat(toolCounter.get()).isEqualTo(1);
 
-						// PROGRESS
-						TestMcpClientConfiguration.TestContext testContext = clientContext
-							.getBean(TestMcpClientConfiguration.TestContext.class);
-						assertThat(testContext.progressLatch.await(5, TimeUnit.SECONDS))
-							.as("Should receive progress notifications in reasonable time")
-							.isTrue();
-						assertThat(testContext.progressNotifications).hasSize(3);
+								// PROGRESS
+								TestMcpClientConfiguration.TestContext testContext = clientContext
+										.getBean(TestMcpClientConfiguration.TestContext.class);
+								assertThat(testContext.progressLatch.await(5, TimeUnit.SECONDS))
+										.as("Should receive progress notifications in reasonable time")
+										.isTrue();
+								assertThat(testContext.progressNotifications).hasSize(3);
 
-						Map<String, McpSchema.ProgressNotification> notificationMap = testContext.progressNotifications
-							.stream()
-							.collect(Collectors.toMap(n -> n.message(), n -> n));
+								Map<String, McpSchema.ProgressNotification> notificationMap = testContext.progressNotifications
+										.stream()
+										.collect(Collectors.toMap(n -> n.message(), n -> n));
 
-						// First notification should be 0.0/1.0 progress
-						assertThat(notificationMap.get("tool call start").progressToken())
-							.isEqualTo("test-progress-token");
-						assertThat(notificationMap.get("tool call start").progress()).isEqualTo(0.0);
-						assertThat(notificationMap.get("tool call start").total()).isEqualTo(1.0);
-						assertThat(notificationMap.get("tool call start").message()).isEqualTo("tool call start");
+								// First notification should be 0.0/1.0 progress
+								assertThat(notificationMap.get("tool call start").progressToken())
+										.isEqualTo("test-progress-token");
+								assertThat(notificationMap.get("tool call start").progress()).isEqualTo(0.0);
+								assertThat(notificationMap.get("tool call start").total()).isEqualTo(1.0);
+								assertThat(notificationMap.get("tool call start").message()).isEqualTo("tool call start");
 
-						// Second notification should be 1.0/1.0 progress
-						assertThat(notificationMap.get("elicitation completed").progressToken())
-							.isEqualTo("test-progress-token");
-						assertThat(notificationMap.get("elicitation completed").progress()).isEqualTo(0.5);
-						assertThat(notificationMap.get("elicitation completed").total()).isEqualTo(1.0);
-						assertThat(notificationMap.get("elicitation completed").message())
-							.isEqualTo("elicitation completed");
+								// Second notification should be 1.0/1.0 progress
+								assertThat(notificationMap.get("elicitation completed").progressToken())
+										.isEqualTo("test-progress-token");
+								assertThat(notificationMap.get("elicitation completed").progress()).isEqualTo(0.5);
+								assertThat(notificationMap.get("elicitation completed").total()).isEqualTo(1.0);
+								assertThat(notificationMap.get("elicitation completed").message())
+										.isEqualTo("elicitation completed");
 
-						// Third notification should be 0.5/1.0 progress
-						assertThat(notificationMap.get("sampling completed").progressToken())
-							.isEqualTo("test-progress-token");
-						assertThat(notificationMap.get("sampling completed").progress()).isEqualTo(1.0);
-						assertThat(notificationMap.get("sampling completed").total()).isEqualTo(1.0);
-						assertThat(notificationMap.get("sampling completed").message()).isEqualTo("sampling completed");
+								// Third notification should be 0.5/1.0 progress
+								assertThat(notificationMap.get("sampling completed").progressToken())
+										.isEqualTo("test-progress-token");
+								assertThat(notificationMap.get("sampling completed").progress()).isEqualTo(1.0);
+								assertThat(notificationMap.get("sampling completed").total()).isEqualTo(1.0);
+								assertThat(notificationMap.get("sampling completed").message()).isEqualTo("sampling completed");
 
-					});
+							});
 
-				stopHttpServer(httpServer);
-			});
+					stopHttpServer(httpServer);
+				});
 	}
 
 	// Helper methods to start and stop the HTTP server
 	private static DisposableServer startHttpServer(ApplicationContext serverContext, int port) {
 		WebFluxStreamableServerTransportProvider mcpStreamableServerTransport = serverContext
-			.getBean(WebFluxStreamableServerTransportProvider.class);
+				.getBean(WebFluxStreamableServerTransportProvider.class);
 		HttpHandler httpHandler = RouterFunctions.toHttpHandler(mcpStreamableServerTransport.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);
 		return HttpServer.create().port(port).handle(adapter).bindNow();
@@ -245,10 +244,10 @@ public class StreamableMcpAnnotationsWithLLMIT {
 
 				// call sampling
 				CreateMessageResult samplingResponse = ctx.sample(s -> s.message("Test Sampling Message")
-					.modelPreferences(pref -> pref.modelHints("OpenAi", "Ollama")
-						.costPriority(1.0)
-						.speedPriority(1.0)
-						.intelligencePriority(1.0)));
+						.modelPreferences(pref -> pref.modelHints("OpenAi", "Ollama")
+								.costPriority(1.0)
+								.speedPriority(1.0)
+								.intelligencePriority(1.0)));
 
 				ctx.progress(p -> p.progress(1.0).total(1.0).message("sampling completed"));
 

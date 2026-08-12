@@ -16,16 +16,8 @@
 
 package org.springframework.ai.model.postgresml.autoconfigure;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.postgresml.PostgresMlEmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +27,13 @@ import org.springframework.boot.jdbc.test.autoconfigure.JdbcTest;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,11 +50,11 @@ public class PostgresMlEmbeddingAutoConfigurationIT {
 	@ServiceConnection
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
 			DockerImageName.parse("ghcr.io/postgresml/postgresml:2.8.1").asCompatibleSubstituteFor("postgres"))
-		.withCommand("sleep", "infinity")
-		.withUsername("postgresml")
-		.withPassword("postgresml")
-		.withDatabaseName("postgresml")
-		.waitingFor(Wait.forLogMessage(".*Starting dashboard.*\\s", 1));
+			.withCommand("sleep", "infinity")
+			.withUsername("postgresml")
+			.withPassword("postgresml")
+			.withDatabaseName("postgresml")
+			.waitingFor(Wait.forLogMessage(".*Starting dashboard.*\\s", 1));
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -63,13 +62,13 @@ public class PostgresMlEmbeddingAutoConfigurationIT {
 	@Test
 	void embedding() {
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withBean(JdbcTemplate.class, () -> this.jdbcTemplate)
-			.withConfiguration(AutoConfigurations.of(PostgresMlEmbeddingAutoConfiguration.class));
+				.withBean(JdbcTemplate.class, () -> this.jdbcTemplate)
+				.withConfiguration(AutoConfigurations.of(PostgresMlEmbeddingAutoConfiguration.class));
 		contextRunner.run(context -> {
 			PostgresMlEmbeddingModel embeddingModel = context.getBean(PostgresMlEmbeddingModel.class);
 
 			EmbeddingResponse embeddingResponse = embeddingModel
-				.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+					.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
 			assertThat(embeddingResponse.getResults()).hasSize(2);
 			assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 			assertThat(embeddingResponse.getResults().get(0).getIndex()).isZero();
@@ -83,26 +82,26 @@ public class PostgresMlEmbeddingAutoConfigurationIT {
 	@Test
 	void embeddingActivation() {
 		new ApplicationContextRunner().withBean(JdbcTemplate.class, () -> this.jdbcTemplate)
-			.withConfiguration(AutoConfigurations.of(PostgresMlEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.embedding=none")
-			.run(context -> {
-				assertThat(context.getBeansOfType(PostgresMlEmbeddingProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(PostgresMlEmbeddingModel.class)).isEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(PostgresMlEmbeddingAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.embedding=none")
+				.run(context -> {
+					assertThat(context.getBeansOfType(PostgresMlEmbeddingProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(PostgresMlEmbeddingModel.class)).isEmpty();
+				});
 
 		new ApplicationContextRunner().withBean(JdbcTemplate.class, () -> this.jdbcTemplate)
-			.withPropertyValues("spring.ai.model.embedding=postgresml")
-			.run(context -> {
-				assertThat(context.getBeansOfType(PostgresMlEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(PostgresMlEmbeddingModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.model.embedding=postgresml")
+				.run(context -> {
+					assertThat(context.getBeansOfType(PostgresMlEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(PostgresMlEmbeddingModel.class)).isNotEmpty();
+				});
 
 		new ApplicationContextRunner().withBean(JdbcTemplate.class, () -> this.jdbcTemplate)
-			.withConfiguration(AutoConfigurations.of(PostgresMlEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(PostgresMlEmbeddingProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(PostgresMlEmbeddingModel.class)).isNotEmpty();
-			});
+				.withConfiguration(AutoConfigurations.of(PostgresMlEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(PostgresMlEmbeddingProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(PostgresMlEmbeddingModel.class)).isNotEmpty();
+				});
 
 	}
 

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.tool.toolsearch.index.lucene;
 
-import org.jspecify.annotations.NullMarked;

@@ -16,16 +16,10 @@
 
 package org.springframework.ai.elevenlabs.api;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.model.ApiKey;
 import org.springframework.ai.model.NoopApiKey;
 import org.springframework.ai.model.SimpleApiKey;
@@ -39,6 +33,11 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Client for the ElevenLabs Text-to-Speech API.
@@ -55,15 +54,16 @@ public final class ElevenLabsApi {
 
 	/**
 	 * Create a new ElevenLabs API client.
-	 * @param baseUrl The base URL for the ElevenLabs API.
-	 * @param apiKey Your ElevenLabs API key.
-	 * @param headers the http headers to use.
-	 * @param restClientBuilder A builder for the Spring RestClient.
-	 * @param webClientBuilder A builder for the Spring WebClient.
+	 *
+	 * @param baseUrl              The base URL for the ElevenLabs API.
+	 * @param apiKey               Your ElevenLabs API key.
+	 * @param headers              the http headers to use.
+	 * @param restClientBuilder    A builder for the Spring RestClient.
+	 * @param webClientBuilder     A builder for the Spring WebClient.
 	 * @param responseErrorHandler A custom error handler for API responses.
 	 */
 	private ElevenLabsApi(String baseUrl, ApiKey apiKey, HttpHeaders headers, RestClient.Builder restClientBuilder,
-			WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler) {
+	                      WebClient.Builder webClientBuilder, ResponseErrorHandler responseErrorHandler) {
 
 		Consumer<HttpHeaders> jsonContentHeaders = h -> {
 			if (!(apiKey instanceof NoopApiKey)) {
@@ -74,18 +74,19 @@ public final class ElevenLabsApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 
 		this.webClient = webClientBuilder.clone().baseUrl(baseUrl).defaultHeaders(jsonContentHeaders).build();
 	}
 
 	/**
 	 * Create a new ElevenLabs API client.
+	 *
 	 * @param restClient Spring RestClient instance.
-	 * @param webClient Spring WebClient instance.
+	 * @param webClient  Spring WebClient instance.
 	 */
 	public ElevenLabsApi(RestClient restClient, WebClient webClient) {
 		this.restClient = restClient;
@@ -98,55 +99,57 @@ public final class ElevenLabsApi {
 
 	/**
 	 * Convert text to speech using the specified voice and parameters.
-	 * @param requestBody The request body containing text, model, and voice settings.
-	 * @param voiceId The ID of the voice to use. Must not be null.
+	 *
+	 * @param requestBody     The request body containing text, model, and voice settings.
+	 * @param voiceId         The ID of the voice to use. Must not be null.
 	 * @param queryParameters Additional query parameters for the API call.
 	 * @return A ResponseEntity containing the generated audio as a byte array.
 	 */
 	public ResponseEntity<byte[]> textToSpeech(SpeechRequest requestBody, String voiceId,
-			MultiValueMap<String, String> queryParameters) {
+	                                           MultiValueMap<String, String> queryParameters) {
 
 		Assert.notNull(voiceId, "voiceId must be provided. It cannot be null.");
 		Assert.notNull(requestBody, "requestBody can not be null.");
 		Assert.hasText(requestBody.text(), "requestBody.text must be provided. It cannot be null or empty.");
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("/v1/text-to-speech/{voice_id}")
-			.queryParams(queryParameters);
+				.queryParams(queryParameters);
 
 		return this.restClient.post()
-			.uri(uriBuilder.buildAndExpand(voiceId).toUriString())
-			.body(requestBody)
-			.retrieve()
-			.toEntity(byte[].class);
+				.uri(uriBuilder.buildAndExpand(voiceId).toUriString())
+				.body(requestBody)
+				.retrieve()
+				.toEntity(byte[].class);
 	}
 
 	/**
 	 * Convert text to speech using the specified voice and parameters, streaming the
 	 * results.
-	 * @param requestBody The request body containing text, model, and voice settings.
-	 * @param voiceId The ID of the voice to use. Must not be null.
+	 *
+	 * @param requestBody     The request body containing text, model, and voice settings.
+	 * @param voiceId         The ID of the voice to use. Must not be null.
 	 * @param queryParameters Additional query parameters for the API call.
 	 * @return A Flux of ResponseEntity containing the generated audio chunks as byte
 	 * arrays.
 	 */
 	public Flux<ResponseEntity<byte[]>> textToSpeechStream(SpeechRequest requestBody, String voiceId,
-			MultiValueMap<String, String> queryParameters) {
+	                                                       MultiValueMap<String, String> queryParameters) {
 		Assert.notNull(voiceId, "voiceId must be provided for streaming. It cannot be null.");
 		Assert.notNull(requestBody, "requestBody can not be null.");
 		Assert.hasText(requestBody.text(), "requestBody.text must be provided. It cannot be null or empty.");
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("/v1/text-to-speech/{voice_id}/stream")
-			.queryParams(queryParameters);
+				.queryParams(queryParameters);
 
 		return this.webClient.post()
-			.uri(uriBuilder.buildAndExpand(voiceId).toUriString())
-			.body(Mono.just(requestBody), SpeechRequest.class)
-			.accept(MediaType.APPLICATION_OCTET_STREAM)
-			.exchangeToFlux(clientResponse -> {
-				HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-				return clientResponse.bodyToFlux(byte[].class)
-					.map(bytes -> ResponseEntity.ok().headers(headers).body(bytes));
-			});
+				.uri(uriBuilder.buildAndExpand(voiceId).toUriString())
+				.body(Mono.just(requestBody), SpeechRequest.class)
+				.accept(MediaType.APPLICATION_OCTET_STREAM)
+				.exchangeToFlux(clientResponse -> {
+					HttpHeaders headers = clientResponse.headers().asHttpHeaders();
+					return clientResponse.bodyToFlux(byte[].class)
+							.map(bytes -> ResponseEntity.ok().headers(headers).body(bytes));
+				});
 	}
 
 	/**
@@ -178,17 +181,17 @@ public final class ElevenLabsApi {
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record SpeechRequest(@JsonProperty("text") String text, @JsonProperty("model_id") @Nullable String modelId,
-			@JsonProperty("language_code") @Nullable String languageCode,
-			@JsonProperty("voice_settings") @Nullable VoiceSettings voiceSettings,
-			@JsonProperty("pronunciation_dictionary_locators") @Nullable List<PronunciationDictionaryLocator> pronunciationDictionaryLocators,
-			@JsonProperty("seed") @Nullable Integer seed, @JsonProperty("previous_text") @Nullable String previousText,
-			@JsonProperty("next_text") @Nullable String nextText,
-			@JsonProperty("previous_request_ids") @Nullable List<String> previousRequestIds,
-			@JsonProperty("next_request_ids") @Nullable List<String> nextRequestIds,
-			@JsonProperty("apply_text_normalization") @Nullable TextNormalizationMode applyTextNormalization,
-			@JsonProperty("apply_language_text_normalization") @Nullable Boolean applyLanguageTextNormalization) {
+	                            @JsonProperty("language_code") @Nullable String languageCode,
+	                            @JsonProperty("voice_settings") @Nullable VoiceSettings voiceSettings,
+	                            @JsonProperty("pronunciation_dictionary_locators") @Nullable List<PronunciationDictionaryLocator> pronunciationDictionaryLocators,
+	                            @JsonProperty("seed") @Nullable Integer seed, @JsonProperty("previous_text") @Nullable String previousText,
+	                            @JsonProperty("next_text") @Nullable String nextText,
+	                            @JsonProperty("previous_request_ids") @Nullable List<String> previousRequestIds,
+	                            @JsonProperty("next_request_ids") @Nullable List<String> nextRequestIds,
+	                            @JsonProperty("apply_text_normalization") @Nullable TextNormalizationMode applyTextNormalization,
+	                            @JsonProperty("apply_language_text_normalization") @Nullable Boolean applyLanguageTextNormalization) {
 
-		public static Builder builder() {
+		public static Builder builder () {
 			return new Builder();
 		}
 
@@ -219,20 +222,20 @@ public final class ElevenLabsApi {
 		 * Voice settings to override defaults for the given voice.
 		 */
 		@JsonInclude(JsonInclude.Include.NON_NULL)
-		public record VoiceSettings(@JsonProperty("stability") @Nullable Double stability,
+		public record VoiceSettings (@JsonProperty("stability") @Nullable Double stability,
 				@JsonProperty("similarity_boost") @Nullable Double similarityBoost,
 				@JsonProperty("style") @Nullable Double style,
 				@JsonProperty("use_speaker_boost") @Nullable Boolean useSpeakerBoost,
-				@JsonProperty("speed") @Nullable Double speed) {
+				@JsonProperty("speed") @Nullable Double speed){
 		}
 
 		/**
 		 * Locator for a pronunciation dictionary.
 		 */
 		@JsonInclude(JsonInclude.Include.NON_NULL)
-		public record PronunciationDictionaryLocator(
+		public record PronunciationDictionaryLocator (
 				@JsonProperty("pronunciation_dictionary_id") String pronunciationDictionaryId,
-				@JsonProperty("version_id") String versionId) {
+				@JsonProperty("version_id") String versionId){
 		}
 
 		public static final class Builder {

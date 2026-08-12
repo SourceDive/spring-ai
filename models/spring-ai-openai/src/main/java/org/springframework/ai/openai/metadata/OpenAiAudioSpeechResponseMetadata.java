@@ -16,15 +16,14 @@
 
 package org.springframework.ai.openai.metadata;
 
-import java.time.Duration;
-
 import com.openai.core.http.Headers;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.audio.tts.TextToSpeechResponseMetadata;
 import org.springframework.ai.chat.metadata.EmptyRateLimit;
 import org.springframework.ai.chat.metadata.RateLimit;
 import org.springframework.util.Assert;
+
+import java.time.Duration;
 
 /**
  * Audio speech metadata implementation for OpenAI using the OpenAI Java SDK.
@@ -82,8 +81,7 @@ public class OpenAiAudioSpeechResponseMetadata extends TextToSpeechResponseMetad
 		if (!values.isEmpty()) {
 			try {
 				return Long.parseLong(values.get(0).trim());
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				return null;
 			}
 		}
@@ -95,8 +93,7 @@ public class OpenAiAudioSpeechResponseMetadata extends TextToSpeechResponseMetad
 		if (!values.isEmpty()) {
 			try {
 				return Duration.ofSeconds(Long.parseLong(values.get(0).trim()));
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				return null;
 			}
 		}

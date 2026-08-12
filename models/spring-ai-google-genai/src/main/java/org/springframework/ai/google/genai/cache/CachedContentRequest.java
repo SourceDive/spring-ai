@@ -16,17 +16,16 @@
 
 package org.springframework.ai.google.genai.cache;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.genai.types.Content;
 import com.google.genai.types.Part;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Request for creating cached content in Google GenAI.
@@ -40,19 +39,23 @@ public final class CachedContentRequest {
 	private final String model;
 
 	@JsonProperty("display_name")
-	@Nullable private final String displayName;
+	@Nullable
+	private final String displayName;
 
 	@JsonProperty("contents")
 	private final List<Content> contents;
 
 	@JsonProperty("system_instruction")
-	@Nullable private final Content systemInstruction;
+	@Nullable
+	private final Content systemInstruction;
 
 	@JsonProperty("ttl")
-	@Nullable private final Duration ttl;
+	@Nullable
+	private final Duration ttl;
 
 	@JsonProperty("expire_time")
-	@Nullable private final Instant expireTime;
+	@Nullable
+	private final Instant expireTime;
 
 	private CachedContentRequest(Builder builder) {
 		Assert.hasText(builder.model, "Model must not be empty");
@@ -104,17 +107,22 @@ public final class CachedContentRequest {
 
 	public static final class Builder {
 
-		@Nullable private String model;
+		@Nullable
+		private String model;
 
-		@Nullable private String displayName;
+		@Nullable
+		private String displayName;
 
 		private List<Content> contents = new ArrayList<>();
 
-		@Nullable private Content systemInstruction;
+		@Nullable
+		private Content systemInstruction;
 
-		@Nullable private Duration ttl;
+		@Nullable
+		private Duration ttl;
 
-		@Nullable private Instant expireTime;
+		@Nullable
+		private Instant expireTime;
 
 		private Builder() {
 		}

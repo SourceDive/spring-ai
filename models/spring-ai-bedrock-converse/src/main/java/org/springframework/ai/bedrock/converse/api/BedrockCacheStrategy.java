@@ -27,10 +27,10 @@ package org.springframework.ai.bedrock.converse.api;
  * hit.
  *
  * @author Soby Chacko
- * @since 1.1.0
  * @see <a href=
  * "https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">AWS Bedrock
  * Prompt Caching</a>
+ * @since 1.1.0
  */
 public enum BedrockCacheStrategy {
 

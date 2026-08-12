@@ -16,13 +16,8 @@
 
 package org.springframework.ai.mcp.client.autoconfigure;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.NamedClientMcpTransport;
 import org.springframework.ai.mcp.client.httpclient.autoconfigure.StreamableHttpHttpClientTransportAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -30,6 +25,10 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,12 +40,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StreamableHttpHttpClientTransportAutoConfigurationTests {
 
 	private final ApplicationContextRunner applicationContext = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(StreamableHttpHttpClientTransportAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(StreamableHttpHttpClientTransportAutoConfiguration.class));
 
 	@Test
 	void mcpHttpClientTransportsNotPresentIfMcpClientDisabled() {
 		this.applicationContext.withPropertyValues("spring.ai.mcp.client.enabled", "false")
-			.run(context -> assertThat(context.containsBean("streamableHttpHttpClientTransports")).isFalse());
+				.run(context -> assertThat(context.containsBean("streamableHttpHttpClientTransports")).isFalse());
 	}
 
 	@Test
@@ -61,105 +60,104 @@ public class StreamableHttpHttpClientTransportAutoConfigurationTests {
 	@Test
 	void singleConnectionCreatesOneTransport() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
-						List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).name()).isEqualTo("server1");
-				assertThat(transports.get(0).transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
-			});
+				.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
+							List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).name()).isEqualTo("server1");
+					assertThat(transports.get(0).transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
+				});
 	}
 
 	@Test
 	void multipleConnectionsCreateMultipleTransports() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.streamable-http.connections.server2.url=http://otherserver:8081")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
-						List.class);
-				assertThat(transports).hasSize(2);
-				assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
-				assertThat(transports).extracting("transport")
-					.allMatch(transport -> transport instanceof HttpClientStreamableHttpTransport);
-				for (NamedClientMcpTransport transport : transports) {
-					assertThat(transport.transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
-					assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transport.transport()))
-						.isEqualTo("/mcp");
-				}
-			});
+				.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.streamable-http.connections.server2.url=http://otherserver:8081")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
+							List.class);
+					assertThat(transports).hasSize(2);
+					assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
+					assertThat(transports).extracting("transport")
+							.allMatch(transport -> transport instanceof HttpClientStreamableHttpTransport);
+					for (NamedClientMcpTransport transport : transports) {
+						assertThat(transport.transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
+						assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transport.transport()))
+								.isEqualTo("/mcp");
+					}
+				});
 	}
 
 	@Test
 	void customEndpointIsRespected() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.streamable-http.connections.server1.endpoint=/custom-mcp")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
-						List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).name()).isEqualTo("server1");
-				assertThat(transports.get(0).transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
+				.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.streamable-http.connections.server1.endpoint=/custom-mcp")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
+							List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).name()).isEqualTo("server1");
+					assertThat(transports.get(0).transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
 
-				assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transports.get(0).transport()))
-					.isEqualTo("/custom-mcp");
-			});
+					assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transports.get(0).transport()))
+							.isEqualTo("/custom-mcp");
+				});
 	}
 
 	@Test
 	void customJsonMapperIsUsed() {
 		this.applicationContext.withUserConfiguration(CustomJsonMapperConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				assertThat(context.getBean(JsonMapper.class)).isNotNull();
-				List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
-						List.class);
-				assertThat(transports).hasSize(1);
-			});
+				.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					assertThat(context.getBean(JsonMapper.class)).isNotNull();
+					List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
+							List.class);
+					assertThat(transports).hasSize(1);
+				});
 	}
 
 	@Test
 	void defaultEndpointIsUsedWhenNotSpecified() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
-						List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).name()).isEqualTo("server1");
-				assertThat(transports.get(0).transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
-				// Default Streamable HTTP endpoint is "/mcp" as specified in the
-				// configuration class
-			});
+				.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
+							List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).name()).isEqualTo("server1");
+					assertThat(transports.get(0).transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
+					// Default Streamable HTTP endpoint is "/mcp" as specified in the
+					// configuration class
+				});
 	}
 
 	@Test
 	void mixedConnectionsWithAndWithoutCustomEndpoint() {
 		this.applicationContext
-			.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.streamable-http.connections.server1.endpoint=/custom-mcp",
-					"spring.ai.mcp.client.streamable-http.connections.server2.url=http://otherserver:8081")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
-						List.class);
-				assertThat(transports).hasSize(2);
-				assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
-				assertThat(transports).extracting("transport")
-					.allMatch(transport -> transport instanceof HttpClientStreamableHttpTransport);
-				for (NamedClientMcpTransport transport : transports) {
-					assertThat(transport.transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
-					if (transport.name().equals("server1")) {
-						assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transport.transport()))
-							.isEqualTo("/custom-mcp");
+				.withPropertyValues("spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.streamable-http.connections.server1.endpoint=/custom-mcp",
+						"spring.ai.mcp.client.streamable-http.connections.server2.url=http://otherserver:8081")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("streamableHttpHttpClientTransports",
+							List.class);
+					assertThat(transports).hasSize(2);
+					assertThat(transports).extracting("name").containsExactlyInAnyOrder("server1", "server2");
+					assertThat(transports).extracting("transport")
+							.allMatch(transport -> transport instanceof HttpClientStreamableHttpTransport);
+					for (NamedClientMcpTransport transport : transports) {
+						assertThat(transport.transport()).isInstanceOf(HttpClientStreamableHttpTransport.class);
+						if (transport.name().equals("server1")) {
+							assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transport.transport()))
+									.isEqualTo("/custom-mcp");
+						} else {
+							assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transport.transport()))
+									.isEqualTo("/mcp");
+						}
 					}
-					else {
-						assertThat(getStreamableHttpEndpoint((HttpClientStreamableHttpTransport) transport.transport()))
-							.isEqualTo("/mcp");
-					}
-				}
-			});
+				});
 	}
 
 	private String getStreamableHttpEndpoint(HttpClientStreamableHttpTransport transport) {

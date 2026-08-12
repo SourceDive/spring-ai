@@ -16,12 +16,12 @@
 
 package org.springframework.ai.embedding;
 
-import java.util.Map;
-
 import org.springframework.ai.chat.metadata.EmptyUsage;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.model.AbstractResponseMetadata;
 import org.springframework.ai.model.ResponseMetadata;
+
+import java.util.Map;
 
 /**
  * Common AI provider metadata returned in an embedding response.
@@ -62,6 +62,7 @@ public class EmbeddingResponseMetadata extends AbstractResponseMetadata implemen
 
 	/**
 	 * The AI provider specific metadata on API usage.
+	 *
 	 * @see Usage
 	 */
 	public Usage getUsage() {

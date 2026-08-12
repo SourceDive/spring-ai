@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.resource;
 
-import java.util.List;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncResourceSpecification;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncResourceTemplateSpecification;
@@ -26,10 +24,11 @@ import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpResource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpResource;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,8 +44,8 @@ public class AsyncStatelessMcpResourceProviderTests {
 	@Test
 	void testConstructorWithNullResourceObjects() {
 		assertThatThrownBy(() -> new AsyncStatelessMcpResourceProvider(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resourceObjects cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("resourceObjects cannot be null");
 	}
 
 	@Test
@@ -290,7 +289,7 @@ public class AsyncStatelessMcpResourceProviderTests {
 		var resourceTemplateSpecs = provider.getResourceTemplateSpecifications();
 
 		assertThat(resourceTemplateSpecs.get(0).resourceTemplate().uriTemplate())
-			.isEqualTo("variable://resource/{id}/{type}");
+				.isEqualTo("variable://resource/{id}/{type}");
 		assertThat(resourceTemplateSpecs.get(0).resourceTemplate().name()).isEqualTo("variable-resource");
 
 		// Test that the handler works with URI variables
@@ -303,7 +302,7 @@ public class AsyncStatelessMcpResourceProviderTests {
 			ResourceContents content = readResult.contents().get(0);
 			assertThat(content).isInstanceOf(TextResourceContents.class);
 			assertThat(((TextResourceContents) content).text())
-				.isEqualTo("Resource content for id: 123, type: document");
+					.isEqualTo("Resource content for id: 123, type: document");
 		}).verifyComplete();
 	}
 
@@ -426,7 +425,7 @@ public class AsyncStatelessMcpResourceProviderTests {
 			ResourceContents content = readResult.contents().get(0);
 			assertThat(content).isInstanceOf(TextResourceContents.class);
 			assertThat(((TextResourceContents) content).text())
-				.isEqualTo("Resource with context: present, URI: context://resource");
+					.isEqualTo("Resource with context: present, URI: context://resource");
 		}).verifyComplete();
 	}
 

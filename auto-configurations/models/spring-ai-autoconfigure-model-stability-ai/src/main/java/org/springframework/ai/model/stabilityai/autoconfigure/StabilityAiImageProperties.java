@@ -147,18 +147,18 @@ public class StabilityAiImageProperties extends StabilityAiParentProperties {
 
 	public StabilityAiImageOptions toOptions() {
 		return StabilityAiImageOptions.builder()
-			.model(this.model)
-			.n(this.n)
-			.width(this.width)
-			.height(this.height)
-			.responseFormat(this.responseFormat)
-			.cfgScale(this.cfgScale)
-			.clipGuidancePreset(this.clipGuidancePreset)
-			.sampler(this.sampler)
-			.seed(this.seed)
-			.steps(this.steps)
-			.stylePreset(this.stylePreset)
-			.build();
+				.model(this.model)
+				.n(this.n)
+				.width(this.width)
+				.height(this.height)
+				.responseFormat(this.responseFormat)
+				.cfgScale(this.cfgScale)
+				.clipGuidancePreset(this.clipGuidancePreset)
+				.sampler(this.sampler)
+				.seed(this.seed)
+				.steps(this.steps)
+				.stylePreset(this.stylePreset)
+				.build();
 	}
 
 	private Options options = new Options();

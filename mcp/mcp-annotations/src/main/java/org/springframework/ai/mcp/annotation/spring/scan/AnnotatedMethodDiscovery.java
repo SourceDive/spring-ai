@@ -16,12 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.spring.scan;
 
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ReflectionUtils;
+
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ReflectionUtils;
 
 class AnnotatedMethodDiscovery {
 

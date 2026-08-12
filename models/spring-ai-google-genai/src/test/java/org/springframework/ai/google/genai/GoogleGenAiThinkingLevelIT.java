@@ -16,8 +16,6 @@
 
 package org.springframework.ai.google.genai;
 
-import java.util.stream.Stream;
-
 import com.google.genai.Client;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,10 +23,11 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.google.genai.common.GoogleGenAiThinkingLevel;
 import org.springframework.ai.model.tool.ToolCallingManager;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,28 +84,28 @@ class GoogleGenAiThinkingLevelIT {
 	@MethodSource("proModelUnsupportedLevels")
 	void testGemini3ProRejectsUnsupportedLevels(String modelName, GoogleGenAiThinkingLevel level) {
 		var chatModel = GoogleGenAiChatModel.builder()
-			.genAiClient(this.genAiClient)
-			.options(GoogleGenAiChatOptions.builder().model(modelName).thinkingLevel(level).build())
-			.toolCallingManager(ToolCallingManager.builder().build())
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.genAiClient(this.genAiClient)
+				.options(GoogleGenAiChatOptions.builder().model(modelName).thinkingLevel(level).build())
+				.toolCallingManager(ToolCallingManager.builder().build())
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 
 		assertThatThrownBy(() -> chatModel.call(new Prompt("What is 2+2?")))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(level.name())
-			.hasMessageContaining("not supported")
-			.hasMessageContaining("Gemini 3 Pro");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(level.name())
+				.hasMessageContaining("not supported")
+				.hasMessageContaining("Gemini 3 Pro");
 	}
 
 	@ParameterizedTest
 	@MethodSource("proModelSupportedLevels")
 	void testGemini3ProAcceptsSupportedLevels(String modelName, GoogleGenAiThinkingLevel level) {
 		var chatModel = GoogleGenAiChatModel.builder()
-			.genAiClient(this.genAiClient)
-			.options(GoogleGenAiChatOptions.builder().model(modelName).thinkingLevel(level).build())
-			.toolCallingManager(ToolCallingManager.builder().build())
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.genAiClient(this.genAiClient)
+				.options(GoogleGenAiChatOptions.builder().model(modelName).thinkingLevel(level).build())
+				.toolCallingManager(ToolCallingManager.builder().build())
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 
 		var response = chatModel.call(new Prompt("What is 2+2? Answer with just the number."));
 
@@ -119,11 +118,11 @@ class GoogleGenAiThinkingLevelIT {
 	@MethodSource("flashModelAllLevels")
 	void testGemini3FlashAcceptsAllLevels(String modelName, GoogleGenAiThinkingLevel level) {
 		var chatModel = GoogleGenAiChatModel.builder()
-			.genAiClient(this.genAiClient)
-			.options(GoogleGenAiChatOptions.builder().model(modelName).thinkingLevel(level).build())
-			.toolCallingManager(ToolCallingManager.builder().build())
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.genAiClient(this.genAiClient)
+				.options(GoogleGenAiChatOptions.builder().model(modelName).thinkingLevel(level).build())
+				.toolCallingManager(ToolCallingManager.builder().build())
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 
 		var response = chatModel.call(new Prompt("What is 2+2? Answer with just the number."));
 

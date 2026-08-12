@@ -42,13 +42,13 @@ public class GemFireWithTokenAuthenticationVectorStoreIT extends GemFireVectorSt
 		@Bean
 		public GemFireVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			return GemFireVectorStore.builder(embeddingModel)
-				.host("localhost")
-				.port(HTTP_SERVICE_PORT)
-				.token("01234567890123456789012345678901234567890")
-				.indexName(INDEX_NAME)
-				.fields(new String[] { "year", "country", "activationDate" })
-				.initializeSchema(true)
-				.build();
+					.host("localhost")
+					.port(HTTP_SERVICE_PORT)
+					.token("01234567890123456789012345678901234567890")
+					.indexName(INDEX_NAME)
+					.fields(new String[]{"year", "country", "activationDate"})
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

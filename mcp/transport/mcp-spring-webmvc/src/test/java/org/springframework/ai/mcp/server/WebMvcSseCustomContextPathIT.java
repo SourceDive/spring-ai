@@ -55,20 +55,19 @@ class WebMvcSseCustomContextPathIT {
 		try {
 			this.tomcatServer.tomcat().start();
 			assertThat(this.tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
 		int port = this.tomcatServer.tomcat().getConnector().getLocalPort();
 		var clientTransport = HttpClientSseClientTransport.builder("http://127.0.0.1:" + port)
-			.sseEndpoint(CUSTOM_CONTEXT_PATH + WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
-			.build();
+				.sseEndpoint(CUSTOM_CONTEXT_PATH + WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
+				.build();
 
 		this.clientBuilder = McpClient.sync(clientTransport);
 
 		this.mcpServerTransportProvider = this.tomcatServer.appContext()
-			.getBean(WebMvcSseServerTransportProvider.class);
+				.getBean(WebMvcSseServerTransportProvider.class);
 	}
 
 	@AfterEach
@@ -83,8 +82,7 @@ class WebMvcSseCustomContextPathIT {
 			try {
 				this.tomcatServer.tomcat().stop();
 				this.tomcatServer.tomcat().destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}
@@ -105,10 +103,10 @@ class WebMvcSseCustomContextPathIT {
 		public WebMvcSseServerTransportProvider webMvcSseServerTransportProvider() {
 
 			return WebMvcSseServerTransportProvider.builder()
-				.baseUrl(CUSTOM_CONTEXT_PATH)
-				.messageEndpoint(MESSAGE_ENDPOINT)
-				.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
-				.build();
+					.baseUrl(CUSTOM_CONTEXT_PATH)
+					.messageEndpoint(MESSAGE_ENDPOINT)
+					.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
+					.build();
 			// return new WebMvcSseServerTransportProvider(new ObjectMapper(),
 			// CUSTOM_CONTEXT_PATH, MESSAGE_ENDPOINT,
 			// WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT);

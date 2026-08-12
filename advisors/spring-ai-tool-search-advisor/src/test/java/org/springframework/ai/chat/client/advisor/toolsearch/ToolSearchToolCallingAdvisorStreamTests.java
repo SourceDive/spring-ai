@@ -16,21 +16,12 @@
 
 package org.springframework.ai.chat.client.advisor.toolsearch;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.DefaultAroundAdvisorChain;
@@ -51,13 +42,19 @@ import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.toolsearch.ToolIndex;
 import org.springframework.ai.tool.toolsearch.ToolReference;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Streaming-path tests for {@link ToolSearchToolCallingAdvisor}.
@@ -80,7 +77,7 @@ class ToolSearchToolCallingAdvisorStreamTests {
 		ToolDefinition td1 = toolDef("tool1", "Desc 1");
 		ToolDefinition td2 = toolDef("tool2", "Desc 2");
 		when(this.toolCallingManager.resolveToolDefinitions(any(ToolCallingChatOptions.class)))
-			.thenReturn(List.of(td1, td2));
+				.thenReturn(List.of(td1, td2));
 
 		drainStream(advisor, (req, ch) -> Flux.just(withContext(response(false), req)));
 
@@ -125,9 +122,9 @@ class ToolSearchToolCallingAdvisorStreamTests {
 		when(this.toolCallingManager.resolveToolDefinitions(any())).thenReturn(List.of());
 
 		ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "toolSearchTool",
-					"[\"weatherTool\", \"calculatorTool\"]")))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "toolSearchTool",
+						"[\"weatherTool\", \"calculatorTool\"]")))
+				.build();
 
 		Prompt prompt = new Prompt(
 				List.of(new SystemMessage("System message"), new UserMessage("test"), toolResponseMessage),
@@ -135,11 +132,11 @@ class ToolSearchToolCallingAdvisorStreamTests {
 		Map<String, Object> extractContext = new ConcurrentHashMap<>();
 		extractContext.put(ChatMemory.CONVERSATION_ID, "test-session-id");
 		ChatClientRequest request = ChatClientRequest.builder()
-			.prompt(prompt)
-			.build()
-			.mutate()
-			.context(extractContext)
-			.build();
+				.prompt(prompt)
+				.build()
+				.mutate()
+				.context(extractContext)
+				.build();
 
 		ChatClientRequest[] captured = new ChatClientRequest[1];
 		StreamAdvisorChain chain = buildChain(advisor, (req, ch) -> {
@@ -150,7 +147,7 @@ class ToolSearchToolCallingAdvisorStreamTests {
 
 		ToolCallingChatOptions opts = (ToolCallingChatOptions) captured[0].prompt().getOptions();
 		assertThat(opts.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactly("toolSearchTool");
+				.containsExactly("toolSearchTool");
 	}
 
 	@Test
@@ -182,46 +179,46 @@ class ToolSearchToolCallingAdvisorStreamTests {
 
 	private ToolSearchToolCallingAdvisor advisor(String suffix) {
 		return ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(this.toolCallingManager)
-			.toolIndex(this.toolIndex)
-			.systemMessageSuffix(suffix)
-			.build();
+				.toolCallingManager(this.toolCallingManager)
+				.toolIndex(this.toolIndex)
+				.systemMessageSuffix(suffix)
+				.build();
 	}
 
 	private void drainStream(ToolSearchToolCallingAdvisor advisor,
-			BiFunction<ChatClientRequest, StreamAdvisorChain, Flux<ChatClientResponse>> terminal) {
+	                         BiFunction<ChatClientRequest, StreamAdvisorChain, Flux<ChatClientResponse>> terminal) {
 		buildChain(advisor, terminal);
 		advisor.adviseStream(createRequest(), buildChain(advisor, terminal)).collectList().block();
 	}
 
 	private StreamAdvisorChain buildChain(ToolSearchToolCallingAdvisor advisor,
-			BiFunction<ChatClientRequest, StreamAdvisorChain, Flux<ChatClientResponse>> terminal) {
+	                                      BiFunction<ChatClientRequest, StreamAdvisorChain, Flux<ChatClientResponse>> terminal) {
 		return DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor, new TerminalStreamAdvisor(terminal)))
-			.build();
+				.pushAll(List.of(advisor, new TerminalStreamAdvisor(terminal)))
+				.build();
 	}
 
 	private ChatClientRequest createRequest() {
 		Map<String, Object> context = new ConcurrentHashMap<>();
 		context.put(ChatMemory.CONVERSATION_ID, "test-session-id");
 		return ChatClientRequest.builder()
-			.prompt(new Prompt(List.of(new SystemMessage("System message"), new UserMessage("test")),
-					new TestToolCallingChatOptions()))
-			.build()
-			.mutate()
-			.context(context)
-			.build();
+				.prompt(new Prompt(List.of(new SystemMessage("System message"), new UserMessage("test")),
+						new TestToolCallingChatOptions()))
+				.build()
+				.mutate()
+				.context(context)
+				.build();
 	}
 
 	private ChatClientResponse response(boolean hasToolCalls) {
 		AssistantMessage msg = hasToolCalls ? AssistantMessage.builder()
-			.content("")
-			.toolCalls(List.of(new AssistantMessage.ToolCall("id", "tool", "name", "{}")))
-			.build() : new AssistantMessage("response");
+				.content("")
+				.toolCalls(List.of(new AssistantMessage.ToolCall("id", "tool", "name", "{}")))
+				.build() : new AssistantMessage("response");
 		return ChatClientResponse.builder()
-			.chatResponse(ChatResponse.builder().generations(List.of(new Generation(msg))).build())
-			.context(new ConcurrentHashMap<>())
-			.build();
+				.chatResponse(ChatResponse.builder().generations(List.of(new Generation(msg))).build())
+				.context(new ConcurrentHashMap<>())
+				.build();
 	}
 
 	// Merges the request context into the response so doAfterStream can find the session

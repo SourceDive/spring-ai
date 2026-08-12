@@ -16,32 +16,31 @@
 
 package org.springframework.ai.reader.tika;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
-import org.xml.sax.ContentHandler;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
 import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
+import org.xml.sax.ContentHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * A document reader that leverages Apache Tika to extract text from a variety of document
  * formats, such as PDF, DOC/DOCX, PPT/PPTX, and HTML. For a comprehensive list of
  * supported formats, refer to: https://tika.apache.org/3.1.0/formats.html.
- *
+ * <p>
  * This reader directly provides the extracted text without any additional formatting. All
  * extracted texts are encapsulated within a {@link Document} instance.
- *
+ * <p>
  * If you require more specialized handling for PDFs, consider using the
  * PagePdfDocumentReader or ParagraphPdfDocumentReader.
  *
@@ -87,6 +86,7 @@ public class TikaDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructor initializing the reader with a given resource URL.
+	 *
 	 * @param resourceUrl URL to the resource
 	 */
 	public TikaDocumentReader(String resourceUrl) {
@@ -95,7 +95,8 @@ public class TikaDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructor initializing the reader with a given resource URL and a text formatter.
-	 * @param resourceUrl URL to the resource
+	 *
+	 * @param resourceUrl   URL to the resource
 	 * @param textFormatter Formatter for the extracted text
 	 */
 	public TikaDocumentReader(String resourceUrl, ExtractedTextFormatter textFormatter) {
@@ -104,6 +105,7 @@ public class TikaDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructor initializing the reader with a resource.
+	 *
 	 * @param resource Resource pointing to the document
 	 */
 	public TikaDocumentReader(Resource resource) {
@@ -114,7 +116,8 @@ public class TikaDocumentReader implements DocumentReader {
 	 * Constructor initializing the reader with a resource and a text formatter. This
 	 * constructor will create a BodyContentHandler that allows for reading large PDFs
 	 * (constrained only by memory)
-	 * @param resource Resource pointing to the document
+	 *
+	 * @param resource      Resource pointing to the document
 	 * @param textFormatter Formatter for the extracted text
 	 */
 	public TikaDocumentReader(Resource resource, ExtractedTextFormatter textFormatter) {
@@ -124,9 +127,10 @@ public class TikaDocumentReader implements DocumentReader {
 	/**
 	 * Constructor initializing the reader with a resource, content handler, and a text
 	 * formatter.
-	 * @param resource Resource pointing to the document
+	 *
+	 * @param resource       Resource pointing to the document
 	 * @param contentHandler Handler to manage content extraction
-	 * @param textFormatter Formatter for the extracted text
+	 * @param textFormatter  Formatter for the extracted text
 	 */
 	public TikaDocumentReader(Resource resource, ContentHandler contentHandler, ExtractedTextFormatter textFormatter) {
 		this.parser = new AutoDetectParser();
@@ -139,6 +143,7 @@ public class TikaDocumentReader implements DocumentReader {
 
 	/**
 	 * Extracts and returns the list of documents from the resource.
+	 *
 	 * @return List of extracted {@link Document}
 	 */
 	@Override
@@ -146,14 +151,14 @@ public class TikaDocumentReader implements DocumentReader {
 		try (InputStream stream = this.resource.getInputStream()) {
 			this.parser.parse(stream, this.handler, this.metadata, this.context);
 			return List.of(toDocument(this.handler.toString()));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Converts the given text to a {@link Document}.
+	 *
 	 * @param docText Text to be converted
 	 * @return Converted document
 	 */
@@ -168,6 +173,7 @@ public class TikaDocumentReader implements DocumentReader {
 	/**
 	 * Returns the name of the resource. If the filename is not present, it returns the
 	 * URI of the resource.
+	 *
 	 * @return Name or URI of the resource
 	 */
 	private String resourceName() {
@@ -177,8 +183,7 @@ public class TikaDocumentReader implements DocumentReader {
 				resourceName = this.resource.getURI().toString();
 			}
 			return resourceName;
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			return String.format("Invalid source URI: %s", e.getMessage());
 		}
 	}

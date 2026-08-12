@@ -16,13 +16,12 @@
 
 package org.springframework.ai.bedrock;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Converts a list of messages to a prompt for bedrock models.
@@ -67,15 +66,15 @@ public final class MessageToPromptConverter {
 	public String toPrompt(List<Message> messages) {
 
 		final String systemMessages = messages.stream()
-			.filter(message -> message.getMessageType() == MessageType.SYSTEM)
-			.map(Message::getText)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.filter(message -> message.getMessageType() == MessageType.SYSTEM)
+				.map(Message::getText)
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		final String userMessages = messages.stream()
-			.filter(message -> message.getMessageType() == MessageType.USER
-					|| message.getMessageType() == MessageType.ASSISTANT)
-			.map(this::messageToString)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.filter(message -> message.getMessageType() == MessageType.USER
+						|| message.getMessageType() == MessageType.ASSISTANT)
+				.map(this::messageToString)
+				.collect(Collectors.joining(System.lineSeparator()));
 
 		// Related to: https://github.com/spring-projects/spring-ai/issues/404
 		return systemMessages + this.lineSeparator + this.lineSeparator + userMessages + this.lineSeparator
@@ -88,7 +87,7 @@ public final class MessageToPromptConverter {
 			case USER -> this.humanPrompt + " " + message.getText();
 			case ASSISTANT -> this.assistantPrompt + " " + message.getText();
 			case TOOL ->
-				throw new IllegalArgumentException("Tool execution results are not supported for Bedrock models");
+					throw new IllegalArgumentException("Tool execution results are not supported for Bedrock models");
 		};
 
 	}

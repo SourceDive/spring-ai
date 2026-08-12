@@ -32,9 +32,9 @@ package org.springframework.ai.google.genai.common;
  * an API error.
  *
  * @author Dan Dobrin
- * @since 1.1.0
  * @see <a href="https://ai.google.dev/gemini-api/docs/thinking">Google GenAI Thinking
  * documentation</a>
+ * @since 1.1.0
  */
 public enum GoogleGenAiThinkingLevel {
 
@@ -47,7 +47,7 @@ public enum GoogleGenAiThinkingLevel {
 	 * Matches the "no thinking" setting for most queries. The model may think very
 	 * minimally for complex coding tasks. Minimizes latency for chat or high throughput
 	 * applications.
-	 *
+	 * <p>
 	 * Note: minimal does not guarantee that thinking is off.
 	 */
 	MINIMAL,

@@ -16,11 +16,10 @@
 
 package org.springframework.ai.model.chat.memory.repository.cassandra.autoconfigure;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.memory.repository.cassandra.CassandraChatMemoryRepositoryConfig;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +36,7 @@ class CassandraChatMemoryRepositoryPropertiesTest {
 		assertThat(props.getKeyspace()).isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_KEYSPACE_NAME);
 		assertThat(props.getTable()).isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_TABLE_NAME);
 		assertThat(props.getMessagesColumn())
-			.isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_MESSAGES_COLUMN_NAME);
+				.isEqualTo(CassandraChatMemoryRepositoryConfig.DEFAULT_MESSAGES_COLUMN_NAME);
 
 		assertThat(props.getTimeToLive()).isNull();
 		assertThat(props.isInitializeSchema()).isTrue();

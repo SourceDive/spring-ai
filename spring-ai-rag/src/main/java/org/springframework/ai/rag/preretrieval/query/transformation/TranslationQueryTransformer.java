@@ -69,7 +69,7 @@ public final class TranslationQueryTransformer implements QueryTransformer {
 	private final String targetLanguage;
 
 	public TranslationQueryTransformer(ChatClient.Builder chatClientBuilder, @Nullable PromptTemplate promptTemplate,
-			String targetLanguage) {
+	                                   String targetLanguage) {
 		Assert.notNull(chatClientBuilder, "chatClientBuilder cannot be null");
 		Assert.hasText(targetLanguage, "targetLanguage cannot be null or empty");
 
@@ -89,11 +89,11 @@ public final class TranslationQueryTransformer implements QueryTransformer {
 		}
 
 		var translatedQueryText = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("targetLanguage", this.targetLanguage)
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("targetLanguage", this.targetLanguage)
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (!StringUtils.hasText(translatedQueryText)) {
 			logger.warn("Query translation result is null/empty. Returning the input query unchanged.");

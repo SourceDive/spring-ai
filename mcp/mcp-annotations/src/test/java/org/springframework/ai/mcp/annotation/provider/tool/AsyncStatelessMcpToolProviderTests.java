@@ -16,9 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.tool;
 
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
@@ -26,11 +23,13 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpTool;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpTool;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,7 +45,7 @@ public class AsyncStatelessMcpToolProviderTests {
 	@Test
 	void testConstructorWithNullToolObjects() {
 		assertThatThrownBy(() -> new AsyncStatelessMcpToolProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("toolObjects cannot be null");
+				.hasMessageContaining("toolObjects cannot be null");
 	}
 
 	@Test
@@ -328,7 +327,7 @@ public class AsyncStatelessMcpToolProviderTests {
 			assertThat(callToolResult.content()).hasSize(1);
 			assertThat(callToolResult.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) callToolResult.content().get(0)).text())
-				.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
+					.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
 		}).verifyComplete();
 	}
 
@@ -781,7 +780,7 @@ public class AsyncStatelessMcpToolProviderTests {
 			assertThat(callToolResult.content()).hasSize(1);
 			assertThat(callToolResult.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) callToolResult.content().get(0)).text())
-				.isEqualTo("Context tool with param: test");
+					.isEqualTo("Context tool with param: test");
 		}).verifyComplete();
 	}
 

@@ -16,12 +16,7 @@
 
 package org.springframework.ai.bedrock.converse.client;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.Disabled;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.RequiresAwsCredentials;
@@ -30,6 +25,10 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.test.chat.client.advisor.AbstractToolCallingAdvisorIT;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+
+import java.time.Duration;
 
 /**
  * Integration tests for {@link ToolCallingAdvisor} functionality with Bedrock SDK.
@@ -47,11 +46,11 @@ class BedrockNovaToolCallingAdvisorIT extends AbstractToolCallingAdvisorIT {
 		String modelId = "us.amazon.nova-pro-v1:0";
 
 		return BedrockProxyChatModel.builder()
-			.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
-			.region(Region.US_EAST_1)
-			.timeout(Duration.ofSeconds(120))
-			.options(BedrockChatOptions.builder().model(modelId).build())
-			.build();
+				.credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+				.region(Region.US_EAST_1)
+				.timeout(Duration.ofSeconds(120))
+				.options(BedrockChatOptions.builder().model(modelId).build())
+				.build();
 	}
 
 	@SpringBootConfiguration

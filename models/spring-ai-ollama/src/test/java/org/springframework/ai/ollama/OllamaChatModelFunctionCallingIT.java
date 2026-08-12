@@ -16,13 +16,7 @@
 
 package org.springframework.ai.ollama;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -41,6 +35,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,13 +59,13 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OllamaChatOptions.builder()
-			.model(MODEL)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MODEL)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 		Prompt prompt = new Prompt(messages, promptOptions);
@@ -85,13 +84,13 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		UserMessage userMessage = new UserMessage("What are the weather conditions in San Francisco?");
 
 		var promptOptions = OllamaChatOptions.builder()
-			.model(MODEL)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MODEL)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
@@ -108,28 +107,28 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OllamaChatOptions.builder()
-			.model(MODEL)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(MODEL)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 		Prompt prompt = new Prompt(messages, promptOptions);
 
 		String content = this.chatModel.stream(prompt).flatMap(response -> {
-			if (response.hasToolCalls()) {
-				ToolExecutionResult toolExecutionResult = toolCallingManager.executeToolCalls(prompt, response);
-				return this.chatModel.stream(new Prompt(toolExecutionResult.conversationHistory(), promptOptions));
-			}
-			return Flux.just(response);
-		})
-			.mapNotNull(r -> (r.getResult() == null || r.getResult().getOutput() == null) ? null
-					: r.getResult().getOutput().getText())
-			.collect(Collectors.joining())
-			.block();
+					if (response.hasToolCalls()) {
+						ToolExecutionResult toolExecutionResult = toolCallingManager.executeToolCalls(prompt, response);
+						return this.chatModel.stream(new Prompt(toolExecutionResult.conversationHistory(), promptOptions));
+					}
+					return Flux.just(response);
+				})
+				.mapNotNull(r -> (r.getResult() == null || r.getResult().getOutput() == null) ? null
+						: r.getResult().getOutput().getText())
+				.collect(Collectors.joining())
+				.block();
 		assertThat(content).contains("30", "10", "15");
 	}
 
@@ -144,10 +143,10 @@ class OllamaChatModelFunctionCallingIT extends BaseOllamaIT {
 		@Bean
 		public OllamaChatModel ollamaChat(OllamaApi ollamaApi) {
 			return OllamaChatModel.builder()
-				.ollamaApi(ollamaApi)
-				.options(OllamaChatOptions.builder().model(MODEL).temperature(0.9).build())
-				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-				.build();
+					.ollamaApi(ollamaApi)
+					.options(OllamaChatOptions.builder().model(MODEL).temperature(0.9).build())
+					.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+					.build();
 		}
 
 	}

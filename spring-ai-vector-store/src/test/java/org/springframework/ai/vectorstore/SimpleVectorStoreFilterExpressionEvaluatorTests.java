@@ -16,28 +16,15 @@
 
 package org.springframework.ai.vectorstore;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.vectorstore.filter.Filter;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.vectorstore.filter.Filter;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.ISNOTNULL;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.ISNULL;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NOT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * Tests for {@link SimpleVectorStoreFilterExpressionEvaluator}.

@@ -16,17 +16,9 @@
 
 package org.springframework.ai.bedrock.aot;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -37,6 +29,13 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.util.ClassUtils;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The BedrockRuntimeHints class is responsible for registering runtime hints for Bedrock
@@ -125,13 +124,13 @@ public class BedrockRuntimeHints implements RuntimeHintsRegistrar {
 			}
 		};
 		return scanner //
-			.findCandidateComponents(packageName) //
-			.stream()//
-			.map(BeanDefinition::getBeanClassName) //
-			.filter(Objects::nonNull) //
-			.filter(x -> !x.contains("package-info"))
-			.map(TypeReference::of) //
-			.toList();
+				.findCandidateComponents(packageName) //
+				.stream()//
+				.map(BeanDefinition::getBeanClassName) //
+				.filter(Objects::nonNull) //
+				.filter(x -> !x.contains("package-info"))
+				.map(TypeReference::of) //
+				.toList();
 	}
 
 }

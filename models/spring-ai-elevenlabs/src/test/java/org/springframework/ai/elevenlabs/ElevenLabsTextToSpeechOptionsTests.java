@@ -16,11 +16,10 @@
 
 package org.springframework.ai.elevenlabs;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.elevenlabs.api.ElevenLabsApi;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,23 +38,23 @@ public class ElevenLabsTextToSpeechOptionsTests {
 	@Test
 	public void testBuilderWithAllFields() {
 		ElevenLabsTextToSpeechOptions options = ElevenLabsTextToSpeechOptions.builder()
-			.modelId("test-model")
-			.voice("test-voice")
-			.voiceId("test-voice-id") // Test both voice and voiceId
-			.format("mp3_44100_128")
-			.outputFormat("mp3_44100_128")
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.8, 0.9, true, 1.2))
-			.languageCode("en")
-			.pronunciationDictionaryLocators(
-					List.of(new ElevenLabsApi.SpeechRequest.PronunciationDictionaryLocator("dict1", "v1")))
-			.seed(12345)
-			.previousText("previous")
-			.nextText("next")
-			.previousRequestIds(List.of("req1", "req2"))
-			.nextRequestIds(List.of("req3", "req4"))
-			.applyTextNormalization(ElevenLabsApi.SpeechRequest.TextNormalizationMode.ON)
-			.applyLanguageTextNormalization(true)
-			.build();
+				.modelId("test-model")
+				.voice("test-voice")
+				.voiceId("test-voice-id") // Test both voice and voiceId
+				.format("mp3_44100_128")
+				.outputFormat("mp3_44100_128")
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.8, 0.9, true, 1.2))
+				.languageCode("en")
+				.pronunciationDictionaryLocators(
+						List.of(new ElevenLabsApi.SpeechRequest.PronunciationDictionaryLocator("dict1", "v1")))
+				.seed(12345)
+				.previousText("previous")
+				.nextText("next")
+				.previousRequestIds(List.of("req1", "req2"))
+				.nextRequestIds(List.of("req3", "req4"))
+				.applyTextNormalization(ElevenLabsApi.SpeechRequest.TextNormalizationMode.ON)
+				.applyLanguageTextNormalization(true)
+				.build();
 
 		assertThat(options.getModelId()).isEqualTo("test-model");
 		assertThat(options.getVoice()).isEqualTo("test-voice-id");
@@ -84,23 +83,23 @@ public class ElevenLabsTextToSpeechOptionsTests {
 	@Test
 	public void testBuilder() {
 		ElevenLabsTextToSpeechOptions options = ElevenLabsTextToSpeechOptions.builder()
-			.modelId("test-model")
-			.voice("test-voice")
-			.voiceId("test-voice-id")
-			.outputFormat("mp3_44100_128")
-			.format("mp3_44100_128")
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.8, null, null, null))
-			.languageCode("en")
-			.pronunciationDictionaryLocators(
-					List.of(new ElevenLabsApi.SpeechRequest.PronunciationDictionaryLocator("dict1", "v1")))
-			.seed(12345)
-			.previousText("previous")
-			.nextText("next")
-			.previousRequestIds(List.of("req1", "req2"))
-			.nextRequestIds(List.of("req3", "req4"))
-			.applyTextNormalization(ElevenLabsApi.SpeechRequest.TextNormalizationMode.ON)
-			.applyLanguageTextNormalization(true)
-			.build();
+				.modelId("test-model")
+				.voice("test-voice")
+				.voiceId("test-voice-id")
+				.outputFormat("mp3_44100_128")
+				.format("mp3_44100_128")
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.5, 0.8, null, null, null))
+				.languageCode("en")
+				.pronunciationDictionaryLocators(
+						List.of(new ElevenLabsApi.SpeechRequest.PronunciationDictionaryLocator("dict1", "v1")))
+				.seed(12345)
+				.previousText("previous")
+				.nextText("next")
+				.previousRequestIds(List.of("req1", "req2"))
+				.nextRequestIds(List.of("req3", "req4"))
+				.applyTextNormalization(ElevenLabsApi.SpeechRequest.TextNormalizationMode.ON)
+				.applyLanguageTextNormalization(true)
+				.build();
 
 		assertThat(options.getModelId()).isEqualTo("test-model");
 		assertThat(options.getVoice()).isEqualTo("test-voice-id");
@@ -148,26 +147,26 @@ public class ElevenLabsTextToSpeechOptionsTests {
 	public void testSetSpeed() {
 		// 1. Setting speed via voiceSettings, no existing voiceSettings
 		ElevenLabsTextToSpeechOptions options = ElevenLabsTextToSpeechOptions.builder()
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(null, null, null, null, 1.5))
-			.build();
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(null, null, null, null, 1.5))
+				.build();
 		assertThat(options.getSpeed()).isEqualTo(1.5);
 		assertThat(options.getVoiceSettings()).isNotNull();
 		assertThat(options.getVoiceSettings().speed()).isEqualTo(1.5);
 
 		// 2. Setting speed via voiceSettings, existing voiceSettings
 		ElevenLabsTextToSpeechOptions options2 = ElevenLabsTextToSpeechOptions.builder()
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, null))
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 2.0)) // Overwrite
-			.build();
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, null))
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 2.0)) // Overwrite
+				.build();
 		assertThat(options2.getSpeed()).isEqualTo(2.0f);
 		assertThat(options2.getVoiceSettings().speed()).isEqualTo(2.0f);
 		assertThat(options2.getVoiceSettings().stability()).isEqualTo(0.1);
 
 		// 3. Setting voiceSettings with null speed, existing voiceSettings
 		ElevenLabsTextToSpeechOptions options3 = ElevenLabsTextToSpeechOptions.builder()
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 2.0))
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, null)) // Overwrite
-			.build();
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 2.0))
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, null)) // Overwrite
+				.build();
 		assertThat(options3.getSpeed()).isNull();
 		assertThat(options3.getVoiceSettings().speed()).isNull();
 		assertThat(options3.getVoiceSettings().stability()).isEqualTo(0.1);
@@ -180,23 +179,23 @@ public class ElevenLabsTextToSpeechOptionsTests {
 
 		// 5. Setting voiceSettings directly, with speed.
 		ElevenLabsTextToSpeechOptions options5 = ElevenLabsTextToSpeechOptions.builder()
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 2.5))
-			.build();
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 2.5))
+				.build();
 		assertThat(options5.getSpeed()).isEqualTo(2.5f);
 		assertThat(options5.getVoiceSettings().speed()).isEqualTo(2.5f);
 
 		// 6. Setting voiceSettings directly, without speed (speed should be null).
 		ElevenLabsTextToSpeechOptions options6 = ElevenLabsTextToSpeechOptions.builder()
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, null))
-			.build();
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, null))
+				.build();
 		assertThat(options6.getSpeed()).isNull();
 		assertThat(options6.getVoiceSettings().speed()).isNull();
 
 		// 7. Setting voiceSettings to null, after previously setting it.
 		ElevenLabsTextToSpeechOptions options7 = ElevenLabsTextToSpeechOptions.builder()
-			.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 1.5))
-			.voiceSettings(null)
-			.build();
+				.voiceSettings(new ElevenLabsApi.SpeechRequest.VoiceSettings(0.1, 0.2, 0.3, true, 1.5))
+				.voiceSettings(null)
+				.build();
 		assertThat(options7.getSpeed()).isNull();
 		assertThat(options7.getVoiceSettings()).isNull();
 

@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chat.cache.semantic;
 
-import java.time.Duration;
-import java.util.Optional;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.vectorstore.VectorStore;
+
+import java.time.Duration;
+import java.util.Optional;
 
 /**
  * Interface defining operations for a semantic cache implementation that stores and
@@ -51,7 +50,8 @@ public interface SemanticCache {
 	 * Stores a query and its corresponding chat response in the cache. Implementations
 	 * should handle vector embedding of the query and proper storage of both the query
 	 * embedding and response.
-	 * @param query The original query text to be cached
+	 *
+	 * @param query    The original query text to be cached
 	 * @param response The chat response associated with the query
 	 */
 	void set(String query, ChatResponse response);
@@ -60,10 +60,11 @@ public interface SemanticCache {
 	 * Stores a query and its corresponding chat response in the cache with an optional
 	 * context identifier for isolation. The context hash ensures that cached responses
 	 * are only returned for queries with matching context (e.g., same system prompt).
-	 * @param query The original query text to be cached
-	 * @param response The chat response associated with the query
+	 *
+	 * @param query       The original query text to be cached
+	 * @param response    The chat response associated with the query
 	 * @param contextHash Optional hash identifier for context isolation (e.g., system
-	 * prompt hash). If null, behaves the same as {@link #set(String, ChatResponse)}.
+	 *                    prompt hash). If null, behaves the same as {@link #set(String, ChatResponse)}.
 	 */
 	default void set(String query, ChatResponse response, @Nullable String contextHash) {
 		set(query, response);
@@ -72,9 +73,10 @@ public interface SemanticCache {
 	/**
 	 * Stores a query and response in the cache with a specified time-to-live duration.
 	 * After the TTL expires, the entry should be automatically removed from the cache.
-	 * @param query The original query text to be cached
+	 *
+	 * @param query    The original query text to be cached
 	 * @param response The chat response associated with the query
-	 * @param ttl The duration after which the cache entry should expire
+	 * @param ttl      The duration after which the cache entry should expire
 	 */
 	void set(String query, ChatResponse response, Duration ttl);
 
@@ -87,6 +89,7 @@ public interface SemanticCache {
 	 * <li>Return the response associated with the most similar query if it meets the
 	 * similarity threshold</li>
 	 * </ul>
+	 *
 	 * @param query The query to find similar responses for
 	 * @return Optional containing the most similar cached response if found and meets
 	 * similarity threshold, empty Optional otherwise
@@ -97,9 +100,10 @@ public interface SemanticCache {
 	 * Retrieves a cached response for a semantically similar query, filtered by context.
 	 * Only returns responses that were stored with the same context hash, ensuring
 	 * isolation between different contexts (e.g., different system prompts).
-	 * @param query The query to find similar responses for
+	 *
+	 * @param query       The query to find similar responses for
 	 * @param contextHash Optional hash identifier for context filtering. If null, behaves
-	 * the same as {@link #get(String)}.
+	 *                    the same as {@link #get(String)}.
 	 * @return Optional containing the most similar cached response if found, matches
 	 * context, and meets similarity threshold; empty Optional otherwise
 	 */
@@ -116,6 +120,7 @@ public interface SemanticCache {
 	/**
 	 * Returns the underlying vector store used by this cache implementation. This allows
 	 * access to lower-level vector operations if needed.
+	 *
 	 * @return The VectorStore instance used by this cache
 	 */
 	VectorStore getStore();

@@ -16,16 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.tool;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import reactor.core.publisher.Mono;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema;
-import reactor.core.publisher.Mono;
-
 public record AsyncToolListChangedSpecification(String[] clients,
-		Function<List<McpSchema.Tool>, Mono<Void>> toolListChangeHandler) {
+                                                Function<List<McpSchema.Tool>, Mono<Void>> toolListChangeHandler) {
 
 	public AsyncToolListChangedSpecification {
 		Objects.requireNonNull(clients, "clients must not be null");

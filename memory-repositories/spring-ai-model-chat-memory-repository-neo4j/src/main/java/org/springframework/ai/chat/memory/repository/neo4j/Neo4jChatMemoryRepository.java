@@ -16,30 +16,19 @@
 
 package org.springframework.ai.chat.memory.repository.neo4j;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionContext;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.messages.ToolResponseMessage.ToolResponse;
-import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.content.MediaContent;
 import org.springframework.util.MimeType;
+
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of {@link ChatMemoryRepository} for Neo4J
@@ -60,9 +49,9 @@ public final class Neo4jChatMemoryRepository implements ChatMemoryRepository {
 	@Override
 	public List<String> findConversationIds() {
 		return this.config.getDriver()
-			.executableQuery("MATCH (conversation:$($sessionLabel)) RETURN conversation.id")
-			.withParameters(Map.of("sessionLabel", this.config.getSessionLabel()))
-			.execute(Collectors.mapping(r -> r.get("conversation.id").asString(), Collectors.toList()));
+				.executableQuery("MATCH (conversation:$($sessionLabel)) RETURN conversation.id")
+				.withParameters(Map.of("sessionLabel", this.config.getSessionLabel()))
+				.execute(Collectors.mapping(r -> r.get("conversation.id").asString(), Collectors.toList()));
 	}
 
 	@Override
@@ -80,44 +69,41 @@ public final class Neo4jChatMemoryRepository implements ChatMemoryRepository {
 				""";
 
 		return this.config.getDriver()
-			.executableQuery(statement)
-			.withParameters(Map.of("conversationId", conversationId, "sessionLabel", this.config.getSessionLabel(),
-					"messageLabel", this.config.getMessageLabel(), "metadataLabel", this.config.getMetadataLabel(),
-					"mediaLabel", this.config.getMediaLabel(), "toolResponseLabel", this.config.getToolResponseLabel(),
-					"toolCallLabel", this.config.getToolCallLabel()))
-			.execute(Collectors.mapping(record -> {
-				Map<String, Object> messageMap = record.get("m").asMap();
-				String msgType = MessageAttributes.MESSAGE_TYPE.stringFrom(messageMap);
-				Message message = null;
-				List<Media> mediaList = List.of();
-				if (!record.get("medias").isNull()) {
-					mediaList = getMedia(record);
-				}
-				if (msgType.equals(MessageType.USER.getValue())) {
-					message = buildUserMessage(record, messageMap, mediaList);
-				}
-				else if (msgType.equals(MessageType.ASSISTANT.getValue())) {
-					message = buildAssistantMessage(record, messageMap, mediaList);
-				}
-				else if (msgType.equals(MessageType.SYSTEM.getValue())) {
-					SystemMessage.Builder systemMessageBuilder = SystemMessage.builder()
-						.text(MessageAttributes.TEXT_CONTENT.stringFrom(messageMap));
-					if (!record.get("metadata").isNull()) {
-						Map<String, Object> retrievedMetadata = record.get("metadata").asMap();
-						systemMessageBuilder.metadata(retrievedMetadata);
+				.executableQuery(statement)
+				.withParameters(Map.of("conversationId", conversationId, "sessionLabel", this.config.getSessionLabel(),
+						"messageLabel", this.config.getMessageLabel(), "metadataLabel", this.config.getMetadataLabel(),
+						"mediaLabel", this.config.getMediaLabel(), "toolResponseLabel", this.config.getToolResponseLabel(),
+						"toolCallLabel", this.config.getToolCallLabel()))
+				.execute(Collectors.mapping(record -> {
+					Map<String, Object> messageMap = record.get("m").asMap();
+					String msgType = MessageAttributes.MESSAGE_TYPE.stringFrom(messageMap);
+					Message message = null;
+					List<Media> mediaList = List.of();
+					if (!record.get("medias").isNull()) {
+						mediaList = getMedia(record);
 					}
-					message = systemMessageBuilder.build();
-				}
-				else if (msgType.equals(MessageType.TOOL.getValue())) {
-					message = buildToolMessage(record);
-				}
-				if (message == null) {
-					throw new IllegalArgumentException("%s messages are not supported"
-						.formatted(record.get(MessageAttributes.MESSAGE_TYPE.getValue()).asString()));
-				}
-				message.getMetadata().put("messageType", message.getMessageType());
-				return message;
-			}, Collectors.toList()));
+					if (msgType.equals(MessageType.USER.getValue())) {
+						message = buildUserMessage(record, messageMap, mediaList);
+					} else if (msgType.equals(MessageType.ASSISTANT.getValue())) {
+						message = buildAssistantMessage(record, messageMap, mediaList);
+					} else if (msgType.equals(MessageType.SYSTEM.getValue())) {
+						SystemMessage.Builder systemMessageBuilder = SystemMessage.builder()
+								.text(MessageAttributes.TEXT_CONTENT.stringFrom(messageMap));
+						if (!record.get("metadata").isNull()) {
+							Map<String, Object> retrievedMetadata = record.get("metadata").asMap();
+							systemMessageBuilder.metadata(retrievedMetadata);
+						}
+						message = systemMessageBuilder.build();
+					} else if (msgType.equals(MessageType.TOOL.getValue())) {
+						message = buildToolMessage(record);
+					}
+					if (message == null) {
+						throw new IllegalArgumentException("%s messages are not supported"
+								.formatted(record.get(MessageAttributes.MESSAGE_TYPE.getValue()).asString()));
+					}
+					message.getMetadata().put("messageType", message.getMessageType());
+					return message;
+				}, Collectors.toList()));
 
 	}
 
@@ -183,31 +169,31 @@ public final class Neo4jChatMemoryRepository implements ChatMemoryRepository {
 	}
 
 	private Message buildAssistantMessage(org.neo4j.driver.Record record, Map<String, Object> messageMap,
-			List<Media> mediaList) {
+	                                      List<Media> mediaList) {
 		Message message = AssistantMessage.builder()
-			.content(MessageAttributes.TEXT_CONTENT.stringFrom(messageMap))
-			.properties(record.get("metadata").asMap(Map.of()))
-			.toolCalls(record.get("toolCalls").asList(v -> {
-				var toolCallMap = v.asMap();
-				return new AssistantMessage.ToolCall(ToolCallAttributes.ID.stringFrom(toolCallMap),
-						ToolCallAttributes.TYPE.stringFrom(toolCallMap),
-						ToolCallAttributes.NAME.stringFrom(toolCallMap),
-						ToolCallAttributes.ARGUMENTS.stringFrom(toolCallMap));
-			}))
-			.media(mediaList)
-			.build();
+				.content(MessageAttributes.TEXT_CONTENT.stringFrom(messageMap))
+				.properties(record.get("metadata").asMap(Map.of()))
+				.toolCalls(record.get("toolCalls").asList(v -> {
+					var toolCallMap = v.asMap();
+					return new AssistantMessage.ToolCall(ToolCallAttributes.ID.stringFrom(toolCallMap),
+							ToolCallAttributes.TYPE.stringFrom(toolCallMap),
+							ToolCallAttributes.NAME.stringFrom(toolCallMap),
+							ToolCallAttributes.ARGUMENTS.stringFrom(toolCallMap));
+				}))
+				.media(mediaList)
+				.build();
 		return message;
 	}
 
 	private Message buildUserMessage(org.neo4j.driver.Record record, Map<String, Object> messageMap,
-			List<Media> mediaList) {
+	                                 List<Media> mediaList) {
 		Message message;
 		Map<String, Object> metadata = record.get("metadata").asMap();
 		message = UserMessage.builder()
-			.text(MessageAttributes.TEXT_CONTENT.stringFrom(messageMap))
-			.media(mediaList)
-			.metadata(metadata)
-			.build();
+				.text(MessageAttributes.TEXT_CONTENT.stringFrom(messageMap))
+				.media(mediaList)
+				.metadata(metadata)
+				.build();
 		return message;
 	}
 
@@ -216,8 +202,8 @@ public final class Neo4jChatMemoryRepository implements ChatMemoryRepository {
 		mediaList = record.get("medias").asList(v -> {
 			Map<String, Object> mediaMap = v.asMap();
 			var mediaBuilder = Media.builder()
-				.name(MediaAttributes.NAME.stringFrom(mediaMap))
-				.mimeType(MimeType.valueOf(MediaAttributes.MIME_TYPE.stringFrom(mediaMap)));
+					.name(MediaAttributes.NAME.stringFrom(mediaMap))
+					.mimeType(MimeType.valueOf(MediaAttributes.MIME_TYPE.stringFrom(mediaMap)));
 			String id = (String) mediaMap.get(MediaAttributes.ID.getValue());
 			if (id != null) {
 				mediaBuilder.id(id);
@@ -225,8 +211,7 @@ public final class Neo4jChatMemoryRepository implements ChatMemoryRepository {
 			Object data = MediaAttributes.DATA.objectFrom(mediaMap, Object.class);
 			if (data instanceof String stringData) {
 				mediaBuilder.data(URI.create(stringData));
-			}
-			else if (data.getClass().isArray()) {
+			} else if (data.getClass().isArray()) {
 				mediaBuilder.data(data);
 			}
 			return mediaBuilder.build();
@@ -279,9 +264,9 @@ public final class Neo4jChatMemoryRepository implements ChatMemoryRepository {
 				for (int i = 0; i < assistantMessage.getToolCalls().size(); i++) {
 					AssistantMessage.ToolCall tc = assistantMessage.getToolCalls().get(i);
 					toolCallMaps
-						.add(Map.of(ToolCallAttributes.ID.getValue(), tc.id(), ToolCallAttributes.NAME.getValue(),
-								tc.name(), ToolCallAttributes.ARGUMENTS.getValue(), tc.arguments(),
-								ToolCallAttributes.TYPE.getValue(), tc.type(), ToolCallAttributes.IDX.getValue(), i));
+							.add(Map.of(ToolCallAttributes.ID.getValue(), tc.id(), ToolCallAttributes.NAME.getValue(),
+									tc.name(), ToolCallAttributes.ARGUMENTS.getValue(), tc.arguments(),
+									ToolCallAttributes.TYPE.getValue(), tc.type(), ToolCallAttributes.IDX.getValue(), i));
 				}
 				queryParameters.put("toolCalls", toolCallMaps);
 			}

@@ -16,13 +16,12 @@
 
 package org.springframework.ai.elevenlabs;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.audio.tts.TextToSpeechOptions;
 import org.springframework.ai.elevenlabs.api.ElevenLabsApi;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Options for ElevenLabs text-to-speech.
@@ -67,13 +66,13 @@ public class ElevenLabsTextToSpeechOptions implements TextToSpeechOptions {
 	private final @Nullable Boolean applyLanguageTextNormalization;
 
 	protected ElevenLabsTextToSpeechOptions(@Nullable String modelId, @Nullable String voiceId,
-			@Nullable Boolean enableLogging, @Nullable String outputFormat,
-			ElevenLabsApi.SpeechRequest.@Nullable VoiceSettings voiceSettings, @Nullable String languageCode,
-			@Nullable List<ElevenLabsApi.SpeechRequest.PronunciationDictionaryLocator> pronunciationDictionaryLocators,
-			@Nullable Integer seed, @Nullable String previousText, @Nullable String nextText,
-			@Nullable List<String> previousRequestIds, @Nullable List<String> nextRequestIds,
-			ElevenLabsApi.SpeechRequest.@Nullable TextNormalizationMode applyTextNormalization,
-			@Nullable Boolean applyLanguageTextNormalization) {
+	                                        @Nullable Boolean enableLogging, @Nullable String outputFormat,
+	                                        ElevenLabsApi.SpeechRequest.@Nullable VoiceSettings voiceSettings, @Nullable String languageCode,
+	                                        @Nullable List<ElevenLabsApi.SpeechRequest.PronunciationDictionaryLocator> pronunciationDictionaryLocators,
+	                                        @Nullable Integer seed, @Nullable String previousText, @Nullable String nextText,
+	                                        @Nullable List<String> previousRequestIds, @Nullable List<String> nextRequestIds,
+	                                        ElevenLabsApi.SpeechRequest.@Nullable TextNormalizationMode applyTextNormalization,
+	                                        @Nullable Boolean applyLanguageTextNormalization) {
 		this.modelId = modelId;
 		this.voiceId = voiceId;
 		this.enableLogging = enableLogging;
@@ -236,6 +235,7 @@ public class ElevenLabsTextToSpeechOptions implements TextToSpeechOptions {
 		/**
 		 * Sets the model ID using the generic 'model' property. This is an alias for
 		 * {@link #modelId(String)}.
+		 *
 		 * @param model The model ID to use.
 		 * @return this builder.
 		 */
@@ -247,6 +247,7 @@ public class ElevenLabsTextToSpeechOptions implements TextToSpeechOptions {
 		/**
 		 * Sets the model ID using the ElevenLabs specific 'modelId' property. This is an
 		 * alias for {@link #model(String)}.
+		 *
 		 * @param modelId The model ID to use.
 		 * @return this builder.
 		 */
@@ -258,6 +259,7 @@ public class ElevenLabsTextToSpeechOptions implements TextToSpeechOptions {
 		/**
 		 * Sets the voice ID using the generic 'voice' property. This is an alias for
 		 * {@link #voiceId(String)}.
+		 *
 		 * @param voice The voice ID to use.
 		 * @return this builder.
 		 */
@@ -269,6 +271,7 @@ public class ElevenLabsTextToSpeechOptions implements TextToSpeechOptions {
 		/**
 		 * Sets the voice ID using the ElevenLabs specific 'voiceId' property. This is an
 		 * alias for {@link #voice(String)}.
+		 *
 		 * @param voiceId The voice ID to use.
 		 * @return this builder.
 		 */
@@ -296,14 +299,12 @@ public class ElevenLabsTextToSpeechOptions implements TextToSpeechOptions {
 			if (speed != null) {
 				if (this.voiceSettings == null) {
 					this.voiceSettings = new ElevenLabsApi.SpeechRequest.VoiceSettings(null, null, null, null, speed);
-				}
-				else {
+				} else {
 					this.voiceSettings = new ElevenLabsApi.SpeechRequest.VoiceSettings(this.voiceSettings.stability(),
 							this.voiceSettings.similarityBoost(), this.voiceSettings.style(),
 							this.voiceSettings.useSpeakerBoost(), speed);
 				}
-			}
-			else {
+			} else {
 				if (this.voiceSettings != null) {
 					this.voiceSettings = new ElevenLabsApi.SpeechRequest.VoiceSettings(this.voiceSettings.stability(),
 							this.voiceSettings.similarityBoost(), this.voiceSettings.style(),

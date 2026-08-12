@@ -16,23 +16,9 @@
 
 package org.springframework.ai.vectorstore.redis;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import com.redis.testcontainers.RedisStackContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -48,6 +34,15 @@ import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfigurat
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -67,10 +62,10 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 
 	// Use host and port explicitly since getRedisURI() might not be consistent
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.data.redis.url=" + redisContainer.getRedisURI())
-		.withPropertyValues("spring.data.redis.client-type=jedis");
+			.withConfiguration(AutoConfigurations.of(DataRedisAutoConfiguration.class))
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.data.redis.url=" + redisContainer.getRedisURI())
+			.withPropertyValues("spring.data.redis.client-type=jedis");
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -81,8 +76,7 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -103,7 +97,7 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 	@Test
 	void ensureIndexGetsCreated() {
 		this.contextRunner.run(context -> assertThat(context.getBean(RedisVectorStore.class).getJedisClient().ftList())
-			.contains(RedisVectorStore.DEFAULT_INDEX_NAME));
+				.contains(RedisVectorStore.DEFAULT_INDEX_NAME));
 	}
 
 	@Test
@@ -116,7 +110,7 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -151,45 +145,45 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country == 'BG' && year == 2020)")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country == 'BG' && year == 2020)")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(nlDocument.getId(), bgDocument2.getId());
@@ -211,7 +205,7 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(document));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -252,7 +246,7 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -296,14 +290,14 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(complexFilter);
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder("A", "B");
+					.containsExactlyInAnyOrder("A", "B");
 			assertThat(results.stream()
-				.map(doc -> Integer.parseInt(doc.getMetadata().get("priority").toString()))
-				.collect(Collectors.toList())).containsExactlyInAnyOrder(1, 1);
+					.map(doc -> Integer.parseInt(doc.getMetadata().get("priority").toString()))
+					.collect(Collectors.toList())).containsExactlyInAnyOrder(1, 1);
 		});
 	}
 
@@ -314,8 +308,8 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 
 			int docCount = 1500;
 			List<Document> docs = java.util.stream.IntStream.range(0, docCount)
-				.mapToObj(i -> new Document("Content " + i, Map.of("type", "test", "priority", i)))
-				.toList();
+					.mapToObj(i -> new Document("Content " + i, Map.of("type", "test", "priority", i)))
+					.toList();
 
 			vectorStore.add(docs);
 
@@ -324,7 +318,7 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(typeFilter);
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(100).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(100).similarityThresholdAll().build());
 
 			assertThat(results.stream().filter(d -> "test".equals(d.getMetadata().get("type")))).isEmpty();
 		});
@@ -347,13 +341,13 @@ class RedisVectorStoreIT extends BaseVectorStoreTests {
 			// Create RedisClient directly with container properties for more reliable
 			// connection
 			return RedisVectorStore
-				.builder(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build(), embeddingModel)
-				.metadataFields(MetadataField.tag("meta1"), MetadataField.tag("meta2"), MetadataField.tag("country"),
-						MetadataField.numeric("year"), MetadataField.numeric("priority"), MetadataField.tag("type"))
-				.initializeSchema(true)
-				.build();
+					.builder(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build(), embeddingModel)
+					.metadataFields(MetadataField.tag("meta1"), MetadataField.tag("meta2"), MetadataField.tag("country"),
+							MetadataField.numeric("year"), MetadataField.numeric("priority"), MetadataField.tag("type"))
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

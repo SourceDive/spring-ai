@@ -16,13 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.method.tool.utils;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.util.JsonHelper;
 import tools.jackson.databind.JsonNode;
 
-import org.springframework.ai.util.JsonHelper;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,12 +48,12 @@ class McpJsonSchemaGeneratorTests {
 		assertThat(schemaNode.has("$defs")).as("$defs must be hoisted to the outer schema root").isTrue();
 		assertThat(schemaNode.get("$defs").has("RecursiveFilter")).isTrue();
 		assertThat(schemaNode.at("/properties/request").has("$defs"))
-			.as("$defs must not remain nested inside the parameter sub-schema")
-			.isFalse();
+				.as("$defs must not remain nested inside the parameter sub-schema")
+				.isFalse();
 		assertThat(schemaNode.at("/properties/request/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 		assertThat(schemaNode.at("/$defs/RecursiveFilter/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 	}
 
 	// gh-5888: when two parameters share the same recursive type, the two
@@ -72,9 +71,9 @@ class McpJsonSchemaGeneratorTests {
 		assertThat(schemaNode.at("/$defs").size()).isEqualTo(1);
 		assertThat(schemaNode.at("/$defs").has("RecursiveFilter")).isTrue();
 		assertThat(schemaNode.at("/properties/a/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 		assertThat(schemaNode.at("/properties/b/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 	}
 
 	// gh-5888: when two parameters carry different recursive types that share
@@ -99,7 +98,7 @@ class McpJsonSchemaGeneratorTests {
 		assertThat(schemaNode.at("/properties/b/properties/filters/items/$ref").asText()).isEqualTo("#/$defs/Filter_2");
 		assertThat(schemaNode.at("/$defs/Filter/properties/children/items/$ref").asText()).isEqualTo("#/$defs/Filter");
 		assertThat(schemaNode.at("/$defs/Filter_2/properties/children/items/$ref").asText())
-			.isEqualTo("#/$defs/Filter_2");
+				.isEqualTo("#/$defs/Filter_2");
 	}
 
 	// gh-5888: when a sub-schema brings in several $defs entries and one of them
@@ -117,17 +116,17 @@ class McpJsonSchemaGeneratorTests {
 		assertThat(schemaNode.at("/$defs/Filter_2/properties").has("code")).isTrue();
 		assertThat(schemaNode.at("/$defs/Wrapper").has("properties")).isTrue();
 		assertThat(schemaNode.at("/$defs/Wrapper/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/Filter_2");
+				.isEqualTo("#/$defs/Filter_2");
 		assertThat(schemaNode.at("/$defs/Wrapper/properties/nested/items/$ref").asText()).isEqualTo("#/$defs/Wrapper");
 		assertThat(schemaNode.at("/$defs/Filter_2/properties/children/items/$ref").asText())
-			.isEqualTo("#/$defs/Filter_2");
+				.isEqualTo("#/$defs/Filter_2");
 	}
 
 	@Test
 	void generateForMethodInputThrowsWhenMethodIsNull() {
 		assertThatThrownBy(() -> McpJsonSchemaGenerator.generateForMethodInput(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("method cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("method cannot be null");
 	}
 
 	@Test

@@ -16,9 +16,6 @@
 
 package org.springframework.ai.model.observation;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.Observation.Context;
 import io.micrometer.observation.ObservationHandler;
@@ -26,8 +23,10 @@ import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An {@link ObservationHandler} that logs errors using a {@link Tracer}.
@@ -35,7 +34,7 @@ import org.springframework.util.Assert;
  * @author Christian Tzolov
  * @since 1.0.0
  */
-@SuppressWarnings({ "rawtypes", "null" })
+@SuppressWarnings({"rawtypes", "null"})
 public class ErrorLoggingObservationHandler implements ObservationHandler {
 
 	private static final Log logger = LogFactory.getLog(ErrorLoggingObservationHandler.class);
@@ -47,12 +46,12 @@ public class ErrorLoggingObservationHandler implements ObservationHandler {
 	private final Consumer<Context> errorConsumer;
 
 	public ErrorLoggingObservationHandler(Tracer tracer,
-			List<Class<? extends Observation.Context>> supportedContextTypes) {
+	                                      List<Class<? extends Observation.Context>> supportedContextTypes) {
 		this(tracer, supportedContextTypes, context -> logger.error("Traced Error: ", context.getError()));
 	}
 
 	public ErrorLoggingObservationHandler(Tracer tracer,
-			List<Class<? extends Observation.Context>> supportedContextTypes, Consumer<Context> errorConsumer) {
+	                                      List<Class<? extends Observation.Context>> supportedContextTypes, Consumer<Context> errorConsumer) {
 
 		Assert.notNull(tracer, "Tracer must not be null");
 		Assert.notNull(supportedContextTypes, "SupportedContextTypes must not be null");

@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.complete;
 
-import java.util.List;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncCompletionSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
@@ -26,9 +24,10 @@ import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
 import io.modelcontextprotocol.spec.McpSchema.PromptReference;
 import io.modelcontextprotocol.spec.McpSchema.ResourceReference;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpComplete;
 import reactor.core.publisher.Mono;
 
-import org.springframework.ai.mcp.annotation.McpComplete;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,8 +43,8 @@ public class SyncStatelessMcpCompleteProviderTests {
 	@Test
 	void testConstructorWithNullCompleteObjects() {
 		assertThatThrownBy(() -> new SyncStatelessMcpCompleteProvider(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("completeObjects cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("completeObjects cannot be null");
 	}
 
 	@Test

@@ -16,22 +16,17 @@
 
 package org.springframework.ai.vectorstore.redis;
 
+import org.springframework.ai.vectorstore.filter.Filter.*;
+import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
+import org.springframework.ai.vectorstore.redis.RedisVectorStore.MetadataField;
+import org.springframework.util.Assert;
+import redis.clients.jedis.search.RediSearchUtil;
+
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import redis.clients.jedis.search.RediSearchUtil;
-
-import org.springframework.ai.vectorstore.filter.Filter.Expression;
-import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
-import org.springframework.ai.vectorstore.filter.Filter.Group;
-import org.springframework.ai.vectorstore.filter.Filter.Key;
-import org.springframework.ai.vectorstore.filter.Filter.Value;
-import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
-import org.springframework.ai.vectorstore.redis.RedisVectorStore.MetadataField;
-import org.springframework.util.Assert;
 
 /**
  * Converts {@link Expression} into Redis search filter expression format. (<a href=
@@ -45,7 +40,7 @@ public class RedisFilterExpressionConverter extends AbstractFilterExpressionConv
 
 	public RedisFilterExpressionConverter(List<MetadataField> metadataFields) {
 		this.metadataFields = metadataFields.stream()
-			.collect(Collectors.toMap(MetadataField::name, Function.identity()));
+				.collect(Collectors.toMap(MetadataField::name, Function.identity()));
 	}
 
 	@Override
@@ -153,9 +148,9 @@ public class RedisFilterExpressionConverter extends AbstractFilterExpressionConv
 		String delimiter = tagValueDelimiter(expression);
 		if (value.value() instanceof List<?> list) {
 			return list.stream()
-				.map(String::valueOf)
-				.map(RediSearchUtil::escapeQuery)
-				.collect(Collectors.joining(delimiter));
+					.map(String::valueOf)
+					.map(RediSearchUtil::escapeQuery)
+					.collect(Collectors.joining(delimiter));
 		}
 		return RediSearchUtil.escapeQuery(String.valueOf(value.value()));
 	}
@@ -237,7 +232,7 @@ public class RedisFilterExpressionConverter extends AbstractFilterExpressionConv
 		private static final String EXCLUSIVE_FORMAT = "(%s";
 
 		@Override
-		public String toString() {
+		public String toString () {
 			if (this == NEGATIVE_INFINITY) {
 				return MINUS_INFINITY;
 			}
@@ -247,7 +242,7 @@ public class RedisFilterExpressionConverter extends AbstractFilterExpressionConv
 			return String.format(formatString(), this.value);
 		}
 
-		private String formatString() {
+		private String formatString () {
 			if (this.exclusive) {
 				return EXCLUSIVE_FORMAT;
 			}

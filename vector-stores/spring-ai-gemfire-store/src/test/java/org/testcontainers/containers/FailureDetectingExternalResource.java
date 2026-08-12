@@ -16,18 +16,18 @@
 
 package org.testcontainers.containers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@link TestRule} which is called before and after each test, and also is notified on
  * success/failure.
- *
+ * <p>
  * This mimics the behaviour of TestWatcher to some degree, but failures occurring in this
  * rule do not contribute to the overall failure count (which can otherwise cause strange
  * negative test success figures).
@@ -48,12 +48,10 @@ public class FailureDetectingExternalResource implements TestRule {
 				try {
 					base.evaluate();
 					succeeded(description);
-				}
-				catch (Throwable e) {
+				} catch (Throwable e) {
 					errors.add(e);
 					failed(e, description);
-				}
-				finally {
+				} finally {
 					finished(description);
 				}
 

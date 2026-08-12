@@ -16,19 +16,6 @@
 
 package org.springframework.ai.openai;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,36 +23,13 @@ import com.openai.client.OpenAIClient;
 import com.openai.client.OpenAIClientAsync;
 import com.openai.core.JsonValue;
 import com.openai.errors.OpenAIInvalidDataException;
-import com.openai.models.FunctionDefinition;
-import com.openai.models.FunctionParameters;
-import com.openai.models.ReasoningEffort;
-import com.openai.models.ResponseFormatJsonObject;
-import com.openai.models.ResponseFormatJsonSchema;
-import com.openai.models.ResponseFormatText;
-import com.openai.models.chat.completions.ChatCompletion;
-import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam;
-import com.openai.models.chat.completions.ChatCompletionChunk;
+import com.openai.models.*;
+import com.openai.models.chat.completions.*;
 import com.openai.models.chat.completions.ChatCompletionChunk.Choice;
 import com.openai.models.chat.completions.ChatCompletionChunk.Choice.Delta;
 import com.openai.models.chat.completions.ChatCompletionChunk.Choice.Delta.ToolCall;
 import com.openai.models.chat.completions.ChatCompletionChunk.Choice.Delta.ToolCall.Function;
 import com.openai.models.chat.completions.ChatCompletionChunk.Choice.FinishReason;
-import com.openai.models.chat.completions.ChatCompletionContentPart;
-import com.openai.models.chat.completions.ChatCompletionContentPartImage;
-import com.openai.models.chat.completions.ChatCompletionContentPartInputAudio;
-import com.openai.models.chat.completions.ChatCompletionContentPartText;
-import com.openai.models.chat.completions.ChatCompletionCreateParams;
-import com.openai.models.chat.completions.ChatCompletionFunctionTool;
-import com.openai.models.chat.completions.ChatCompletionMessage;
-import com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall;
-import com.openai.models.chat.completions.ChatCompletionMessageParam;
-import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
-import com.openai.models.chat.completions.ChatCompletionNamedToolChoice;
-import com.openai.models.chat.completions.ChatCompletionStreamOptions;
-import com.openai.models.chat.completions.ChatCompletionTool;
-import com.openai.models.chat.completions.ChatCompletionToolChoiceOption;
-import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
-import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import com.openai.models.completions.CompletionUsage;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.Observation;
@@ -74,18 +38,11 @@ import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccess
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import tools.jackson.databind.JsonNode;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
-import org.springframework.ai.chat.metadata.ChatResponseMetadata;
-import org.springframework.ai.chat.metadata.DefaultUsage;
-import org.springframework.ai.chat.metadata.EmptyUsage;
-import org.springframework.ai.chat.metadata.Usage;
+import org.springframework.ai.chat.metadata.*;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -110,6 +67,14 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+import tools.jackson.databind.JsonNode;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Chat Model implementation using the OpenAI Java SDK.
@@ -152,6 +117,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 	/**
 	 * Creates a new builder for {@link OpenAiChatModel}.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder() {
@@ -159,7 +125,7 @@ public final class OpenAiChatModel implements ChatModel {
 	}
 
 	private OpenAiChatModel(OpenAIClient openAiClient, OpenAIClientAsync openAiClientAsync, OpenAiChatOptions options,
-			ObservationRegistry observationRegistry, ToolCallingManager toolCallingManager) {
+	                        ObservationRegistry observationRegistry, ToolCallingManager toolCallingManager) {
 		this.openAiClient = openAiClient;
 		this.openAiClientAsync = openAiClientAsync;
 		this.options = options;
@@ -169,6 +135,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 	/**
 	 * Gets the chat options for this model.
+	 *
 	 * @return the chat options
 	 * @since 2.0.0
 	 */
@@ -196,7 +163,8 @@ public final class OpenAiChatModel implements ChatModel {
 
 	/**
 	 * Internal method to handle chat completion calls with tool execution support.
-	 * @param prompt the prompt for the chat completion
+	 *
+	 * @param prompt               the prompt for the chat completion
 	 * @param previousChatResponse the previous chat response for accumulating usage
 	 * @return the chat response
 	 */
@@ -205,48 +173,48 @@ public final class OpenAiChatModel implements ChatModel {
 		ChatCompletionCreateParams request = createRequest(prompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(AiProvider.OPENAI.value())
-			.build();
+				.prompt(prompt)
+				.provider(AiProvider.OPENAI.value())
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ChatCompletion chatCompletion = this.openAiClient.chat().completions().create(request);
+					ChatCompletion chatCompletion = this.openAiClient.chat().completions().create(request);
 
-				List<ChatCompletion.Choice> choices = chatCompletion.choices();
-				if (choices.isEmpty()) {
-					if (logger.isWarnEnabled()) {
-						logger.warn("No choices returned for prompt: " + prompt);
+					List<ChatCompletion.Choice> choices = chatCompletion.choices();
+					if (choices.isEmpty()) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("No choices returned for prompt: " + prompt);
+						}
+						return new ChatResponse(List.of());
 					}
-					return new ChatResponse(List.of());
-				}
 
-				List<Generation> generations = choices.stream().map(choice -> {
-					Map<String, Object> metadata = Map.of("id", chatCompletion.id(), "role",
-							choice.message()._role().asString().isPresent() ? choice.message()._role().asStringOrThrow()
-									: "",
-							"index", choice.index(), "finishReason", choice.finishReason().value().toString(),
-							"refusal", choice.message().refusal().orElse(""), "annotations",
-							choice.message().annotations().orElse((List) List.of(Map.of())), REASONING_CONTENT,
-							getReasoningContent(choice));
-					return buildGeneration(choice, metadata, request);
-				}).toList();
+					List<Generation> generations = choices.stream().map(choice -> {
+						Map<String, Object> metadata = Map.of("id", chatCompletion.id(), "role",
+								choice.message()._role().asString().isPresent() ? choice.message()._role().asStringOrThrow()
+										: "",
+								"index", choice.index(), "finishReason", choice.finishReason().value().toString(),
+								"refusal", choice.message().refusal().orElse(""), "annotations",
+								choice.message().annotations().orElse((List) List.of(Map.of())), REASONING_CONTENT,
+								getReasoningContent(choice));
+						return buildGeneration(choice, metadata, request);
+					}).toList();
 
-				// Current usage
-				CompletionUsage usage = chatCompletion.usage().orElse(null);
-				Usage currentChatResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
-				Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
-						previousChatResponse);
-				ChatResponse chatResponse = new ChatResponse(generations, from(chatCompletion, accumulatedUsage));
+					// Current usage
+					CompletionUsage usage = chatCompletion.usage().orElse(null);
+					Usage currentChatResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
+					Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
+							previousChatResponse);
+					ChatResponse chatResponse = new ChatResponse(generations, from(chatCompletion, accumulatedUsage));
 
-				observationContext.setResponse(chatResponse);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
+					return chatResponse;
 
-			});
+				});
 
 		return response;
 	}
@@ -261,6 +229,7 @@ public final class OpenAiChatModel implements ChatModel {
 	/**
 	 * Internal method to handle streaming chat completion calls with tool execution
 	 * support.
+	 *
 	 * @param prompt the prompt for the chat completion
 	 * @return a Flux of chat responses
 	 */
@@ -269,10 +238,10 @@ public final class OpenAiChatModel implements ChatModel {
 			ChatCompletionCreateParams request = createRequest(prompt, true);
 			ConcurrentHashMap<String, String> roleMap = new ConcurrentHashMap<>();
 			final ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(AiProvider.OPENAI.value())
-				.streaming(true)
-				.build();
+					.prompt(prompt)
+					.provider(AiProvider.OPENAI.value())
+					.streaming(true)
+					.build();
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
 					this.observationRegistry);
@@ -291,18 +260,17 @@ public final class OpenAiChatModel implements ChatModel {
 
 			// Convert from AsyncStreamResponse<ChatCompletionChunk> to Flux<CCC>
 			Flux<ChatCompletionChunk> chunks = Flux.<ChatCompletionChunk>create(sink -> this.openAiClientAsync.chat()
-				.completions()
-				.createStreaming(request)
-				.subscribe(sink::next)
-				.onCompleteFuture()
-				.whenComplete((unused, throwable) -> {
-					if (throwable != null) {
-						sink.error(throwable);
-					}
-					else {
-						sink.complete();
-					}
-				}));
+					.completions()
+					.createStreaming(request)
+					.subscribe(sink::next)
+					.onCompleteFuture()
+					.whenComplete((unused, throwable) -> {
+						if (throwable != null) {
+							sink.error(throwable);
+						} else {
+							sink.complete();
+						}
+					}));
 
 			// Next, aggregate CCCs that deal with tool calls together
 			AtomicBoolean isInsideTool = new AtomicBoolean(false);
@@ -344,8 +312,8 @@ public final class OpenAiChatModel implements ChatModel {
 			});
 
 			Flux<ChatResponse> observedResponses = chatResponses.doOnError(observation::error)
-				.doFinally(s -> observation.stop())
-				.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
+					.doFinally(s -> observation.stop())
+					.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
 
 			return new MessageAggregator().aggregate(observedResponses, observationContext::setResponse);
 
@@ -353,7 +321,7 @@ public final class OpenAiChatModel implements ChatModel {
 	}
 
 	private Generation buildGeneration(ChatCompletion.Choice choice, Map<String, Object> metadata,
-			ChatCompletionCreateParams request) {
+	                                   ChatCompletionCreateParams request) {
 		ChatCompletionMessage message = choice.message();
 		Map<String, Object> assistantMessageMetadata = new LinkedHashMap<>(metadata);
 		Map<String, String> toolCallAdditionalProperties = extractToolCallAdditionalProperties(message);
@@ -361,22 +329,22 @@ public final class OpenAiChatModel implements ChatModel {
 			assistantMessageMetadata.put(TOOL_CALL_ADDITIONAL_PROPERTIES_METADATA_KEY, toolCallAdditionalProperties);
 		}
 		List<AssistantMessage.ToolCall> toolCalls = message.toolCalls()
-			.map(list -> list.stream().filter(tc -> tc.function().isPresent()).map(tc -> {
-				var opt = tc.function();
-				if (opt.isEmpty()) {
-					return null;
-				}
-				var funcCall = opt.get();
-				var functionDef = funcCall.function();
-				String id = funcCall.id();
-				String name = functionDef.name();
-				String arguments = functionDef.arguments();
-				return new AssistantMessage.ToolCall(id, "function", name, arguments);
-			}).filter(Objects::nonNull).toList())
-			.orElse(List.of());
+				.map(list -> list.stream().filter(tc -> tc.function().isPresent()).map(tc -> {
+					var opt = tc.function();
+					if (opt.isEmpty()) {
+						return null;
+					}
+					var funcCall = opt.get();
+					var functionDef = funcCall.function();
+					String id = funcCall.id();
+					String name = functionDef.name();
+					String arguments = functionDef.arguments();
+					return new AssistantMessage.ToolCall(id, "function", name, arguments);
+				}).filter(Objects::nonNull).toList())
+				.orElse(List.of());
 
 		var generationMetadataBuilder = ChatGenerationMetadata.builder()
-			.finishReason(choice.finishReason().value().name());
+				.finishReason(choice.finishReason().value().name());
 
 		String textContent = message.content().orElse("");
 
@@ -390,10 +358,10 @@ public final class OpenAiChatModel implements ChatModel {
 			Resource resource = new ByteArrayResource(audioData);
 			Media.builder().mimeType(MimeTypeUtils.parseMimeType(mimeType)).data(resource).id(audioOutput.id()).build();
 			media.add(Media.builder()
-				.mimeType(MimeTypeUtils.parseMimeType(mimeType))
-				.data(resource)
-				.id(audioOutput.id())
-				.build());
+					.mimeType(MimeTypeUtils.parseMimeType(mimeType))
+					.data(resource)
+					.id(audioOutput.id())
+					.build());
 			if (!StringUtils.hasText(textContent)) {
 				textContent = audioOutput.transcript();
 			}
@@ -402,28 +370,27 @@ public final class OpenAiChatModel implements ChatModel {
 		}
 
 		var assistantMessage = AssistantMessage.builder()
-			.content(textContent)
-			.properties(assistantMessageMetadata)
-			.toolCalls(toolCalls)
-			.media(media)
-			.build();
+				.content(textContent)
+				.properties(assistantMessageMetadata)
+				.toolCalls(toolCalls)
+				.media(media)
+				.build();
 		return new Generation(assistantMessage, generationMetadataBuilder.build());
 	}
 
 	private Map<String, String> extractToolCallAdditionalProperties(ChatCompletionMessage message) {
 		Map<String, String> result = new LinkedHashMap<>();
 		message.toolCalls()
-			.ifPresent(toolCalls -> toolCalls.forEach(toolCall -> toolCall.function().ifPresent(functionToolCall -> {
-				Map<String, JsonValue> props = functionToolCall._additionalProperties();
-				if (!CollectionUtils.isEmpty(props)) {
-					try {
-						result.put(functionToolCall.id(), objectMapper.writeValueAsString(props));
+				.ifPresent(toolCalls -> toolCalls.forEach(toolCall -> toolCall.function().ifPresent(functionToolCall -> {
+					Map<String, JsonValue> props = functionToolCall._additionalProperties();
+					if (!CollectionUtils.isEmpty(props)) {
+						try {
+							result.put(functionToolCall.id(), objectMapper.writeValueAsString(props));
+						} catch (JsonProcessingException ex) {
+							throw new RuntimeException(ex);
+						}
 					}
-					catch (JsonProcessingException ex) {
-						throw new RuntimeException(ex);
-					}
-				}
-			})));
+				})));
 		return result;
 	}
 
@@ -432,17 +399,16 @@ public final class OpenAiChatModel implements ChatModel {
 		result.model();
 		result.id();
 		ChatResponseMetadata.Builder metadataBuilder = ChatResponseMetadata.builder()
-			.id(result.id())
-			.usage(usage)
-			.model(result.model())
-			.keyValue("created", getCreated(result));
+				.id(result.id())
+				.usage(usage)
+				.model(result.model())
+				.keyValue("created", getCreated(result));
 
 		result._additionalProperties().forEach((key, jsonValue) -> {
 			try {
 				Object value = JacksonUtils.getDefaultJsonMapper().convertValue(jsonValue, Object.class);
 				metadataBuilder.keyValue(key, value);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				if (logger.isErrorEnabled()) {
 					logger.error("Error parsing JSON value for key '" + key + "': " + jsonValue, e);
 				}
@@ -461,8 +427,7 @@ public final class OpenAiChatModel implements ChatModel {
 	private long getCreated(ChatCompletion result) {
 		try {
 			return result.created();
-		}
-		catch (OpenAIInvalidDataException ex) {
+		} catch (OpenAIInvalidDataException ex) {
 			return 0L;
 		}
 	}
@@ -483,6 +448,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 	/**
 	 * Creates a chat completion request from the given prompt.
+	 *
 	 * @param prompt the prompt containing messages and options
 	 * @param stream whether this is a streaming request
 	 * @return the chat completion create parameters
@@ -490,191 +456,180 @@ public final class OpenAiChatModel implements ChatModel {
 	ChatCompletionCreateParams createRequest(Prompt prompt, boolean stream) {
 
 		List<ChatCompletionMessageParam> chatCompletionMessageParams = prompt.getInstructions()
-			.stream()
-			.map(message -> {
-				if (message.getMessageType() == MessageType.USER || message.getMessageType() == MessageType.SYSTEM) {
-					// Handle simple text content for user and system messages
-					ChatCompletionUserMessageParam.Builder builder = ChatCompletionUserMessageParam.builder();
+				.stream()
+				.map(message -> {
+					if (message.getMessageType() == MessageType.USER || message.getMessageType() == MessageType.SYSTEM) {
+						// Handle simple text content for user and system messages
+						ChatCompletionUserMessageParam.Builder builder = ChatCompletionUserMessageParam.builder();
 
-					if (message instanceof UserMessage userMessage
-							&& !CollectionUtils.isEmpty(userMessage.getMedia())) {
-						// Handle media content (images, audio, files)
-						List<ChatCompletionContentPart> parts = new ArrayList<>();
+						if (message instanceof UserMessage userMessage
+								&& !CollectionUtils.isEmpty(userMessage.getMedia())) {
+							// Handle media content (images, audio, files)
+							List<ChatCompletionContentPart> parts = new ArrayList<>();
 
-						String messageText = message.getText();
-						if (messageText != null && !messageText.isEmpty()) {
-							parts.add(ChatCompletionContentPart
-								.ofText(ChatCompletionContentPartText.builder().text(messageText).build()));
-						}
-
-						// Add media content parts
-						userMessage.getMedia().forEach(media -> {
-							String mimeType = media.getMimeType().toString();
-							if (mimeType.startsWith("image/")) {
-								if (media.getData() instanceof java.net.URI uri) {
-									parts.add(ChatCompletionContentPart
-										.ofImageUrl(ChatCompletionContentPartImage.builder()
-											.imageUrl(ChatCompletionContentPartImage.ImageUrl.builder()
-												.url(uri.toString())
-												.build())
-											.build()));
-								}
-								else if (media.getData() instanceof String text) {
-									// The org.springframework.ai.content.Media object
-									// should store the URL as a java.net.URI but it
-									// transforms it to String somewhere along the way,
-									// for example in its Builder class. So, we accept
-									// String as well here for image URLs.
-									parts.add(ChatCompletionContentPart
-										.ofImageUrl(ChatCompletionContentPartImage.builder()
-											.imageUrl(
-													ChatCompletionContentPartImage.ImageUrl.builder().url(text).build())
-											.build()));
-								}
-								else if (media.getData() instanceof byte[] bytes) {
-									// Assume the bytes are an image. So, convert the
-									// bytes to a base64 encoded
-									ChatCompletionContentPartImage.ImageUrl.Builder imageUrlBuilder = ChatCompletionContentPartImage.ImageUrl
-										.builder();
-
-									imageUrlBuilder.url("data:" + mimeType + ";base64,"
-											+ Base64.getEncoder().encodeToString(bytes));
-									parts.add(ChatCompletionContentPart
-										.ofImageUrl(ChatCompletionContentPartImage.builder()
-											.imageUrl(imageUrlBuilder.build())
-											.build()));
-								}
-								else {
-									if (logger.isInfoEnabled()) {
-										logger.info("Could not process image media with data of type: "
-												+ media.getData().getClass().getSimpleName()
-												+ ". Only java.net.URI is supported for image URLs.");
-									}
-								}
-							}
-							else if (mimeType.startsWith("audio/")) {
+							String messageText = message.getText();
+							if (messageText != null && !messageText.isEmpty()) {
 								parts.add(ChatCompletionContentPart
-									.ofInputAudio(ChatCompletionContentPartInputAudio.builder()
-										.inputAudio(ChatCompletionContentPartInputAudio.builder()
-											.inputAudio(ChatCompletionContentPartInputAudio.InputAudio.builder()
-												.data(fromAudioData(media.getData()))
-												.format(mimeType.contains("mp3")
-														? ChatCompletionContentPartInputAudio.InputAudio.Format.MP3
-														: ChatCompletionContentPartInputAudio.InputAudio.Format.WAV)
-												.build())
-											.build()
-											.inputAudio())
-										.build()));
+										.ofText(ChatCompletionContentPartText.builder().text(messageText).build()));
 							}
-							else {
-								// Assume it's a file or other media type represented as a
-								// data URL
-								parts.add(ChatCompletionContentPart.ofText(ChatCompletionContentPartText.builder()
-									.text(fromMediaData(media.getMimeType(), media.getData()))
-									.build()));
-							}
-						});
-						builder.contentOfArrayOfContentParts(parts);
-					}
-					else {
-						// Simple text message
-						String messageText = message.getText();
-						if (messageText != null) {
-							builder.content(ChatCompletionContentPartText.builder().text(messageText).build().text());
-						}
-					}
 
-					if (message.getMessageType() == MessageType.USER) {
-						builder.role(JsonValue.from(MessageType.USER.getValue()));
-					}
-					else {
-						builder.role(JsonValue.from(MessageType.SYSTEM.getValue()));
-					}
+							// Add media content parts
+							userMessage.getMedia().forEach(media -> {
+								String mimeType = media.getMimeType().toString();
+								if (mimeType.startsWith("image/")) {
+									if (media.getData() instanceof java.net.URI uri) {
+										parts.add(ChatCompletionContentPart
+												.ofImageUrl(ChatCompletionContentPartImage.builder()
+														.imageUrl(ChatCompletionContentPartImage.ImageUrl.builder()
+																.url(uri.toString())
+																.build())
+														.build()));
+									} else if (media.getData() instanceof String text) {
+										// The org.springframework.ai.content.Media object
+										// should store the URL as a java.net.URI but it
+										// transforms it to String somewhere along the way,
+										// for example in its Builder class. So, we accept
+										// String as well here for image URLs.
+										parts.add(ChatCompletionContentPart
+												.ofImageUrl(ChatCompletionContentPartImage.builder()
+														.imageUrl(
+																ChatCompletionContentPartImage.ImageUrl.builder().url(text).build())
+														.build()));
+									} else if (media.getData() instanceof byte[] bytes) {
+										// Assume the bytes are an image. So, convert the
+										// bytes to a base64 encoded
+										ChatCompletionContentPartImage.ImageUrl.Builder imageUrlBuilder = ChatCompletionContentPartImage.ImageUrl
+												.builder();
 
-					return List.of(ChatCompletionMessageParam.ofUser(builder.build()));
-				}
-				else if (message.getMessageType() == MessageType.ASSISTANT) {
-					var assistantMessage = (AssistantMessage) message;
-					ChatCompletionAssistantMessageParam.Builder builder = ChatCompletionAssistantMessageParam.builder()
-						.role(JsonValue.from(MessageType.ASSISTANT.getValue()));
-
-					if (assistantMessage.getText() != null) {
-						builder.content(ChatCompletionAssistantMessageParam.builder()
-							.content(assistantMessage.getText())
-							.build()
-							.content());
-					}
-
-					if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
-						Map<String, String> toolCallAdditionalProperties = toolCallAdditionalPropertiesFromMetadata(
-								assistantMessage);
-
-						List<ChatCompletionMessageToolCall> toolCalls = assistantMessage.getToolCalls()
-							.stream()
-							.map(toolCall -> {
-								ChatCompletionMessageFunctionToolCall.Builder toolCallBuilder = ChatCompletionMessageFunctionToolCall
-									.builder()
-									.id(toolCall.id())
-									.function(ChatCompletionMessageFunctionToolCall.Function.builder()
-										.name(toolCall.name())
-										.arguments(toolCall.arguments())
-										.build());
-
-								String jsonProps = toolCallAdditionalProperties.get(toolCall.id());
-								if (StringUtils.hasText(jsonProps)) {
-									Map<String, JsonValue> additionalProperties = new LinkedHashMap<>();
-									try {
-										objectMapper.readValue(jsonProps, MAP_TYPE_REF)
-											.forEach((k, v) -> additionalProperties.put(k, JsonValue.from(v)));
+										imageUrlBuilder.url("data:" + mimeType + ";base64,"
+												+ Base64.getEncoder().encodeToString(bytes));
+										parts.add(ChatCompletionContentPart
+												.ofImageUrl(ChatCompletionContentPartImage.builder()
+														.imageUrl(imageUrlBuilder.build())
+														.build()));
+									} else {
+										if (logger.isInfoEnabled()) {
+											logger.info("Could not process image media with data of type: "
+													+ media.getData().getClass().getSimpleName()
+													+ ". Only java.net.URI is supported for image URLs.");
+										}
 									}
-									catch (JsonProcessingException ex) {
-										throw new IllegalStateException("Conversion from JSON to %s failed"
-											.formatted(MAP_TYPE_REF.getType().getTypeName()), ex);
-									}
-									toolCallBuilder.putAllAdditionalProperties(additionalProperties);
+								} else if (mimeType.startsWith("audio/")) {
+									parts.add(ChatCompletionContentPart
+											.ofInputAudio(ChatCompletionContentPartInputAudio.builder()
+													.inputAudio(ChatCompletionContentPartInputAudio.builder()
+															.inputAudio(ChatCompletionContentPartInputAudio.InputAudio.builder()
+																	.data(fromAudioData(media.getData()))
+																	.format(mimeType.contains("mp3")
+																			? ChatCompletionContentPartInputAudio.InputAudio.Format.MP3
+																			: ChatCompletionContentPartInputAudio.InputAudio.Format.WAV)
+																	.build())
+															.build()
+															.inputAudio())
+													.build()));
+								} else {
+									// Assume it's a file or other media type represented as a
+									// data URL
+									parts.add(ChatCompletionContentPart.ofText(ChatCompletionContentPartText.builder()
+											.text(fromMediaData(media.getMimeType(), media.getData()))
+											.build()));
 								}
-								return ChatCompletionMessageToolCall.ofFunction(toolCallBuilder.build());
-							})
-							.toList();
+							});
+							builder.contentOfArrayOfContentParts(parts);
+						} else {
+							// Simple text message
+							String messageText = message.getText();
+							if (messageText != null) {
+								builder.content(ChatCompletionContentPartText.builder().text(messageText).build().text());
+							}
+						}
 
-						builder.toolCalls(toolCalls);
+						if (message.getMessageType() == MessageType.USER) {
+							builder.role(JsonValue.from(MessageType.USER.getValue()));
+						} else {
+							builder.role(JsonValue.from(MessageType.SYSTEM.getValue()));
+						}
+
+						return List.of(ChatCompletionMessageParam.ofUser(builder.build()));
+					} else if (message.getMessageType() == MessageType.ASSISTANT) {
+						var assistantMessage = (AssistantMessage) message;
+						ChatCompletionAssistantMessageParam.Builder builder = ChatCompletionAssistantMessageParam.builder()
+								.role(JsonValue.from(MessageType.ASSISTANT.getValue()));
+
+						if (assistantMessage.getText() != null) {
+							builder.content(ChatCompletionAssistantMessageParam.builder()
+									.content(assistantMessage.getText())
+									.build()
+									.content());
+						}
+
+						if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
+							Map<String, String> toolCallAdditionalProperties = toolCallAdditionalPropertiesFromMetadata(
+									assistantMessage);
+
+							List<ChatCompletionMessageToolCall> toolCalls = assistantMessage.getToolCalls()
+									.stream()
+									.map(toolCall -> {
+										ChatCompletionMessageFunctionToolCall.Builder toolCallBuilder = ChatCompletionMessageFunctionToolCall
+												.builder()
+												.id(toolCall.id())
+												.function(ChatCompletionMessageFunctionToolCall.Function.builder()
+														.name(toolCall.name())
+														.arguments(toolCall.arguments())
+														.build());
+
+										String jsonProps = toolCallAdditionalProperties.get(toolCall.id());
+										if (StringUtils.hasText(jsonProps)) {
+											Map<String, JsonValue> additionalProperties = new LinkedHashMap<>();
+											try {
+												objectMapper.readValue(jsonProps, MAP_TYPE_REF)
+														.forEach((k, v) -> additionalProperties.put(k, JsonValue.from(v)));
+											} catch (JsonProcessingException ex) {
+												throw new IllegalStateException("Conversion from JSON to %s failed"
+														.formatted(MAP_TYPE_REF.getType().getTypeName()), ex);
+											}
+											toolCallBuilder.putAllAdditionalProperties(additionalProperties);
+										}
+										return ChatCompletionMessageToolCall.ofFunction(toolCallBuilder.build());
+									})
+									.toList();
+
+							builder.toolCalls(toolCalls);
+						}
+
+						// Replay reasoning content only when present - plain OpenAI is
+						// unaffected
+						Object reasoningContent = assistantMessage.getMetadata().get(REASONING_CONTENT);
+						if (reasoningContent instanceof String reasoning && StringUtils.hasText(reasoning)) {
+							// "reasoning_content" is the wire field; REASONING_CONTENT is the
+							// metadata key
+							builder.putAdditionalProperty("reasoning_content", JsonValue.from(reasoning));
+						}
+
+						return List.of(ChatCompletionMessageParam.ofAssistant(builder.build()));
+					} else if (message.getMessageType() == MessageType.TOOL) {
+						ToolResponseMessage toolMessage = (ToolResponseMessage) message;
+
+						ChatCompletionToolMessageParam.Builder builder = ChatCompletionToolMessageParam.builder();
+						builder.content(toolMessage.getText() != null ? toolMessage.getText() : "");
+						builder.role(JsonValue.from(MessageType.TOOL.getValue()));
+
+						if (toolMessage.getResponses().isEmpty()) {
+							return List.of(ChatCompletionMessageParam.ofTool(builder.build()));
+						}
+						return toolMessage.getResponses().stream().map(response -> {
+							String callId = response.id();
+							String callResponse = response.responseData();
+
+							return ChatCompletionMessageParam
+									.ofTool(builder.toolCallId(callId).content(callResponse).build());
+						}).toList();
+					} else {
+						throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 					}
-
-					// Replay reasoning content only when present - plain OpenAI is
-					// unaffected
-					Object reasoningContent = assistantMessage.getMetadata().get(REASONING_CONTENT);
-					if (reasoningContent instanceof String reasoning && StringUtils.hasText(reasoning)) {
-						// "reasoning_content" is the wire field; REASONING_CONTENT is the
-						// metadata key
-						builder.putAdditionalProperty("reasoning_content", JsonValue.from(reasoning));
-					}
-
-					return List.of(ChatCompletionMessageParam.ofAssistant(builder.build()));
-				}
-				else if (message.getMessageType() == MessageType.TOOL) {
-					ToolResponseMessage toolMessage = (ToolResponseMessage) message;
-
-					ChatCompletionToolMessageParam.Builder builder = ChatCompletionToolMessageParam.builder();
-					builder.content(toolMessage.getText() != null ? toolMessage.getText() : "");
-					builder.role(JsonValue.from(MessageType.TOOL.getValue()));
-
-					if (toolMessage.getResponses().isEmpty()) {
-						return List.of(ChatCompletionMessageParam.ofTool(builder.build()));
-					}
-					return toolMessage.getResponses().stream().map(response -> {
-						String callId = response.id();
-						String callResponse = response.responseData();
-
-						return ChatCompletionMessageParam
-							.ofTool(builder.toolCallId(callId).content(callResponse).build());
-					}).toList();
-				}
-				else {
-					throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
-				}
-			})
-			.flatMap(List::stream)
-			.toList();
+				})
+				.flatMap(List::stream)
+				.toList();
 
 		ChatCompletionCreateParams.Builder builder = ChatCompletionCreateParams.builder();
 
@@ -687,8 +642,7 @@ public final class OpenAiChatModel implements ChatModel {
 		// name
 		if (requestOptions.getDeploymentName() != null) {
 			builder.model(requestOptions.getDeploymentName());
-		}
-		else if (requestOptions.getModel() != null) {
+		} else if (requestOptions.getModel() != null) {
 			builder.model(requestOptions.getModel());
 		}
 
@@ -697,11 +651,11 @@ public final class OpenAiChatModel implements ChatModel {
 		}
 		if (requestOptions.getLogitBias() != null) {
 			builder.logitBias(ChatCompletionCreateParams.LogitBias.builder()
-				.putAllAdditionalProperties(requestOptions.getLogitBias()
-					.entrySet()
-					.stream()
-					.collect(Collectors.toMap(Map.Entry::getKey, entry -> JsonValue.from(entry.getValue()))))
-				.build());
+					.putAllAdditionalProperties(requestOptions.getLogitBias()
+							.entrySet()
+							.stream()
+							.collect(Collectors.toMap(Map.Entry::getKey, entry -> JsonValue.from(entry.getValue()))))
+					.build());
 		}
 		if (requestOptions.getLogprobs() != null) {
 			builder.logprobs(requestOptions.getLogprobs());
@@ -720,9 +674,9 @@ public final class OpenAiChatModel implements ChatModel {
 		}
 		if (requestOptions.getOutputModalities() != null) {
 			builder.modalities(requestOptions.getOutputModalities()
-				.stream()
-				.map(modality -> ChatCompletionCreateParams.Modality.of(modality.toLowerCase()))
-				.toList());
+					.stream()
+					.map(modality -> ChatCompletionCreateParams.Modality.of(modality.toLowerCase()))
+					.toList());
 		}
 		if (requestOptions.getOutputAudio() != null) {
 			builder.audio(requestOptions.getOutputAudio().toChatCompletionAudioParam());
@@ -734,16 +688,14 @@ public final class OpenAiChatModel implements ChatModel {
 			ResponseFormat responseFormat = requestOptions.getResponseFormat();
 			if (responseFormat.getType().equals(ResponseFormat.Type.TEXT)) {
 				builder.responseFormat(ResponseFormatText.builder().build());
-			}
-			else if (responseFormat.getType().equals(ResponseFormat.Type.JSON_OBJECT)) {
+			} else if (responseFormat.getType().equals(ResponseFormat.Type.JSON_OBJECT)) {
 				builder.responseFormat(ResponseFormatJsonObject.builder().build());
-			}
-			else if (responseFormat.getType().equals(ResponseFormat.Type.JSON_SCHEMA)) {
+			} else if (responseFormat.getType().equals(ResponseFormat.Type.JSON_SCHEMA)) {
 				String jsonSchemaString = responseFormat.getJsonSchema() != null ? responseFormat.getJsonSchema() : "";
 				try {
 
 					ResponseFormatJsonSchema.JsonSchema.Builder jsonSchemaBuilder = ResponseFormatJsonSchema.JsonSchema
-						.builder();
+							.builder();
 					jsonSchemaBuilder.name("json_schema");
 					jsonSchemaBuilder.strict(true);
 
@@ -754,12 +706,10 @@ public final class OpenAiChatModel implements ChatModel {
 
 					builder.responseFormat(
 							ResponseFormatJsonSchema.builder().jsonSchema(jsonSchemaBuilder.build()).build());
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					throw new IllegalArgumentException("Failed to parse JSON schema: " + jsonSchemaString, e);
 				}
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Unsupported response format type: " + responseFormat.getType());
 			}
 		}
@@ -769,8 +719,7 @@ public final class OpenAiChatModel implements ChatModel {
 		if (requestOptions.getStop() != null && !requestOptions.getStop().isEmpty()) {
 			if (requestOptions.getStop().size() == 1) {
 				builder.stop(ChatCompletionCreateParams.Stop.ofString(requestOptions.getStop().get(0)));
-			}
-			else {
+			} else {
 				builder.stop(ChatCompletionCreateParams.Stop.ofStrings(requestOptions.getStop()));
 			}
 		}
@@ -798,11 +747,11 @@ public final class OpenAiChatModel implements ChatModel {
 		}
 		if (requestOptions.getMetadata() != null && !requestOptions.getMetadata().isEmpty()) {
 			builder.metadata(ChatCompletionCreateParams.Metadata.builder()
-				.putAllAdditionalProperties(requestOptions.getMetadata()
-					.entrySet()
-					.stream()
-					.collect(Collectors.toMap(Map.Entry::getKey, entry -> JsonValue.from(entry.getValue()))))
-				.build());
+					.putAllAdditionalProperties(requestOptions.getMetadata()
+							.entrySet()
+							.stream()
+							.collect(Collectors.toMap(Map.Entry::getKey, entry -> JsonValue.from(entry.getValue()))))
+					.build());
 		}
 		if (requestOptions.getServiceTier() != null) {
 			builder.serviceTier(ChatCompletionCreateParams.ServiceTier.of(requestOptions.getServiceTier()));
@@ -827,19 +776,18 @@ public final class OpenAiChatModel implements ChatModel {
 
 				if (!CollectionUtils.isEmpty(ops.additionalProperties())) {
 					Map<String, com.openai.core.JsonValue> nativeParams = ops.additionalProperties()
-						.entrySet()
-						.stream()
-						.map(e -> Map.entry(e.getKey(), com.openai.core.JsonValue.from(e.getValue())))
-						.collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+							.entrySet()
+							.stream()
+							.map(e -> Map.entry(e.getKey(), com.openai.core.JsonValue.from(e.getValue())))
+							.collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
 
 					streamOptionsBuilder.putAllAdditionalProperties(nativeParams);
 				}
 				builder.streamOptions(streamOptionsBuilder.build());
-			}
-			else {
+			} else {
 				builder.streamOptions(ChatCompletionStreamOptions.builder()
-					.includeUsage(true) // Include usage by default for streaming
-					.build());
+						.includeUsage(true) // Include usage by default for streaming
+						.build());
 			}
 		}
 
@@ -852,24 +800,19 @@ public final class OpenAiChatModel implements ChatModel {
 		if (requestOptions.getToolChoice() != null) {
 			if (requestOptions.getToolChoice() instanceof ChatCompletionToolChoiceOption toolChoiceOption) {
 				builder.toolChoice(toolChoiceOption);
-			}
-			else if (requestOptions.getToolChoice() instanceof String json) {
+			} else if (requestOptions.getToolChoice() instanceof String json) {
 				if (json.equals("auto")) {
 					builder.toolChoice(ChatCompletionToolChoiceOption.ofAuto(ChatCompletionToolChoiceOption.Auto.AUTO));
-				}
-				else if (json.equals("none")) {
+				} else if (json.equals("none")) {
 					builder.toolChoice(ChatCompletionToolChoiceOption.ofAuto(ChatCompletionToolChoiceOption.Auto.NONE));
-				}
-				else if (json.equals("required")) {
+				} else if (json.equals("required")) {
 					builder.toolChoice(
 							ChatCompletionToolChoiceOption.ofAuto(ChatCompletionToolChoiceOption.Auto.REQUIRED));
-				}
-				else {
+				} else {
 					try {
 						var node = JacksonUtils.getDefaultJsonMapper().readTree(json);
 						builder.toolChoice(parseToolChoice(node));
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						throw new IllegalArgumentException("Failed to parse toolChoice JSON: " + json, e);
 					}
 				}
@@ -880,10 +823,10 @@ public final class OpenAiChatModel implements ChatModel {
 		// providers
 		if (requestOptions.getExtraBody() != null && !requestOptions.getExtraBody().isEmpty()) {
 			Map<String, com.openai.core.JsonValue> extraParams = requestOptions.getExtraBody()
-				.entrySet()
-				.stream()
-				.collect(java.util.stream.Collectors.toMap(Map.Entry::getKey,
-						entry -> com.openai.core.JsonValue.from(entry.getValue())));
+					.entrySet()
+					.stream()
+					.collect(java.util.stream.Collectors.toMap(Map.Entry::getKey,
+							entry -> com.openai.core.JsonValue.from(entry.getValue())));
 			builder.additionalBodyProperties(extraParams);
 		}
 
@@ -910,8 +853,8 @@ public final class OpenAiChatModel implements ChatModel {
 			case "function":
 				String functionName = node.get("function").get("name").asString();
 				ChatCompletionNamedToolChoice.Function func = ChatCompletionNamedToolChoice.Function.builder()
-					.name(functionName)
-					.build();
+						.name(functionName)
+						.build();
 				ChatCompletionNamedToolChoice named = ChatCompletionNamedToolChoice.builder().function(func).build();
 				return ChatCompletionToolChoiceOption.ofNamedToolChoice(named);
 			case "auto":
@@ -939,12 +882,10 @@ public final class OpenAiChatModel implements ChatModel {
 			// Assume the bytes are an image. So, convert the bytes to a base64 encoded
 			// following the prefix pattern.
 			return String.format("data:%s;base64,%s", mimeType.toString(), Base64.getEncoder().encodeToString(bytes));
-		}
-		else if (mediaContentData instanceof String text) {
+		} else if (mediaContentData instanceof String text) {
 			// Assume the text is a URLs or a base64 encoded image prefixed by the user.
 			return text;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(
 					"Unsupported media data type: " + mediaContentData.getClass().getSimpleName());
 		}
@@ -962,27 +903,26 @@ public final class OpenAiChatModel implements ChatModel {
 
 					// Add each property from the schema to the parameters
 					schemaMap
-						.forEach((key, value) -> parametersBuilder.putAdditionalProperty(key, JsonValue.from(value)));
+							.forEach((key, value) -> parametersBuilder.putAdditionalProperty(key, JsonValue.from(value)));
 
 					// Add strict mode
 					parametersBuilder.putAdditionalProperty("strict", JsonValue.from(true)); // TODO
-																								// allow
-																								// non-strict
-																								// mode
-				}
-				catch (Exception e) {
+					// allow
+					// non-strict
+					// mode
+				} catch (Exception e) {
 					logger.error("Failed to parse tool schema", e);
 				}
 			}
 
 			FunctionDefinition functionDefinition = FunctionDefinition.builder()
-				.name(toolDefinition.name())
-				.description(toolDefinition.description())
-				.parameters(parametersBuilder.build())
-				.build();
+					.name(toolDefinition.name())
+					.description(toolDefinition.description())
+					.parameters(parametersBuilder.build())
+					.build();
 
 			return ChatCompletionTool
-				.ofFunction(ChatCompletionFunctionTool.builder().function(functionDefinition).build());
+					.ofFunction(ChatCompletionFunctionTool.builder().function(functionDefinition).build());
 		}).toList();
 	}
 
@@ -991,8 +931,7 @@ public final class OpenAiChatModel implements ChatModel {
 		Map<String, JsonValue> additionalProperties = choice.message()._additionalProperties();
 		if (additionalProperties.get("reasoning_content") != null) {
 			reasoningContent = (String) additionalProperties.get("reasoning_content").asString().orElse("");
-		}
-		else {
+		} else {
 			if (additionalProperties.get("reasoning") != null) {
 				reasoningContent = (String) additionalProperties.get("reasoning").asString().orElse("");
 			}
@@ -1002,6 +941,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -1017,8 +957,7 @@ public final class OpenAiChatModel implements ChatModel {
 	private Prompt buildRequestPrompt(Prompt prompt) {
 		if (prompt.getOptions() == null) {
 			return prompt.mutate().chatOptions(this.getOptions()).build();
-		}
-		else {
+		} else {
 			return prompt;
 		}
 	}
@@ -1044,19 +983,19 @@ public final class OpenAiChatModel implements ChatModel {
 				chunk.usage().ifPresent(builder::usage);
 				chunk.serviceTier().ifPresent(builder::serviceTier);
 				chunk.choices()
-					.forEach(choice -> choices.compute(choice.index(),
-							(ix, c) -> c == null ? choice : mergeChoices(c, choice)));
+						.forEach(choice -> choices.compute(choice.index(),
+								(ix, c) -> c == null ? choice : mergeChoices(c, choice)));
 			}
 			return builder.choices(new ArrayList<>(choices.values())).build();
 		}
 
 		private static Choice mergeChoices(Choice c1, Choice c2) {
 			return Choice.builder()
-				.index(c1.index())
-				.finishReason(c1.finishReason().or(c2::finishReason))
-				.logprobs(c1.logprobs().or(c2::logprobs))
-				.delta(mergeDeltas(c1.delta(), c2.delta()))
-				.build();
+					.index(c1.index())
+					.finishReason(c1.finishReason().or(c2::finishReason))
+					.logprobs(c1.logprobs().or(c2::logprobs))
+					.delta(mergeDeltas(c1.delta(), c2.delta()))
+					.build();
 		}
 
 		private static Delta mergeDeltas(Delta left, Delta right) {
@@ -1067,23 +1006,22 @@ public final class OpenAiChatModel implements ChatModel {
 					List<ToolCall> result = new ArrayList<>(tcs1);
 					result.add(toolCall);
 					return result;
-				}
-				else {
+				} else {
 					ToolCall lastFromTc1 = tcs1.get(tcs1.size() - 1);
 					Function lastFromTc1F = lastFromTc1.function().get();
 
 					var concatenatedArgs = Stream
-						.of(lastFromTc1F.arguments(), toolCall.function().flatMap(Function::arguments))
-						.flatMap(Optional::stream)
-						.reduce((args1, args2) -> args1 + args2)
-						.orElse("");
+							.of(lastFromTc1F.arguments(), toolCall.function().flatMap(Function::arguments))
+							.flatMap(Optional::stream)
+							.reduce((args1, args2) -> args1 + args2)
+							.orElse("");
 
 					List<ToolCall> result = new ArrayList<>(tcs1);
 					result.set(tcs1.size() - 1,
 							lastFromTc1.toBuilder()
-								.putAllAdditionalProperties(toolCall._additionalProperties())
-								.function(lastFromTc1F.toBuilder().arguments(concatenatedArgs).build())
-								.build());
+									.putAllAdditionalProperties(toolCall._additionalProperties())
+									.function(lastFromTc1F.toBuilder().arguments(concatenatedArgs).build())
+									.build());
 					return result;
 				}
 			}).orElse(List.of());
@@ -1102,34 +1040,33 @@ public final class OpenAiChatModel implements ChatModel {
 
 				choiceBuilder.finishReason(ChatCompletion.Choice.FinishReason.of(""));
 				cccc.finishReason()
-					.ifPresent(finishReason -> choiceBuilder.finishReason(
-							ChatCompletion.Choice.FinishReason.of(finishReason.value().name().toLowerCase())));
+						.ifPresent(finishReason -> choiceBuilder.finishReason(
+								ChatCompletion.Choice.FinishReason.of(finishReason.value().name().toLowerCase())));
 
 				if (cccc.logprobs().isPresent()) {
 					var logprobs = cccc.logprobs().get();
 					choiceBuilder.logprobs(ChatCompletion.Choice.Logprobs.builder()
-						.content(logprobs.content())
-						.refusal(logprobs.refusal())
-						.build());
-				}
-				else {
+							.content(logprobs.content())
+							.refusal(logprobs.refusal())
+							.build());
+				} else {
 					choiceBuilder.logprobs(
 							ChatCompletion.Choice.Logprobs.builder().content(List.of()).refusal(List.of()).build());
 				}
 
 				ChatCompletionMessage.Builder msgBuilder = ChatCompletionMessage.builder()
-					.content(cccc.delta().content())
-					.refusal(cccc.delta().refusal());
+						.content(cccc.delta().content())
+						.refusal(cccc.delta().refusal());
 				cccc.delta().toolCalls().ifPresent(ccctcs -> {
 					msgBuilder.toolCalls(ccctcs.stream().map(tc -> {
 						ChatCompletionMessageFunctionToolCall.Builder toolCallBuilder = ChatCompletionMessageFunctionToolCall
-							.builder();
+								.builder();
 						toolCallBuilder.putAllAdditionalProperties(tc._additionalProperties());
 						toolCallBuilder.id(tc.id().get());
 						toolCallBuilder.function(ChatCompletionMessageFunctionToolCall.Function.builder()
-							.name(tc.function().get().name().get())
-							.arguments(tc.function().get().arguments().get())
-							.build());
+								.name(tc.function().get().name().get())
+								.arguments(tc.function().get().arguments().get())
+								.build());
 						return ChatCompletionMessageToolCall.ofFunction(toolCallBuilder.build());
 					}).toList());
 				});
@@ -1138,14 +1075,14 @@ public final class OpenAiChatModel implements ChatModel {
 			}).toList();
 
 			return ChatCompletion.builder()
-				.id(chunk.id())
-				.choices(choices)
-				.created(getCreated(chunk))
-				.model(chunk.model())
-				.usage(chunk.usage()
-					.orElse(CompletionUsage.builder().promptTokens(0).completionTokens(0).totalTokens(0).build()))
-				.putAllAdditionalProperties(chunk._additionalProperties())
-				.build();
+					.id(chunk.id())
+					.choices(choices)
+					.created(getCreated(chunk))
+					.model(chunk.model())
+					.usage(chunk.usage()
+							.orElse(CompletionUsage.builder().promptTokens(0).completionTokens(0).totalTokens(0).build()))
+					.putAllAdditionalProperties(chunk._additionalProperties())
+					.build();
 		}
 
 		/**
@@ -1155,8 +1092,7 @@ public final class OpenAiChatModel implements ChatModel {
 		private static long getCreated(ChatCompletionChunk chunk) {
 			try {
 				return chunk.created();
-			}
-			catch (OpenAIInvalidDataException ex) {
+			} catch (OpenAIInvalidDataException ex) {
 				return 0L;
 			}
 		}
@@ -1278,6 +1214,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 		/**
 		 * Sets the synchronous OpenAI client.
+		 *
 		 * @param openAiClient the synchronous client
 		 * @return this builder
 		 */
@@ -1288,6 +1225,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 		/**
 		 * Sets the asynchronous OpenAI client.
+		 *
 		 * @param openAiClientAsync the asynchronous client
 		 * @return this builder
 		 */
@@ -1298,6 +1236,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 		/**
 		 * Sets the chat options.
+		 *
 		 * @param options the chat options
 		 * @return this builder
 		 */
@@ -1308,6 +1247,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 		/**
 		 * Sets the tool calling manager used for internal tool execution.
+		 *
 		 * @param toolCallingManager the tool calling manager
 		 * @return this builder
 		 * @deprecated since 2.0.0 for removal in 3.0.0 — internal tool execution in
@@ -1322,6 +1262,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 		/**
 		 * Sets the observation registry for metrics and tracing.
+		 *
 		 * @param observationRegistry the observation registry
 		 * @return this builder
 		 */
@@ -1362,6 +1303,7 @@ public final class OpenAiChatModel implements ChatModel {
 
 		/**
 		 * Builds a new {@link OpenAiChatModel} instance.
+		 *
 		 * @return the configured chat model
 		 */
 		public OpenAiChatModel build() {

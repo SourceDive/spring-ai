@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.Map;
-
 import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
@@ -26,18 +24,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.execution.ToolExecutionException;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AsyncMcpToolCallbackTest {
@@ -55,30 +52,30 @@ class AsyncMcpToolCallbackTest {
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(Mono.just(callToolResult));
 
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(this.tool.name())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(this.tool.name())
+				.build();
 		assertThatThrownBy(() -> callback.call("{\"param\":\"value\"}")).isInstanceOf(ToolExecutionException.class)
-			.cause()
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("Error calling tool: [TextContent[annotations=null, text=Some error data, meta=null]]");
+				.cause()
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("Error calling tool: [TextContent[annotations=null, text=Some error data, meta=null]]");
 	}
 
 	@Test
 	void callShouldWrapReactiveErrors() {
 		when(this.tool.name()).thenReturn("testTool");
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class)))
-			.thenReturn(Mono.error(new Exception("Testing tool error")));
+				.thenReturn(Mono.error(new Exception("Testing tool error")));
 
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(this.tool.name())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(this.tool.name())
+				.build();
 		assertThatThrownBy(() -> callback.call("{\"param\":\"value\"}")).isInstanceOf(ToolExecutionException.class)
-			.rootCause()
-			.hasMessage("Testing tool error");
+				.rootCause()
+				.hasMessage("Testing tool error");
 	}
 
 	@Test
@@ -86,17 +83,17 @@ class AsyncMcpToolCallbackTest {
 		when(this.tool.name()).thenReturn("testTool");
 
 		var callToolResult = McpSchema.CallToolResult.builder()
-			.addTextContent("Success response")
-			.isError(false)
-			.build();
+				.addTextContent("Success response")
+				.isError(false)
+				.build();
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(Mono.just(callToolResult));
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("prefixed_testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("prefixed_testTool")
+				.build();
 
 		String result = callback.call("{\"param\":\"value\"}");
 
@@ -105,28 +102,28 @@ class AsyncMcpToolCallbackTest {
 
 		// Verify the correct tool name was used in the request
 		ArgumentCaptor<McpSchema.CallToolRequest> requestCaptor = ArgumentCaptor
-			.forClass(McpSchema.CallToolRequest.class);
+				.forClass(McpSchema.CallToolRequest.class);
 		verify(this.mcpClient).callTool(requestCaptor.capture());
 		assertThat(requestCaptor.getValue().name()).isEqualTo("testTool"); // Original
-																			// name, not
-																			// prefixed
+		// name, not
+		// prefixed
 	}
 
 	@Test
 	void callShouldHandleNullInput() {
 		when(this.tool.name()).thenReturn("testTool");
 		var callToolResult = McpSchema.CallToolResult.builder()
-			.addTextContent("Success with empty input")
-			.isError(false)
-			.build();
+				.addTextContent("Success with empty input")
+				.isError(false)
+				.build();
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(Mono.just(callToolResult));
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("testTool")
+				.build();
 
 		String result = callback.call(null);
 
@@ -135,7 +132,7 @@ class AsyncMcpToolCallbackTest {
 
 		// Verify empty JSON object was used
 		ArgumentCaptor<McpSchema.CallToolRequest> requestCaptor = ArgumentCaptor
-			.forClass(McpSchema.CallToolRequest.class);
+				.forClass(McpSchema.CallToolRequest.class);
 		verify(this.mcpClient).callTool(requestCaptor.capture());
 		assertThat(requestCaptor.getValue().arguments()).isEmpty();
 	}
@@ -144,17 +141,17 @@ class AsyncMcpToolCallbackTest {
 	void callShouldHandleEmptyInput() {
 		when(this.tool.name()).thenReturn("testTool");
 		var callToolResult = McpSchema.CallToolResult.builder()
-			.addTextContent("Success with empty input")
-			.isError(false)
-			.build();
+				.addTextContent("Success with empty input")
+				.isError(false)
+				.build();
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(Mono.just(callToolResult));
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("testTool")
+				.build();
 
 		String result = callback.call("");
 
@@ -163,7 +160,7 @@ class AsyncMcpToolCallbackTest {
 
 		// Verify empty JSON object was used
 		ArgumentCaptor<McpSchema.CallToolRequest> requestCaptor = ArgumentCaptor
-			.forClass(McpSchema.CallToolRequest.class);
+				.forClass(McpSchema.CallToolRequest.class);
 		verify(this.mcpClient).callTool(requestCaptor.capture());
 		assertThat(requestCaptor.getValue().arguments()).isEmpty();
 	}
@@ -172,9 +169,9 @@ class AsyncMcpToolCallbackTest {
 	void callShouldIncludeToolContext() {
 		when(this.tool.name()).thenReturn("testTool");
 		var callToolResult = McpSchema.CallToolResult.builder()
-			.addTextContent("Success with context")
-			.isError(false)
-			.build();
+				.addTextContent("Success with context")
+				.isError(false)
+				.build();
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(Mono.just(callToolResult));
 
 		ToolContext toolContext = mock(ToolContext.class);
@@ -182,10 +179,10 @@ class AsyncMcpToolCallbackTest {
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("testTool")
+				.build();
 
 		String result = callback.call("{\"param\":\"value\"}", toolContext);
 
@@ -194,7 +191,7 @@ class AsyncMcpToolCallbackTest {
 
 		// Verify the context was included in the request
 		ArgumentCaptor<McpSchema.CallToolRequest> requestCaptor = ArgumentCaptor
-			.forClass(McpSchema.CallToolRequest.class);
+				.forClass(McpSchema.CallToolRequest.class);
 		verify(this.mcpClient).callTool(requestCaptor.capture());
 		assertThat(requestCaptor.getValue().meta()).isNotNull();
 	}
@@ -206,10 +203,10 @@ class AsyncMcpToolCallbackTest {
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("prefix_testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("prefix_testTool")
+				.build();
 
 		ToolDefinition definition = callback.getToolDefinition();
 
@@ -225,10 +222,10 @@ class AsyncMcpToolCallbackTest {
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("prefix_originalToolName")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("prefix_originalToolName")
+				.build();
 
 		// Assert
 		assertThat(callback.getOriginalToolName()).isEqualTo("originalToolName");
@@ -244,23 +241,23 @@ class AsyncMcpToolCallbackTest {
 		// Assert
 		ToolDefinition definition = callback.getToolDefinition();
 		assertThat(definition.name()).contains("testTool"); // Should contain the tool
-															// name
+		// name
 	}
 
 	@Test
 	void builderShouldThrowWhenMcpClientIsNull() {
 		// Act & Assert
 		assertThatThrownBy(() -> AsyncMcpToolCallback.builder().tool(this.tool).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("MCP client must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("MCP client must not be null");
 	}
 
 	@Test
 	void builderShouldThrowWhenToolIsNull() {
 		// Act & Assert
 		assertThatThrownBy(() -> AsyncMcpToolCallback.builder().mcpClient(this.mcpClient).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("MCP tool must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("MCP tool must not be null");
 	}
 
 	@Test
@@ -276,11 +273,11 @@ class AsyncMcpToolCallbackTest {
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("testTool")
-			.toolContextToMcpMetaConverter(customConverter)
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("testTool")
+				.toolContextToMcpMetaConverter(customConverter)
+				.build();
 
 		callback.call("{}", toolContext);
 
@@ -309,18 +306,18 @@ class AsyncMcpToolCallbackTest {
 	void callShouldHandleComplexJsonResponse() {
 		when(this.tool.name()).thenReturn("testTool");
 		var callToolResult = McpSchema.CallToolResult.builder()
-			.addTextContent("Part 1")
-			.addTextContent("Part 2")
-			.isError(false)
-			.build();
+				.addTextContent("Part 1")
+				.addTextContent("Part 2")
+				.isError(false)
+				.build();
 		when(this.mcpClient.callTool(any(McpSchema.CallToolRequest.class))).thenReturn(Mono.just(callToolResult));
 
 		// Act
 		var callback = AsyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("testTool")
+				.build();
 
 		String result = callback.call("{\"input\":\"test\"}");
 

@@ -16,11 +16,8 @@
 
 package org.springframework.ai.model.anthropic.autoconfigure.tool;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -35,6 +32,8 @@ import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,9 +47,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FunctionCallWithPromptFunctionIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
-		.withConfiguration(
-				AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
+			.withConfiguration(
+					AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
@@ -60,11 +59,11 @@ class FunctionCallWithPromptFunctionIT {
 			ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 			AnthropicChatOptions options = AnthropicChatOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-					.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+							.description("Get the weather in location. Return temperature in 36°F or 36°C format.")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			Prompt prompt = new Prompt(
 					List.of(new UserMessage("What's the weather like in San Francisco, in Paris and in Tokyo?"

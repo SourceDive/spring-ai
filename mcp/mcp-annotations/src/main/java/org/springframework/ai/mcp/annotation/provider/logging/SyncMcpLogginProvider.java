@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.provider.logging;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpLogging;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.logging.SyncLoggingSpecification;
 import org.springframework.ai.mcp.annotation.method.logging.SyncMcpLoggingMethodCallback;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Provider for synchronous logging consumer callbacks.
@@ -65,8 +64,9 @@ public class SyncMcpLogginProvider {
 
 	/**
 	 * Create a new SyncMcpLoggingConsumerProvider.
+	 *
 	 * @param loggingConsumerObjects the objects containing methods annotated with
-	 * {@link McpLogging}
+	 *                               {@link McpLogging}
 	 */
 	public SyncMcpLogginProvider(List<Object> loggingConsumerObjects) {
 		Assert.notNull(loggingConsumerObjects, "loggingConsumerObjects cannot be null");
@@ -75,35 +75,37 @@ public class SyncMcpLogginProvider {
 
 	/**
 	 * Get the list of logging consumer callbacks.
+	 *
 	 * @return the list of logging consumer callbacks
 	 */
 	public List<SyncLoggingSpecification> getLoggingSpecifications() {
 
 		List<SyncLoggingSpecification> loggingConsumers = this.loggingConsumerObjects.stream()
-			.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
-				.filter(method -> method.isAnnotationPresent(McpLogging.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpLoggingConsumerMethod -> {
-					var loggingConsumerAnnotation = mcpLoggingConsumerMethod.getAnnotation(McpLogging.class);
+				.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
+						.filter(method -> method.isAnnotationPresent(McpLogging.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpLoggingConsumerMethod -> {
+							var loggingConsumerAnnotation = mcpLoggingConsumerMethod.getAnnotation(McpLogging.class);
 
-					Consumer<LoggingMessageNotification> methodCallback = SyncMcpLoggingMethodCallback.builder()
-						.method(mcpLoggingConsumerMethod)
-						.bean(consumerObject)
-						.loggingConsumer(loggingConsumerAnnotation)
-						.build();
+							Consumer<LoggingMessageNotification> methodCallback = SyncMcpLoggingMethodCallback.builder()
+									.method(mcpLoggingConsumerMethod)
+									.bean(consumerObject)
+									.loggingConsumer(loggingConsumerAnnotation)
+									.build();
 
-					return new SyncLoggingSpecification(loggingConsumerAnnotation.clients(), methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncLoggingSpecification(loggingConsumerAnnotation.clients(), methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return loggingConsumers;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

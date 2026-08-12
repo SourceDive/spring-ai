@@ -32,8 +32,7 @@ public class PrintFilterExpressionConverter extends AbstractFilterExpressionConv
 		context.append(" ").append(expression.type()).append(" ");
 		if (expression.right() != null) {
 			this.convertOperand(expression.right(), context);
-		}
-		else {
+		} else {
 			context.append("null");
 		}
 

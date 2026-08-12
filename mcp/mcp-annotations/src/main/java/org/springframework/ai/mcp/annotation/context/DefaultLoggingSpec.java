@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
+import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
+import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.LoggingSpec;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
-
-import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.LoggingSpec;
 
 /**
  * @author Christian Tzolov

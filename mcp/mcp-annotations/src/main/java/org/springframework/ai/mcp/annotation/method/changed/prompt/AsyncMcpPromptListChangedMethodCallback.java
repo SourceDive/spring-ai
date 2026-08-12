@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.prompt;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import org.springframework.ai.mcp.annotation.McpPromptListChanged;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-
 /**
  * Class for creating Function callbacks around prompt list changed consumer methods that
  * return Mono.
- *
+ * <p>
  * This class provides a way to convert methods annotated with
  * {@link McpPromptListChanged} into callback functions that can be used to handle prompt
  * list change notifications in a reactive way. It supports methods with a single
@@ -48,11 +47,12 @@ public final class AsyncMcpPromptListChangedMethodCallback extends AbstractMcpPr
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns a Mono that completes when the method execution is done.
+	 *
 	 * @param updatedPrompts The updated list of prompts, must not be null
 	 * @return A Mono that completes when the method execution is done
 	 * @throws McpPromptListChangedConsumerMethodException if there is an error invoking
-	 * the prompt list changed consumer method
-	 * @throws IllegalArgumentException if the updatedPrompts is null
+	 *                                                     the prompt list changed consumer method
+	 * @throws IllegalArgumentException                    if the updatedPrompts is null
 	 */
 	@Override
 	public Mono<Void> apply(List<McpSchema.Prompt> updatedPrompts) {
@@ -87,8 +87,7 @@ public final class AsyncMcpPromptListChangedMethodCallback extends AbstractMcpPr
 			}
 			// If the method returns void, return an empty Mono
 			return Mono.empty();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return Mono.error(new McpPromptListChangedConsumerMethodException(
 					"Error invoking prompt list changed consumer method: " + this.method.getName(), e));
 		}
@@ -97,6 +96,7 @@ public final class AsyncMcpPromptListChangedMethodCallback extends AbstractMcpPr
 	/**
 	 * Validates that the method return type is compatible with the prompt list changed
 	 * consumer callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -112,6 +112,7 @@ public final class AsyncMcpPromptListChangedMethodCallback extends AbstractMcpPr
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -128,6 +129,7 @@ public final class AsyncMcpPromptListChangedMethodCallback extends AbstractMcpPr
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpPromptListChangedMethodCallback instance
 		 */
 		@Override

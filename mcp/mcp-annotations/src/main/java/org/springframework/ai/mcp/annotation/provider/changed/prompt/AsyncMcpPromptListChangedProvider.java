@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.util.Assert;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpPromptListChanged;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.changed.prompt.AsyncMcpPromptListChangedMethodCallback;
 import org.springframework.ai.mcp.annotation.method.changed.prompt.AsyncPromptListChangedSpecification;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Provider for asynchronous prompt list changed consumer callbacks.
@@ -65,8 +64,9 @@ public class AsyncMcpPromptListChangedProvider {
 
 	/**
 	 * Create a new AsyncMcpPromptListChangedProvider.
+	 *
 	 * @param promptListChangedConsumerObjects the objects containing methods annotated
-	 * with {@link McpPromptListChanged}
+	 *                                         with {@link McpPromptListChanged}
 	 */
 	public AsyncMcpPromptListChangedProvider(List<Object> promptListChangedConsumerObjects) {
 		Assert.notNull(promptListChangedConsumerObjects, "promptListChangedConsumerObjects cannot be null");
@@ -75,38 +75,40 @@ public class AsyncMcpPromptListChangedProvider {
 
 	/**
 	 * Get the list of prompt list changed consumer specifications.
+	 *
 	 * @return the list of prompt list changed consumer specifications
 	 */
 	public List<AsyncPromptListChangedSpecification> getPromptListChangedSpecifications() {
 
 		List<AsyncPromptListChangedSpecification> promptListChangedConsumers = this.promptListChangedConsumerObjects
-			.stream()
-			.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
-				.filter(method -> method.isAnnotationPresent(McpPromptListChanged.class))
-				.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpPromptListChangedConsumerMethod -> {
-					var promptListChangedAnnotation = mcpPromptListChangedConsumerMethod
-						.getAnnotation(McpPromptListChanged.class);
+				.stream()
+				.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
+						.filter(method -> method.isAnnotationPresent(McpPromptListChanged.class))
+						.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpPromptListChangedConsumerMethod -> {
+							var promptListChangedAnnotation = mcpPromptListChangedConsumerMethod
+									.getAnnotation(McpPromptListChanged.class);
 
-					Function<List<McpSchema.Prompt>, Mono<Void>> methodCallback = AsyncMcpPromptListChangedMethodCallback
-						.builder()
-						.method(mcpPromptListChangedConsumerMethod)
-						.bean(consumerObject)
-						.build();
+							Function<List<McpSchema.Prompt>, Mono<Void>> methodCallback = AsyncMcpPromptListChangedMethodCallback
+									.builder()
+									.method(mcpPromptListChangedConsumerMethod)
+									.bean(consumerObject)
+									.build();
 
-					return new AsyncPromptListChangedSpecification(promptListChangedAnnotation.clients(),
-							methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new AsyncPromptListChangedSpecification(promptListChangedAnnotation.clients(),
+									methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return promptListChangedConsumers;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

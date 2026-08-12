@@ -16,8 +16,6 @@
 
 package org.springframework.ai.vectorstore.bedrockknowledgebase;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,34 +24,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
-import software.amazon.awssdk.services.bedrockagentruntime.model.AccessDeniedException;
-import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult;
-import software.amazon.awssdk.services.bedrockagentruntime.model.ResourceNotFoundException;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultConfluenceLocation;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultContent;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultLocation;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultLocationType;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultS3Location;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultSalesforceLocation;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultSharePointLocation;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultWebLocation;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveRequest;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveResponse;
-import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.Filter;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
+import software.amazon.awssdk.services.bedrockagentruntime.model.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link BedrockKnowledgeBaseVectorStore}.
@@ -73,9 +55,9 @@ class BedrockKnowledgeBaseVectorStoreTest {
 	@BeforeEach
 	void setUp() {
 		this.vectorStore = BedrockKnowledgeBaseVectorStore.builder(this.mockClient, TEST_KB_ID)
-			.topK(5)
-			.similarityThreshold(0.7)
-			.build();
+				.topK(5)
+				.similarityThreshold(0.7)
+				.build();
 	}
 
 	private static RetrieveResponse createRetrieveResponse(KnowledgeBaseRetrievalResult... results) {
@@ -84,14 +66,14 @@ class BedrockKnowledgeBaseVectorStoreTest {
 
 	private static KnowledgeBaseRetrievalResult createResult(String text, double score, String s3Uri) {
 		var builder = KnowledgeBaseRetrievalResult.builder()
-			.content(RetrievalResultContent.builder().text(text).build())
-			.score(score);
+				.content(RetrievalResultContent.builder().text(text).build())
+				.score(score);
 
 		if (s3Uri != null) {
 			builder.location(RetrievalResultLocation.builder()
-				.type(RetrievalResultLocationType.S3)
-				.s3Location(RetrievalResultS3Location.builder().uri(s3Uri).build())
-				.build());
+					.type(RetrievalResultLocationType.S3)
+					.s3Location(RetrievalResultS3Location.builder().uri(s3Uri).build())
+					.build());
 		}
 
 		return builder.build();
@@ -104,8 +86,8 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		@Test
 		void shouldCreateVectorStoreWithRequiredParameters() {
 			BedrockKnowledgeBaseVectorStore store = BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
-				.build();
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
+					.build();
 
 			assertThat(store.getKnowledgeBaseId()).isEqualTo(TEST_KB_ID);
 			assertThat(store.getName()).isEqualTo("BedrockKnowledgeBaseVectorStore");
@@ -114,49 +96,49 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		@Test
 		void shouldRejectNullClient() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStore.builder(null, TEST_KB_ID))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("must not be null");
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("must not be null");
 		}
 
 		@Test
 		void shouldRejectEmptyKnowledgeBaseId() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, ""))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("must not be empty");
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, ""))
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("must not be empty");
 		}
 
 		@Test
 		void shouldRejectInvalidTopK() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
-				.topK(0)
-				.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("topK must be positive");
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
+					.topK(0)
+					.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("topK must be positive");
 		}
 
 		@Test
 		void shouldRejectInvalidSimilarityThreshold() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
-				.similarityThreshold(1.5)
-				.build()).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("similarityThreshold must be between");
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
+					.similarityThreshold(1.5)
+					.build()).isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("similarityThreshold must be between");
 		}
 
 		@Test
 		void shouldRejectNegativeSimilarityThreshold() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
-				.similarityThreshold(-0.1)
-				.build()).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("similarityThreshold must be between");
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
+					.similarityThreshold(-0.1)
+					.build()).isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("similarityThreshold must be between");
 		}
 
 		@Test
 		void shouldProvideNativeClient() {
 			assertThat(BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.getNativeClient()).isPresent();
 			assertThat(BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.getNativeClient().get())
-				.isSameAs(BedrockKnowledgeBaseVectorStoreTest.this.mockClient);
+					.isSameAs(BedrockKnowledgeBaseVectorStoreTest.this.mockClient);
 		}
 
 	}
@@ -172,11 +154,11 @@ class BedrockKnowledgeBaseVectorStoreTest {
 					createResult("Travel policy content", 0.89, "s3://docs/travel.pdf"),
 					createResult("Expense guidelines", 0.75, "s3://docs/expense.pdf"));
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(response);
+					.thenReturn(response);
 
 			// When
 			List<Document> results = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("What is the travel policy?").build());
+					.similaritySearch(SearchRequest.builder().query("What is the travel policy?").build());
 
 			// Then
 			assertThat(results).hasSize(2);
@@ -191,11 +173,11 @@ class BedrockKnowledgeBaseVectorStoreTest {
 			RetrieveResponse response = createRetrieveResponse(createResult("High relevance", 0.85, null),
 					createResult("Low relevance", 0.5, null));
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(response);
+					.thenReturn(response);
 
 			// When - use default threshold (0.7) from vectorStore builder
 			List<Document> results = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("test query").similarityThreshold(0.7).build());
+					.similaritySearch(SearchRequest.builder().query("test query").similarityThreshold(0.7).build());
 
 			// Then
 			assertThat(results).hasSize(1);
@@ -206,11 +188,11 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldHandleEmptyResults() {
 			// Given
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
+					.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
 
 			// When
 			List<Document> results = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("nonexistent query").build());
+					.similaritySearch(SearchRequest.builder().query("nonexistent query").build());
 
 			// Then
 			assertThat(results).isEmpty();
@@ -220,11 +202,11 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldPassCorrectParametersToBedrockApi() {
 			// Given
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
+					.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
 
 			// When
 			BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("test query").topK(10).build());
+					.similaritySearch(SearchRequest.builder().query("test query").topK(10).build());
 
 			// Then
 			ArgumentCaptor<RetrieveRequest> captor = ArgumentCaptor.forClass(RetrieveRequest.class);
@@ -240,23 +222,23 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldRejectNullSearchRequest() {
 			assertThatThrownBy(
 					() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.similaritySearch((SearchRequest) null))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("must not be null");
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("must not be null");
 		}
 
 		@Test
 		void shouldRejectEmptyQuery() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("").build()))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("must not be empty");
+					.similaritySearch(SearchRequest.builder().query("").build()))
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("must not be empty");
 		}
 
 		@Test
 		void shouldPassFilterExpressionToBedrockApi() {
 			// Given
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
+					.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
 
 			// When
 			BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.similaritySearch(
@@ -269,9 +251,9 @@ class BedrockKnowledgeBaseVectorStoreTest {
 			RetrieveRequest captured = captor.getValue();
 			assertThat(captured.retrievalConfiguration().vectorSearchConfiguration().filter()).isNotNull();
 			assertThat(captured.retrievalConfiguration().vectorSearchConfiguration().filter().equalsValue())
-				.isNotNull();
+					.isNotNull();
 			assertThat(captured.retrievalConfiguration().vectorSearchConfiguration().filter().equalsValue().key())
-				.isEqualTo("department");
+					.isEqualTo("department");
 		}
 
 	}
@@ -341,15 +323,15 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		@Test
 		void addShouldThrowUnsupportedOperationException() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.add(List.of()))
-				.isInstanceOf(UnsupportedOperationException.class)
-				.hasMessageContaining("data source sync");
+					.isInstanceOf(UnsupportedOperationException.class)
+					.hasMessageContaining("data source sync");
 		}
 
 		@Test
 		void deleteByIdsShouldThrowUnsupportedOperationException() {
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.delete(List.of("id1", "id2")))
-				.isInstanceOf(UnsupportedOperationException.class)
-				.hasMessageContaining("data source");
+					.isInstanceOf(UnsupportedOperationException.class)
+					.hasMessageContaining("data source");
 		}
 
 		@Test
@@ -357,8 +339,8 @@ class BedrockKnowledgeBaseVectorStoreTest {
 			Filter.Expression filter = new Filter.Expression(Filter.ExpressionType.EQ, new Filter.Key("key"),
 					new Filter.Value("value"));
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.delete(filter))
-				.isInstanceOf(UnsupportedOperationException.class)
-				.hasMessageContaining("data source");
+					.isInstanceOf(UnsupportedOperationException.class)
+					.hasMessageContaining("data source");
 		}
 
 	}
@@ -371,26 +353,26 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldPropagateResourceNotFoundException() {
 			// Given
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenThrow(ResourceNotFoundException.builder().message("Knowledge base not found").build());
+					.thenThrow(ResourceNotFoundException.builder().message("Knowledge base not found").build());
 
 			// When/Then
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("test").build()))
-				.isInstanceOf(ResourceNotFoundException.class)
-				.hasMessageContaining("Knowledge base not found");
+					.similaritySearch(SearchRequest.builder().query("test").build()))
+					.isInstanceOf(ResourceNotFoundException.class)
+					.hasMessageContaining("Knowledge base not found");
 		}
 
 		@Test
 		void shouldPropagateAccessDeniedException() {
 			// Given
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenThrow(AccessDeniedException.builder().message("Access denied").build());
+					.thenThrow(AccessDeniedException.builder().message("Access denied").build());
 
 			// When/Then
 			assertThatThrownBy(() -> BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("test").build()))
-				.isInstanceOf(AccessDeniedException.class)
-				.hasMessageContaining("Access denied");
+					.similaritySearch(SearchRequest.builder().query("test").build()))
+					.isInstanceOf(AccessDeniedException.class)
+					.hasMessageContaining("Access denied");
 		}
 
 	}
@@ -403,22 +385,22 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldHandlePaginatedResults() {
 			// Given - two pages of results
 			RetrieveResponse page1 = RetrieveResponse.builder()
-				.retrievalResults(List.of(createResult("Result 1", 0.9, null), createResult("Result 2", 0.85, null)))
-				.nextToken("token-page-2")
-				.build();
+					.retrievalResults(List.of(createResult("Result 1", 0.9, null), createResult("Result 2", 0.85, null)))
+					.nextToken("token-page-2")
+					.build();
 
 			RetrieveResponse page2 = RetrieveResponse.builder()
-				.retrievalResults(List.of(createResult("Result 3", 0.8, null)))
-				.nextToken(null)
-				.build();
+					.retrievalResults(List.of(createResult("Result 3", 0.8, null)))
+					.nextToken(null)
+					.build();
 
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(page1)
-				.thenReturn(page2);
+					.thenReturn(page1)
+					.thenReturn(page2);
 
 			// When - request more than first page has
 			List<Document> results = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("test").topK(5).similarityThreshold(0.0).build());
+					.similaritySearch(SearchRequest.builder().query("test").topK(5).similarityThreshold(0.0).build());
 
 			// Then - should get results from both pages
 			assertThat(results).hasSize(3);
@@ -429,17 +411,17 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldStopPaginationWhenTopKReached() {
 			// Given - first page has enough results
 			RetrieveResponse page1 = RetrieveResponse.builder()
-				.retrievalResults(List.of(createResult("Result 1", 0.9, null), createResult("Result 2", 0.85, null),
-						createResult("Result 3", 0.8, null)))
-				.nextToken("token-page-2")
-				.build();
+					.retrievalResults(List.of(createResult("Result 1", 0.9, null), createResult("Result 2", 0.85, null),
+							createResult("Result 3", 0.8, null)))
+					.nextToken("token-page-2")
+					.build();
 
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(page1);
+					.thenReturn(page1);
 
 			// When - request only 2 results
 			List<Document> results = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore
-				.similaritySearch(SearchRequest.builder().query("test").topK(2).similarityThreshold(0.0).build());
+					.similaritySearch(SearchRequest.builder().query("test").topK(2).similarityThreshold(0.0).build());
 
 			// Then - should trim to topK
 			assertThat(results).hasSize(2);
@@ -456,22 +438,22 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldExtractConfluenceLocation() {
 			// Given
 			KnowledgeBaseRetrievalResult result = KnowledgeBaseRetrievalResult.builder()
-				.content(RetrievalResultContent.builder().text("Confluence content").build())
-				.score(0.8)
-				.location(RetrievalResultLocation.builder()
-					.type(RetrievalResultLocationType.CONFLUENCE)
-					.confluenceLocation(RetrievalResultConfluenceLocation.builder()
-						.url("https://company.atlassian.net/wiki/spaces/DOC/pages/123")
-						.build())
-					.build())
-				.build();
+					.content(RetrievalResultContent.builder().text("Confluence content").build())
+					.score(0.8)
+					.location(RetrievalResultLocation.builder()
+							.type(RetrievalResultLocationType.CONFLUENCE)
+							.confluenceLocation(RetrievalResultConfluenceLocation.builder()
+									.url("https://company.atlassian.net/wiki/spaces/DOC/pages/123")
+									.build())
+							.build())
+					.build();
 
 			// When
 			Document doc = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.toDocument(result);
 
 			// Then
 			assertThat(doc.getMetadata().get("source"))
-				.isEqualTo("https://company.atlassian.net/wiki/spaces/DOC/pages/123");
+					.isEqualTo("https://company.atlassian.net/wiki/spaces/DOC/pages/123");
 			assertThat(doc.getMetadata().get("locationType")).isEqualTo("CONFLUENCE");
 		}
 
@@ -479,22 +461,22 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldExtractSharePointLocation() {
 			// Given
 			KnowledgeBaseRetrievalResult result = KnowledgeBaseRetrievalResult.builder()
-				.content(RetrievalResultContent.builder().text("SharePoint content").build())
-				.score(0.8)
-				.location(RetrievalResultLocation.builder()
-					.type(RetrievalResultLocationType.SHAREPOINT)
-					.sharePointLocation(RetrievalResultSharePointLocation.builder()
-						.url("https://company.sharepoint.com/sites/docs/policy.docx")
-						.build())
-					.build())
-				.build();
+					.content(RetrievalResultContent.builder().text("SharePoint content").build())
+					.score(0.8)
+					.location(RetrievalResultLocation.builder()
+							.type(RetrievalResultLocationType.SHAREPOINT)
+							.sharePointLocation(RetrievalResultSharePointLocation.builder()
+									.url("https://company.sharepoint.com/sites/docs/policy.docx")
+									.build())
+							.build())
+					.build();
 
 			// When
 			Document doc = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.toDocument(result);
 
 			// Then
 			assertThat(doc.getMetadata().get("source"))
-				.isEqualTo("https://company.sharepoint.com/sites/docs/policy.docx");
+					.isEqualTo("https://company.sharepoint.com/sites/docs/policy.docx");
 			assertThat(doc.getMetadata().get("locationType")).isEqualTo("SHAREPOINT");
 		}
 
@@ -502,15 +484,15 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldExtractSalesforceLocation() {
 			// Given
 			KnowledgeBaseRetrievalResult result = KnowledgeBaseRetrievalResult.builder()
-				.content(RetrievalResultContent.builder().text("Salesforce content").build())
-				.score(0.8)
-				.location(RetrievalResultLocation.builder()
-					.type(RetrievalResultLocationType.SALESFORCE)
-					.salesforceLocation(RetrievalResultSalesforceLocation.builder()
-						.url("https://company.salesforce.com/article/123")
-						.build())
-					.build())
-				.build();
+					.content(RetrievalResultContent.builder().text("Salesforce content").build())
+					.score(0.8)
+					.location(RetrievalResultLocation.builder()
+							.type(RetrievalResultLocationType.SALESFORCE)
+							.salesforceLocation(RetrievalResultSalesforceLocation.builder()
+									.url("https://company.salesforce.com/article/123")
+									.build())
+							.build())
+					.build();
 
 			// When
 			Document doc = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.toDocument(result);
@@ -524,13 +506,13 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldExtractWebLocation() {
 			// Given
 			KnowledgeBaseRetrievalResult result = KnowledgeBaseRetrievalResult.builder()
-				.content(RetrievalResultContent.builder().text("Web content").build())
-				.score(0.8)
-				.location(RetrievalResultLocation.builder()
-					.type(RetrievalResultLocationType.WEB)
-					.webLocation(RetrievalResultWebLocation.builder().url("https://docs.example.com/guide").build())
-					.build())
-				.build();
+					.content(RetrievalResultContent.builder().text("Web content").build())
+					.score(0.8)
+					.location(RetrievalResultLocation.builder()
+							.type(RetrievalResultLocationType.WEB)
+							.webLocation(RetrievalResultWebLocation.builder().url("https://docs.example.com/guide").build())
+							.build())
+					.build();
 
 			// When
 			Document doc = BedrockKnowledgeBaseVectorStoreTest.this.vectorStore.toDocument(result);
@@ -550,12 +532,12 @@ class BedrockKnowledgeBaseVectorStoreTest {
 		void shouldPassHybridSearchTypeToApi() {
 			// Given
 			BedrockKnowledgeBaseVectorStore storeWithHybrid = BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
-				.searchType(SearchType.HYBRID)
-				.build();
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
+					.searchType(SearchType.HYBRID)
+					.build();
 
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
+					.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
 
 			// When
 			storeWithHybrid.similaritySearch(SearchRequest.builder().query("test").build());
@@ -565,19 +547,19 @@ class BedrockKnowledgeBaseVectorStoreTest {
 			verify(BedrockKnowledgeBaseVectorStoreTest.this.mockClient).retrieve(captor.capture());
 
 			assertThat(captor.getValue().retrievalConfiguration().vectorSearchConfiguration().overrideSearchType())
-				.isEqualTo(SearchType.HYBRID);
+					.isEqualTo(SearchType.HYBRID);
 		}
 
 		@Test
 		void shouldPassSemanticSearchTypeToApi() {
 			// Given
 			BedrockKnowledgeBaseVectorStore storeWithSemantic = BedrockKnowledgeBaseVectorStore
-				.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
-				.searchType(SearchType.SEMANTIC)
-				.build();
+					.builder(BedrockKnowledgeBaseVectorStoreTest.this.mockClient, TEST_KB_ID)
+					.searchType(SearchType.SEMANTIC)
+					.build();
 
 			when(BedrockKnowledgeBaseVectorStoreTest.this.mockClient.retrieve(any(RetrieveRequest.class)))
-				.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
+					.thenReturn(RetrieveResponse.builder().retrievalResults(List.of()).build());
 
 			// When
 			storeWithSemantic.similaritySearch(SearchRequest.builder().query("test").build());
@@ -587,7 +569,7 @@ class BedrockKnowledgeBaseVectorStoreTest {
 			verify(BedrockKnowledgeBaseVectorStoreTest.this.mockClient).retrieve(captor.capture());
 
 			assertThat(captor.getValue().retrievalConfiguration().vectorSearchConfiguration().overrideSearchType())
-				.isEqualTo(SearchType.SEMANTIC);
+					.isEqualTo(SearchType.SEMANTIC);
 		}
 
 	}

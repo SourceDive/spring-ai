@@ -16,14 +16,13 @@
 
 package org.springframework.ai.chat.client;
 
+import org.springframework.ai.chat.model.MessageAggregator;
+import reactor.core.publisher.Flux;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.chat.model.MessageAggregator;
 
 /**
  * Helper that for streaming chat responses, aggregate the chat response messages into a
@@ -38,7 +37,7 @@ public class ChatClientMessageAggregator {
 
 	@SuppressWarnings("NullAway") // https://github.com/uber/NullAway/issues/1350
 	public Flux<ChatClientResponse> aggregateChatClientResponse(Flux<ChatClientResponse> chatClientResponses,
-			Consumer<ChatClientResponse> aggregationHandler) {
+	                                                            Consumer<ChatClientResponse> aggregationHandler) {
 
 		AtomicReference<Map<String, Object>> context = new AtomicReference<>(new HashMap<>());
 
@@ -47,9 +46,9 @@ public class ChatClientMessageAggregator {
 			return chatClientResponse.chatResponse();
 		}), aggregatedChatResponse -> {
 			ChatClientResponse aggregatedChatClientResponse = ChatClientResponse.builder()
-				.chatResponse(aggregatedChatResponse)
-				.context(context.get())
-				.build();
+					.chatResponse(aggregatedChatResponse)
+					.context(context.get())
+					.build();
 			aggregationHandler.accept(aggregatedChatClientResponse);
 		}).map(chatResponse -> ChatClientResponse.builder().chatResponse(chatResponse).context(context.get()).build());
 	}

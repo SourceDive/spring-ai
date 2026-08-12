@@ -16,17 +16,7 @@
 
 package org.springframework.ai.rag.advisor;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
-import reactor.core.scheduler.Scheduler;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
@@ -46,6 +36,11 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.support.ContextPropagatingTaskDecorator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
+import reactor.core.scheduler.Scheduler;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Advisor that implements common Retrieval Augmented Generation (RAG) flows using the
@@ -54,10 +49,10 @@ import org.springframework.util.Assert;
  *
  * @author Christian Tzolov
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href="http://export.arxiv.org/abs/2407.21059">arXiv:2407.21059</a>
  * @see <a href="https://export.arxiv.org/abs/2312.10997">arXiv:2312.10997</a>
  * @see <a href="https://export.arxiv.org/abs/2410.20878">arXiv:2410.20878</a>
+ * @since 1.0.0
  */
 public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
@@ -82,10 +77,10 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 	private final int order;
 
 	private RetrievalAugmentationAdvisor(@Nullable List<QueryTransformer> queryTransformers,
-			@Nullable QueryExpander queryExpander, DocumentRetriever documentRetriever,
-			@Nullable DocumentJoiner documentJoiner, @Nullable List<DocumentPostProcessor> documentPostProcessors,
-			@Nullable QueryAugmenter queryAugmenter, @Nullable TaskExecutor taskExecutor, @Nullable Scheduler scheduler,
-			@Nullable Integer order) {
+	                                     @Nullable QueryExpander queryExpander, DocumentRetriever documentRetriever,
+	                                     @Nullable DocumentJoiner documentJoiner, @Nullable List<DocumentPostProcessor> documentPostProcessors,
+	                                     @Nullable QueryAugmenter queryAugmenter, @Nullable TaskExecutor taskExecutor, @Nullable Scheduler scheduler,
+	                                     @Nullable Integer order) {
 		Assert.notNull(documentRetriever, "documentRetriever cannot be null");
 		Assert.noNullElements(queryTransformers, "queryTransformers cannot contain null elements");
 		this.queryTransformers = queryTransformers != null ? queryTransformers : List.of();
@@ -110,10 +105,10 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 		// 0. Create a query from the user text, parameters, and conversation history.
 		String text = chatClientRequest.prompt().getUserMessage().getText();
 		Query originalQuery = Query.builder()
-			.text(Objects.requireNonNullElse(text, ""))
-			.history(chatClientRequest.prompt().getInstructions())
-			.context(context)
-			.build();
+				.text(Objects.requireNonNullElse(text, ""))
+				.history(chatClientRequest.prompt().getInstructions())
+				.context(context)
+				.build();
 
 		// 1. Transform original user query based on a chain of query transformers.
 		Query transformedQuery = originalQuery;
@@ -127,11 +122,11 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
 		// 3. Get similar documents for each query.
 		Map<Query, List<List<Document>>> documentsForQuery = expandedQueries.stream()
-			.map(query -> CompletableFuture.supplyAsync(() -> getDocumentsForQuery(query), this.taskExecutor))
-			.toList()
-			.stream()
-			.map(CompletableFuture::join)
-			.collect(Collectors.toMap(Map.Entry::getKey, entry -> List.of(entry.getValue())));
+				.map(query -> CompletableFuture.supplyAsync(() -> getDocumentsForQuery(query), this.taskExecutor))
+				.toList()
+				.stream()
+				.map(CompletableFuture::join)
+				.collect(Collectors.toMap(Map.Entry::getKey, entry -> List.of(entry.getValue())));
 
 		// 4. Combine documents retrieved based on multiple queries and from multiple data
 		// sources.
@@ -148,9 +143,9 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 
 		// 7. Update ChatClientRequest with augmented prompt.
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedQuery.text()))
-			.context(context)
-			.build();
+				.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedQuery.text()))
+				.context(context)
+				.build();
 	}
 
 	/**
@@ -167,8 +162,7 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 		ChatResponse.Builder chatResponseBuilder;
 		if (chatClientResponse.chatResponse() == null) {
 			chatResponseBuilder = ChatResponse.builder();
-		}
-		else {
+		} else {
 			chatResponseBuilder = ChatResponse.builder().from(chatClientResponse.chatResponse());
 		}
 		Object ctx = chatClientResponse.context().get(DOCUMENT_CONTEXT);
@@ -176,9 +170,9 @@ public final class RetrievalAugmentationAdvisor implements BaseAdvisor {
 			chatResponseBuilder.metadata(DOCUMENT_CONTEXT, ctx);
 		}
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponseBuilder.build())
-			.context(chatClientResponse.context())
-			.build();
+				.chatResponse(chatResponseBuilder.build())
+				.context(chatClientResponse.context())
+				.build();
 	}
 
 	@Override

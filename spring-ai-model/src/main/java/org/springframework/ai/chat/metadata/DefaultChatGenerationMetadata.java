@@ -16,16 +16,11 @@
 
 package org.springframework.ai.chat.metadata;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Default implementation of {@link ChatGenerationMetadata}.
@@ -43,13 +38,14 @@ public class DefaultChatGenerationMetadata implements ChatGenerationMetadata {
 
 	/**
 	 * Create a new {@link DefaultChatGenerationMetadata} instance.
-	 * @param metadata the metadata map, must not be null
-	 * @param finishReason the finish reason, may be null
+	 *
+	 * @param metadata       the metadata map, must not be null
+	 * @param finishReason   the finish reason, may be null
 	 * @param contentFilters the content filters, must not be null
 	 * @throws IllegalArgumentException if metadata or contentFilters is null
 	 */
 	DefaultChatGenerationMetadata(Map<String, Object> metadata, @Nullable String finishReason,
-			Set<String> contentFilters) {
+	                              Set<String> contentFilters) {
 		Assert.notNull(metadata, "Metadata must not be null");
 		Assert.notNull(contentFilters, "Content filters must not be null");
 		this.metadata = metadata;

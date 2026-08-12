@@ -16,9 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
@@ -29,9 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.execution.ToolExecutionException;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,11 +54,11 @@ class SyncMcpToolCallbackTests {
 		when(this.tool.description()).thenReturn("Test tool description");
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName(clientInfo.name(), clientInfo.title(), this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName(clientInfo.name(), clientInfo.title(), this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		var toolDefinition = callback.getToolDefinition();
 
@@ -72,10 +71,10 @@ class SyncMcpToolCallbackTests {
 		when(this.tool.name()).thenReturn("originalToolName");
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("prefix_originalToolName")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("prefix_originalToolName")
+				.build();
 
 		assertThat(callback.getOriginalToolName()).isEqualTo("originalToolName");
 	}
@@ -87,11 +86,11 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		String response = callback.call("{\"param\":\"value\"}");
 
@@ -105,11 +104,11 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		String response = callback.call("{\"param\":\"value\"}", new ToolContext(Map.of("foo", "bar")));
 
@@ -124,10 +123,10 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName("testClient_testTool")
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName("testClient_testTool")
+				.build();
 
 		// Test with null input
 		String responseNull = callback.call(null);
@@ -152,16 +151,16 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName(clientInfo.name(), clientInfo.title(), this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName(clientInfo.name(), clientInfo.title(), this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		assertThatThrownBy(() -> callback.call("{\"param\":\"value\"}")).isInstanceOf(ToolExecutionException.class)
-			.cause()
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessage("Error calling tool: [TextContent[annotations=null, text=Some error data, meta=null]]");
+				.cause()
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessage("Error calling tool: [TextContent[annotations=null, text=Some error data, meta=null]]");
 	}
 
 	@Test
@@ -171,15 +170,15 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenThrow(new RuntimeException("Testing tool error"));
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName(clientInfo.name(), clientInfo.title(), this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName(clientInfo.name(), clientInfo.title(), this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		assertThatThrownBy(() -> callback.call("{\"param\":\"value\"}")).isInstanceOf(ToolExecutionException.class)
-			.rootCause()
-			.hasMessage("Testing tool error");
+				.rootCause()
+				.hasMessage("Testing tool error");
 	}
 
 	@Test
@@ -191,11 +190,11 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		String response = callback.call("{\"param\":\"value\"}");
 
@@ -212,11 +211,11 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		String response = callback.call("{\"param\":\"value\"}");
 
@@ -233,11 +232,11 @@ class SyncMcpToolCallbackTests {
 		when(this.mcpClient.callTool(any(CallToolRequest.class))).thenReturn(callResult);
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(this.mcpClient)
-			.tool(this.tool)
-			.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(this.mcpClient)
+				.tool(this.tool)
+				.prefixedToolName(McpToolUtils.prefixedToolName("testClient", "server1", this.tool.name()))
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		String response = callback.call("{\"param\":\"value\"}");
 
@@ -260,13 +259,13 @@ class SyncMcpToolCallbackTests {
 	void builderShouldValidateRequiredParameters() {
 		// Test missing mcpClient
 		assertThatThrownBy(() -> SyncMcpToolCallback.builder().tool(this.tool).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("MCP client must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("MCP client must not be null");
 
 		// Test missing tool
 		assertThatThrownBy(() -> SyncMcpToolCallback.builder().mcpClient(this.mcpClient).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("MCP tool must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("MCP tool must not be null");
 	}
 
 }

@@ -16,12 +16,7 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.openai.OpenAiChatModel.ResponseFormat;
@@ -30,6 +25,10 @@ import org.springframework.ai.openai.OpenAiChatOptions.Builder;
 import org.springframework.ai.openai.OpenAiChatOptions.StreamOptions;
 import org.springframework.ai.test.options.AbstractChatOptionsTests;
 import org.springframework.ai.tool.ToolCallback;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,33 +64,33 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 		Map<String, Object> extraBody = Map.of("top_k", 50, "repetition_penalty", 1.2);
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model("test-model")
-			.deploymentName("test-deployment")
-			.frequencyPenalty(0.5)
-			.logitBias(logitBias)
-			.logprobs(true)
-			.topLogprobs(5)
-			.maxTokens(100)
-			.maxCompletionTokens(50)
-			.n(2)
-			.presencePenalty(0.8)
-			.streamOptions(StreamOptions.builder().includeUsage(true).build())
-			.seed(12345)
-			.stop(stop)
-			.temperature(0.7)
-			.topP(0.9)
-			.user("test-user")
-			.parallelToolCalls(true)
-			.store(false)
-			.metadata(metadata)
-			.reasoningEffort("medium")
-			.verbosity("low")
-			.serviceTier("auto")
-			.promptCacheKey("test-cache-key")
-			.customHeaders(customHeaders)
-			.toolContext(toolContext)
-			.extraBody(extraBody)
-			.build();
+				.model("test-model")
+				.deploymentName("test-deployment")
+				.frequencyPenalty(0.5)
+				.logitBias(logitBias)
+				.logprobs(true)
+				.topLogprobs(5)
+				.maxTokens(100)
+				.maxCompletionTokens(50)
+				.n(2)
+				.presencePenalty(0.8)
+				.streamOptions(StreamOptions.builder().includeUsage(true).build())
+				.seed(12345)
+				.stop(stop)
+				.temperature(0.7)
+				.topP(0.9)
+				.user("test-user")
+				.parallelToolCalls(true)
+				.store(false)
+				.metadata(metadata)
+				.reasoningEffort("medium")
+				.verbosity("low")
+				.serviceTier("auto")
+				.promptCacheKey("test-cache-key")
+				.customHeaders(customHeaders)
+				.toolContext(toolContext)
+				.extraBody(extraBody)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getDeploymentName()).isEqualTo("test-deployment");
@@ -131,29 +130,29 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 		Map<String, String> metadata = Map.of("key2", "value2");
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model("test-model")
-			.deploymentName("test-deployment")
-			.frequencyPenalty(0.5)
-			.logitBias(logitBias)
-			.logprobs(true)
-			.topLogprobs(5)
-			.maxCompletionTokens(50)
-			.n(2)
-			.presencePenalty(0.8)
-			.streamOptions(StreamOptions.builder().includeUsage(true).build())
-			.seed(12345)
-			.stopSequences(stop)
-			.temperature(0.7)
-			.topP(0.9)
-			.user("test-user")
-			.parallelToolCalls(true)
-			.store(false)
-			.metadata(metadata)
-			.reasoningEffort("high")
-			.verbosity("medium")
-			.serviceTier("auto")
-			.customHeaders(Map.of("header2", "value2"))
-			.build();
+				.model("test-model")
+				.deploymentName("test-deployment")
+				.frequencyPenalty(0.5)
+				.logitBias(logitBias)
+				.logprobs(true)
+				.topLogprobs(5)
+				.maxCompletionTokens(50)
+				.n(2)
+				.presencePenalty(0.8)
+				.streamOptions(StreamOptions.builder().includeUsage(true).build())
+				.seed(12345)
+				.stopSequences(stop)
+				.temperature(0.7)
+				.topP(0.9)
+				.user("test-user")
+				.parallelToolCalls(true)
+				.store(false)
+				.metadata(metadata)
+				.reasoningEffort("high")
+				.verbosity("medium")
+				.serviceTier("auto")
+				.customHeaders(Map.of("header2", "value2"))
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getDeploymentName()).isEqualTo("test-deployment");
@@ -220,25 +219,25 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testEqualsAndHashCode() {
 		OpenAiChatOptions options1 = OpenAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.maxTokens(100)
-			.extraBody(Map.of("key1", "value1"))
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.maxTokens(100)
+				.extraBody(Map.of("key1", "value1"))
+				.build();
 
 		OpenAiChatOptions options2 = OpenAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.maxTokens(100)
-			.extraBody(Map.of("key1", "value1"))
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.maxTokens(100)
+				.extraBody(Map.of("key1", "value1"))
+				.build();
 
 		OpenAiChatOptions options3 = OpenAiChatOptions.builder()
-			.model("different-model")
-			.temperature(0.7)
-			.maxTokens(100)
-			.extraBody(Map.of("key1", "value2"))
-			.build();
+				.model("different-model")
+				.temperature(0.7)
+				.maxTokens(100)
+				.extraBody(Map.of("key1", "value2"))
+				.build();
 
 		// Test equals
 		assertThat(options1).isEqualTo(options2);
@@ -252,12 +251,12 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testBuilderWithNullValues() {
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.temperature(null)
-			.logitBias(null)
-			.stop(null)
-			.metadata(null)
-			.extraBody(null)
-			.build();
+				.temperature(null)
+				.logitBias(null)
+				.stop(null)
+				.metadata(null)
+				.extraBody(null)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo(OpenAiChatOptions.DEFAULT_CHAT_MODEL);
 		assertThat(options.getTemperature()).isNull();
@@ -284,10 +283,10 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	void testNullAndEmptyCollections() {
 		// Test setting null collections
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.logitBias(null)
-			.stopSequences(null)
-			.metadata(null)
-			.build();
+				.logitBias(null)
+				.stopSequences(null)
+				.metadata(null)
+				.build();
 
 		assertThat(options.getLogitBias()).isNull();
 		assertThat(options.getStop()).isNull();
@@ -295,11 +294,11 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 
 		// Test setting empty collections
 		options = options.mutate()
-			.logitBias(new java.util.HashMap<>())
-			.stopSequences(new java.util.ArrayList<>())
-			.metadata(new java.util.HashMap<>())
-			.customHeaders(new java.util.HashMap<>())
-			.build();
+				.logitBias(new java.util.HashMap<>())
+				.stopSequences(new java.util.ArrayList<>())
+				.metadata(new java.util.HashMap<>())
+				.customHeaders(new java.util.HashMap<>())
+				.build();
 
 		assertThat(options.getLogitBias()).isEmpty();
 		assertThat(options.getStop()).isEmpty();
@@ -381,10 +380,10 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 			@Override
 			public org.springframework.ai.tool.definition.ToolDefinition getToolDefinition() {
 				return org.springframework.ai.tool.definition.DefaultToolDefinition.builder()
-					.name("tool1")
-					.description("desc1")
-					.inputSchema("{}")
-					.build();
+						.name("tool1")
+						.description("desc1")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -397,10 +396,10 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 			@Override
 			public org.springframework.ai.tool.definition.ToolDefinition getToolDefinition() {
 				return org.springframework.ai.tool.definition.DefaultToolDefinition.builder()
-					.name("tool2")
-					.description("desc2")
-					.inputSchema("{}")
-					.build();
+						.name("tool2")
+						.description("desc2")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -420,10 +419,10 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 			@Override
 			public org.springframework.ai.tool.definition.ToolDefinition getToolDefinition() {
 				return org.springframework.ai.tool.definition.DefaultToolDefinition.builder()
-					.name("tool")
-					.description("desc")
-					.inputSchema("{}")
-					.build();
+						.name("tool")
+						.description("desc")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -448,8 +447,8 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testCombineWithChatOptions() {
 		OpenAiChatOptions merged = OpenAiChatOptions.builder()
-			.combineWith(ChatOptions.builder().model("override-model").temperature(0.9).maxTokens(100))
-			.build();
+				.combineWith(ChatOptions.builder().model("override-model").temperature(0.9).maxTokens(100))
+				.build();
 
 		assertThat(merged.getModel()).isEqualTo("override-model");
 		assertThat(merged.getTemperature()).isEqualTo(0.9);
@@ -459,8 +458,8 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testCombineWithToolCallingChatOptions() {
 		OpenAiChatOptions merged = OpenAiChatOptions.builder()
-			.combineWith(ToolCallingChatOptions.builder().model("override-model").temperature(0.9))
-			.build();
+				.combineWith(ToolCallingChatOptions.builder().model("override-model").temperature(0.9))
+				.build();
 
 		assertThat(merged.getModel()).isEqualTo("override-model");
 		assertThat(merged.getTemperature()).isEqualTo(0.9);
@@ -472,16 +471,16 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 		Map<String, String> headers = Map.of("header1", "value1");
 
 		OpenAiChatOptions override = OpenAiChatOptions.builder()
-			.baseUrl("https://override.com")
-			.apiKey("override-key")
-			.deploymentName("override-deployment")
-			.organizationId("override-org")
-			.microsoftFoundry(true)
-			.gitHubModels(true)
-			.timeout(java.time.Duration.ofSeconds(10))
-			.maxRetries(5)
-			.customHeaders(headers)
-			.build();
+				.baseUrl("https://override.com")
+				.apiKey("override-key")
+				.deploymentName("override-deployment")
+				.organizationId("override-org")
+				.microsoftFoundry(true)
+				.gitHubModels(true)
+				.timeout(java.time.Duration.ofSeconds(10))
+				.maxRetries(5)
+				.customHeaders(headers)
+				.build();
 
 		OpenAiChatOptions merged = OpenAiChatOptions.builder().combineWith(override.mutate()).build();
 
@@ -499,10 +498,10 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testCombineWith() {
 		OpenAiChatOptions base = OpenAiChatOptions.builder()
-			.model("base-model")
-			.temperature(0.5)
-			.maxTokens(100)
-			.build();
+				.model("base-model")
+				.temperature(0.5)
+				.maxTokens(100)
+				.build();
 
 		OpenAiChatOptions override = OpenAiChatOptions.builder().model("override-model").topP(0.9).build();
 
@@ -525,13 +524,13 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 		Map<String, String> metadata = Map.of("key", "value");
 
 		OpenAiChatOptions source = OpenAiChatOptions.builder()
-			.model("source-model")
-			.temperature(0.7)
-			.maxTokens(100)
-			.logitBias(logitBias)
-			.stop(stop)
-			.metadata(metadata)
-			.build();
+				.model("source-model")
+				.temperature(0.7)
+				.maxTokens(100)
+				.logitBias(logitBias)
+				.stop(stop)
+				.metadata(metadata)
+				.build();
 
 		OpenAiChatOptions copy = source.mutate().build();
 
@@ -546,10 +545,10 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testCombineWithDoesNotOverrideWithNull() {
 		OpenAiChatOptions base = OpenAiChatOptions.builder()
-			.model("base-model")
-			.temperature(0.5)
-			.maxTokens(100)
-			.build();
+				.model("base-model")
+				.temperature(0.5)
+				.maxTokens(100)
+				.build();
 
 		OpenAiChatOptions.Builder override = OpenAiChatOptions.builder().model(null).temperature(null);
 
@@ -564,14 +563,14 @@ public class OpenAiChatOptionsTests extends AbstractChatOptionsTests<OpenAiChatO
 	@Test
 	void testCombineWithPreservesNonNullValues() {
 		OpenAiChatOptions base = OpenAiChatOptions.builder()
-			.model("base-model")
-			.temperature(0.5)
-			.reasoningEffort("medium")
-			.build();
+				.model("base-model")
+				.temperature(0.5)
+				.reasoningEffort("medium")
+				.build();
 
 		OpenAiChatOptions.Builder override = OpenAiChatOptions.builder()
-			.model("override-model")
-			.reasoningEffort("high");
+				.model("override-model")
+				.reasoningEffort("high");
 
 		OpenAiChatOptions merged = base.mutate().combineWith(override).build();
 

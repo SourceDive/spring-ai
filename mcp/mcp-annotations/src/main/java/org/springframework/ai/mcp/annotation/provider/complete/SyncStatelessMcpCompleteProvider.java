@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.complete;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncCompletionSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
@@ -28,15 +23,19 @@ import io.modelcontextprotocol.spec.McpSchema.CompleteResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.adapter.CompleteAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.complete.SyncStatelessMcpCompleteMethodCallback;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
+
 /**
  * Provider for synchronous stateless MCP complete methods.
- *
+ * <p>
  * This provider creates completion specifications for methods annotated with
  * {@link McpComplete} that are designed to work in a stateless manner using
  * {@link McpTransportContext}.
@@ -51,8 +50,9 @@ public class SyncStatelessMcpCompleteProvider {
 
 	/**
 	 * Create a new SyncStatelessMcpCompleteProvider.
+	 *
 	 * @param completeObjects the objects containing methods annotated with
-	 * {@link McpComplete}
+	 *                        {@link McpComplete}
 	 */
 	public SyncStatelessMcpCompleteProvider(List<Object> completeObjects) {
 		Assert.notNull(completeObjects, "completeObjects cannot be null");
@@ -61,32 +61,33 @@ public class SyncStatelessMcpCompleteProvider {
 
 	/**
 	 * Get the stateless completion specifications.
+	 *
 	 * @return the list of stateless completion specifications
 	 */
 	public List<SyncCompletionSpecification> getCompleteSpecifications() {
 
 		List<SyncCompletionSpecification> completeSpecs = this.completeObjects.stream()
-			.map(completeObject -> Stream.of(doGetClassMethods(completeObject))
-				.filter(method -> method.isAnnotationPresent(McpComplete.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.filter(McpPredicates.filterMethodWithBidirectionalParameters())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpCompleteMethod -> {
-					var completeAnnotation = mcpCompleteMethod.getAnnotation(McpComplete.class);
-					var completeRef = CompleteAdapter.asCompleteReference(completeAnnotation, mcpCompleteMethod);
+				.map(completeObject -> Stream.of(doGetClassMethods(completeObject))
+						.filter(method -> method.isAnnotationPresent(McpComplete.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.filter(McpPredicates.filterMethodWithBidirectionalParameters())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpCompleteMethod -> {
+							var completeAnnotation = mcpCompleteMethod.getAnnotation(McpComplete.class);
+							var completeRef = CompleteAdapter.asCompleteReference(completeAnnotation, mcpCompleteMethod);
 
-					BiFunction<McpTransportContext, CompleteRequest, CompleteResult> methodCallback = SyncStatelessMcpCompleteMethodCallback
-						.builder()
-						.method(mcpCompleteMethod)
-						.bean(completeObject)
-						.complete(completeAnnotation)
-						.build();
+							BiFunction<McpTransportContext, CompleteRequest, CompleteResult> methodCallback = SyncStatelessMcpCompleteMethodCallback
+									.builder()
+									.method(mcpCompleteMethod)
+									.bean(completeObject)
+									.complete(completeAnnotation)
+									.build();
 
-					return new SyncCompletionSpecification(completeRef, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncCompletionSpecification(completeRef, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (completeSpecs.isEmpty()) {
 			if (logger.isWarnEnabled()) {
@@ -99,6 +100,7 @@ public class SyncStatelessMcpCompleteProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

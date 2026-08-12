@@ -16,14 +16,7 @@
 
 package org.springframework.ai.mcp.client.webflux.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.NamedClientMcpTransport;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpClientCommonProperties;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpStreamableHttpClientProperties;
@@ -37,6 +30,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Auto-configuration for WebFlux-based Streamable HTTP client transport in the Model
@@ -63,8 +62,8 @@ import org.springframework.web.reactive.function.client.WebClient;
  * @see McpStreamableHttpClientProperties
  */
 @AutoConfiguration
-@ConditionalOnClass({ WebClientStreamableHttpTransport.class, WebClient.class })
-@EnableConfigurationProperties({ McpStreamableHttpClientProperties.class, McpClientCommonProperties.class })
+@ConditionalOnClass({WebClientStreamableHttpTransport.class, WebClient.class})
+@EnableConfigurationProperties({McpStreamableHttpClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 public class StreamableHttpWebFluxTransportAutoConfiguration {
@@ -79,13 +78,14 @@ public class StreamableHttpWebFluxTransportAutoConfiguration {
 	 * <li>JsonMapper for JSON processing
 	 * <li>Server connection parameters from properties
 	 * </ul>
-	 * @param streamableProperties the Streamable HTTP client properties containing server
-	 * configurations
+	 *
+	 * @param streamableProperties     the Streamable HTTP client properties containing server
+	 *                                 configurations
 	 * @param webClientBuilderProvider the provider for WebClient.Builder
-	 * @param jsonMapperProvider the provider for JsonMapper or a new instance if not
-	 * available
-	 * @param transportCustomizers provider for
-	 * {@link McpClientCustomizer<WebClientStreamableHttpTransport.Builder>} beans
+	 * @param jsonMapperProvider       the provider for JsonMapper or a new instance if not
+	 *                                 available
+	 * @param transportCustomizers     provider for
+	 *                                 {@link McpClientCustomizer<WebClientStreamableHttpTransport.Builder>} beans
 	 * @return list of named MCP transports
 	 */
 	@Bean
@@ -100,7 +100,7 @@ public class StreamableHttpWebFluxTransportAutoConfiguration {
 		var jsonMapper = jsonMapperProvider.getIfAvailable(JsonMapper::new);
 
 		for (Map.Entry<String, ConnectionParameters> serverParameters : streamableProperties.getConnections()
-			.entrySet()) {
+				.entrySet()) {
 			String connectionName = serverParameters.getKey();
 			String url = Objects.requireNonNull(serverParameters.getValue().url(),
 					"Missing url for server named " + connectionName);
@@ -108,8 +108,8 @@ public class StreamableHttpWebFluxTransportAutoConfiguration {
 			String streamableHttpEndpoint = Objects.requireNonNullElse(serverParameters.getValue().endpoint(), "/mcp");
 
 			var transportBuilder = WebClientStreamableHttpTransport.builder(webClientBuilder)
-				.endpoint(streamableHttpEndpoint)
-				.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
+					.endpoint(streamableHttpEndpoint)
+					.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
 
 			for (McpClientCustomizer<WebClientStreamableHttpTransport.Builder> customizer : transportCustomizers) {
 				customizer.customize(connectionName, transportBuilder);

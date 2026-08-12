@@ -16,17 +16,12 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -42,11 +37,13 @@ import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.converter.MapOutputConverter;
 import org.springframework.core.ParameterizedTypeReference;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.times;
-import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -77,11 +74,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, MyBean> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about John")
-			.call()
-			.responseEntity(MyBean.class);
+				.build()
+				.prompt()
+				.user("Tell me about John")
+				.call()
+				.responseEntity(MyBean.class);
 
 		assertThat(responseEntity.getResponse()).isEqualTo(chatResponse);
 		assertThat(responseEntity.getResponse().getMetadata().get("key1").toString()).isEqualTo("value1");
@@ -107,13 +104,13 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, List<MyBean>> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about them")
-			.call()
-			.responseEntity(new ParameterizedTypeReference<>() {
+				.build()
+				.prompt()
+				.user("Tell me about them")
+				.call()
+				.responseEntity(new ParameterizedTypeReference<>() {
 
-			});
+				});
 
 		assertThat(responseEntity.getResponse()).isEqualTo(chatResponse);
 		assertThat(responseEntity.getEntity().get(0)).isEqualTo(new MyBean("Max", 10));
@@ -135,11 +132,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, Map<String, Object>> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about Max")
-			.call()
-			.responseEntity(new MapOutputConverter());
+				.build()
+				.prompt()
+				.user("Tell me about Max")
+				.call()
+				.responseEntity(new MapOutputConverter());
 
 		assertThat(responseEntity.getResponse()).isEqualTo(chatResponse);
 		assertThat(responseEntity.getEntity().get("name")).isEqualTo("Max");
@@ -157,11 +154,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		assertThatThrownBy(() -> ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("test")
-			.call()
-			.responseEntity(MyBean.class)).isInstanceOf(RuntimeException.class);
+				.build()
+				.prompt()
+				.user("test")
+				.call()
+				.responseEntity(MyBean.class)).isInstanceOf(RuntimeException.class);
 	}
 
 	@Test
@@ -171,11 +168,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		assertThatThrownBy(() -> ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("test")
-			.call()
-			.responseEntity(MyBean.class)).isInstanceOf(RuntimeException.class);
+				.build()
+				.prompt()
+				.user("test")
+				.call()
+				.responseEntity(MyBean.class)).isInstanceOf(RuntimeException.class);
 	}
 
 	@Test
@@ -192,12 +189,12 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, Map<String, String>> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("test")
-			.call()
-			.responseEntity(new ParameterizedTypeReference<Map<String, String>>() {
-			});
+				.build()
+				.prompt()
+				.user("test")
+				.call()
+				.responseEntity(new ParameterizedTypeReference<Map<String, String>>() {
+				});
 
 		assertThat(responseEntity.getEntity()).containsEntry("key1", "value1");
 		assertThat(responseEntity.getEntity()).containsEntry("key2", "value2");
@@ -211,12 +208,12 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, List<MyBean>> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("test")
-			.call()
-			.responseEntity(new ParameterizedTypeReference<List<MyBean>>() {
-			});
+				.build()
+				.prompt()
+				.user("test")
+				.call()
+				.responseEntity(new ParameterizedTypeReference<List<MyBean>>() {
+				});
 
 		assertThat(responseEntity.getEntity()).isEmpty();
 	}
@@ -228,11 +225,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, Boolean> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Is this true?")
-			.call()
-			.responseEntity(Boolean.class);
+				.build()
+				.prompt()
+				.user("Is this true?")
+				.call()
+				.responseEntity(Boolean.class);
 
 		assertThat(responseEntity.getEntity()).isTrue();
 	}
@@ -244,11 +241,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(this.promptCaptor.capture())).willReturn(chatResponse);
 
 		ResponseEntity<ChatResponse, Integer> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("What is the answer?")
-			.call()
-			.responseEntity(Integer.class);
+				.build()
+				.prompt()
+				.user("What is the answer?")
+				.call()
+				.responseEntity(Integer.class);
 
 		assertThat(responseEntity.getEntity()).isEqualTo(1);
 	}
@@ -263,13 +260,13 @@ public class ChatClientResponseEntityTests {
 
 		var contextCatcher = new ContextCatcherCallAdvisor();
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(contextCatcher)
-			.user("Tell me about John")
-			.call()
-			.entity(new ParameterizedTypeReference<MyBean>() {
-			}, spec -> spec.useProviderStructuredOutput());
+				.build()
+				.prompt()
+				.advisors(contextCatcher)
+				.user("Tell me about John")
+				.call()
+				.entity(new ParameterizedTypeReference<MyBean>() {
+				}, spec -> spec.useProviderStructuredOutput());
 
 		assertThat(contextCatcher.getContext()).containsKey(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey());
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
@@ -284,12 +281,12 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(any(Prompt.class))).willReturn(chatResponse);
 
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about John")
-			.call()
-			.entity(new ParameterizedTypeReference<MyBean>() {
-			}, spec -> spec.validateSchema());
+				.build()
+				.prompt()
+				.user("Tell me about John")
+				.call()
+				.entity(new ParameterizedTypeReference<MyBean>() {
+				}, spec -> spec.validateSchema());
 
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
 		verify(this.chatModel, times(1)).call(any(Prompt.class));
@@ -304,12 +301,12 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(any(Prompt.class))).willReturn(invalidResponse, validResponse);
 
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about John")
-			.call()
-			.entity(new ParameterizedTypeReference<MyBean>() {
-			}, spec -> spec.validateSchema());
+				.build()
+				.prompt()
+				.user("Tell me about John")
+				.call()
+				.entity(new ParameterizedTypeReference<MyBean>() {
+				}, spec -> spec.validateSchema());
 
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
 		verify(this.chatModel, times(2)).call(any(Prompt.class));
@@ -324,12 +321,12 @@ public class ChatClientResponseEntityTests {
 
 		var contextCatcher = new ContextCatcherCallAdvisor();
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(contextCatcher)
-			.user("Tell me about John")
-			.call()
-			.entity(MyBean.class, spec -> spec.useProviderStructuredOutput());
+				.build()
+				.prompt()
+				.advisors(contextCatcher)
+				.user("Tell me about John")
+				.call()
+				.entity(MyBean.class, spec -> spec.useProviderStructuredOutput());
 
 		assertThat(contextCatcher.getContext()).containsKey(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey());
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
@@ -343,11 +340,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(any(Prompt.class))).willReturn(chatResponse);
 
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about John")
-			.call()
-			.entity(MyBean.class, spec -> spec.validateSchema());
+				.build()
+				.prompt()
+				.user("Tell me about John")
+				.call()
+				.entity(MyBean.class, spec -> spec.validateSchema());
 
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
 		verify(this.chatModel, times(1)).call(any(Prompt.class));
@@ -362,12 +359,12 @@ public class ChatClientResponseEntityTests {
 
 		var contextCatcher = new ContextCatcherCallAdvisor();
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(contextCatcher)
-			.user("Tell me about John")
-			.call()
-			.entity(new BeanOutputConverter<>(MyBean.class), spec -> spec.useProviderStructuredOutput());
+				.build()
+				.prompt()
+				.advisors(contextCatcher)
+				.user("Tell me about John")
+				.call()
+				.entity(new BeanOutputConverter<>(MyBean.class), spec -> spec.useProviderStructuredOutput());
 
 		assertThat(contextCatcher.getContext()).containsKey(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey());
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
@@ -381,11 +378,11 @@ public class ChatClientResponseEntityTests {
 		given(this.chatModel.call(any(Prompt.class))).willReturn(chatResponse);
 
 		MyBean entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.user("Tell me about John")
-			.call()
-			.entity(new BeanOutputConverter<>(MyBean.class), spec -> spec.validateSchema());
+				.build()
+				.prompt()
+				.user("Tell me about John")
+				.call()
+				.entity(new BeanOutputConverter<>(MyBean.class), spec -> spec.validateSchema());
 
 		assertThat(entity).isEqualTo(new MyBean("John", 30));
 		verify(this.chatModel, times(1)).call(any(Prompt.class));

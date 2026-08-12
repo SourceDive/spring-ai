@@ -16,15 +16,9 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -36,6 +30,11 @@ import org.springframework.ai.chat.model.StreamingChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,11 +54,11 @@ public class OpenAiCompatibleChatModelIT {
 		Stream.Builder<ChatModel> builder = Stream.builder();
 
 		builder.add(OpenAiChatModel.builder()
-			.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model("gpt-3.5-turbo")
-				.build())
-			.build());
+				.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
+						.apiKey(System.getenv("OPENAI_API_KEY"))
+						.model("gpt-3.5-turbo")
+						.build())
+				.build());
 
 		// (26.01.2025) Disable because the Groq API is down. TODO: Re-enable when the API
 		// is back up.
@@ -75,12 +74,12 @@ public class OpenAiCompatibleChatModelIT {
 
 		if (System.getenv("OPEN_ROUTER_API_KEY") != null) {
 			builder.add(OpenAiChatModel.builder()
-				.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
-					.baseUrl("https://openrouter.ai/api")
-					.apiKey(System.getenv("OPEN_ROUTER_API_KEY"))
-					.model("meta-llama/llama-3-8b-instruct")
-					.build())
-				.build());
+					.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
+							.baseUrl("https://openrouter.ai/api")
+							.apiKey(System.getenv("OPEN_ROUTER_API_KEY"))
+							.model("meta-llama/llama-3-8b-instruct")
+							.build())
+					.build());
 		}
 
 		return builder.build();
@@ -106,11 +105,11 @@ public class OpenAiCompatibleChatModelIT {
 		assertThat(responses).hasSizeGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}

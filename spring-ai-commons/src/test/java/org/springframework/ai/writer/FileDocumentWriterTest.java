@@ -16,17 +16,16 @@
 
 package org.springframework.ai.writer;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.document.MetadataMode;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.document.MetadataMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,25 +47,25 @@ public class FileDocumentWriterTest {
 		this.testFileName = this.tempDir.resolve("file-document-test-output.txt").toString();
 		this.testDocuments = List.of(
 				Document.builder()
-					.text("Document one introduces the core functionality of Spring AI.")
-					.metadata("page_number", "1")
-					.metadata("end_page_number", "2")
-					.metadata("source", "intro.pdf")
-					.metadata("title", "Spring AI Overview")
-					.metadata("author", "QA Team")
-					.build(),
+						.text("Document one introduces the core functionality of Spring AI.")
+						.metadata("page_number", "1")
+						.metadata("end_page_number", "2")
+						.metadata("source", "intro.pdf")
+						.metadata("title", "Spring AI Overview")
+						.metadata("author", "QA Team")
+						.build(),
 				Document.builder()
-					.text("Document two illustrates multi-line handling and line breaks.\nEnsure preservation of formatting.")
-					.metadata("page_number", "3")
-					.metadata("end_page_number", "4")
-					.metadata("source", "formatting.pdf")
-					.build(),
+						.text("Document two illustrates multi-line handling and line breaks.\nEnsure preservation of formatting.")
+						.metadata("page_number", "3")
+						.metadata("end_page_number", "4")
+						.metadata("source", "formatting.pdf")
+						.build(),
 				Document.builder()
-					.text("Document three checks metadata inclusion and output formatting behavior.")
-					.metadata("page_number", "5")
-					.metadata("end_page_number", "6")
-					.metadata("version", "v1.2")
-					.build());
+						.text("Document three checks metadata inclusion and output formatting behavior.")
+						.metadata("page_number", "5")
+						.metadata("end_page_number", "6")
+						.metadata("version", "v1.2")
+						.build());
 	}
 
 	@Test

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chat.memory.repository.redis;
 
-import org.jspecify.annotations.NullMarked;

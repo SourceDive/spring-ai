@@ -17,12 +17,11 @@
 package org.springframework.ai.testcontainers.service.connection.opensearch;
 
 import org.jspecify.annotations.Nullable;
-import org.testcontainers.containers.localstack.LocalStackContainer;
-
 import org.springframework.ai.vectorstore.opensearch.autoconfigure.AwsOpenSearchConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
 import org.springframework.util.Assert;
+import org.testcontainers.containers.localstack.LocalStackContainer;
 
 /**
  * @author Eddú Meléndez

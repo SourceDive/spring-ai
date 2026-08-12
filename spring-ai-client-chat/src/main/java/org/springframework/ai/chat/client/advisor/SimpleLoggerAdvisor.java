@@ -16,13 +16,9 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.function.Function;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClientMessageAggregator;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -32,6 +28,9 @@ import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
 import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.util.JacksonUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.function.Function;
 
 /**
  * A simple logger advisor that logs the request and response messages.
@@ -63,7 +62,7 @@ public class SimpleLoggerAdvisor implements CallAdvisor, StreamAdvisor {
 	}
 
 	public SimpleLoggerAdvisor(@Nullable Function<@Nullable ChatClientRequest, String> requestToString,
-			@Nullable Function<@Nullable ChatResponse, String> responseToString, int order) {
+	                           @Nullable Function<@Nullable ChatResponse, String> responseToString, int order) {
 		this.requestToString = requestToString != null ? requestToString : DEFAULT_REQUEST_TO_STRING;
 		this.responseToString = responseToString != null ? responseToString : DEFAULT_RESPONSE_TO_STRING;
 		this.order = order;
@@ -82,7 +81,7 @@ public class SimpleLoggerAdvisor implements CallAdvisor, StreamAdvisor {
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		logRequest(chatClientRequest);
 
 		Flux<ChatClientResponse> chatClientResponses = streamAdvisorChain.nextStream(chatClientRequest);

@@ -16,18 +16,17 @@
 
 package org.springframework.ai.rag;
 
-import java.util.List;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a query in the context of a Retrieval Augmented Generation (RAG) flow.
  *
- * @param text the text of the query
+ * @param text    the text of the query
  * @param history the messages in the conversation history
  * @param context the context of the query
  * @author Thomas Vitale
@@ -47,11 +46,11 @@ public record Query(String text, List<Message> history, Map<String, Object> cont
 		this(text, List.of(), Map.of());
 	}
 
-	public Builder mutate() {
+	public Builder mutate () {
 		return new Builder().text(this.text).history(this.history).context(this.context);
 	}
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

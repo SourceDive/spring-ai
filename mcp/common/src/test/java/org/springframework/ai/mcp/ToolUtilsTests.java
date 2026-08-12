@@ -16,29 +16,23 @@
 
 package org.springframework.ai.mcp;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
-import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import org.junit.jupiter.api.Test;
-import reactor.test.StepVerifier;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
+import reactor.test.StepVerifier;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -79,20 +73,20 @@ class ToolUtilsTests {
 	@Test
 	void prefixedToolNameShouldThrowExceptionForNullOrEmptyInputs() {
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName(null, "toolName"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName("", "toolName"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName("prefix", null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 
 		assertThatThrownBy(() -> McpToolUtils.prefixedToolName("prefix", ""))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Prefix or toolName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Prefix or toolName cannot be null or empty");
 	}
 
 	@Test
@@ -139,13 +133,13 @@ class ToolUtilsTests {
 	void prefixedToolNameShouldHandleUnicodeBoundaries() {
 		// Test characters at the boundaries of the Chinese Unicode range
 		String result1 = McpToolUtils.prefixedToolName("prefix", "tool\u4e00"); // First
-																				// Chinese
-																				// character
+		// Chinese
+		// character
 		assertThat(result1).isEqualTo("p_tool\u4e00");
 
 		String result2 = McpToolUtils.prefixedToolName("prefix", "tool\u9fa5"); // Last
-																				// Chinese
-																				// character
+		// Chinese
+		// character
 		assertThat(result2).isEqualTo("p_tool\u9fa5");
 	}
 
@@ -153,17 +147,17 @@ class ToolUtilsTests {
 	void prefixedToolNameShouldExcludeNonChineseUnicodeCharacters() {
 		// Test with Japanese Hiragana (outside Chinese range)
 		String result1 = McpToolUtils.prefixedToolName("prefix", "toolあ"); // Japanese
-																			// Hiragana
+		// Hiragana
 		assertThat(result1).isEqualTo("p_tool");
 
 		// Test with Korean characters (outside Chinese range)
 		String result2 = McpToolUtils.prefixedToolName("prefix", "tool한"); // Korean
-																			// character
+		// character
 		assertThat(result2).isEqualTo("p_tool");
 
 		// Test with Arabic characters (outside Chinese range)
 		String result3 = McpToolUtils.prefixedToolName("prefix", "toolع"); // Arabic
-																			// character
+		// character
 		assertThat(result3).isEqualTo("p_tool");
 	}
 
@@ -184,13 +178,13 @@ class ToolUtilsTests {
 	void prefixedToolNameShouldSupportExtendedHanCharacters() {
 		// Test boundary character at end of CJK Unified Ideographs block
 		String result1 = McpToolUtils.prefixedToolName("prefix", "tool\u9fff"); // CJK
-																				// block
-																				// boundary
+		// block
+		// boundary
 		assertThat(result1).isEqualTo("p_tool\u9fff");
 
 		// Test CJK Extension A characters
 		String result2 = McpToolUtils.prefixedToolName("prefix", "tool\u3400"); // CJK Ext
-																				// A
+		// A
 		assertThat(result2).isEqualTo("p_tool\u3400");
 	}
 
@@ -198,7 +192,7 @@ class ToolUtilsTests {
 	void prefixedToolNameShouldSupportCompatibilityIdeographs() {
 		// Test CJK Compatibility Ideographs
 		String result = McpToolUtils.prefixedToolName("prefix", "tool\uf900"); // Compatibility
-																				// ideograph
+		// ideograph
 		assertThat(result).isEqualTo("p_tool\uf900");
 	}
 
@@ -229,7 +223,7 @@ class ToolUtilsTests {
 		assertThat(toolSpecification.tool().name()).isEqualTo("test");
 
 		CallToolResult result = toolSpecification.callHandler()
-			.apply(mock(McpSyncServerExchange.class), new McpSchema.CallToolRequest("test", Map.of()));
+				.apply(mock(McpSyncServerExchange.class), new McpSchema.CallToolRequest("test", Map.of()));
 		TextContent content = (TextContent) result.content().get(0);
 		assertThat(content.text()).isEqualTo("success");
 		assertThat(result.isError()).isFalse();
@@ -243,7 +237,7 @@ class ToolUtilsTests {
 
 		assertThat(toolSpecification).isNotNull();
 		CallToolResult result = toolSpecification.callHandler()
-			.apply(mock(McpSyncServerExchange.class), new McpSchema.CallToolRequest("test", Map.of()));
+				.apply(mock(McpSyncServerExchange.class), new McpSchema.CallToolRequest("test", Map.of()));
 		TextContent content = (TextContent) result.content().get(0);
 		assertThat(content.text()).isEqualTo("error");
 		assertThat(result.isError()).isTrue();
@@ -272,14 +266,14 @@ class ToolUtilsTests {
 		assertThat(toolSpecification.tool().name()).isEqualTo("test");
 
 		StepVerifier
-			.create(toolSpecification.callHandler()
-				.apply(mock(McpAsyncServerExchange.class), mock(McpSchema.CallToolRequest.class)))
-			.assertNext(result -> {
-				TextContent content = (TextContent) result.content().get(0);
-				assertThat(content.text()).isEqualTo("success");
-				assertThat(result.isError()).isFalse();
-			})
-			.verifyComplete();
+				.create(toolSpecification.callHandler()
+						.apply(mock(McpAsyncServerExchange.class), mock(McpSchema.CallToolRequest.class)))
+				.assertNext(result -> {
+					TextContent content = (TextContent) result.content().get(0);
+					assertThat(content.text()).isEqualTo("success");
+					assertThat(result.isError()).isFalse();
+				})
+				.verifyComplete();
 	}
 
 	@Test
@@ -290,14 +284,14 @@ class ToolUtilsTests {
 
 		assertThat(toolSpecification).isNotNull();
 		StepVerifier
-			.create(toolSpecification.callHandler()
-				.apply(mock(McpAsyncServerExchange.class), mock(McpSchema.CallToolRequest.class)))
-			.assertNext(result -> {
-				TextContent content = (TextContent) result.content().get(0);
-				assertThat(content.text()).isEqualTo("error");
-				assertThat(result.isError()).isTrue();
-			})
-			.verifyComplete();
+				.create(toolSpecification.callHandler()
+						.apply(mock(McpAsyncServerExchange.class), mock(McpSchema.CallToolRequest.class)))
+				.assertNext(result -> {
+					TextContent content = (TextContent) result.content().get(0);
+					assertThat(content.text()).isEqualTo("error");
+					assertThat(result.isError()).isTrue();
+				})
+				.verifyComplete();
 	}
 
 	@Test
@@ -318,10 +312,10 @@ class ToolUtilsTests {
 	private ToolCallback createMockToolCallback(String name, String result) {
 		ToolCallback callback = mock(ToolCallback.class);
 		ToolDefinition definition = DefaultToolDefinition.builder()
-			.name(name)
-			.description("Test tool")
-			.inputSchema("{}")
-			.build();
+				.name(name)
+				.description("Test tool")
+				.inputSchema("{}")
+				.build();
 		when(callback.getToolDefinition()).thenReturn(definition);
 		when(callback.call(anyString(), any())).thenReturn(result);
 		return callback;
@@ -330,10 +324,10 @@ class ToolUtilsTests {
 	private ToolCallback createMockToolCallback(String name, RuntimeException error) {
 		ToolCallback callback = mock(ToolCallback.class);
 		ToolDefinition definition = DefaultToolDefinition.builder()
-			.name(name)
-			.description("Test tool")
-			.inputSchema("{}")
-			.build();
+				.name(name)
+				.description("Test tool")
+				.inputSchema("{}")
+				.build();
 		when(callback.getToolDefinition()).thenReturn(definition);
 		when(callback.call(anyString(), any())).thenThrow(error);
 		return callback;
@@ -459,8 +453,8 @@ class ToolUtilsTests {
 		when(mockClient2.listTools()).thenReturn(listToolsResult2);
 
 		assertThatThrownBy(() -> McpToolUtils.getToolCallbacksFromSyncClients(mockClient1, mockClient2))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Multiple tools with the same name");
 	}
 
 }

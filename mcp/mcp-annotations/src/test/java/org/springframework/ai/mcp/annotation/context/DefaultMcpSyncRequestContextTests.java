@@ -16,39 +16,22 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
-import java.util.Map;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
-import io.modelcontextprotocol.spec.McpSchema.ElicitFormRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
-import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.ListRootsResult;
-import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.SamplingMessage;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
 import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.ElicitationSpec;
 import org.springframework.core.ParameterizedTypeReference;
+
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link DefaultMcpSyncRequestContext}.
@@ -77,9 +60,9 @@ public class DefaultMcpSyncRequestContextTests {
 	public void testBuilderWithValidParameters() {
 		CallToolRequest testRequest = new CallToolRequest("test-tool", Map.of());
 		McpSyncRequestContext ctx = DefaultMcpSyncRequestContext.builder()
-			.request(testRequest)
-			.exchange(this.exchange)
-			.build();
+				.request(testRequest)
+				.exchange(this.exchange)
+				.build();
 
 		assertThat(ctx).isNotNull();
 		assertThat(ctx.request()).isEqualTo(testRequest);
@@ -89,16 +72,16 @@ public class DefaultMcpSyncRequestContextTests {
 	@Test
 	public void testBuilderWithNullRequest() {
 		assertThatThrownBy(() -> DefaultMcpSyncRequestContext.builder().request(null).exchange(this.exchange).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Request must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Request must not be null");
 	}
 
 	@Test
 	public void testBuilderWithNullExchange() {
 		CallToolRequest testRequest = new CallToolRequest("test-tool", Map.of());
 		assertThatThrownBy(() -> DefaultMcpSyncRequestContext.builder().request(testRequest).exchange(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Exchange must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Exchange must not be null");
 	}
 
 	// Roots Tests
@@ -151,7 +134,7 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		assertThatThrownBy(() -> this.context.roots()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Roots not supported");
+				.hasMessageContaining("Roots not supported");
 	}
 
 	@Test
@@ -161,7 +144,7 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
 		assertThatThrownBy(() -> this.context.roots()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Roots not supported");
+				.hasMessageContaining("Roots not supported");
 	}
 
 	// Elicitation Tests
@@ -231,7 +214,7 @@ public class DefaultMcpSyncRequestContextTests {
 		when(capabilities.elicitation()).thenReturn(elicitation);
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
-		record Person(String name, int age) {
+		record Person (String name,int age){
 		}
 
 		Map<String, Object> contentMap = Map.of("name", "Jane", "age", 25);
@@ -269,8 +252,8 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
 		assertThatThrownBy(() -> this.context.elicit((ParameterizedTypeReference<String>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Elicitation response type must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Elicitation response type must not be null");
 	}
 
 	@Test
@@ -301,9 +284,9 @@ public class DefaultMcpSyncRequestContextTests {
 		when(capabilities.elicitation()).thenReturn(elicitation);
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
-		record Address(String street, String city) {
+		record Address (String street, String city){
 		}
-		record PersonWithAddress(String name, int age, Address address) {
+		record PersonWithAddress (String name,int age, Address address){
 		}
 
 		Map<String, Object> addressMap = Map.of("street", "123 Main St", "city", "Springfield");
@@ -315,8 +298,8 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.createElicitation(any(ElicitRequest.class))).thenReturn(expectedResult);
 
 		StructuredElicitResult<PersonWithAddress> result = this.context
-			.elicit(e -> e.message("Test message").meta(null), new ParameterizedTypeReference<PersonWithAddress>() {
-			});
+				.elicit(e -> e.message("Test message").meta(null), new ParameterizedTypeReference<PersonWithAddress>() {
+				});
 
 		assertThat(result).isNotNull();
 		assertThat(result.action()).isEqualTo(ElicitResult.Action.ACCEPT);
@@ -344,8 +327,8 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.createElicitation(any(ElicitRequest.class))).thenReturn(expectedResult);
 
 		StructuredElicitResult<Map<String, Object>> result = this.context
-			.elicit(e -> e.message("Test message").meta(null), new ParameterizedTypeReference<Map<String, Object>>() {
-			});
+				.elicit(e -> e.message("Test message").meta(null), new ParameterizedTypeReference<Map<String, Object>>() {
+				});
 
 		assertThat(result).isNotNull();
 		assertThat(result.structuredContent()).containsKey("items");
@@ -365,8 +348,8 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.createElicitation(any(ElicitRequest.class))).thenReturn(expectedResult);
 
 		StructuredElicitResult<Map<String, Object>> result = this.context
-			.elicit(e -> e.message("Test message").meta(null), new ParameterizedTypeReference<Map<String, Object>>() {
-			});
+				.elicit(e -> e.message("Test message").meta(null), new ParameterizedTypeReference<Map<String, Object>>() {
+				});
 
 		assertThat(result).isNotNull();
 		assertThat(result.structuredContent()).containsEntry("result", "success");
@@ -382,9 +365,9 @@ public class DefaultMcpSyncRequestContextTests {
 
 		ElicitResult expectedResult = mock(ElicitResult.class);
 		ElicitRequest elicitRequest = ElicitRequest.builder()
-			.message("Test message")
-			.requestedSchema(Map.of("type", "string"))
-			.build();
+				.message("Test message")
+				.requestedSchema(Map.of("type", "string"))
+				.build();
 
 		when(this.exchange.createElicitation(elicitRequest)).thenReturn(expectedResult);
 
@@ -399,23 +382,23 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		assertThatThrownBy(() -> this.context.elicit((ElicitRequest) null)).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Elicitation not supported by the clien");
+				.hasMessageContaining("Elicitation not supported by the clien");
 
 		assertThatThrownBy(
 				() -> this.context.elicit((Consumer<ElicitationSpec>) null, (ParameterizedTypeReference<?>) null))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Elicitation not supported by the clien");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Elicitation not supported by the clien");
 
 		assertThatThrownBy(() -> this.context.elicit((Consumer<ElicitationSpec>) null, (Class<?>) null))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Elicitation not supported by the clien");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Elicitation not supported by the clien");
 
 		assertThatThrownBy(() -> this.context.elicit((ParameterizedTypeReference<?>) null))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Elicitation not supported by the clien");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Elicitation not supported by the clien");
 
 		assertThatThrownBy(() -> this.context.elicit((Class<?>) null)).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Elicitation not supported by the clien");
+				.hasMessageContaining("Elicitation not supported by the clien");
 	}
 
 	// Sampling Tests
@@ -500,9 +483,9 @@ public class DefaultMcpSyncRequestContextTests {
 
 		CreateMessageResult expectedResult = mock(CreateMessageResult.class);
 		CreateMessageRequest createRequest = CreateMessageRequest.builder()
-			.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
-			.maxTokens(500)
-			.build();
+				.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
+				.maxTokens(500)
+				.build();
 
 		when(this.exchange.createMessage(createRequest)).thenReturn(expectedResult);
 
@@ -517,19 +500,19 @@ public class DefaultMcpSyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		CreateMessageRequest createRequest = CreateMessageRequest.builder()
-			.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
-			.maxTokens(500)
-			.build();
+				.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
+				.maxTokens(500)
+				.build();
 
 		assertThatThrownBy(() -> this.context.sample(createRequest)).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Sampling not supported by the client");
+				.hasMessageContaining("Sampling not supported by the client");
 
 		assertThatThrownBy(() -> this.context.sample("Message 1")).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Sampling not supported by the client");
+				.hasMessageContaining("Sampling not supported by the client");
 
 		assertThatThrownBy(() -> this.context.sample(spec -> spec.message("Test")))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Sampling not supported by the client");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Sampling not supported by the client");
 	}
 
 	// Progress Tests
@@ -537,14 +520,14 @@ public class DefaultMcpSyncRequestContextTests {
 	@Test
 	public void testProgressWithPercentage() {
 		CallToolRequest requestWithToken = CallToolRequest.builder()
-			.name("test-tool")
-			.arguments(Map.of())
-			.progressToken("token-123")
-			.build();
+				.name("test-tool")
+				.arguments(Map.of())
+				.progressToken("token-123")
+				.build();
 		McpSyncRequestContext contextWithToken = DefaultMcpSyncRequestContext.builder()
-			.request(requestWithToken)
-			.exchange(this.exchange)
-			.build();
+				.request(requestWithToken)
+				.exchange(this.exchange)
+				.build();
 
 		contextWithToken.progress(50);
 
@@ -560,23 +543,23 @@ public class DefaultMcpSyncRequestContextTests {
 	@Test
 	public void testProgressWithInvalidPercentage() {
 		assertThatThrownBy(() -> this.context.progress(-1)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Percentage must be between 0 and 100");
+				.hasMessageContaining("Percentage must be between 0 and 100");
 
 		assertThatThrownBy(() -> this.context.progress(101)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Percentage must be between 0 and 100");
+				.hasMessageContaining("Percentage must be between 0 and 100");
 	}
 
 	@Test
 	public void testProgressWithConsumer() {
 		CallToolRequest requestWithToken = CallToolRequest.builder()
-			.name("test-tool")
-			.arguments(Map.of())
-			.progressToken("token-123")
-			.build();
+				.name("test-tool")
+				.arguments(Map.of())
+				.progressToken("token-123")
+				.build();
 		McpSyncRequestContext contextWithToken = DefaultMcpSyncRequestContext.builder()
-			.request(requestWithToken)
-			.exchange(this.exchange)
-			.build();
+				.request(requestWithToken)
+				.exchange(this.exchange)
+				.build();
 
 		contextWithToken.progress(spec -> {
 			spec.progress(0.75);
@@ -689,7 +672,7 @@ public class DefaultMcpSyncRequestContextTests {
 	@Test
 	public void testLogWithEmptyMessage() {
 		assertThatThrownBy(() -> this.context.debug("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Log message must not be empty");
+				.hasMessageContaining("Log message must not be empty");
 	}
 
 	// Getter Tests
@@ -731,14 +714,14 @@ public class DefaultMcpSyncRequestContextTests {
 	public void testGetRequestMeta() {
 		Map<String, Object> meta = Map.of("key", "value");
 		CallToolRequest requestWithMeta = CallToolRequest.builder()
-			.name("test-tool")
-			.arguments(Map.of())
-			.meta(meta)
-			.build();
+				.name("test-tool")
+				.arguments(Map.of())
+				.meta(meta)
+				.build();
 		McpSyncRequestContext contextWithMeta = DefaultMcpSyncRequestContext.builder()
-			.request(requestWithMeta)
-			.exchange(this.exchange)
-			.build();
+				.request(requestWithMeta)
+				.exchange(this.exchange)
+				.build();
 
 		assertThat(contextWithMeta.requestMeta()).isEqualTo(meta);
 	}

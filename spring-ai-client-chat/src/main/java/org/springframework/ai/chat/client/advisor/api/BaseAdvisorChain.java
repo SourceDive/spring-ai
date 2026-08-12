@@ -16,11 +16,10 @@
 
 package org.springframework.ai.chat.client.advisor.api;
 
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.chat.client.advisor.DefaultAroundAdvisorChain;
+
+import java.util.List;
 
 /**
  * A base interface for advisor chains that can be used to chain multiple advisors
@@ -39,6 +38,7 @@ public interface BaseAdvisorChain extends CallAdvisorChain, StreamAdvisorChain {
 	 * <p>
 	 * Concrete {@link BaseAdvisorChain} classes must override this to return the most
 	 * concrete builder implementation.
+	 *
 	 * @return a pre-populated {@link Builder}
 	 */
 	// TODO: change from default to abstract once all implementations override mutate()
@@ -49,6 +49,7 @@ public interface BaseAdvisorChain extends CallAdvisorChain, StreamAdvisorChain {
 	/**
 	 * Creates a new {@link Builder} for the default {@link BaseAdvisorChain}
 	 * implementation.
+	 *
 	 * @param observationRegistry the observation registry to use
 	 * @return a new {@link Builder}
 	 */
@@ -65,6 +66,7 @@ public interface BaseAdvisorChain extends CallAdvisorChain, StreamAdvisorChain {
 
 		/**
 		 * Adds a single {@link Advisor} to the chain.
+		 *
 		 * @param advisor the advisor to add; must not be null
 		 * @return this builder
 		 */
@@ -72,6 +74,7 @@ public interface BaseAdvisorChain extends CallAdvisorChain, StreamAdvisorChain {
 
 		/**
 		 * Adds multiple {@link Advisor} instances to the chain.
+		 *
 		 * @param advisors the advisors to add; must not be null or contain null elements
 		 * @return this builder
 		 */
@@ -79,6 +82,7 @@ public interface BaseAdvisorChain extends CallAdvisorChain, StreamAdvisorChain {
 
 		/**
 		 * Builds and returns the {@link BaseAdvisorChain}.
+		 *
 		 * @return the constructed chain
 		 */
 		BaseAdvisorChain build();

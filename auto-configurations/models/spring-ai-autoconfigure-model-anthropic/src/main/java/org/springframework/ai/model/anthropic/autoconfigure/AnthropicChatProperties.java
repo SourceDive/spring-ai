@@ -16,21 +16,20 @@
 
 package org.springframework.ai.model.anthropic.autoconfigure;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.anthropic.models.messages.Metadata;
 import com.anthropic.models.messages.OutputConfig;
 import com.anthropic.models.messages.ThinkingConfigParam;
 import com.anthropic.models.messages.ToolChoice;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.AnthropicServiceTier;
 import org.springframework.ai.anthropic.AnthropicWebSearchTool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Anthropic Chat autoconfiguration properties.
@@ -221,23 +220,23 @@ public class AnthropicChatProperties {
 
 	public AnthropicChatOptions toOptions() {
 		return AnthropicChatOptions.builder()
-			.model(this.getModel())
-			.maxTokens(this.maxTokens)
-			.metadata(this.metadata)
-			.stopSequences(this.stopSequences)
-			.temperature(this.temperature)
-			.topP(this.topP)
-			.topK(this.topK)
-			.toolChoice(this.toolChoice)
-			.thinking(this.thinking)
-			.disableParallelToolUse(this.disableParallelToolUse)
-			.outputConfig(this.outputConfig)
-			.webSearchTool(this.webSearchTool)
-			.serviceTier(this.serviceTier)
-			.inferenceGeo(this.inferenceGeo)
-			.cacheOptions(this.cacheOptions != null ? this.cacheOptions.toOptions() : null)
-			.httpHeaders(this.httpHeaders)
-			.build();
+				.model(this.getModel())
+				.maxTokens(this.maxTokens)
+				.metadata(this.metadata)
+				.stopSequences(this.stopSequences)
+				.temperature(this.temperature)
+				.topP(this.topP)
+				.topK(this.topK)
+				.toolChoice(this.toolChoice)
+				.thinking(this.thinking)
+				.disableParallelToolUse(this.disableParallelToolUse)
+				.outputConfig(this.outputConfig)
+				.webSearchTool(this.webSearchTool)
+				.serviceTier(this.serviceTier)
+				.inferenceGeo(this.inferenceGeo)
+				.cacheOptions(this.cacheOptions != null ? this.cacheOptions.toOptions() : null)
+				.httpHeaders(this.httpHeaders)
+				.build();
 	}
 
 	@DeprecatedConfigurationProperty(replacement = "spring.ai.anthropic.chat")

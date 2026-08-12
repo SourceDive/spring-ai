@@ -76,11 +76,11 @@ public class VertexAiTextEmbeddingProperties {
 
 	public VertexAiTextEmbeddingOptions toOptions() {
 		return VertexAiTextEmbeddingOptions.builder()
-			.model(this.model)
-			.taskType(this.taskType)
-			.dimensions(this.outputDimensionality)
-			.title(this.title)
-			.build();
+				.model(this.model)
+				.taskType(this.taskType)
+				.dimensions(this.outputDimensionality)
+				.title(this.title)
+				.build();
 	}
 
 	private Options options = new Options();

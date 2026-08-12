@@ -31,6 +31,7 @@ public interface ChatClientBuilderCustomizer {
 
 	/**
 	 * Callback to customize a {@link ChatClient.Builder ChatClient.Builder} instance.
+	 *
 	 * @param chatClientBuilder the client builder to customize
 	 */
 	void customize(ChatClient.Builder chatClientBuilder);

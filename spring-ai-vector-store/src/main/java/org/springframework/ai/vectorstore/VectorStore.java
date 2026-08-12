@@ -16,11 +16,7 @@
 
 package org.springframework.ai.vectorstore;
 
-import java.util.List;
-import java.util.Optional;
-
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentWriter;
 import org.springframework.ai.embedding.BatchingStrategy;
@@ -28,6 +24,9 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.observation.DefaultVectorStoreObservationConvention;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationConvention;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The {@code VectorStore} interface defines the operations for managing and querying
@@ -45,8 +44,9 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 
 	/**
 	 * Adds list of {@link Document}s to the vector store.
+	 *
 	 * @param documents the list of documents to store. Throws an exception if the
-	 * underlying provider checks for duplicate IDs.
+	 *                  underlying provider checks for duplicate IDs.
 	 */
 	void add(List<Document> documents);
 
@@ -57,12 +57,14 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 
 	/**
 	 * Deletes documents from the vector store.
+	 *
 	 * @param idList list of document ids for which documents will be removed.
 	 */
 	void delete(List<String> idList);
 
 	/**
 	 * Deletes documents from the vector store based on filter criteria.
+	 *
 	 * @param filterExpression Filter expression to identify documents to delete
 	 * @throws IllegalStateException if the underlying delete causes an exception
 	 */
@@ -72,9 +74,10 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 	 * Deletes documents from the vector store using a string filter expression. Converts
 	 * the string filter to an Expression object and delegates to
 	 * {@link #delete(Filter.Expression)}.
+	 *
 	 * @param filterExpression String representation of the filter criteria
 	 * @throws IllegalArgumentException if the filter expression is null
-	 * @throws IllegalStateException if the underlying delete causes an exception
+	 * @throws IllegalStateException    if the underlying delete causes an exception
 	 */
 	default void delete(String filterExpression) {
 		SearchRequest searchRequest = SearchRequest.builder().filterExpression(filterExpression).build();
@@ -85,17 +88,18 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 
 	/**
 	 * Returns the native client if available in this vector store implementation.
-	 *
+	 * <p>
 	 * Note on usage: 1. Returns empty Optional when no native client is available 2. Due
 	 * to Java type erasure, runtime type checking is not possible
-	 *
+	 * <p>
 	 * Example usage: When working with implementation with known native client:
 	 * Optional<NativeClientType> client = vectorStore.getNativeClient();
-	 *
+	 * <p>
 	 * Note: Using Optional<?> will return the native client if one exists, rather than an
 	 * empty Optional. For type safety, prefer using the specific client type.
-	 * @return Optional containing native client if available, empty Optional otherwise
+	 *
 	 * @param <T> The type of the native client
+	 * @return Optional containing native client if available, empty Optional otherwise
 	 */
 	default <T> Optional<T> getNativeClient() {
 		return Optional.empty();
@@ -106,13 +110,14 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 	 * pattern for configuring observation-related settings.
 	 *
 	 * @param <T> the concrete builder type, enabling method chaining with the correct
-	 * return type
+	 *            return type
 	 */
 	interface Builder<T extends Builder<T>> {
 
 		/**
 		 * Sets the registry for collecting observations and metrics. Defaults to
 		 * {@link ObservationRegistry#NOOP} if not specified.
+		 *
 		 * @param observationRegistry the registry to use for observations
 		 * @return the builder instance for method chaining
 		 */
@@ -121,6 +126,7 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 		/**
 		 * Sets a custom convention for creating observations. If not specified,
 		 * {@link DefaultVectorStoreObservationConvention} will be used.
+		 *
 		 * @param convention the custom observation convention to use
 		 * @return the builder instance for method chaining
 		 */
@@ -128,6 +134,7 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 
 		/**
 		 * Sets the batching strategy.
+		 *
 		 * @param batchingStrategy the strategy to use
 		 * @return the builder instance for method chaining
 		 */
@@ -135,6 +142,7 @@ public interface VectorStore extends DocumentWriter, VectorStoreRetriever {
 
 		/**
 		 * Builds and returns a new VectorStore instance with the configured settings.
+		 *
 		 * @return a new VectorStore instance
 		 */
 		VectorStore build();

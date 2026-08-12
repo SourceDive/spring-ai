@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.deepseek.api.common;
 
-import org.jspecify.annotations.NullMarked;

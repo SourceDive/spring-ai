@@ -16,12 +16,7 @@
 
 package org.springframework.ai.vectorstore.mariadb;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
@@ -29,15 +24,12 @@ import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Diego Dupin
@@ -57,8 +49,8 @@ public class MariaDBFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo(
 				"JSON_VALUE(`metadata`, '$.\"genre\"') = 'drama' AND JSON_VALUE(`metadata`, '$.\"year\"') >= 2020");
 	}
@@ -75,12 +67,12 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr)
-			.isEqualTo("JSON_VALUE(`metadata`, '$.\"year\"') >= 2020 OR JSON_VALUE(`metadata`, '$.\"country\"') = 'BG'"
-					+ " AND JSON_VALUE(`metadata`, '$.\"city\"') != 'Sofia'");
+				.isEqualTo("JSON_VALUE(`metadata`, '$.\"year\"') >= 2020 OR JSON_VALUE(`metadata`, '$.\"country\"') = 'BG'"
+						+ " AND JSON_VALUE(`metadata`, '$.\"city\"') != 'Sofia'");
 	}
 
 	@Test
@@ -91,8 +83,8 @@ public class MariaDBFilterExpressionConverterTests {
 						new Expression(EQ, new Key("country"), new Value("BG")))),
 				new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv")))));
 		assertThat(vectorExpr)
-			.isEqualTo("(JSON_VALUE(`metadata`, '$.\"year\"') >= 2020 OR JSON_VALUE(`metadata`, '$.\"country\"') ="
-					+ " 'BG') AND JSON_VALUE(`metadata`, '$.\"city\"') NOT IN ('Sofia','Plovdiv')");
+				.isEqualTo("(JSON_VALUE(`metadata`, '$.\"year\"') >= 2020 OR JSON_VALUE(`metadata`, '$.\"country\"') ="
+						+ " 'BG') AND JSON_VALUE(`metadata`, '$.\"city\"') NOT IN ('Sofia','Plovdiv')");
 	}
 
 	@Test
@@ -104,26 +96,26 @@ public class MariaDBFilterExpressionConverterTests {
 				new Expression(IN, new Key("country"), new Value(List.of("BG", "NL", "US")))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("JSON_VALUE(`metadata`, '$.\"isOpen\"') = true AND JSON_VALUE(`metadata`, '$.\"year\"') >= 2020"
-					+ " AND JSON_VALUE(`metadata`, '$.\"country\"') IN ('BG','NL','US')");
+				.isEqualTo("JSON_VALUE(`metadata`, '$.\"isOpen\"') = true AND JSON_VALUE(`metadata`, '$.\"year\"') >= 2020"
+						+ " AND JSON_VALUE(`metadata`, '$.\"country\"') IN ('BG','NL','US')");
 	}
 
 	@Test
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("JSON_VALUE(`metadata`, '$.\"temperature\"') >= -15.6 AND JSON_VALUE(`metadata`,"
-					+ " '$.\"temperature\"') <= 20.13");
+				.isEqualTo("JSON_VALUE(`metadata`, '$.\"temperature\"') >= -15.6 AND JSON_VALUE(`metadata`,"
+						+ " '$.\"temperature\"') <= 20.13");
 	}
 
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"\\\\\"country 1 2 3\\\\\"\"') = 'BG'");
 	}
 
@@ -131,7 +123,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testEmptyList() {
 		// category IN []
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("category"), new Value(List.of())));
+				.convertExpression(new Expression(IN, new Key("category"), new Value(List.of())));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"category\"') IN ()");
 	}
 
@@ -139,7 +131,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testSingleItemList() {
 		// status IN ["active"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
+				.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"status\"') IN ('active')");
 	}
 
@@ -147,7 +139,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testNullValue() {
 		// description == null
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("description"), new Value(null)));
+				.convertExpression(new Expression(EQ, new Key("description"), new Value(null)));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"description\"') = null");
 	}
 
@@ -155,7 +147,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testNestedJsonPath() {
 		// entity.profile.name == "EntityA"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("entity.profile.name"), new Value("EntityA")));
+				.convertExpression(new Expression(EQ, new Key("entity.profile.name"), new Value("EntityA")));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"entity.profile.name\"') = 'EntityA'");
 	}
 
@@ -211,7 +203,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testNinWithMixedTypes() {
 		// status NIN ["A", "B", "C"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("status"), new Value(List.of("A", "B", "C"))));
+				.convertExpression(new Expression(NIN, new Key("status"), new Value(List.of("A", "B", "C"))));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"status\"') NOT IN ('A','B','C')");
 	}
 
@@ -226,7 +218,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testArrayIndexAccess() {
 		// tags[0] == "important"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("tags[0]"), new Value("important")));
+				.convertExpression(new Expression(EQ, new Key("tags[0]"), new Value("important")));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"tags[0]\"') = 'important'");
 	}
 
@@ -238,7 +230,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Malicious value: ' OR '1'='1
 		String maliciousValue = "' OR '1'='1";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("department"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("department"), new Value(maliciousValue)));
 
 		// Expected format with SQL-escaped single quotes (doubled)
 		// The single quote before OR should be doubled: ''' OR
@@ -252,7 +244,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Attempt to inject using backslash escape: value\'
 		String maliciousValue = "value\\'";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// Should escape both backslash and quote
 		// Input: value\' → Output: value\\''' (backslash becomes \\, quote becomes '')
@@ -264,7 +256,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Attempt to inject using double quotes: value" OR field="admin
 		String maliciousValue = "value\" OR field=\"admin";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// In SQL single-quoted strings, double quotes don't need escaping
 		// They are treated as literal characters
@@ -276,7 +268,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Attempt to inject using newline: value\n OR field='admin'
 		String maliciousValue = "value\n OR field='admin'";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// Should escape newline and single quotes
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"field\"') = 'value\\n OR field=''admin'''");
@@ -291,7 +283,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Complex injection with multiple special characters
 		String maliciousValue = "test'\"\\'\n\r\t";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// All special characters should be escaped according to SQL rules
 		// Single quotes: doubled, backslashes: \\, control chars: \n, \r, \t
@@ -317,8 +309,8 @@ public class MariaDBFilterExpressionConverterTests {
 		// Attempt injection in a complex AND/OR expression
 		String maliciousValue = "' OR role='admin' OR dept='";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("department"), new Value(maliciousValue)),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("department"), new Value(maliciousValue)),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 
 		// Should not allow injection to break out of the expression
 		// Single quotes should be doubled per SQL standard
@@ -332,7 +324,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Verify normal strings work correctly after escaping fix
 		String normalValue = "HR Department";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("department"), new Value(normalValue)));
+				.convertExpression(new Expression(EQ, new Key("department"), new Value(normalValue)));
 
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"department\"') = 'HR Department'");
 	}
@@ -342,7 +334,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Test Unicode control characters are escaped
 		String valueWithControlChar = "test\u0000value"; // null character
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(valueWithControlChar)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(valueWithControlChar)));
 
 		// Should escape Unicode control character
 		assertThat(vectorExpr).contains("\\u0000");
@@ -353,7 +345,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Test that Date objects are properly formatted as ISO 8601 strings
 		Date testDate = Date.from(Instant.parse("2024-01-15T10:30:00Z"));
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("activationDate"), new Value(testDate)));
+				.convertExpression(new Expression(EQ, new Key("activationDate"), new Value(testDate)));
 
 		// Verify date is formatted as ISO 8601 string with SQL escaping (milliseconds
 		// from formatter)
@@ -365,7 +357,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Test that ISO date strings are normalized to Date objects and formatted
 		// correctly
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("activationDate"), new Value("2024-01-15T10:30:00Z")));
+				.convertExpression(new Expression(EQ, new Key("activationDate"), new Value("2024-01-15T10:30:00Z")));
 
 		// Verify ISO date strings are normalized and formatted correctly (milliseconds
 		// from formatter)
@@ -376,7 +368,7 @@ public class MariaDBFilterExpressionConverterTests {
 	public void testDateWithMilliseconds() {
 		// Test that ISO date strings with milliseconds are handled correctly
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("timestamp"), new Value("2024-01-15T10:30:00.123Z")));
+				.convertExpression(new Expression(EQ, new Key("timestamp"), new Value("2024-01-15T10:30:00.123Z")));
 
 		// After normalization, milliseconds should be preserved
 		// Note: Actual output depends on whether DateTimeFormatter preserves milliseconds
@@ -390,7 +382,7 @@ public class MariaDBFilterExpressionConverterTests {
 		Date date2 = Date.from(Instant.parse("2024-02-20T14:45:00Z"));
 
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("activationDate"), new Value(List.of(date1, date2))));
+				.convertExpression(new Expression(IN, new Key("activationDate"), new Value(List.of(date1, date2))));
 
 		// Verify dates are properly formatted in IN clause (milliseconds from formatter)
 		assertThat(vectorExpr).contains("'2024-01-15T10:30:00.000Z'");
@@ -415,7 +407,7 @@ public class MariaDBFilterExpressionConverterTests {
 		// Test date comparison with GTE operator
 		Date testDate = Date.from(Instant.parse("2024-01-01T00:00:00Z"));
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(GTE, new Key("createdAt"), new Value(testDate)));
+				.convertExpression(new Expression(GTE, new Key("createdAt"), new Value(testDate)));
 
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"createdAt\"') >= '2024-01-01T00:00:00.000Z'");
 	}
@@ -425,8 +417,8 @@ public class MariaDBFilterExpressionConverterTests {
 		// Test date in complex AND expression
 		Date startDate = Date.from(Instant.parse("2024-01-01T00:00:00Z"));
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("department"), new Value("Engineering")),
-					new Expression(GTE, new Key("joinDate"), new Value(startDate))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("department"), new Value("Engineering")),
+						new Expression(GTE, new Key("joinDate"), new Value(startDate))));
 
 		assertThat(vectorExpr).contains("JSON_VALUE(`metadata`, '$.\"department\"') = 'Engineering'");
 		assertThat(vectorExpr).contains("JSON_VALUE(`metadata`, '$.\"joinDate\"') >= '2024-01-01T00:00:00.000Z'");
@@ -436,7 +428,7 @@ public class MariaDBFilterExpressionConverterTests {
 	@Test
 	public void testKeyWithSingleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
+				.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"x'' OR 1=1--\"') = 'dummy'");
 		assertThat(vectorExpr).doesNotContain("'$.\"x\"' OR");
 	}
@@ -457,7 +449,7 @@ public class MariaDBFilterExpressionConverterTests {
 	@Test
 	public void testKeyWithBackslash() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo("JSON_VALUE(`metadata`, '$.\"key\\\\\\\\inject\"') = 'v'");
 	}
 

@@ -20,9 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link URLValidator#assertNoInternalAddress} — the pre-flight SSRF guard.
@@ -36,17 +34,17 @@ class URLValidatorTest {
 	// -------------------------------------------------------------------------
 
 	@ParameterizedTest(name = "assertNoInternalAddress blocks loopback: {0}")
-	@ValueSource(strings = { "127.0.0.1", "127.0.0.2", "::1" })
+	@ValueSource(strings = {"127.0.0.1", "127.0.0.2", "::1"})
 	void loopbackThrowsSecurityException(String host) {
 		assertThatThrownBy(() -> URLValidator.assertNoInternalAddress(host)).isInstanceOf(SecurityException.class)
-			.hasMessageContaining(host);
+				.hasMessageContaining(host);
 	}
 
 	@Test
 	void localhostThrowsSecurityException() {
 		// "localhost" resolves to 127.0.0.1 — the old regex explicitly allowed it
 		assertThatThrownBy(() -> URLValidator.assertNoInternalAddress("localhost"))
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	// -------------------------------------------------------------------------
@@ -54,11 +52,11 @@ class URLValidatorTest {
 	// -------------------------------------------------------------------------
 
 	@ParameterizedTest(name = "assertNoInternalAddress blocks link-local: {0}")
-	@ValueSource(strings = { "169.254.169.254", "169.254.0.1" })
+	@ValueSource(strings = {"169.254.169.254", "169.254.0.1"})
 	void awsImdsThrowsSecurityException(String host) {
 		// Primary scenario: AWS IMDS credential theft
 		assertThatThrownBy(() -> URLValidator.assertNoInternalAddress(host)).isInstanceOf(SecurityException.class)
-			.hasMessageContaining(host);
+				.hasMessageContaining(host);
 	}
 
 	// -------------------------------------------------------------------------
@@ -66,11 +64,11 @@ class URLValidatorTest {
 	// -------------------------------------------------------------------------
 
 	@ParameterizedTest(name = "assertNoInternalAddress blocks site-local: {0}")
-	@ValueSource(strings = { "10.0.0.1", "10.255.255.255", "172.16.0.1", "172.31.255.255", "192.168.0.1",
-			"192.168.255.255" })
+	@ValueSource(strings = {"10.0.0.1", "10.255.255.255", "172.16.0.1", "172.31.255.255", "192.168.0.1",
+			"192.168.255.255"})
 	void privateRangesThrowsSecurityException(String host) {
 		assertThatThrownBy(() -> URLValidator.assertNoInternalAddress(host)).isInstanceOf(SecurityException.class)
-			.hasMessageContaining(host);
+				.hasMessageContaining(host);
 	}
 
 	// -------------------------------------------------------------------------
@@ -89,8 +87,8 @@ class URLValidatorTest {
 	@Test
 	void unknownHostThrowsSecurityException() {
 		assertThatThrownBy(() -> URLValidator.assertNoInternalAddress("this-host-does-not-exist.invalid"))
-			.isInstanceOf(SecurityException.class)
-			.hasMessageContaining("Failed to resolve host");
+				.isInstanceOf(SecurityException.class)
+				.hasMessageContaining("Failed to resolve host");
 	}
 
 	// -------------------------------------------------------------------------

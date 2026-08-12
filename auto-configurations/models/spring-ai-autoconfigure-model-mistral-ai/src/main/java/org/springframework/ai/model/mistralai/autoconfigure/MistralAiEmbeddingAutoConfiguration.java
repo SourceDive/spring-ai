@@ -50,7 +50,7 @@ import org.springframework.web.client.RestClient;
  * @since 0.8.1
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ MistralAiCommonProperties.class, MistralAiEmbeddingProperties.class })
+@EnableConfigurationProperties({MistralAiCommonProperties.class, MistralAiEmbeddingProperties.class})
 @ConditionalOnClass(MistralAiApi.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.MISTRAL,
 		matchIfMissing = true)
@@ -59,23 +59,23 @@ public class MistralAiEmbeddingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MistralAiEmbeddingModel mistralAiEmbeddingModel(MistralAiCommonProperties commonProperties,
-			MistralAiEmbeddingProperties embeddingProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, ObjectProvider<RetryTemplate> retryTemplate,
-			ObjectProvider<ResponseErrorHandler> responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                       MistralAiEmbeddingProperties embeddingProperties,
+	                                                       ObjectProvider<RestClient.Builder> restClientBuilderProvider, ObjectProvider<RetryTemplate> retryTemplate,
+	                                                       ObjectProvider<ResponseErrorHandler> responseErrorHandler,
+	                                                       ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                       ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var mistralAiApi = mistralAiApi(embeddingProperties.getApiKey(), commonProperties.getApiKey(),
 				embeddingProperties.getBaseUrl(), commonProperties.getBaseUrl(),
 				restClientBuilderProvider.getIfAvailable(RestClient::builder), responseErrorHandler);
 
 		var embeddingModel = MistralAiEmbeddingModel.builder()
-			.mistralAiApi(mistralAiApi)
-			.metadataMode(embeddingProperties.getMetadataMode())
-			.options(embeddingProperties.toOptions())
-			.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.mistralAiApi(mistralAiApi)
+				.metadataMode(embeddingProperties.getMetadataMode())
+				.options(embeddingProperties.toOptions())
+				.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(embeddingModel::setObservationConvention);
 
@@ -83,8 +83,8 @@ public class MistralAiEmbeddingAutoConfiguration {
 	}
 
 	private MistralAiApi mistralAiApi(@Nullable String apiKey, @Nullable String commonApiKey, @Nullable String baseUrl,
-			@Nullable String commonBaseUrl, RestClient.Builder restClientBuilder,
-			ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
+	                                  @Nullable String commonBaseUrl, RestClient.Builder restClientBuilder,
+	                                  ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
 
 		var resolvedApiKey = StringUtils.hasText(apiKey) ? apiKey : commonApiKey;
 		var resoledBaseUrl = StringUtils.hasText(baseUrl) ? baseUrl : commonBaseUrl;
@@ -93,11 +93,11 @@ public class MistralAiEmbeddingAutoConfiguration {
 		Assert.hasText(resoledBaseUrl, "Mistral base URL must be set");
 
 		return MistralAiApi.builder()
-			.baseUrl(resoledBaseUrl)
-			.apiKey(resolvedApiKey)
-			.restClientBuilder(restClientBuilder)
-			.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
-			.build();
+				.baseUrl(resoledBaseUrl)
+				.apiKey(resolvedApiKey)
+				.restClientBuilder(restClientBuilder)
+				.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
+				.build();
 	}
 
 }

@@ -16,37 +16,17 @@
 
 package org.springframework.ai.vectorstore.azure;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import com.azure.core.util.Context;
 import com.azure.search.documents.SearchClient;
 import com.azure.search.documents.SearchDocument;
 import com.azure.search.documents.indexes.SearchIndexClient;
-import com.azure.search.documents.indexes.models.HnswAlgorithmConfiguration;
-import com.azure.search.documents.indexes.models.HnswParameters;
-import com.azure.search.documents.indexes.models.SearchField;
-import com.azure.search.documents.indexes.models.SearchFieldDataType;
-import com.azure.search.documents.indexes.models.SearchIndex;
-import com.azure.search.documents.indexes.models.VectorSearch;
-import com.azure.search.documents.indexes.models.VectorSearchAlgorithmMetric;
-import com.azure.search.documents.indexes.models.VectorSearchProfile;
-import com.azure.search.documents.models.IndexDocumentsResult;
-import com.azure.search.documents.models.IndexingResult;
-import com.azure.search.documents.models.SearchOptions;
-import com.azure.search.documents.models.VectorSearchOptions;
-import com.azure.search.documents.models.VectorizedQuery;
+import com.azure.search.documents.indexes.models.*;
+import com.azure.search.documents.models.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -63,6 +43,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Uses Azure Cognitive Search as a backing vector store. Documents can be preloaded into
@@ -138,6 +121,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 	/**
 	 * Protected constructor that accepts a builder instance. This is the preferred way to
 	 * create new AzureVectorStore instances.
+	 *
 	 * @param builder the configured builder instance
 	 */
 	protected AzureVectorStore(Builder builder) {
@@ -218,10 +202,10 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 	@Override
 	public List<Document> similaritySearch(String query) {
 		return this.similaritySearch(SearchRequest.builder()
-			.query(query)
-			.topK(this.defaultTopK)
-			.similarityThreshold(this.defaultSimilarityThreshold)
-			.build());
+				.query(query)
+				.topK(this.defaultTopK)
+				.similarityThreshold(this.defaultSimilarityThreshold)
+				.build());
 	}
 
 	@Override
@@ -232,13 +216,13 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 		var searchEmbedding = this.embeddingModel.embed(request.getQuery());
 
 		final var vectorQuery = new VectorizedQuery(EmbeddingUtils.toList(searchEmbedding))
-			.setKNearestNeighborsCount(request.getTopK())
-			// Set the fields to compare the vector against. This is a comma-delimited
-			// list of field names.
-			.setFields(this.embeddingFieldName);
+				.setKNearestNeighborsCount(request.getTopK())
+				// Set the fields to compare the vector against. This is a comma-delimited
+				// list of field names.
+				.setFields(this.embeddingFieldName);
 
 		var searchOptions = new SearchOptions()
-			.setVectorSearchOptions(new VectorSearchOptions().setQueries(vectorQuery));
+				.setVectorSearchOptions(new VectorSearchOptions().setQueries(vectorQuery));
 
 		if (request.hasFilterExpression()) {
 			Assert.notNull(request.getFilterExpression(), "filterExpression should not be null at this point");
@@ -249,24 +233,24 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 		final var searchResults = this.searchClient.search(null, searchOptions, Context.NONE);
 
 		return searchResults.stream()
-			.filter(result -> result.getScore() >= request.getSimilarityThreshold())
-			.map(result -> {
+				.filter(result -> result.getScore() >= request.getSimilarityThreshold())
+				.map(result -> {
 
-				SearchDocument document = result.getDocument(SearchDocument.class);
+					SearchDocument document = result.getDocument(SearchDocument.class);
 
-				String id = document.get(ID_FIELD_NAME) != null ? document.get(ID_FIELD_NAME).toString() : "";
-				String content = document.get(this.contentFieldName) != null
-						? document.get(this.contentFieldName).toString() : "";
-				String metadataJson = document.get(this.metadataFieldName) != null
-						? document.get(this.metadataFieldName).toString() : "";
+					String id = document.get(ID_FIELD_NAME) != null ? document.get(ID_FIELD_NAME).toString() : "";
+					String content = document.get(this.contentFieldName) != null
+							? document.get(this.contentFieldName).toString() : "";
+					String metadataJson = document.get(this.metadataFieldName) != null
+							? document.get(this.metadataFieldName).toString() : "";
 
-				Map<String, Object> metadata = parseMetadataToMutable(metadataJson);
+					Map<String, Object> metadata = parseMetadataToMutable(metadataJson);
 
-				metadata.put(DocumentMetadata.DISTANCE.value(), 1.0 - result.getScore());
+					metadata.put(DocumentMetadata.DISTANCE.value(), 1.0 - result.getScore());
 
-				return Document.builder().id(id).text(content).metadata(metadata).score(result.getScore()).build();
-			})
-			.toList();
+					return Document.builder().id(id).text(content).metadata(metadata).score(result.getScore()).build();
+				})
+				.toList();
 	}
 
 	@Override
@@ -280,38 +264,38 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 		List<SearchField> fields = new ArrayList<>();
 
 		fields.add(new SearchField(ID_FIELD_NAME, SearchFieldDataType.STRING).setKey(true)
-			.setFilterable(true)
-			.setSortable(true));
+				.setFilterable(true)
+				.setSortable(true));
 		fields.add(new SearchField(this.embeddingFieldName, SearchFieldDataType.collection(SearchFieldDataType.SINGLE))
-			.setSearchable(true)
-			.setHidden(false)
-			.setVectorSearchDimensions(dimensions)
-			// This must match a vector search configuration name.
-			.setVectorSearchProfileName(SPRING_AI_VECTOR_PROFILE));
+				.setSearchable(true)
+				.setHidden(false)
+				.setVectorSearchDimensions(dimensions)
+				// This must match a vector search configuration name.
+				.setVectorSearchProfileName(SPRING_AI_VECTOR_PROFILE));
 		fields.add(new SearchField(this.contentFieldName, SearchFieldDataType.STRING).setSearchable(true)
-			.setFilterable(true));
+				.setFilterable(true));
 		fields.add(new SearchField(this.metadataFieldName, SearchFieldDataType.STRING).setSearchable(true)
-			.setFilterable(true));
+				.setFilterable(true));
 
 		for (MetadataField filterableMetadataField : this.filterMetadataFields) {
 			fields.add(new SearchField(METADATA_FIELD_PREFIX + filterableMetadataField.name(),
 					filterableMetadataField.fieldType())
-				.setSearchable(false)
-				.setFacetable(true));
+					.setSearchable(false)
+					.setFacetable(true));
 		}
 
 		SearchIndex searchIndex = new SearchIndex(this.indexName).setFields(fields)
-			// VectorSearch configuration is required for a vector field. The name used
-			// for the vector search algorithm configuration must match the configuration
-			// used by the search field used for vector search.
-			.setVectorSearch(new VectorSearch()
-				.setProfiles(Collections
-					.singletonList(new VectorSearchProfile(SPRING_AI_VECTOR_PROFILE, SPRING_AI_VECTOR_CONFIG)))
-				.setAlgorithms(Collections.singletonList(new HnswAlgorithmConfiguration(SPRING_AI_VECTOR_CONFIG)
-					.setParameters(new HnswParameters().setM(4)
-						.setEfConstruction(400)
-						.setEfSearch(1000)
-						.setMetric(VectorSearchAlgorithmMetric.COSINE)))));
+				// VectorSearch configuration is required for a vector field. The name used
+				// for the vector search algorithm configuration must match the configuration
+				// used by the search field used for vector search.
+				.setVectorSearch(new VectorSearch()
+						.setProfiles(Collections
+								.singletonList(new VectorSearchProfile(SPRING_AI_VECTOR_PROFILE, SPRING_AI_VECTOR_CONFIG)))
+						.setAlgorithms(Collections.singletonList(new HnswAlgorithmConfiguration(SPRING_AI_VECTOR_CONFIG)
+								.setParameters(new HnswParameters().setM(4)
+										.setEfConstruction(400)
+										.setEfSearch(1000)
+										.setMetric(VectorSearchAlgorithmMetric.COSINE)))));
 
 		SearchIndex index = this.searchIndexClient.createOrUpdateIndex(searchIndex);
 
@@ -323,9 +307,9 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		VectorStoreObservationContext.Builder builder = VectorStoreObservationContext
-			.builder(VectorStoreProvider.AZURE.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions());
+				.builder(VectorStoreProvider.AZURE.value(), operationName)
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions());
 		if (this.initializeSchema) {
 			builder.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
 		}
@@ -347,8 +331,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 			Map<String, Object> parsed = JSONObject.parseObject(metadataJson, new TypeReference<Map<String, Object>>() {
 			});
 			return (parsed == null) ? new HashMap<>() : new HashMap<>(parsed);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			if (logger.isWarnEnabled()) {
 				logger.warn("Failed to parse metadata JSON. Using empty metadata. json=" + metadataJson, ex);
 			}
@@ -358,27 +341,27 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 	public record MetadataField(String name, SearchFieldDataType fieldType) {
 
-		public static MetadataField text(String name) {
+		public static MetadataField text (String name){
 			return new MetadataField(name, SearchFieldDataType.STRING);
 		}
 
-		public static MetadataField int32(String name) {
+		public static MetadataField int32 (String name){
 			return new MetadataField(name, SearchFieldDataType.INT32);
 		}
 
-		public static MetadataField int64(String name) {
+		public static MetadataField int64 (String name){
 			return new MetadataField(name, SearchFieldDataType.INT64);
 		}
 
-		public static MetadataField decimal(String name) {
+		public static MetadataField decimal (String name){
 			return new MetadataField(name, SearchFieldDataType.DOUBLE);
 		}
 
-		public static MetadataField bool(String name) {
+		public static MetadataField bool (String name){
 			return new MetadataField(name, SearchFieldDataType.BOOLEAN);
 		}
 
-		public static MetadataField date(String name) {
+		public static MetadataField date (String name){
 			return new MetadataField(name, SearchFieldDataType.DATE_TIME_OFFSET);
 		}
 
@@ -419,6 +402,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -429,6 +413,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata fields for filtering.
+		 *
 		 * @param filterMetadataFields the list of metadata fields
 		 * @return the builder instance
 		 */
@@ -439,6 +424,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the index name for the Azure Vector Store.
+		 *
 		 * @param indexName the name of the index to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if indexName is null or empty
@@ -451,6 +437,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the default maximum number of similar documents to return.
+		 *
 		 * @param defaultTopK the maximum number of documents
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if defaultTopK is negative
@@ -463,11 +450,12 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the default similarity threshold for returned documents.
+		 *
 		 * @param defaultSimilarityThreshold the similarity threshold (must be between 0.0
-		 * and 1.0)
+		 *                                   and 1.0)
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if defaultSimilarityThreshold is not between
-		 * 0.0 and 1.0
+		 *                                  0.0 and 1.0
 		 */
 		public Builder defaultSimilarityThreshold(Double defaultSimilarityThreshold) {
 			Assert.isTrue(defaultSimilarityThreshold >= 0.0 && defaultSimilarityThreshold <= 1.0,
@@ -478,6 +466,7 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the content field name in the Azure Search index.
+		 *
 		 * @param contentFieldName the name of the content field (defaults to "content")
 		 * @return the builder instance
 		 */
@@ -488,8 +477,9 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the embedding field name in the Azure Search index.
+		 *
 		 * @param embeddingFieldName the name of the embedding field (defaults to
-		 * "embedding")
+		 *                           "embedding")
 		 * @return the builder instance
 		 */
 		public Builder embeddingFieldName(@Nullable String embeddingFieldName) {
@@ -499,8 +489,9 @@ public class AzureVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata field name in the Azure Search index.
+		 *
 		 * @param metadataFieldName the name of the metadata field (defaults to
-		 * "metadata")
+		 *                          "metadata")
 		 * @return the builder instance
 		 */
 		public Builder metadataFieldName(@Nullable String metadataFieldName) {

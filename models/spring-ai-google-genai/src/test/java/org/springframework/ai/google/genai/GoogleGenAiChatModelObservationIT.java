@@ -16,17 +16,12 @@
 
 package org.springframework.ai.google.genai;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.genai.Client;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistryAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.observation.ChatModelObservationDocumentation;
@@ -38,6 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,12 +65,12 @@ public class GoogleGenAiChatModelObservationIT {
 	void observationForChatOperation() {
 
 		var options = GoogleGenAiChatOptions.builder()
-			.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH.getValue())
-			.temperature(0.7)
-			.stopSequences(List.of("this-is-the-end"))
-			.maxOutputTokens(2048)
-			.topP(1.0)
-			.build();
+				.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH.getValue())
+				.temperature(0.7)
+				.stopSequences(List.of("this-is-the-end"))
+				.maxOutputTokens(2048)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -89,12 +88,12 @@ public class GoogleGenAiChatModelObservationIT {
 	void observationForStreamingOperation() {
 
 		var options = GoogleGenAiChatOptions.builder()
-			.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH.getValue())
-			.temperature(0.7)
-			.stopSequences(List.of("this-is-the-end"))
-			.maxOutputTokens(2048)
-			.topP(1.0)
-			.build();
+				.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH.getValue())
+				.temperature(0.7)
+				.stopSequences(List.of("this-is-the-end"))
+				.maxOutputTokens(2048)
+				.topP(1.0)
+				.build();
 
 		Prompt prompt = new Prompt("Why does a raven look like a desk?", options);
 
@@ -104,9 +103,9 @@ public class GoogleGenAiChatModelObservationIT {
 		assertThat(responses).hasSizeGreaterThan(1);
 
 		String aggregatedResponse = responses.subList(0, responses.size() - 1)
-			.stream()
-			.map(r -> r.getResult().getOutput().getText())
-			.collect(Collectors.joining());
+				.stream()
+				.map(r -> r.getResult().getOutput().getText())
+				.collect(Collectors.joining());
 		assertThat(aggregatedResponse).isNotEmpty();
 
 		ChatResponse lastChatResponse = responses.get(responses.size() - 1);
@@ -119,47 +118,46 @@ public class GoogleGenAiChatModelObservationIT {
 
 	private void validate(ChatResponseMetadata responseMetadata, boolean streaming) {
 		var observationAssert = TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasLowCardinalityKeyValue(
-					ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.CHAT.value())
-			.hasLowCardinalityKeyValue(ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.GOOGLE_GENAI_AI.value())
-			.hasLowCardinalityKeyValue(
-					ChatModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH.getValue())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
-					"[\"this-is-the-end\"]")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
-			.doesNotHaveHighCardinalityKeyValueWithKey(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_K.asString())
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
-					"[\"STOP\"]")
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
-			.hasHighCardinalityKeyValue(
-					ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultChatModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasLowCardinalityKeyValue(
+						ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.CHAT.value())
+				.hasLowCardinalityKeyValue(ChatModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.GOOGLE_GENAI_AI.value())
+				.hasLowCardinalityKeyValue(
+						ChatModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH.getValue())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_MAX_TOKENS.asString(), "2048")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STOP_SEQUENCES.asString(),
+						"[\"this-is-the-end\"]")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TEMPERATURE.asString(), "0.7")
+				.doesNotHaveHighCardinalityKeyValueWithKey(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_K.asString())
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_TOP_P.asString(), "1.0")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.RESPONSE_FINISH_REASONS.asString(),
+						"[\"STOP\"]")
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_OUTPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getCompletionTokens()))
+				.hasHighCardinalityKeyValue(
+						ChatModelObservationDocumentation.HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 		if (streaming) {
 			observationAssert.hasHighCardinalityKeyValue(
 					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STREAM.asString(), "true");
-		}
-		else {
+		} else {
 			observationAssert.doesNotHaveHighCardinalityKeyValueWithKey(
 					ChatModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_STREAM.asString());
 		}
@@ -184,11 +182,11 @@ public class GoogleGenAiChatModelObservationIT {
 		public GoogleGenAiChatModel vertexAiEmbedding(Client genAiClient, TestObservationRegistry observationRegistry) {
 
 			return GoogleGenAiChatModel.builder()
-				.genAiClient(genAiClient)
-				.observationRegistry(observationRegistry)
-				.options(
-						GoogleGenAiChatOptions.builder().model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH).build())
-				.build();
+					.genAiClient(genAiClient)
+					.observationRegistry(observationRegistry)
+					.options(
+							GoogleGenAiChatOptions.builder().model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH).build())
+					.build();
 		}
 
 	}

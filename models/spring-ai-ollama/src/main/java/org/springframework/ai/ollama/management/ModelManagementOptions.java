@@ -16,34 +16,34 @@
 
 package org.springframework.ai.ollama.management;
 
+import org.jspecify.annotations.Nullable;
+
 import java.time.Duration;
 import java.util.List;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Options for managing models in Ollama.
  *
  * @param pullModelStrategy the strategy to pull models
- * @param additionalModels additional models to manage
- * @param timeout the timeout for managing models
- * @param maxRetries the maximum number of retries
+ * @param additionalModels  additional models to manage
+ * @param timeout           the timeout for managing models
+ * @param maxRetries        the maximum number of retries
  * @author Thomas Vitale
  * @author Ilayaperumal Gopinathan
  * @since 1.0.0
  */
 public record ModelManagementOptions(PullModelStrategy pullModelStrategy, @Nullable List<String> additionalModels,
-		Duration timeout, Integer maxRetries) {
+                                     Duration timeout, Integer maxRetries) {
 
 	public ModelManagementOptions {
 		additionalModels = additionalModels != null ? List.copyOf(additionalModels) : List.of();
 	}
 
-	public static ModelManagementOptions defaults() {
+	public static ModelManagementOptions defaults () {
 		return new ModelManagementOptions(PullModelStrategy.NEVER, List.of(), Duration.ofMinutes(5), 0);
 	}
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

@@ -16,29 +16,18 @@
 
 package org.springframework.ai.mcp.security;
 
-import java.time.Duration;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityValidator;
 import io.modelcontextprotocol.spec.McpSchema;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Named;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.BeforeParameterizedClassInvocation;
 import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import reactor.core.publisher.Mono;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebClientStreamableHttpTransport;
 import org.springframework.ai.mcp.client.webflux.transport.WebFluxSseClientTransport;
 import org.springframework.ai.mcp.server.webflux.transport.WebFluxSseServerTransportProvider;
@@ -46,13 +35,15 @@ import org.springframework.ai.mcp.server.webflux.transport.WebFluxStatelessServe
 import org.springframework.ai.mcp.server.webflux.transport.WebFluxStreamableServerTransportProvider;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
-import org.springframework.web.reactive.function.client.ClientRequest;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.ExchangeFunction;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.*;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.core.publisher.Mono;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
+import java.time.Duration;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -214,24 +205,24 @@ public class WebFluxServerTransportSecurityIT {
 
 		Sse() {
 			this.transportProvider = WebFluxSseServerTransportProvider.builder()
-				.messageEndpoint("/mcp/message")
-				.securityValidator(DefaultServerTransportSecurityValidator.builder()
-					.allowedOrigin("http://localhost:*")
-					.allowedHost("localhost:*")
-					.build())
-				.build();
+					.messageEndpoint("/mcp/message")
+					.securityValidator(DefaultServerTransportSecurityValidator.builder()
+							.allowedOrigin("http://localhost:*")
+							.allowedHost("localhost:*")
+							.build())
+					.build();
 			McpServer.sync(this.transportProvider)
-				.serverInfo("test-server", "1.0.0")
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.build();
+					.serverInfo("test-server", "1.0.0")
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.build();
 		}
 
 		@Override
 		public McpSyncClient createMcpClient(String baseUrl, TestHeaderExchangeFilterFunction exchangeFilterFunction) {
 			var transport = WebFluxSseClientTransport
-				.builder(WebClient.builder().baseUrl(baseUrl).filter(exchangeFilterFunction))
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.build();
+					.builder(WebClient.builder().baseUrl(baseUrl).filter(exchangeFilterFunction))
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.build();
 			return McpClient.sync(transport).initializationTimeout(Duration.ofMillis(500)).build();
 		}
 
@@ -248,24 +239,24 @@ public class WebFluxServerTransportSecurityIT {
 
 		StreamableHttp() {
 			this.transportProvider = WebFluxStreamableServerTransportProvider.builder()
-				.securityValidator(DefaultServerTransportSecurityValidator.builder()
-					.allowedOrigin("http://localhost:*")
-					.allowedHost("localhost:*")
-					.build())
-				.build();
+					.securityValidator(DefaultServerTransportSecurityValidator.builder()
+							.allowedOrigin("http://localhost:*")
+							.allowedHost("localhost:*")
+							.build())
+					.build();
 			McpServer.sync(this.transportProvider)
-				.serverInfo("test-server", "1.0.0")
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.build();
+					.serverInfo("test-server", "1.0.0")
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.build();
 		}
 
 		@Override
 		public McpSyncClient createMcpClient(String baseUrl, TestHeaderExchangeFilterFunction exchangeFilterFunction) {
 			var transport = WebClientStreamableHttpTransport
-				.builder(WebClient.builder().baseUrl(baseUrl).filter(exchangeFilterFunction))
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.openConnectionOnStartup(true)
-				.build();
+					.builder(WebClient.builder().baseUrl(baseUrl).filter(exchangeFilterFunction))
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.openConnectionOnStartup(true)
+					.build();
 			return McpClient.sync(transport).initializationTimeout(Duration.ofMillis(500)).build();
 		}
 
@@ -282,24 +273,24 @@ public class WebFluxServerTransportSecurityIT {
 
 		Stateless() {
 			this.transportProvider = WebFluxStatelessServerTransport.builder()
-				.securityValidator(DefaultServerTransportSecurityValidator.builder()
-					.allowedOrigin("http://localhost:*")
-					.allowedHost("localhost:*")
-					.build())
-				.build();
+					.securityValidator(DefaultServerTransportSecurityValidator.builder()
+							.allowedOrigin("http://localhost:*")
+							.allowedHost("localhost:*")
+							.build())
+					.build();
 			McpServer.sync(this.transportProvider)
-				.serverInfo("test-server", "1.0.0")
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.build();
+					.serverInfo("test-server", "1.0.0")
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.build();
 		}
 
 		@Override
 		public McpSyncClient createMcpClient(String baseUrl, TestHeaderExchangeFilterFunction exchangeFilterFunction) {
 			var transport = WebClientStreamableHttpTransport
-				.builder(WebClient.builder().baseUrl(baseUrl).filter(exchangeFilterFunction))
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.openConnectionOnStartup(true)
-				.build();
+					.builder(WebClient.builder().baseUrl(baseUrl).filter(exchangeFilterFunction))
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.openConnectionOnStartup(true)
+					.build();
 			return McpClient.sync(transport).initializationTimeout(Duration.ofMillis(500)).build();
 		}
 

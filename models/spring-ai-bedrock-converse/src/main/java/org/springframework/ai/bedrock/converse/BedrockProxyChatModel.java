@@ -16,71 +16,13 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.core.document.Document;
-import software.amazon.awssdk.core.exception.SdkClientException;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
-import software.amazon.awssdk.services.bedrockruntime.model.CachePointBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseMetrics;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseResponse;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamRequest;
-import software.amazon.awssdk.services.bedrockruntime.model.DocumentBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.DocumentSource;
-import software.amazon.awssdk.services.bedrockruntime.model.ImageBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.ImageSource;
-import software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration;
-import software.amazon.awssdk.services.bedrockruntime.model.JsonSchemaDefinition;
-import software.amazon.awssdk.services.bedrockruntime.model.Message;
-import software.amazon.awssdk.services.bedrockruntime.model.OutputConfig;
-import software.amazon.awssdk.services.bedrockruntime.model.OutputFormat;
-import software.amazon.awssdk.services.bedrockruntime.model.OutputFormatStructure;
-import software.amazon.awssdk.services.bedrockruntime.model.S3Location;
-import software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.TokenUsage;
-import software.amazon.awssdk.services.bedrockruntime.model.Tool;
-import software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration;
-import software.amazon.awssdk.services.bedrockruntime.model.ToolInputSchema;
-import software.amazon.awssdk.services.bedrockruntime.model.ToolResultBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.ToolResultContentBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.ToolSpecification;
-import software.amazon.awssdk.services.bedrockruntime.model.ToolUseBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.VideoBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.VideoFormat;
-import software.amazon.awssdk.services.bedrockruntime.model.VideoSource;
-
-import org.springframework.ai.bedrock.converse.api.BedrockCacheOptions;
-import org.springframework.ai.bedrock.converse.api.BedrockCacheStrategy;
-import org.springframework.ai.bedrock.converse.api.BedrockMediaFormat;
-import org.springframework.ai.bedrock.converse.api.ConverseApiUtils;
-import org.springframework.ai.bedrock.converse.api.ConverseChatResponseStream;
-import org.springframework.ai.bedrock.converse.api.MediaFetcher;
-import org.springframework.ai.bedrock.converse.api.URLValidator;
+import org.springframework.ai.bedrock.converse.api.*;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
@@ -108,6 +50,24 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
+import reactor.core.publisher.Flux;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.core.document.Document;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
+import software.amazon.awssdk.services.bedrockruntime.model.*;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.Duration;
+import java.util.*;
 
 /**
  * A {@link ChatModel} implementation that uses the Amazon Bedrock Converse API to
@@ -168,15 +128,15 @@ public class BedrockProxyChatModel implements ChatModel {
 	private final MediaFetcher mediaFetcher;
 
 	public BedrockProxyChatModel(BedrockRuntimeClient bedrockRuntimeClient,
-			BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient, BedrockChatOptions options,
-			ObservationRegistry observationRegistry, ToolCallingManager toolCallingManager) {
+	                             BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient, BedrockChatOptions options,
+	                             ObservationRegistry observationRegistry, ToolCallingManager toolCallingManager) {
 		this(bedrockRuntimeClient, bedrockRuntimeAsyncClient, options, observationRegistry, toolCallingManager,
 				new MediaFetcher());
 	}
 
 	public BedrockProxyChatModel(BedrockRuntimeClient bedrockRuntimeClient,
-			BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient, BedrockChatOptions options,
-			ObservationRegistry observationRegistry, ToolCallingManager toolCallingManager, MediaFetcher mediaFetcher) {
+	                             BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient, BedrockChatOptions options,
+	                             ObservationRegistry observationRegistry, ToolCallingManager toolCallingManager, MediaFetcher mediaFetcher) {
 
 		Assert.notNull(bedrockRuntimeClient, "bedrockRuntimeClient must not be null");
 		Assert.notNull(bedrockRuntimeAsyncClient, "bedrockRuntimeAsyncClient must not be null");
@@ -193,10 +153,11 @@ public class BedrockProxyChatModel implements ChatModel {
 
 	/**
 	 * Invoke the model and return the response.
-	 *
+	 * <p>
 	 * https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html
 	 * https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html
 	 * https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/bedrockruntime/BedrockRuntimeClient.html#converse
+	 *
 	 * @return The model invocation response.
 	 */
 	@Override
@@ -210,27 +171,27 @@ public class BedrockProxyChatModel implements ChatModel {
 		ConverseRequest converseRequest = this.createRequest(prompt);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(AiProvider.BEDROCK_CONVERSE.value())
-			.build();
+				.prompt(prompt)
+				.provider(AiProvider.BEDROCK_CONVERSE.value())
+				.build();
 
 		ChatResponse chatResponse = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ConverseResponse converseResponse = this.bedrockRuntimeClient.converse(converseRequest);
+					ConverseResponse converseResponse = this.bedrockRuntimeClient.converse(converseRequest);
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("ConverseResponse: " + converseResponse);
-				}
+					if (logger.isDebugEnabled()) {
+						logger.debug("ConverseResponse: " + converseResponse);
+					}
 
-				var response = this.toChatResponse(converseResponse, perviousChatResponse);
+					var response = this.toChatResponse(converseResponse, perviousChatResponse);
 
-				observationContext.setResponse(response);
+					observationContext.setResponse(response);
 
-				return response;
-			});
+					return response;
+				});
 
 		return chatResponse;
 	}
@@ -255,9 +216,9 @@ public class BedrockProxyChatModel implements ChatModel {
 
 		// Get all non-system messages
 		List<org.springframework.ai.chat.messages.Message> allNonSystemMessages = prompt.getInstructions()
-			.stream()
-			.filter(message -> message.getMessageType() != MessageType.SYSTEM)
-			.toList();
+				.stream()
+				.filter(message -> message.getMessageType() != MessageType.SYSTEM)
+				.toList();
 
 		// Find the last user message index for CONVERSATION_HISTORY caching
 		int lastUserMessageIndex = -1;
@@ -291,9 +252,9 @@ public class BedrockProxyChatModel implements ChatModel {
 
 					if (!CollectionUtils.isEmpty(userMessage.getMedia())) {
 						List<ContentBlock> mediaContent = userMessage.getMedia()
-							.stream()
-							.map(this::mapMediaToContentBlock)
-							.toList();
+								.stream()
+								.map(this::mapMediaToContentBlock)
+								.toList();
 						contents.addAll(mediaContent);
 					}
 				}
@@ -306,8 +267,7 @@ public class BedrockProxyChatModel implements ChatModel {
 				}
 
 				instructionMessages.add(Message.builder().content(contents).role(ConversationRole.USER).build());
-			}
-			else if (message.getMessageType() == MessageType.ASSISTANT) {
+			} else if (message.getMessageType() == MessageType.ASSISTANT) {
 				AssistantMessage assistantMessage = (AssistantMessage) message;
 				List<ContentBlock> contentBlocks = new ArrayList<>();
 				if (StringUtils.hasText(message.getText())) {
@@ -317,33 +277,31 @@ public class BedrockProxyChatModel implements ChatModel {
 					for (AssistantMessage.ToolCall toolCall : assistantMessage.getToolCalls()) {
 
 						var argumentsDocument = ConverseApiUtils
-							.convertObjectToDocument(jsonHelper.fromJsonToMap(toolCall.arguments()));
+								.convertObjectToDocument(jsonHelper.fromJsonToMap(toolCall.arguments()));
 
 						contentBlocks.add(ContentBlock.fromToolUse(ToolUseBlock.builder()
-							.toolUseId(toolCall.id())
-							.name(toolCall.name())
-							.input(argumentsDocument)
-							.build()));
+								.toolUseId(toolCall.id())
+								.name(toolCall.name())
+								.input(argumentsDocument)
+								.build()));
 
 					}
 				}
 
 				instructionMessages
-					.add(Message.builder().content(contentBlocks).role(ConversationRole.ASSISTANT).build());
-			}
-			else if (message.getMessageType() == MessageType.TOOL) {
+						.add(Message.builder().content(contentBlocks).role(ConversationRole.ASSISTANT).build());
+			} else if (message.getMessageType() == MessageType.TOOL) {
 				List<ContentBlock> contentBlocks = new ArrayList<>(
 						((ToolResponseMessage) message).getResponses().stream().map(toolResponse -> {
 							ToolResultBlock toolResultBlock = ToolResultBlock.builder()
-								.toolUseId(toolResponse.id())
-								.content(ToolResultContentBlock.builder().text(toolResponse.responseData()).build())
-								.build();
+									.toolUseId(toolResponse.id())
+									.content(ToolResultContentBlock.builder().text(toolResponse.responseData()).build())
+									.build();
 							return ContentBlock.fromToolResult(toolResultBlock);
 						}).toList());
 
 				instructionMessages.add(Message.builder().content(contentBlocks).role(ConversationRole.USER).build());
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 			}
 		}
@@ -351,16 +309,16 @@ public class BedrockProxyChatModel implements ChatModel {
 		// Determine if system message caching should be applied
 		boolean shouldCacheSystem = cacheOptions != null
 				&& (cacheOptions.getStrategy() == BedrockCacheStrategy.SYSTEM_ONLY
-						|| cacheOptions.getStrategy() == BedrockCacheStrategy.SYSTEM_AND_TOOLS);
+				|| cacheOptions.getStrategy() == BedrockCacheStrategy.SYSTEM_AND_TOOLS);
 
 		if (logger.isDebugEnabled() && cacheOptions != null) {
 			logger.debug("Cache strategy: " + cacheOptions.getStrategy() + ", shouldCacheSystem: " + shouldCacheSystem);
 		}
 
 		List<org.springframework.ai.chat.messages.Message> systemMessageList = prompt.getInstructions()
-			.stream()
-			.filter(m -> m.getMessageType() == MessageType.SYSTEM)
-			.toList();
+				.stream()
+				.filter(m -> m.getMessageType() == MessageType.SYSTEM)
+				.toList();
 
 		// With multi-block system caching, place the cache point after the
 		// second-to-last block so a trailing dynamic block can vary without
@@ -392,7 +350,7 @@ public class BedrockProxyChatModel implements ChatModel {
 		// Determine if tool caching should be applied
 		boolean shouldCacheTools = cacheOptions != null
 				&& (cacheOptions.getStrategy() == BedrockCacheStrategy.TOOLS_ONLY
-						|| cacheOptions.getStrategy() == BedrockCacheStrategy.SYSTEM_AND_TOOLS);
+				|| cacheOptions.getStrategy() == BedrockCacheStrategy.SYSTEM_AND_TOOLS);
 
 		if (!CollectionUtils.isEmpty(toolDefinitions)) {
 			List<Tool> bedrockTools = new ArrayList<>();
@@ -405,13 +363,13 @@ public class BedrockProxyChatModel implements ChatModel {
 
 				// Create tool specification
 				Tool tool = Tool.builder()
-					.toolSpec(ToolSpecification.builder()
-						.name(name)
-						.description(description)
-						.inputSchema(ToolInputSchema
-							.fromJson(ConverseApiUtils.convertObjectToDocument(jsonHelper.fromJsonToMap(inputSchema))))
-						.build())
-					.build();
+						.toolSpec(ToolSpecification.builder()
+								.name(name)
+								.description(description)
+								.inputSchema(ToolInputSchema
+										.fromJson(ConverseApiUtils.convertObjectToDocument(jsonHelper.fromJsonToMap(inputSchema))))
+								.build())
+						.build();
 				bedrockTools.add(tool);
 
 				// Apply cache point marker after last tool if caching is enabled
@@ -429,33 +387,33 @@ public class BedrockProxyChatModel implements ChatModel {
 		}
 
 		InferenceConfiguration inferenceConfiguration = InferenceConfiguration.builder()
-			.maxTokens(options.getMaxTokens())
-			.stopSequences(options.getStopSequences())
-			.temperature(options.getTemperature() != null ? options.getTemperature().floatValue() : null)
-			.topP(options.getTopP() != null ? options.getTopP().floatValue() : null)
-			.build();
+				.maxTokens(options.getMaxTokens())
+				.stopSequences(options.getStopSequences())
+				.temperature(options.getTemperature() != null ? options.getTemperature().floatValue() : null)
+				.topP(options.getTopP() != null ? options.getTopP().floatValue() : null)
+				.build();
 
 		BedrockChatOptions bedrockOptions = (BedrockChatOptions) prompt.getOptions();
 		Assert.notNull(bedrockOptions, "options can't be null here");
 		Document additionalModelRequestFields = null;
 		if (!CollectionUtils.isEmpty(bedrockOptions.getRequestParameters())) {
 			additionalModelRequestFields = ConverseApiUtils
-				.convertObjectToDocument(bedrockOptions.getRequestParameters());
+					.convertObjectToDocument(bedrockOptions.getRequestParameters());
 		}
 
 		Map<String, String> requestMetadata = ConverseApiUtils
-			.getRequestMetadata(prompt.getUserMessage().getMetadata());
+				.getRequestMetadata(prompt.getUserMessage().getMetadata());
 
 		return ConverseRequest.builder()
-			.modelId(options.getModel())
-			.inferenceConfig(inferenceConfiguration)
-			.messages(instructionMessages)
-			.system(systemMessages)
-			.additionalModelRequestFields(additionalModelRequestFields)
-			.toolConfig(toolConfiguration)
-			.requestMetadata(requestMetadata)
-			.outputConfig(buildOutputConfig(options))
-			.build();
+				.modelId(options.getModel())
+				.inferenceConfig(inferenceConfiguration)
+				.messages(instructionMessages)
+				.system(systemMessages)
+				.additionalModelRequestFields(additionalModelRequestFields)
+				.toolConfig(toolConfiguration)
+				.requestMetadata(requestMetadata)
+				.outputConfig(buildOutputConfig(options))
+				.build();
 	}
 
 	private @Nullable OutputConfig buildOutputConfig(BedrockChatOptions options) {
@@ -465,13 +423,13 @@ public class BedrockProxyChatModel implements ChatModel {
 		}
 
 		return OutputConfig.builder()
-			.textFormat(OutputFormat.builder()
-				.type("json_schema")
-				.structure(OutputFormatStructure.builder()
-					.jsonSchema(JsonSchemaDefinition.builder().schema(schema).name("response_schema").build())
-					.build())
-				.build())
-			.build();
+				.textFormat(OutputFormat.builder()
+						.type("json_schema")
+						.structure(OutputFormatStructure.builder()
+								.jsonSchema(JsonSchemaDefinition.builder().schema(schema).name("response_schema").build())
+								.build())
+						.build())
+				.build();
 	}
 
 	ContentBlock mapMediaToContentBlock(Media media) {
@@ -483,57 +441,46 @@ public class BedrockProxyChatModel implements ChatModel {
 			VideoSource videoSource = null;
 			if (media.getData() instanceof byte[] bytes) {
 				videoSource = VideoSource.builder().bytes(SdkBytes.fromByteArrayUnsafe(bytes)).build();
-			}
-			else if (media.getData() instanceof String uriText) {
+			} else if (media.getData() instanceof String uriText) {
 				videoSource = VideoSource.builder().s3Location(S3Location.builder().uri(uriText).build()).build();
-			}
-			else if (media.getData() instanceof URL url) {
+			} else if (media.getData() instanceof URL url) {
 				try {
 					videoSource = VideoSource.builder()
-						.s3Location(S3Location.builder().uri(url.toURI().toString()).build())
-						.build();
-				}
-				catch (URISyntaxException e) {
+							.s3Location(S3Location.builder().uri(url.toURI().toString()).build())
+							.build();
+				} catch (URISyntaxException e) {
 					throw new IllegalArgumentException(e);
 				}
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Invalid video content type: " + media.getData().getClass());
 			}
 
 			return ContentBlock.fromVideo(VideoBlock.builder().source(videoSource).format(videoFormat).build());
-		}
-		else if (BedrockMediaFormat.isSupportedImageFormat(mimeType)) { // Image
+		} else if (BedrockMediaFormat.isSupportedImageFormat(mimeType)) { // Image
 			ImageSource.Builder sourceBuilder = ImageSource.builder();
 			if (media.getData() instanceof byte[] bytes) {
 				sourceBuilder.bytes(SdkBytes.fromByteArrayUnsafe(bytes)).build();
-			}
-			else if (media.getData() instanceof String text) {
+			} else if (media.getData() instanceof String text) {
 
 				if (text.startsWith("s3://")) {
 					sourceBuilder.s3Location(S3Location.builder().uri(text).build()).build();
-				}
-				else if (text.startsWith("http://") || text.startsWith("https://")) {
+				} else if (text.startsWith("http://") || text.startsWith("https://")) {
 					// Not base64
 					if (URLValidator.isValidURLStrict(text)) {
 						try {
 							byte[] bytes = this.mediaFetcher.fetch(URI.create(text));
 							sourceBuilder.bytes(SdkBytes.fromByteArrayUnsafe(bytes)).build();
-						}
-						catch (SecurityException | RestClientException e) {
+						} catch (SecurityException | RestClientException e) {
 							throw new RuntimeException("Failed to read media data from URL: " + text, e);
 						}
-					}
-					else {
+					} else {
 						throw new SecurityException("URL is not valid under strict validation rules: " + text);
 					}
-				}
-				else {
+				} else {
 					// Assume it's base64-encoded image data
 					sourceBuilder.bytes(SdkBytes.fromByteArray(Base64.getDecoder().decode(text)));
 				}
-			}
-			else if (media.getData() instanceof URL url) {
+			} else if (media.getData() instanceof URL url) {
 
 				try {
 					String protocol = url.getProtocol();
@@ -542,27 +489,24 @@ public class BedrockProxyChatModel implements ChatModel {
 					}
 					byte[] bytes = this.mediaFetcher.fetch(url.toURI());
 					sourceBuilder.bytes(SdkBytes.fromByteArrayUnsafe(bytes)).build();
-				}
-				catch (SecurityException | RestClientException | URISyntaxException e) {
+				} catch (SecurityException | RestClientException | URISyntaxException e) {
 					throw new IllegalArgumentException("Failed to read media data from URL: " + url, e);
 				}
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Invalid Image content type: " + media.getData().getClass());
 			}
 
 			return ContentBlock.fromImage(ImageBlock.builder()
-				.source(sourceBuilder.build())
-				.format(BedrockMediaFormat.getImageFormat(mimeType))
-				.build());
-		}
-		else if (BedrockMediaFormat.isSupportedDocumentFormat(mimeType)) { // Document
+					.source(sourceBuilder.build())
+					.format(BedrockMediaFormat.getImageFormat(mimeType))
+					.build());
+		} else if (BedrockMediaFormat.isSupportedDocumentFormat(mimeType)) { // Document
 
 			return ContentBlock.fromDocument(DocumentBlock.builder()
-				.name(sanitizeDocumentName(media.getName()))
-				.format(BedrockMediaFormat.getDocumentFormat(mimeType))
-				.source(DocumentSource.builder().bytes(SdkBytes.fromByteArray(media.getDataAsByteArray())).build())
-				.build());
+					.name(sanitizeDocumentName(media.getName()))
+					.format(BedrockMediaFormat.getDocumentFormat(mimeType))
+					.source(DocumentSource.builder().bytes(SdkBytes.fromByteArray(media.getDataAsByteArray())).build())
+					.build());
 		}
 
 		throw new IllegalArgumentException("Unsupported media format: " + mimeType);
@@ -572,6 +516,7 @@ public class BedrockProxyChatModel implements ChatModel {
 	 * Sanitizes a document name to conform to Amazon Bedrock's naming restrictions. The
 	 * name can only contain alphanumeric characters, whitespace characters (no more than
 	 * one in a row), hyphens, parentheses, and square brackets.
+	 *
 	 * @param name the document name to sanitize
 	 * @return the sanitized document name
 	 * @see <a href=
@@ -586,6 +531,7 @@ public class BedrockProxyChatModel implements ChatModel {
 	 * Convert {@link ConverseResponse} to {@link ChatResponse} includes model output,
 	 * stopReason, usage, metrics etc.
 	 * https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html#API_runtime_Converse_ResponseSyntax
+	 *
 	 * @param response The Bedrock Converse response.
 	 * @return The ChatResponse entity.
 	 */
@@ -596,13 +542,13 @@ public class BedrockProxyChatModel implements ChatModel {
 		Message message = response.output().message();
 
 		List<Generation> generations = message.content()
-			.stream()
-			.filter(content -> content.type() != ContentBlock.Type.TOOL_USE)
-			.filter(content -> content.text() != null)
-			.map(content -> new Generation(
-					AssistantMessage.builder().content(content.text()).properties(Map.of()).build(),
-					ChatGenerationMetadata.builder().finishReason(response.stopReasonAsString()).build()))
-			.toList();
+				.stream()
+				.filter(content -> content.type() != ContentBlock.Type.TOOL_USE)
+				.filter(content -> content.text() != null)
+				.map(content -> new Generation(
+						AssistantMessage.builder().content(content.text()).properties(Map.of()).build(),
+						ChatGenerationMetadata.builder().finishReason(response.stopReasonAsString()).build()))
+				.toList();
 
 		List<Generation> allGenerations = new ArrayList<>(generations);
 
@@ -613,9 +559,9 @@ public class BedrockProxyChatModel implements ChatModel {
 		}
 
 		List<ContentBlock> toolUseContentBlocks = message.content()
-			.stream()
-			.filter(c -> c.type() == ContentBlock.Type.TOOL_USE)
-			.toList();
+				.stream()
+				.filter(c -> c.type() == ContentBlock.Type.TOOL_USE)
+				.toList();
 
 		if (!CollectionUtils.isEmpty(toolUseContentBlocks)) {
 
@@ -628,14 +574,14 @@ public class BedrockProxyChatModel implements ChatModel {
 				var functionArguments = toolUseContentBlock.toolUse().input().toString();
 
 				toolCalls
-					.add(new AssistantMessage.ToolCall(functionCallId, "function", functionName, functionArguments));
+						.add(new AssistantMessage.ToolCall(functionCallId, "function", functionName, functionArguments));
 			}
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("")
-				.properties(Map.of())
-				.toolCalls(toolCalls)
-				.build();
+					.content("")
+					.properties(Map.of())
+					.toolCalls(toolCalls)
+					.build();
 			Generation toolCallGeneration = new Generation(assistantMessage,
 					ChatGenerationMetadata.builder().finishReason(response.stopReasonAsString()).build());
 			allGenerations.add(toolCallGeneration);
@@ -657,18 +603,16 @@ public class BedrockProxyChatModel implements ChatModel {
 			// Merge cache metrics from previous response if available
 			if (perviousChatResponse.getMetadata().getUsage().getNativeUsage() instanceof TokenUsage) {
 				TokenUsage previousTokenUsage = (TokenUsage) perviousChatResponse.getMetadata()
-					.getUsage()
-					.getNativeUsage();
+						.getUsage()
+						.getNativeUsage();
 				if (cacheReadInputTokens == null) {
 					cacheReadInputTokens = previousTokenUsage.cacheReadInputTokens();
-				}
-				else if (previousTokenUsage.cacheReadInputTokens() != null) {
+				} else if (previousTokenUsage.cacheReadInputTokens() != null) {
 					cacheReadInputTokens += previousTokenUsage.cacheReadInputTokens();
 				}
 				if (cacheWriteInputTokens == null) {
 					cacheWriteInputTokens = previousTokenUsage.cacheWriteInputTokens();
-				}
-				else if (previousTokenUsage.cacheWriteInputTokens() != null) {
+				} else if (previousTokenUsage.cacheWriteInputTokens() != null) {
 					cacheWriteInputTokens += previousTokenUsage.cacheWriteInputTokens();
 				}
 			}
@@ -676,12 +620,12 @@ public class BedrockProxyChatModel implements ChatModel {
 
 		// Create native TokenUsage with cache metrics
 		TokenUsage nativeTokenUsage = TokenUsage.builder()
-			.inputTokens(promptTokens)
-			.outputTokens(generationTokens)
-			.totalTokens(totalTokens)
-			.cacheReadInputTokens(cacheReadInputTokens)
-			.cacheWriteInputTokens(cacheWriteInputTokens)
-			.build();
+				.inputTokens(promptTokens)
+				.outputTokens(generationTokens)
+				.totalTokens(totalTokens)
+				.cacheReadInputTokens(cacheReadInputTokens)
+				.cacheWriteInputTokens(cacheWriteInputTokens)
+				.build();
 
 		DefaultUsage usage = new DefaultUsage(promptTokens, generationTokens, totalTokens, nativeTokenUsage,
 				cacheReadInputTokens != null ? cacheReadInputTokens.longValue() : null,
@@ -692,8 +636,8 @@ public class BedrockProxyChatModel implements ChatModel {
 		ConverseMetrics metrics = response.metrics();
 
 		var metadataBuilder = ChatResponseMetadata.builder()
-			.id(response.responseMetadata() != null ? response.responseMetadata().requestId() : "Unknown")
-			.usage(usage);
+				.id(response.responseMetadata() != null ? response.responseMetadata().requestId() : "Unknown")
+				.usage(usage);
 
 		// Add cache metrics to metadata if available (for backward compatibility)
 		Map<String, Object> additionalMetadata = new HashMap<>();
@@ -712,10 +656,11 @@ public class BedrockProxyChatModel implements ChatModel {
 
 	/**
 	 * Invoke the model and return the response stream.
-	 *
+	 * <p>
 	 * https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html
 	 * https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html
 	 * https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/bedrockruntime/BedrockRuntimeAsyncClient.html#converseStream
+	 *
 	 * @return The model invocation response stream.
 	 */
 	@Override
@@ -732,10 +677,10 @@ public class BedrockProxyChatModel implements ChatModel {
 			ConverseRequest converseRequest = this.createRequest(prompt);
 
 			ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(AiProvider.BEDROCK_CONVERSE.value())
-				.streaming(true)
-				.build();
+					.prompt(prompt)
+					.provider(AiProvider.BEDROCK_CONVERSE.value())
+					.streaming(true)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -749,15 +694,15 @@ public class BedrockProxyChatModel implements ChatModel {
 			}
 
 			ConverseStreamRequest converseStreamRequest = ConverseStreamRequest.builder()
-				.modelId(converseRequest.modelId())
-				.inferenceConfig(converseRequest.inferenceConfig())
-				.messages(converseRequest.messages())
-				.system(converseRequest.system())
-				.additionalModelRequestFields(converseRequest.additionalModelRequestFields())
-				.toolConfig(converseRequest.toolConfig())
-				.requestMetadata(converseRequest.requestMetadata())
-				.outputConfig(converseRequest.outputConfig())
-				.build();
+					.modelId(converseRequest.modelId())
+					.inferenceConfig(converseRequest.inferenceConfig())
+					.messages(converseRequest.messages())
+					.system(converseRequest.system())
+					.additionalModelRequestFields(converseRequest.additionalModelRequestFields())
+					.toolConfig(converseRequest.toolConfig())
+					.requestMetadata(converseRequest.requestMetadata())
+					.outputConfig(converseRequest.outputConfig())
+					.build();
 
 			Usage accumulatedUsage = null;
 			if (perviousChatResponse != null && perviousChatResponse.getMetadata() != null) {
@@ -766,15 +711,15 @@ public class BedrockProxyChatModel implements ChatModel {
 
 			Flux<ChatResponse> chatResponses = new ConverseChatResponseStream(this.bedrockRuntimeAsyncClient,
 					converseStreamRequest, accumulatedUsage)
-				.stream();
+					.stream();
 
 			ChatOptions options = prompt.getOptions();
 			Assert.state(options != null, "Prompt options must not be null");
 
 			Flux<ChatResponse> chatResponseFlux = chatResponses.concatMap(chatResponse -> Flux.just(chatResponse))
-				.doOnError(observation::error)
-				.doFinally(s -> observation.stop())
-				.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
+					.doOnError(observation::error)
+					.doFinally(s -> observation.stop())
+					.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, observation));
 
 			return new MessageAggregator().aggregate(chatResponseFlux, observationContext::setResponse);
 		});
@@ -782,6 +727,7 @@ public class BedrockProxyChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -801,8 +747,7 @@ public class BedrockProxyChatModel implements ChatModel {
 	private Prompt buildRequestPrompt(Prompt prompt) {
 		if (prompt.getOptions() == null) {
 			return prompt.mutate().chatOptions(this.getOptions()).build();
-		}
-		else {
+		} else {
 			return prompt;
 		}
 	}
@@ -838,14 +783,14 @@ public class BedrockProxyChatModel implements ChatModel {
 		private Builder() {
 			try {
 				this.region = DefaultAwsRegionProviderChain.builder().build().getRegion();
-			}
-			catch (SdkClientException e) {
+			} catch (SdkClientException e) {
 				logger.warn("Failed to load region from DefaultAwsRegionProviderChain, using US_EAST_1", e);
 			}
 		}
 
 		/**
 		 * Sets the tool calling manager used for internal tool execution.
+		 *
 		 * @param toolCallingManager the tool calling manager
 		 * @return this builder
 		 * @deprecated since 2.0.0 for removal in 3.0.0 — internal tool execution in
@@ -933,32 +878,32 @@ public class BedrockProxyChatModel implements ChatModel {
 			if (this.bedrockRuntimeClient == null) {
 
 				var httpClientBuilder = ApacheHttpClient.builder()
-					.connectionAcquisitionTimeout(this.connectionAcquisitionTimeout)
-					.connectionTimeout(this.connectionTimeout)
-					.socketTimeout(this.socketTimeout);
+						.connectionAcquisitionTimeout(this.connectionAcquisitionTimeout)
+						.connectionTimeout(this.connectionTimeout)
+						.socketTimeout(this.socketTimeout);
 
 				this.bedrockRuntimeClient = BedrockRuntimeClient.builder()
-					.region(this.region)
-					.httpClientBuilder(httpClientBuilder)
-					.credentialsProvider(this.credentialsProvider)
-					.overrideConfiguration(c -> c.apiCallTimeout(this.timeout))
-					.build();
+						.region(this.region)
+						.httpClientBuilder(httpClientBuilder)
+						.credentialsProvider(this.credentialsProvider)
+						.overrideConfiguration(c -> c.apiCallTimeout(this.timeout))
+						.build();
 			}
 
 			if (this.bedrockRuntimeAsyncClient == null) {
 
 				var httpClientBuilder = NettyNioAsyncHttpClient.builder()
-					.tcpKeepAlive(true)
-					.readTimeout(this.asyncReadTimeout)
-					.connectionTimeout(this.connectionTimeout)
-					.connectionAcquisitionTimeout(this.connectionAcquisitionTimeout)
-					.maxConcurrency(200);
+						.tcpKeepAlive(true)
+						.readTimeout(this.asyncReadTimeout)
+						.connectionTimeout(this.connectionTimeout)
+						.connectionAcquisitionTimeout(this.connectionAcquisitionTimeout)
+						.maxConcurrency(200);
 
 				var builder = BedrockRuntimeAsyncClient.builder()
-					.region(this.region)
-					.httpClientBuilder(httpClientBuilder)
-					.credentialsProvider(this.credentialsProvider)
-					.overrideConfiguration(c -> c.apiCallTimeout(this.timeout));
+						.region(this.region)
+						.httpClientBuilder(httpClientBuilder)
+						.credentialsProvider(this.credentialsProvider)
+						.overrideConfiguration(c -> c.apiCallTimeout(this.timeout));
 				this.bedrockRuntimeAsyncClient = builder.build();
 			}
 

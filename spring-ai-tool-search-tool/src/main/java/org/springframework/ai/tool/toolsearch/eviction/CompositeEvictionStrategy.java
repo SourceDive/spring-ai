@@ -16,11 +16,11 @@
 
 package org.springframework.ai.tool.toolsearch.eviction;
 
+import org.springframework.util.Assert;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.springframework.util.Assert;
 
 /**
  * A {@link ToolIndexEvictionStrategy} that delegates to multiple strategies and unions
@@ -39,6 +39,7 @@ public final class CompositeEvictionStrategy implements ToolIndexEvictionStrateg
 
 	/**
 	 * Creates a composite strategy from the given delegates.
+	 *
 	 * @param strategies one or more strategies to combine; must not be empty
 	 */
 	public CompositeEvictionStrategy(ToolIndexEvictionStrategy... strategies) {

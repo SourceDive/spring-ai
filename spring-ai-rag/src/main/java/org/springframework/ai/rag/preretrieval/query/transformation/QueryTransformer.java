@@ -16,9 +16,9 @@
 
 package org.springframework.ai.rag.preretrieval.query.transformation;
 
-import java.util.function.Function;
-
 import org.springframework.ai.rag.Query;
+
+import java.util.function.Function;
 
 /**
  * A component for transforming the input query to make it more effective for retrieval
@@ -32,6 +32,7 @@ public interface QueryTransformer extends Function<Query, Query> {
 
 	/**
 	 * Transforms the given query according to the implemented strategy.
+	 *
 	 * @param query The original query to transform
 	 * @return The transformed query
 	 */

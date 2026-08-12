@@ -16,14 +16,11 @@
 
 package org.springframework.ai.google.genai.text;
 
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistryAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.embedding.EmbeddingResponseMetadata;
@@ -38,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,9 +62,9 @@ public class GoogleGenAiTextEmbeddingModelObservationIT {
 	void observationForEmbeddingOperation() {
 
 		var options = GoogleGenAiTextEmbeddingOptions.builder()
-			.model(GoogleGenAiTextEmbeddingModelName.TEXT_EMBEDDING_004.getName())
-			.dimensions(768)
-			.build();
+				.model(GoogleGenAiTextEmbeddingModelName.TEXT_EMBEDDING_004.getName())
+				.dimensions(768)
+				.build();
 
 		EmbeddingRequest embeddingRequest = new EmbeddingRequest(List.of("Here comes the sun"), options);
 
@@ -76,24 +75,24 @@ public class GoogleGenAiTextEmbeddingModelObservationIT {
 		assertThat(responseMetadata).isNotNull();
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("embedding " + GoogleGenAiTextEmbeddingModelName.TEXT_EMBEDDING_004.getName())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.EMBEDDING.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.GOOGLE_GENAI_AI.value())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					GoogleGenAiTextEmbeddingModelName.TEXT_EMBEDDING_004.getName())
-			.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(), "768")
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getPromptTokens()))
-			.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
-					String.valueOf(responseMetadata.getUsage().getTotalTokens()))
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultEmbeddingModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("embedding " + GoogleGenAiTextEmbeddingModelName.TEXT_EMBEDDING_004.getName())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.EMBEDDING.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.GOOGLE_GENAI_AI.value())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						GoogleGenAiTextEmbeddingModelName.TEXT_EMBEDDING_004.getName())
+				.hasLowCardinalityKeyValue(LowCardinalityKeyNames.RESPONSE_MODEL.asString(), responseMetadata.getModel())
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.REQUEST_EMBEDDING_DIMENSIONS.asString(), "768")
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_INPUT_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getPromptTokens()))
+				.hasHighCardinalityKeyValue(HighCardinalityKeyNames.USAGE_TOTAL_TOKENS.asString(),
+						String.valueOf(responseMetadata.getUsage().getTotalTokens()))
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration
@@ -107,9 +106,9 @@ public class GoogleGenAiTextEmbeddingModelObservationIT {
 		@Bean
 		public GoogleGenAiEmbeddingConnectionDetails connectionDetails() {
 			return GoogleGenAiEmbeddingConnectionDetails.builder()
-				.projectId(System.getenv("GOOGLE_CLOUD_PROJECT"))
-				.location(System.getenv("GOOGLE_CLOUD_LOCATION"))
-				.build();
+					.projectId(System.getenv("GOOGLE_CLOUD_PROJECT"))
+					.location(System.getenv("GOOGLE_CLOUD_LOCATION"))
+					.build();
 		}
 
 		@Bean
@@ -117,8 +116,8 @@ public class GoogleGenAiTextEmbeddingModelObservationIT {
 				GoogleGenAiEmbeddingConnectionDetails connectionDetails, ObservationRegistry observationRegistry) {
 
 			GoogleGenAiTextEmbeddingOptions options = GoogleGenAiTextEmbeddingOptions.builder()
-				.model(GoogleGenAiTextEmbeddingOptions.DEFAULT_MODEL_NAME)
-				.build();
+					.model(GoogleGenAiTextEmbeddingOptions.DEFAULT_MODEL_NAME)
+					.build();
 
 			return new GoogleGenAiTextEmbeddingModel(connectionDetails, options, RetryUtils.DEFAULT_RETRY_TEMPLATE,
 					observationRegistry);

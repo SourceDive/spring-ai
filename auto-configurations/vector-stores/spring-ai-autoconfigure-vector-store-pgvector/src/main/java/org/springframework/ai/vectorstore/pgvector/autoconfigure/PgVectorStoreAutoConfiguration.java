@@ -16,10 +16,7 @@
 
 package org.springframework.ai.vectorstore.pgvector.autoconfigure;
 
-import javax.sql.DataSource;
-
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -35,6 +32,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
+
 /**
  * {@link AutoConfiguration Auto-configuration} for PostgreSQL Vector Store.
  *
@@ -44,7 +43,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ PgVectorStore.class, DataSource.class, JdbcTemplate.class })
+@ConditionalOnClass({PgVectorStore.class, DataSource.class, JdbcTemplate.class})
 @EnableConfigurationProperties(PgVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.PGVECTOR,
 		matchIfMissing = true)
@@ -59,27 +58,27 @@ public class PgVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public PgVectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel,
-			PgVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                 PgVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                 ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                 BatchingStrategy batchingStrategy) {
 
 		var initializeSchema = properties.isInitializeSchema();
 
 		return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.schemaName(properties.getSchemaName())
-			.idType(properties.getIdType())
-			.vectorTableName(properties.getTableName())
-			.vectorTableValidationsEnabled(properties.isSchemaValidation())
-			.dimensions(properties.getDimensions())
-			.distanceType(properties.getDistanceType())
-			.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
-			.indexType(properties.getIndexType())
-			.initializeSchema(initializeSchema)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.maxDocumentBatchSize(properties.getMaxDocumentBatchSize())
-			.build();
+				.schemaName(properties.getSchemaName())
+				.idType(properties.getIdType())
+				.vectorTableName(properties.getTableName())
+				.vectorTableValidationsEnabled(properties.isSchemaValidation())
+				.dimensions(properties.getDimensions())
+				.distanceType(properties.getDistanceType())
+				.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
+				.indexType(properties.getIndexType())
+				.initializeSchema(initializeSchema)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.maxDocumentBatchSize(properties.getMaxDocumentBatchSize())
+				.build();
 	}
 
 }

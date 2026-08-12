@@ -16,13 +16,12 @@
 
 package org.springframework.ai.tool.toolsearch.index.regex;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.toolsearch.ToolReference;
 import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
 import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,8 +46,7 @@ class RegexToolIndexTests {
 	void searchTypeIsRegex() {
 		try (RegexToolIndex searcher = new RegexToolIndex()) {
 			assertThat(searcher.getClass().getSimpleName()).isEqualTo("RegexToolIndex");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -63,8 +61,7 @@ class RegexToolIndexTests {
 
 			assertThat(response.toolReferences()).hasSize(1);
 			assertThat(response.toolReferences().get(0).toolName()).isEqualTo("weatherTool");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -79,8 +76,7 @@ class RegexToolIndexTests {
 
 			assertThat(response.toolReferences()).hasSize(1);
 			assertThat(response.toolReferences().get(0).toolName()).isEqualTo("toolA");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -92,8 +88,7 @@ class RegexToolIndexTests {
 					ref("tool2", "Second tool description"), ref("tool3", "Third tool description")));
 
 			assertThat(searcher.size(SESSION)).isEqualTo(3);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -104,8 +99,7 @@ class RegexToolIndexTests {
 			ToolSearchResponse response = search(searcher, "weather");
 
 			assertThat(response.toolReferences()).isEmpty();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -120,8 +114,7 @@ class RegexToolIndexTests {
 
 			assertThat(searcher.size(SESSION)).isEqualTo(0);
 			assertThat(search(searcher, "tool").toolReferences()).isEmpty();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -135,8 +128,7 @@ class RegexToolIndexTests {
 			ToolSearchResponse response = searcher.search(new ToolSearchRequest("session-2", "weather", null, null));
 
 			assertThat(response.toolReferences()).isEmpty();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -151,8 +143,7 @@ class RegexToolIndexTests {
 
 			assertThat(response.toolReferences()).hasSize(2);
 			assertThat(response.toolReferences().get(0).toolName()).isEqualTo("weatherTool");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -167,8 +158,7 @@ class RegexToolIndexTests {
 			ToolSearchResponse response = searcher.search(new ToolSearchRequest(SESSION, "data", 3, null));
 
 			assertThat(response.toolReferences()).hasSize(3);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -179,8 +169,7 @@ class RegexToolIndexTests {
 			assertThat(searcher.convertQueryToRegexPattern("weather tools")).isEqualTo("(?i)(weather|tools)");
 			assertThat(searcher.convertQueryToRegexPattern("get user data")).isEqualTo("(?i)(get|user|data)");
 			assertThat(searcher.convertQueryToRegexPattern("")).isEqualTo(".*");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -191,8 +180,7 @@ class RegexToolIndexTests {
 			assertThat(searcher.isValidPattern("(?i)(weather|tools)")).isTrue();
 			assertThat(searcher.isValidPattern("[invalid")).isFalse();
 			assertThat(searcher.isValidPattern(null)).isFalse();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

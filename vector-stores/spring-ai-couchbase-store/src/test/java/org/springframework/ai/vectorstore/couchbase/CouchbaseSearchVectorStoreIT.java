@@ -16,27 +16,12 @@
 
 package org.springframework.ai.vectorstore.couchbase;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import com.couchbase.client.java.Cluster;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.couchbase.CouchbaseContainer;
-import org.testcontainers.couchbase.CouchbaseService;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
@@ -47,6 +32,16 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.couchbase.CouchbaseContainer;
+import org.testcontainers.couchbase.CouchbaseService;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,13 +57,13 @@ public class CouchbaseSearchVectorStoreIT {
 	@Container
 	final static CouchbaseContainer couchbaseContainer = new CouchbaseContainer(
 			CouchbaseContainerMetadata.COUCHBASE_IMAGE_ENTERPRISE)
-		.withCredentials(CouchbaseContainerMetadata.USERNAME, CouchbaseContainerMetadata.PASSWORD)
-		.withEnabledServices(CouchbaseService.KV, CouchbaseService.QUERY, CouchbaseService.INDEX,
-				CouchbaseService.SEARCH)
-		.withBucket(CouchbaseContainerMetadata.bucketDefinition)
-		.withStartupAttempts(4)
-		.withStartupTimeout(Duration.ofSeconds(90))
-		.waitingFor(Wait.forHealthcheck());
+			.withCredentials(CouchbaseContainerMetadata.USERNAME, CouchbaseContainerMetadata.PASSWORD)
+			.withEnabledServices(CouchbaseService.KV, CouchbaseService.QUERY, CouchbaseService.INDEX,
+					CouchbaseService.SEARCH)
+			.withBucket(CouchbaseContainerMetadata.bucketDefinition)
+			.withStartupAttempts(4)
+			.withStartupTimeout(Duration.ofSeconds(90))
+			.waitingFor(Wait.forHealthcheck());
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -103,7 +98,7 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(5000); // wait for indexing
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -115,7 +110,7 @@ public class CouchbaseSearchVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(documents.stream().map(Document::getId).collect(Collectors.toList()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 			assertThat(results2).isEmpty();
 
 		});
@@ -133,7 +128,7 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(5000); // Await a second for the document to be indexed
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -158,7 +153,7 @@ public class CouchbaseSearchVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(Collections.singletonList(document.getId()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 			assertThat(results2).isEmpty();
 		});
 	}
@@ -179,45 +174,45 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(5000); // Await a second for the document to be indexed
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country == 'BG' && year == 2020)")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country == 'BG' && year == 2020)")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(nlDocument.getId(), bgDocument2.getId());
@@ -226,7 +221,7 @@ public class CouchbaseSearchVectorStoreIT {
 			// Remove all documents from the store
 			vectorStore.delete(List.of(bgDocument.getId(), bgDocument2.getId(), nlDocument.getId()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 			assertThat(results2).isEmpty();
 
 		});
@@ -256,18 +251,18 @@ public class CouchbaseSearchVectorStoreIT {
 			Thread.sleep(1000); // Wait for deletion to be processed
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder("A", "B");
+					.containsExactlyInAnyOrder("A", "B");
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("priority")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(1, 1);
+					.containsExactlyInAnyOrder(1, 1);
 
 			// Remove all documents from the store
 			vectorStore.delete(List.of(doc1.getId(), doc3.getId()));
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).build());
 			assertThat(results2).isEmpty();
 		});
 	}
@@ -289,9 +284,9 @@ public class CouchbaseSearchVectorStoreIT {
 			Cluster cluster = Cluster.connect(couchbaseContainer.getConnectionString(),
 					couchbaseContainer.getUsername(), couchbaseContainer.getPassword());
 			CouchbaseSearchVectorStore.Builder builder = CouchbaseSearchVectorStore.builder(cluster, embeddingModel)
-				.bucketName("springBucket")
-				.scopeName("springScope")
-				.collectionName("springCollection");
+					.bucketName("springBucket")
+					.scopeName("springScope")
+					.collectionName("springCollection");
 
 			return builder.initializeSchema(true).build();
 		}
@@ -299,9 +294,9 @@ public class CouchbaseSearchVectorStoreIT {
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

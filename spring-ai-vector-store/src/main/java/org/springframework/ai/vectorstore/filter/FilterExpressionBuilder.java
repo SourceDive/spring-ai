@@ -16,11 +16,11 @@
 
 package org.springframework.ai.vectorstore.filter;
 
-import java.util.List;
-
 import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
+
+import java.util.List;
 
 /**
  * DSL builder for {@link Filter.Expression} instances. Here are some common examples:
@@ -47,8 +47,8 @@ import org.springframework.ai.vectorstore.filter.Filter.Value;
  * var exp6 = b.and(b.and(b.eq("isOpen", true), b.gte("year", 2020)), b.in("country", "BG", "NL", "US"));
  *
  * }</pre>
- *
- *
+ * <p>
+ * <p>
  * This builder DSL mimics the common
  * <a href="https://www.baeldung.com/hibernate-criteria-queries">Criteria Queries</a>
  * syntax.
@@ -123,12 +123,11 @@ public class FilterExpressionBuilder {
 
 	public record Op(Filter.Operand expression) {
 
-		public Filter.Expression build() {
+		public Filter.Expression build () {
 			if (this.expression instanceof Filter.Group group) {
 				// Remove the top-level grouping.
 				return group.content();
-			}
-			else if (this.expression instanceof Filter.Expression exp) {
+			} else if (this.expression instanceof Filter.Expression exp) {
 				return exp;
 			}
 			throw new RuntimeException("Invalid expression: " + this.expression);

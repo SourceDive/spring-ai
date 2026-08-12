@@ -27,7 +27,9 @@ import org.springframework.util.Assert;
  * @author Christian Tzolov
  * @since 1.0.0
  */
-public record SimpleApiKey(String value) implements ApiKey {
+public record SimpleApiKey(String value) implements
+
+ApiKey {
 
 	/**
 	 * Create a new SimpleApiKey.
@@ -40,12 +42,12 @@ public record SimpleApiKey(String value) implements ApiKey {
 	}
 
 	@Override
-	public String getValue() {
+	public String getValue () {
 		return this.value();
 	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		return "SimpleApiKey{value='***'}";
 	}
 }

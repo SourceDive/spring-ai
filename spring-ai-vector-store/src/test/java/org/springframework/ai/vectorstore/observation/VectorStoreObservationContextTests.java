@@ -31,39 +31,39 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenMandatoryFieldsThenReturn() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.ADD)
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.ADD)
+				.build();
 		assertThat(observationContext).isNotNull();
 	}
 
 	@Test
 	void whenDbSystemIsNullThenThrow() {
 		assertThatThrownBy(() -> VectorStoreObservationContext.builder(null, "delete").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("databaseSystem cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("databaseSystem cannot be null or empty");
 	}
 
 	@Test
 	void whenOperationNameIsNullThenThrow() {
 		assertThatThrownBy(() -> VectorStoreObservationContext.builder("Db", "").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("operationName cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("operationName cannot be null or empty");
 	}
 
 	@Test
 	void whenEmptyDbSystemThenThrow() {
 		assertThatThrownBy(
 				() -> VectorStoreObservationContext.builder("", VectorStoreObservationContext.Operation.ADD).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("databaseSystem cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("databaseSystem cannot be null or empty");
 	}
 
 	@Test
 	void whenWhitespaceDbSystemThenThrow() {
 		assertThatThrownBy(
 				() -> VectorStoreObservationContext.builder("   ", VectorStoreObservationContext.Operation.ADD).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("databaseSystem cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("databaseSystem cannot be null or empty");
 	}
 
 	@Test
@@ -76,9 +76,9 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenCollectionNameProvidedThenSet() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.ADD)
-			.collectionName("documents")
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.ADD)
+				.collectionName("documents")
+				.build();
 
 		assertThat(observationContext.getCollectionName()).isEqualTo("documents");
 	}
@@ -86,8 +86,8 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenNoCollectionNameProvidedThenNull() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.ADD)
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.ADD)
+				.build();
 
 		assertThat(observationContext.getCollectionName()).isNull();
 	}
@@ -95,8 +95,8 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenNoDimensionsProvidedThenNull() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.QUERY)
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.QUERY)
+				.build();
 
 		assertThat(observationContext.getDimensions()).isNull();
 	}
@@ -104,9 +104,9 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenFieldNameProvidedThenSet() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.QUERY)
-			.fieldName("embedding_vector")
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.QUERY)
+				.fieldName("embedding_vector")
+				.build();
 
 		assertThat(observationContext.getFieldName()).isEqualTo("embedding_vector");
 	}
@@ -114,9 +114,9 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenNamespaceProvidedThenSet() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.ADD)
-			.namespace("production")
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.ADD)
+				.namespace("production")
+				.build();
 
 		assertThat(observationContext.getNamespace()).isEqualTo("production");
 	}
@@ -124,9 +124,9 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenSimilarityMetricProvidedThenSet() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.QUERY)
-			.similarityMetric("cosine")
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.QUERY)
+				.similarityMetric("cosine")
+				.build();
 
 		assertThat(observationContext.getSimilarityMetric()).isEqualTo("cosine");
 	}
@@ -134,9 +134,9 @@ class VectorStoreObservationContextTests {
 	@Test
 	void whenEmptyCollectionNameThenSet() {
 		var observationContext = VectorStoreObservationContext
-			.builder("db", VectorStoreObservationContext.Operation.ADD)
-			.collectionName("")
-			.build();
+				.builder("db", VectorStoreObservationContext.Operation.ADD)
+				.collectionName("")
+				.build();
 
 		assertThat(observationContext.getCollectionName()).isEmpty();
 	}

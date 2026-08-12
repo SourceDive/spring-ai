@@ -18,14 +18,7 @@ package org.springframework.ai.openai.moderation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import org.springframework.ai.moderation.Categories;
-import org.springframework.ai.moderation.CategoryScores;
-import org.springframework.ai.moderation.Moderation;
-import org.springframework.ai.moderation.ModerationOptionsBuilder;
-import org.springframework.ai.moderation.ModerationPrompt;
-import org.springframework.ai.moderation.ModerationResponse;
-import org.springframework.ai.moderation.ModerationResult;
+import org.springframework.ai.moderation.*;
 import org.springframework.ai.openai.OpenAiTestConfiguration;
 import org.springframework.ai.openai.testutils.AbstractIT;
 import org.springframework.boot.test.context.SpringBootTest;

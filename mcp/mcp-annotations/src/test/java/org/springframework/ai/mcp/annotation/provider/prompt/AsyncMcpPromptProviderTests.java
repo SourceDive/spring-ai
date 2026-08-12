@@ -16,23 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.provider.prompt;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncPromptSpecification;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
-import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpArg;
+import org.springframework.ai.mcp.annotation.McpPrompt;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpArg;
-import org.springframework.ai.mcp.annotation.McpPrompt;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,7 +43,7 @@ public class AsyncMcpPromptProviderTests {
 	@Test
 	void testConstructorWithNullPromptObjects() {
 		assertThatThrownBy(() -> new AsyncMcpPromptProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("promptObjects cannot be null");
+				.hasMessageContaining("promptObjects cannot be null");
 	}
 
 	@Test
@@ -426,7 +421,7 @@ public class AsyncMcpPromptProviderTests {
 			PromptMessage message = promptResult.messages().get(0);
 			assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 			assertThat(((TextContent) message.content()).text())
-				.isEqualTo("Prompt with exchange: present, name: exchange-prompt");
+					.isEqualTo("Prompt with exchange: present, name: exchange-prompt");
 		}).verifyComplete();
 	}
 
@@ -437,7 +432,7 @@ public class AsyncMcpPromptProviderTests {
 			@McpPrompt(name = "request-prompt", description = "Prompt with request parameter")
 			public Mono<GetPromptResult> requestPrompt(GetPromptRequest request) {
 				return Mono.just(new GetPromptResult("Request prompt result", List
-					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Prompt for name: " + request.name())))));
+						.of(new PromptMessage(Role.ASSISTANT, new TextContent("Prompt for name: " + request.name())))));
 			}
 
 		}

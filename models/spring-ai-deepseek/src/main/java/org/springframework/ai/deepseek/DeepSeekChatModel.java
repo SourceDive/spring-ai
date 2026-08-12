@@ -16,31 +16,17 @@
 
 package org.springframework.ai.deepseek;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
-import org.springframework.ai.chat.metadata.ChatResponseMetadata;
-import org.springframework.ai.chat.metadata.DefaultUsage;
-import org.springframework.ai.chat.metadata.EmptyUsage;
-import org.springframework.ai.chat.metadata.Usage;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
-import org.springframework.ai.chat.model.MessageAggregator;
-import org.springframework.ai.chat.model.StreamingChatModel;
+import org.springframework.ai.chat.metadata.*;
+import org.springframework.ai.chat.model.*;
 import org.springframework.ai.chat.observation.ChatModelObservationContext;
 import org.springframework.ai.chat.observation.ChatModelObservationConvention;
 import org.springframework.ai.chat.observation.ChatModelObservationDocumentation;
@@ -63,6 +49,11 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@link ChatModel} and {@link StreamingChatModel} implementation for {@literal DeepSeek}
@@ -111,8 +102,8 @@ public class DeepSeekChatModel implements ChatModel {
 	private ChatModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
 	public DeepSeekChatModel(DeepSeekApi deepSeekApi, DeepSeekChatOptions options,
-			ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                         ToolCallingManager toolCallingManager, RetryTemplate retryTemplate,
+	                         ObservationRegistry observationRegistry) {
 		Assert.notNull(deepSeekApi, "deepSeekApi cannot be null");
 		Assert.notNull(options, "options cannot be null");
 		Assert.notNull(toolCallingManager, "toolCallingManager cannot be null");
@@ -136,60 +127,60 @@ public class DeepSeekChatModel implements ChatModel {
 		ChatCompletionRequest request = createRequest(prompt, false);
 
 		ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-			.prompt(prompt)
-			.provider(DeepSeekConstants.PROVIDER_NAME)
-			.build();
+				.prompt(prompt)
+				.provider(DeepSeekConstants.PROVIDER_NAME)
+				.build();
 
 		ChatResponse response = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
 
-				ResponseEntity<ChatCompletion> completionEntity = RetryUtils.execute(this.retryTemplate,
-						() -> this.deepSeekApi.chatCompletionEntity(request));
+					ResponseEntity<ChatCompletion> completionEntity = RetryUtils.execute(this.retryTemplate,
+							() -> this.deepSeekApi.chatCompletionEntity(request));
 
-				var chatCompletion = completionEntity.getBody();
+					var chatCompletion = completionEntity.getBody();
 
-				if (chatCompletion == null) {
-					if (logger.isWarnEnabled()) {
-						logger.warn("No chat completion returned for prompt: " + prompt);
+					if (chatCompletion == null) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("No chat completion returned for prompt: " + prompt);
+						}
+						return new ChatResponse(List.of());
 					}
-					return new ChatResponse(List.of());
-				}
 
-				List<Choice> choices = chatCompletion.choices();
-				if (choices == null) {
-					if (logger.isWarnEnabled()) {
-						logger.warn("No choices returned for prompt: " + prompt);
+					List<Choice> choices = chatCompletion.choices();
+					if (choices == null) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("No choices returned for prompt: " + prompt);
+						}
+						return new ChatResponse(List.of());
 					}
-					return new ChatResponse(List.of());
-				}
 
-				List<Generation> generations = choices.stream().map(choice -> {
-			// @formatter:off
+					List<Generation> generations = choices.stream().map(choice -> {
+						// @formatter:off
 					Map<String, Object> metadata = Map.of(
 							"id", chatCompletion.id() != null ? chatCompletion.id() : "",
 							"role", choice.message().role() != null ? choice.message().role().name() : "",
 							"index", choice.index(),
 							"finishReason", choice.finishReason() != null ? choice.finishReason().name() : "");
 					// @formatter:on
-					return buildGeneration(choice, metadata);
-				}).toList();
+						return buildGeneration(choice, metadata);
+					}).toList();
 
-				// Current usage
-				ChatCompletion body = completionEntity.getBody();
-				Assert.state(body != null, "Body must not be null");
-				DeepSeekApi.Usage usage = body.usage();
-				Usage currentChatResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
-				Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
-						previousChatResponse);
-				ChatResponse chatResponse = new ChatResponse(generations, from(body, accumulatedUsage));
+					// Current usage
+					ChatCompletion body = completionEntity.getBody();
+					Assert.state(body != null, "Body must not be null");
+					DeepSeekApi.Usage usage = body.usage();
+					Usage currentChatResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
+					Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
+							previousChatResponse);
+					ChatResponse chatResponse = new ChatResponse(generations, from(body, accumulatedUsage));
 
-				observationContext.setResponse(chatResponse);
+					observationContext.setResponse(chatResponse);
 
-				return chatResponse;
+					return chatResponse;
 
-			});
+				});
 
 		return response;
 	}
@@ -211,10 +202,10 @@ public class DeepSeekChatModel implements ChatModel {
 			ConcurrentHashMap<String, String> roleMap = new ConcurrentHashMap<>();
 
 			final ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(prompt)
-				.provider(DeepSeekConstants.PROVIDER_NAME)
-				.streaming(true)
-				.build();
+					.prompt(prompt)
+					.provider(DeepSeekConstants.PROVIDER_NAME)
+					.streaming(true)
+					.build();
 
 			Observation observation = ChatModelObservationDocumentation.CHAT_MODEL_OPERATION.observation(
 					this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
@@ -252,8 +243,7 @@ public class DeepSeekChatModel implements ChatModel {
 						Usage cumulativeUsage = UsageCalculator.getCumulativeUsage(currentUsage, previousChatResponse);
 
 						return new ChatResponse(generations, from(chatCompletion2, cumulativeUsage));
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						logger.error("Error processing chat completion", e);
 						return new ChatResponse(List.of());
 					}
@@ -275,11 +265,11 @@ public class DeepSeekChatModel implements ChatModel {
 	private Generation buildGeneration(Choice choice, Map<String, Object> metadata) {
 		List<AssistantMessage.ToolCall> toolCalls = choice.message().toolCalls() == null ? List.of()
 				: choice.message()
-					.toolCalls()
-					.stream()
-					.map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
-							toolCall.function().name(), toolCall.function().arguments()))
-					.toList();
+				.toolCalls()
+				.stream()
+				.map(toolCall -> new AssistantMessage.ToolCall(toolCall.id(), "function",
+						toolCall.function().name(), toolCall.function().arguments()))
+				.toList();
 
 		String finishReason = (choice.finishReason() != null ? choice.finishReason().name() : "");
 		var generationMetadataBuilder = ChatGenerationMetadata.builder().finishReason(finishReason);
@@ -289,10 +279,10 @@ public class DeepSeekChatModel implements ChatModel {
 
 		DeepSeekAssistantMessage.Builder builder = new DeepSeekAssistantMessage.Builder();
 		DeepSeekAssistantMessage assistantMessage = builder.content(textContent)
-			.reasoningContent(reasoningContent)
-			.properties(metadata)
-			.toolCalls(toolCalls)
-			.build();
+				.reasoningContent(reasoningContent)
+				.properties(metadata)
+				.toolCalls(toolCalls)
+				.build();
 
 		return new Generation(assistantMessage, generationMetadataBuilder.build());
 	}
@@ -300,34 +290,35 @@ public class DeepSeekChatModel implements ChatModel {
 	private ChatResponseMetadata from(DeepSeekApi.ChatCompletion result, Usage usage) {
 		Assert.notNull(result, "DeepSeek ChatCompletionResult must not be null");
 		var builder = ChatResponseMetadata.builder()
-			.id(result.id() != null ? result.id() : "")
-			.usage(usage)
-			.model(result.model() != null ? result.model() : "")
-			.keyValue("created", result.created() != null ? result.created() : 0L)
-			.keyValue("system-fingerprint", result.systemFingerprint() != null ? result.systemFingerprint() : "");
+				.id(result.id() != null ? result.id() : "")
+				.usage(usage)
+				.model(result.model() != null ? result.model() : "")
+				.keyValue("created", result.created() != null ? result.created() : 0L)
+				.keyValue("system-fingerprint", result.systemFingerprint() != null ? result.systemFingerprint() : "");
 		return builder.build();
 	}
 
 	private ChatResponseMetadata from(ChatResponseMetadata chatResponseMetadata, Usage usage) {
 		Assert.notNull(chatResponseMetadata, "DeepSeek ChatResponseMetadata must not be null");
 		var builder = ChatResponseMetadata.builder()
-			.id(chatResponseMetadata.getId() != null ? chatResponseMetadata.getId() : "")
-			.usage(usage)
-			.model(chatResponseMetadata.getModel() != null ? chatResponseMetadata.getModel() : "");
+				.id(chatResponseMetadata.getId() != null ? chatResponseMetadata.getId() : "")
+				.usage(usage)
+				.model(chatResponseMetadata.getModel() != null ? chatResponseMetadata.getModel() : "");
 		return builder.build();
 	}
 
 	/**
 	 * Convert the ChatCompletionChunk into a ChatCompletion. The Usage is set to null.
+	 *
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
 	private DeepSeekApi.ChatCompletion chunkToChatCompletion(DeepSeekApi.ChatCompletionChunk chunk) {
 		List<Choice> choices = chunk.choices()
-			.stream()
-			.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
-					chunkChoice.logprobs()))
-			.toList();
+				.stream()
+				.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
+						chunkChoice.logprobs()))
+				.toList();
 
 		return new DeepSeekApi.ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.serviceTier(),
 				chunk.systemFingerprint(), chunk.usage());
@@ -347,8 +338,7 @@ public class DeepSeekChatModel implements ChatModel {
 				Assert.state(text != null, "text must not be null");
 				return List.of(new ChatCompletionMessage(text,
 						ChatCompletionMessage.Role.valueOf(message.getMessageType().name())));
-			}
-			else if (message.getMessageType() == MessageType.ASSISTANT) {
+			} else if (message.getMessageType() == MessageType.ASSISTANT) {
 				var assistantMessage = (AssistantMessage) message;
 				List<ToolCall> toolCalls = null;
 				if (!CollectionUtils.isEmpty(assistantMessage.getToolCalls())) {
@@ -369,19 +359,17 @@ public class DeepSeekChatModel implements ChatModel {
 				Assert.state(text != null, "text must not be null");
 				return List.of(new ChatCompletionMessage(text, ChatCompletionMessage.Role.ASSISTANT, null, null,
 						toolCalls, isPrefixAssistantMessage, reasoningContent));
-			}
-			else if (message.getMessageType() == MessageType.TOOL) {
+			} else if (message.getMessageType() == MessageType.TOOL) {
 				ToolResponseMessage toolMessage = (ToolResponseMessage) message;
 
 				toolMessage.getResponses()
-					.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
+						.forEach(response -> Assert.isTrue(response.id() != null, "ToolResponseMessage must have an id"));
 				return toolMessage.getResponses()
-					.stream()
-					.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
-							tr.id(), null))
-					.toList();
-			}
-			else {
+						.stream()
+						.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
+								tr.id(), null))
+						.toList();
+			} else {
 				throw new IllegalArgumentException("Unsupported message type: " + message.getMessageType());
 			}
 		}).flatMap(List::stream).toList();
@@ -439,6 +427,7 @@ public class DeepSeekChatModel implements ChatModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ChatModelObservationConvention observationConvention) {
@@ -458,8 +447,7 @@ public class DeepSeekChatModel implements ChatModel {
 	private Prompt buildRequestPrompt(Prompt prompt) {
 		if (prompt.getOptions() == null) {
 			return prompt.mutate().chatOptions(this.getOptions()).build();
-		}
-		else {
+		} else {
 			return prompt;
 		}
 	}
@@ -492,6 +480,7 @@ public class DeepSeekChatModel implements ChatModel {
 		/**
 		 * Sets the tool calling manager used to resolve the tool definitions sent to the
 		 * model.
+		 *
 		 * @param toolCallingManager the tool calling manager
 		 * @return this builder
 		 */

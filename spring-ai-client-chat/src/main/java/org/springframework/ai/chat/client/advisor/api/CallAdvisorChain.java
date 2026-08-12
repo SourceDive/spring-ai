@@ -16,10 +16,10 @@
 
 package org.springframework.ai.chat.client.advisor.api;
 
-import java.util.List;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
+
+import java.util.List;
 
 /**
  * A chain of {@link CallAdvisor} instances orchestrating the execution of a
@@ -47,6 +47,7 @@ public interface CallAdvisorChain extends AdvisorChain {
 	/**
 	 * Creates a new CallAdvisorChain copy that contains all advisors after the specified
 	 * advisor.
+	 *
 	 * @param after the CallAdvisor after which to copy the chain
 	 * @return a new CallAdvisorChain containing all advisors after the specified advisor
 	 * @throws IllegalArgumentException if the specified advisor is not part of the chain

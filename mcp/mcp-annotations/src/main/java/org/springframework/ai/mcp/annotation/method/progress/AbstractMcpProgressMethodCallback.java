@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.progress;
 
+import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import io.modelcontextprotocol.util.Assert;
+import org.springframework.ai.mcp.annotation.McpProgress;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import io.modelcontextprotocol.util.Assert;
-
-import org.springframework.ai.mcp.annotation.McpProgress;
-
 /**
  * Abstract base class for creating callbacks around progress methods.
- *
+ * <p>
  * This class provides common functionality for both synchronous and asynchronous progress
  * method callbacks. It contains shared logic for method validation, argument building,
  * and other common operations.
@@ -41,8 +40,9 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 	/**
 	 * Constructor for AbstractMcpProgressMethodCallback.
+	 *
 	 * @param method The method to create a callback for
-	 * @param bean The bean instance that contains the method
+	 * @param bean   The bean instance that contains the method
 	 */
 	protected AbstractMcpProgressMethodCallback(Method method, Object bean) {
 		Assert.notNull(method, "Method can't be null!");
@@ -58,6 +58,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 	 * <p>
 	 * This method checks that the return type is valid and that the parameters match the
 	 * expected pattern.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the method signature is not compatible
 	 */
@@ -74,6 +75,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 	 * Validates that the method return type is compatible with the progress callback.
 	 * This method should be implemented by subclasses to handle specific return type
 	 * validation.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -82,6 +84,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 	/**
 	 * Validates method parameters. This method provides common validation logic and
 	 * delegates exchange type checking to subclasses.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the parameters are not compatible
 	 */
@@ -104,8 +107,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 						+ method.getName() + " in " + method.getDeclaringClass().getName() + " has parameter of type "
 						+ parameters[0].getType().getName());
 			}
-		}
-		else {
+		} else {
 			// Three parameters must be Double, String, String
 			if (!Double.class.isAssignableFrom(parameters[0].getType())
 					&& !double.class.isAssignableFrom(parameters[0].getType())) {
@@ -131,8 +133,9 @@ public abstract class AbstractMcpProgressMethodCallback {
 	 * <p>
 	 * This method constructs an array of arguments based on the method's parameter types
 	 * and the available values (exchange, notification).
-	 * @param method The method to build arguments for
-	 * @param exchange The server exchange
+	 *
+	 * @param method       The method to build arguments for
+	 * @param exchange     The server exchange
 	 * @param notification The progress notification
 	 * @return An array of arguments for the method invocation
 	 */
@@ -143,8 +146,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 		if (parameters.length == 1) {
 			// Single parameter (ProgressNotification)
 			args[0] = notification;
-		}
-		else {
+		} else {
 			// Three parameters (Double, String, String)
 			args[0] = notification.progress();
 			args[1] = notification.progressToken();
@@ -163,8 +165,9 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message and cause.
+		 *
 		 * @param message The detail message
-		 * @param cause The cause
+		 * @param cause   The cause
 		 */
 		public McpProgressMethodException(String message, Throwable cause) {
 			super(message, cause);
@@ -172,6 +175,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message.
+		 *
 		 * @param message The detail message
 		 */
 		public McpProgressMethodException(String message) {
@@ -197,6 +201,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Set the method to create a callback for.
+		 *
 		 * @param method The method to create a callback for
 		 * @return This builder
 		 */
@@ -208,6 +213,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Set the bean instance that contains the method.
+		 *
 		 * @param bean The bean instance
 		 * @return This builder
 		 */
@@ -219,6 +225,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Set the progress annotation.
+		 *
 		 * @param progress The progress annotation
 		 * @return This builder
 		 */
@@ -230,6 +237,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Validate the builder state.
+		 *
 		 * @throws IllegalArgumentException if the builder state is invalid
 		 */
 		protected void validate() {
@@ -243,6 +251,7 @@ public abstract class AbstractMcpProgressMethodCallback {
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new callback instance
 		 */
 		public abstract R build();

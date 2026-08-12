@@ -16,14 +16,13 @@
 
 package org.springframework.ai.chat.messages;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.content.Media;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,7 +38,7 @@ class UserMessageTests {
 	@Test
 	void userMessageWithNullText() {
 		assertThatThrownBy(() -> new UserMessage((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 	}
 
 	@Test
@@ -54,7 +53,7 @@ class UserMessageTests {
 	@Test
 	void userMessageWithNullResource() {
 		assertThatThrownBy(() -> new UserMessage((Resource) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.hasMessageContaining("resource cannot be null");
 	}
 
 	@Test
@@ -69,15 +68,15 @@ class UserMessageTests {
 	void userMessageFromBuilderWithText() {
 		String text = "Hello, world!";
 		UserMessage message = UserMessage.builder()
-			.text(text)
-			.media(new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt")))
-			.metadata(Map.of("key", "value"))
-			.build();
+				.text(text)
+				.media(new Media(MimeTypeUtils.TEXT_PLAIN, new ClassPathResource("prompt-user.txt")))
+				.metadata(Map.of("key", "value"))
+				.build();
 		assertThat(message.getText()).isEqualTo(text);
 		assertThat(message.getMedia()).hasSize(1);
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.USER)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.USER)
+				.containsEntry("key", "value");
 	}
 
 	@Test
@@ -143,8 +142,8 @@ class UserMessageTests {
 	@Test
 	void userMessageBuilderWithNullText() {
 		assertThatThrownBy(() -> UserMessage.builder().text((String) null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 	}
 
 	@Test
@@ -170,15 +169,15 @@ class UserMessageTests {
 	void userMessageBuilderOverwriteMetadata() {
 		String text = "Test message";
 		UserMessage message = UserMessage.builder()
-			.text(text)
-			.metadata(Map.of("key1", "value1"))
-			.metadata(Map.of("key2", "value2"))
-			.build();
+				.text(text)
+				.metadata(Map.of("key1", "value1"))
+				.metadata(Map.of("key2", "value2"))
+				.build();
 
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.USER)
-			.containsEntry("key2", "value2")
-			.doesNotContainKey("key1");
+				.containsEntry(MESSAGE_TYPE, MessageType.USER)
+				.containsEntry("key2", "value2")
+				.doesNotContainKey("key1");
 	}
 
 	@Test
@@ -218,8 +217,8 @@ class UserMessageTests {
 		assertThat(result.getText()).isEqualTo("Updated");
 		assertThat(result.getMedia()).hasSize(1).contains(media);
 		assertThat(result.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.USER)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.USER)
+				.containsEntry("key", "value");
 	}
 
 	@Test

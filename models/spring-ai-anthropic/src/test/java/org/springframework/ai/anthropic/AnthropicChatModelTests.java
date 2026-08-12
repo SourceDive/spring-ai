@@ -16,35 +16,13 @@
 
 package org.springframework.ai.anthropic;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
-
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.AnthropicClientAsync;
 import com.anthropic.core.JsonValue;
 import com.anthropic.core.http.Headers;
 import com.anthropic.core.http.HttpResponseFor;
 import com.anthropic.core.http.StreamResponse;
-import com.anthropic.models.messages.ContentBlock;
-import com.anthropic.models.messages.ContentBlockParam;
-import com.anthropic.models.messages.Message;
-import com.anthropic.models.messages.MessageCreateParams;
-import com.anthropic.models.messages.MessageDeltaUsage;
-import com.anthropic.models.messages.MessageParam;
-import com.anthropic.models.messages.Model;
-import com.anthropic.models.messages.OutputConfig;
-import com.anthropic.models.messages.RawMessageDeltaEvent;
-import com.anthropic.models.messages.RawMessageStreamEvent;
-import com.anthropic.models.messages.StopReason;
-import com.anthropic.models.messages.TextBlock;
-import com.anthropic.models.messages.ToolResultBlockParam;
-import com.anthropic.models.messages.ToolUseBlock;
-import com.anthropic.models.messages.Usage;
+import com.anthropic.models.messages.*;
 import com.anthropic.services.async.MessageServiceAsync;
 import com.anthropic.services.blocking.MessageService;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
 import org.springframework.ai.anthropic.metadata.AnthropicRateLimit;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -66,12 +43,18 @@ import org.springframework.ai.chat.metadata.RateLimit;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link AnthropicChatModel}. Tests request building and response parsing
@@ -119,14 +102,14 @@ class AnthropicChatModelTests {
 		});
 
 		this.chatModel = AnthropicChatModel.builder()
-			.anthropicClient(this.anthropicClient)
-			.anthropicClientAsync(this.anthropicClientAsync)
-			.options(AnthropicChatOptions.builder()
-				.model(Model.CLAUDE_SONNET_4_20250514)
-				.maxTokens(1024)
-				.temperature(0.7)
-				.build())
-			.build();
+				.anthropicClient(this.anthropicClient)
+				.anthropicClientAsync(this.anthropicClientAsync)
+				.options(AnthropicChatOptions.builder()
+						.model(Model.CLAUDE_SONNET_4_20250514)
+						.maxTokens(1024)
+						.temperature(0.7)
+						.build())
+				.build();
 	}
 
 	@Test
@@ -173,10 +156,10 @@ class AnthropicChatModelTests {
 		given(this.messageService.create(any(MessageCreateParams.class))).willReturn(mockResponse);
 
 		AnthropicChatOptions runtimeOptions = AnthropicChatOptions.builder()
-			.model("claude-3-opus-20240229")
-			.maxTokens(2048)
-			.temperature(0.3)
-			.build();
+				.model("claude-3-opus-20240229")
+				.maxTokens(2048)
+				.temperature(0.3)
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt("Test", runtimeOptions));
 
@@ -221,7 +204,7 @@ class AnthropicChatModelTests {
 		given(this.messageService.create(any(MessageCreateParams.class))).willReturn(mockResponse);
 
 		ChatResponse response = this.chatModel
-			.call(new Prompt("What's the weather?", AnthropicChatOptions.builder().build()));
+				.call(new Prompt("What's the weather?", AnthropicChatOptions.builder().build()));
 
 		assertThat(response.getResult()).isNotNull();
 		AssistantMessage output = response.getResult().getOutput();
@@ -237,14 +220,14 @@ class AnthropicChatModelTests {
 	@Test
 	void cacheOptionsIsMergedFromRuntimePrompt() {
 		AnthropicChatModel model = AnthropicChatModel.builder()
-			.anthropicClient(this.anthropicClient)
-			.anthropicClientAsync(this.anthropicClientAsync)
-			.options(AnthropicChatOptions.builder().model("default-model").maxTokens(1000).build())
-			.build();
+				.anthropicClient(this.anthropicClient)
+				.anthropicClientAsync(this.anthropicClientAsync)
+				.options(AnthropicChatOptions.builder().model("default-model").maxTokens(1000).build())
+				.build();
 
 		AnthropicCacheOptions cacheOptions = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
-			.build();
+				.strategy(AnthropicCacheStrategy.SYSTEM_ONLY)
+				.build();
 
 		AnthropicChatOptions runtimeOptions = AnthropicChatOptions.builder().cacheOptions(cacheOptions).build();
 
@@ -261,9 +244,9 @@ class AnthropicChatModelTests {
 		given(this.messageService.create(any(MessageCreateParams.class))).willReturn(mockResponse);
 
 		AnthropicCacheOptions cacheOptions = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
-			.cacheToolResults(true)
-			.build();
+				.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
+				.cacheToolResults(true)
+				.build();
 		AnthropicChatOptions options = AnthropicChatOptions.builder().cacheOptions(cacheOptions).build();
 
 		this.chatModel.call(new Prompt(toolCallingConversation(), options));
@@ -282,8 +265,8 @@ class AnthropicChatModelTests {
 		// CONVERSATION_HISTORY alone (without cacheToolResults) must not place a
 		// breakpoint on tool result blocks.
 		AnthropicCacheOptions cacheOptions = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
-			.build();
+				.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
+				.build();
 		AnthropicChatOptions options = AnthropicChatOptions.builder().cacheOptions(cacheOptions).build();
 
 		this.chatModel.call(new Prompt(toolCallingConversation(), options));
@@ -300,9 +283,9 @@ class AnthropicChatModelTests {
 		given(this.messageService.create(any(MessageCreateParams.class))).willReturn(mockResponse);
 
 		AnthropicCacheOptions cacheOptions = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
-			.cacheToolResults(true)
-			.build();
+				.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
+				.cacheToolResults(true)
+				.build();
 		AnthropicChatOptions options = AnthropicChatOptions.builder().cacheOptions(cacheOptions).build();
 
 		// Two tool-calling rounds: only the final tool result should carry a breakpoint.
@@ -370,8 +353,8 @@ class AnthropicChatModelTests {
 		given(this.messageService.create(any(MessageCreateParams.class))).willReturn(mockResponse);
 
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.outputSchema("{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}")
-			.build();
+				.outputSchema("{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}")
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt("Generate JSON", options));
 
@@ -391,8 +374,8 @@ class AnthropicChatModelTests {
 		given(this.messageService.create(any(MessageCreateParams.class))).willReturn(mockResponse);
 
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.httpHeaders(Map.of("X-Custom-Header", "custom-value", "X-Request-Id", "req-123"))
-			.build();
+				.httpHeaders(Map.of("X-Custom-Header", "custom-value", "X-Request-Id", "req-123"))
+				.build();
 
 		ChatResponse response = this.chatModel.call(new Prompt("Hello", options));
 
@@ -438,16 +421,16 @@ class AnthropicChatModelTests {
 
 	private static AssistantMessage assistantToolCall(String id, String city) {
 		return AssistantMessage.builder()
-			.content("")
-			.toolCalls(
-					List.of(new AssistantMessage.ToolCall(id, "function", "getWeather", "{\"city\":\"" + city + "\"}")))
-			.build();
+				.content("")
+				.toolCalls(
+						List.of(new AssistantMessage.ToolCall(id, "function", "getWeather", "{\"city\":\"" + city + "\"}")))
+				.build();
 	}
 
 	private static ToolResponseMessage toolResult(String id, String data) {
 		return ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse(id, "getWeather", data)))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse(id, "getWeather", data)))
+				.build();
 	}
 
 	private static List<ToolResultBlockParam> toolResultBlocks(MessageCreateParams request) {
@@ -494,7 +477,7 @@ class AnthropicChatModelTests {
 	}
 
 	private Message createMockMessageWithToolUse(String toolId, String toolName, JsonValue input,
-			StopReason stopReason) {
+	                                             StopReason stopReason) {
 		ToolUseBlock toolUseBlock = mock(ToolUseBlock.class);
 		given(toolUseBlock.id()).willReturn(toolId);
 		given(toolUseBlock.name()).willReturn(toolName);
@@ -527,13 +510,13 @@ class AnthropicChatModelTests {
 
 		Instant resetAt = Instant.now().plus(30, ChronoUnit.SECONDS);
 		Headers rateLimitHeaders = Headers.builder()
-			.put("anthropic-ratelimit-requests-limit", "100")
-			.put("anthropic-ratelimit-requests-remaining", "99")
-			.put("anthropic-ratelimit-requests-reset", resetAt.toString())
-			.put("anthropic-ratelimit-tokens-limit", "50000")
-			.put("anthropic-ratelimit-tokens-remaining", "49000")
-			.put("anthropic-ratelimit-tokens-reset", resetAt.toString())
-			.build();
+				.put("anthropic-ratelimit-requests-limit", "100")
+				.put("anthropic-ratelimit-requests-remaining", "99")
+				.put("anthropic-ratelimit-requests-reset", resetAt.toString())
+				.put("anthropic-ratelimit-tokens-limit", "50000")
+				.put("anthropic-ratelimit-tokens-remaining", "49000")
+				.put("anthropic-ratelimit-tokens-reset", resetAt.toString())
+				.build();
 
 		given(this.messageServiceWithRawResponse.create(any(MessageCreateParams.class))).willAnswer(invocation -> {
 			MessageCreateParams params = invocation.getArgument(0);
@@ -570,7 +553,7 @@ class AnthropicChatModelTests {
 		given(this.anthropicClientAsync.messages()).willReturn(this.messageServiceAsync);
 		given(this.messageServiceAsync.withRawResponse()).willReturn(this.messageServiceAsyncWithRawResponse);
 		given(this.messageServiceAsyncWithRawResponse.createStreaming(any(MessageCreateParams.class)))
-			.willReturn(CompletableFuture.completedFuture(rawResponse));
+				.willReturn(CompletableFuture.completedFuture(rawResponse));
 
 		this.chatModel.stream(new Prompt("test")).collectList().block();
 
@@ -585,33 +568,33 @@ class AnthropicChatModelTests {
 	void streamingAttachesRateLimitHeadersToResponse() {
 		Instant resetAt = Instant.now().plus(30, ChronoUnit.SECONDS);
 		Headers rateLimitHeaders = Headers.builder()
-			.put("anthropic-ratelimit-requests-limit", "100")
-			.put("anthropic-ratelimit-requests-remaining", "99")
-			.put("anthropic-ratelimit-requests-reset", resetAt.toString())
-			.put("anthropic-ratelimit-tokens-limit", "50000")
-			.put("anthropic-ratelimit-tokens-remaining", "49000")
-			.put("anthropic-ratelimit-tokens-reset", resetAt.toString())
-			.build();
+				.put("anthropic-ratelimit-requests-limit", "100")
+				.put("anthropic-ratelimit-requests-remaining", "99")
+				.put("anthropic-ratelimit-requests-reset", resetAt.toString())
+				.put("anthropic-ratelimit-tokens-limit", "50000")
+				.put("anthropic-ratelimit-tokens-remaining", "49000")
+				.put("anthropic-ratelimit-tokens-reset", resetAt.toString())
+				.build();
 
 		// A message_delta event carries the final usage and triggers the metadata
 		// build that attaches the captured rate limit. The SDK builders require every
 		// field to be set explicitly, hence the Optional.empty() plumbing.
 		RawMessageStreamEvent messageDelta = RawMessageStreamEvent.ofMessageDelta(RawMessageDeltaEvent.builder()
-			.delta(RawMessageDeltaEvent.Delta.builder()
-				.container(Optional.empty())
-				.stopDetails(Optional.empty())
-				.stopReason(StopReason.END_TURN)
-				.stopSequence(Optional.empty())
-				.build())
-			.usage(MessageDeltaUsage.builder()
-				.cacheCreationInputTokens(Optional.empty())
-				.cacheReadInputTokens(Optional.empty())
-				.inputTokens(Optional.empty())
-				.outputTokens(5L)
-				.outputTokensDetails(Optional.empty())
-				.serverToolUse(Optional.empty())
-				.build())
-			.build());
+				.delta(RawMessageDeltaEvent.Delta.builder()
+						.container(Optional.empty())
+						.stopDetails(Optional.empty())
+						.stopReason(StopReason.END_TURN)
+						.stopSequence(Optional.empty())
+						.build())
+				.usage(MessageDeltaUsage.builder()
+						.cacheCreationInputTokens(Optional.empty())
+						.cacheReadInputTokens(Optional.empty())
+						.inputTokens(Optional.empty())
+						.outputTokens(5L)
+						.outputTokensDetails(Optional.empty())
+						.serverToolUse(Optional.empty())
+						.build())
+				.build());
 
 		StreamResponse<RawMessageStreamEvent> streamResponse = mock(StreamResponse.class);
 		given(streamResponse.stream()).willReturn(Stream.of(messageDelta));
@@ -623,15 +606,15 @@ class AnthropicChatModelTests {
 		given(this.anthropicClientAsync.messages()).willReturn(this.messageServiceAsync);
 		given(this.messageServiceAsync.withRawResponse()).willReturn(this.messageServiceAsyncWithRawResponse);
 		given(this.messageServiceAsyncWithRawResponse.createStreaming(any(MessageCreateParams.class)))
-			.willReturn(CompletableFuture.completedFuture(rawResponse));
+				.willReturn(CompletableFuture.completedFuture(rawResponse));
 
 		List<ChatResponse> responses = this.chatModel.stream(new Prompt("test")).collectList().block();
 
 		assertThat(responses).isNotNull();
 		ChatResponse responseWithRateLimit = responses.stream()
-			.filter(response -> response.getMetadata().getRateLimit() instanceof AnthropicRateLimit)
-			.findFirst()
-			.orElse(null);
+				.filter(response -> response.getMetadata().getRateLimit() instanceof AnthropicRateLimit)
+				.findFirst()
+				.orElse(null);
 
 		assertThat(responseWithRateLimit).as("The message_delta chunk should carry rate-limit metadata").isNotNull();
 		RateLimit rateLimit = responseWithRateLimit.getMetadata().getRateLimit();

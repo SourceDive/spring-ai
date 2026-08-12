@@ -31,11 +31,11 @@ class DefaultTextToSpeechOptionsTests {
 	@Test
 	void testBuilderWithAllFields() {
 		TextToSpeechOptions options = DefaultTextToSpeechOptions.builder()
-			.model("test-model")
-			.voice("test-voice")
-			.format("test-format")
-			.speed(0.8)
-			.build();
+				.model("test-model")
+				.voice("test-voice")
+				.format("test-format")
+				.speed(0.8)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getVoice()).isEqualTo("test-voice");

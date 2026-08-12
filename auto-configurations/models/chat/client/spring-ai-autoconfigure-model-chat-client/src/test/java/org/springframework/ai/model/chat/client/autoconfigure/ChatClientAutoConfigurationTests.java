@@ -43,8 +43,8 @@ import static org.mockito.Mockito.mock;
 class ChatClientAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ChatClientAutoConfiguration.class))
-		.withBean(ChatModel.class, () -> mock(ChatModel.class));
+			.withConfiguration(AutoConfigurations.of(ChatClientAutoConfiguration.class))
+			.withBean(ChatModel.class, () -> mock(ChatModel.class));
 
 	@Test
 	void autoConfigurationOrdersAfterToolCallingAutoConfiguration() {
@@ -91,9 +91,9 @@ class ChatClientAutoConfigurationTests {
 
 			ChatClient.Builder chatClientBuilder = context.getBean(ChatClient.Builder.class);
 			var defaultRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ReflectionTestUtils
-				.getField(chatClientBuilder, "defaultRequest");
+					.getField(chatClientBuilder, "defaultRequest");
 			assertThat(ReflectionTestUtils.getField(defaultRequest, "toolCallingAdvisorBuilder"))
-				.isSameAs(advisorBuilder);
+					.isSameAs(advisorBuilder);
 		});
 	}
 
@@ -102,12 +102,12 @@ class ChatClientAutoConfigurationTests {
 		var manager = mock(ToolCallingManager.class);
 
 		this.contextRunner.withBean(ToolCallingManager.class, () -> manager)
-			.withPropertyValues("spring.ai.chat.client.tool-calling.advisor-order=500")
-			.run(context -> {
-				assertThat(context).hasNotFailed();
-				var advisorBuilder = context.getBean(ToolCallingAdvisor.Builder.class);
-				assertThat(advisorBuilder.getAdvisorOrder()).isEqualTo(500);
-			});
+				.withPropertyValues("spring.ai.chat.client.tool-calling.advisor-order=500")
+				.run(context -> {
+					assertThat(context).hasNotFailed();
+					var advisorBuilder = context.getBean(ToolCallingAdvisor.Builder.class);
+					assertThat(advisorBuilder.getAdvisorOrder()).isEqualTo(500);
+				});
 	}
 
 	@Test
@@ -116,12 +116,12 @@ class ChatClientAutoConfigurationTests {
 		ToolExecutionEligibilityChecker customChecker = chatResponse -> false;
 
 		this.contextRunner.withBean(ToolCallingManager.class, () -> manager)
-			.withBean(ToolExecutionEligibilityChecker.class, () -> customChecker)
-			.run(context -> {
-				var advisorBuilder = context.getBean(ToolCallingAdvisor.Builder.class);
-				assertThat(ReflectionTestUtils.getField(advisorBuilder, "toolExecutionEligibilityChecker"))
-					.isSameAs(customChecker);
-			});
+				.withBean(ToolExecutionEligibilityChecker.class, () -> customChecker)
+				.run(context -> {
+					var advisorBuilder = context.getBean(ToolCallingAdvisor.Builder.class);
+					assertThat(ReflectionTestUtils.getField(advisorBuilder, "toolExecutionEligibilityChecker"))
+							.isSameAs(customChecker);
+				});
 	}
 
 	@Test
@@ -139,17 +139,17 @@ class ChatClientAutoConfigurationTests {
 		var manager = mock(ToolCallingManager.class);
 
 		this.contextRunner.withBean(ToolCallingManager.class, () -> manager)
-			.withPropertyValues("spring.ai.chat.client.tool-calling.enabled=false")
-			.run(context -> {
-				ChatClient.Builder chatClientBuilder = context.getBean(ChatClient.Builder.class);
-				var defaultRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ReflectionTestUtils
-					.getField(chatClientBuilder, "defaultRequest");
-				@SuppressWarnings("unchecked")
-				var advisorParams = (java.util.Map<String, Object>) ReflectionTestUtils.getField(defaultRequest,
-						"advisorParams");
-				assertThat(advisorParams)
-					.containsEntry(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false);
-			});
+				.withPropertyValues("spring.ai.chat.client.tool-calling.enabled=false")
+				.run(context -> {
+					ChatClient.Builder chatClientBuilder = context.getBean(ChatClient.Builder.class);
+					var defaultRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ReflectionTestUtils
+							.getField(chatClientBuilder, "defaultRequest");
+					@SuppressWarnings("unchecked")
+					var advisorParams = (java.util.Map<String, Object>) ReflectionTestUtils.getField(defaultRequest,
+							"advisorParams");
+					assertThat(advisorParams)
+							.containsEntry(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false);
+				});
 	}
 
 	@Test
@@ -158,11 +158,11 @@ class ChatClientAutoConfigurationTests {
 		var customAdvisorBuilder = ToolCallingAdvisor.builder().toolCallingManager(manager);
 
 		this.contextRunner.withBean(ToolCallingManager.class, () -> manager)
-			.withBean(ToolCallingAdvisor.Builder.class, () -> customAdvisorBuilder)
-			.run(context -> {
-				assertThat(context).hasNotFailed();
-				assertThat(context.getBean(ToolCallingAdvisor.Builder.class)).isSameAs(customAdvisorBuilder);
-			});
+				.withBean(ToolCallingAdvisor.Builder.class, () -> customAdvisorBuilder)
+				.run(context -> {
+					assertThat(context).hasNotFailed();
+					assertThat(context.getBean(ToolCallingAdvisor.Builder.class)).isSameAs(customAdvisorBuilder);
+				});
 	}
 
 	@Test
@@ -174,8 +174,8 @@ class ChatClientAutoConfigurationTests {
 		// beans
 		// cause the context itself to fail at startup.
 		this.contextRunner.withBean("customToolCallingManager", ToolCallingManager.class, () -> customManager)
-			.withBean("defaultToolCallingManager", ToolCallingManager.class, () -> defaultManager)
-			.run(context -> assertThat(context).hasFailed());
+				.withBean("defaultToolCallingManager", ToolCallingManager.class, () -> defaultManager)
+				.run(context -> assertThat(context).hasFailed());
 	}
 
 }

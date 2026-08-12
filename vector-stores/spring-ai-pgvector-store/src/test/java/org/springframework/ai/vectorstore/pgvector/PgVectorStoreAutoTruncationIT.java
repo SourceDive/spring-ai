@@ -16,19 +16,10 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
 import com.knuddels.jtokkit.api.EncodingType;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -49,6 +40,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -70,18 +68,18 @@ public class PgVectorStoreAutoTruncationIT {
 	@Container
 	@SuppressWarnings("resource")
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(PgVectorImage.DEFAULT_IMAGE)
-		.withUsername("postgres")
-		.withPassword("postgres");
+			.withUsername("postgres")
+			.withPassword("postgres");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(PgVectorStoreAutoTruncationIT.TestApplication.class)
-		.withPropertyValues("test.spring.ai.vectorstore.pgvector.distanceType=COSINE_DISTANCE",
+			.withUserConfiguration(PgVectorStoreAutoTruncationIT.TestApplication.class)
+			.withPropertyValues("test.spring.ai.vectorstore.pgvector.distanceType=COSINE_DISTANCE",
 
-				// JdbcTemplate configuration
-				String.format("app.datasource.url=jdbc:postgresql://%s:%d/%s", postgresContainer.getHost(),
-						postgresContainer.getMappedPort(5432), "postgres"),
-				"app.datasource.username=postgres", "app.datasource.password=postgres",
-				"app.datasource.type=com.zaxxer.hikari.HikariDataSource");
+					// JdbcTemplate configuration
+					String.format("app.datasource.url=jdbc:postgresql://%s:%d/%s", postgresContainer.getHost(),
+							postgresContainer.getMappedPort(5432), "postgres"),
+					"app.datasource.username=postgres", "app.datasource.password=postgres",
+					"app.datasource.type=com.zaxxer.hikari.HikariDataSource");
 
 	private static void dropTable(ApplicationContext context) {
 		JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
@@ -96,7 +94,7 @@ public class PgVectorStoreAutoTruncationIT {
 			// Test with a document that exceeds normal token limits but is within our
 			// artificially high limit
 			String largeContent = "This is a test document. ".repeat(5000); // ~25,000
-																			// tokens
+			// tokens
 			Document largeDocument = new Document(largeContent);
 			largeDocument.getMetadata().put("test", "auto-truncation");
 
@@ -106,7 +104,7 @@ public class PgVectorStoreAutoTruncationIT {
 
 			// Verify the document was stored
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("test document").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("test document").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -124,7 +122,7 @@ public class PgVectorStoreAutoTruncationIT {
 
 			// Verify all documents were processed
 			List<Document> batchResults = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Large content").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Large content").topK(5).build());
 
 			assertThat(batchResults).hasSizeGreaterThanOrEqualTo(5);
 
@@ -143,12 +141,12 @@ public class PgVectorStoreAutoTruncationIT {
 
 			// Create a document that exceeds even our artificially high limit
 			String massiveContent = "word ".repeat(150000); // ~150,000 tokens (exceeds
-															// 132,900)
+			// 132,900)
 			Document massiveDocument = new Document(massiveContent);
 
 			// This should throw an exception as it exceeds our configured limit
 			assertThatThrownBy(() -> batchingStrategy.batch(List.of(massiveDocument)))
-				.isInstanceOf(IllegalArgumentException.class);
+					.isInstanceOf(IllegalArgumentException.class);
 
 			dropTable(context);
 		});
@@ -169,16 +167,16 @@ public class PgVectorStoreAutoTruncationIT {
 
 		@Bean
 		public VectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel,
-				BatchingStrategy batchingStrategy) {
+		                               BatchingStrategy batchingStrategy) {
 			return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-				.dimensions(PgVectorStore.INVALID_EMBEDDING_DIMENSION)
-				.batchingStrategy(batchingStrategy)
-				.idType(this.idType)
-				.distanceType(this.distanceType)
-				.initializeSchema(this.initializeSchema)
-				.indexType(PgVectorStore.PgIndexType.HNSW)
-				.removeExistingVectorStoreTable(true)
-				.build();
+					.dimensions(PgVectorStore.INVALID_EMBEDDING_DIMENSION)
+					.batchingStrategy(batchingStrategy)
+					.idType(this.idType)
+					.distanceType(this.distanceType)
+					.initializeSchema(this.initializeSchema)
+					.indexType(PgVectorStore.PgIndexType.HNSW)
+					.removeExistingVectorStoreTable(true)
+					.build();
 		}
 
 		@Bean
@@ -201,13 +199,13 @@ public class PgVectorStoreAutoTruncationIT {
 		@Bean
 		public VertexAiTextEmbeddingModel vertexAiEmbeddingModel(VertexAiEmbeddingConnectionDetails connectionDetails) {
 			VertexAiTextEmbeddingOptions options = VertexAiTextEmbeddingOptions.builder()
-				.model(VertexAiTextEmbeddingOptions.DEFAULT_MODEL_NAME)
-				// Although this might be the default in Vertex, we are explicitly setting
-				// this to true to ensure
-				// that auto truncate is turned on as this is crucial for the
-				// verifications in this test suite.
-				.autoTruncate(true)
-				.build();
+					.model(VertexAiTextEmbeddingOptions.DEFAULT_MODEL_NAME)
+					// Although this might be the default in Vertex, we are explicitly setting
+					// this to true to ensure
+					// that auto truncate is turned on as this is crucial for the
+					// verifications in this test suite.
+					.autoTruncate(true)
+					.build();
 
 			return new VertexAiTextEmbeddingModel(connectionDetails, options);
 		}
@@ -215,9 +213,9 @@ public class PgVectorStoreAutoTruncationIT {
 		@Bean
 		public VertexAiEmbeddingConnectionDetails connectionDetails() {
 			return VertexAiEmbeddingConnectionDetails.builder()
-				.projectId(System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"))
-				.location(System.getenv("VERTEX_AI_GEMINI_LOCATION"))
-				.build();
+					.projectId(System.getenv("VERTEX_AI_GEMINI_PROJECT_ID"))
+					.location(System.getenv("VERTEX_AI_GEMINI_LOCATION"))
+					.build();
 		}
 
 		@Bean

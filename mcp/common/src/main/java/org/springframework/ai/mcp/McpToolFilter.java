@@ -16,9 +16,9 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.function.BiPredicate;
-
 import io.modelcontextprotocol.spec.McpSchema;
+
+import java.util.function.BiPredicate;
 
 /**
  * A {@link BiPredicate} for {@link SyncMcpToolCallbackProvider} and the

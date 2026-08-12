@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.rag.retrieval.join;
 
-import org.jspecify.annotations.NullMarked;

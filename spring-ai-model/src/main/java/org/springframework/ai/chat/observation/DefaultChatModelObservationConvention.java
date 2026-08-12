@@ -16,17 +16,16 @@
 
 package org.springframework.ai.chat.observation;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
-
 import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringJoiner;
 
 /**
  * Default conventions to populate observations for chat model operations.
@@ -40,10 +39,10 @@ public class DefaultChatModelObservationConvention implements ChatModelObservati
 	public static final String DEFAULT_NAME = "gen_ai.client.operation";
 
 	private static final KeyValue REQUEST_MODEL_NONE = KeyValue
-		.of(ChatModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL, KeyValue.NONE_VALUE);
+			.of(ChatModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL, KeyValue.NONE_VALUE);
 
 	private static final KeyValue RESPONSE_MODEL_NONE = KeyValue
-		.of(ChatModelObservationDocumentation.LowCardinalityKeyNames.RESPONSE_MODEL, KeyValue.NONE_VALUE);
+			.of(ChatModelObservationDocumentation.LowCardinalityKeyNames.RESPONSE_MODEL, KeyValue.NONE_VALUE);
 
 	@Override
 	public String getName() {
@@ -221,11 +220,11 @@ public class DefaultChatModelObservationConvention implements ChatModelObservati
 	protected KeyValues responseFinishReasons(KeyValues keyValues, ChatModelObservationContext context) {
 		if (context.getResponse() != null && !CollectionUtils.isEmpty(context.getResponse().getResults())) {
 			var finishReasons = context.getResponse()
-				.getResults()
-				.stream()
-				.filter(generation -> StringUtils.hasText(generation.getMetadata().getFinishReason()))
-				.map(generation -> generation.getMetadata().getFinishReason())
-				.toList();
+					.getResults()
+					.stream()
+					.filter(generation -> StringUtils.hasText(generation.getMetadata().getFinishReason()))
+					.map(generation -> generation.getMetadata().getFinishReason())
+					.toList();
 			if (CollectionUtils.isEmpty(finishReasons)) {
 				return keyValues;
 			}

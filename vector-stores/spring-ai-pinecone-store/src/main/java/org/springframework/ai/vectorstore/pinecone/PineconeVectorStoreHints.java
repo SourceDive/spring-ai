@@ -16,13 +16,12 @@
 
 package org.springframework.ai.vectorstore.pinecone;
 
-import java.util.Set;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
+
+import java.util.Set;
 
 /**
  * Registration of AOT hints for Pinecone's vector store.

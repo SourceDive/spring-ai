@@ -16,15 +16,9 @@
 
 package org.springframework.ai.openai.azure;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -43,11 +37,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = AzureOpenAiChatModelFunctionCallIT.TestConfiguration.class)
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+")})
 class AzureOpenAiChatModelFunctionCallIT {
 
 	@Autowired
@@ -66,12 +65,12 @@ class AzureOpenAiChatModelFunctionCallIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -101,12 +100,12 @@ class AzureOpenAiChatModelFunctionCallIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -129,12 +128,12 @@ class AzureOpenAiChatModelFunctionCallIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -160,13 +159,13 @@ class AzureOpenAiChatModelFunctionCallIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = OpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.streamUsage(true)
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.streamUsage(true)
+				.build();
 
 		List<ChatResponse> responses = this.chatModel.stream(new Prompt(messages, promptOptions)).collectList().block();
 
@@ -191,12 +190,12 @@ class AzureOpenAiChatModelFunctionCallIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.deploymentName(this.selectedModel)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the current weather in a given location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.deploymentName(this.selectedModel)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the current weather in a given location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -221,8 +220,7 @@ class AzureOpenAiChatModelFunctionCallIT {
 			String deploymentName = System.getenv("AZURE_OPENAI_DEPLOYMENT_NAME");
 			if (StringUtils.hasText(deploymentName)) {
 				return deploymentName;
-			}
-			else {
+			} else {
 				return "gpt-4o";
 			}
 		}
@@ -230,13 +228,13 @@ class AzureOpenAiChatModelFunctionCallIT {
 		@Bean
 		public OpenAiChatModel azureOpenAiChatModel(String selectedModel) {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
-					.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
-					.deploymentName(selectedModel)
-					.maxTokens(500)
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
+							.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
+							.deploymentName(selectedModel)
+							.maxTokens(500)
+							.build())
+					.build();
 		}
 
 		@Bean

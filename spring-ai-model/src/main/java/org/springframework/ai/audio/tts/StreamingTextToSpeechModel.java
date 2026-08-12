@@ -16,9 +16,8 @@
 
 package org.springframework.ai.audio.tts;
 
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.model.StreamingModel;
+import reactor.core.publisher.Flux;
 
 /**
  * Interface for the streaming text to speech model.

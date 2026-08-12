@@ -16,20 +16,19 @@
 
 package org.springframework.ai.converter;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Objects;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
+import org.springframework.ai.util.JacksonUtils;
+import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
+import org.springframework.core.ParameterizedTypeReference;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
-import org.springframework.ai.util.JacksonUtils;
-import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
-import org.springframework.core.ParameterizedTypeReference;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * An implementation of {@link StructuredOutputConverter} that transforms the LLM output
@@ -57,17 +56,24 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 */
 	private final Type type;
 
-	/** The JSON mapper used for deserialization and other JSON operations. */
+	/**
+	 * The JSON mapper used for deserialization and other JSON operations.
+	 */
 	private final JsonMapper jsonMapper;
 
-	/** Holds the generated JSON schema for the target type. */
+	/**
+	 * Holds the generated JSON schema for the target type.
+	 */
 	private final String jsonSchema;
 
-	/** The text cleaner used to preprocess LLM responses before parsing. */
+	/**
+	 * The text cleaner used to preprocess LLM responses before parsing.
+	 */
 	private final ResponseTextCleaner textCleaner;
 
 	/**
 	 * Constructor to initialize with the target type's class.
+	 *
 	 * @param clazz The target type's class.
 	 */
 	public BeanOutputConverter(Class<T> clazz) {
@@ -77,7 +83,8 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	/**
 	 * Constructor to initialize with the target type's class, a custom JSON mapper, and a
 	 * line endings normalizer to ensure consistent line endings on any platform.
-	 * @param clazz The target type's class.
+	 *
+	 * @param clazz      The target type's class.
 	 * @param jsonMapper Custom JSON mapper for JSON operations. endings.
 	 */
 	public BeanOutputConverter(Class<T> clazz, @Nullable JsonMapper jsonMapper) {
@@ -87,17 +94,19 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	/**
 	 * Constructor to initialize with the target type's class, a custom JSON mapper, and a
 	 * custom text cleaner.
-	 * @param clazz The target type's class.
-	 * @param jsonMapper Custom JSON mapper for JSON operations.
+	 *
+	 * @param clazz       The target type's class.
+	 * @param jsonMapper  Custom JSON mapper for JSON operations.
 	 * @param textCleaner Custom text cleaner for preprocessing responses.
 	 */
 	public BeanOutputConverter(Class<T> clazz, @Nullable JsonMapper jsonMapper,
-			@Nullable ResponseTextCleaner textCleaner) {
+	                           @Nullable ResponseTextCleaner textCleaner) {
 		this(ParameterizedTypeReference.forType(clazz), jsonMapper, textCleaner);
 	}
 
 	/**
 	 * Constructor to initialize with the target class type reference.
+	 *
 	 * @param typeRef The target class type reference.
 	 */
 	public BeanOutputConverter(ParameterizedTypeReference<T> typeRef) {
@@ -108,7 +117,8 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 * Constructor to initialize with the target class type reference, a custom JSON
 	 * mapper, and a line endings normalizer to ensure consistent line endings on any
 	 * platform.
-	 * @param typeRef The target class type reference.
+	 *
+	 * @param typeRef    The target class type reference.
 	 * @param jsonMapper Custom JSON mapper for JSON operations. endings.
 	 */
 	public BeanOutputConverter(ParameterizedTypeReference<T> typeRef, @Nullable JsonMapper jsonMapper) {
@@ -118,12 +128,13 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	/**
 	 * Constructor to initialize with the target class type reference, a custom JSON
 	 * mapper, and a custom text cleaner.
-	 * @param typeRef The target class type reference.
-	 * @param jsonMapper Custom JSON mapper for JSON operations.
+	 *
+	 * @param typeRef     The target class type reference.
+	 * @param jsonMapper  Custom JSON mapper for JSON operations.
 	 * @param textCleaner Custom text cleaner for preprocessing responses.
 	 */
 	public BeanOutputConverter(ParameterizedTypeReference<T> typeRef, @Nullable JsonMapper jsonMapper,
-			@Nullable ResponseTextCleaner textCleaner) {
+	                           @Nullable ResponseTextCleaner textCleaner) {
 		this(typeRef.getType(), jsonMapper, textCleaner);
 	}
 
@@ -131,8 +142,9 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 * Constructor to initialize with the target class type reference, a custom JSON
 	 * mapper, and a line endings normalizer to ensure consistent line endings on any
 	 * platform.
-	 * @param type The target class type.
-	 * @param jsonMapper Custom JSON mapper for JSON operations. endings.
+	 *
+	 * @param type        The target class type.
+	 * @param jsonMapper  Custom JSON mapper for JSON operations. endings.
 	 * @param textCleaner Custom text cleaner for preprocessing responses.
 	 */
 	private BeanOutputConverter(Type type, @Nullable JsonMapper jsonMapper, @Nullable ResponseTextCleaner textCleaner) {
@@ -158,15 +170,16 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 * <p>
 	 * To customize the cleaning behavior, provide a custom {@link ResponseTextCleaner}
 	 * via the constructor.
+	 *
 	 * @return a composite text cleaner with default cleaning strategies
 	 */
 	private static ResponseTextCleaner createDefaultTextCleaner() {
 		return CompositeResponseTextCleaner.builder()
-			.addCleaner(new WhitespaceCleaner())
-			.addCleaner(new ThinkingTagCleaner())
-			.addCleaner(new MarkdownCodeBlockCleaner())
-			.addCleaner(new WhitespaceCleaner()) // Final trim after all cleanups
-			.build();
+				.addCleaner(new WhitespaceCleaner())
+				.addCleaner(new ThinkingTagCleaner())
+				.addCleaner(new MarkdownCodeBlockCleaner())
+				.addCleaner(new WhitespaceCleaner()) // Final trim after all cleanups
+				.build();
 	}
 
 	/**
@@ -174,6 +187,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	 * <p>
 	 * This method can be overridden in subclasses to customize the JSON schema generation
 	 * logic.
+	 *
 	 * @return the generated JSON schema
 	 */
 	protected String generateSchema() {
@@ -182,6 +196,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Parses the given text to transform it to the desired target type.
+	 *
 	 * @param text The LLM output in string format.
 	 * @return The parsed output in the desired target type.
 	 */
@@ -196,18 +211,20 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Configures and returns a JSON mapper for JSON operations.
+	 *
 	 * @return Configured JSON mapper.
 	 */
 	protected JsonMapper getJsonMapper() {
 		return JsonMapper.builder()
-			.addModules(JacksonUtils.instantiateAvailableModules())
-			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-			.build();
+				.addModules(JacksonUtils.instantiateAvailableModules())
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.build();
 	}
 
 	/**
 	 * Provides the expected format of the response, instructing that it should adhere to
 	 * the generated JSON schema.
+	 *
 	 * @return The instruction format string.
 	 */
 	@Override
@@ -225,6 +242,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 
 	/**
 	 * Provides the generated JSON schema for the target type.
+	 *
 	 * @return The generated JSON schema.
 	 */
 	@Override
@@ -235,8 +253,7 @@ public class BeanOutputConverter<T> implements StructuredOutputConverter<T> {
 	public Map<String, Object> getJsonSchemaMap() {
 		try {
 			return this.jsonMapper.readValue(this.jsonSchema, Map.class);
-		}
-		catch (JacksonException ex) {
+		} catch (JacksonException ex) {
 			logger.error("Could not parse the JSON Schema to a Map object", ex);
 			throw new IllegalStateException(ex);
 		}

@@ -16,11 +16,10 @@
 
 package org.springframework.ai.testcontainers.service.connection.typesense;
 
-import org.testcontainers.typesense.TypesenseContainer;
-
 import org.springframework.ai.vectorstore.typesense.autoconfigure.TypesenseConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.typesense.TypesenseContainer;
 
 /**
  * @author Eddú Meléndez

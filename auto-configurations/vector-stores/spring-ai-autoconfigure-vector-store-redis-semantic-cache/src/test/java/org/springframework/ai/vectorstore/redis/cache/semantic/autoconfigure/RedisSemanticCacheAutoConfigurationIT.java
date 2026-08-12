@@ -21,9 +21,6 @@ import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.chat.cache.semantic.SemanticCache;
 import org.springframework.ai.chat.cache.semantic.SemanticCacheAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
@@ -38,6 +35,8 @@ import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfigurat
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,18 +50,18 @@ class RedisSemanticCacheAutoConfigurationIT {
 	@Container
 	static RedisStackContainer redisContainer = new RedisStackContainer(
 			RedisStackContainer.DEFAULT_IMAGE_NAME.withTag(RedisStackContainer.DEFAULT_TAG))
-		.withExposedPorts(6379);
+			.withExposedPorts(6379);
 
 	@BeforeAll
 	static void setup() {
 	}
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(
-				AutoConfigurations.of(DataRedisAutoConfiguration.class, RedisSemanticCacheAutoConfiguration.class))
-		.withUserConfiguration(TestConfig.class)
-		.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
-				"spring.data.redis.port=" + redisContainer.getFirstMappedPort(), "spring.data.redis.client-type=jedis");
+			.withConfiguration(
+					AutoConfigurations.of(DataRedisAutoConfiguration.class, RedisSemanticCacheAutoConfiguration.class))
+			.withUserConfiguration(TestConfig.class)
+			.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
+					"spring.data.redis.port=" + redisContainer.getFirstMappedPort(), "spring.data.redis.client-type=jedis");
 
 	@Test
 	void autoConfigurationRegistersExpectedBeans() {
@@ -88,24 +87,24 @@ class RedisSemanticCacheAutoConfigurationIT {
 	@Test
 	void customPropertiesAreApplied() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.redis.semantic-cache.index-name=custom-index",
-					"spring.ai.vectorstore.redis.semantic-cache.prefix=custom-prefix:",
-					"spring.ai.vectorstore.redis.semantic-cache.similarity-threshold=0.85")
-			.run(context -> {
-				SemanticCache semanticCache = context.getBean(SemanticCache.class);
-				assertThat(semanticCache).isNotNull();
-			});
+				.withPropertyValues("spring.ai.vectorstore.redis.semantic-cache.index-name=custom-index",
+						"spring.ai.vectorstore.redis.semantic-cache.prefix=custom-prefix:",
+						"spring.ai.vectorstore.redis.semantic-cache.similarity-threshold=0.85")
+				.run(context -> {
+					SemanticCache semanticCache = context.getBean(SemanticCache.class);
+					assertThat(semanticCache).isNotNull();
+				});
 	}
 
 	@Test
 	void autoConfigurationDisabledWhenDisabledPropertyIsSet() {
 		this.contextRunner.withPropertyValues("spring.ai.vectorstore.redis.semantic-cache.enabled=false")
-			.run(context -> {
-				assertThat(context.getBeansOfType(RedisSemanticCacheProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(SemanticCache.class)).isEmpty();
-				assertThat(context.getBeansOfType(DefaultSemanticCache.class)).isEmpty();
-				assertThat(context.getBeansOfType(SemanticCacheAdvisor.class)).isEmpty();
-			});
+				.run(context -> {
+					assertThat(context.getBeansOfType(RedisSemanticCacheProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(SemanticCache.class)).isEmpty();
+					assertThat(context.getBeansOfType(DefaultSemanticCache.class)).isEmpty();
+					assertThat(context.getBeansOfType(SemanticCacheAdvisor.class)).isEmpty();
+				});
 	}
 
 	@Configuration
@@ -121,9 +120,9 @@ class RedisSemanticCacheAutoConfigurationIT {
 			// Get API key from environment variable
 			String apiKey = System.getenv("OPENAI_API_KEY");
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(apiKey)
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(apiKey)
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

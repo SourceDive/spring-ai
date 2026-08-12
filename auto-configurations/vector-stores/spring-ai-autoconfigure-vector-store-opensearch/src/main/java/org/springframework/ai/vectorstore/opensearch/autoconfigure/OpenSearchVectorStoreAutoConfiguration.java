@@ -16,13 +16,6 @@
 
 package org.springframework.ai.vectorstore.opensearch.autoconfigure;
 
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
@@ -38,12 +31,6 @@ import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.aws.AwsSdk2Transport;
 import org.opensearch.client.transport.aws.AwsSdk2TransportOptions;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.regions.Region;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -60,9 +47,21 @@ import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.regions.Region;
+
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @AutoConfiguration
-@ConditionalOnClass({ OpenSearchVectorStore.class, EmbeddingModel.class, OpenSearchClient.class })
+@ConditionalOnClass({OpenSearchVectorStore.class, EmbeddingModel.class, OpenSearchClient.class})
 @EnableConfigurationProperties(OpenSearchVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.OPENSEARCH,
 		matchIfMissing = true)
@@ -83,20 +82,20 @@ public class OpenSearchVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	OpenSearchVectorStore vectorStore(OpenSearchVectorStoreProperties properties, OpenSearchClient openSearchClient,
-			EmbeddingModel embeddingModel, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                  EmbeddingModel embeddingModel, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                  ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                  BatchingStrategy batchingStrategy) {
 		var indexName = Optional.ofNullable(properties.getIndexName()).orElse(OpenSearchVectorStore.DEFAULT_INDEX_NAME);
 		var mappingJson = Optional.ofNullable(properties.getMappingJson())
-			.orElse(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION);
+				.orElse(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION);
 
 		var builder = OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-			.index(indexName)
-			.mappingJson(mappingJson)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy);
+				.index(indexName)
+				.mappingJson(mappingJson)
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy);
 
 		Optional.ofNullable(properties.getUseApproximateKnn()).ifPresent(builder::useApproximateKnn);
 		Optional.ofNullable(properties.getDimensions()).ifPresent(builder::dimensions);
@@ -112,16 +111,16 @@ public class OpenSearchVectorStoreAutoConfiguration {
 		@Bean
 		@ConditionalOnMissingBean
 		OpenSearchClient openSearchClient(OpenSearchVectorStoreProperties properties,
-				OpenSearchConnectionDetails connectionDetails, Optional<SslBundles> sslBundles) {
+		                                  OpenSearchConnectionDetails connectionDetails, Optional<SslBundles> sslBundles) {
 
 			HttpHost[] httpHosts = connectionDetails.getUris()
-				.stream()
-				.map(s -> createHttpHost(s))
-				.toArray(HttpHost[]::new);
+					.stream()
+					.map(s -> createHttpHost(s))
+					.toArray(HttpHost[]::new);
 
 			Optional<BasicCredentialsProvider> basicCredentialsProvider = Optional.ofNullable(properties.getUsername())
-				.map(username -> createBasicCredentialsProvider(httpHosts, username,
-						Objects.requireNonNull(properties.getPassword(), "password is required")));
+					.map(username -> createBasicCredentialsProvider(httpHosts, username,
+							Objects.requireNonNull(properties.getPassword(), "password is required")));
 
 			var transportBuilder = ApacheHttpClient5TransportBuilder.builder(httpHosts);
 			transportBuilder.setHttpClientConfigCallback(httpClientBuilder -> {
@@ -139,16 +138,16 @@ public class OpenSearchVectorStoreAutoConfiguration {
 		}
 
 		private AsyncClientConnectionManager createConnectionManager(OpenSearchVectorStoreProperties properties,
-				Optional<SslBundles> sslBundles) {
+		                                                             Optional<SslBundles> sslBundles) {
 			var connectionManagerBuilder = PoolingAsyncClientConnectionManagerBuilder.create();
 			if (sslBundles.isPresent()) {
 				Optional.ofNullable(properties.getSslBundle())
-					.map(bundle -> sslBundles.get().getBundle(bundle))
-					.map(bundle -> ClientTlsStrategyBuilder.create()
-						.setSslContext(bundle.createSslContext())
-						.setTlsVersions(bundle.getOptions().getEnabledProtocols())
-						.build())
-					.ifPresent(connectionManagerBuilder::setTlsStrategy);
+						.map(bundle -> sslBundles.get().getBundle(bundle))
+						.map(bundle -> ClientTlsStrategyBuilder.create()
+								.setSslContext(bundle.createSslContext())
+								.setTlsVersions(bundle.getOptions().getEnabledProtocols())
+								.build())
+						.ifPresent(connectionManagerBuilder::setTlsStrategy);
 			}
 			return connectionManagerBuilder.build();
 		}
@@ -156,18 +155,18 @@ public class OpenSearchVectorStoreAutoConfiguration {
 		private RequestConfig createRequestConfig(OpenSearchVectorStoreProperties properties) {
 			var requestConfigBuilder = RequestConfig.custom();
 			Optional.ofNullable(properties.getConnectionTimeout())
-				.map(Duration::toMillis)
-				.ifPresent(timeoutMillis -> requestConfigBuilder.setConnectionRequestTimeout(timeoutMillis,
-						TimeUnit.MILLISECONDS));
+					.map(Duration::toMillis)
+					.ifPresent(timeoutMillis -> requestConfigBuilder.setConnectionRequestTimeout(timeoutMillis,
+							TimeUnit.MILLISECONDS));
 			Optional.ofNullable(properties.getReadTimeout())
-				.map(Duration::toMillis)
-				.ifPresent(
-						timeoutMillis -> requestConfigBuilder.setResponseTimeout(timeoutMillis, TimeUnit.MILLISECONDS));
+					.map(Duration::toMillis)
+					.ifPresent(
+							timeoutMillis -> requestConfigBuilder.setResponseTimeout(timeoutMillis, TimeUnit.MILLISECONDS));
 			return requestConfigBuilder.build();
 		}
 
 		private BasicCredentialsProvider createBasicCredentialsProvider(HttpHost[] httpHosts, String username,
-				String password) {
+		                                                                String password) {
 			BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
 			for (HttpHost httpHost : httpHosts) {
 				basicCredentialsProvider.setCredentials(new AuthScope(httpHost),
@@ -179,8 +178,7 @@ public class OpenSearchVectorStoreAutoConfiguration {
 		private HttpHost createHttpHost(String s) {
 			try {
 				return HttpHost.create(s);
-			}
-			catch (URISyntaxException e) {
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -199,7 +197,7 @@ public class OpenSearchVectorStoreAutoConfiguration {
 	 * (e.g., S3).
 	 */
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnClass({ AwsCredentialsProvider.class, Region.class, ApacheHttpClient.class })
+	@ConditionalOnClass({AwsCredentialsProvider.class, Region.class, ApacheHttpClient.class})
 	@ConditionalOnProperty(name = "spring.ai.vectorstore.opensearch.aws.enabled", havingValue = "true",
 			matchIfMissing = true)
 	static class AwsOpenSearchConfiguration {
@@ -214,7 +212,7 @@ public class OpenSearchVectorStoreAutoConfiguration {
 		@Bean
 		@ConditionalOnMissingBean
 		OpenSearchClient openSearchClient(OpenSearchVectorStoreProperties properties, Optional<SslBundles> sslBundles,
-				AwsOpenSearchConnectionDetails connectionDetails, AwsSdk2TransportOptions options) {
+		                                  AwsOpenSearchConnectionDetails connectionDetails, AwsSdk2TransportOptions options) {
 			Region region = Region.of(connectionDetails.getRegion());
 
 			var httpClientBuilder = ApacheHttpClient.builder();
@@ -222,10 +220,10 @@ public class OpenSearchVectorStoreAutoConfiguration {
 			Optional.ofNullable(properties.getReadTimeout()).ifPresent(httpClientBuilder::socketTimeout);
 			if (sslBundles.isPresent()) {
 				Optional.ofNullable(properties.getSslBundle())
-					.map(bundle -> sslBundles.get().getBundle(bundle))
-					.ifPresent(bundle -> httpClientBuilder
-						.tlsKeyManagersProvider(() -> bundle.getManagers().getKeyManagers())
-						.tlsTrustManagersProvider(() -> bundle.getManagers().getTrustManagers()));
+						.map(bundle -> sslBundles.get().getBundle(bundle))
+						.ifPresent(bundle -> httpClientBuilder
+								.tlsKeyManagersProvider(() -> bundle.getManagers().getKeyManagers())
+								.tlsTrustManagersProvider(() -> bundle.getManagers().getTrustManagers()));
 			}
 			OpenSearchTransport transport = new AwsSdk2Transport(httpClientBuilder.build(),
 					Objects.requireNonNull(connectionDetails.getHost(properties.getAws().getDomainName()),
@@ -239,9 +237,9 @@ public class OpenSearchVectorStoreAutoConfiguration {
 		@ConditionalOnMissingBean
 		AwsSdk2TransportOptions options(AwsOpenSearchConnectionDetails connectionDetails) {
 			return AwsSdk2TransportOptions.builder()
-				.setCredentials(StaticCredentialsProvider.create(
-						AwsBasicCredentials.create(connectionDetails.getAccessKey(), connectionDetails.getSecretKey())))
-				.build();
+					.setCredentials(StaticCredentialsProvider.create(
+							AwsBasicCredentials.create(connectionDetails.getAccessKey(), connectionDetails.getSecretKey())))
+					.build();
 		}
 
 	}

@@ -16,22 +16,16 @@
 
 package org.springframework.ai.anthropic;
 
+import com.anthropic.models.messages.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-
-import com.anthropic.models.messages.Base64PdfSource;
-import com.anthropic.models.messages.CitationsConfigParam;
-import com.anthropic.models.messages.ContentBlockSource;
-import com.anthropic.models.messages.ContentBlockSourceContent;
-import com.anthropic.models.messages.DocumentBlockParam;
-import com.anthropic.models.messages.TextBlockParam;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * Builder class for creating citation-enabled documents using the Anthropic Java SDK.
@@ -83,9 +77,9 @@ import org.springframework.util.Assert;
  * }</pre>
  *
  * @author Soby Chacko
- * @since 1.1.0
  * @see Citation
  * @see AnthropicChatOptions#getCitationDocuments()
+ * @since 1.1.0
  */
 public final class AnthropicCitationDocument {
 
@@ -94,13 +88,19 @@ public final class AnthropicCitationDocument {
 	 */
 	public enum DocumentType {
 
-		/** Plain text document with character-based citations. */
+		/**
+		 * Plain text document with character-based citations.
+		 */
 		PLAIN_TEXT,
 
-		/** PDF document with page-based citations. */
+		/**
+		 * PDF document with page-based citations.
+		 */
 		PDF,
 
-		/** Custom content with user-defined blocks and block-based citations. */
+		/**
+		 * Custom content with user-defined blocks and block-based citations.
+		 */
 		CUSTOM_CONTENT
 
 	}
@@ -126,6 +126,7 @@ public final class AnthropicCitationDocument {
 
 	/**
 	 * Convert this citation document to an SDK {@link DocumentBlockParam}.
+	 *
 	 * @return configured DocumentBlockParam for the Anthropic API
 	 */
 	public DocumentBlockParam toDocumentBlockParam() {
@@ -143,10 +144,10 @@ public final class AnthropicCitationDocument {
 				@SuppressWarnings("unchecked")
 				List<String> textBlocks = (List<String>) this.sourceData;
 				List<ContentBlockSourceContent> contentItems = textBlocks.stream()
-					.map(text -> ContentBlockSourceContent.ofText(TextBlockParam.builder().text(text).build()))
-					.toList();
+						.map(text -> ContentBlockSourceContent.ofText(TextBlockParam.builder().text(text).build()))
+						.toList();
 				builder.source(DocumentBlockParam.Source
-					.ofContent(ContentBlockSource.builder().contentOfBlockSource(contentItems).build()));
+						.ofContent(ContentBlockSource.builder().contentOfBlockSource(contentItems).build()));
 			}
 		}
 
@@ -174,6 +175,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Create a plain text document.
+		 *
 		 * @param text the document text content
 		 * @return builder for method chaining
 		 */
@@ -186,6 +188,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Create a PDF document from byte array.
+		 *
 		 * @param pdfBytes the PDF file content as bytes
 		 * @return builder for method chaining
 		 */
@@ -199,6 +202,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Create a PDF document from file path.
+		 *
 		 * @param filePath path to the PDF file
 		 * @return builder for method chaining
 		 * @throws IOException if file cannot be read
@@ -211,6 +215,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Create a custom content document from text blocks.
+		 *
 		 * @param textBlocks variable number of text strings to create content blocks
 		 * @return builder for method chaining
 		 */
@@ -224,6 +229,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Set the document title.
+		 *
 		 * @param title document title for reference
 		 * @return builder for method chaining
 		 */
@@ -234,6 +240,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Set the document context.
+		 *
 		 * @param context additional context about the document
 		 * @return builder for method chaining
 		 */
@@ -244,6 +251,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Enable or disable citations for this document.
+		 *
 		 * @param enabled whether citations should be enabled
 		 * @return builder for method chaining
 		 */
@@ -254,6 +262,7 @@ public final class AnthropicCitationDocument {
 
 		/**
 		 * Build the AnthropicCitationDocument.
+		 *
 		 * @return configured citation document
 		 */
 		public AnthropicCitationDocument build() {

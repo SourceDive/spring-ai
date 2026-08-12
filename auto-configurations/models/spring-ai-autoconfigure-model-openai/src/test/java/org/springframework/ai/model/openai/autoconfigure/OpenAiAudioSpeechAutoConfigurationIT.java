@@ -36,9 +36,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OpenAiAudioSpeechAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(OpenAiAudioSpeechAutoConfiguration.class))
-		.withPropertyValues("spring.ai.model.audio.speech=openai",
-				"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+			.withConfiguration(AutoConfigurations.of(OpenAiAudioSpeechAutoConfiguration.class))
+			.withPropertyValues("spring.ai.model.audio.speech=openai",
+					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 
 	@Test
 	void autoConfigurationEnabled() {
@@ -53,9 +53,9 @@ class OpenAiAudioSpeechAutoConfigurationIT {
 	@Test
 	void autoConfigurationDisabled() {
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(OpenAiAudioSpeechAutoConfiguration.class))
-			.withPropertyValues("spring.ai.model.audio.speech=other")
-			.run(context -> assertThat(context).doesNotHaveBean(OpenAiAudioSpeechModel.class));
+				.withConfiguration(AutoConfigurations.of(OpenAiAudioSpeechAutoConfiguration.class))
+				.withPropertyValues("spring.ai.model.audio.speech=other")
+				.run(context -> assertThat(context).doesNotHaveBean(OpenAiAudioSpeechModel.class));
 	}
 
 	@Test
@@ -73,18 +73,18 @@ class OpenAiAudioSpeechAutoConfigurationIT {
 	@Test
 	void customPropertiesApplied() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.audio.speech.options.model=tts-1-hd",
-					"spring.ai.openai.audio.speech.options.voice=nova",
-					"spring.ai.openai.audio.speech.options.response-format=opus",
-					"spring.ai.openai.audio.speech.options.speed=1.5")
-			.run(context -> {
-				OpenAiAudioSpeechModel model = context.getBean(OpenAiAudioSpeechModel.class);
-				OpenAiAudioSpeechOptions options = (OpenAiAudioSpeechOptions) model.getOptions();
-				assertThat(options.getModel()).isEqualTo("tts-1-hd");
-				assertThat(options.getVoice()).isEqualTo("nova");
-				assertThat(options.getResponseFormat()).isEqualTo("opus");
-				assertThat(options.getSpeed()).isEqualTo(1.5);
-			});
+				.withPropertyValues("spring.ai.openai.audio.speech.options.model=tts-1-hd",
+						"spring.ai.openai.audio.speech.options.voice=nova",
+						"spring.ai.openai.audio.speech.options.response-format=opus",
+						"spring.ai.openai.audio.speech.options.speed=1.5")
+				.run(context -> {
+					OpenAiAudioSpeechModel model = context.getBean(OpenAiAudioSpeechModel.class);
+					OpenAiAudioSpeechOptions options = (OpenAiAudioSpeechOptions) model.getOptions();
+					assertThat(options.getModel()).isEqualTo("tts-1-hd");
+					assertThat(options.getVoice()).isEqualTo("nova");
+					assertThat(options.getResponseFormat()).isEqualTo("opus");
+					assertThat(options.getSpeed()).isEqualTo(1.5);
+				});
 	}
 
 }

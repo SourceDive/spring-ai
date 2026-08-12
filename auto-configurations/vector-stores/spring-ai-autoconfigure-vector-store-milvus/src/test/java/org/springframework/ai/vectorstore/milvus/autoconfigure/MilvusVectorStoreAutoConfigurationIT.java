@@ -16,15 +16,8 @@
 
 package org.springframework.ai.vectorstore.milvus.autoconfigure;
 
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.milvus.MilvusContainer;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -39,6 +32,12 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.milvus.MilvusContainer;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,8 +55,8 @@ public class MilvusVectorStoreAutoConfigurationIT {
 	private static MilvusContainer milvus = new MilvusContainer("milvusdb/milvus:v2.3.8");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(MilvusVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withConfiguration(AutoConfigurations.of(MilvusVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	List<Document> documents = List.of(
 			new Document(ResourceUtils.getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -67,101 +66,101 @@ public class MilvusVectorStoreAutoConfigurationIT {
 	@Test
 	public void addAndSearch() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.milvus.metric-type=COSINE",
-					"spring.ai.vectorstore.milvus.index-type=IVF_FLAT",
-					"spring.ai.vectorstore.milvus.embedding-dimension=384",
-					"spring.ai.vectorstore.milvus.collection-name=myTestCollection",
-					"spring.ai.vectorstore.milvus.initialize-schema=true",
-					"spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
-					"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
-			.run(context -> {
-				VectorStore vectorStore = context.getBean(VectorStore.class);
-				TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
+				.withPropertyValues("spring.ai.vectorstore.milvus.metric-type=COSINE",
+						"spring.ai.vectorstore.milvus.index-type=IVF_FLAT",
+						"spring.ai.vectorstore.milvus.embedding-dimension=384",
+						"spring.ai.vectorstore.milvus.collection-name=myTestCollection",
+						"spring.ai.vectorstore.milvus.initialize-schema=true",
+						"spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
+						"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
+				.run(context -> {
+					VectorStore vectorStore = context.getBean(VectorStore.class);
+					TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
 
-				vectorStore.add(this.documents);
+					vectorStore.add(this.documents);
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
-						VectorStoreObservationContext.Operation.ADD);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
+							VectorStoreObservationContext.Operation.ADD);
+					observationRegistry.clear();
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
-				assertThat(resultDoc.getText()).contains(
-						"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
-				assertThat(resultDoc.getMetadata()).hasSize(2);
-				assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
+					assertThat(resultDoc.getText()).contains(
+							"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+					assertThat(resultDoc.getMetadata()).hasSize(2);
+					assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
-						VectorStoreObservationContext.Operation.QUERY);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
+							VectorStoreObservationContext.Operation.QUERY);
+					observationRegistry.clear();
 
-				// Remove all documents from the store
-				vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
+					// Remove all documents from the store
+					vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
-				results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
-				assertThat(results).hasSize(0);
+					results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					assertThat(results).hasSize(0);
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
-						VectorStoreObservationContext.Operation.DELETE);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
+							VectorStoreObservationContext.Operation.DELETE);
+					observationRegistry.clear();
 
-			});
+				});
 	}
 
 	@Test
 	public void searchWithCustomFields() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.milvus.metric-type=COSINE",
-					"spring.ai.vectorstore.milvus.index-type=IVF_FLAT",
-					"spring.ai.vectorstore.milvus.embedding-dimension=384",
-					"spring.ai.vectorstore.milvus.collection-name=myCustomCollection",
-					"spring.ai.vectorstore.milvus.id-field-name=identity",
-					"spring.ai.vectorstore.milvus.content-field-name=text",
-					"spring.ai.vectorstore.milvus.embedding-field-name=vectors",
-					"spring.ai.vectorstore.milvus.metadata-field-name=meta",
-					"spring.ai.vectorstore.milvus.initialize-schema=true",
-					"spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
-					"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
-			.run(context -> {
-				VectorStore vectorStore = context.getBean(VectorStore.class);
-				TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
+				.withPropertyValues("spring.ai.vectorstore.milvus.metric-type=COSINE",
+						"spring.ai.vectorstore.milvus.index-type=IVF_FLAT",
+						"spring.ai.vectorstore.milvus.embedding-dimension=384",
+						"spring.ai.vectorstore.milvus.collection-name=myCustomCollection",
+						"spring.ai.vectorstore.milvus.id-field-name=identity",
+						"spring.ai.vectorstore.milvus.content-field-name=text",
+						"spring.ai.vectorstore.milvus.embedding-field-name=vectors",
+						"spring.ai.vectorstore.milvus.metadata-field-name=meta",
+						"spring.ai.vectorstore.milvus.initialize-schema=true",
+						"spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
+						"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
+				.run(context -> {
+					VectorStore vectorStore = context.getBean(VectorStore.class);
+					TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
 
-				vectorStore.add(this.documents);
+					vectorStore.add(this.documents);
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
-						VectorStoreObservationContext.Operation.ADD);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
+							VectorStoreObservationContext.Operation.ADD);
+					observationRegistry.clear();
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
-				assertThat(resultDoc.getText()).contains(
-						"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
-				assertThat(resultDoc.getMetadata()).hasSize(2);
-				assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
+					assertThat(resultDoc.getText()).contains(
+							"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+					assertThat(resultDoc.getMetadata()).hasSize(2);
+					assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
-						VectorStoreObservationContext.Operation.QUERY);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
+							VectorStoreObservationContext.Operation.QUERY);
+					observationRegistry.clear();
 
-				// Remove all documents from the store
-				vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
+					// Remove all documents from the store
+					vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
-				results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
-				assertThat(results).hasSize(0);
+					results = vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					assertThat(results).hasSize(0);
 
-				ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
-						VectorStoreObservationContext.Operation.DELETE);
-				observationRegistry.clear();
+					ObservationTestUtil.assertObservationRegistry(observationRegistry, VectorStoreProvider.MILVUS,
+							VectorStoreObservationContext.Operation.DELETE);
+					observationRegistry.clear();
 
-			});
+				});
 	}
 
 	@Test
@@ -176,26 +175,26 @@ public class MilvusVectorStoreAutoConfigurationIT {
 	@Test
 	public void autoConfigurationEnabledByDefault() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
-					"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
-			.run(context -> {
-				assertThat(context.getBeansOfType(MilvusVectorStoreProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(VectorStore.class)).isNotEmpty();
-				assertThat(context.getBean(VectorStore.class)).isInstanceOf(MilvusVectorStore.class);
-			});
+				.withPropertyValues("spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
+						"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
+				.run(context -> {
+					assertThat(context.getBeansOfType(MilvusVectorStoreProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(VectorStore.class)).isNotEmpty();
+					assertThat(context.getBean(VectorStore.class)).isInstanceOf(MilvusVectorStore.class);
+				});
 	}
 
 	@Test
 	public void autoConfigurationEnabledWhenTypeIsMilvus() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
-					"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
-			.withPropertyValues("spring.ai.vectorstore.type=milvus")
-			.run(context -> {
-				assertThat(context.getBeansOfType(MilvusVectorStoreProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(VectorStore.class)).isNotEmpty();
-				assertThat(context.getBean(VectorStore.class)).isInstanceOf(MilvusVectorStore.class);
-			});
+				.withPropertyValues("spring.ai.vectorstore.milvus.client.host=" + milvus.getHost(),
+						"spring.ai.vectorstore.milvus.client.port=" + milvus.getMappedPort(19530))
+				.withPropertyValues("spring.ai.vectorstore.type=milvus")
+				.run(context -> {
+					assertThat(context.getBeansOfType(MilvusVectorStoreProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(VectorStore.class)).isNotEmpty();
+					assertThat(context.getBean(VectorStore.class)).isInstanceOf(MilvusVectorStore.class);
+				});
 	}
 
 	@Configuration(proxyBeanMethods = false)

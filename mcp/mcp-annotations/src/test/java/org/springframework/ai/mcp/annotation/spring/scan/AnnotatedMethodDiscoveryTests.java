@@ -16,14 +16,10 @@
 
 package org.springframework.ai.mcp.annotation.spring.scan;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
+
+import java.lang.annotation.*;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,11 +16,10 @@
 
 package org.springframework.ai.openai.metadata;
 
-import java.time.Duration;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.RateLimit;
+
+import java.time.Duration;
 
 /**
  * {@link RateLimit} implementation for {@literal OpenAI SDK}.
@@ -47,8 +46,8 @@ public class OpenAiRateLimit implements RateLimit {
 	private final @Nullable Duration tokensReset;
 
 	public OpenAiRateLimit(@Nullable Long requestsLimit, @Nullable Long requestsRemaining,
-			@Nullable Duration requestsReset, @Nullable Long tokensLimit, @Nullable Long tokensRemaining,
-			@Nullable Duration tokensReset) {
+	                       @Nullable Duration requestsReset, @Nullable Long tokensLimit, @Nullable Long tokensRemaining,
+	                       @Nullable Duration tokensReset) {
 
 		this.requestsLimit = requestsLimit;
 		this.requestsRemaining = requestsRemaining;
@@ -91,8 +90,8 @@ public class OpenAiRateLimit implements RateLimit {
 	@Override
 	public String toString() {
 		return "{ @type: %1$s, requestsLimit: %2$s, requestsRemaining: %3$s, requestsReset: %4$s, tokensLimit: %5$s; tokensRemaining: %6$s; tokensReset: %7$s }"
-			.formatted(getClass().getName(), getRequestsLimit(), getRequestsRemaining(), getRequestsReset(),
-					getTokensLimit(), getTokensRemaining(), getTokensReset());
+				.formatted(getClass().getName(), getRequestsLimit(), getRequestsRemaining(), getRequestsReset(),
+						getTokensLimit(), getTokensRemaining(), getTokensReset());
 	}
 
 }

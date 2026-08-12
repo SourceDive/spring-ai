@@ -16,16 +16,8 @@
 
 package org.springframework.ai.transformers;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
@@ -33,6 +25,13 @@ import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Service that helps caching remote {@link Resource}s on the local file system.
@@ -75,6 +74,7 @@ public class ResourceCacheService {
 
 	/**
 	 * Overrides the excluded URI schemas list.
+	 *
 	 * @param excludedUriSchemas new list of URI schemas to be excluded from caching.
 	 */
 	public void setExcludedUriSchemas(List<String> excludedUriSchemas) {
@@ -84,6 +84,7 @@ public class ResourceCacheService {
 
 	/**
 	 * Get {@link Resource} representing the cached copy of the original resource.
+	 *
 	 * @param originalResourceUri Resource to be cached.
 	 * @return Returns a cached resource. If the original resource's URI schema is within
 	 * the excluded schema list the original resource is returned.
@@ -94,6 +95,7 @@ public class ResourceCacheService {
 
 	/**
 	 * Get {@link Resource} representing the cached copy of the original resource.
+	 *
 	 * @param originalResource Resource to be cached.
 	 * @return Returns a cached resource. If the original resource's URI schema is within
 	 * the excluded schema list the original resource is returned.
@@ -112,8 +114,7 @@ public class ResourceCacheService {
 				logger.info("Caching the " + originalResource.toString() + " resource to: " + cachedFile);
 			}
 			return new FileUrlResource(cachedFile.getAbsolutePath());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to cache the resource: " + originalResource.getDescription(), e);
 		}
 	}

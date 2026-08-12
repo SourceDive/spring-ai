@@ -16,10 +16,6 @@
 
 package org.springframework.ai.chat.client.advisor.vectorstore;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +23,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -45,6 +40,10 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -115,16 +114,16 @@ public class QuestionAnswerAdvisorTests {
 		// @formatter:on
 
 		given(this.vectorStore.similaritySearch(this.vectorSearchCaptor.capture()))
-			.willReturn(List.of(new Document("doc1"), new Document("doc2")));
+				.willReturn(List.of(new Document("doc1"), new Document("doc2")));
 
 		var qaAdvisor = QuestionAnswerAdvisor.builder(this.vectorStore)
-			.searchRequest(SearchRequest.builder().similarityThreshold(0.99d).topK(6).build())
-			.build();
+				.searchRequest(SearchRequest.builder().similarityThreshold(0.99d).topK(6).build())
+				.build();
 
 		var chatClient = ChatClient.builder(this.chatModel)
-			.defaultSystem("Default system text.")
-			.defaultAdvisors(qaAdvisor)
-			.build();
+				.defaultSystem("Default system text.")
+				.defaultAdvisors(qaAdvisor)
+				.build();
 
 		// @formatter:off
 		var response = chatClient.prompt()

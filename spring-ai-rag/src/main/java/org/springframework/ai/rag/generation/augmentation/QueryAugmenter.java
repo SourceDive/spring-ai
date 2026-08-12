@@ -16,11 +16,11 @@
 
 package org.springframework.ai.rag.generation.augmentation;
 
-import java.util.List;
-import java.util.function.BiFunction;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.Query;
+
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * A component for augmenting an input query with additional data, useful to provide a
@@ -33,7 +33,8 @@ public interface QueryAugmenter extends BiFunction<Query, List<Document>, Query>
 
 	/**
 	 * Augments the user query with contextual data.
-	 * @param query The user query to augment
+	 *
+	 * @param query     The user query to augment
 	 * @param documents The contextual data to use for augmentation
 	 * @return The augmented query
 	 */

@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.common;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Predicate;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
+import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
-import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

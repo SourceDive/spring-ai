@@ -16,20 +16,19 @@
 
 package org.springframework.ai.mcp.annotation.common;
 
-import java.lang.reflect.Method;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.reactivestreams.Publisher;
+import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
+import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
-import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
+import java.lang.reflect.Method;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public final class McpPredicates {
 
@@ -45,11 +44,11 @@ public final class McpPredicates {
 	}
 
 	public final static Predicate<Method> isReactiveReturnType = method -> Mono.class
-		.isAssignableFrom(method.getReturnType()) || Flux.class.isAssignableFrom(method.getReturnType())
+			.isAssignableFrom(method.getReturnType()) || Flux.class.isAssignableFrom(method.getReturnType())
 			|| Publisher.class.isAssignableFrom(method.getReturnType());
 
 	public final static Predicate<Method> isNotReactiveReturnType = method -> !Mono.class
-		.isAssignableFrom(method.getReturnType()) && !Flux.class.isAssignableFrom(method.getReturnType())
+			.isAssignableFrom(method.getReturnType()) && !Flux.class.isAssignableFrom(method.getReturnType())
 			&& !Publisher.class.isAssignableFrom(method.getReturnType());
 
 	public static Predicate<Method> filterNonReactiveReturnTypeMethod() {

@@ -16,15 +16,14 @@
 
 package org.springframework.ai.vectorstore;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
 import org.springframework.util.Assert;
+
+import java.util.Objects;
 
 /**
  * Similarity search request. Use the {@link SearchRequest#builder()} to create the
@@ -61,14 +60,15 @@ public class SearchRequest {
 
 	/**
 	 * Copy an existing {@link SearchRequest.Builder} instance.
+	 *
 	 * @param originalSearchRequest {@link SearchRequest} instance to copy.
 	 * @return Returns new {@link SearchRequest.Builder} instance.
 	 */
 	public static Builder from(SearchRequest originalSearchRequest) {
 		return builder().query(originalSearchRequest.getQuery())
-			.topK(originalSearchRequest.getTopK())
-			.similarityThreshold(originalSearchRequest.getSimilarityThreshold())
-			.filterExpression(originalSearchRequest.getFilterExpression());
+				.topK(originalSearchRequest.getTopK())
+				.similarityThreshold(originalSearchRequest.getSimilarityThreshold())
+				.filterExpression(originalSearchRequest.getFilterExpression());
 	}
 
 	public SearchRequest() {
@@ -128,6 +128,7 @@ public class SearchRequest {
 
 	/**
 	 * Builder for creating the SearchRequest instance.
+	 *
 	 * @return the builder.
 	 */
 	public static Builder builder() {
@@ -168,6 +169,7 @@ public class SearchRequest {
 		 * side. A threshold value of 0.0 means any similarity is accepted or disable the
 		 * similarity threshold filtering. A threshold value of 1.0 means an exact match
 		 * is required.
+		 *
 		 * @param threshold The lower bound of the similarity score.
 		 * @return this builder.
 		 */
@@ -180,6 +182,7 @@ public class SearchRequest {
 		/**
 		 * Sets disables the similarity threshold by setting it to 0.0 - all results are
 		 * accepted.
+		 *
 		 * @return this builder.
 		 */
 		public Builder similarityThresholdAll() {
@@ -190,7 +193,7 @@ public class SearchRequest {
 		/**
 		 * Retrieves documents by query embedding similarity and matching the filters.
 		 * Value of 'null' means that no metadata filters will be applied to the search.
-		 *
+		 * <p>
 		 * For example if the {@link Document#getMetadata()} schema is:
 		 *
 		 * <pre>{@code
@@ -202,7 +205,7 @@ public class SearchRequest {
 		 * "isActive": <Boolean>
 		 * &#125;
 		 * }</pre>
-		 *
+		 * <p>
 		 * you can constrain the search result to only UK countries with isActive=true and
 		 * year equal or greater 2020. You can build this such metadata filter
 		 * programmatically like this:
@@ -214,10 +217,10 @@ public class SearchRequest {
 		 * 				new Expression(GTE, new Key("year"), new Value(2020)),
 		 * 				new Expression(EQ, new Key("isActive"), new Value(true))));
 		 * }</pre>
-		 *
+		 * <p>
 		 * The {@link Filter.Expression} is portable across all vector stores.<br/>
-		 *
-		 *
+		 * <p>
+		 * <p>
 		 * The {@link FilterExpressionBuilder} is a DSL creating expressions
 		 * programmatically:
 		 *
@@ -229,7 +232,7 @@ public class SearchRequest {
 		 * 			b.gte("year", 2020),
 		 * 			b.eq("isActive", true)));
 		 * }</pre>
-		 *
+		 * <p>
 		 * The {@link FilterExpressionTextParser} converts textual, SQL like filter
 		 * expression language into {@link Filter.Expression}:
 		 *
@@ -237,8 +240,9 @@ public class SearchRequest {
 		 * var parser = new FilterExpressionTextParser();
 		 * var exp = parser.parse("country == 'UK' && isActive == true && year >=2020");
 		 * }</pre>
+		 *
 		 * @param expression {@link Filter.Expression} instance used to define the
-		 * metadata filter criteria. The 'null' value stands for no expression filters.
+		 *                   metadata filter criteria. The 'null' value stands for no expression filters.
 		 * @return this builder.
 		 */
 		public Builder filterExpression(Filter.@Nullable Expression expression) {
@@ -259,7 +263,7 @@ public class SearchRequest {
 		 * "isActive": <Boolean>
 		 * &#125;
 		 * }</pre>
-		 *
+		 * <p>
 		 * then you can constrain the search result with metadata filter expressions like:
 		 *
 		 * <pre>{@code
@@ -267,17 +271,18 @@ public class SearchRequest {
 		 * Or
 		 * country == 'BG' && (city NOT IN ['Sofia', 'Plovdiv'] || price < 134.34)
 		 * }</pre>
-		 *
+		 * <p>
 		 * This ensures that the response contains only embeddings that match the
 		 * specified filer criteria. <br/>
-		 *
+		 * <p>
 		 * The declarative, SQL like, filter syntax is portable across all vector stores
 		 * supporting the filter search feature.<br/>
-		 *
+		 * <p>
 		 * The {@link FilterExpressionTextParser} is used to convert the text filter
 		 * expression into {@link Filter.Expression}.
+		 *
 		 * @param textExpression declarative, portable, SQL like, metadata filter syntax.
-		 * The 'null' value stands for no expression filters.
+		 *                       The 'null' value stands for no expression filters.
 		 * @return this.builder
 		 */
 		public Builder filterExpression(@Nullable String textExpression) {

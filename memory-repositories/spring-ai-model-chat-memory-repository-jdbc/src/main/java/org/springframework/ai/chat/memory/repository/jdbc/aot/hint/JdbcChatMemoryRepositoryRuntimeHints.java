@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chat.memory.repository.jdbc.aot.hint;
 
-import javax.sql.DataSource;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
+
+import javax.sql.DataSource;
 
 /**
  * A {@link RuntimeHintsRegistrar} for JDBC Chat Memory hints
@@ -34,7 +33,7 @@ class JdbcChatMemoryRepositoryRuntimeHints implements RuntimeHintsRegistrar {
 	@Override
 	public void registerHints(RuntimeHints hints, @Nullable ClassLoader classLoader) {
 		hints.reflection()
-			.registerType(DataSource.class, hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_METHODS));
+				.registerType(DataSource.class, hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_METHODS));
 
 		hints.resources().registerPattern("org/springframework/ai/chat/memory/repository/jdbc/schema-*.sql");
 	}

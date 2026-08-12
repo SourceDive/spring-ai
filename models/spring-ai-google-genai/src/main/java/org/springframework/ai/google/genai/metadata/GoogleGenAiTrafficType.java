@@ -51,6 +51,7 @@ public enum GoogleGenAiTrafficType {
 
 	/**
 	 * Creates a GoogleGenAiTrafficType from the SDK's TrafficType.
+	 *
 	 * @param trafficType the SDK traffic type
 	 * @return the corresponding GoogleGenAiTrafficType
 	 */
@@ -81,6 +82,7 @@ public enum GoogleGenAiTrafficType {
 
 	/**
 	 * Returns the string value of the traffic type.
+	 *
 	 * @return the traffic type value
 	 */
 	@JsonValue

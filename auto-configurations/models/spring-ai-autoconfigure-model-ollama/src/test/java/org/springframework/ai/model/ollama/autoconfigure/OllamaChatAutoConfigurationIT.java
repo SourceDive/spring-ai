@@ -16,14 +16,8 @@
 
 package org.springframework.ai.model.ollama.autoconfigure;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -34,6 +28,11 @@ import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaModel;
 import org.springframework.ai.ollama.management.OllamaModelManager;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,13 +47,13 @@ public class OllamaChatAutoConfigurationIT extends BaseOllamaIT {
 	private static final String MODEL_NAME = OllamaModel.QWEN_2_5_3B.getName();
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner().withPropertyValues(
-	// @formatter:off
+					// @formatter:off
 				"spring.ai.ollama.base-url=" + getBaseUrl(),
 				"spring.ai.ollama.chat.model=" + MODEL_NAME,
 				"spring.ai.ollama.chat.temperature=0.5",
 				"spring.ai.ollama.chat.top-k=10")
 				// @formatter:on
-		.withConfiguration(ollamaAutoConfig(OllamaChatAutoConfiguration.class));
+			.withConfiguration(ollamaAutoConfig(OllamaChatAutoConfiguration.class));
 
 	private final UserMessage userMessage = new UserMessage("What's the capital of Denmark?");
 
@@ -84,11 +83,11 @@ public class OllamaChatAutoConfigurationIT extends BaseOllamaIT {
 			assertThat(responses.size()).isGreaterThan(1);
 
 			String stitchedResponseContent = responses.stream()
-				.map(ChatResponse::getResults)
-				.flatMap(List::stream)
-				.map(Generation::getOutput)
-				.map(AssistantMessage::getText)
-				.collect(Collectors.joining());
+					.map(ChatResponse::getResults)
+					.flatMap(List::stream)
+					.map(Generation::getOutput)
+					.map(AssistantMessage::getText)
+					.collect(Collectors.joining());
 
 			assertThat(stitchedResponseContent).contains("Copenhagen");
 		});
@@ -97,18 +96,18 @@ public class OllamaChatAutoConfigurationIT extends BaseOllamaIT {
 	@Test
 	public void chatCompletionWithPull() {
 		this.contextRunner.withPropertyValues("spring.ai.ollama.init.pull-model-strategy=when_missing")
-			.withPropertyValues("spring.ai.ollama.chat.model=tinyllama")
-			.run(context -> {
-				var model = "tinyllama";
-				OllamaApi ollamaApi = context.getBean(OllamaApi.class);
-				var modelManager = new OllamaModelManager(ollamaApi);
-				assertThat(modelManager.isModelAvailable(model)).isTrue();
+				.withPropertyValues("spring.ai.ollama.chat.model=tinyllama")
+				.run(context -> {
+					var model = "tinyllama";
+					OllamaApi ollamaApi = context.getBean(OllamaApi.class);
+					var modelManager = new OllamaModelManager(ollamaApi);
+					assertThat(modelManager.isModelAvailable(model)).isTrue();
 
-				OllamaChatModel chatModel = context.getBean(OllamaChatModel.class);
-				ChatResponse response = chatModel.call(new Prompt(this.userMessage));
-				assertThat(response.getResult().getOutput().getText()).contains("Copenhagen");
-				modelManager.deleteModel(model);
-			});
+					OllamaChatModel chatModel = context.getBean(OllamaChatModel.class);
+					ChatResponse response = chatModel.call(new Prompt(this.userMessage));
+					assertThat(response.getResult().getOutput().getText()).contains("Copenhagen");
+					modelManager.deleteModel(model);
+				});
 	}
 
 	@Test

@@ -16,14 +16,13 @@
 
 package org.springframework.ai.openai.audio.transcription;
 
-import java.util.List;
-import java.util.Map;
-
 import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.audio.transcription.AudioTranscriptionOptions;
 import org.springframework.ai.openai.OpenAiAudioTranscriptionOptions;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,19 +50,19 @@ class OpenAiAudioTranscriptionOptionsTests {
 	@Test
 	void testOptionsBuilderMergeCustomHeadersAndTimestampGranularities() {
 		OpenAiAudioTranscriptionOptions defaultOptions = OpenAiAudioTranscriptionOptions.builder()
-			.customHeaders(Map.of("default-header", "default-value"))
-			.timestampGranularities(List.of(TranscriptionCreateParams.TimestampGranularity.WORD))
-			.build();
+				.customHeaders(Map.of("default-header", "default-value"))
+				.timestampGranularities(List.of(TranscriptionCreateParams.TimestampGranularity.WORD))
+				.build();
 
 		OpenAiAudioTranscriptionOptions requestOptions = OpenAiAudioTranscriptionOptions.builder()
-			.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
-			.timestampGranularities(List.of(TranscriptionCreateParams.TimestampGranularity.SEGMENT))
-			.build();
+				.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
+				.timestampGranularities(List.of(TranscriptionCreateParams.TimestampGranularity.SEGMENT))
+				.build();
 
 		OpenAiAudioTranscriptionOptions merged = OpenAiAudioTranscriptionOptions.builder()
-			.from(defaultOptions)
-			.merge(requestOptions)
-			.build();
+				.from(defaultOptions)
+				.merge(requestOptions)
+				.build();
 
 		assertThat(merged.getCustomHeaders()).containsExactlyInAnyOrderEntriesOf(Map.of("default-header",
 				"default-value", "merged-header1", "merged-value1", "merged-header2", "merged-value2"));

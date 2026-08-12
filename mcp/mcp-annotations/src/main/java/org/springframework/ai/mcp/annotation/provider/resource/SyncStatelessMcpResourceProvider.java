@@ -16,12 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.resource;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncResourceSpecification;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncResourceTemplateSpecification;
@@ -31,15 +25,20 @@ import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.common.MetaUtils;
 import org.springframework.ai.mcp.annotation.method.resource.SyncStatelessMcpResourceMethodCallback;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
+
 /**
  * Provider for synchronous stateless MCP resource methods.
- *
+ * <p>
  * This provider creates resource specifications for methods annotated with
  * {@link McpResource} that are designed to work in a stateless manner using
  * {@link McpTransportContext}.
@@ -57,8 +56,9 @@ public class SyncStatelessMcpResourceProvider {
 
 	/**
 	 * Create a new SyncStatelessMcpResourceProvider.
+	 *
 	 * @param resourceObjects the objects containing methods annotated with
-	 * {@link McpResource}
+	 *                        {@link McpResource}
 	 */
 	public SyncStatelessMcpResourceProvider(List<Object> resourceObjects) {
 		Assert.notNull(resourceObjects, "resourceObjects cannot be null");
@@ -67,52 +67,53 @@ public class SyncStatelessMcpResourceProvider {
 
 	/**
 	 * Get the stateless resource specifications.
+	 *
 	 * @return the list of stateless resource specifications
 	 */
 	public List<SyncResourceSpecification> getResourceSpecifications() {
 
 		List<SyncResourceSpecification> resourceSpecs = this.resourceObjects.stream()
-			.map(resourceObject -> Stream.of(doGetClassMethods(resourceObject))
-				.filter(method -> method.isAnnotationPresent(McpResource.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.filter(McpPredicates.filterMethodWithBidirectionalParameters())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpResourceMethod -> {
+				.map(resourceObject -> Stream.of(doGetClassMethods(resourceObject))
+						.filter(method -> method.isAnnotationPresent(McpResource.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.filter(McpPredicates.filterMethodWithBidirectionalParameters())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpResourceMethod -> {
 
-					var resourceAnnotation = doGetMcpResourceAnnotation(mcpResourceMethod);
+							var resourceAnnotation = doGetMcpResourceAnnotation(mcpResourceMethod);
 
-					var uri = resourceAnnotation.uri();
+							var uri = resourceAnnotation.uri();
 
-					if (McpPredicates.isUriTemplate(uri)) {
-						return null;
-					}
+							if (McpPredicates.isUriTemplate(uri)) {
+								return null;
+							}
 
-					var name = getName(mcpResourceMethod, resourceAnnotation);
-					var description = resourceAnnotation.description();
-					var mimeType = resourceAnnotation.mimeType();
-					var meta = MetaUtils.getMeta(resourceAnnotation.metaProvider());
+							var name = getName(mcpResourceMethod, resourceAnnotation);
+							var description = resourceAnnotation.description();
+							var mimeType = resourceAnnotation.mimeType();
+							var meta = MetaUtils.getMeta(resourceAnnotation.metaProvider());
 
-					var mcpResource = McpSchema.Resource.builder(uri, name)
-						.description(description)
-						.mimeType(mimeType)
-						.meta(meta)
-						.build();
+							var mcpResource = McpSchema.Resource.builder(uri, name)
+									.description(description)
+									.mimeType(mimeType)
+									.meta(meta)
+									.build();
 
-					BiFunction<McpTransportContext, ReadResourceRequest, ReadResourceResult> methodCallback = SyncStatelessMcpResourceMethodCallback
-						.builder()
-						.method(mcpResourceMethod)
-						.bean(resourceObject)
-						.resource(mcpResource)
-						.build();
+							BiFunction<McpTransportContext, ReadResourceRequest, ReadResourceResult> methodCallback = SyncStatelessMcpResourceMethodCallback
+									.builder()
+									.method(mcpResourceMethod)
+									.bean(resourceObject)
+									.resource(mcpResource)
+									.build();
 
-					var resourceSpec = new SyncResourceSpecification(mcpResource, methodCallback);
+							var resourceSpec = new SyncResourceSpecification(mcpResource, methodCallback);
 
-					return resourceSpec;
-				})
-				.filter(Objects::nonNull)
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return resourceSpec;
+						})
+						.filter(Objects::nonNull)
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (resourceSpecs.isEmpty()) {
 			if (logger.isWarnEnabled()) {
@@ -126,46 +127,46 @@ public class SyncStatelessMcpResourceProvider {
 	public List<SyncResourceTemplateSpecification> getResourceTemplateSpecifications() {
 
 		List<SyncResourceTemplateSpecification> resourceSpecs = this.resourceObjects.stream()
-			.map(resourceObject -> Stream.of(doGetClassMethods(resourceObject))
-				.filter(method -> method.isAnnotationPresent(McpResource.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpResourceMethod -> {
+				.map(resourceObject -> Stream.of(doGetClassMethods(resourceObject))
+						.filter(method -> method.isAnnotationPresent(McpResource.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpResourceMethod -> {
 
-					var resourceAnnotation = doGetMcpResourceAnnotation(mcpResourceMethod);
+							var resourceAnnotation = doGetMcpResourceAnnotation(mcpResourceMethod);
 
-					var uri = resourceAnnotation.uri();
+							var uri = resourceAnnotation.uri();
 
-					if (!McpPredicates.isUriTemplate(uri)) {
-						return null;
-					}
+							if (!McpPredicates.isUriTemplate(uri)) {
+								return null;
+							}
 
-					var name = getName(mcpResourceMethod, resourceAnnotation);
-					var description = resourceAnnotation.description();
-					var mimeType = resourceAnnotation.mimeType();
-					var meta = MetaUtils.getMeta(resourceAnnotation.metaProvider());
+							var name = getName(mcpResourceMethod, resourceAnnotation);
+							var description = resourceAnnotation.description();
+							var mimeType = resourceAnnotation.mimeType();
+							var meta = MetaUtils.getMeta(resourceAnnotation.metaProvider());
 
-					var mcpResourceTemplate = McpSchema.ResourceTemplate.builder(uri, name)
-						.description(description)
-						.mimeType(mimeType)
-						.meta(meta)
-						.build();
+							var mcpResourceTemplate = McpSchema.ResourceTemplate.builder(uri, name)
+									.description(description)
+									.mimeType(mimeType)
+									.meta(meta)
+									.build();
 
-					BiFunction<McpTransportContext, ReadResourceRequest, ReadResourceResult> methodCallback = SyncStatelessMcpResourceMethodCallback
-						.builder()
-						.method(mcpResourceMethod)
-						.bean(resourceObject)
-						.resource(mcpResourceTemplate)
-						.build();
+							BiFunction<McpTransportContext, ReadResourceRequest, ReadResourceResult> methodCallback = SyncStatelessMcpResourceMethodCallback
+									.builder()
+									.method(mcpResourceMethod)
+									.bean(resourceObject)
+									.resource(mcpResourceTemplate)
+									.build();
 
-					var resourceSpec = new SyncResourceTemplateSpecification(mcpResourceTemplate, methodCallback);
+							var resourceSpec = new SyncResourceTemplateSpecification(mcpResourceTemplate, methodCallback);
 
-					return resourceSpec;
-				})
-				.filter(Objects::nonNull)
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return resourceSpec;
+						})
+						.filter(Objects::nonNull)
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (resourceSpecs.isEmpty()) {
 			if (logger.isWarnEnabled()) {

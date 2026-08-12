@@ -16,13 +16,12 @@
 
 package org.springframework.ai.embedding;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ModelResponse;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Embedding response object.
@@ -41,6 +40,7 @@ public class EmbeddingResponse implements ModelResponse<Embedding> {
 
 	/**
 	 * Creates a new {@link EmbeddingResponse} instance with empty metadata.
+	 *
 	 * @param embeddings the embedding data.
 	 */
 	public EmbeddingResponse(List<Embedding> embeddings) {
@@ -49,8 +49,9 @@ public class EmbeddingResponse implements ModelResponse<Embedding> {
 
 	/**
 	 * Creates a new {@link EmbeddingResponse} instance.
+	 *
 	 * @param embeddings the embedding data.
-	 * @param metadata the embedding metadata.
+	 * @param metadata   the embedding metadata.
 	 */
 	public EmbeddingResponse(List<Embedding> embeddings, EmbeddingResponseMetadata metadata) {
 		this.embeddings = embeddings;

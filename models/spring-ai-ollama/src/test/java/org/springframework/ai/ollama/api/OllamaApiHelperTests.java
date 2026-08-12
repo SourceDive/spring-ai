@@ -16,14 +16,14 @@
 
 package org.springframework.ai.ollama.api;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -125,24 +125,24 @@ class OllamaApiHelperTests {
 	void mergeWhenBothResponsesHaveValuesShouldMergeCorrectly() {
 		Instant previousCreatedAt = Instant.now().minusSeconds(10);
 		OllamaApi.Message previousMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.content("Previous content")
-			.thinking("Previous thinking")
-			.images(Arrays.asList("image1"))
-			.toolCalls(Arrays.asList(mock(OllamaApi.Message.ToolCall.class)))
-			.toolName("Previous tool")
-			.build();
+				.content("Previous content")
+				.thinking("Previous thinking")
+				.images(Arrays.asList("image1"))
+				.toolCalls(Arrays.asList(mock(OllamaApi.Message.ToolCall.class)))
+				.toolName("Previous tool")
+				.build();
 
 		OllamaApi.ChatResponse previous = new OllamaApi.ChatResponse("previous-model", previousCreatedAt,
 				previousMessage, "previous-reason", false, 100L, 50L, 10, 200L, 5, 100L);
 
 		Instant currentCreatedAt = Instant.now();
 		OllamaApi.Message currentMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.USER)
-			.content("Current content")
-			.thinking("Current thinking")
-			.images(Arrays.asList("image2"))
-			.toolCalls(Arrays.asList(mock(OllamaApi.Message.ToolCall.class)))
-			.toolName("Current tool")
-			.build();
+				.content("Current content")
+				.thinking("Current thinking")
+				.images(Arrays.asList("image2"))
+				.toolCalls(Arrays.asList(mock(OllamaApi.Message.ToolCall.class)))
+				.toolName("Current tool")
+				.build();
 
 		OllamaApi.ChatResponse current = new OllamaApi.ChatResponse("current-model", currentCreatedAt, currentMessage,
 				"stop", true, 200L, 100L, 20, 400L, 10, 200L);
@@ -170,18 +170,18 @@ class OllamaApiHelperTests {
 	@Test
 	void mergeStringsShouldConcatenate() {
 		OllamaApi.Message previousMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.content("Hello")
-			.thinking("Think")
-			.toolName("Tool")
-			.build();
+				.content("Hello")
+				.thinking("Think")
+				.toolName("Tool")
+				.build();
 		OllamaApi.ChatResponse previous = new OllamaApi.ChatResponse("model1", Instant.now(), previousMessage,
 				"reason1", false, null, null, null, null, null, null);
 
 		OllamaApi.Message currentMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.content(" World")
-			.thinking("ing")
-			.toolName("Box")
-			.build();
+				.content(" World")
+				.thinking("ing")
+				.toolName("Box")
+				.build();
 		OllamaApi.ChatResponse current = new OllamaApi.ChatResponse("model2", Instant.now(), currentMessage, "reason2",
 				true, null, null, null, null, null, null);
 
@@ -218,14 +218,14 @@ class OllamaApiHelperTests {
 	@Test
 	void mergeListsShouldCombine() {
 		OllamaApi.Message previousMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.images(Arrays.asList("image1", "image2"))
-			.build();
+				.images(Arrays.asList("image1", "image2"))
+				.build();
 		OllamaApi.ChatResponse previous = new OllamaApi.ChatResponse(null, null, previousMessage, null, null, null,
 				null, null, null, null, null);
 
 		OllamaApi.Message currentMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.images(Arrays.asList("image3", "image4"))
-			.build();
+				.images(Arrays.asList("image3", "image4"))
+				.build();
 		OllamaApi.ChatResponse current = new OllamaApi.ChatResponse(null, null, currentMessage, null, null, null, null,
 				null, null, null, null);
 

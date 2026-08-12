@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.audio.transcription;
 
-import org.jspecify.annotations.NullMarked;

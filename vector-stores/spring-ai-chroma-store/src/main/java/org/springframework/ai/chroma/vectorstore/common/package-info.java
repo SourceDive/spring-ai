@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chroma.vectorstore.common;
 
-import org.jspecify.annotations.NullMarked;

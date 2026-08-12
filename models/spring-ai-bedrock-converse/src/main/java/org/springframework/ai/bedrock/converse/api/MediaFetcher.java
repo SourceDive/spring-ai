@@ -16,16 +16,6 @@
 
 package org.springframework.ai.bedrock.converse.api;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Set;
-
 import org.apache.hc.client5.http.DnsResolver;
 import org.apache.hc.client5.http.SystemDefaultDnsResolver;
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -42,9 +32,14 @@ import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
-
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
+import java.util.Set;
 
 /**
  * Fetches media content from HTTP/HTTPS URLs with SSRF and resource-exhaustion
@@ -80,10 +75,14 @@ public final class MediaFetcher {
 	 */
 	public static final int DEFAULT_MAX_FETCH_SIZE_BYTES = 40 * 1024 * 1024;
 
-	/** Connect timeout for opening a connection to the media URL. */
+	/**
+	 * Connect timeout for opening a connection to the media URL.
+	 */
 	private static final int DEFAULT_CONNECT_TIMEOUT_SECONDS = 15;
 
-	/** Socket timeout for reading from the media URL connection. */
+	/**
+	 * Socket timeout for reading from the media URL connection.
+	 */
 	private static final int DEFAULT_SOCKET_TIMEOUT_SECONDS = 30;
 
 	private final RestClient restClient;
@@ -109,8 +108,9 @@ public final class MediaFetcher {
 	 * When {@code allowedHosts} is non-empty, every fetch is checked against this set
 	 * before the SSRF blocklist. A host is allowed when it either equals an entry exactly
 	 * (case-insensitive) or matches a wildcard entry of the form {@code *.example.com}.
+	 *
 	 * @param allowedHosts set of permitted hostnames or wildcard patterns; an empty set
-	 * disables allowlist enforcement
+	 *                     disables allowlist enforcement
 	 */
 	public MediaFetcher(Set<String> allowedHosts) {
 		this.allowedHosts = Set.copyOf(allowedHosts);
@@ -132,11 +132,12 @@ public final class MediaFetcher {
 	 * <p>
 	 * The caller is responsible for validating the URI (protocol, host) before invoking
 	 * this method. This method enforces size limits and socket-level SSRF protection.
+	 *
 	 * @param uri the URI to fetch
 	 * @return the response body as a byte array
-	 * @throws SecurityException if the response exceeds
-	 * {@link #DEFAULT_MAX_FETCH_SIZE_BYTES} or the host resolves to a blocked internal
-	 * address
+	 * @throws SecurityException                                  if the response exceeds
+	 *                                                            {@link #DEFAULT_MAX_FETCH_SIZE_BYTES} or the host resolves to a blocked internal
+	 *                                                            address
 	 * @throws org.springframework.web.client.RestClientException on HTTP or I/O errors
 	 */
 	public byte[] fetch(URI uri) {
@@ -178,8 +179,7 @@ public final class MediaFetcher {
 				if (normalizedHost.endsWith(suffix)) {
 					return true;
 				}
-			}
-			else if (normalizedHost.equals(normalizedAllowed)) {
+			} else if (normalizedHost.equals(normalizedAllowed)) {
 				return true;
 			}
 		}
@@ -204,21 +204,21 @@ public final class MediaFetcher {
 
 	private static RestClient createSsrfSafeRestClient() {
 		Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-			.register("http", new SsrfBlockingPlainSocketFactory())
-			.register("https", new SsrfBlockingSSLSocketFactory(SSLConnectionSocketFactory.getSocketFactory()))
-			.build();
+				.register("http", new SsrfBlockingPlainSocketFactory())
+				.register("https", new SsrfBlockingSSLSocketFactory(SSLConnectionSocketFactory.getSocketFactory()))
+				.build();
 
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
 				socketFactoryRegistry, null, null, null, null, new SsrfSafeDnsResolver(), null);
 		connectionManager.setDefaultConnectionConfig(ConnectionConfig.custom()
-			.setConnectTimeout(Timeout.ofSeconds(DEFAULT_CONNECT_TIMEOUT_SECONDS))
-			.setSocketTimeout(Timeout.ofSeconds(DEFAULT_SOCKET_TIMEOUT_SECONDS))
-			.build());
+				.setConnectTimeout(Timeout.ofSeconds(DEFAULT_CONNECT_TIMEOUT_SECONDS))
+				.setSocketTimeout(Timeout.ofSeconds(DEFAULT_SOCKET_TIMEOUT_SECONDS))
+				.build());
 
 		CloseableHttpClient httpClient = HttpClients.custom()
-			.setConnectionManager(connectionManager)
-			.disableRedirectHandling()
-			.build();
+				.setConnectionManager(connectionManager)
+				.disableRedirectHandling()
+				.build();
 		return RestClient.builder().requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient)).build();
 	}
 
@@ -247,7 +247,7 @@ public final class MediaFetcher {
 
 		@Override
 		public Socket connectSocket(TimeValue connectTimeout, Socket socket, HttpHost host,
-				InetSocketAddress remoteAddress, InetSocketAddress localAddress, HttpContext context)
+		                            InetSocketAddress remoteAddress, InetSocketAddress localAddress, HttpContext context)
 				throws IOException {
 			assertNotBlockedAddress(remoteAddress, host);
 			return super.connectSocket(connectTimeout, socket, host, remoteAddress, localAddress, context);
@@ -276,7 +276,7 @@ public final class MediaFetcher {
 
 		@Override
 		public Socket connectSocket(TimeValue connectTimeout, Socket socket, HttpHost host,
-				InetSocketAddress remoteAddress, InetSocketAddress localAddress, HttpContext context)
+		                            InetSocketAddress remoteAddress, InetSocketAddress localAddress, HttpContext context)
 				throws IOException {
 			assertNotBlockedAddress(remoteAddress, host);
 			return this.delegate.connectSocket(connectTimeout, socket, host, remoteAddress, localAddress, context);

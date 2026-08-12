@@ -16,21 +16,20 @@
 
 package org.springframework.ai.openai;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.openai.azure.AzureOpenAIServiceVersion;
 import com.openai.credential.Credential;
 import com.openai.models.images.ImageGenerateParams;
 import com.openai.models.images.ImageModel;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.image.ImageOptions;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.util.CollectionUtils;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Configuration information for the Image Model implementation using the OpenAI Java SDK.
@@ -93,12 +92,12 @@ public class OpenAiImageOptions extends AbstractOpenAiOptions implements ImageOp
 	private final @Nullable String user;
 
 	protected OpenAiImageOptions(@Nullable String baseUrl, @Nullable String apiKey, @Nullable Credential credential,
-			@Nullable String model, @Nullable String microsoftDeploymentName,
-			@Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
-			@Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
-			@Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
-			@Nullable Integer n, @Nullable Integer width, @Nullable Integer height, @Nullable String quality,
-			@Nullable String responseFormat, @Nullable String size, @Nullable String style, @Nullable String user) {
+	                             @Nullable String model, @Nullable String microsoftDeploymentName,
+	                             @Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
+	                             @Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
+	                             @Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
+	                             @Nullable Integer n, @Nullable Integer width, @Nullable Integer height, @Nullable String quality,
+	                             @Nullable String responseFormat, @Nullable String size, @Nullable String style, @Nullable String user) {
 		super(baseUrl, apiKey, credential, model != null ? model : DEFAULT_IMAGE_MODEL, microsoftDeploymentName,
 				microsoftFoundryServiceVersion, organizationId, isMicrosoftFoundry, isGitHubModels, timeout, maxRetries,
 				proxy, customHeaders);
@@ -186,8 +185,7 @@ public class OpenAiImageOptions extends AbstractOpenAiOptions implements ImageOp
 		// name
 		if (this.getDeploymentName() != null) {
 			builder.model(this.getDeploymentName());
-		}
-		else if (this.getModel() != null) {
+		} else if (this.getModel() != null) {
 			builder.model(this.getModel());
 		}
 
@@ -315,8 +313,7 @@ public class OpenAiImageOptions extends AbstractOpenAiOptions implements ImageOp
 				if (castFrom.getCustomHeaders() != null) {
 					if (this.customHeaders == null) {
 						this.customHeaders = new HashMap<>(castFrom.getCustomHeaders());
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.customHeaders);
 						merged.putAll(castFrom.getCustomHeaders());
 						this.customHeaders = merged;

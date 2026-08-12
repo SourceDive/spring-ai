@@ -46,13 +46,13 @@ public class OpenAiAudioTranscriptionAutoConfigurationIT {
 	@Test
 	void transcribe() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(OpenAiAudioTranscriptionAutoConfiguration.class))
-			.run(context -> {
-				OpenAiAudioTranscriptionModel transcriptionModel = context.getBean(OpenAiAudioTranscriptionModel.class);
-				AudioTranscriptionResponse response = transcriptionModel
-					.call(new AudioTranscriptionPrompt(new ClassPathResource("/speech.flac")));
-				assertThat(response.getResults()).hasSize(1);
-				assertThat(response.getResult().getOutput()).isNotBlank();
-			});
+				.run(context -> {
+					OpenAiAudioTranscriptionModel transcriptionModel = context.getBean(OpenAiAudioTranscriptionModel.class);
+					AudioTranscriptionResponse response = transcriptionModel
+							.call(new AudioTranscriptionPrompt(new ClassPathResource("/speech.flac")));
+					assertThat(response.getResults()).hasSize(1);
+					assertThat(response.getResult().getOutput()).isNotBlank();
+				});
 	}
 
 }

@@ -16,11 +16,7 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.modelcontextprotocol.server.McpServerFeatures;
-
 import org.springframework.ai.mcp.McpToolUtils;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.ai.tool.ToolCallback;
@@ -34,21 +30,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.util.MimeType;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Christian Tzolov
  */
 @AutoConfiguration
 @EnableConfigurationProperties(McpServerProperties.class)
-@Conditional({ ToolCallbackConverterAutoConfiguration.ToolCallbackConverterCondition.class,
-		McpServerAutoConfiguration.NonStatelessServerCondition.class })
+@Conditional({ToolCallbackConverterAutoConfiguration.ToolCallbackConverterCondition.class,
+		McpServerAutoConfiguration.NonStatelessServerCondition.class})
 public class ToolCallbackConverterAutoConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "type", havingValue = "SYNC",
 			matchIfMissing = true)
 	public List<McpServerFeatures.SyncToolSpecification> syncTools(ObjectProvider<List<ToolCallback>> toolCalls,
-			List<ToolCallback> toolCallbackList, ObjectProvider<List<ToolCallbackProvider>> tcbProviderList,
-			ObjectProvider<ToolCallbackProvider> tcbProviders, McpServerProperties serverProperties) {
+	                                                               List<ToolCallback> toolCallbackList, ObjectProvider<List<ToolCallbackProvider>> tcbProviderList,
+	                                                               ObjectProvider<ToolCallbackProvider> tcbProviders, McpServerProperties serverProperties) {
 
 		List<ToolCallback> tools = ToolCallbackUtils.aggregateToolCallbacks(toolCalls, toolCallbackList,
 				tcbProviderList, tcbProviders, serverProperties.isExposeMcpClientTools());
@@ -57,30 +56,30 @@ public class ToolCallbackConverterAutoConfiguration {
 	}
 
 	private List<McpServerFeatures.SyncToolSpecification> toSyncToolSpecifications(List<ToolCallback> tools,
-			McpServerProperties serverProperties) {
+	                                                                               McpServerProperties serverProperties) {
 
 		// De-duplicate tools by their name, keeping the first occurrence of each tool
 		// name
 		return tools.stream() // Key: tool name
-			.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
-					(existing, replacement) -> existing)) // On duplicate key, keep the
-															// existing tool
-			.values()
-			.stream()
-			.map(tool -> {
-				String toolName = tool.getToolDefinition().name();
-				MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
-						? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
-				return McpToolUtils.toSyncToolSpecification(tool, mimeType);
-			})
-			.toList();
+				.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
+						(existing, replacement) -> existing)) // On duplicate key, keep the
+				// existing tool
+				.values()
+				.stream()
+				.map(tool -> {
+					String toolName = tool.getToolDefinition().name();
+					MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
+							? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
+					return McpToolUtils.toSyncToolSpecification(tool, mimeType);
+				})
+				.toList();
 	}
 
 	@Bean
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "type", havingValue = "ASYNC")
 	public List<McpServerFeatures.AsyncToolSpecification> asyncTools(ObjectProvider<List<ToolCallback>> toolCalls,
-			List<ToolCallback> toolCallbackList, ObjectProvider<List<ToolCallbackProvider>> tcbProviderList,
-			ObjectProvider<ToolCallbackProvider> tcbProviders, McpServerProperties serverProperties) {
+	                                                                 List<ToolCallback> toolCallbackList, ObjectProvider<List<ToolCallbackProvider>> tcbProviderList,
+	                                                                 ObjectProvider<ToolCallbackProvider> tcbProviders, McpServerProperties serverProperties) {
 		List<ToolCallback> tools = ToolCallbackUtils.aggregateToolCallbacks(toolCalls, toolCallbackList,
 				tcbProviderList, tcbProviders, serverProperties.isExposeMcpClientTools());
 
@@ -88,23 +87,23 @@ public class ToolCallbackConverterAutoConfiguration {
 	}
 
 	private List<McpServerFeatures.AsyncToolSpecification> toAsyncToolSpecification(List<ToolCallback> tools,
-			McpServerProperties serverProperties) {
+	                                                                                McpServerProperties serverProperties) {
 		// De-duplicate tools by their name, keeping the first occurrence of each tool
 		// name
 		return tools.stream() // Key: tool name
-			.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
-					// Value: the tool itself
-					(existing, replacement) -> existing)) // On duplicate key, keep the
-			// existing tool
-			.values()
-			.stream()
-			.map(tool -> {
-				String toolName = tool.getToolDefinition().name();
-				MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
-						? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
-				return McpToolUtils.toAsyncToolSpecification(tool, mimeType);
-			})
-			.toList();
+				.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
+						// Value: the tool itself
+						(existing, replacement) -> existing)) // On duplicate key, keep the
+				// existing tool
+				.values()
+				.stream()
+				.map(tool -> {
+					String toolName = tool.getToolDefinition().name();
+					MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
+							? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
+					return McpToolUtils.toAsyncToolSpecification(tool, mimeType);
+				})
+				.toList();
 	}
 
 	private static boolean isMcpToolProvider(ToolCallbackProvider tcbp) {

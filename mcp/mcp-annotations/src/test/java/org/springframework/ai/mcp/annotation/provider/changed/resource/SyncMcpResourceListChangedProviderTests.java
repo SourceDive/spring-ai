@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.resource;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpResourceListChanged;
+import org.springframework.ai.mcp.annotation.method.changed.resource.SyncResourceListChangedSpecification;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import io.modelcontextprotocol.spec.McpSchema;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
-import org.springframework.ai.mcp.annotation.method.changed.resource.SyncResourceListChangedSpecification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,13 +36,13 @@ public class SyncMcpResourceListChangedProviderTests {
 
 	private static final List<McpSchema.Resource> TEST_RESOURCES = List.of(
 			McpSchema.Resource.builder("file:///test1.txt", "test-resource-1")
-				.description("Test Resource 1")
-				.mimeType("text/plain")
-				.build(),
+					.description("Test Resource 1")
+					.mimeType("text/plain")
+					.build(),
 			McpSchema.Resource.builder("file:///test2.txt", "test-resource-2")
-				.description("Test Resource 2")
-				.mimeType("text/plain")
-				.build());
+					.description("Test Resource 2")
+					.mimeType("text/plain")
+					.build());
 
 	@Test
 	void testGetResourceListChangedSpecifications() {
@@ -52,8 +51,8 @@ public class SyncMcpResourceListChangedProviderTests {
 
 		List<SyncResourceListChangedSpecification> specifications = provider.getResourceListChangedSpecifications();
 		List<Consumer<List<McpSchema.Resource>>> consumers = specifications.stream()
-			.map(SyncResourceListChangedSpecification::resourceListChangeHandler)
-			.toList();
+				.map(SyncResourceListChangedSpecification::resourceListChangeHandler)
+				.toList();
 
 		// Should find 2 annotated methods
 		assertThat(consumers).hasSize(2);
@@ -96,9 +95,9 @@ public class SyncMcpResourceListChangedProviderTests {
 		SyncMcpResourceListChangedProvider provider = new SyncMcpResourceListChangedProvider(List.of());
 
 		List<Consumer<List<McpSchema.Resource>>> consumers = provider.getResourceListChangedSpecifications()
-			.stream()
-			.map(SyncResourceListChangedSpecification::resourceListChangeHandler)
-			.toList();
+				.stream()
+				.map(SyncResourceListChangedSpecification::resourceListChangeHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -111,9 +110,9 @@ public class SyncMcpResourceListChangedProviderTests {
 				List.of(handler1, handler2));
 
 		List<Consumer<List<McpSchema.Resource>>> consumers = provider.getResourceListChangedSpecifications()
-			.stream()
-			.map(SyncResourceListChangedSpecification::resourceListChangeHandler)
-			.toList();
+				.stream()
+				.map(SyncResourceListChangedSpecification::resourceListChangeHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

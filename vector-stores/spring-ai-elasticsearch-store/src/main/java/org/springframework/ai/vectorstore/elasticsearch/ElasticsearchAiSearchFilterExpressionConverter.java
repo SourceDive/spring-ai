@@ -16,16 +16,16 @@
 
 package org.springframework.ai.vectorstore.elasticsearch;
 
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ElasticsearchAiSearchFilterExpressionConverter is a class that converts
@@ -52,17 +52,14 @@ public class ElasticsearchAiSearchFilterExpressionConverter extends AbstractFilt
 			context.append("(");
 			this.convertOperand(expression.right(), context);
 			context.append(")");
-		}
-		else if (expression.type() == Filter.ExpressionType.ISNULL) {
+		} else if (expression.type() == Filter.ExpressionType.ISNULL) {
 			context.append("-");
 			this.convertOperand(expression.left(), context);
 			context.append("*");
-		}
-		else if (expression.type() == Filter.ExpressionType.ISNOTNULL) {
+		} else if (expression.type() == Filter.ExpressionType.ISNOTNULL) {
 			this.convertOperand(expression.left(), context);
 			context.append("*");
-		}
-		else {
+		} else {
 			Assert.state(expression.right() != null, "expression.right() must not be null");
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
@@ -115,8 +112,7 @@ public class ElasticsearchAiSearchFilterExpressionConverter extends AbstractFilt
 					this.doAddValueRangeSpitter(filterValue, context);
 				}
 			}
-		}
-		else {
+		} else {
 			this.doSingleValue(normalizeDateString(filterValue.value()), context);
 		}
 	}
@@ -125,13 +121,11 @@ public class ElasticsearchAiSearchFilterExpressionConverter extends AbstractFilt
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			context.append(this.dateFormat.format(date.toInstant()));
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			context.append("\"");
 			emitLuceneString(text, context);
 			context.append("\"");
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}

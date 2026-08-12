@@ -16,14 +16,13 @@
 
 package org.springframework.ai.transformer.splitter;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.document.DefaultContentFormatter;
+import org.springframework.ai.document.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.document.DefaultContentFormatter;
-import org.springframework.ai.document.Document;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -78,9 +77,9 @@ public class TextSplitterTests {
 
 		// Doc2 chunks:
 		assertThat(chunks.get(2).getText())
-			.isEqualTo("The most oppressive thing about the labyrinth is that you are constantly being forced to ");
+				.isEqualTo("The most oppressive thing about the labyrinth is that you are constantly being forced to ");
 		assertThat(chunks.get(3).getText())
-			.isEqualTo("choose. It isn’t the lack of an exit, but the abundance of exits that is so disorienting.");
+				.isEqualTo("choose. It isn’t the lack of an exit, but the abundance of exits that is so disorienting.");
 
 		// Verify that the original metadata is copied to all chunks (including
 		// chunk-specific fields)
@@ -269,10 +268,10 @@ public class TextSplitterTests {
 		// given
 		Double originalScore = 0.95;
 		var doc = Document.builder()
-			.text("This is a test document that will be split into multiple chunks.")
-			.metadata(Map.of("source", "test.txt"))
-			.score(originalScore)
-			.build();
+				.text("This is a test document that will be split into multiple chunks.")
+				.metadata(Map.of("source", "test.txt"))
+				.score(originalScore)
+				.build();
 
 		// when
 		List<Document> chunks = testTextSplitter.apply(List.of(doc));
@@ -338,16 +337,16 @@ public class TextSplitterTests {
 	public void testEnhancedMetadataWithMultipleDocuments() {
 		// given
 		var doc1 = Document.builder()
-			.text("First document with score and metadata.")
-			.metadata(Map.of("type", "article", "priority", "high"))
-			.score(0.8)
-			.build();
+				.text("First document with score and metadata.")
+				.metadata(Map.of("type", "article", "priority", "high"))
+				.score(0.8)
+				.build();
 
 		var doc2 = Document.builder()
-			.text("Second document with different score.")
-			.metadata(Map.of("type", "report", "priority", "medium"))
-			.score(0.6)
-			.build();
+				.text("Second document with different score.")
+				.metadata(Map.of("type", "report", "priority", "medium"))
+				.score(0.6)
+				.build();
 
 		String originalId1 = doc1.getId();
 		String originalId2 = doc2.getId();

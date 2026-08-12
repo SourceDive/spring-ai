@@ -16,12 +16,8 @@
 
 package org.springframework.ai.model.deepseek.autoconfigure.tool;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.MessageAggregator;
@@ -39,6 +35,9 @@ import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfigura
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -52,10 +51,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FunctionCallbackInPromptIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.deepseek.api-key=" + System.getenv("DEEPSEEK_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(DeepSeekChatAutoConfiguration.class, RestClientAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class,
-				WebClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.deepseek.api-key=" + System.getenv("DEEPSEEK_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(DeepSeekChatAutoConfiguration.class, RestClientAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class,
+					WebClientAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
@@ -67,11 +66,11 @@ public class FunctionCallbackInPromptIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius");
 
 			var promptOptions = DeepSeekChatOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description("Get the weather in location")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 
@@ -100,11 +99,11 @@ public class FunctionCallbackInPromptIT {
 					"What's the weather like in San Francisco, Tokyo, and Paris? Return the temperature in Celsius");
 
 			var promptOptions = DeepSeekChatOptions.builder()
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description("Get the weather in location")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 

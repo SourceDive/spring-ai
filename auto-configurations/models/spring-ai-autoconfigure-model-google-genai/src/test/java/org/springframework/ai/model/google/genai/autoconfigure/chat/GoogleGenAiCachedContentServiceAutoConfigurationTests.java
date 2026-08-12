@@ -44,36 +44,36 @@ import static org.mockito.Mockito.when;
 public class GoogleGenAiCachedContentServiceAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(GoogleGenAiChatAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(GoogleGenAiChatAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class));
 
 	@Test
 	void cachedContentServiceBeanIsCreatedWhenChatModelExists() {
 		this.contextRunner.withUserConfiguration(MockGoogleGenAiConfiguration.class)
-			.withPropertyValues("spring.ai.google.genai.api-key=test-key",
-					"spring.ai.google.genai.chat.model=gemini-2.0-flash")
-			.run(context -> {
-				assertThat(context).hasSingleBean(GoogleGenAiChatModel.class);
-				// The CachedContentServiceCondition will prevent the bean from being
-				// created
-				// if the service is null, but with our mock it returns a non-null service
-				// However, the condition runs during auto-configuration and our mock
-				// configuration creates the bean directly, bypassing the condition
-				GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
-				assertThat(chatModel.getCachedContentService()).isNotNull();
-			});
+				.withPropertyValues("spring.ai.google.genai.api-key=test-key",
+						"spring.ai.google.genai.chat.model=gemini-2.0-flash")
+				.run(context -> {
+					assertThat(context).hasSingleBean(GoogleGenAiChatModel.class);
+					// The CachedContentServiceCondition will prevent the bean from being
+					// created
+					// if the service is null, but with our mock it returns a non-null service
+					// However, the condition runs during auto-configuration and our mock
+					// configuration creates the bean directly, bypassing the condition
+					GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
+					assertThat(chatModel.getCachedContentService()).isNotNull();
+				});
 	}
 
 	@Test
 	void cachedContentServiceBeanIsNotCreatedWhenDisabled() {
 		this.contextRunner.withUserConfiguration(MockGoogleGenAiConfiguration.class)
-			.withPropertyValues("spring.ai.google.genai.api-key=test-key",
-					"spring.ai.google.genai.chat.model=gemini-2.0-flash",
-					"spring.ai.google.genai.chat.enable-cached-content=false")
-			.run(context -> {
-				assertThat(context).hasSingleBean(GoogleGenAiChatModel.class);
-				assertThat(context).doesNotHaveBean(GoogleGenAiCachedContentService.class);
-			});
+				.withPropertyValues("spring.ai.google.genai.api-key=test-key",
+						"spring.ai.google.genai.chat.model=gemini-2.0-flash",
+						"spring.ai.google.genai.chat.enable-cached-content=false")
+				.run(context -> {
+					assertThat(context).hasSingleBean(GoogleGenAiChatModel.class);
+					assertThat(context).doesNotHaveBean(GoogleGenAiCachedContentService.class);
+				});
 	}
 
 	@Test
@@ -94,53 +94,53 @@ public class GoogleGenAiCachedContentServiceAutoConfigurationTests {
 	@Test
 	void cachedContentServiceCannotBeCreatedWithMockClientWithoutCaches() {
 		this.contextRunner.withUserConfiguration(MockGoogleGenAiConfigurationWithoutCachedContent.class)
-			.withPropertyValues("spring.ai.google.genai.api-key=test-key",
-					"spring.ai.google.genai.chat.model=gemini-2.0-flash")
-			.run(context -> {
-				assertThat(context).hasSingleBean(GoogleGenAiChatModel.class);
-				// The bean will actually be created but return null (which should be
-				// handled gracefully)
-				// Let's verify the bean exists but the underlying service is null
-				GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
-				assertThat(chatModel.getCachedContentService()).isNull();
-			});
+				.withPropertyValues("spring.ai.google.genai.api-key=test-key",
+						"spring.ai.google.genai.chat.model=gemini-2.0-flash")
+				.run(context -> {
+					assertThat(context).hasSingleBean(GoogleGenAiChatModel.class);
+					// The bean will actually be created but return null (which should be
+					// handled gracefully)
+					// Let's verify the bean exists but the underlying service is null
+					GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
+					assertThat(chatModel.getCachedContentService()).isNull();
+				});
 	}
 
 	@Test
 	void cachedContentPropertiesArePassedToChatModel() {
 		this.contextRunner.withUserConfiguration(MockGoogleGenAiConfiguration.class)
-			.withPropertyValues("spring.ai.google.genai.api-key=test-key",
-					"spring.ai.google.genai.chat.model=gemini-2.0-flash",
-					"spring.ai.google.genai.chat.use-cached-content=true",
-					"spring.ai.google.genai.chat.cached-content-name=cachedContent/test123",
-					"spring.ai.google.genai.chat.auto-cache-threshold=50000",
-					"spring.ai.google.genai.chat.auto-cache-ttl=PT2H")
-			.run(context -> {
-				GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
-				assertThat(chatModel).isNotNull();
+				.withPropertyValues("spring.ai.google.genai.api-key=test-key",
+						"spring.ai.google.genai.chat.model=gemini-2.0-flash",
+						"spring.ai.google.genai.chat.use-cached-content=true",
+						"spring.ai.google.genai.chat.cached-content-name=cachedContent/test123",
+						"spring.ai.google.genai.chat.auto-cache-threshold=50000",
+						"spring.ai.google.genai.chat.auto-cache-ttl=PT2H")
+				.run(context -> {
+					GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
+					assertThat(chatModel).isNotNull();
 
-				var options = chatModel.getOptions();
-				assertThat(options).isNotNull();
-				// Note: We can't directly access GoogleGenAiChatOptions from ChatOptions
-				// interface
-				// but the properties should be properly configured
-			});
+					var options = chatModel.getOptions();
+					assertThat(options).isNotNull();
+					// Note: We can't directly access GoogleGenAiChatOptions from ChatOptions
+					// interface
+					// but the properties should be properly configured
+				});
 	}
 
 	@Test
 	void extendedUsageMetadataPropertyIsPassedToChatModel() {
 		this.contextRunner.withUserConfiguration(MockGoogleGenAiConfiguration.class)
-			.withPropertyValues("spring.ai.google.genai.api-key=test-key",
-					"spring.ai.google.genai.chat.model=gemini-2.0-flash",
-					"spring.ai.google.genai.chat.include-extended-usage-metadata=true")
-			.run(context -> {
-				GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
-				assertThat(chatModel).isNotNull();
+				.withPropertyValues("spring.ai.google.genai.api-key=test-key",
+						"spring.ai.google.genai.chat.model=gemini-2.0-flash",
+						"spring.ai.google.genai.chat.include-extended-usage-metadata=true")
+				.run(context -> {
+					GoogleGenAiChatModel chatModel = context.getBean(GoogleGenAiChatModel.class);
+					assertThat(chatModel).isNotNull();
 
-				var options = chatModel.getOptions();
-				assertThat(options).isNotNull();
-				// The property should be configured
-			});
+					var options = chatModel.getOptions();
+					assertThat(options).isNotNull();
+					// The property should be configured
+				});
 	}
 
 	@Configuration
@@ -161,7 +161,7 @@ public class GoogleGenAiCachedContentServiceAutoConfigurationTests {
 
 		@Bean
 		public GoogleGenAiChatModel googleGenAiChatModel(Client client, GoogleGenAiChatProperties properties,
-				ToolCallingManager toolCallingManager) {
+		                                                 ToolCallingManager toolCallingManager) {
 			// Create a mock chat model that returns a mock cached content service
 			GoogleGenAiChatModel mockModel = Mockito.mock(GoogleGenAiChatModel.class);
 			GoogleGenAiCachedContentService mockService = Mockito.mock(GoogleGenAiCachedContentService.class);
@@ -187,7 +187,7 @@ public class GoogleGenAiCachedContentServiceAutoConfigurationTests {
 
 		@Bean
 		public GoogleGenAiChatModel googleGenAiChatModel(Client client, GoogleGenAiChatProperties properties,
-				ToolCallingManager toolCallingManager) {
+		                                                 ToolCallingManager toolCallingManager) {
 			// Create a mock chat model that returns null for cached content service
 			// This simulates using a mock client that doesn't support cached content
 			GoogleGenAiChatModel mockModel = Mockito.mock(GoogleGenAiChatModel.class);

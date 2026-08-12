@@ -16,15 +16,10 @@
 
 package org.springframework.ai.model.chat.observation.autoconfigure;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.Usage;
@@ -43,6 +38,10 @@ import org.springframework.boot.micrometer.metrics.autoconfigure.export.simple.S
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -59,9 +58,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChatObservationAutoConfigurationOrderingTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ObservationAutoConfiguration.class, MetricsAutoConfiguration.class,
-				CompositeMeterRegistryAutoConfiguration.class, SimpleMetricsExportAutoConfiguration.class,
-				ChatObservationAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ObservationAutoConfiguration.class, MetricsAutoConfiguration.class,
+					CompositeMeterRegistryAutoConfiguration.class, SimpleMetricsExportAutoConfiguration.class,
+					ChatObservationAutoConfiguration.class));
 
 	@Test
 	void meterObservationHandlerCreatedWithFullAutoConfigChain() {
@@ -81,9 +80,9 @@ class ChatObservationAutoConfigurationOrderingTests {
 			ObservationRegistry observationRegistry = context.getBean(ObservationRegistry.class);
 
 			ChatModelObservationContext observationContext = ChatModelObservationContext.builder()
-				.prompt(new Prompt("test", ChatOptions.builder().model("test-model").build()))
-				.provider("test-provider")
-				.build();
+					.prompt(new Prompt("test", ChatOptions.builder().model("test-model").build()))
+					.provider("test-provider")
+					.build();
 
 			Observation observation = Observation.createNotStarted(new DefaultChatModelObservationConvention(),
 					() -> observationContext, observationRegistry);

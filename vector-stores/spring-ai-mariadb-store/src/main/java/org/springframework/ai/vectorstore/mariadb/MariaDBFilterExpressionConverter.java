@@ -16,14 +16,14 @@
 
 package org.springframework.ai.vectorstore.mariadb;
 
-import java.util.Date;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.util.Date;
 
 /**
  * Converts {@link Expression} into MariaDB SQL WHERE clause format using JSON_VALUE
@@ -55,11 +55,9 @@ public class MariaDBFilterExpressionConverter extends AbstractFilterExpressionCo
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			emitSqlString(ISO_DATE_FORMATTER.format(date.toInstant()), context);
-		}
-		else if (value instanceof String stringValue) {
+		} else if (value instanceof String stringValue) {
 			emitSqlString(stringValue, context);
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}
@@ -79,7 +77,8 @@ public class MariaDBFilterExpressionConverter extends AbstractFilterExpressionCo
 	 * <li>{@code \b \f \n \r \t} → Escape sequences for control characters</li>
 	 * <li>Unicode control chars (U+0000 to U+001F) → {@code \\uXXXX} format</li>
 	 * </ul>
-	 * @param value the string value to format
+	 *
+	 * @param value   the string value to format
 	 * @param context the context to append the SQL string literal to
 	 * @since 2.0.0
 	 */
@@ -117,8 +116,7 @@ public class MariaDBFilterExpressionConverter extends AbstractFilterExpressionCo
 					// Escape Unicode control characters (U+0000 to U+001F)
 					if (c < 0x20) {
 						context.append(String.format("\\u%04x", (int) c));
-					}
-					else {
+					} else {
 						context.append(c);
 					}
 					break;

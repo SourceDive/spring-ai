@@ -16,9 +16,6 @@
 
 package org.springframework.ai.openai.testutils;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.model.ChatModel;
@@ -35,6 +32,9 @@ import org.springframework.ai.openai.OpenAiModerationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -81,14 +81,13 @@ public abstract class AbstractIT {
 		assertThat(response).isNotNull();
 		String answer = response.getResult().getOutput().getText();
 		PromptTemplate userPromptTemplate = PromptTemplate.builder()
-			.resource(this.userEvaluatorResource)
-			.variables(Map.of("question", question, "answer", answer))
-			.build();
+				.resource(this.userEvaluatorResource)
+				.variables(Map.of("question", question, "answer", answer))
+				.build();
 		SystemMessage systemMessage;
 		if (factBased) {
 			systemMessage = new SystemMessage(this.qaEvaluatorFactBasedAnswerResource);
-		}
-		else {
+		} else {
 			systemMessage = new SystemMessage(this.qaEvaluatorAccurateAnswerResource);
 		}
 		Message userMessage = userPromptTemplate.createMessage();
@@ -99,8 +98,7 @@ public abstract class AbstractIT {
 			prompt = new Prompt(List.of(userMessage, notRelatedSystemMessage));
 			String reasonForFailure = this.chatModel.call(prompt).getResult().getOutput().getText();
 			fail(reasonForFailure);
-		}
-		else {
+		} else {
 			assertThat(yesOrNo).isEqualTo("YES");
 		}
 	}

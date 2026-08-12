@@ -24,16 +24,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Christian Tzolov
@@ -54,10 +51,10 @@ public class MilvusEmbeddingDimensionsTests {
 		final int explicitDimensions = 696;
 
 		MilvusVectorStore build = MilvusVectorStore.builder(this.milvusClient, this.embeddingModel)
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy())
-			.embeddingDimension(explicitDimensions)
-			.build();
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy())
+				.embeddingDimension(explicitDimensions)
+				.build();
 		var dim = build.embeddingDimensions();
 
 		assertThat(dim).isEqualTo(explicitDimensions);
@@ -69,9 +66,9 @@ public class MilvusEmbeddingDimensionsTests {
 		given(this.embeddingModel.dimensions()).willReturn(969);
 
 		MilvusVectorStore build = MilvusVectorStore.builder(this.milvusClient, this.embeddingModel)
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy())
-			.build();
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy())
+				.build();
 		var dim = build.embeddingDimensions();
 
 		assertThat(dim).isEqualTo(969);
@@ -85,9 +82,9 @@ public class MilvusEmbeddingDimensionsTests {
 		given(this.embeddingModel.dimensions()).willThrow(new RuntimeException());
 
 		MilvusVectorStore build = MilvusVectorStore.builder(this.milvusClient, this.embeddingModel)
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy())
-			.build();
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy())
+				.build();
 		var dim = build.embeddingDimensions();
 
 		assertThat(dim).isEqualTo(MilvusVectorStore.OPENAI_EMBEDDING_DIMENSION_SIZE);
@@ -95,13 +92,13 @@ public class MilvusEmbeddingDimensionsTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(ints = { 0, 32769 })
+	@ValueSource(ints = {0, 32769})
 	public void invalidDimensionsThrowException(final int explicitDimensions) {
 		// when
 		ThrowableAssert.ThrowingCallable actual = () -> MilvusVectorStore
-			.builder(this.milvusClient, this.embeddingModel)
-			.embeddingDimension(explicitDimensions)
-			.build();
+				.builder(this.milvusClient, this.embeddingModel)
+				.embeddingDimension(explicitDimensions)
+				.build();
 
 		// then
 		assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);

@@ -60,7 +60,7 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void callReturnsTranscriptionText() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("Hello, transcribed text").build());
+				.ofTranscription(Transcription.builder().text("Hello, transcribed text").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
@@ -74,7 +74,7 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void callWithOptions() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("Hello, this is a test transcription.").build());
+				.ofTranscription(Transcription.builder().text("Hello, this is a test transcription.").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
@@ -90,14 +90,14 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void callWithPromptOptions() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("Hello, this is a test transcription with options.").build());
+				.ofTranscription(Transcription.builder().text("Hello, this is a test transcription with options.").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.temperature(0.5f)
-			.responseFormat(AudioResponseFormat.JSON)
-			.build();
+				.temperature(0.5f)
+				.responseFormat(AudioResponseFormat.JSON)
+				.build();
 
 		OpenAiAudioTranscriptionModel model = OpenAiAudioTranscriptionModel.builder().openAiClient(client).build();
 
@@ -110,7 +110,7 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void transcribeWithResourceReturnsText() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("Simple output").build());
+				.ofTranscription(Transcription.builder().text("Simple output").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
@@ -123,18 +123,18 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void transcribeWithOptionsUsesMergedOptions() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("With options").build());
+				.ofTranscription(Transcription.builder().text("With options").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("en")
-			.build();
+				.model("whisper-1")
+				.language("en")
+				.build();
 		OpenAiAudioTranscriptionModel model = OpenAiAudioTranscriptionModel.builder()
-			.openAiClient(client)
-			.options(options)
-			.build();
+				.openAiClient(client)
+				.options(options)
+				.build();
 		String text = model.transcribe(new ClassPathResource("/speech.flac"), options);
 
 		assertThat(text).isEqualTo("With options");
@@ -143,15 +143,15 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void optionsBuilderFromCopiesAllFields() {
 		OpenAiAudioTranscriptionOptions original = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.responseFormat(AudioResponseFormat.VERBOSE_JSON)
-			.language("en")
-			.prompt("test prompt")
-			.temperature(0.5f)
-			.baseUrl("https://custom.api.com")
-			.apiKey("test-key")
-			.organizationId("org-123")
-			.build();
+				.model("whisper-1")
+				.responseFormat(AudioResponseFormat.VERBOSE_JSON)
+				.language("en")
+				.prompt("test prompt")
+				.temperature(0.5f)
+				.baseUrl("https://custom.api.com")
+				.apiKey("test-key")
+				.organizationId("org-123")
+				.build();
 
 		OpenAiAudioTranscriptionOptions copied = OpenAiAudioTranscriptionOptions.builder().from(original).build();
 
@@ -168,20 +168,20 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void optionsBuilderMergeOverridesNonNullValues() {
 		OpenAiAudioTranscriptionOptions base = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("en")
-			.temperature(0.5f)
-			.build();
+				.model("whisper-1")
+				.language("en")
+				.temperature(0.5f)
+				.build();
 
 		OpenAiAudioTranscriptionOptions override = OpenAiAudioTranscriptionOptions.builder()
-			.language("de")
-			.prompt("new prompt")
-			.build();
+				.language("de")
+				.prompt("new prompt")
+				.build();
 
 		OpenAiAudioTranscriptionOptions merged = OpenAiAudioTranscriptionOptions.builder()
-			.from(base)
-			.merge(override)
-			.build();
+				.from(base)
+				.merge(override)
+				.build();
 
 		assertThat(merged.getModel()).isEqualTo("whisper-1");
 		assertThat(merged.getLanguage()).isEqualTo("de");
@@ -192,22 +192,22 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void optionsEqualsAndHashCode() {
 		OpenAiAudioTranscriptionOptions options1 = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("en")
-			.temperature(0.5f)
-			.build();
+				.model("whisper-1")
+				.language("en")
+				.temperature(0.5f)
+				.build();
 
 		OpenAiAudioTranscriptionOptions options2 = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("en")
-			.temperature(0.5f)
-			.build();
+				.model("whisper-1")
+				.language("en")
+				.temperature(0.5f)
+				.build();
 
 		OpenAiAudioTranscriptionOptions options3 = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("de")
-			.temperature(0.5f)
-			.build();
+				.model("whisper-1")
+				.language("de")
+				.temperature(0.5f)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -217,11 +217,11 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void optionsBuilderWithAzureConfiguration() {
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.deploymentName("my-deployment")
-			.microsoftFoundry(true)
-			.baseUrl("https://my-resource.openai.azure.com")
-			.build();
+				.model("whisper-1")
+				.deploymentName("my-deployment")
+				.microsoftFoundry(true)
+				.baseUrl("https://my-resource.openai.azure.com")
+				.build();
 
 		assertThat(options.getDeploymentName()).isEqualTo("my-deployment");
 		assertThat(options.isMicrosoftFoundry()).isTrue();
@@ -231,19 +231,19 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void mutateCreatesBuilderWithSameConfiguration() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("Mutated model output").build());
+				.ofTranscription(Transcription.builder().text("Mutated model output").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("en")
-			.build();
+				.model("whisper-1")
+				.language("en")
+				.build();
 
 		OpenAiAudioTranscriptionModel originalModel = OpenAiAudioTranscriptionModel.builder()
-			.openAiClient(client)
-			.options(options)
-			.build();
+				.openAiClient(client)
+				.options(options)
+				.build();
 
 		OpenAiAudioTranscriptionModel mutatedModel = originalModel.mutate().build();
 
@@ -257,25 +257,25 @@ class OpenAiAudioTranscriptionModelTests {
 	@Test
 	void mutateAllowsOverridingOptions() {
 		TranscriptionCreateResponse mockResponse = TranscriptionCreateResponse
-			.ofTranscription(Transcription.builder().text("Modified options output").build());
+				.ofTranscription(Transcription.builder().text("Modified options output").build());
 
 		OpenAIClient client = createMockClient(mockResponse);
 
 		OpenAiAudioTranscriptionOptions originalOptions = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("en")
-			.build();
+				.model("whisper-1")
+				.language("en")
+				.build();
 
 		OpenAiAudioTranscriptionModel originalModel = OpenAiAudioTranscriptionModel.builder()
-			.openAiClient(client)
-			.options(originalOptions)
-			.build();
+				.openAiClient(client)
+				.options(originalOptions)
+				.build();
 
 		OpenAiAudioTranscriptionOptions newOptions = OpenAiAudioTranscriptionOptions.builder()
-			.model("whisper-1")
-			.language("de")
-			.temperature(0.5f)
-			.build();
+				.model("whisper-1")
+				.language("de")
+				.temperature(0.5f)
+				.build();
 
 		OpenAiAudioTranscriptionModel mutatedModel = originalModel.mutate().options(newOptions).build();
 

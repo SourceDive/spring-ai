@@ -16,22 +16,21 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.context.DefaultMcpAsyncRequestContext;
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.function.BiFunction;
 
 /**
  * Class for creating Function callbacks around tool methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpTool} into
  * callback functions that can be used to handle tool requests.
  *
@@ -46,7 +45,7 @@ public final class AsyncMcpToolMethodCallback
 	}
 
 	public AsyncMcpToolMethodCallback(ReturnMode returnMode, Method toolMethod, Object toolObject,
-			Class<? extends Throwable> toolCallExceptionClass) {
+	                                  Class<? extends Throwable> toolCallExceptionClass) {
 		super(returnMode, toolMethod, toolObject, toolCallExceptionClass);
 	}
 
@@ -73,8 +72,9 @@ public final class AsyncMcpToolMethodCallback
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns the result.
+	 *
 	 * @param exchange The server exchange context
-	 * @param request The tool call request, must not be null
+	 * @param request  The tool call request, must not be null
 	 * @return The result of the method invocation
 	 */
 	@Override
@@ -92,8 +92,7 @@ public final class AsyncMcpToolMethodCallback
 				// Handle reactive types - method return types should always be reactive
 				return this.convertToCallToolResult(result);
 
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				if (this.toolCallExceptionClass.isInstance(e)) {
 					return this.createAsyncErrorResult(e);
 				}

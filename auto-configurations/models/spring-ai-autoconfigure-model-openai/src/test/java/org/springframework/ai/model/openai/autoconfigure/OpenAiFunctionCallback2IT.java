@@ -16,12 +16,9 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.stream.Collectors;
-
 import com.openai.models.ChatModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.model.tool.ToolCallingManager;
@@ -34,6 +31,8 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
@@ -43,20 +42,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OpenAiFunctionCallback2IT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.temperature=0.1",
-					"spring.ai.openai.chat.model=" + ChatModel.GPT_4O_MINI.asString())
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.temperature=0.1",
+						"spring.ai.openai.chat.model=" + ChatModel.GPT_4O_MINI.asString())
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-			// @formatter:off
+					// @formatter:off
 			ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 			ToolCallback weatherFunctionInfo = context.getBean("weatherFunctionInfo", ToolCallback.class);
 
@@ -71,21 +70,21 @@ public class OpenAiFunctionCallback2IT {
 				.call().content();
 			// @formatter:on
 
-				assertThat(content).contains("30", "10", "15");
-			});
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 	@Test
 	void streamFunctionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.temperature=0.2",
-					"spring.ai.openai.chat.model=" + ChatModel.GPT_4O_MINI.asString())
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.temperature=0.2",
+						"spring.ai.openai.chat.model=" + ChatModel.GPT_4O_MINI.asString())
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
-				ToolCallback weatherFunctionInfo = context.getBean("weatherFunctionInfo", ToolCallback.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					ToolCallback weatherFunctionInfo = context.getBean("weatherFunctionInfo", ToolCallback.class);
 
-			// @formatter:off
+					// @formatter:off
 			ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 			String content = ChatClient.builder(chatModel)
 				.defaultAdvisors(ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager).build())
@@ -96,8 +95,8 @@ public class OpenAiFunctionCallback2IT {
 				.collectList().block().stream().collect(Collectors.joining());
 			// @formatter:on
 
-				assertThat(content).contains("30", "10", "15");
-			});
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 	@Configuration
@@ -107,9 +106,9 @@ public class OpenAiFunctionCallback2IT {
 		public ToolCallback weatherFunctionInfo() {
 
 			return FunctionToolCallback.builder("WeatherInfo", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description("Get the weather in location")
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

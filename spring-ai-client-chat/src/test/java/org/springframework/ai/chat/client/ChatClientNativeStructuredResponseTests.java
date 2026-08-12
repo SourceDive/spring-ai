@@ -16,10 +16,6 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
 import org.jspecify.annotations.NonNull;
@@ -29,8 +25,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tools.jackson.databind.JsonNode;
-
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -45,6 +39,11 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.converter.StructuredOutputConverter;
 import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.ai.util.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -100,12 +99,12 @@ public class ChatClientNativeStructuredResponseTests {
 
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 		ResponseEntity<ChatResponse, UserEntity> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.responseEntity(UserEntity.class);
+				.build()
+				.prompt()
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.responseEntity(UserEntity.class);
 
 		var context = textCallAdvisor.getContext();
 
@@ -138,12 +137,12 @@ public class ChatClientNativeStructuredResponseTests {
 
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 		UserEntity entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.entity(UserEntity.class);
+				.build()
+				.prompt()
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.entity(UserEntity.class);
 
 		var context = textCallAdvisor.getContext();
 
@@ -173,13 +172,13 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		ResponseEntity<ChatResponse, UserEntity> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.responseEntity(UserEntity.class);
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.responseEntity(UserEntity.class);
 
 		var context = textCallAdvisor.getContext();
 
@@ -199,8 +198,8 @@ public class ChatClientNativeStructuredResponseTests {
 		StructuredOutputChatOptions soco = (StructuredOutputChatOptions) this.promptCaptor.getValue().getOptions();
 
 		JsonAssertions.assertThatJson(soco.getOutputSchema())
-			.when(Option.IGNORING_ARRAY_ORDER)
-			.isEqualTo(USER_JSON_SCHEMA);
+				.when(Option.IGNORING_ARRAY_ORDER)
+				.isEqualTo(USER_JSON_SCHEMA);
 
 	}
 
@@ -219,13 +218,13 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		UserEntity entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.entity(UserEntity.class);
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.entity(UserEntity.class);
 
 		var context = textCallAdvisor.getContext();
 
@@ -242,8 +241,8 @@ public class ChatClientNativeStructuredResponseTests {
 		StructuredOutputChatOptions soco = (StructuredOutputChatOptions) this.promptCaptor.getValue().getOptions();
 
 		JsonAssertions.assertThatJson(soco.getOutputSchema())
-			.when(Option.IGNORING_ARRAY_ORDER)
-			.isEqualTo(USER_JSON_SCHEMA);
+				.when(Option.IGNORING_ARRAY_ORDER)
+				.isEqualTo(USER_JSON_SCHEMA);
 	}
 
 	@Test
@@ -262,14 +261,14 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		ResponseEntity<ChatResponse, UserEntity> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.advisors(a -> a.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey(), false))
-			.user("Tell me about John")
-			.call()
-			.responseEntity(UserEntity.class);
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.advisors(a -> a.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey(), false))
+				.user("Tell me about John")
+				.call()
+				.responseEntity(UserEntity.class);
 
 		var context = textCallAdvisor.getContext();
 
@@ -305,14 +304,14 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		UserEntity entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.advisors(a -> a.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey(), false))
-			.user("Tell me about John")
-			.call()
-			.entity(UserEntity.class);
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.advisors(a -> a.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey(), false))
+				.user("Tell me about John")
+				.call()
+				.entity(UserEntity.class);
 
 		var context = textCallAdvisor.getContext();
 
@@ -345,13 +344,13 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		ResponseEntity<ChatResponse, JsonNode> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.responseEntity(new CustomJsonSchemaOutputConverter(USER_JSON_SCHEMA));
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.responseEntity(new CustomJsonSchemaOutputConverter(USER_JSON_SCHEMA));
 
 		var context = textCallAdvisor.getContext();
 
@@ -373,8 +372,8 @@ public class ChatClientNativeStructuredResponseTests {
 		StructuredOutputChatOptions soco = (StructuredOutputChatOptions) this.promptCaptor.getValue().getOptions();
 
 		JsonAssertions.assertThatJson(soco.getOutputSchema())
-			.when(Option.IGNORING_ARRAY_ORDER)
-			.isEqualTo(USER_JSON_SCHEMA);
+				.when(Option.IGNORING_ARRAY_ORDER)
+				.isEqualTo(USER_JSON_SCHEMA);
 
 	}
 
@@ -393,13 +392,13 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		JsonNode entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.entity(new CustomJsonSchemaOutputConverter(USER_JSON_SCHEMA));
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.entity(new CustomJsonSchemaOutputConverter(USER_JSON_SCHEMA));
 
 		var context = textCallAdvisor.getContext();
 
@@ -421,8 +420,8 @@ public class ChatClientNativeStructuredResponseTests {
 		StructuredOutputChatOptions soco = (StructuredOutputChatOptions) this.promptCaptor.getValue().getOptions();
 
 		JsonAssertions.assertThatJson(soco.getOutputSchema())
-			.when(Option.IGNORING_ARRAY_ORDER)
-			.isEqualTo(USER_JSON_SCHEMA);
+				.when(Option.IGNORING_ARRAY_ORDER)
+				.isEqualTo(USER_JSON_SCHEMA);
 	}
 
 	@Test
@@ -440,13 +439,13 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		ResponseEntity<ChatResponse, JsonNode> responseEntity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.responseEntity(new CustomJsonSchemaOutputConverter(StructuredOutputConverter.NO_JSON_SCHEMA));
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.responseEntity(new CustomJsonSchemaOutputConverter(StructuredOutputConverter.NO_JSON_SCHEMA));
 
 		var context = textCallAdvisor.getContext();
 
@@ -487,13 +486,13 @@ public class ChatClientNativeStructuredResponseTests {
 		var textCallAdvisor = new ContextCatcherCallAdvisor();
 
 		JsonNode entity = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt()
-			.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
-			.advisors(textCallAdvisor)
-			.user("Tell me about John")
-			.call()
-			.entity(new CustomJsonSchemaOutputConverter(StructuredOutputConverter.NO_JSON_SCHEMA));
+				.build()
+				.prompt()
+				.advisors(AdvisorParams.ENABLE_NATIVE_STRUCTURED_OUTPUT)
+				.advisors(textCallAdvisor)
+				.user("Tell me about John")
+				.call()
+				.entity(new CustomJsonSchemaOutputConverter(StructuredOutputConverter.NO_JSON_SCHEMA));
 
 		var context = textCallAdvisor.getContext();
 
@@ -544,7 +543,9 @@ public class ChatClientNativeStructuredResponseTests {
 			return this.context;
 		}
 
-	};
+	}
+
+	;
 
 	private static final class CustomJsonSchemaOutputConverter implements StructuredOutputConverter<JsonNode> {
 

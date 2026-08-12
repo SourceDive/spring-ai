@@ -16,19 +16,18 @@
 
 package org.springframework.ai.openai;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.openai.azure.AzureOpenAIServiceVersion;
 import com.openai.credential.Credential;
 import com.openai.models.embeddings.EmbeddingCreateParams;
 import com.openai.models.embeddings.EmbeddingModel;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.embedding.EmbeddingOptions;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration information for the Embedding Model implementation using the OpenAI Java
@@ -61,11 +60,11 @@ public class OpenAiEmbeddingOptions extends AbstractOpenAiOptions implements Emb
 	private final @Nullable Integer dimensions;
 
 	protected OpenAiEmbeddingOptions(@Nullable String baseUrl, @Nullable String apiKey, @Nullable Credential credential,
-			@Nullable String model, @Nullable String microsoftDeploymentName,
-			@Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
-			@Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
-			@Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
-			@Nullable String user, @Nullable EncodingFormat encodingFormat, @Nullable Integer dimensions) {
+	                                 @Nullable String model, @Nullable String microsoftDeploymentName,
+	                                 @Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
+	                                 @Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
+	                                 @Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
+	                                 @Nullable String user, @Nullable EncodingFormat encodingFormat, @Nullable Integer dimensions) {
 		super(baseUrl, apiKey, credential, model != null ? model : DEFAULT_EMBEDDING_MODEL, microsoftDeploymentName,
 				microsoftFoundryServiceVersion, organizationId, isMicrosoftFoundry, isGitHubModels, timeout, maxRetries,
 				proxy, customHeaders);
@@ -99,8 +98,7 @@ public class OpenAiEmbeddingOptions extends AbstractOpenAiOptions implements Emb
 		// name
 		if (this.getDeploymentName() != null) {
 			builder.model(this.getDeploymentName());
-		}
-		else if (this.getModel() != null) {
+		} else if (this.getModel() != null) {
 			builder.model(this.getModel());
 		}
 
@@ -207,8 +205,7 @@ public class OpenAiEmbeddingOptions extends AbstractOpenAiOptions implements Emb
 				if (castFrom.getCustomHeaders() != null) {
 					if (this.customHeaders == null) {
 						this.customHeaders = new HashMap<>(castFrom.getCustomHeaders());
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.customHeaders);
 						merged.putAll(castFrom.getCustomHeaders());
 						this.customHeaders = merged;
@@ -233,7 +230,7 @@ public class OpenAiEmbeddingOptions extends AbstractOpenAiOptions implements Emb
 			}
 			if (openAiCreateParams.encodingFormat().isPresent()) {
 				this.encodingFormat = EncodingFormat
-					.valueOf(openAiCreateParams.encodingFormat().get().asString().toUpperCase());
+						.valueOf(openAiCreateParams.encodingFormat().get().asString().toUpperCase());
 			}
 			if (openAiCreateParams.dimensions().isPresent()) {
 				this.dimensions = Math.toIntExact(openAiCreateParams.dimensions().get());

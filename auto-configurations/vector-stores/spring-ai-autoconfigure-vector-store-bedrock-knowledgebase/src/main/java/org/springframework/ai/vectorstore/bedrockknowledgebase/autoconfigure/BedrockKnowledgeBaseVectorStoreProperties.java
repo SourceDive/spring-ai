@@ -20,11 +20,10 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import org.jspecify.annotations.Nullable;
-import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
-
 import org.springframework.ai.vectorstore.bedrockknowledgebase.BedrockKnowledgeBaseVectorStore;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
 
 /**
  * Configuration properties for Amazon Bedrock Knowledge Base VectorStore.
@@ -53,9 +52,9 @@ import org.springframework.validation.annotation.Validated;
  * </pre>
  *
  * @author Yuriy Bezsonov
- * @since 2.0.0
  * @see BedrockKnowledgeBaseVectorStore
  * @see BedrockKnowledgeBaseVectorStoreAutoConfiguration
+ * @since 2.0.0
  */
 @Validated
 @ConfigurationProperties(BedrockKnowledgeBaseVectorStoreProperties.CONFIG_PREFIX)

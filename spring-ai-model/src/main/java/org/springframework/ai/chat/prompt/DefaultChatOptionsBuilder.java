@@ -16,10 +16,10 @@
 
 package org.springframework.ai.chat.prompt;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of {@link ChatOptions.Builder} to create {@link DefaultChatOptions}.
@@ -51,8 +51,7 @@ public class DefaultChatOptionsBuilder<B extends DefaultChatOptionsBuilder<B>> i
 			B copy = (B) super.clone();
 			copy.stopSequences = this.stopSequences == null ? null : new ArrayList<>(this.stopSequences);
 			return copy;
-		}
-		catch (CloneNotSupportedException e) {
+		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -90,8 +89,7 @@ public class DefaultChatOptionsBuilder<B extends DefaultChatOptionsBuilder<B>> i
 	public B stopSequences(@Nullable List<String> stop) {
 		if (stop != null) {
 			this.stopSequences = new ArrayList<>(stop);
-		}
-		else {
+		} else {
 			this.stopSequences = null;
 		}
 		return self();
@@ -133,8 +131,7 @@ public class DefaultChatOptionsBuilder<B extends DefaultChatOptionsBuilder<B>> i
 			if (that.stopSequences != null) {
 				if (this.stopSequences == null) {
 					this.stopSequences = new ArrayList<>(that.stopSequences);
-				}
-				else {
+				} else {
 					List<String> merged = new ArrayList<>(this.stopSequences);
 					merged.addAll(that.stopSequences);
 					this.stopSequences = merged;

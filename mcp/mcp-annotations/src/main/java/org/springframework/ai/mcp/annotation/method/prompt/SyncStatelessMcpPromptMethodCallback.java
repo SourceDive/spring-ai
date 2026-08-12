@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -28,13 +24,16 @@ import io.modelcontextprotocol.spec.McpSchema.ErrorCodes;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.common.ErrorUtils;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.BiFunction;
+
 /**
  * Class for creating BiFunction callbacks around prompt methods for stateless contexts.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpPrompt} into
  * callback functions that can be used to handle prompt requests in stateless
  * environments. It supports various method signatures and return types.
@@ -67,11 +66,9 @@ public final class SyncStatelessMcpPromptMethodCallback extends AbstractMcpPromp
 		if (McpTransportContext.class.isAssignableFrom(paramType)) {
 			if (exchange instanceof McpTransportContext transportContext) {
 				return transportContext;
-			}
-			else if (exchange instanceof McpSyncServerExchange syncServerExchange) {
+			} else if (exchange instanceof McpSyncServerExchange syncServerExchange) {
 				return syncServerExchange.transportContext();
-			}
-			else if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
+			} else if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
 				throw new IllegalArgumentException("Unsupported Async exchange type: "
 						+ asyncServerExchange.getClass().getName() + " for Sync method: " + method.getName() + " in "
 						+ method.getDeclaringClass().getName());
@@ -88,10 +85,11 @@ public final class SyncStatelessMcpPromptMethodCallback extends AbstractMcpPromp
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * converts the result to a GetPromptResult.
+	 *
 	 * @param context The transport context, may be null if the method doesn't require it
 	 * @param request The prompt request, must not be null
 	 * @return The prompt result
-	 * @throws McpError if there is an error invoking the prompt method
+	 * @throws McpError                 if there is an error invoking the prompt method
 	 * @throws IllegalArgumentException if the request is null
 	 */
 	@Override
@@ -112,18 +110,17 @@ public final class SyncStatelessMcpPromptMethodCallback extends AbstractMcpPromp
 			GetPromptResult promptResult = this.convertToGetPromptResult(result);
 
 			return promptResult;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (e instanceof McpError mcpError && mcpError.getJsonRpcError() != null) {
 				throw mcpError;
 			}
 
 			throw McpError.builder(ErrorCodes.INVALID_PARAMS)
-				.message("Error invoking prompt method: " + this.method.getName() + " in "
-						+ this.bean.getClass().getName() + ". /nCause: "
-						+ ErrorUtils.findCauseUsingPlainJava(e).getMessage())
-				.data(ErrorUtils.findCauseUsingPlainJava(e).getMessage())
-				.build();
+					.message("Error invoking prompt method: " + this.method.getName() + " in "
+							+ this.bean.getClass().getName() + ". /nCause: "
+							+ ErrorUtils.findCauseUsingPlainJava(e).getMessage())
+					.data(ErrorUtils.findCauseUsingPlainJava(e).getMessage())
+					.build();
 		}
 	}
 
@@ -149,6 +146,7 @@ public final class SyncStatelessMcpPromptMethodCallback extends AbstractMcpPromp
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -165,6 +163,7 @@ public final class SyncStatelessMcpPromptMethodCallback extends AbstractMcpPromp
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new SyncStatelessMcpPromptMethodCallback instance
 		 */
 		@Override

@@ -16,20 +16,15 @@
 
 package org.springframework.ai.mistralai;
 
-import java.net.URI;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage;
+
+import java.net.URI;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,8 +49,8 @@ class MistralAiChatCompletionRequestTests {
 	private static final Media IMAGE_MEDIA = new Media(Media.Format.IMAGE_PNG, URI.create(IMAGE_URL));
 
 	private final MistralAiChatModel chatModel = MistralAiChatModel.builder()
-		.mistralAiApi(MistralAiApi.builder().baseUrl(BASE_URL).apiKey(API_KEY).build())
-		.build();
+			.mistralAiApi(MistralAiApi.builder().baseUrl(BASE_URL).apiKey(API_KEY).build())
+			.build();
 
 	@Test
 	void chatCompletionDefaultRequestTest() {
@@ -76,19 +71,19 @@ class MistralAiChatCompletionRequestTests {
 	@Test
 	void chatCompletionRequestWithOptionsTest() {
 		var options = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.MISTRAL_SMALL.getValue())
-			.temperature(0.5)
-			.topP(0.8)
-			.maxTokens(100)
-			.safePrompt(true)
-			.randomSeed(5)
-			.stop(List.of("stop1", "stop2"))
-			.frequencyPenalty(0.5)
-			.presencePenalty(0.3)
-			.n(2)
-			.tools(List.of(new MistralAiApi.FunctionTool()))
-			.toolChoice(MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO)
-			.build();
+				.model(MistralAiApi.ChatModel.MISTRAL_SMALL.getValue())
+				.temperature(0.5)
+				.topP(0.8)
+				.maxTokens(100)
+				.safePrompt(true)
+				.randomSeed(5)
+				.stop(List.of("stop1", "stop2"))
+				.frequencyPenalty(0.5)
+				.presencePenalty(0.3)
+				.n(2)
+				.tools(List.of(new MistralAiApi.FunctionTool()))
+				.toolChoice(MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO)
+				.build();
 
 		var prompt = new Prompt("test content", options);
 		var request = this.chatModel.createRequest(prompt, true);
@@ -105,8 +100,8 @@ class MistralAiChatCompletionRequestTests {
 		assertThat(request.presencePenalty()).isEqualTo(0.3);
 		assertThat(request.n()).isEqualTo(2);
 		assertThat(request.tools()).isNotEmpty()
-			.extracting(MistralAiApi.FunctionTool::getType)
-			.containsExactly(MistralAiApi.FunctionTool.Type.FUNCTION);
+				.extracting(MistralAiApi.FunctionTool::getType)
+				.containsExactly(MistralAiApi.FunctionTool.Type.FUNCTION);
 		assertThat(request.toolChoice()).isEqualTo(MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO);
 		assertThat(request.stream()).isTrue();
 	}
@@ -159,8 +154,8 @@ class MistralAiChatCompletionRequestTests {
 		var toolResponse2 = createToolResponse(2);
 		var toolResponse3 = createToolResponse(3);
 		var toolResponseMessage = ToolResponseMessage.builder()
-			.responses(List.of(toolResponse1, toolResponse2, toolResponse3))
-			.build();
+				.responses(List.of(toolResponse1, toolResponse2, toolResponse3))
+				.build();
 		var prompt = createPrompt(toolResponseMessage);
 		var chatCompletionRequest = this.chatModel.createRequest(prompt, false);
 		var chatCompletionMessages = chatCompletionRequest.messages();
@@ -177,7 +172,7 @@ class MistralAiChatCompletionRequestTests {
 	}
 
 	private static void verifyToolChatCompletionMessage(ChatCompletionMessage chatCompletionMessage,
-			ToolResponseMessage.ToolResponse toolResponse) {
+	                                                    ToolResponseMessage.ToolResponse toolResponse) {
 		assertThat(chatCompletionMessage.role()).isEqualTo(ChatCompletionMessage.Role.TOOL);
 		assertThat(chatCompletionMessage.content()).isEqualTo(toolResponse.responseData());
 		assertThat(chatCompletionMessage.name()).isEqualTo(toolResponse.name());
@@ -190,7 +185,7 @@ class MistralAiChatCompletionRequestTests {
 	}
 
 	private static void verifyToolCall(ChatCompletionMessage.ToolCall mistralToolCall,
-			AssistantMessage.ToolCall toolCall) {
+	                                   AssistantMessage.ToolCall toolCall) {
 		assertThat(mistralToolCall.id()).isEqualTo(toolCall.id());
 		assertThat(mistralToolCall.type()).isEqualTo(toolCall.type());
 		var function = mistralToolCall.function();

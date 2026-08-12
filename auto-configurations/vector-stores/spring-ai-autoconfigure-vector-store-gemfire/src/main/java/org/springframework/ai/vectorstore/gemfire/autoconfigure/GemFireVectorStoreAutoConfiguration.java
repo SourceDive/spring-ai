@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Bean;
  * @author Jason Huynh
  */
 @AutoConfiguration
-@ConditionalOnClass({ GemFireVectorStore.class, EmbeddingModel.class })
+@ConditionalOnClass({GemFireVectorStore.class, EmbeddingModel.class})
 @EnableConfigurationProperties(GemFireVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.GEMFIRE,
 		matchIfMissing = true)
@@ -65,24 +65,24 @@ public class GemFireVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public GemFireVectorStore gemfireVectorStore(EmbeddingModel embeddingModel, GemFireVectorStoreProperties properties,
-			GemFireConnectionDetails gemFireConnectionDetails, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                             GemFireConnectionDetails gemFireConnectionDetails, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                             ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                             BatchingStrategy batchingStrategy) {
 
 		Builder builder = GemFireVectorStore.builder(embeddingModel)
-			.host(gemFireConnectionDetails.getHost())
-			.port(gemFireConnectionDetails.getPort())
-			.indexName(properties.getIndexName())
-			.beamWidth(properties.getBeamWidth())
-			.maxConnections(properties.getMaxConnections())
-			.buckets(properties.getBuckets())
-			.vectorSimilarityFunction(properties.getVectorSimilarityFunction())
-			.fields(properties.getFields())
-			.sslEnabled(properties.isSslEnabled())
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(batchingStrategy);
+				.host(gemFireConnectionDetails.getHost())
+				.port(gemFireConnectionDetails.getPort())
+				.indexName(properties.getIndexName())
+				.beamWidth(properties.getBeamWidth())
+				.maxConnections(properties.getMaxConnections())
+				.buckets(properties.getBuckets())
+				.vectorSimilarityFunction(properties.getVectorSimilarityFunction())
+				.fields(properties.getFields())
+				.sslEnabled(properties.isSslEnabled())
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(batchingStrategy);
 		if (gemFireConnectionDetails.getUsername() != null) {
 			builder.username(gemFireConnectionDetails.getUsername());
 		}

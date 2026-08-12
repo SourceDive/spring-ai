@@ -16,9 +16,9 @@
 
 package org.springframework.ai.chat.memory;
 
-import java.util.List;
-
 import org.springframework.ai.chat.messages.Message;
+
+import java.util.List;
 
 /**
  * A repository for storing and retrieving chat messages.

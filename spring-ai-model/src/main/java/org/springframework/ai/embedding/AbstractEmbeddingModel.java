@@ -16,20 +16,19 @@
 
 package org.springframework.ai.embedding;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Abstract implementation of the {@link EmbeddingModel} interface that provides
@@ -55,9 +54,10 @@ public abstract class AbstractEmbeddingModel implements EmbeddingModel {
 	 * Return the dimension of the requested embedding generative name. If the generative
 	 * name is unknown uses the EmbeddingModel to perform a dummy EmbeddingModel#embed and
 	 * count the response dimensions.
+	 *
 	 * @param embeddingModel Fall-back client to determine, empirically the dimensions.
-	 * @param modelName Embedding generative name to retrieve the dimensions for.
-	 * @param dummyContent Dummy content to use for the empirical dimension calculation.
+	 * @param modelName      Embedding generative name to retrieve the dimensions for.
+	 * @param dummyContent   Dummy content to use for the empirical dimension calculation.
 	 * @return Returns the embedding dimensions for the modelName.
 	 */
 	public static int dimensions(EmbeddingModel embeddingModel, String modelName, String dummyContent) {
@@ -65,8 +65,7 @@ public abstract class AbstractEmbeddingModel implements EmbeddingModel {
 		if (KNOWN_EMBEDDING_DIMENSIONS.containsKey(modelName)) {
 			// Retrieve the dimension from a pre-configured file.
 			return KNOWN_EMBEDDING_DIMENSIONS.get(modelName);
-		}
-		else {
+		} else {
 			// Determine the dimensions empirically.
 			// Generate an embedding and count the dimension size;
 			return embeddingModel.embed(dummyContent).length;
@@ -83,10 +82,9 @@ public abstract class AbstractEmbeddingModel implements EmbeddingModel {
 				properties.load(in);
 			}
 			return properties.entrySet()
-				.stream()
-				.collect(Collectors.toMap(e -> e.getKey().toString(), e -> Integer.parseInt(e.getValue().toString())));
-		}
-		catch (IOException e) {
+					.stream()
+					.collect(Collectors.toMap(e -> e.getKey().toString(), e -> Integer.parseInt(e.getValue().toString())));
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.s3.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

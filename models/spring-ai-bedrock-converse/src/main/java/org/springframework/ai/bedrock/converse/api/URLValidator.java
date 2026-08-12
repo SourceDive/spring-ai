@@ -16,14 +16,10 @@
 
 package org.springframework.ai.bedrock.converse.api;
 
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.regex.Pattern;
-
 import org.jspecify.annotations.Nullable;
+
+import java.net.*;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for detecting and normalizing URLs. Intended for use with multimodal user
@@ -54,6 +50,7 @@ public final class URLValidator {
 	 * Check if the string looks like a URL using a simple regex pattern to disstinct it
 	 * from base64 or other text. This is a quick check to avoid unnecessary URL parsing
 	 * for clearly non-URL strings.
+	 *
 	 * @deprecated This method is not sufficient for security-sensitive URL validation and
 	 * should not be relied upon for security-critical checks. Use
 	 * {@link #isValidURLStrict(String)} instead for robust validation.
@@ -101,8 +98,7 @@ public final class URLValidator {
 			// including raw IP literals that bypass the dot-based localhost check
 			try {
 				assertNoInternalAddress(host);
-			}
-			catch (SecurityException e) {
+			} catch (SecurityException e) {
 				return false;
 			}
 
@@ -113,8 +109,7 @@ public final class URLValidator {
 			}
 
 			return true;
-		}
-		catch (MalformedURLException | URISyntaxException e) {
+		} catch (MalformedURLException | URISyntaxException e) {
 			return false;
 		}
 	}
@@ -125,9 +120,10 @@ public final class URLValidator {
 	 * wildcard address. Protects against SSRF via internal network access (including IPv6
 	 * equivalents) and limits exposure from DNS rebinding by checking all returned
 	 * addresses.
+	 *
 	 * @param host the hostname to check
 	 * @throws SecurityException if the host resolves to a blocked internal address or
-	 * cannot be resolved
+	 *                           cannot be resolved
 	 */
 	public static void assertNoInternalAddress(String host) {
 		try {
@@ -137,8 +133,7 @@ public final class URLValidator {
 							+ address.getHostAddress());
 				}
 			}
-		}
-		catch (UnknownHostException e) {
+		} catch (UnknownHostException e) {
 			throw new SecurityException("Failed to resolve host: " + host, e);
 		}
 	}
@@ -146,6 +141,7 @@ public final class URLValidator {
 	/**
 	 * Returns {@code true} if the given address is a loopback, link-local, site-local, or
 	 * wildcard address. Covers both IPv4 and IPv6 private/internal ranges.
+	 *
 	 * @param address the address to test
 	 * @return {@code true} if the address should be blocked
 	 */

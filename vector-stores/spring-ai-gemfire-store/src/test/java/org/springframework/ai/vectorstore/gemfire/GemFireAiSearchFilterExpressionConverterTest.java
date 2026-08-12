@@ -16,24 +16,15 @@
 
 package org.springframework.ai.vectorstore.gemfire;
 
-import java.util.Date;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 
+import java.util.Date;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Jason Huynh
@@ -56,7 +47,7 @@ class GemFireAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testEQ() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("country:BG");
 	}
 
@@ -125,15 +116,15 @@ class GemFireAiSearchFilterExpressionConverterTest {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("country 1 2 3"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("country 1 2 3"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("country\\ 1\\ 2\\ 3:BG");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("\\\"country\\ 1\\ 2\\ 3\\\":BG");
 
 		vectorExpr = this.converter
-			.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
+				.convertExpression(new Filter.Expression(EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
 		assertThat(vectorExpr).isEqualTo("'country\\ 1\\ 2\\ 3':BG");
 	}
 

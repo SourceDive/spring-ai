@@ -30,5 +30,9 @@ import org.springframework.ai.tool.definition.ToolDefinition;
  * @param arguments The augmented arguments extracted from the input.
  * @author Christian Tzolov
  */
-public record AugmentedArgumentEvent<T>(ToolDefinition toolDefinition, String rawInput, @Nullable T arguments) {
-}
+public record AugmentedArgumentEvent<T>(
+		ToolDefinition toolDefinition, String
+rawInput,
+@Nullable
+T arguments){
+		}

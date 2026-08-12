@@ -16,13 +16,6 @@
 
 package org.springframework.ai.chat.memory.repository.cassandra;
 
-import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
@@ -42,8 +35,14 @@ import com.datastax.oss.driver.shaded.guava.common.base.Preconditions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Configuration for the Cassandra Chat Memory store.
@@ -122,8 +121,7 @@ public final class CassandraChatMemoryRepositoryConfig {
 			ensureTableExists();
 			ensureTableColumnsExist();
 			SchemaUtil.checkSchemaAgreement(this.session);
-		}
-		else {
+		} else {
 			checkSchemaValid();
 		}
 	}
@@ -134,22 +132,22 @@ public final class CassandraChatMemoryRepositoryConfig {
 				"keyspace %s does not exist", this.schema.keyspace);
 
 		Preconditions.checkState(this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace)
-			.get()
-			.getTable(this.schema.table)
-			.isPresent(), "table %s does not exist");
+				.getKeyspace(this.schema.keyspace)
+				.get()
+				.getTable(this.schema.table)
+				.isPresent(), "table %s does not exist");
 
 		Preconditions.checkState(this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace())
-			.get()
-			.getUserDefinedType(this.messageUDT)
-			.isPresent(), "table %s does not exist");
+				.getKeyspace(this.schema.keyspace())
+				.get()
+				.getUserDefinedType(this.messageUDT)
+				.isPresent(), "table %s does not exist");
 
 		UserDefinedType udt = this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace())
-			.get()
-			.getUserDefinedType(this.messageUDT)
-			.get();
+				.getKeyspace(this.schema.keyspace())
+				.get()
+				.getUserDefinedType(this.messageUDT)
+				.get();
 
 		Preconditions.checkState(udt.contains(this.messageUdtTimestampColumn), "field %s does not exist",
 				this.messageUdtTimestampColumn);
@@ -161,10 +159,10 @@ public final class CassandraChatMemoryRepositoryConfig {
 				this.messageUdtContentColumn);
 
 		TableMetadata tableMetadata = this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace)
-			.get()
-			.getTable(this.schema.table)
-			.get();
+				.getKeyspace(this.schema.keyspace)
+				.get()
+				.getTable(this.schema.table)
+				.get();
 
 		Preconditions.checkState(tableMetadata.getColumn(this.messagesColumn).isPresent(), "column %s does not exist",
 				this.messagesColumn);
@@ -175,7 +173,7 @@ public final class CassandraChatMemoryRepositoryConfig {
 			CreateTable createTable = null;
 
 			CreateTableStart createTableStart = SchemaBuilder.createTable(this.schema.keyspace, this.schema.table)
-				.ifNotExists();
+					.ifNotExists();
 
 			for (SchemaColumn partitionKey : this.schema.partitionKeys) {
 				createTable = (null != createTable ? createTable : createTableStart).withPartitionKey(partitionKey.name,
@@ -189,11 +187,11 @@ public final class CassandraChatMemoryRepositoryConfig {
 			String lastClusteringColumn = this.schema.clusteringKeys.get(this.schema.clusteringKeys.size() - 1).name();
 
 			CreateTableWithOptions createTableWithOptions = createTable
-				.withColumn(this.messagesColumn, DataTypes.frozenListOf(SchemaBuilder.udt(this.messageUDT, true)))
-				.withClusteringOrder(lastClusteringColumn, ClusteringOrder.DESC)
-				// TODO replace w/ SchemaBuilder.unifiedCompactionStrategy() when
-				// available
-				.withOption("compaction", Map.of("class", "UnifiedCompactionStrategy"));
+					.withColumn(this.messagesColumn, DataTypes.frozenListOf(SchemaBuilder.udt(this.messageUDT, true)))
+					.withClusteringOrder(lastClusteringColumn, ClusteringOrder.DESC)
+					// TODO replace w/ SchemaBuilder.unifiedCompactionStrategy() when
+					// available
+					.withOption("compaction", Map.of("class", "UnifiedCompactionStrategy"));
 
 			if (null != this.timeToLiveSeconds) {
 				createTableWithOptions = createTableWithOptions.withDefaultTimeToLiveSeconds(this.timeToLiveSeconds);
@@ -205,11 +203,11 @@ public final class CassandraChatMemoryRepositoryConfig {
 	private void ensureMessageTypeExist() {
 
 		SimpleStatement stmt = SchemaBuilder.createType(this.messageUDT)
-			.ifNotExists()
-			.withField(this.messageUdtTimestampColumn, DataTypes.TIMESTAMP)
-			.withField(this.messageUdtTypeColumn, DataTypes.TEXT)
-			.withField(this.messageUdtContentColumn, DataTypes.TEXT)
-			.build();
+				.ifNotExists()
+				.withField(this.messageUdtTimestampColumn, DataTypes.TIMESTAMP)
+				.withField(this.messageUdtTypeColumn, DataTypes.TEXT)
+				.withField(this.messageUdtContentColumn, DataTypes.TEXT)
+				.build();
 
 		this.session.execute(stmt.setKeyspace(this.schema.keyspace));
 	}
@@ -217,16 +215,16 @@ public final class CassandraChatMemoryRepositoryConfig {
 	private void ensureTableColumnsExist() {
 
 		TableMetadata tableMetadata = this.session.getMetadata()
-			.getKeyspace(this.schema.keyspace())
-			.get()
-			.getTable(this.schema.table())
-			.get();
+				.getKeyspace(this.schema.keyspace())
+				.get()
+				.getTable(this.schema.table())
+				.get();
 
 		if (tableMetadata.getColumn(this.messagesColumn).isEmpty()) {
 
 			SimpleStatement stmt = SchemaBuilder.alterTable(this.schema.keyspace(), this.schema.table())
-				.addColumn(this.messagesColumn, DataTypes.frozenListOf(SchemaBuilder.udt(this.messageUDT, true)))
-				.build();
+					.addColumn(this.messagesColumn, DataTypes.frozenListOf(SchemaBuilder.udt(this.messageUDT, true)))
+					.build();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + stmt.getQuery());
@@ -235,7 +233,9 @@ public final class CassandraChatMemoryRepositoryConfig {
 		}
 	}
 
-	/** Given a string sessionId, return the value for each primary key column. */
+	/**
+	 * Given a string sessionId, return the value for each primary key column.
+	 */
 	public interface SessionIdToPrimaryKeysTranslator extends Function<String, List<Object>> {
 
 	}
@@ -246,7 +246,7 @@ public final class CassandraChatMemoryRepositoryConfig {
 
 	public record SchemaColumn(String name, DataType type) {
 
-		public GenericType<Object> javaType() {
+		public GenericType<Object> javaType () {
 			return CodecRegistry.DEFAULT.codecFor(this.type).getJavaType();
 		}
 
@@ -265,7 +265,7 @@ public final class CassandraChatMemoryRepositoryConfig {
 		private List<SchemaColumn> partitionKeys = List.of(new SchemaColumn(DEFAULT_SESSION_ID_NAME, DataTypes.TEXT));
 
 		private List<SchemaColumn> clusteringKeys = List
-			.of(new SchemaColumn(DEFAULT_EXCHANGE_ID_NAME, DataTypes.TIMESTAMP));
+				.of(new SchemaColumn(DEFAULT_EXCHANGE_ID_NAME, DataTypes.TIMESTAMP));
 
 		private String messagesColumn = DEFAULT_MESSAGES_COLUMN_NAME;
 
@@ -331,7 +331,9 @@ public final class CassandraChatMemoryRepositoryConfig {
 			return this;
 		}
 
-		/** How long are messages kept for */
+		/**
+		 * How long are messages kept for
+		 */
 		public Builder withTimeToLive(Duration timeToLive) {
 			Preconditions.checkArgument(0 < timeToLive.getSeconds());
 			this.timeToLiveSeconds = (int) timeToLive.toSeconds();

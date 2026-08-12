@@ -50,13 +50,11 @@ public class MarkdownCodeBlockCleaner implements ResponseTextCleaner {
 				if (firstLine.length() > 3) {
 					// Has language identifier like ```json
 					text = lines.length > 1 ? lines[1] : "";
-				}
-				else {
+				} else {
 					// Just ``` without language
 					text = text.substring(3);
 				}
-			}
-			else {
+			} else {
 				text = text.substring(3);
 			}
 

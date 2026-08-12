@@ -16,16 +16,15 @@
 
 package org.springframework.ai.google.genai.metadata;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.genai.types.GenerateContentResponseUsageMetadata;
 import com.google.genai.types.ModalityTokenCount;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.DefaultUsage;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Extended usage metadata for Google GenAI responses that includes thinking tokens,
@@ -37,33 +36,41 @@ import org.springframework.ai.chat.metadata.DefaultUsage;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GoogleGenAiUsage extends DefaultUsage {
 
-	@Nullable private final Integer thoughtsTokenCount;
+	@Nullable
+	private final Integer thoughtsTokenCount;
 
-	@Nullable private final Integer cachedContentTokenCount;
+	@Nullable
+	private final Integer cachedContentTokenCount;
 
-	@Nullable private final Integer toolUsePromptTokenCount;
+	@Nullable
+	private final Integer toolUsePromptTokenCount;
 
-	@Nullable private final List<GoogleGenAiModalityTokenCount> promptTokensDetails;
+	@Nullable
+	private final List<GoogleGenAiModalityTokenCount> promptTokensDetails;
 
-	@Nullable private final List<GoogleGenAiModalityTokenCount> candidatesTokensDetails;
+	@Nullable
+	private final List<GoogleGenAiModalityTokenCount> candidatesTokensDetails;
 
-	@Nullable private final List<GoogleGenAiModalityTokenCount> cacheTokensDetails;
+	@Nullable
+	private final List<GoogleGenAiModalityTokenCount> cacheTokensDetails;
 
-	@Nullable private final List<GoogleGenAiModalityTokenCount> toolUsePromptTokensDetails;
+	@Nullable
+	private final List<GoogleGenAiModalityTokenCount> toolUsePromptTokensDetails;
 
-	@Nullable private final GoogleGenAiTrafficType trafficType;
+	@Nullable
+	private final GoogleGenAiTrafficType trafficType;
 
 	/**
 	 * Creates a new GoogleGenAiUsage instance with all extended metadata.
 	 */
 	public GoogleGenAiUsage(Integer promptTokens, Integer completionTokens, Integer totalTokens,
-			@Nullable Integer thoughtsTokenCount, @Nullable Integer cachedContentTokenCount,
-			@Nullable Integer toolUsePromptTokenCount,
-			@Nullable List<GoogleGenAiModalityTokenCount> promptTokensDetails,
-			@Nullable List<GoogleGenAiModalityTokenCount> candidatesTokensDetails,
-			@Nullable List<GoogleGenAiModalityTokenCount> cacheTokensDetails,
-			@Nullable List<GoogleGenAiModalityTokenCount> toolUsePromptTokensDetails,
-			@Nullable GoogleGenAiTrafficType trafficType, @Nullable GenerateContentResponseUsageMetadata nativeUsage) {
+	                        @Nullable Integer thoughtsTokenCount, @Nullable Integer cachedContentTokenCount,
+	                        @Nullable Integer toolUsePromptTokenCount,
+	                        @Nullable List<GoogleGenAiModalityTokenCount> promptTokensDetails,
+	                        @Nullable List<GoogleGenAiModalityTokenCount> candidatesTokensDetails,
+	                        @Nullable List<GoogleGenAiModalityTokenCount> cacheTokensDetails,
+	                        @Nullable List<GoogleGenAiModalityTokenCount> toolUsePromptTokensDetails,
+	                        @Nullable GoogleGenAiTrafficType trafficType, @Nullable GenerateContentResponseUsageMetadata nativeUsage) {
 		super(promptTokens, completionTokens, totalTokens, nativeUsage);
 		this.thoughtsTokenCount = thoughtsTokenCount;
 		this.cachedContentTokenCount = cachedContentTokenCount;
@@ -77,6 +84,7 @@ public class GoogleGenAiUsage extends DefaultUsage {
 
 	/**
 	 * Creates a GoogleGenAiUsage instance from the Google GenAI SDK response metadata.
+	 *
 	 * @param usageMetadata the usage metadata from the Google GenAI SDK
 	 * @return a new GoogleGenAiUsage instance with all available metadata
 	 */
@@ -109,25 +117,29 @@ public class GoogleGenAiUsage extends DefaultUsage {
 	private static @Nullable List<GoogleGenAiModalityTokenCount> convertModalityDetails(
 			Optional<List<ModalityTokenCount>> modalityTokens) {
 		return modalityTokens.map(tokens -> tokens.stream().map(GoogleGenAiModalityTokenCount::from).toList())
-			.orElse(null);
+				.orElse(null);
 	}
 
 	/**
 	 * Returns the number of tokens present in thoughts output for thinking-enabled
 	 * models.
+	 *
 	 * @return the thoughts token count, or null if not available
 	 */
 	@JsonProperty("thoughtsTokenCount")
-	@Nullable public Integer getThoughtsTokenCount() {
+	@Nullable
+	public Integer getThoughtsTokenCount() {
 		return this.thoughtsTokenCount;
 	}
 
 	/**
 	 * Returns the number of tokens in the cached content.
+	 *
 	 * @return the cached content token count, or null if not available
 	 */
 	@JsonProperty("cachedContentTokenCount")
-	@Nullable public Integer getCachedContentTokenCount() {
+	@Nullable
+	public Integer getCachedContentTokenCount() {
 		return this.cachedContentTokenCount;
 	}
 
@@ -138,56 +150,68 @@ public class GoogleGenAiUsage extends DefaultUsage {
 
 	/**
 	 * Returns the number of tokens present in tool-use prompts.
+	 *
 	 * @return the tool-use prompt token count, or null if not available
 	 */
 	@JsonProperty("toolUsePromptTokenCount")
-	@Nullable public Integer getToolUsePromptTokenCount() {
+	@Nullable
+	public Integer getToolUsePromptTokenCount() {
 		return this.toolUsePromptTokenCount;
 	}
 
 	/**
 	 * Returns the list of modalities that were processed in the request input.
+	 *
 	 * @return the prompt tokens details by modality, or null if not available
 	 */
 	@JsonProperty("promptTokensDetails")
-	@Nullable public List<GoogleGenAiModalityTokenCount> getPromptTokensDetails() {
+	@Nullable
+	public List<GoogleGenAiModalityTokenCount> getPromptTokensDetails() {
 		return this.promptTokensDetails;
 	}
 
 	/**
 	 * Returns the list of modalities that were returned in the response.
+	 *
 	 * @return the candidates tokens details by modality, or null if not available
 	 */
 	@JsonProperty("candidatesTokensDetails")
-	@Nullable public List<GoogleGenAiModalityTokenCount> getCandidatesTokensDetails() {
+	@Nullable
+	public List<GoogleGenAiModalityTokenCount> getCandidatesTokensDetails() {
 		return this.candidatesTokensDetails;
 	}
 
 	/**
 	 * Returns the list of modalities of the cached content in the request input.
+	 *
 	 * @return the cache tokens details by modality, or null if not available
 	 */
 	@JsonProperty("cacheTokensDetails")
-	@Nullable public List<GoogleGenAiModalityTokenCount> getCacheTokensDetails() {
+	@Nullable
+	public List<GoogleGenAiModalityTokenCount> getCacheTokensDetails() {
 		return this.cacheTokensDetails;
 	}
 
 	/**
 	 * Returns the list of modalities that were processed for tool-use request inputs.
+	 *
 	 * @return the tool-use prompt tokens details by modality, or null if not available
 	 */
 	@JsonProperty("toolUsePromptTokensDetails")
-	@Nullable public List<GoogleGenAiModalityTokenCount> getToolUsePromptTokensDetails() {
+	@Nullable
+	public List<GoogleGenAiModalityTokenCount> getToolUsePromptTokensDetails() {
 		return this.toolUsePromptTokensDetails;
 	}
 
 	/**
 	 * Returns the traffic type showing whether a request consumes Pay-As-You-Go or
 	 * Provisioned Throughput quota.
+	 *
 	 * @return the traffic type, or null if not available
 	 */
 	@JsonProperty("trafficType")
-	@Nullable public GoogleGenAiTrafficType getTrafficType() {
+	@Nullable
+	public GoogleGenAiTrafficType getTrafficType() {
 		return this.trafficType;
 	}
 

@@ -16,9 +16,6 @@
 
 package org.springframework.ai.openai.setup;
 
-import java.time.Duration;
-import java.util.List;
-
 import com.openai.client.OpenAIClient;
 import com.openai.models.ChatModel;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
@@ -27,9 +24,11 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.model.NoopApiKey;
 import org.springframework.ai.openai.OpenAiChatOptions;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,8 +49,8 @@ public class OpenAiSetupEmptyApiKeyTests {
 	void emptyApiKeyDoesNotSendAuthorizationHeader() throws Exception {
 		try (MockWebServer server = new MockWebServer()) {
 			server.enqueue(new MockResponse().setResponseCode(200)
-				.setHeader("Content-Type", "application/json")
-				.setBody(CHAT_COMPLETION_RESPONSE));
+					.setHeader("Content-Type", "application/json")
+					.setBody(CHAT_COMPLETION_RESPONSE));
 			server.start();
 
 			OpenAIClient client = OpenAiSetup.setupSyncClient(server.url("/v1").toString(), "", null, null, null, null,
@@ -62,12 +61,12 @@ public class OpenAiSetupEmptyApiKeyTests {
 
 			// Trigger an actual HTTP request so we can inspect received headers.
 			client.chat()
-				.completions()
-				.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
+					.completions()
+					.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("Authorization")).as("Authorization header must be absent in no-auth mode")
-				.isNull();
+					.isNull();
 		}
 	}
 
@@ -75,17 +74,17 @@ public class OpenAiSetupEmptyApiKeyTests {
 	void noopApiKeyDoesNotSendAuthorizationHeader() throws Exception {
 		try (MockWebServer server = new MockWebServer()) {
 			server.enqueue(new MockResponse().setResponseCode(200)
-				.setHeader("Content-Type", "application/json")
-				.setBody(CHAT_COMPLETION_RESPONSE));
+					.setHeader("Content-Type", "application/json")
+					.setBody(CHAT_COMPLETION_RESPONSE));
 			server.start();
 
 			// NoopApiKey is the 1.x migration path: users who previously relied on
 			// NoopApiKey can now pass it via the ApiKey-typed builder overload.
 			OpenAiChatOptions options = OpenAiChatOptions.builder()
-				.baseUrl(server.url("/v1").toString())
-				.apiKey(new NoopApiKey())
-				.model("gpt-4")
-				.build();
+					.baseUrl(server.url("/v1").toString())
+					.apiKey(new NoopApiKey())
+					.model("gpt-4")
+					.build();
 
 			assertThat(options.getApiKey()).as("NoopApiKey.getValue() should return empty string").isEmpty();
 
@@ -94,13 +93,13 @@ public class OpenAiSetupEmptyApiKeyTests {
 					null, List.of());
 
 			client.chat()
-				.completions()
-				.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
+					.completions()
+					.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("Authorization"))
-				.as("Authorization header must be absent when NoopApiKey is used")
-				.isNull();
+					.as("Authorization header must be absent when NoopApiKey is used")
+					.isNull();
 		}
 	}
 

@@ -16,11 +16,11 @@
 
 package org.springframework.ai.model.ollama.autoconfigure;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.springframework.ai.ollama.management.PullModelStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
+import java.util.List;
 
 /**
  * Ollama initialization configuration properties.

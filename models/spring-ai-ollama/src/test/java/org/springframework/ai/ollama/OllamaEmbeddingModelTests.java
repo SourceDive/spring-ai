@@ -16,16 +16,12 @@
 
 package org.springframework.ai.ollama;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.embedding.EmbeddingOptions;
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
@@ -34,6 +30,9 @@ import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaApi.EmbeddingsRequest;
 import org.springframework.ai.ollama.api.OllamaApi.EmbeddingsResponse;
 import org.springframework.ai.ollama.api.OllamaEmbeddingOptions;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,10 +57,10 @@ class OllamaEmbeddingModelTests {
 	void options() {
 
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME",
-					List.of(new float[] { 1f, 2f, 3f }, new float[] { 4f, 5f, 6f }), 0L, 0L, 0))
-			.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME2",
-					List.of(new float[] { 7f, 8f, 9f }, new float[] { 10f, 11f, 12f }), 0L, 0L, 0));
+				.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME",
+						List.of(new float[]{1f, 2f, 3f}, new float[]{4f, 5f, 6f}), 0L, 0L, 0))
+				.willReturn(new EmbeddingsResponse("RESPONSE_MODEL_NAME2",
+						List.of(new float[]{7f, 8f, 9f}, new float[]{10f, 11f, 12f}), 0L, 0L, 0));
 
 		// Tests default options
 		var options = OllamaEmbeddingOptions.builder().model("DEFAULT_MODEL").build();
@@ -69,14 +68,14 @@ class OllamaEmbeddingModelTests {
 		var embeddingModel = OllamaEmbeddingModel.builder().ollamaApi(this.ollamaApi).options(options).build();
 
 		EmbeddingResponse response = embeddingModel
-			.call(new EmbeddingRequest(List.of("Input1", "Input2", "Input3"), EmbeddingOptions.builder().build()));
+				.call(new EmbeddingRequest(List.of("Input1", "Input2", "Input3"), EmbeddingOptions.builder().build()));
 
 		assertThat(response.getResults()).hasSize(2);
 		assertThat(response.getResults().get(0).getIndex()).isEqualTo(0);
-		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[] { 1f, 2f, 3f });
+		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[]{1f, 2f, 3f});
 		assertThat(response.getResults().get(0).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getResults().get(1).getIndex()).isEqualTo(1);
-		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[] { 4f, 5f, 6f });
+		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[]{4f, 5f, 6f});
 		assertThat(response.getResults().get(1).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getMetadata().getModel()).isEqualTo("RESPONSE_MODEL_NAME");
 
@@ -93,10 +92,10 @@ class OllamaEmbeddingModelTests {
 
 		assertThat(response.getResults()).hasSize(2);
 		assertThat(response.getResults().get(0).getIndex()).isEqualTo(0);
-		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[] { 7f, 8f, 9f });
+		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[]{7f, 8f, 9f});
 		assertThat(response.getResults().get(0).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getResults().get(1).getIndex()).isEqualTo(1);
-		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[] { 10f, 11f, 12f });
+		assertThat(response.getResults().get(1).getOutput()).isEqualTo(new float[]{10f, 11f, 12f});
 		assertThat(response.getResults().get(1).getMetadata()).isEqualTo(EmbeddingResultMetadata.EMPTY);
 		assertThat(response.getMetadata().getModel()).isEqualTo("RESPONSE_MODEL_NAME2");
 
@@ -108,19 +107,19 @@ class OllamaEmbeddingModelTests {
 	@Test
 	void singleInputEmbedding() {
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("TEST_MODEL", List.of(new float[] { 0.1f, 0.2f, 0.3f }), 10L, 5L, 1));
+				.willReturn(new EmbeddingsResponse("TEST_MODEL", List.of(new float[]{0.1f, 0.2f, 0.3f}), 10L, 5L, 1));
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaEmbeddingOptions.builder().model("TEST_MODEL").build())
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaEmbeddingOptions.builder().model("TEST_MODEL").build())
+				.build();
 
 		EmbeddingResponse response = embeddingModel
-			.call(new EmbeddingRequest(List.of("Single input text"), EmbeddingOptions.builder().build()));
+				.call(new EmbeddingRequest(List.of("Single input text"), EmbeddingOptions.builder().build()));
 
 		assertThat(response.getResults()).hasSize(1);
 		assertThat(response.getResults().get(0).getIndex()).isEqualTo(0);
-		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[] { 0.1f, 0.2f, 0.3f });
+		assertThat(response.getResults().get(0).getOutput()).isEqualTo(new float[]{0.1f, 0.2f, 0.3f});
 		assertThat(response.getMetadata().getModel()).isEqualTo("TEST_MODEL");
 
 		assertThat(this.embeddingsRequestCaptor.getValue().input()).isEqualTo(List.of("Single input text"));
@@ -130,12 +129,12 @@ class OllamaEmbeddingModelTests {
 	@Test
 	void embeddingWithNullOptions() {
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("NULL_OPTIONS_MODEL", List.of(new float[] { 0.5f }), 5L, 2L, 1));
+				.willReturn(new EmbeddingsResponse("NULL_OPTIONS_MODEL", List.of(new float[]{0.5f}), 5L, 2L, 1));
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaEmbeddingOptions.builder().model("NULL_OPTIONS_MODEL").build())
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaEmbeddingOptions.builder().model("NULL_OPTIONS_MODEL").build())
+				.build();
 
 		EmbeddingResponse response = embeddingModel.call(new EmbeddingRequest(List.of("Null options test"), null));
 
@@ -154,18 +153,18 @@ class OllamaEmbeddingModelTests {
 				"A third lengthy input to test batch processing capabilities of the embedding model");
 
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse(
-					"BATCH_MODEL", List.of(new float[] { 0.1f, 0.2f, 0.3f, 0.4f },
-							new float[] { 0.5f, 0.6f, 0.7f, 0.8f }, new float[] { 0.9f, 1.0f, 1.1f, 1.2f }),
-					150L, 75L, 3));
+				.willReturn(new EmbeddingsResponse(
+						"BATCH_MODEL", List.of(new float[]{0.1f, 0.2f, 0.3f, 0.4f},
+						new float[]{0.5f, 0.6f, 0.7f, 0.8f}, new float[]{0.9f, 1.0f, 1.1f, 1.2f}),
+						150L, 75L, 3));
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaEmbeddingOptions.builder().model("BATCH_MODEL").build())
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaEmbeddingOptions.builder().model("BATCH_MODEL").build())
+				.build();
 
 		EmbeddingResponse response = embeddingModel
-			.call(new EmbeddingRequest(largeInputs, EmbeddingOptions.builder().build()));
+				.call(new EmbeddingRequest(largeInputs, EmbeddingOptions.builder().build()));
 
 		assertThat(response.getResults()).hasSize(3);
 		assertThat(response.getResults().get(0).getOutput()).hasSize(4);
@@ -178,12 +177,12 @@ class OllamaEmbeddingModelTests {
 	@Test
 	void embeddingWithCustomKeepAliveFormats() {
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("KEEPALIVE_MODEL", List.of(new float[] { 1.0f }), 5L, 2L, 1));
+				.willReturn(new EmbeddingsResponse("KEEPALIVE_MODEL", List.of(new float[]{1.0f}), 5L, 2L, 1));
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaEmbeddingOptions.builder().model("KEEPALIVE_MODEL").build())
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaEmbeddingOptions.builder().model("KEEPALIVE_MODEL").build())
+				.build();
 
 		// Test with seconds format
 		var secondsOptions = OllamaEmbeddingOptions.builder().model("KEEPALIVE_MODEL").keepAlive("300s").build();
@@ -201,15 +200,15 @@ class OllamaEmbeddingModelTests {
 	@Test
 	void embeddingResponseMetadata() {
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("METADATA_MODEL", List.of(new float[] { 0.1f, 0.2f }), 100L, 50L, 25));
+				.willReturn(new EmbeddingsResponse("METADATA_MODEL", List.of(new float[]{0.1f, 0.2f}), 100L, 50L, 25));
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaEmbeddingOptions.builder().model("METADATA_MODEL").build())
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaEmbeddingOptions.builder().model("METADATA_MODEL").build())
+				.build();
 
 		EmbeddingResponse response = embeddingModel
-			.call(new EmbeddingRequest(List.of("Metadata test"), EmbeddingOptions.builder().build()));
+				.call(new EmbeddingRequest(List.of("Metadata test"), EmbeddingOptions.builder().build()));
 
 		assertThat(response.getMetadata().getModel()).isEqualTo("METADATA_MODEL");
 		assertThat(response.getResults()).hasSize(1);
@@ -219,15 +218,15 @@ class OllamaEmbeddingModelTests {
 	@Test
 	void embeddingWithZeroLengthVectors() {
 		given(this.ollamaApi.embed(this.embeddingsRequestCaptor.capture()))
-			.willReturn(new EmbeddingsResponse("ZERO_MODEL", List.of(new float[] {}), 0L, 0L, 1));
+				.willReturn(new EmbeddingsResponse("ZERO_MODEL", List.of(new float[]{}), 0L, 0L, 1));
 
 		var embeddingModel = OllamaEmbeddingModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaEmbeddingOptions.builder().model("ZERO_MODEL").build())
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaEmbeddingOptions.builder().model("ZERO_MODEL").build())
+				.build();
 
 		EmbeddingResponse response = embeddingModel
-			.call(new EmbeddingRequest(List.of("Zero length test"), EmbeddingOptions.builder().build()));
+				.call(new EmbeddingRequest(List.of("Zero length test"), EmbeddingOptions.builder().build()));
 
 		assertThat(response.getResults()).hasSize(1);
 		assertThat(response.getResults().get(0).getOutput()).isEmpty();

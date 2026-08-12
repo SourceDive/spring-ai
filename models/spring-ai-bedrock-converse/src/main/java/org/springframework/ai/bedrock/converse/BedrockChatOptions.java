@@ -16,19 +16,18 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.bedrock.converse.api.BedrockCacheOptions;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.tool.DefaultToolCallingChatOptions;
 import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.ToolCallback;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * The options to be used when sending a chat request to the Bedrock API.
@@ -65,11 +64,11 @@ public class BedrockChatOptions implements ToolCallingChatOptions, StructuredOut
 	private final @Nullable String outputSchema;
 
 	protected BedrockChatOptions(@Nullable String model, @Nullable Double frequencyPenalty, @Nullable Integer maxTokens,
-			@Nullable Double presencePenalty, @Nullable Map<String, String> requestParameters,
-			@Nullable List<String> stopSequences, @Nullable Double temperature, @Nullable Integer topK,
-			@Nullable Double topP, @Nullable List<ToolCallback> toolCallbacks,
-			@Nullable Map<String, Object> toolContext, @Nullable BedrockCacheOptions cacheOptions,
-			@Nullable String outputSchema) {
+	                             @Nullable Double presencePenalty, @Nullable Map<String, String> requestParameters,
+	                             @Nullable List<String> stopSequences, @Nullable Double temperature, @Nullable Integer topK,
+	                             @Nullable Double topP, @Nullable List<ToolCallback> toolCallbacks,
+	                             @Nullable Map<String, Object> toolContext, @Nullable BedrockCacheOptions cacheOptions,
+	                             @Nullable String outputSchema) {
 		this.model = model;
 		this.frequencyPenalty = frequencyPenalty;
 		this.maxTokens = maxTokens;
@@ -155,22 +154,22 @@ public class BedrockChatOptions implements ToolCallingChatOptions, StructuredOut
 	@Override
 	public Builder mutate() {
 		return BedrockChatOptions.builder()
-			// ChatOptions
-			.model(this.model)
-			.frequencyPenalty(this.frequencyPenalty)
-			.maxTokens(this.maxTokens)
-			.presencePenalty(this.presencePenalty)
-			.stopSequences(this.stopSequences)
-			.temperature(this.temperature)
-			.topK(this.topK)
-			.topP(this.topP)
-			// ToolCallingChatOptions
-			.toolCallbacks(this.getToolCallbacks())
-			.toolContext(this.getToolContext())
-			// Bedrock Specific
-			.requestParameters(this.requestParameters)
-			.cacheOptions(this.cacheOptions)
-			.outputSchema(this.outputSchema);
+				// ChatOptions
+				.model(this.model)
+				.frequencyPenalty(this.frequencyPenalty)
+				.maxTokens(this.maxTokens)
+				.presencePenalty(this.presencePenalty)
+				.stopSequences(this.stopSequences)
+				.temperature(this.temperature)
+				.topK(this.topK)
+				.topP(this.topP)
+				// ToolCallingChatOptions
+				.toolCallbacks(this.getToolCallbacks())
+				.toolContext(this.getToolContext())
+				// Bedrock Specific
+				.requestParameters(this.requestParameters)
+				.cacheOptions(this.cacheOptions)
+				.outputSchema(this.outputSchema);
 	}
 
 	@Override
@@ -238,8 +237,7 @@ public class BedrockChatOptions implements ToolCallingChatOptions, StructuredOut
 				if (that.requestParameters != null) {
 					if (this.requestParameters == null) {
 						this.requestParameters = new HashMap<>(that.requestParameters);
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.requestParameters);
 						merged.putAll(that.requestParameters);
 						this.requestParameters = merged;

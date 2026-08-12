@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.mongodb.atlas;
 
-import org.jspecify.annotations.NullMarked;

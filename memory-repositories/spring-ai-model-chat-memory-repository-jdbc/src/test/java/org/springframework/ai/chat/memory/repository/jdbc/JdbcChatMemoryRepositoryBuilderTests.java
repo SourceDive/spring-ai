@@ -16,16 +16,14 @@
 
 package org.springframework.ai.chat.memory.repository.jdbc;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,9 +45,9 @@ public class JdbcChatMemoryRepositoryBuilderTests {
 		JdbcChatMemoryRepositoryDialect dialect = mock(JdbcChatMemoryRepositoryDialect.class);
 
 		JdbcChatMemoryRepository repository = JdbcChatMemoryRepository.builder()
-			.dataSource(dataSource)
-			.dialect(dialect)
-			.build();
+				.dataSource(dataSource)
+				.dialect(dialect)
+				.build();
 
 		assertThat(repository).isNotNull();
 	}
@@ -61,10 +59,10 @@ public class JdbcChatMemoryRepositoryBuilderTests {
 		PlatformTransactionManager txManager = mock(PlatformTransactionManager.class);
 
 		JdbcChatMemoryRepository repository = JdbcChatMemoryRepository.builder()
-			.dataSource(dataSource)
-			.dialect(dialect)
-			.transactionManager(txManager)
-			.build();
+				.dataSource(dataSource)
+				.dialect(dialect)
+				.transactionManager(txManager)
+				.build();
 
 		assertThat(repository).isNotNull();
 	}
@@ -186,8 +184,8 @@ public class JdbcChatMemoryRepositoryBuilderTests {
 	@Test
 	void testBuilderWithNullDataSource() {
 		assertThatThrownBy(() -> JdbcChatMemoryRepository.builder().build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("DataSource must be set (either via dataSource() or jdbcTemplate())");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("DataSource must be set (either via dataSource() or jdbcTemplate())");
 	}
 
 	@Test
@@ -197,9 +195,9 @@ public class JdbcChatMemoryRepositoryBuilderTests {
 
 		// Should work because dialect is explicitly set
 		JdbcChatMemoryRepository repository = JdbcChatMemoryRepository.builder()
-			.dataSource(dataSource)
-			.dialect(dialect)
-			.build();
+				.dataSource(dataSource)
+				.dialect(dialect)
+				.build();
 
 		assertThat(repository).isNotNull();
 	}
@@ -207,8 +205,8 @@ public class JdbcChatMemoryRepositoryBuilderTests {
 	@Test
 	void testBuilderWithNullDataSourceAndDialect() {
 		assertThatThrownBy(() -> JdbcChatMemoryRepository.builder().build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("DataSource must be set (either via dataSource() or jdbcTemplate())");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("DataSource must be set (either via dataSource() or jdbcTemplate())");
 	}
 
 	/**
@@ -235,9 +233,9 @@ public class JdbcChatMemoryRepositoryBuilderTests {
 		// Test with explicit dialect - should use MySQL dialect even though PostgreSQL is
 		// detected
 		JdbcChatMemoryRepository repository = JdbcChatMemoryRepository.builder()
-			.dataSource(dataSource)
-			.dialect(mysqlDialect)
-			.build();
+				.dataSource(dataSource)
+				.dialect(mysqlDialect)
+				.build();
 
 		assertThat(repository).isNotNull();
 		// Verify warning was logged (would need to use a logging framework test utility

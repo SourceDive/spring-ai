@@ -16,14 +16,13 @@
 
 package org.springframework.ai.embedding;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.Model;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * EmbeddingModel is a generic interface for embedding models.
@@ -43,6 +42,7 @@ public interface EmbeddingModel extends Model<EmbeddingRequest, EmbeddingRespons
 
 	/**
 	 * Embeds the given text into a vector.
+	 *
 	 * @param text the text to embed.
 	 * @return the embedded vector.
 	 */
@@ -54,6 +54,7 @@ public interface EmbeddingModel extends Model<EmbeddingRequest, EmbeddingRespons
 
 	/**
 	 * Embeds the given document's content into a vector.
+	 *
 	 * @param document the document to embed.
 	 * @return the embedded vector.
 	 */
@@ -67,6 +68,7 @@ public interface EmbeddingModel extends Model<EmbeddingRequest, EmbeddingRespons
 	 * {@link Document#getFormattedContent(org.springframework.ai.document.MetadataMode)}
 	 * with the appropriate metadata mode, so that metadata is included in the text sent
 	 * to the embedding API.
+	 *
 	 * @param document the document to extract embedding content from.
 	 * @return the text content to embed.
 	 */
@@ -77,30 +79,32 @@ public interface EmbeddingModel extends Model<EmbeddingRequest, EmbeddingRespons
 
 	/**
 	 * Embeds a batch of texts into vectors.
+	 *
 	 * @param texts list of texts to embed.
 	 * @return list of embedded vectors.
 	 */
 	default List<float[]> embed(List<String> texts) {
 		Assert.notNull(texts, "Texts must not be null");
 		return this.call(new EmbeddingRequest(texts, EmbeddingOptions.builder().build()))
-			.getResults()
-			.stream()
-			.map(Embedding::getOutput)
-			.toList();
+				.getResults()
+				.stream()
+				.map(Embedding::getOutput)
+				.toList();
 	}
 
 	/**
 	 * Embeds a batch of {@link Document}s into vectors based on a
 	 * {@link BatchingStrategy}.
-	 * @param documents list of {@link Document}s.
-	 * @param options {@link EmbeddingOptions}.
+	 *
+	 * @param documents        list of {@link Document}s.
+	 * @param options          {@link EmbeddingOptions}.
 	 * @param batchingStrategy {@link BatchingStrategy}.
 	 * @return a list of float[] that represents the vectors for the incoming
 	 * {@link Document}s. The returned list is expected to be in the same order of the
 	 * {@link Document} list.
 	 */
 	default List<float[]> embed(List<Document> documents, @Nullable EmbeddingOptions options,
-			BatchingStrategy batchingStrategy) {
+	                            BatchingStrategy batchingStrategy) {
 		Assert.notNull(documents, "Documents must not be null");
 		List<float[]> embeddings = new ArrayList<>(documents.size());
 		List<List<Document>> batch = batchingStrategy.batch(documents);
@@ -119,6 +123,7 @@ public interface EmbeddingModel extends Model<EmbeddingRequest, EmbeddingRespons
 
 	/**
 	 * Embeds a batch of texts into vectors and returns the {@link EmbeddingResponse}.
+	 *
 	 * @param texts list of texts to embed.
 	 * @return the embedding response.
 	 */
@@ -132,6 +137,7 @@ public interface EmbeddingModel extends Model<EmbeddingRequest, EmbeddingRespons
 	 * method will call the remote Embedding endpoint to get the dimensions of the
 	 * embedded vectors. If the dimensions are known ahead of time, it is recommended to
 	 * override this method.
+	 *
 	 * @return the number of dimensions of the embedded vectors.
 	 */
 	default int dimensions() {

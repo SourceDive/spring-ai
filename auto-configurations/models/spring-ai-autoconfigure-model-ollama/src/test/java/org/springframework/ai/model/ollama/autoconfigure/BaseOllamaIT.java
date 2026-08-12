@@ -16,18 +16,10 @@
 
 package org.springframework.ai.model.ollama.autoconfigure;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.ollama.OllamaContainer;
-
 import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -40,6 +32,13 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration;
 import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
 import org.springframework.util.Assert;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.ollama.OllamaContainer;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Testcontainers
 @EnabledIfEnvironmentVariable(named = "OLLAMA_AUTOCONF_TESTS_ENABLED", matches = "true")
@@ -61,7 +60,7 @@ public abstract class BaseOllamaIT {
 	// Environment variable to control whether to create a new container or use existing
 	// Ollama instance
 	private static final boolean SKIP_CONTAINER_CREATION = Boolean
-		.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
+			.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
 
 	private static OllamaContainer ollamaContainer;
 
@@ -71,6 +70,7 @@ public abstract class BaseOllamaIT {
 	 * Initialize the Ollama API with the specified model. When OLLAMA_WITH_REUSE=true
 	 * (default), uses TestContainers withReuse feature. When OLLAMA_WITH_REUSE=false,
 	 * connects to local Ollama instance.
+	 *
 	 * @param model the Ollama model to initialize (must not be null or empty)
 	 * @return configured OllamaApi instance
 	 * @throws IllegalArgumentException if model is null or empty
@@ -90,6 +90,7 @@ public abstract class BaseOllamaIT {
 
 	/**
 	 * Get the initialized OllamaApi instance.
+	 *
 	 * @return the OllamaApi instance
 	 * @throws IllegalStateException if called before initialization
 	 */
@@ -126,9 +127,9 @@ public abstract class BaseOllamaIT {
 
 	private static void ensureModelIsPresent(final OllamaApi ollamaApi, final String model) {
 		final var modelManagementOptions = ModelManagementOptions.builder()
-			.maxRetries(DEFAULT_MAX_RETRIES)
-			.timeout(DEFAULT_TIMEOUT)
-			.build();
+				.maxRetries(DEFAULT_MAX_RETRIES)
+				.timeout(DEFAULT_TIMEOUT)
+				.build();
 		final var ollamaModelManager = new OllamaModelManager(ollamaApi, modelManagementOptions);
 		ollamaModelManager.pullModel(model, PullModelStrategy.WHEN_MISSING);
 	}

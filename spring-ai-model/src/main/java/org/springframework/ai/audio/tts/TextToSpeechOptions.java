@@ -31,6 +31,7 @@ public interface TextToSpeechOptions extends ModelOptions {
 	/**
 	 * Creates a new {@link TextToSpeechOptions.Builder} to create the default
 	 * {@link TextToSpeechOptions}.
+	 *
 	 * @return Returns a new {@link TextToSpeechOptions.Builder}.
 	 */
 	static TextToSpeechOptions.Builder builder() {
@@ -39,27 +40,35 @@ public interface TextToSpeechOptions extends ModelOptions {
 
 	/**
 	 * Returns the model to use for text-to-speech.
+	 *
 	 * @return The model name.
 	 */
-	@Nullable String getModel();
+	@Nullable
+	String getModel();
 
 	/**
 	 * Returns the voice to use for text-to-speech.
+	 *
 	 * @return The voice identifier.
 	 */
-	@Nullable String getVoice();
+	@Nullable
+	String getVoice();
 
 	/**
 	 * Returns the output format for the generated audio.
+	 *
 	 * @return The output format (e.g., "mp3", "wav").
 	 */
-	@Nullable String getFormat();
+	@Nullable
+	String getFormat();
 
 	/**
 	 * Returns the speed of the generated speech.
+	 *
 	 * @return The speech speed.
 	 */
-	@Nullable Double getSpeed();
+	@Nullable
+	Double getSpeed();
 
 	/**
 	 * Builder for {@link TextToSpeechOptions}.
@@ -68,6 +77,7 @@ public interface TextToSpeechOptions extends ModelOptions {
 
 		/**
 		 * Sets the model to use for text-to-speech.
+		 *
 		 * @param model The model name.
 		 * @return This builder.
 		 */
@@ -75,6 +85,7 @@ public interface TextToSpeechOptions extends ModelOptions {
 
 		/**
 		 * Sets the voice to use for text-to-speech.
+		 *
 		 * @param voice The voice identifier.
 		 * @return This builder.
 		 */
@@ -82,6 +93,7 @@ public interface TextToSpeechOptions extends ModelOptions {
 
 		/**
 		 * Sets the output format for the generated audio.
+		 *
 		 * @param format The output format (e.g., "mp3", "wav").
 		 * @return This builder.
 		 */
@@ -89,6 +101,7 @@ public interface TextToSpeechOptions extends ModelOptions {
 
 		/**
 		 * Sets the speed of the generated speech.
+		 *
 		 * @param speed The speech speed.
 		 * @return This builder.
 		 */
@@ -96,6 +109,7 @@ public interface TextToSpeechOptions extends ModelOptions {
 
 		/**
 		 * Builds the {@link TextToSpeechOptions}.
+		 *
 		 * @return The {@link TextToSpeechOptions}.
 		 */
 		TextToSpeechOptions build();

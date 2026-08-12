@@ -16,20 +16,14 @@
 
 package org.springframework.ai.chat.messages;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.content.MediaContent;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
 
 /**
  * A message of the type 'user' passed as input Messages with the user role are from the
@@ -120,8 +114,7 @@ public class UserMessage extends AbstractMessage implements MediaContent {
 		public UserMessage build() {
 			if (StringUtils.hasText(this.textContent) && this.resource != null) {
 				throw new IllegalArgumentException("textContent and resource cannot be set at the same time");
-			}
-			else if (this.resource != null) {
+			} else if (this.resource != null) {
 				this.textContent = MessageUtils.readResource(this.resource);
 			}
 			return new UserMessage(this.textContent, this.media, this.metadata);

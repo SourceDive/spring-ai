@@ -16,22 +16,17 @@
 
 package org.springframework.ai.stabilityai;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.ai.image.*;
+import org.springframework.ai.stabilityai.api.StabilityAiImageOptions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import org.springframework.ai.image.Image;
-import org.springframework.ai.image.ImageGeneration;
-import org.springframework.ai.image.ImageModel;
-import org.springframework.ai.image.ImagePrompt;
-import org.springframework.ai.image.ImageResponse;
-import org.springframework.ai.stabilityai.api.StabilityAiImageOptions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,8 +51,8 @@ public class StabilityAiImageModelIT {
 	void imageAsBase64Test() throws IOException {
 
 		StabilityAiImageOptions imageOptions = StabilityAiImageOptions.builder()
-			.stylePreset(StyleEnum.PHOTOGRAPHIC)
-			.build();
+				.stylePreset(StyleEnum.PHOTOGRAPHIC)
+				.build();
 
 		var instructions = """
 				A light cream colored mini golden doodle.

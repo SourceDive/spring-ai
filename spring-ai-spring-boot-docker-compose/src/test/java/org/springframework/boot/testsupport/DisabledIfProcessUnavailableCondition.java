@@ -16,21 +16,20 @@
 
 package org.springframework.boot.testsupport;
 
-import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * An {@link ExecutionCondition} that disables execution if specified processes cannot
@@ -52,16 +51,15 @@ class DisabledIfProcessUnavailableCondition implements ExecutionCondition {
 		try {
 			commands.forEach(this::check);
 			return ConditionEvaluationResult.enabled("All processes available");
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			return ConditionEvaluationResult.disabled("Process unavailable", ex.getMessage());
 		}
 	}
 
 	private Stream<String[]> getAnnotationValue(AnnotatedElement testElement) {
 		return MergedAnnotations.from(testElement, SearchStrategy.TYPE_HIERARCHY)
-			.stream(DisabledIfProcessUnavailable.class)
-			.map(annotation -> annotation.getStringArray(MergedAnnotation.VALUE));
+				.stream(DisabledIfProcessUnavailable.class)
+				.map(annotation -> annotation.getStringArray(MergedAnnotation.VALUE));
 	}
 
 	private void check(String[] command) {
@@ -71,8 +69,7 @@ class DisabledIfProcessUnavailableCondition implements ExecutionCondition {
 			Assert.isTrue(process.waitFor(30, TimeUnit.SECONDS), "Process did not exit within 30 seconds");
 			Assert.state(process.exitValue() == 0, () -> "Process exited with %d".formatted(process.exitValue()));
 			process.destroy();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			String path = processBuilder.environment().get("PATH");
 			if (MAC_OS && path != null && !path.contains(USR_LOCAL_BIN)
 					&& !command[0].startsWith(USR_LOCAL_BIN + "/")) {

@@ -16,14 +16,13 @@
 
 package org.springframework.ai.tool.toolsearch;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
+
+import java.util.List;
+import java.util.Objects;
 
 public class ToolSearchTool {
 
@@ -31,7 +30,8 @@ public class ToolSearchTool {
 
 	private final ToolIndex toolIndex;
 
-	@Nullable private final Integer advisorMaxResults;
+	@Nullable
+	private final Integer advisorMaxResults;
 
 	public ToolSearchTool(ToolIndex toolIndex, @Nullable Integer advisorMaxResults) {
 		this.toolIndex = toolIndex;
@@ -52,14 +52,14 @@ public class ToolSearchTool {
 		ToolContext toolContext) { // @formatter:on
 
 		String sessionId = Objects.requireNonNull(toolContext.getContext().get(TOOL_SEARCH_TOOL_SESSION_ID_KEY))
-			.toString();
+				.toString();
 
 		// Advisor-configured maxResults is the fallback when the LLM does not provide
 		// one.
 		maxResults = (maxResults != null) ? maxResults : this.advisorMaxResults;
 
 		ToolSearchResponse toolSearchResponse = this.toolIndex
-			.search(new ToolSearchRequest(sessionId, query, maxResults, categoryFilter));
+				.search(new ToolSearchRequest(sessionId, query, maxResults, categoryFilter));
 
 		return toolSearchResponse.toolReferences().stream().map(tr -> tr.toolName()).toList();
 	}

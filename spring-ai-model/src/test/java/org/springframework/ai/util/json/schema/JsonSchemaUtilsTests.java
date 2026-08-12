@@ -16,22 +16,16 @@
 
 package org.springframework.ai.util.json.schema;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.util.JsonHelper;
 import tools.jackson.databind.node.ObjectNode;
 
-import org.springframework.ai.util.JsonHelper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -198,15 +192,14 @@ class JsonSchemaUtilsTests {
 				schemas.add(future.get(30, TimeUnit.SECONDS));
 			}
 			return schemas;
-		}
-		finally {
+		} finally {
 			executor.shutdownNow();
 		}
 	}
 
-	@JsonPropertyOrder({ "accountId", "accountName", "currency", "totals" })
+	@JsonPropertyOrder({"accountId", "accountName", "currency", "totals"})
 	record OrderedStatement(@JsonProperty(required = true) String accountId,
-			@JsonProperty(required = true) String accountName, String currency, Map<String, Double> totals) {
+	                        @JsonProperty(required = true) String accountName, String currency, Map<String, Double> totals) {
 
 	}
 

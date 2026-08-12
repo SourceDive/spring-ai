@@ -16,31 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import io.modelcontextprotocol.spec.McpSchema;
-
-import org.springframework.ai.mcp.annotation.McpElicitation;
-import org.springframework.ai.mcp.annotation.McpLogging;
-import org.springframework.ai.mcp.annotation.McpProgress;
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
-import org.springframework.ai.mcp.annotation.McpSampling;
-import org.springframework.ai.mcp.annotation.McpToolListChanged;
+import org.springframework.ai.mcp.annotation.*;
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Base class for sync and async ClientMcpHandlerRegistries. Not intended for public use.
@@ -58,9 +45,9 @@ abstract class AbstractClientMcpHandlerRegistry implements BeanFactoryPostProces
 
 	protected final Set<String> allAnnotatedBeans = new HashSet<>();
 
-	static final Class<? extends Annotation>[] CLIENT_MCP_ANNOTATIONS = new Class[] { McpSampling.class,
+	static final Class<? extends Annotation>[] CLIENT_MCP_ANNOTATIONS = new Class[]{McpSampling.class,
 			McpElicitation.class, McpLogging.class, McpProgress.class, McpToolListChanged.class,
-			McpPromptListChanged.class, McpResourceListChanged.class };
+			McpPromptListChanged.class, McpResourceListChanged.class};
 
 	static final McpSchema.ClientCapabilities EMPTY_CAPABILITIES = new McpSchema.ClientCapabilities(null, null, null,
 			null);
@@ -91,8 +78,7 @@ abstract class AbstractClientMcpHandlerRegistry implements BeanFactoryPostProces
 					for (var client : sampling.clients()) {
 						samplingClientToAnnotatedBeans.computeIfAbsent(client, c -> new ArrayList<>()).add(beanName);
 					}
-				}
-				else if (foundAnnotation instanceof McpElicitation elicitation) {
+				} else if (foundAnnotation instanceof McpElicitation elicitation) {
 					for (var client : elicitation.clients()) {
 						elicitationClientToAnnotatedBeans.computeIfAbsent(client, c -> new ArrayList<>()).add(beanName);
 					}
@@ -104,14 +90,14 @@ abstract class AbstractClientMcpHandlerRegistry implements BeanFactoryPostProces
 			if (elicitationEntry.getValue().size() > 1) {
 				throw new IllegalArgumentException(
 						"Found 2 elicitation handlers for client [%s], found in bean with names %s. Only one @McpElicitation handler is allowed per client"
-							.formatted(elicitationEntry.getKey(), new LinkedHashSet<>(elicitationEntry.getValue())));
+								.formatted(elicitationEntry.getKey(), new LinkedHashSet<>(elicitationEntry.getValue())));
 			}
 		}
 		for (var samplingEntry : samplingClientToAnnotatedBeans.entrySet()) {
 			if (samplingEntry.getValue().size() > 1) {
 				throw new IllegalArgumentException(
 						"Found 2 sampling handlers for client [%s], found in bean with names %s. Only one @McpSampling handler is allowed per client"
-							.formatted(samplingEntry.getKey(), new LinkedHashSet<>(samplingEntry.getValue())));
+								.formatted(samplingEntry.getKey(), new LinkedHashSet<>(samplingEntry.getValue())));
 			}
 		}
 
@@ -121,12 +107,12 @@ abstract class AbstractClientMcpHandlerRegistry implements BeanFactoryPostProces
 		}
 		for (var elicitationClient : elicitationClientToAnnotatedBeans.keySet()) {
 			capsPerClient.computeIfAbsent(elicitationClient, ignored -> McpSchema.ClientCapabilities.builder())
-				.elicitation();
+					.elicitation();
 		}
 
 		this.capabilitiesPerClient = capsPerClient.entrySet()
-			.stream()
-			.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
+				.stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().build()));
 	}
 
 	protected List<Annotation> scan(Class<?> beanClass) {

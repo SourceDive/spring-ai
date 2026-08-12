@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chat.metadata;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.model.ResultMetadata;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.model.ResultMetadata;
 
 /**
  *
@@ -38,9 +37,11 @@ public interface ChatGenerationMetadata extends ResultMetadata {
 
 	/**
 	 * Get the {@link String reason} this choice completed for the generation.
+	 *
 	 * @return the {@link String reason} this choice completed for the generation.
 	 */
-	@Nullable String getFinishReason();
+	@Nullable
+	String getFinishReason();
 
 	Set<String> getContentFilters();
 

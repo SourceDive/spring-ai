@@ -25,7 +25,7 @@ public final class OpenAiAutoConfigurationUtil {
 	}
 
 	public static ResolvedConnectionProperties resolveCommonProperties(AbstractOpenAiProperties commonProperties,
-			AbstractOpenAiProperties modelProperties) {
+	                                                                   AbstractOpenAiProperties modelProperties) {
 
 		var resolved = new ResolvedConnectionProperties();
 
@@ -68,7 +68,7 @@ public final class OpenAiAutoConfigurationUtil {
 				? modelProperties.getMaxRetries() : commonProperties.getMaxRetries());
 
 		resolved
-			.setProxy(modelProperties.getProxy() != null ? modelProperties.getProxy() : commonProperties.getProxy());
+				.setProxy(modelProperties.getProxy() != null ? modelProperties.getProxy() : commonProperties.getProxy());
 
 		resolved.setCustomHeaders(!modelProperties.getCustomHeaders().isEmpty() ? modelProperties.getCustomHeaders()
 				: commonProperties.getCustomHeaders());

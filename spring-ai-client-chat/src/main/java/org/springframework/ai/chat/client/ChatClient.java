@@ -16,17 +16,8 @@
 
 package org.springframework.ai.chat.client;
 
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.client.advisor.observation.AdvisorObservationConvention;
@@ -45,6 +36,14 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
+import reactor.core.publisher.Flux;
+
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Client to perform stateless requests to an AI Model, using a fluent API.
@@ -69,12 +68,12 @@ public interface ChatClient {
 	}
 
 	static ChatClient create(ChatModel chatModel, ObservationRegistry observationRegistry,
-			@Nullable ChatClientObservationConvention chatClientObservationConvention,
-			@Nullable AdvisorObservationConvention advisorObservationConvention) {
+	                         @Nullable ChatClientObservationConvention chatClientObservationConvention,
+	                         @Nullable AdvisorObservationConvention advisorObservationConvention) {
 		Assert.notNull(chatModel, "chatModel cannot be null");
 		Assert.notNull(observationRegistry, "observationRegistry cannot be null");
 		return builder(chatModel, observationRegistry, chatClientObservationConvention, advisorObservationConvention)
-			.build();
+				.build();
 	}
 
 	static Builder builder(ChatModel chatModel) {
@@ -82,8 +81,8 @@ public interface ChatClient {
 	}
 
 	static Builder builder(ChatModel chatModel, ObservationRegistry observationRegistry,
-			@Nullable ChatClientObservationConvention chatClientObservationConvention,
-			@Nullable AdvisorObservationConvention advisorObservationConvention) {
+	                       @Nullable ChatClientObservationConvention chatClientObservationConvention,
+	                       @Nullable AdvisorObservationConvention advisorObservationConvention) {
 		return builder(chatModel, observationRegistry, chatClientObservationConvention, advisorObservationConvention,
 				null);
 	}
@@ -101,23 +100,24 @@ public interface ChatClient {
 	 * {@link org.springframework.ai.model.tool.ToolCallingManager}, including any
 	 * {@link io.micrometer.observation.ObservationRegistry}, since the supplied
 	 * {@code observationRegistry} will not be automatically applied to it.
-	 * @param chatModel the chat model to use
-	 * @param observationRegistry the observation registry for client-level observations;
-	 * also used to configure the default {@code ToolCallingManager} when
-	 * {@code toolCallingAdvisorBuilder} is {@code null}
+	 *
+	 * @param chatModel                       the chat model to use
+	 * @param observationRegistry             the observation registry for client-level observations;
+	 *                                        also used to configure the default {@code ToolCallingManager} when
+	 *                                        {@code toolCallingAdvisorBuilder} is {@code null}
 	 * @param chatClientObservationConvention optional custom observation convention for
-	 * the chat client
-	 * @param advisorObservationConvention optional custom observation convention for
-	 * advisors
-	 * @param toolCallingAdvisorBuilder optional builder for the
-	 * {@link org.springframework.ai.chat.client.advisor.ToolCallingAdvisor}; when
-	 * {@code null} a default is created
+	 *                                        the chat client
+	 * @param advisorObservationConvention    optional custom observation convention for
+	 *                                        advisors
+	 * @param toolCallingAdvisorBuilder       optional builder for the
+	 *                                        {@link org.springframework.ai.chat.client.advisor.ToolCallingAdvisor}; when
+	 *                                        {@code null} a default is created
 	 * @return a new {@link Builder}
 	 */
 	static Builder builder(ChatModel chatModel, ObservationRegistry observationRegistry,
-			@Nullable ChatClientObservationConvention chatClientObservationConvention,
-			@Nullable AdvisorObservationConvention advisorObservationConvention,
-			ToolCallingAdvisor.@Nullable Builder<?> toolCallingAdvisorBuilder) {
+	                       @Nullable ChatClientObservationConvention chatClientObservationConvention,
+	                       @Nullable AdvisorObservationConvention advisorObservationConvention,
+	                       ToolCallingAdvisor.@Nullable Builder<?> toolCallingAdvisorBuilder) {
 		Assert.notNull(chatModel, "chatModel cannot be null");
 		Assert.notNull(observationRegistry, "observationRegistry cannot be null");
 
@@ -238,16 +238,18 @@ public interface ChatClient {
 		/**
 		 * Deserializes the response into a {@code T} instance, with behaviour configured
 		 * via the {@code entityParamSpecConsumer}.
-		 * @param type the target parameterized type
+		 *
+		 * @param type                    the target parameterized type
 		 * @param entityParamSpecConsumer configures options such as
-		 * {@link EntityParamSpec#useProviderStructuredOutput()} and
-		 * {@link EntityParamSpec#validateSchema()}
+		 *                                {@link EntityParamSpec#useProviderStructuredOutput()} and
+		 *                                {@link EntityParamSpec#validateSchema()}
 		 * @return the deserialized entity, or {@code null} if the response is empty
 		 */
 		<T> @Nullable T entity(ParameterizedTypeReference<T> type, Consumer<EntityParamSpec> entityParamSpecConsumer);
 
 		/**
 		 * Deserializes the response into a {@code T} instance.
+		 *
 		 * @param type the target parameterized type
 		 * @return the deserialized entity, or {@code null} if the response is empty
 		 */
@@ -256,20 +258,22 @@ public interface ChatClient {
 		/**
 		 * Deserializes the response using the given converter, with behaviour configured
 		 * via the {@code entityParamSpecConsumer}.
+		 *
 		 * @param structuredOutputConverter the converter for parsing and schema
-		 * resolution
-		 * @param entityParamSpecConsumer configures options such as
-		 * {@link EntityParamSpec#useProviderStructuredOutput()} and
-		 * {@link EntityParamSpec#validateSchema()}
+		 *                                  resolution
+		 * @param entityParamSpecConsumer   configures options such as
+		 *                                  {@link EntityParamSpec#useProviderStructuredOutput()} and
+		 *                                  {@link EntityParamSpec#validateSchema()}
 		 * @return the deserialized entity, or {@code null} if the response is empty
 		 */
 		<T> @Nullable T entity(StructuredOutputConverter<T> structuredOutputConverter,
-				Consumer<EntityParamSpec> entityParamSpecConsumer);
+		                       Consumer<EntityParamSpec> entityParamSpecConsumer);
 
 		/**
 		 * Deserializes the response using the given converter.
+		 *
 		 * @param structuredOutputConverter the converter for parsing and schema
-		 * resolution
+		 *                                  resolution
 		 * @return the deserialized entity, or {@code null} if the response is empty
 		 */
 		<T> @Nullable T entity(StructuredOutputConverter<T> structuredOutputConverter);
@@ -277,16 +281,18 @@ public interface ChatClient {
 		/**
 		 * Deserializes the response into a {@code T} instance, with behaviour configured
 		 * via the {@code entityParamSpecConsumer}.
-		 * @param type the target class
+		 *
+		 * @param type                    the target class
 		 * @param entityParamSpecConsumer configures options such as
-		 * {@link EntityParamSpec#useProviderStructuredOutput()} and
-		 * {@link EntityParamSpec#validateSchema()}
+		 *                                {@link EntityParamSpec#useProviderStructuredOutput()} and
+		 *                                {@link EntityParamSpec#validateSchema()}
 		 * @return the deserialized entity, or {@code null} if the response is empty
 		 */
 		<T> @Nullable T entity(Class<T> type, Consumer<EntityParamSpec> entityParamSpecConsumer);
 
 		/**
 		 * Deserializes the response into a {@code T} instance.
+		 *
 		 * @param type the target class
 		 * @return the deserialized entity, or {@code null} if the response is empty
 		 */
@@ -294,27 +300,31 @@ public interface ChatClient {
 
 		ChatClientResponse chatClientResponse();
 
-		@Nullable ChatResponse chatResponse();
+		@Nullable
+		ChatResponse chatResponse();
 
-		@Nullable String content();
+		@Nullable
+		String content();
 
 		/**
 		 * Returns a {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and a specific entity type, with behaviour
 		 * configured via the {@code entityParamSpecConsumer}.
-		 * @param type the target class
+		 *
+		 * @param type                    the target class
 		 * @param entityParamSpecConsumer configures options such as
-		 * {@link EntityParamSpec#useProviderStructuredOutput()} and
-		 * {@link EntityParamSpec#validateSchema()}
+		 *                                {@link EntityParamSpec#useProviderStructuredOutput()} and
+		 *                                {@link EntityParamSpec#validateSchema()}
 		 * @return the {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and the deserialized entity
 		 */
 		<T> ResponseEntity<ChatResponse, T> responseEntity(Class<T> type,
-				Consumer<EntityParamSpec> entityParamSpecConsumer);
+		                                                   Consumer<EntityParamSpec> entityParamSpecConsumer);
 
 		/**
 		 * Returns a {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and a specific entity type.
+		 *
 		 * @param type the target class
 		 * @return the {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and the deserialized entity
@@ -325,19 +335,21 @@ public interface ChatClient {
 		 * Returns a {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and a specific entity type, with behaviour
 		 * configured via the {@code entityParamSpecConsumer}.
-		 * @param type the target parameterized type
+		 *
+		 * @param type                    the target parameterized type
 		 * @param entityParamSpecConsumer configures options such as
-		 * {@link EntityParamSpec#useProviderStructuredOutput()} and
-		 * {@link EntityParamSpec#validateSchema()}
+		 *                                {@link EntityParamSpec#useProviderStructuredOutput()} and
+		 *                                {@link EntityParamSpec#validateSchema()}
 		 * @return the {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and the deserialized entity
 		 */
 		<T> ResponseEntity<ChatResponse, T> responseEntity(ParameterizedTypeReference<T> type,
-				Consumer<EntityParamSpec> entityParamSpecConsumer);
+		                                                   Consumer<EntityParamSpec> entityParamSpecConsumer);
 
 		/**
 		 * Returns a {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and a {@link Collection} of entity types.
+		 *
 		 * @param type the target parameterized type
 		 * @return the {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and the deserialized entities
@@ -349,23 +361,25 @@ public interface ChatClient {
 		 * {@link ChatResponse} object and an entity converted using a specified
 		 * {@link StructuredOutputConverter}, with behaviour configured via the
 		 * {@code entityParamSpecConsumer}.
+		 *
 		 * @param structuredOutputConverter the converter for parsing and schema
-		 * resolution
-		 * @param entityParamSpecConsumer configures options such as
-		 * {@link EntityParamSpec#useProviderStructuredOutput()} and
-		 * {@link EntityParamSpec#validateSchema()}
+		 *                                  resolution
+		 * @param entityParamSpecConsumer   configures options such as
+		 *                                  {@link EntityParamSpec#useProviderStructuredOutput()} and
+		 *                                  {@link EntityParamSpec#validateSchema()}
 		 * @return the {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and the deserialized entity
 		 */
 		<T> ResponseEntity<ChatResponse, T> responseEntity(StructuredOutputConverter<T> structuredOutputConverter,
-				Consumer<EntityParamSpec> entityParamSpecConsumer);
+		                                                   Consumer<EntityParamSpec> entityParamSpecConsumer);
 
 		/**
 		 * Returns a {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and an entity converted using a specified
 		 * {@link StructuredOutputConverter}.
+		 *
 		 * @param structuredOutputConverter the converter for parsing and schema
-		 * resolution
+		 *                                  resolution
 		 * @return the {@link ResponseEntity} containing both the complete
 		 * {@link ChatResponse} object and the deserialized entity
 		 */
@@ -437,12 +451,13 @@ public interface ChatClient {
 		 * Tools registered here are available only for this specific request. Use
 		 * {@link Builder#defaultTools(Object...)} to register tools that apply to every
 		 * request built from the same {@link Builder}.
+		 *
 		 * @param tools tool objects to register; must not be {@code null} and must not
-		 * contain {@code null} elements
+		 *              contain {@code null} elements
 		 * @return this spec for chaining
 		 * @throws IllegalArgumentException if {@code tools} is {@code null}, contains
-		 * {@code null} elements, or if a POJO argument has no
-		 * {@link org.springframework.ai.tool.annotation.Tool}-annotated methods
+		 *                                  {@code null} elements, or if a POJO argument has no
+		 *                                  {@link org.springframework.ai.tool.annotation.Tool}-annotated methods
 		 */
 		ChatClientRequestSpec tools(Object... tools);
 
@@ -554,12 +569,13 @@ public interface ChatClient {
 		 * <p>
 		 * WARNING: Because default tools are shared, be careful not to register tools
 		 * that should only be available in specific contexts.
+		 *
 		 * @param tools tool objects to register; must not be {@code null} and must not
-		 * contain {@code null} elements
+		 *              contain {@code null} elements
 		 * @return this builder for chaining
 		 * @throws IllegalArgumentException if {@code tools} is {@code null}, contains
-		 * {@code null} elements, or if a POJO argument has no
-		 * {@link org.springframework.ai.tool.annotation.Tool}-annotated methods
+		 *                                  {@code null} elements, or if a POJO argument has no
+		 *                                  {@link org.springframework.ai.tool.annotation.Tool}-annotated methods
 		 */
 		Builder defaultTools(Object... tools);
 

@@ -16,12 +16,11 @@
 
 package org.springframework.ai.tool.resolution;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * A {@link ToolCallbackResolver} that delegates to a list of {@link ToolCallbackResolver}

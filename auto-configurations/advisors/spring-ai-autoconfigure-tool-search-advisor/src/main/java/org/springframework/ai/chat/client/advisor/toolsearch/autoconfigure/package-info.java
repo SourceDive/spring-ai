@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chat.client.advisor.toolsearch.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

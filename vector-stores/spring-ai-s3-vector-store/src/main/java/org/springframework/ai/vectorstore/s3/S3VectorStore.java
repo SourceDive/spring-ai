@@ -16,23 +16,7 @@
 
 package org.springframework.ai.vectorstore.s3;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.jspecify.annotations.Nullable;
-import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
-import software.amazon.awssdk.services.s3vectors.model.DeleteVectorsRequest;
-import software.amazon.awssdk.services.s3vectors.model.PutInputVector;
-import software.amazon.awssdk.services.s3vectors.model.PutVectorsRequest;
-import software.amazon.awssdk.services.s3vectors.model.QueryOutputVector;
-import software.amazon.awssdk.services.s3vectors.model.QueryVectorsRequest;
-import software.amazon.awssdk.services.s3vectors.model.QueryVectorsResponse;
-import software.amazon.awssdk.services.s3vectors.model.VectorData;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingOptions;
@@ -44,6 +28,10 @@ import org.springframework.ai.vectorstore.observation.AbstractObservationVectorS
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
+import software.amazon.awssdk.services.s3vectors.model.*;
+
+import java.util.*;
 
 /**
  * @author Matej Nedic
@@ -61,6 +49,7 @@ public class S3VectorStore extends AbstractObservationVectorStore implements Ini
 	/**
 	 * Creates a new S3VectorStore instance with the specified builder settings.
 	 * Initializes observation-related components and the embedding model.
+	 *
 	 * @param builder the builder containing configuration settings
 	 */
 	protected S3VectorStore(Builder builder) {
@@ -89,10 +78,10 @@ public class S3VectorStore extends AbstractObservationVectorStore implements Ini
 			float[] embs = embedding.get(documents.indexOf(document));
 			VectorData vectorData = constructVectorData(embs);
 			vectors.add(PutInputVector.builder()
-				.data(vectorData)
-				.key(document.getId())
-				.metadata(constructMetadata(document.getMetadata()))
-				.build());
+					.data(vectorData)
+					.key(document.getId())
+					.metadata(constructMetadata(document.getMetadata()))
+					.build());
 		}
 		requestBuilder.vectors(vectors);
 		this.s3VectorsClient.putVectors(requestBuilder.build());
@@ -101,10 +90,10 @@ public class S3VectorStore extends AbstractObservationVectorStore implements Ini
 	@Override
 	public void doDelete(List<String> idList) {
 		this.s3VectorsClient.deleteVectors(DeleteVectorsRequest.builder()
-			.keys(idList)
-			.indexName(this.indexName)
-			.vectorBucketName(this.vectorBucketName)
-			.build());
+				.keys(idList)
+				.indexName(this.indexName)
+				.vectorBucketName(this.vectorBucketName)
+				.build());
 	}
 
 	@Override
@@ -112,23 +101,23 @@ public class S3VectorStore extends AbstractObservationVectorStore implements Ini
 		Assert.notNull(filterExpression, "Filter expression mus not be null");
 
 		software.amazon.awssdk.core.document.Document filterDoc = this.filterExpressionConverter
-			.convertExpression(filterExpression);
+				.convertExpression(filterExpression);
 		QueryVectorsRequest request = QueryVectorsRequest.builder()
-			.filter(filterDoc)
-			.vectorBucketName(this.vectorBucketName)
-			.indexName(this.indexName)
-			.build();
+				.filter(filterDoc)
+				.vectorBucketName(this.vectorBucketName)
+				.indexName(this.indexName)
+				.build();
 		List<String> keys = this.s3VectorsClient.queryVectors(request)
-			.vectors()
-			.stream()
-			.map(QueryOutputVector::key)
-			.toList();
+				.vectors()
+				.stream()
+				.map(QueryOutputVector::key)
+				.toList();
 
 		this.s3VectorsClient.deleteVectors(DeleteVectorsRequest.builder()
-			.vectorBucketName(this.vectorBucketName)
-			.keys(keys)
-			.indexName(this.indexName)
-			.build());
+				.vectorBucketName(this.vectorBucketName)
+				.keys(keys)
+				.indexName(this.indexName)
+				.build());
 	}
 
 	@Override
@@ -136,16 +125,16 @@ public class S3VectorStore extends AbstractObservationVectorStore implements Ini
 		Assert.notNull(searchRequest, "The search request must not be null.");
 
 		QueryVectorsRequest.Builder requestBuilder = QueryVectorsRequest.builder()
-			.indexName(this.indexName)
-			.vectorBucketName(this.vectorBucketName)
-			.topK(searchRequest.getTopK())
-			.returnMetadata(true)
-			.returnDistance(true);
+				.indexName(this.indexName)
+				.vectorBucketName(this.vectorBucketName)
+				.topK(searchRequest.getTopK())
+				.returnMetadata(true)
+				.returnDistance(true);
 
 		if (searchRequest.hasFilterExpression()) {
 			Filter.Expression filterExpression = Objects.requireNonNull(searchRequest.getFilterExpression());
 			software.amazon.awssdk.core.document.Document filter = this.filterExpressionConverter
-				.convertExpression(filterExpression);
+					.convertExpression(filterExpression);
 			requestBuilder.filter(filter);
 		}
 
@@ -186,8 +175,8 @@ public class S3VectorStore extends AbstractObservationVectorStore implements Ini
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.S3_VECTOR.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions());
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions());
 	}
 
 	@Override

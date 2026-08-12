@@ -16,30 +16,23 @@
 
 package org.springframework.ai.mcp.annotation.method.prompt;
 
+import io.modelcontextprotocol.common.McpTransportContext;
+import io.modelcontextprotocol.server.McpAsyncServerExchange;
+import io.modelcontextprotocol.server.McpSyncServerExchange;
+import io.modelcontextprotocol.spec.McpError;
+import io.modelcontextprotocol.spec.McpSchema.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpArg;
+import org.springframework.ai.mcp.annotation.McpMeta;
+import org.springframework.ai.mcp.annotation.McpPrompt;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import io.modelcontextprotocol.common.McpTransportContext;
-import io.modelcontextprotocol.server.McpAsyncServerExchange;
-import io.modelcontextprotocol.server.McpSyncServerExchange;
-import io.modelcontextprotocol.spec.McpError;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
-import io.modelcontextprotocol.spec.McpSchema.Prompt;
-import io.modelcontextprotocol.spec.McpSchema.PromptArgument;
-import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import org.springframework.ai.mcp.annotation.McpArg;
-import org.springframework.ai.mcp.annotation.McpMeta;
-import org.springframework.ai.mcp.annotation.McpPrompt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,11 +58,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("greeting", "A simple greeting prompt");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -97,11 +90,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("context-greeting", "A greeting prompt with context");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -128,11 +121,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("arguments-greeting", "A greeting prompt with arguments");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -159,11 +152,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("individual-args", "A prompt with individual arguments");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -192,11 +185,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mixed-args", "A prompt with mixed argument types");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -213,7 +206,7 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 			PromptMessage message = result.messages().get(0);
 			assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 			assertThat(((TextContent) message.content()).text())
-				.isEqualTo("Hello John, you are 30 years old (with context)");
+					.isEqualTo("Hello John, you are 30 years old (with context)");
 		}).verifyComplete();
 	}
 
@@ -225,11 +218,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("list-messages", "A prompt returning a list of messages");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -259,11 +252,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("string-prompt", "A prompt returning a string");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -289,11 +282,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("single-message", "A prompt returning a single message");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -320,11 +313,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("string-list", "A prompt returning a list of strings");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -360,11 +353,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mono-prompt", "A prompt returning a Mono");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -391,11 +384,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mono-string", "A prompt returning a Mono<String>");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -421,11 +414,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mono-message", "A prompt returning a Mono<PromptMessage>");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -451,11 +444,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mono-message-list", "A prompt returning a Mono<List<PromptMessage>>");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -484,11 +477,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mono-string-list", "A prompt returning a Mono<List<String>>");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -520,11 +513,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("invalid", "Invalid return type");
 
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return either GetPromptResult, List<PromptMessage>");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must return either GetPromptResult, List<PromptMessage>");
 	}
 
 	@Test
@@ -536,11 +529,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("invalid", "Invalid parameters");
 
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one exchange parameter");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one exchange parameter");
 	}
 
 	@Test
@@ -552,11 +545,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("invalid", "Invalid parameters");
 
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one GetPromptRequest parameter");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one GetPromptRequest parameter");
 	}
 
 	@Test
@@ -567,11 +560,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("invalid", "Invalid parameters");
 
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one Map parameter");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one Map parameter");
 	}
 
 	@Test
@@ -582,11 +575,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mono-prompt", "A prompt returning a Mono");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 
@@ -601,11 +594,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("async-stateless-meta-prompt", "A prompt with meta parameter");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -624,7 +617,7 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 			PromptMessage message = result.messages().get(0);
 			assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 			assertThat(((TextContent) message.content()).text())
-				.contains("Hello John, Meta: {userId=user123, sessionId=session456}");
+					.contains("Hello John, Meta: {userId=user123, sessionId=session456}");
 		}).verifyComplete();
 	}
 
@@ -636,11 +629,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("async-stateless-meta-prompt", "A prompt with meta parameter");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -670,11 +663,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("async-stateless-mixed-with-meta", "A prompt with mixed args and meta");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -693,7 +686,7 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 			PromptMessage message = result.messages().get(0);
 			assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 			assertThat(((TextContent) message.content()).text())
-				.isEqualTo("Hello John from async-stateless-mixed-with-meta, Meta: {userId=user123}");
+					.isEqualTo("Hello John from async-stateless-mixed-with-meta, Meta: {userId=user123}");
 		}).verifyComplete();
 	}
 
@@ -705,11 +698,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("invalid", "Invalid parameters");
 
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one McpMeta parameter");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one McpMeta parameter");
 	}
 
 	@Test
@@ -720,11 +713,11 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("failing-prompt", "A prompt that throws an exception");
 
 		BiFunction<McpTransportContext, GetPromptRequest, Mono<GetPromptResult>> callback = AsyncStatelessMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpTransportContext context = mock(McpTransportContext.class);
 		Map<String, Object> args = new HashMap<>();
@@ -735,9 +728,9 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 
 		// The new error handling should throw McpError instead of custom exceptions
 		StepVerifier.create(resultMono)
-			.expectErrorMatches(throwable -> throwable instanceof McpError
-					&& throwable.getMessage().contains("Error invoking prompt method"))
-			.verify();
+				.expectErrorMatches(throwable -> throwable instanceof McpError
+						&& throwable.getMessage().contains("Error invoking prompt method"))
+				.verify();
 	}
 
 	@Test
@@ -750,13 +743,13 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 
 		// Should fail during callback creation due to parameter validation
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Stateless Streamable-Http prompt method must not declare parameter of type")
-			.hasMessageContaining("McpSyncServerExchange")
-			.hasMessageContaining("Use McpTransportContext instead");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Stateless Streamable-Http prompt method must not declare parameter of type")
+				.hasMessageContaining("McpSyncServerExchange")
+				.hasMessageContaining("Use McpTransportContext instead");
 	}
 
 	@Test
@@ -769,13 +762,13 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 
 		// Should fail during callback creation due to parameter validation
 		assertThatThrownBy(() -> AsyncStatelessMcpPromptMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Stateless Streamable-Http prompt method must not declare parameter of type")
-			.hasMessageContaining("McpAsyncServerExchange")
-			.hasMessageContaining("Use McpTransportContext instead");
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Stateless Streamable-Http prompt method must not declare parameter of type")
+				.hasMessageContaining("McpAsyncServerExchange")
+				.hasMessageContaining("Use McpTransportContext instead");
 	}
 
 	private static class TestPromptProvider {
@@ -789,7 +782,7 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		@McpPrompt(name = "context-greeting", description = "A greeting prompt with context")
 		public GetPromptResult getPromptWithContext(McpTransportContext context, GetPromptRequest request) {
 			return new GetPromptResult("Greeting with context", List
-				.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello with context from " + request.name()))));
+					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello with context from " + request.name()))));
 		}
 
 		@McpPrompt(name = "arguments-greeting", description = "A greeting prompt with arguments")
@@ -809,8 +802,8 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 
 		@McpPrompt(name = "mixed-args", description = "A prompt with mixed argument types")
 		public GetPromptResult getPromptWithMixedArgs(McpTransportContext context,
-				@McpArg(name = "name", description = "The user's name", required = true) String name,
-				@McpArg(name = "age", description = "The user's age", required = true) Integer age) {
+		                                              @McpArg(name = "name", description = "The user's name", required = true) String name,
+		                                              @McpArg(name = "age", description = "The user's age", required = true) Integer age) {
 			return new GetPromptResult("Mixed arguments prompt", List.of(new PromptMessage(Role.ASSISTANT,
 					new TextContent("Hello " + name + ", you are " + age + " years old (with context)"))));
 		}
@@ -840,7 +833,7 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		@McpPrompt(name = "mono-prompt", description = "A prompt returning a Mono")
 		public Mono<GetPromptResult> getMonoPrompt(GetPromptRequest request) {
 			return Mono.just(new GetPromptResult("Mono prompt", List
-				.of(new PromptMessage(Role.ASSISTANT, new TextContent("Async response for " + request.name())))));
+					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Async response for " + request.name())))));
 		}
 
 		@McpPrompt(name = "mono-string", description = "A prompt returning a Mono<String>")
@@ -851,7 +844,7 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 		@McpPrompt(name = "mono-message", description = "A prompt returning a Mono<PromptMessage>")
 		public Mono<PromptMessage> getMonoMessage(GetPromptRequest request) {
 			return Mono
-				.just(new PromptMessage(Role.ASSISTANT, new TextContent("Async single message for " + request.name())));
+					.just(new PromptMessage(Role.ASSISTANT, new TextContent("Async single message for " + request.name())));
 		}
 
 		@McpPrompt(name = "mono-message-list", description = "A prompt returning a Mono<List<PromptMessage>>")
@@ -888,13 +881,13 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 				@McpArg(name = "name", description = "The user's name", required = true) String name, McpMeta meta) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return Mono.just(new GetPromptResult("Async stateless meta prompt", List
-				.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello " + name + ", Meta: " + metaInfo)))));
+					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello " + name + ", Meta: " + metaInfo)))));
 		}
 
 		@McpPrompt(name = "async-stateless-mixed-with-meta", description = "A prompt with mixed args and meta")
 		public Mono<GetPromptResult> getMonoPromptWithMixedAndMeta(McpTransportContext context,
-				@McpArg(name = "name", description = "The user's name", required = true) String name, McpMeta meta,
-				GetPromptRequest request) {
+		                                                           @McpArg(name = "name", description = "The user's name", required = true) String name, McpMeta meta,
+		                                                           GetPromptRequest request) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return Mono.just(new GetPromptResult("Async stateless mixed with meta prompt",
 					List.of(new PromptMessage(Role.ASSISTANT,
@@ -912,12 +905,12 @@ public class AsyncStatelessMcpPromptMethodCallbackTests {
 
 		// Invalid parameter types for stateless methods
 		public Mono<GetPromptResult> invalidSyncExchangeParameter(McpSyncServerExchange exchange,
-				GetPromptRequest request) {
+		                                                          GetPromptRequest request) {
 			return Mono.just(new GetPromptResult("Invalid", List.of()));
 		}
 
 		public Mono<GetPromptResult> invalidAsyncExchangeParameter(McpAsyncServerExchange exchange,
-				GetPromptRequest request) {
+		                                                           GetPromptRequest request) {
 			return Mono.just(new GetPromptResult("Invalid", List.of()));
 		}
 

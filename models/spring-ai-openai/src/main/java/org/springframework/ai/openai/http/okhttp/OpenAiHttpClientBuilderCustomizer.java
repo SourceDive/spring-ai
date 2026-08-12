@@ -32,6 +32,7 @@ public interface OpenAiHttpClientBuilderCustomizer {
 	/**
 	 * Customize the {@link SpringAiOpenAiHttpClient.Builder} prior to building the
 	 * underlying OkHttp client.
+	 *
 	 * @param builder the builder to customize
 	 */
 	void customize(SpringAiOpenAiHttpClient.Builder builder);

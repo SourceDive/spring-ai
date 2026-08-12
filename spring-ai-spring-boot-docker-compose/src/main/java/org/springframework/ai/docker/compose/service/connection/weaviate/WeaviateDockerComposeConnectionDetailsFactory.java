@@ -27,8 +27,8 @@ import org.springframework.boot.docker.compose.service.connection.DockerComposeC
 class WeaviateDockerComposeConnectionDetailsFactory
 		extends DockerComposeConnectionDetailsFactory<WeaviateConnectionDetails> {
 
-	private static final String[] WEAVIATE_IMAGE_NAMES = { "semitechnologies/weaviate",
-			"cr.weaviate.io/semitechnologies/weaviate" };
+	private static final String[] WEAVIATE_IMAGE_NAMES = {"semitechnologies/weaviate",
+			"cr.weaviate.io/semitechnologies/weaviate"};
 
 	private static final int WEAVIATE_PORT = 8080;
 

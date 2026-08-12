@@ -16,14 +16,9 @@
 
 package org.springframework.ai.elevenlabs;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.audio.tts.Speech;
 import org.springframework.ai.audio.tts.TextToSpeechModel;
 import org.springframework.ai.audio.tts.TextToSpeechPrompt;
@@ -34,6 +29,10 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of the {@link TextToSpeechModel} interface for ElevenLabs TTS API.
@@ -56,7 +55,7 @@ public class ElevenLabsTextToSpeechModel implements TextToSpeechModel {
 	}
 
 	public ElevenLabsTextToSpeechModel(ElevenLabsApi elevenLabsApi, ElevenLabsTextToSpeechOptions options,
-			RetryTemplate retryTemplate) {
+	                                   RetryTemplate retryTemplate) {
 		Assert.notNull(elevenLabsApi, "ElevenLabsApi must not be null");
 		Assert.notNull(options, "ElevenLabsSpeechOptions must not be null");
 		Assert.notNull(retryTemplate, "RetryTemplate must not be null");
@@ -94,8 +93,8 @@ public class ElevenLabsTextToSpeechModel implements TextToSpeechModel {
 		RequestContext requestContext = prepareRequest(prompt);
 
 		return RetryUtils.execute(this.retryTemplate, () -> this.elevenLabsApi
-			.textToSpeechStream(requestContext.request, requestContext.voiceId, requestContext.queryParameters)
-			.map(entity -> new TextToSpeechResponse(List.of(new Speech(Objects.requireNonNull(entity.getBody()))))));
+				.textToSpeechStream(requestContext.request, requestContext.voiceId, requestContext.queryParameters)
+				.map(entity -> new TextToSpeechResponse(List.of(new Speech(Objects.requireNonNull(entity.getBody()))))));
 	}
 
 	private RequestContext prepareRequest(TextToSpeechPrompt prompt) {
@@ -129,50 +128,50 @@ public class ElevenLabsTextToSpeechModel implements TextToSpeechModel {
 		Assert.hasText(text, "Prompt must contain text to convert to speech.");
 
 		return ElevenLabsApi.SpeechRequest.builder()
-			.text(text)
-			.modelId(options.getModelId())
-			.voiceSettings(options.getVoiceSettings())
-			.languageCode(options.getLanguageCode())
-			.pronunciationDictionaryLocators(options.getPronunciationDictionaryLocators())
-			.seed(options.getSeed())
-			.previousText(options.getPreviousText())
-			.nextText(options.getNextText())
-			.previousRequestIds(options.getPreviousRequestIds())
-			.nextRequestIds(options.getNextRequestIds())
-			.applyTextNormalization(options.getApplyTextNormalization())
-			.applyLanguageTextNormalization(options.getApplyLanguageTextNormalization())
-			.build();
+				.text(text)
+				.modelId(options.getModelId())
+				.voiceSettings(options.getVoiceSettings())
+				.languageCode(options.getLanguageCode())
+				.pronunciationDictionaryLocators(options.getPronunciationDictionaryLocators())
+				.seed(options.getSeed())
+				.previousText(options.getPreviousText())
+				.nextText(options.getNextText())
+				.previousRequestIds(options.getPreviousRequestIds())
+				.nextRequestIds(options.getNextRequestIds())
+				.applyTextNormalization(options.getApplyTextNormalization())
+				.applyLanguageTextNormalization(options.getApplyLanguageTextNormalization())
+				.build();
 	}
 
 	private ElevenLabsTextToSpeechOptions getOptions(TextToSpeechPrompt prompt) {
 		ElevenLabsTextToSpeechOptions runtimeOptions = (prompt
-			.getOptions() instanceof ElevenLabsTextToSpeechOptions elevenLabsSpeechOptions) ? elevenLabsSpeechOptions
-					: null;
+				.getOptions() instanceof ElevenLabsTextToSpeechOptions elevenLabsSpeechOptions) ? elevenLabsSpeechOptions
+				: null;
 		return (runtimeOptions != null) ? merge(runtimeOptions, this.options) : this.options;
 	}
 
 	private ElevenLabsTextToSpeechOptions merge(ElevenLabsTextToSpeechOptions runtimeOptions,
-			ElevenLabsTextToSpeechOptions options) {
+	                                            ElevenLabsTextToSpeechOptions options) {
 		return ElevenLabsTextToSpeechOptions.builder()
-			.modelId(getOrDefault(runtimeOptions.getModelId(), options.getModelId()))
-			.voice(getOrDefault(runtimeOptions.getVoice(), options.getVoice()))
-			.voiceId(getOrDefault(runtimeOptions.getVoiceId(), options.getVoiceId()))
-			.format(getOrDefault(runtimeOptions.getFormat(), options.getFormat()))
-			.outputFormat(getOrDefault(runtimeOptions.getOutputFormat(), options.getOutputFormat()))
-			.voiceSettings(getOrDefault(runtimeOptions.getVoiceSettings(), options.getVoiceSettings()))
-			.languageCode(getOrDefault(runtimeOptions.getLanguageCode(), options.getLanguageCode()))
-			.pronunciationDictionaryLocators(getOrDefault(runtimeOptions.getPronunciationDictionaryLocators(),
-					options.getPronunciationDictionaryLocators()))
-			.seed(getOrDefault(runtimeOptions.getSeed(), options.getSeed()))
-			.previousText(getOrDefault(runtimeOptions.getPreviousText(), options.getPreviousText()))
-			.nextText(getOrDefault(runtimeOptions.getNextText(), options.getNextText()))
-			.previousRequestIds(getOrDefault(runtimeOptions.getPreviousRequestIds(), options.getPreviousRequestIds()))
-			.nextRequestIds(getOrDefault(runtimeOptions.getNextRequestIds(), options.getNextRequestIds()))
-			.applyTextNormalization(
-					getOrDefault(runtimeOptions.getApplyTextNormalization(), options.getApplyTextNormalization()))
-			.applyLanguageTextNormalization(getOrDefault(runtimeOptions.getApplyLanguageTextNormalization(),
-					options.getApplyLanguageTextNormalization()))
-			.build();
+				.modelId(getOrDefault(runtimeOptions.getModelId(), options.getModelId()))
+				.voice(getOrDefault(runtimeOptions.getVoice(), options.getVoice()))
+				.voiceId(getOrDefault(runtimeOptions.getVoiceId(), options.getVoiceId()))
+				.format(getOrDefault(runtimeOptions.getFormat(), options.getFormat()))
+				.outputFormat(getOrDefault(runtimeOptions.getOutputFormat(), options.getOutputFormat()))
+				.voiceSettings(getOrDefault(runtimeOptions.getVoiceSettings(), options.getVoiceSettings()))
+				.languageCode(getOrDefault(runtimeOptions.getLanguageCode(), options.getLanguageCode()))
+				.pronunciationDictionaryLocators(getOrDefault(runtimeOptions.getPronunciationDictionaryLocators(),
+						options.getPronunciationDictionaryLocators()))
+				.seed(getOrDefault(runtimeOptions.getSeed(), options.getSeed()))
+				.previousText(getOrDefault(runtimeOptions.getPreviousText(), options.getPreviousText()))
+				.nextText(getOrDefault(runtimeOptions.getNextText(), options.getNextText()))
+				.previousRequestIds(getOrDefault(runtimeOptions.getPreviousRequestIds(), options.getPreviousRequestIds()))
+				.nextRequestIds(getOrDefault(runtimeOptions.getNextRequestIds(), options.getNextRequestIds()))
+				.applyTextNormalization(
+						getOrDefault(runtimeOptions.getApplyTextNormalization(), options.getApplyTextNormalization()))
+				.applyLanguageTextNormalization(getOrDefault(runtimeOptions.getApplyLanguageTextNormalization(),
+						options.getApplyLanguageTextNormalization()))
+				.build();
 	}
 
 	private <T> @Nullable T getOrDefault(@Nullable T runtimeValue, @Nullable T defaultValue) {
@@ -229,7 +228,7 @@ public class ElevenLabsTextToSpeechModel implements TextToSpeechModel {
 	}
 
 	private record RequestContext(ElevenLabsApi.SpeechRequest request, String voiceId,
-			MultiValueMap<String, String> queryParameters) {
+	                              MultiValueMap<String, String> queryParameters) {
 	}
 
 }

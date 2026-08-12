@@ -16,16 +16,15 @@
 
 package org.springframework.ai.deepseek.api;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionChunk;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.ChatCompletionFunction;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.Role;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.ToolCall;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -102,7 +101,7 @@ class DeepSeekStreamFunctionCallingHelperTest {
 
 		ChatCompletionFunction func2 = new ChatCompletionFunction("func1", "\"value1\"}");
 		ToolCall toolCall2 = new ToolCall(null, "function", func2); // No ID -
-																	// continuation
+		// continuation
 		ChatCompletionMessage currentMsg = new ChatCompletionMessage("content", Role.ASSISTANT, null, null,
 				List.of(toolCall2));
 

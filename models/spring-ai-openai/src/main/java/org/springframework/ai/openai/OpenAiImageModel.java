@@ -16,23 +16,13 @@
 
 package org.springframework.ai.openai;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import com.openai.client.OpenAIClient;
 import com.openai.models.images.ImageGenerateParams;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.image.Image;
-import org.springframework.ai.image.ImageGeneration;
-import org.springframework.ai.image.ImageModel;
-import org.springframework.ai.image.ImagePrompt;
-import org.springframework.ai.image.ImageResponse;
-import org.springframework.ai.image.ImageResponseMetadata;
+import org.springframework.ai.image.*;
 import org.springframework.ai.image.observation.DefaultImageModelObservationConvention;
 import org.springframework.ai.image.observation.ImageModelObservationContext;
 import org.springframework.ai.image.observation.ImageModelObservationConvention;
@@ -43,6 +33,10 @@ import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
 import org.springframework.ai.openai.metadata.OpenAiImageResponseMetadata;
 import org.springframework.ai.openai.setup.OpenAiSetup;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Image Model implementation using the OpenAI Java SDK.
@@ -76,6 +70,7 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates a new OpenAiImageModel with the given options.
+	 *
 	 * @param options the image options
 	 */
 	public OpenAiImageModel(@Nullable OpenAiImageOptions options) {
@@ -84,6 +79,7 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates a new OpenAiImageModel with the given observation registry.
+	 *
 	 * @param observationRegistry the observation registry
 	 */
 	public OpenAiImageModel(@Nullable ObservationRegistry observationRegistry) {
@@ -92,7 +88,8 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates a new OpenAiImageModel with the given options and observation registry.
-	 * @param options the image options
+	 *
+	 * @param options             the image options
 	 * @param observationRegistry the observation registry
 	 */
 	public OpenAiImageModel(@Nullable OpenAiImageOptions options, @Nullable ObservationRegistry observationRegistry) {
@@ -101,6 +98,7 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates a new OpenAiImageModel with the given OpenAI client.
+	 *
 	 * @param openAIClient the OpenAI client
 	 */
 	public OpenAiImageModel(@Nullable OpenAIClient openAIClient) {
@@ -109,8 +107,9 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates a new OpenAiImageModel with the given OpenAI client and options.
+	 *
 	 * @param openAIClient the OpenAI client
-	 * @param options the image options
+	 * @param options      the image options
 	 */
 	public OpenAiImageModel(@Nullable OpenAIClient openAIClient, @Nullable OpenAiImageOptions options) {
 		this(openAIClient, options, null);
@@ -119,7 +118,8 @@ public class OpenAiImageModel implements ImageModel {
 	/**
 	 * Creates a new OpenAiImageModel with the given OpenAI client and observation
 	 * registry.
-	 * @param openAIClient the OpenAI client
+	 *
+	 * @param openAIClient        the OpenAI client
 	 * @param observationRegistry the observation registry
 	 */
 	public OpenAiImageModel(@Nullable OpenAIClient openAIClient, @Nullable ObservationRegistry observationRegistry) {
@@ -128,12 +128,13 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Creates a new OpenAiImageModel with all configuration options.
-	 * @param openAiClient the OpenAI client
-	 * @param options the image options
+	 *
+	 * @param openAiClient        the OpenAI client
+	 * @param options             the image options
 	 * @param observationRegistry the observation registry
 	 */
 	public OpenAiImageModel(@Nullable OpenAIClient openAiClient, @Nullable OpenAiImageOptions options,
-			@Nullable ObservationRegistry observationRegistry) {
+	                        @Nullable ObservationRegistry observationRegistry) {
 		this(builder().openAiClient(openAiClient).options(options).observationRegistry(observationRegistry));
 	}
 
@@ -156,6 +157,7 @@ public class OpenAiImageModel implements ImageModel {
 
 	/**
 	 * Gets the image options for this model.
+	 *
 	 * @return the image options
 	 */
 	public OpenAiImageOptions getOptions() {
@@ -165,9 +167,9 @@ public class OpenAiImageModel implements ImageModel {
 	@Override
 	public ImageResponse call(ImagePrompt imagePrompt) {
 		OpenAiImageOptions options = OpenAiImageOptions.builder()
-			.from(this.options)
-			.merge(imagePrompt.getOptions())
-			.build();
+				.from(this.options)
+				.merge(imagePrompt.getOptions())
+				.build();
 
 		ImageGenerateParams imageGenerateParams = options.toOpenAiImageGenerateParams(imagePrompt);
 
@@ -177,45 +179,44 @@ public class OpenAiImageModel implements ImageModel {
 		}
 
 		var observationContext = ImageModelObservationContext.builder()
-			.imagePrompt(imagePrompt)
-			.provider(AiProvider.OPENAI.value())
-			.build();
+				.imagePrompt(imagePrompt)
+				.provider(AiProvider.OPENAI.value())
+				.build();
 
 		return Objects.requireNonNull(
 				ImageModelObservationDocumentation.IMAGE_MODEL_OPERATION
-					.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-							this.observationRegistry)
-					.observe(() -> {
-						var images = this.openAiClient.images().generate(imageGenerateParams);
+						.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+								this.observationRegistry)
+						.observe(() -> {
+							var images = this.openAiClient.images().generate(imageGenerateParams);
 
-						if (images.data().isEmpty() && images.data().get().isEmpty()) {
-							throw new IllegalArgumentException("Image generation failed: no image returned");
-						}
+							if (images.data().isEmpty() && images.data().get().isEmpty()) {
+								throw new IllegalArgumentException("Image generation failed: no image returned");
+							}
 
-						List<ImageGeneration> imageGenerations = images.data().get().stream().map(nativeImage -> {
-							Image image;
-							if (nativeImage.url().isPresent()) {
-								image = new Image(nativeImage.url().get(), null);
-							}
-							else if (nativeImage.b64Json().isPresent()) {
-								image = new Image(null, nativeImage.b64Json().get());
-							}
-							else {
-								throw new IllegalArgumentException(
-										"Image generation failed: image entry missing url and b64_json");
-							}
-							var metadata = new OpenAiImageGenerationMetadata(nativeImage.revisedPrompt().orElse(null));
-							return new ImageGeneration(image, metadata);
-						}).toList();
-						ImageResponseMetadata openAiImageResponseMetadata = OpenAiImageResponseMetadata.from(images);
-						ImageResponse imageResponse = new ImageResponse(imageGenerations, openAiImageResponseMetadata);
-						observationContext.setResponse(imageResponse);
-						return imageResponse;
-					}));
+							List<ImageGeneration> imageGenerations = images.data().get().stream().map(nativeImage -> {
+								Image image;
+								if (nativeImage.url().isPresent()) {
+									image = new Image(nativeImage.url().get(), null);
+								} else if (nativeImage.b64Json().isPresent()) {
+									image = new Image(null, nativeImage.b64Json().get());
+								} else {
+									throw new IllegalArgumentException(
+											"Image generation failed: image entry missing url and b64_json");
+								}
+								var metadata = new OpenAiImageGenerationMetadata(nativeImage.revisedPrompt().orElse(null));
+								return new ImageGeneration(image, metadata);
+							}).toList();
+							ImageResponseMetadata openAiImageResponseMetadata = OpenAiImageResponseMetadata.from(images);
+							ImageResponse imageResponse = new ImageResponse(imageGenerations, openAiImageResponseMetadata);
+							observationContext.setResponse(imageResponse);
+							return imageResponse;
+						}));
 	}
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(ImageModelObservationConvention observationConvention) {

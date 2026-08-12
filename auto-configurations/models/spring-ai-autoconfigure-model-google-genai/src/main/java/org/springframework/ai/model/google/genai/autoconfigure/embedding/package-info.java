@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.google.genai.autoconfigure.embedding;
 
-import org.jspecify.annotations.NullMarked;

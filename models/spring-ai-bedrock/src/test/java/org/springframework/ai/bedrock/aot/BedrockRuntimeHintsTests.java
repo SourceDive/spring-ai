@@ -16,18 +16,17 @@
 
 package org.springframework.ai.bedrock.aot;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.bedrock.cohere.BedrockCohereEmbeddingOptions;
 import org.springframework.ai.bedrock.cohere.api.CohereEmbeddingBedrockApi;
 import org.springframework.ai.bedrock.titan.BedrockTitanEmbeddingOptions;
 import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.ai.aot.AiRuntimeHints.findJsonAnnotatedClassesInPackage;
@@ -59,9 +58,9 @@ class BedrockRuntimeHintsTests {
 
 		// Verify at least the Bedrock-specific classes we expect exist
 		boolean hasAbstractBedrockApi = jsonAnnotatedClasses.stream()
-			.anyMatch(typeRef -> typeRef.getName().contains("AbstractBedrockApi"));
+				.anyMatch(typeRef -> typeRef.getName().contains("AbstractBedrockApi"));
 		boolean hasCohereApi = jsonAnnotatedClasses.stream()
-			.anyMatch(typeRef -> typeRef.getName().contains("CohereEmbeddingBedrockApi"));
+				.anyMatch(typeRef -> typeRef.getName().contains("CohereEmbeddingBedrockApi"));
 
 		assertThat(hasAbstractBedrockApi || hasCohereApi).isTrue();
 	}
@@ -75,13 +74,13 @@ class BedrockRuntimeHintsTests {
 
 		// Verify that Bedrock client classes are registered
 		boolean hasBedrockClient = registeredTypes.stream()
-			.anyMatch(typeRef -> typeRef.getName().contains("Bedrock") && typeRef.getName().contains("Client"));
+				.anyMatch(typeRef -> typeRef.getName().contains("Bedrock") && typeRef.getName().contains("Client"));
 
 		assertThat(hasBedrockClient).isTrue();
 
 		// Verify that bedrockruntime.model classes are registered
 		boolean hasBedrockRuntimeModel = registeredTypes.stream()
-			.anyMatch(typeRef -> typeRef.getName().contains("software.amazon.awssdk.services.bedrockruntime.model"));
+				.anyMatch(typeRef -> typeRef.getName().contains("software.amazon.awssdk.services.bedrockruntime.model"));
 
 		assertThat(hasBedrockRuntimeModel).isTrue();
 	}
@@ -131,7 +130,7 @@ class BedrockRuntimeHintsTests {
 
 		// Verify AWS SDK classes from software.amazon.awssdk are registered
 		boolean hasAwsSdkClasses = registeredTypes.stream()
-			.anyMatch(typeRef -> typeRef.getName().startsWith("software.amazon.awssdk"));
+				.anyMatch(typeRef -> typeRef.getName().startsWith("software.amazon.awssdk"));
 
 		assertThat(hasAwsSdkClasses).isTrue();
 	}

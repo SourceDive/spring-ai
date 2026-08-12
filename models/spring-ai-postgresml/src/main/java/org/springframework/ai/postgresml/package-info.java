@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.postgresml;
 
-import org.jspecify.annotations.NullMarked;

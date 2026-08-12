@@ -33,20 +33,20 @@ public class OllamaEmbeddingAutoConfigurationTests {
 	public void propertiesTest() {
 
 		new ApplicationContextRunner().withPropertyValues(
-		// @formatter:off
+						// @formatter:off
 			"spring.ai.ollama.base-url=TEST_BASE_URL",
 				"spring.ai.ollama.embedding.options.model=MODEL_XYZ"
 				// @formatter:on
-		)
+				)
 
-			.withConfiguration(BaseOllamaIT.ollamaAutoConfig(OllamaEmbeddingAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(OllamaEmbeddingProperties.class);
-				var connectionProperties = context.getBean(OllamaConnectionProperties.class);
+				.withConfiguration(BaseOllamaIT.ollamaAutoConfig(OllamaEmbeddingAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(OllamaEmbeddingProperties.class);
+					var connectionProperties = context.getBean(OllamaConnectionProperties.class);
 
-				assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
-			});
+					assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+				});
 	}
 
 }

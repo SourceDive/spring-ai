@@ -21,13 +21,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.ToolParam;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link AugmentedToolCallbackProvider}.
@@ -49,7 +46,7 @@ class AugmentedToolCallbackProviderTest {
 	void shouldCreateProviderWithDelegate() {
 		AugmentedToolCallbackProvider<TestArgs> provider = new AugmentedToolCallbackProvider<>(this.mockDelegate,
 				TestArgs.class, args -> {
-				}, true);
+		}, true);
 
 		assertNotNull(provider);
 	}
@@ -69,9 +66,9 @@ class AugmentedToolCallbackProviderTest {
 	void builderShouldRequireArgumentConsumer() {
 		IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> AugmentedToolCallbackProvider.<TestArgs>builder()
-					.delegate(this.mockDelegate)
-					.argumentType(TestArgs.class)
-					.build());
+						.delegate(this.mockDelegate)
+						.argumentType(TestArgs.class)
+						.build());
 
 		assertEquals("argumentConsumer is required", ex.getMessage());
 	}
@@ -81,12 +78,12 @@ class AugmentedToolCallbackProviderTest {
 	void builderShouldNotAllowBothDelegateAndToolObject() {
 		IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> AugmentedToolCallbackProvider.<TestArgs>builder()
-					.delegate(this.mockDelegate)
-					.toolObject(new Object())
-					.argumentType(TestArgs.class)
-					.argumentConsumer(args -> {
-					})
-					.build());
+						.delegate(this.mockDelegate)
+						.toolObject(new Object())
+						.argumentType(TestArgs.class)
+						.argumentConsumer(args -> {
+						})
+						.build());
 
 		assertEquals("Cannot set both delegate and toolObject", ex.getMessage());
 	}
@@ -96,10 +93,10 @@ class AugmentedToolCallbackProviderTest {
 	void builderShouldRequireDelegateOrToolObject() {
 		IllegalStateException ex = assertThrows(IllegalStateException.class,
 				() -> AugmentedToolCallbackProvider.<TestArgs>builder()
-					.argumentType(TestArgs.class)
-					.argumentConsumer(args -> {
-					})
-					.build());
+						.argumentType(TestArgs.class)
+						.argumentConsumer(args -> {
+						})
+						.build());
 
 		assertEquals("Either delegate or toolObject must be set", ex.getMessage());
 	}
@@ -108,12 +105,12 @@ class AugmentedToolCallbackProviderTest {
 	@DisplayName("Builder should build successfully with delegate")
 	void builderShouldBuildWithDelegate() {
 		AugmentedToolCallbackProvider<TestArgs> provider = AugmentedToolCallbackProvider.<TestArgs>builder()
-			.delegate(this.mockDelegate)
-			.argumentType(TestArgs.class)
-			.argumentConsumer(args -> {
-			})
-			.removeExtraArgumentsAfterProcessing(false)
-			.build();
+				.delegate(this.mockDelegate)
+				.argumentType(TestArgs.class)
+				.argumentConsumer(args -> {
+				})
+				.removeExtraArgumentsAfterProcessing(false)
+				.build();
 
 		assertNotNull(provider);
 	}

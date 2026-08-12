@@ -16,6 +16,8 @@
 
 package org.springframework.ai.document.id;
 
+import org.springframework.util.Assert;
+
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
@@ -23,8 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
-
-import org.springframework.util.Assert;
 
 /**
  * A SHA-256 based ID generator that returns the hash as a UUID.
@@ -46,8 +46,7 @@ public class JdkSha256HexIdGenerator implements IdGenerator {
 		this.charset = charset;
 		try {
 			this.messageDigest = MessageDigest.getInstance(algorithm);
-		}
-		catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -79,8 +78,7 @@ public class JdkSha256HexIdGenerator implements IdGenerator {
 				out.writeObject(content);
 			}
 			return byteOut.toByteArray();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to serialize", e);
 		}
 	}
@@ -88,8 +86,7 @@ public class JdkSha256HexIdGenerator implements IdGenerator {
 	MessageDigest getMessageDigest() {
 		try {
 			return (MessageDigest) this.messageDigest.clone();
-		}
-		catch (CloneNotSupportedException e) {
+		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("Unsupported clone for MessageDigest.", e);
 		}
 	}

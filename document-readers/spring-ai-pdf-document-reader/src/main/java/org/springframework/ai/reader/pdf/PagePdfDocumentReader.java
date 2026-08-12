@@ -16,12 +16,6 @@
 
 package org.springframework.ai.reader.pdf;
 
-import java.awt.Rectangle;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdfparser.PDFParser;
@@ -29,7 +23,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
 import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
@@ -38,6 +31,12 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Groups the parsed PDF pages into {@link Document}s. You can group one or more pages
@@ -86,8 +85,7 @@ public class PagePdfDocumentReader implements DocumentReader {
 
 			this.resourceFileName = pdfResource.getFilename();
 			this.config = config;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -134,14 +132,13 @@ public class PagePdfDocumentReader implements DocumentReader {
 				logger.info("Processed total " + totalPages + " pages");
 			}
 			return readDocuments;
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private void handleSinglePage(PDPage page, int pageNumber, PDFLayoutTextStripperByArea pdfTextStripper,
-			List<String> pageTextGroupList) throws IOException {
+	                              List<String> pageTextGroupList) throws IOException {
 		int x0 = (int) page.getMediaBox().getLowerLeftX();
 		int xW = (int) page.getMediaBox().getWidth();
 

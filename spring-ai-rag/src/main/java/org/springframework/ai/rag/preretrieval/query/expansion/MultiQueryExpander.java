@@ -16,14 +16,9 @@
 
 package org.springframework.ai.rag.preretrieval.query.expansion;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.rag.Query;
@@ -31,6 +26,10 @@ import org.springframework.ai.rag.util.PromptAssert;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Uses a large language model to expand a query into multiple semantically diverse
@@ -82,7 +81,7 @@ public final class MultiQueryExpander implements QueryExpander {
 	private final int numberOfQueries;
 
 	public MultiQueryExpander(ChatClient.Builder chatClientBuilder, @Nullable PromptTemplate promptTemplate,
-			@Nullable Boolean includeOriginal, @Nullable Integer numberOfQueries) {
+	                          @Nullable Boolean includeOriginal, @Nullable Integer numberOfQueries) {
 		Assert.notNull(chatClientBuilder, "chatClientBuilder cannot be null");
 
 		this.chatClient = chatClientBuilder.build();
@@ -102,11 +101,11 @@ public final class MultiQueryExpander implements QueryExpander {
 		}
 
 		var response = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("number", this.numberOfQueries)
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("number", this.numberOfQueries)
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (response == null) {
 			logger.warn("Query expansion result is null. Returning the input query unchanged.");
@@ -124,9 +123,9 @@ public final class MultiQueryExpander implements QueryExpander {
 		}
 
 		var queries = queryVariants.stream()
-			.filter(StringUtils::hasText)
-			.map(queryText -> query.mutate().text(queryText).build())
-			.collect(Collectors.toList());
+				.filter(StringUtils::hasText)
+				.map(queryText -> query.mutate().text(queryText).build())
+				.collect(Collectors.toList());
 
 		if (this.includeOriginal) {
 			logger.debug("Including the original query in the result");

@@ -116,7 +116,7 @@ class ThinkOptionTests {
 	@Test
 	void testThinkLevelInvalidStringThrowsException() {
 		assertThatThrownBy(() -> new ThinkOption.ThinkLevel("invalid")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("think level must be one of [low, medium, high], got: invalid");
+				.hasMessageContaining("think level must be one of [low, medium, high], got: invalid");
 	}
 
 	@Test

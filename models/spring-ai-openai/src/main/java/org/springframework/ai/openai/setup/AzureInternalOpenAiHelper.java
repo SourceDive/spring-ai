@@ -24,7 +24,7 @@ import com.openai.credential.Credential;
 /**
  * Specific configuration for authenticating on Azure. This is in a separate class to
  * avoid needing the Azure SDK dependencies when not using Azure as a platform.
- *
+ * <p>
  * This code is inspired by LangChain4j's
  * `dev.langchain4j.model.openaiofficial.AzureInternalOpenAiOfficialHelper` class, which
  * is coded by the same author (Julien Dubois, from Microsoft).

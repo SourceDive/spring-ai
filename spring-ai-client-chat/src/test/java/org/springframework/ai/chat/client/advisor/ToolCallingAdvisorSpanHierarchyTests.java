@@ -16,10 +16,6 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
@@ -27,8 +23,6 @@ import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.test.simple.SimpleSpan;
 import io.micrometer.tracing.test.simple.SimpleTracer;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
@@ -45,6 +39,11 @@ import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.core.Ordered;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -90,11 +89,11 @@ class ToolCallingAdvisorSpanHierarchyTests {
 		List<Message> conversationHistory = List.of(new UserMessage("What is the weather in Denver?"),
 				AssistantMessage.builder().content("").build(), ToolResponseMessage.builder().build());
 		when(toolCallingManager.executeToolCalls(any(Prompt.class), any(ChatResponse.class)))
-			.thenReturn(ToolExecutionResult.builder().conversationHistory(conversationHistory).build());
+				.thenReturn(ToolExecutionResult.builder().conversationHistory(conversationHistory).build());
 
 		ToolCallingAdvisor toolCallingAdvisor = ToolCallingAdvisor.builder()
-			.toolCallingManager(toolCallingManager)
-			.build();
+				.toolCallingManager(toolCallingManager)
+				.build();
 
 		// Terminal advisor standing in for the model: first call returns a tool call,
 		// second call (after tool execution) returns the final answer. Emits
@@ -120,13 +119,13 @@ class ToolCallingAdvisorSpanHierarchyTests {
 		};
 
 		StreamAdvisorChain chain = DefaultAroundAdvisorChain.builder(registry)
-			.pushAll(List.<Advisor>of(toolCallingAdvisor, modelAdvisor))
-			.build();
+				.pushAll(List.<Advisor>of(toolCallingAdvisor, modelAdvisor))
+				.build();
 
 		ChatClientRequest request = ChatClientRequest.builder()
-			.prompt(new Prompt(List.of(new UserMessage("What is the weather in Denver?")),
-					ToolCallingChatOptions.builder().build()))
-			.build();
+				.prompt(new Prompt(List.of(new UserMessage("What is the weather in Denver?")),
+						ToolCallingChatOptions.builder().build()))
+				.build();
 
 		// Simulate the servlet HTTP span: an outer observation whose scope stays open on
 		// the calling thread while the reactive pipeline is subscribed.
@@ -134,9 +133,9 @@ class ToolCallingAdvisorSpanHierarchyTests {
 		List<ChatClientResponse> results;
 		try (Observation.Scope ignored = outer.openScope()) {
 			results = chain.nextStream(request)
-				.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, outer))
-				.collectList()
-				.block();
+					.contextWrite(ctx -> ctx.put(ObservationThreadLocalAccessor.KEY, outer))
+					.collectList()
+					.block();
 		}
 		outer.stop();
 
@@ -154,8 +153,8 @@ class ToolCallingAdvisorSpanHierarchyTests {
 		// follow-up call), and the ToolCallingAdvisor span sits under the outer span.
 		assertThat(modelSpans).hasSize(2);
 		assertThat(toolCallingAdvisorSpan.context().parentId())
-			.as("the ToolCallingAdvisor span must be a child of the outer (HTTP-like) span")
-			.isEqualTo(outerSpan.context().spanId());
+				.as("the ToolCallingAdvisor span must be a child of the outer (HTTP-like) span")
+				.isEqualTo(outerSpan.context().spanId());
 
 		// The actual regression: every model-call span must nest under the
 		// ToolCallingAdvisor
@@ -165,30 +164,30 @@ class ToolCallingAdvisorSpanHierarchyTests {
 		// is
 		// still open).
 		assertThat(modelSpans).allSatisfy(span -> assertThat(span.context().parentId())
-			.as("model-call span %s must nest under the ToolCallingAdvisor span (%s), not escape to the outer span (%s)",
-					span.context().spanId(), toolCallingAdvisorSpan.context().spanId(), outerSpan.context().spanId())
-			.isEqualTo(toolCallingAdvisorSpan.context().spanId()));
+				.as("model-call span %s must nest under the ToolCallingAdvisor span (%s), not escape to the outer span (%s)",
+						span.context().spanId(), toolCallingAdvisorSpan.context().spanId(), outerSpan.context().spanId())
+				.isEqualTo(toolCallingAdvisorSpan.context().spanId()));
 	}
 
 	private static ChatResponse responseWithToolCall() {
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.toolCalls(List.of(new AssistantMessage.ToolCall("call-1", "function", "weather", "{}")))
-			.build();
+				.content("")
+				.toolCalls(List.of(new AssistantMessage.ToolCall("call-1", "function", "weather", "{}")))
+				.build();
 		return ChatResponse.builder().generations(List.of(new Generation(assistantMessage))).build();
 	}
 
 	private static ChatResponse finalResponse() {
 		return ChatResponse.builder()
-			.generations(List.of(new Generation(new AssistantMessage("The weather in Denver is sunny."))))
-			.build();
+				.generations(List.of(new Generation(new AssistantMessage("The weather in Denver is sunny."))))
+				.build();
 	}
 
 	private static SimpleSpan spanNamed(List<SimpleSpan> spans, String name) {
 		return spans.stream()
-			.filter(span -> name.equals(span.getName()))
-			.findFirst()
-			.orElseThrow(() -> new AssertionError("No span named '" + name + "' in " + spanSummary(spans)));
+				.filter(span -> name.equals(span.getName()))
+				.findFirst()
+				.orElseThrow(() -> new AssertionError("No span named '" + name + "' in " + spanSummary(spans)));
 	}
 
 	private static List<SimpleSpan> spansForAdvisor(List<SimpleSpan> spans, String advisorName) {
@@ -198,16 +197,16 @@ class ToolCallingAdvisorSpanHierarchyTests {
 	private static SimpleSpan singleSpanForAdvisor(List<SimpleSpan> spans, String advisorName) {
 		List<SimpleSpan> matches = spansForAdvisor(spans, advisorName);
 		assertThat(matches).as("expected exactly one span for advisor '%s' in %s", advisorName, spanSummary(spans))
-			.hasSize(1);
+				.hasSize(1);
 		return matches.get(0);
 	}
 
 	private static String spanSummary(List<SimpleSpan> spans) {
 		return spans.stream()
-			.map(span -> "%s(span=%s,parent=%s,advisor=%s)".formatted(span.getName(), span.context().spanId(),
-					span.context().parentId(), span.getTags().get(ADVISOR_NAME_TAG)))
-			.toList()
-			.toString();
+				.map(span -> "%s(span=%s,parent=%s,advisor=%s)".formatted(span.getName(), span.context().spanId(),
+						span.context().parentId(), span.getTags().get(ADVISOR_NAME_TAG)))
+				.toList()
+				.toString();
 	}
 
 }

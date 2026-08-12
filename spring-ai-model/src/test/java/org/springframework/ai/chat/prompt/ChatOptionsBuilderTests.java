@@ -16,14 +16,13 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.function.FunctionToolCallback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -47,12 +46,12 @@ public class ChatOptionsBuilderTests {
 	@Test
 	void shouldBuildWithAllOptions() {
 		ChatOptions options = this.builder.model("gpt-4")
-			.maxTokens(100)
-			.temperature(0.7)
-			.topP(1.0)
-			.topK(40)
-			.stopSequences(List.of("stop1", "stop2"))
-			.build();
+				.maxTokens(100)
+				.temperature(0.7)
+				.topP(1.0)
+				.topK(40)
+				.stopSequences(List.of("stop1", "stop2"))
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("gpt-4");
 		assertThat(options.getMaxTokens()).isEqualTo(100);
@@ -78,19 +77,19 @@ public class ChatOptionsBuilderTests {
 	void shouldUpcastToChatOptions() {
 		// Given
 		FunctionToolCallback callback = FunctionToolCallback.builder("function1", x -> "result")
-			.description("Test function")
-			.inputType(String.class)
-			.build();
+				.description("Test function")
+				.inputType(String.class)
+				.build();
 
 		ToolCallingChatOptions toolCallingChatOptions = ToolCallingChatOptions.builder()
-			.model("gpt-4")
-			.maxTokens(100)
-			.temperature(0.7)
-			.topP(1.0)
-			.topK(40)
-			.stopSequences(List.of("stop1", "stop2"))
-			.toolCallbacks(List.of(callback))
-			.build();
+				.model("gpt-4")
+				.maxTokens(100)
+				.temperature(0.7)
+				.topP(1.0)
+				.topK(40)
+				.stopSequences(List.of("stop1", "stop2"))
+				.toolCallbacks(List.of(callback))
+				.build();
 
 		// When
 		ChatOptions chatOptions = toolCallingChatOptions;
@@ -150,7 +149,7 @@ public class ChatOptionsBuilderTests {
 
 		// Then
 		assertThatThrownBy(() -> options.getStopSequences().add("stop3"))
-			.isInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -187,8 +186,8 @@ public class ChatOptionsBuilderTests {
 	@Test
 	void shouldHandleSpecialStringValues() {
 		ChatOptions options = this.builder.model("") // Empty string
-			.stopSequences(List.of("", "  ", "\n", "\t"))
-			.build();
+				.stopSequences(List.of("", "  ", "\n", "\t"))
+				.build();
 
 		assertThat(options.getModel()).isEmpty();
 		assertThat(options.getStopSequences()).containsExactly("", "  ", "\n", "\t");

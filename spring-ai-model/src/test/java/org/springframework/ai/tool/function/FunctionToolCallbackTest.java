@@ -16,18 +16,17 @@
 
 package org.springframework.ai.tool.function;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.model.ToolContext;
+import org.springframework.ai.tool.execution.ToolExecutionException;
+import org.springframework.ai.tool.metadata.ToolMetadata;
+
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.model.ToolContext;
-import org.springframework.ai.tool.execution.ToolExecutionException;
-import org.springframework.ai.tool.metadata.ToolMetadata;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
@@ -42,10 +41,10 @@ class FunctionToolCallbackTest {
 	void testConsumerToolCall() {
 		TestFunctionTool tool = new TestFunctionTool();
 		FunctionToolCallback<String, Void> callback = FunctionToolCallback.builder("testTool", tool.stringConsumer())
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.description("test description")
-			.inputType(String.class)
-			.build();
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.description("test description")
+				.inputType(String.class)
+				.build();
 
 		callback.call("\"test string param\"");
 
@@ -56,11 +55,11 @@ class FunctionToolCallbackTest {
 	void testBiFunctionToolCall() {
 		TestFunctionTool tool = new TestFunctionTool();
 		FunctionToolCallback<String, String> callback = FunctionToolCallback
-			.builder("testTool", tool.stringBiFunction())
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.description("test description")
-			.inputType(String.class)
-			.build();
+				.builder("testTool", tool.stringBiFunction())
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.description("test description")
+				.inputType(String.class)
+				.build();
 
 		ToolContext toolContext = new ToolContext(Map.of("foo", "bar"));
 
@@ -75,10 +74,10 @@ class FunctionToolCallbackTest {
 	void testFunctionToolCall() {
 		TestFunctionTool tool = new TestFunctionTool();
 		FunctionToolCallback<String, String> callback = FunctionToolCallback.builder("testTool", tool.stringFunction())
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.description("test description")
-			.inputType(String.class)
-			.build();
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.description("test description")
+				.inputType(String.class)
+				.build();
 
 		ToolContext toolContext = new ToolContext(Map.of());
 
@@ -93,10 +92,10 @@ class FunctionToolCallbackTest {
 		TestFunctionTool tool = new TestFunctionTool();
 
 		FunctionToolCallback<Void, String> callback = FunctionToolCallback.builder("testTool", tool.stringSupplier())
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.description("test description")
-			.inputType(Void.class)
-			.build();
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.description("test description")
+				.inputType(Void.class)
+				.build();
 
 		ToolContext toolContext = new ToolContext(Map.of());
 
@@ -110,41 +109,41 @@ class FunctionToolCallbackTest {
 	void testThrowRuntimeException() {
 		TestFunctionTool tool = new TestFunctionTool();
 		FunctionToolCallback<String, Void> callback = FunctionToolCallback
-			.builder("testTool", tool.throwRuntimeException())
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.description("test description")
-			.inputType(String.class)
-			.build();
+				.builder("testTool", tool.throwRuntimeException())
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.description("test description")
+				.inputType(String.class)
+				.build();
 
 		assertThatThrownBy(() -> callback.call("\"test string param\"")).hasMessage("test exception")
-			.hasCauseInstanceOf(RuntimeException.class)
-			.asInstanceOf(type(ToolExecutionException.class))
-			.extracting(ToolExecutionException::getToolDefinition)
-			.isEqualTo(callback.getToolDefinition());
+				.hasCauseInstanceOf(RuntimeException.class)
+				.asInstanceOf(type(ToolExecutionException.class))
+				.extracting(ToolExecutionException::getToolDefinition)
+				.isEqualTo(callback.getToolDefinition());
 	}
 
 	@Test
 	void testThrowToolExecutionException() {
 		TestFunctionTool tool = new TestFunctionTool();
 		FunctionToolCallback<String, Void> callback = FunctionToolCallback
-			.builder("testTool", tool.throwToolExecutionException())
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.description("test description")
-			.inputType(String.class)
-			.build();
+				.builder("testTool", tool.throwToolExecutionException())
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.description("test description")
+				.inputType(String.class)
+				.build();
 
 		assertThatThrownBy(() -> callback.call("\"test string param\"")).hasMessage("test exception")
-			.hasCauseInstanceOf(RuntimeException.class)
-			.isInstanceOf(ToolExecutionException.class);
+				.hasCauseInstanceOf(RuntimeException.class)
+				.isInstanceOf(ToolExecutionException.class);
 	}
 
 	@Test
 	void testEmptyStringInput() {
 		TestFunctionTool tool = new TestFunctionTool();
 		FunctionToolCallback<String, Void> callback = FunctionToolCallback.builder("testTool", tool.stringConsumer())
-			.description("test empty string")
-			.inputType(String.class)
-			.build();
+				.description("test empty string")
+				.inputType(String.class)
+				.build();
 
 		callback.call("\"\"");
 		assertEquals("", tool.calledValue.get());

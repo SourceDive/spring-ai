@@ -16,19 +16,18 @@
 
 package org.springframework.ai.google.genai;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.core.io.PathResource;
+import org.springframework.util.MimeType;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import org.springframework.core.io.PathResource;
-import org.springframework.util.MimeType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
@@ -41,8 +40,8 @@ class MimeTypeDetectorTests {
 
 	private static Stream<Arguments> provideMimeTypes() {
 		return org.springframework.ai.google.genai.MimeTypeDetector.GEMINI_MIME_TYPES.entrySet()
-			.stream()
-			.map(entry -> Arguments.of(entry.getKey(), entry.getValue()));
+				.stream()
+				.map(entry -> Arguments.of(entry.getKey(), entry.getValue()));
 	}
 
 	@ParameterizedTest
@@ -94,31 +93,31 @@ class MimeTypeDetectorTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { " ", "\t", "\n" })
+	@ValueSource(strings = {" ", "\t", "\n"})
 	void getMimeTypeByStringWithInvalidInputShouldThrowException(String invalidPath) {
 		assertThatThrownBy(() -> MimeTypeDetector.getMimeType(invalidPath)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Unable to detect the MIME type");
+				.hasMessageContaining("Unable to detect the MIME type");
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "JPG", "PNG", "GIF" })
+	@ValueSource(strings = {"JPG", "PNG", "GIF"})
 	void getMimeTypeByStringWithUppercaseExtensionsShouldWork(String uppercaseExt) {
 		String upperFileName = "test." + uppercaseExt;
 		String lowerFileName = "test." + uppercaseExt.toLowerCase();
 
 		// Should throw for uppercase (not in map) but work for lowercase
 		assertThatThrownBy(() -> MimeTypeDetector.getMimeType(upperFileName))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 
 		// Lowercase should work if it's a supported extension
 		if (org.springframework.ai.google.genai.MimeTypeDetector.GEMINI_MIME_TYPES
-			.containsKey(uppercaseExt.toLowerCase())) {
+				.containsKey(uppercaseExt.toLowerCase())) {
 			assertThatCode(() -> MimeTypeDetector.getMimeType(lowerFileName)).doesNotThrowAnyException();
 		}
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "test.jpg", "test.png", "test.gif" })
+	@ValueSource(strings = {"test.jpg", "test.png", "test.gif"})
 	void getMimeTypeSupportedFileAcrossDifferentMethodsShouldBeConsistent(String fileName) {
 		MimeType stringResult = MimeTypeDetector.getMimeType(fileName);
 		MimeType fileResult = MimeTypeDetector.getMimeType(new File(fileName));
@@ -130,13 +129,13 @@ class MimeTypeDetectorTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "https://example.com/documents/file.pdf", "https://example.com/data/file.json",
-			"https://example.com/files/document.txt" })
+	@ValueSource(strings = {"https://example.com/documents/file.pdf", "https://example.com/data/file.json",
+			"https://example.com/files/document.txt"})
 	void getMimeTypeByURIWithUnsupportedExtensionsShouldThrowException(String url) {
 		URI uri = URI.create(url);
 
 		assertThatThrownBy(() -> MimeTypeDetector.getMimeType(uri)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Unable to detect the MIME type");
+				.hasMessageContaining("Unable to detect the MIME type");
 	}
 
 }

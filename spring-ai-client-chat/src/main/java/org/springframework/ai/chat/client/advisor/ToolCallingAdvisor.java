@@ -16,21 +16,10 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.client.ChatClientMessageAggregator;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
-import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.ToolAdvisor;
+import org.springframework.ai.chat.client.advisor.api.*;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
@@ -42,6 +31,11 @@ import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.model.tool.internal.ToolCallReactiveContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Recursive Advisor that disables the internal tool execution flow and instead implements
@@ -91,8 +85,8 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	private final boolean conversationHistoryEnabled;
 
 	protected ToolCallingAdvisor(ToolCallingManager toolCallingManager,
-			ToolExecutionEligibilityChecker toolExecutionEligibilityChecker, int advisorOrder,
-			boolean conversationHistoryEnabled) {
+	                             ToolExecutionEligibilityChecker toolExecutionEligibilityChecker, int advisorOrder,
+	                             boolean conversationHistoryEnabled) {
 		Assert.notNull(toolCallingManager, "toolCallingManager must not be null");
 		Assert.notNull(toolExecutionEligibilityChecker, "toolExecutionEligibilityChecker must not be null");
 		Assert.isTrue(advisorOrder > BaseAdvisor.HIGHEST_PRECEDENCE && advisorOrder < BaseAdvisor.LOWEST_PRECEDENCE,
@@ -140,9 +134,9 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 			// Before Call
 			var processedChatClientRequest = ChatClientRequest.builder()
-				.prompt(new Prompt(instructions, toolCallingChatOptions))
-				.context(chatClientRequest.context())
-				.build();
+					.prompt(new Prompt(instructions, toolCallingChatOptions))
+					.context(chatClientRequest.context())
+					.build();
 
 			// Next Call
 			processedChatClientRequest = this.doBeforeCall(processedChatClientRequest, callAdvisorChain);
@@ -159,17 +153,17 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 			if (isToolCall) {
 				Assert.notNull(chatResponse, "redundant check that should never fail, but here to help NullAway");
 				ToolExecutionResult toolExecutionResult = this.toolCallingManager
-					.executeToolCalls(processedChatClientRequest.prompt(), chatResponse);
+						.executeToolCalls(processedChatClientRequest.prompt(), chatResponse);
 
 				if (toolExecutionResult.returnDirect()) {
 
 					// Return tool execution result directly to the application client.
 					chatClientResponse = chatClientResponse.mutate()
-						.chatResponse(ChatResponse.builder()
-							.from(chatResponse)
-							.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-							.build())
-						.build();
+							.chatResponse(ChatResponse.builder()
+									.from(chatResponse)
+									.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+									.build())
+							.build();
 
 					// Interrupt the tool calling loop and return the tool execution
 					// result directly to the client application instead of returning
@@ -188,7 +182,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	}
 
 	protected List<Message> doGetNextInstructionsForToolCall(ChatClientRequest chatClientRequest,
-			ChatClientResponse chatClientResponse, ToolExecutionResult toolExecutionResult) {
+	                                                         ChatClientResponse chatClientResponse, ToolExecutionResult toolExecutionResult) {
 
 		if (!this.conversationHistoryEnabled) {
 			List<Message> history = toolExecutionResult.conversationHistory();
@@ -202,12 +196,12 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	}
 
 	protected ChatClientResponse doFinalizeLoop(ChatClientResponse chatClientResponse,
-			CallAdvisorChain callAdvisorChain) {
+	                                            CallAdvisorChain callAdvisorChain) {
 		return chatClientResponse;
 	}
 
 	protected ChatClientRequest doInitializeLoop(ChatClientRequest chatClientRequest,
-			CallAdvisorChain callAdvisorChain) {
+	                                             CallAdvisorChain callAdvisorChain) {
 		return chatClientRequest;
 	}
 
@@ -224,7 +218,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	// -------------------------------------------------------------------------
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		Assert.notNull(streamAdvisorChain, "streamAdvisorChain must not be null");
 		Assert.notNull(chatClientRequest, "chatClientRequest must not be null");
 
@@ -241,15 +235,15 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	}
 
 	private Flux<ChatClientResponse> internalStream(StreamAdvisorChain streamAdvisorChain,
-			ChatClientRequest originalRequest, ToolCallingChatOptions toolCallingChatOptions,
-			List<Message> instructions) {
+	                                                ChatClientRequest originalRequest, ToolCallingChatOptions toolCallingChatOptions,
+	                                                List<Message> instructions) {
 
 		return Flux.deferContextual(contextView -> {
 			// Build request with current instructions
 			var processedRequest = ChatClientRequest.builder()
-				.prompt(new Prompt(instructions, toolCallingChatOptions))
-				.context(originalRequest.context())
-				.build();
+					.prompt(new Prompt(instructions, toolCallingChatOptions))
+					.context(originalRequest.context())
+					.build();
 
 			processedRequest = this.doBeforeStream(processedRequest, streamAdvisorChain);
 
@@ -266,15 +260,15 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	}
 
 	private Flux<ChatClientResponse> streamWithToolCallResponses(Flux<ChatClientResponse> responseFlux,
-			ChatClientRequest finalRequest, StreamAdvisorChain streamAdvisorChain, ChatClientRequest originalRequest,
-			ToolCallingChatOptions optionsCopy) {
+	                                                             ChatClientRequest finalRequest, StreamAdvisorChain streamAdvisorChain, ChatClientRequest originalRequest,
+	                                                             ToolCallingChatOptions optionsCopy) {
 
 		AtomicReference<ChatClientResponse> aggregatedResponseRef = new AtomicReference<>();
 
 		return CHAT_CLIENT_MESSAGE_AGGREGATOR.aggregateChatClientResponse(responseFlux, aggregatedResponseRef::set)
-			.concatWith(Flux.defer(() -> this.handleToolCallRecursion(aggregatedResponseRef.get(), finalRequest,
-					streamAdvisorChain, originalRequest, optionsCopy)))
-			.filter(ccr -> !this.toolExecutionEligibilityChecker.isToolCallResponse(ccr.chatResponse()));
+				.concatWith(Flux.defer(() -> this.handleToolCallRecursion(aggregatedResponseRef.get(), finalRequest,
+						streamAdvisorChain, originalRequest, optionsCopy)))
+				.filter(ccr -> !this.toolExecutionEligibilityChecker.isToolCallResponse(ccr.chatResponse()));
 	}
 
 	/**
@@ -282,8 +276,8 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	 * flux if no tool call, or recursive stream if tool call detected.
 	 */
 	private Flux<ChatClientResponse> handleToolCallRecursion(ChatClientResponse aggregatedResponse,
-			ChatClientRequest finalRequest, StreamAdvisorChain streamAdvisorChain, ChatClientRequest originalRequest,
-			ToolCallingChatOptions optionsCopy) {
+	                                                         ChatClientRequest finalRequest, StreamAdvisorChain streamAdvisorChain, ChatClientRequest originalRequest,
+	                                                         ToolCallingChatOptions optionsCopy) {
 
 		if (aggregatedResponse == null) {
 			return Flux.empty();
@@ -308,21 +302,19 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 			try {
 				ToolCallReactiveContextHolder.setContext(ctx);
 				toolExecutionResult = this.toolCallingManager.executeToolCalls(finalRequest.prompt(), chatResponse);
-			}
-			finally {
+			} finally {
 				ToolCallReactiveContextHolder.clearContext();
 			}
 
 			if (toolExecutionResult.returnDirect()) {
 				// Return tool execution result directly to the application client
 				return Flux.just(finalAggregatedResponse.mutate()
-					.chatResponse(ChatResponse.builder()
-						.from(chatResponse)
-						.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
-						.build())
-					.build());
-			}
-			else {
+						.chatResponse(ChatResponse.builder()
+								.from(chatResponse)
+								.generations(ToolExecutionResult.buildGenerations(toolExecutionResult))
+								.build())
+						.build());
+			} else {
 				// Recursive call with updated conversation history
 				List<Message> nextInstructions = this.doGetNextInstructionsForToolCallStream(finalRequest,
 						finalAggregatedResponse, toolExecutionResult);
@@ -335,61 +327,66 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	/**
 	 * Hook method called at the start of the streaming tool call loop. Subclasses can
 	 * override to customize initialization behavior.
-	 * @param chatClientRequest the initial request
+	 *
+	 * @param chatClientRequest  the initial request
 	 * @param streamAdvisorChain the stream advisor chain
 	 * @return the potentially modified request
 	 */
 	protected ChatClientRequest doInitializeLoopStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                                   StreamAdvisorChain streamAdvisorChain) {
 		return chatClientRequest;
 	}
 
 	/**
 	 * Hook method called before each streaming call in the tool call loop. Subclasses can
 	 * override to customize pre-call behavior.
-	 * @param chatClientRequest the request about to be processed
+	 *
+	 * @param chatClientRequest  the request about to be processed
 	 * @param streamAdvisorChain the stream advisor chain
 	 * @return the potentially modified request
 	 */
 	protected ChatClientRequest doBeforeStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                           StreamAdvisorChain streamAdvisorChain) {
 		return chatClientRequest;
 	}
 
 	/**
 	 * Hook method called after each streaming call in the tool call loop. Subclasses can
 	 * override to customize post-call behavior.
+	 *
 	 * @param chatClientResponse the response from the call
 	 * @param streamAdvisorChain the stream advisor chain
 	 * @return the potentially modified response
 	 */
 	protected ChatClientResponse doAfterStream(ChatClientResponse chatClientResponse,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                           StreamAdvisorChain streamAdvisorChain) {
 		return chatClientResponse;
 	}
 
 	/**
 	 * Hook method called at the end of the streaming tool call loop to finalize the
 	 * response. Subclasses can override to customize finalization behavior.
+	 *
 	 * @param chatClientResponseFlux the flux of collected response chunks to emit
-	 * @param streamAdvisorChain the stream advisor chain
+	 * @param streamAdvisorChain     the stream advisor chain
 	 * @return the potentially modified flux of responses
 	 */
 	protected Flux<ChatClientResponse> doFinalizeLoopStream(Flux<ChatClientResponse> chatClientResponseFlux,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                                        StreamAdvisorChain streamAdvisorChain) {
 		return chatClientResponseFlux;
 	}
 
 	/**
 	 * Hook method to determine the next instructions for a tool call iteration in
 	 * streaming mode. Subclasses can override to customize conversation history handling.
-	 * @param chatClientRequest the current request
-	 * @param chatClientResponse the current response
+	 *
+	 * @param chatClientRequest   the current request
+	 * @param chatClientResponse  the current response
 	 * @param toolExecutionResult the result of tool execution
 	 * @return the list of messages to use as instructions for the next iteration
 	 */
 	protected List<Message> doGetNextInstructionsForToolCallStream(ChatClientRequest chatClientRequest,
-			ChatClientResponse chatClientResponse, ToolExecutionResult toolExecutionResult) {
+	                                                               ChatClientResponse chatClientResponse, ToolExecutionResult toolExecutionResult) {
 
 		if (!this.conversationHistoryEnabled) {
 			List<Message> history = toolExecutionResult.conversationHistory();
@@ -404,6 +401,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 	/**
 	 * Creates a new Builder instance for constructing a ToolCallingAdvisor.
+	 *
 	 * @return a new Builder instance
 	 */
 	public static Builder<?> builder() {
@@ -416,7 +414,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 	 * This builder uses the self-referential generic pattern to support extensibility.
 	 *
 	 * @param <T> the builder type, used for self-referential generics to support method
-	 * chaining in subclasses
+	 *            chaining in subclasses
 	 */
 	public static class Builder<T extends Builder<T>> {
 
@@ -434,6 +432,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		/**
 		 * Returns this builder cast to the appropriate type for method chaining.
 		 * Subclasses should override this method to return the correct type.
+		 *
 		 * @return this builder instance
 		 */
 		@SuppressWarnings("unchecked")
@@ -443,6 +442,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 		/**
 		 * Sets the ToolCallingManager to be used by the advisor.
+		 *
 		 * @param toolCallingManager the ToolCallingManager instance
 		 * @return this Builder instance for method chaining
 		 */
@@ -456,6 +456,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		 * execution. Defaults to
 		 * {@code chatResponse -> chatResponse != null && chatResponse.hasToolCalls()}.
 		 * Override to apply provider-specific stop-reason logic.
+		 *
 		 * @param toolExecutionEligibilityChecker the checker
 		 * @return this Builder instance for method chaining
 		 */
@@ -466,8 +467,9 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 		/**
 		 * Sets the order of the advisor in the advisor chain.
+		 *
 		 * @param advisorOrder the order value, must be between HIGHEST_PRECEDENCE and
-		 * LOWEST_PRECEDENCE
+		 *                     LOWEST_PRECEDENCE
 		 * @return this Builder instance for method chaining
 		 */
 		public T advisorOrder(int advisorOrder) {
@@ -478,6 +480,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		/**
 		 * Sets whether internal conversation history is enabled. If false, you need a
 		 * ChatMemory Advisor registered next in the chain.
+		 *
 		 * @param conversationHistoryEnabled true to enable, false to disable
 		 * @return this Builder instance for method chaining
 		 */
@@ -489,6 +492,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		/**
 		 * Disables internal conversation history. You need a ChatMemory Advisor
 		 * registered next in the chain.
+		 *
 		 * @return this Builder instance for method chaining
 		 */
 		public T disableInternalConversationHistory() {
@@ -498,6 +502,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 		/**
 		 * Returns the configured ToolCallingManager.
+		 *
 		 * @return the ToolCallingManager instance
 		 */
 		protected ToolCallingManager getToolCallingManager() {
@@ -506,6 +511,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 		/**
 		 * Returns the configured advisor order.
+		 *
 		 * @return the advisor order value
 		 */
 		public int getAdvisorOrder() {
@@ -514,6 +520,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 		/**
 		 * Returns the configured ToolExecutionEligibilityChecker.
+		 *
 		 * @return the ToolExecutionEligibilityChecker instance
 		 */
 		public ToolExecutionEligibilityChecker getToolExecutionEligibilityChecker() {
@@ -527,6 +534,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		 * <p>
 		 * Subclasses must override {@link #newCopy()} to return an instance of their own
 		 * type, and override this method to copy their additional fields into it.
+		 *
 		 * @return a new {@link Builder} with the same configuration
 		 */
 		public Builder<?> copy() {
@@ -543,6 +551,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		 * that will receive the copied fields. Subclasses must override this to return an
 		 * instance of their own builder type so that {@link #copy()} preserves the full
 		 * subtype.
+		 *
 		 * @return a new, unconfigured builder of the same concrete type
 		 */
 		protected Builder<?> newCopy() {
@@ -551,6 +560,7 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 
 		/**
 		 * Returns whether internal conversation history is enabled.
+		 *
 		 * @return true if internal conversation history is enabled, false if disabled
 		 */
 		protected boolean isConversationHistoryEnabled() {
@@ -560,9 +570,10 @@ public class ToolCallingAdvisor implements CallAdvisor, StreamAdvisor, ToolAdvis
 		/**
 		 * Builds and returns a new ToolCallingAdvisor instance with the configured
 		 * properties.
+		 *
 		 * @return a new ToolCallingAdvisor instance
 		 * @throws IllegalArgumentException if toolCallingManager is null or advisorOrder
-		 * is out of valid range
+		 *                                  is out of valid range
 		 */
 		public ToolCallingAdvisor build() {
 			return new ToolCallingAdvisor(this.toolCallingManager, this.toolExecutionEligibilityChecker,

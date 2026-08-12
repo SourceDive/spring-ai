@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.bedrock.converse.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

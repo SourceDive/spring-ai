@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.chat.client.observation;
 
-import org.jspecify.annotations.NullMarked;

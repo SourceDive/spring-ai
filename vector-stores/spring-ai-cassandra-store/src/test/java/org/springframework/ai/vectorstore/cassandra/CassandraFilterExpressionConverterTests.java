@@ -16,31 +16,24 @@
 
 package org.springframework.ai.vectorstore.cassandra;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.metadata.schema.ColumnMetadata;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.internal.core.metadata.schema.DefaultColumnMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Mick Semb Wever
@@ -93,8 +86,8 @@ class CassandraFilterExpressionConverterTests {
 
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = filter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 
 		assertThat(vectorExpr).isEqualTo("\"genre\" = 'drama' and \"year\" >= 2020");
 	}
@@ -105,8 +98,8 @@ class CassandraFilterExpressionConverterTests {
 
 		// genre == "drama" OR year = 2020
 		String vectorExpr = filter
-			.convertExpression(new Expression(OR, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(EQ, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(OR, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(EQ, new Key("year"), new Value(2020))));
 
 		assertThat(vectorExpr).isEqualTo("\"genre\" = 'drama' or \"year\" = 2020");
 	}
@@ -132,9 +125,9 @@ class CassandraFilterExpressionConverterTests {
 
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = filter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Group(new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia"))))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Group(new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia"))))));
 
 		assertThat(vectorExpr).isEqualTo("\"year\" >= 2020 or \"country\" = 'BG' and \"city\" != 'Sofia'");
 	}
@@ -178,14 +171,14 @@ class CassandraFilterExpressionConverterTests {
 		Set<ColumnMetadata> columns = new HashSet(COLUMNS);
 
 		columns
-			.add(new DefaultColumnMetadata(T, T, CqlIdentifier.fromInternal("temperature"), DataTypes.DOUBLE, false));
+				.add(new DefaultColumnMetadata(T, T, CqlIdentifier.fromInternal("temperature"), DataTypes.DOUBLE, false));
 
 		CassandraFilterExpressionConverter filter = new CassandraFilterExpressionConverter(columns);
 
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = filter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo("\"temperature\" >= -15.6 and \"temperature\" <= 20.13");
 	}
@@ -198,7 +191,7 @@ class CassandraFilterExpressionConverterTests {
 				false));
 
 		columns
-			.add(new DefaultColumnMetadata(T, T, CqlIdentifier.fromInternal("'country 1 2 3'"), DataTypes.TEXT, false));
+				.add(new DefaultColumnMetadata(T, T, CqlIdentifier.fromInternal("'country 1 2 3'"), DataTypes.TEXT, false));
 
 		CassandraFilterExpressionConverter filter = new CassandraFilterExpressionConverter(columns);
 

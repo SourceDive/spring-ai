@@ -16,19 +16,12 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServer;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.JsonNode;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.method.tool.utils.McpJsonSchemaGenerator;
 import org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration;
@@ -38,6 +31,12 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
+import tools.jackson.databind.JsonNode;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,8 +48,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class McpToolInputSchemaIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
-				McpServerJsonMapperAutoConfiguration.class, ToolCallbackConverterAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
+					McpServerJsonMapperAutoConfiguration.class, ToolCallbackConverterAutoConfiguration.class));
 
 	/**
 	 * A top-level {@code @Nullable} parameter must be absent from the {@code required}
@@ -88,9 +87,9 @@ public class McpToolInputSchemaIT {
 		List<String> requestRequired = requiredList(requestSchema);
 		assertThat(requestRequired).as("non-nullable 'project' must be required inside request").contains("project");
 		assertThat(requestRequired).as("non-nullable 'issueType' must be required inside request")
-			.contains("issueType");
+				.contains("issueType");
 		assertThat(requestRequired).as("@Nullable 'summary' must NOT be required inside request")
-			.doesNotContain("summary");
+				.doesNotContain("summary");
 
 		// Inside Project, "description" carries @Nullable → NOT required
 		JsonNode projectSchema = requestSchema.at("/properties/project");
@@ -99,7 +98,7 @@ public class McpToolInputSchemaIT {
 		assertThat(projectRequired).as("non-nullable Project.key must be required").contains("key");
 		assertThat(projectRequired).as("non-nullable Project.name must be required").contains("name");
 		assertThat(projectRequired).as("@Nullable Project.description must NOT be required")
-			.doesNotContain("description");
+				.doesNotContain("description");
 
 		// Inside IssueType, "description" carries @Nullable → NOT required
 		JsonNode issueTypeSchema = requestSchema.at("/properties/issueType");
@@ -107,7 +106,7 @@ public class McpToolInputSchemaIT {
 		List<String> issueTypeRequired = requiredList(issueTypeSchema);
 		assertThat(issueTypeRequired).as("non-nullable IssueType.name must be required").contains("name");
 		assertThat(issueTypeRequired).as("@Nullable IssueType.description must NOT be required")
-			.doesNotContain("description");
+				.doesNotContain("description");
 	}
 
 	/**
@@ -127,11 +126,11 @@ public class McpToolInputSchemaIT {
 		assertThat(projectRequired).as("non-nullable Project.key must be required").contains("key");
 		assertThat(projectRequired).as("non-nullable Project.name must be required").contains("name");
 		assertThat(projectRequired).as("@JsonProperty(required=false) Project.description must NOT be required")
-			.doesNotContain("description");
+				.doesNotContain("description");
 
 		List<String> requestRequired = requiredList(requestSchema);
 		assertThat(requestRequired).as("@JsonProperty(required=false) summary must NOT be required")
-			.doesNotContain("summary");
+				.doesNotContain("summary");
 	}
 
 	/**
@@ -142,19 +141,19 @@ public class McpToolInputSchemaIT {
 	@Test
 	void jiraToolRegisteredWithExpectedSchema() {
 		this.contextRunner
-			.withUserConfiguration(McpServerAnnotationScannerAutoConfiguration.class,
-					McpServerSpecificationFactoryAutoConfiguration.class)
-			.withBean(JiraToolComponent.class)
-			.run(context -> {
-				McpSyncServer syncServer = context.getBean(McpSyncServer.class);
-				McpAsyncServer asyncServer = (McpAsyncServer) ReflectionTestUtils.getField(syncServer, "asyncServer");
+				.withUserConfiguration(McpServerAnnotationScannerAutoConfiguration.class,
+						McpServerSpecificationFactoryAutoConfiguration.class)
+				.withBean(JiraToolComponent.class)
+				.run(context -> {
+					McpSyncServer syncServer = context.getBean(McpSyncServer.class);
+					McpAsyncServer asyncServer = (McpAsyncServer) ReflectionTestUtils.getField(syncServer, "asyncServer");
 
-				CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "tools");
+					CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "tools");
 
-				assertThat(tools).hasSize(1);
-				assertThat(tools.get(0).tool().name()).isEqualTo("create_jira_issue");
-			});
+					assertThat(tools).hasSize(1);
+					assertThat(tools.get(0).tool().name()).isEqualTo("create_jira_issue");
+				});
 	}
 
 	private static List<String> requiredList(JsonNode node) {
@@ -166,11 +165,15 @@ public class McpToolInputSchemaIT {
 		return result;
 	}
 
-	/** Optional {@code description} field; {@code name} is required. */
+	/**
+	 * Optional {@code description} field; {@code name} is required.
+	 */
 	public record IssueType(String name, @Nullable String description) {
 	}
 
-	/** Optional {@code description} field; {@code key} and {@code name} are required. */
+	/**
+	 * Optional {@code description} field; {@code key} and {@code name} are required.
+	 */
 	public record Project(String key, String name, @Nullable String description) {
 	}
 
@@ -193,7 +196,7 @@ public class McpToolInputSchemaIT {
 	 * workaround.
 	 */
 	public record JiraCreateIssueRequestWorkaround(@JsonProperty(required = false) String summary,
-			ProjectWorkaround project, IssueType issueType) {
+	                                               ProjectWorkaround project, IssueType issueType) {
 	}
 
 	static class JiraToolMethods {

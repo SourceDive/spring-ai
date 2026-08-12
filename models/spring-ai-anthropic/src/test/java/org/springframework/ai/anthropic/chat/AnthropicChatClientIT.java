@@ -16,20 +16,11 @@
 
 package org.springframework.ai.anthropic.chat;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.anthropic.models.messages.Model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.AnthropicTestConfiguration;
 import org.springframework.ai.chat.client.AdvisorParams;
@@ -51,6 +42,14 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -265,7 +264,7 @@ class AnthropicChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "claude-haiku-4-5" })
+	@ValueSource(strings = {"claude-haiku-4-5"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 		// @formatter:off
 		String response = ChatClient.create(this.chatModel).prompt()
@@ -279,7 +278,7 @@ class AnthropicChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "claude-haiku-4-5" })
+	@ValueSource(strings = {"claude-haiku-4-5"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 		URL url = new URL("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png");
 
@@ -310,16 +309,16 @@ class AnthropicChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "claude-haiku-4-5" })
+	@ValueSource(strings = {"claude-haiku-4-5"})
 	void streamToolCallingResponseShouldNotContainToolCallMessages(String modelName) {
 		ChatClient chatClient = ChatClient.builder(this.chatModel).build();
 
 		Flux<ChatResponse> responses = chatClient.prompt()
-			.options(ToolCallingChatOptions.builder().model(modelName))
-			.tools(new MyTools())
-			.user("Get current weather in Amsterdam and Paris")
-			.stream()
-			.chatResponse();
+				.options(ToolCallingChatOptions.builder().model(modelName))
+				.tools(new MyTools())
+				.user("Get current weather in Amsterdam and Paris")
+				.stream()
+				.chatResponse();
 
 		List<ChatResponse> chatResponses = responses.collectList().block();
 

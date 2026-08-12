@@ -16,13 +16,12 @@
 
 package org.springframework.ai.template.st;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.template.ValidationMode;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,8 +36,8 @@ class StTemplateRendererTests {
 	@Test
 	void shouldNotAcceptNullValidationMode() {
 		assertThatThrownBy(() -> StTemplateRenderer.builder().validationMode(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("validationMode cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("validationMode cannot be null");
 	}
 
 	@Test
@@ -80,14 +79,14 @@ class StTemplateRendererTests {
 		Map<String, Object> variables = new HashMap<>();
 
 		assertThatThrownBy(() -> renderer.apply("", variables)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
 	void shouldNotAcceptNullVariables() {
 		StTemplateRenderer renderer = StTemplateRenderer.builder().build();
 		assertThatThrownBy(() -> renderer.apply("Hello!", null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables cannot be null");
+				.hasMessageContaining("variables cannot be null");
 	}
 
 	@Test
@@ -98,7 +97,7 @@ class StTemplateRendererTests {
 		variables.put(null, "Spring AI");
 
 		assertThatThrownBy(() -> renderer.apply(template, variables)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables keys cannot be null");
+				.hasMessageContaining("variables keys cannot be null");
 	}
 
 	@Test
@@ -108,7 +107,7 @@ class StTemplateRendererTests {
 		variables.put("name", "Spring AI");
 
 		assertThatThrownBy(() -> renderer.apply("Hello {name!", variables)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The template string is not valid.");
+				.hasMessageContaining("The template string is not valid.");
 	}
 
 	@Test
@@ -118,9 +117,9 @@ class StTemplateRendererTests {
 		variables.put("greeting", "Hello");
 
 		assertThatThrownBy(() -> renderer.apply("{greeting} {name}!", variables))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining(
-					"Not all variables were replaced in the template. Missing variable names are: [name]");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining(
+						"Not all variables were replaced in the template. Missing variable names are: [name]");
 	}
 
 	@Test
@@ -148,9 +147,9 @@ class StTemplateRendererTests {
 	@Test
 	void shouldRenderWithCustomDelimiters() {
 		StTemplateRenderer renderer = StTemplateRenderer.builder()
-			.startDelimiterToken('<')
-			.endDelimiterToken('>')
-			.build();
+				.startDelimiterToken('<')
+				.endDelimiterToken('>')
+				.build();
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("name", "Spring AI");
 
@@ -162,9 +161,9 @@ class StTemplateRendererTests {
 	@Test
 	void shouldHandleSpecialCharactersAsDelimiters() {
 		StTemplateRenderer renderer = StTemplateRenderer.builder()
-			.startDelimiterToken('$')
-			.endDelimiterToken('$')
-			.build();
+				.startDelimiterToken('$')
+				.endDelimiterToken('$')
+				.build();
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("name", "Spring AI");
 
@@ -212,7 +211,7 @@ class StTemplateRendererTests {
 		StTemplateRenderer renderer = StTemplateRenderer.builder().validationMode(ValidationMode.NONE).build();
 
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("items", new String[] { "apple", "banana", "cherry" });
+		variables.put("items", new String[]{"apple", "banana", "cherry"});
 
 		String result = renderer.apply("Items: {items; separator=\", \"}", variables);
 
@@ -230,7 +229,7 @@ class StTemplateRendererTests {
 		StTemplateRenderer renderer = StTemplateRenderer.builder().validationMode(ValidationMode.NONE).build();
 
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("fruits", new String[] { "apple", "banana", "cherry" });
+		variables.put("fruits", new String[]{"apple", "banana", "cherry"});
 		variables.put("count", 3);
 
 		// Template with separator option for list formatting
@@ -348,9 +347,9 @@ class StTemplateRendererTests {
 		missingVariables.put("profile", Map.of("name", "John"));
 
 		assertThatThrownBy(() -> renderer.apply("Hello {user.profile.name}!", missingVariables))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining(
-					"Not all variables were replaced in the template. Missing variable names are: [user]");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining(
+						"Not all variables were replaced in the template. Missing variable names are: [user]");
 	}
 
 }

@@ -22,12 +22,16 @@ import org.springframework.boot.autoconfigure.service.connection.ConnectionDetai
 
 public interface AwsOpenSearchConnectionDetails extends ConnectionDetails {
 
-	@Nullable String getRegion();
+	@Nullable
+	String getRegion();
 
-	@Nullable String getAccessKey();
+	@Nullable
+	String getAccessKey();
 
-	@Nullable String getSecretKey();
+	@Nullable
+	String getSecretKey();
 
-	@Nullable String getHost(@Nullable String domainName);
+	@Nullable
+	String getHost(@Nullable String domainName);
 
 }

@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.ollama.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.ai.ollama.api.ThinkOption;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * Ollama Chat autoconfiguration properties.
@@ -388,42 +387,42 @@ public class OllamaChatProperties {
 
 	public OllamaChatOptions toOptions() {
 		return OllamaChatOptions.builder()
-			.model(this.model)
-			.format(this.format)
-			.keepAlive(this.keepAlive)
-			.truncate(this.truncate)
-			.thinkOption(toThinkOption(this.think))
-			.useNUMA(this.useNUMA)
-			.numCtx(this.numCtx)
-			.numBatch(this.numBatch)
-			.numGPU(this.numGPU)
-			.mainGPU(this.mainGPU)
-			.lowVRAM(this.lowVRAM)
-			.f16KV(this.f16KV)
-			.logitsAll(this.logitsAll)
-			.vocabOnly(this.vocabOnly)
-			.useMMap(this.useMMap)
-			.useMLock(this.useMLock)
-			.numThread(this.numThread)
-			.numKeep(this.numKeep)
-			.seed(this.seed)
-			.numPredict(this.numPredict)
-			.topK(this.topK)
-			.topP(this.topP)
-			.minP(this.minP)
-			.tfsZ(this.tfsZ)
-			.typicalP(this.typicalP)
-			.repeatLastN(this.repeatLastN)
-			.temperature(this.temperature)
-			.repeatPenalty(this.repeatPenalty)
-			.presencePenalty(this.presencePenalty)
-			.frequencyPenalty(this.frequencyPenalty)
-			.mirostat(this.mirostat)
-			.mirostatTau(this.mirostatTau)
-			.mirostatEta(this.mirostatEta)
-			.penalizeNewline(this.penalizeNewline)
-			.stop(this.stop)
-			.build();
+				.model(this.model)
+				.format(this.format)
+				.keepAlive(this.keepAlive)
+				.truncate(this.truncate)
+				.thinkOption(toThinkOption(this.think))
+				.useNUMA(this.useNUMA)
+				.numCtx(this.numCtx)
+				.numBatch(this.numBatch)
+				.numGPU(this.numGPU)
+				.mainGPU(this.mainGPU)
+				.lowVRAM(this.lowVRAM)
+				.f16KV(this.f16KV)
+				.logitsAll(this.logitsAll)
+				.vocabOnly(this.vocabOnly)
+				.useMMap(this.useMMap)
+				.useMLock(this.useMLock)
+				.numThread(this.numThread)
+				.numKeep(this.numKeep)
+				.seed(this.seed)
+				.numPredict(this.numPredict)
+				.topK(this.topK)
+				.topP(this.topP)
+				.minP(this.minP)
+				.tfsZ(this.tfsZ)
+				.typicalP(this.typicalP)
+				.repeatLastN(this.repeatLastN)
+				.temperature(this.temperature)
+				.repeatPenalty(this.repeatPenalty)
+				.presencePenalty(this.presencePenalty)
+				.frequencyPenalty(this.frequencyPenalty)
+				.mirostat(this.mirostat)
+				.mirostatTau(this.mirostatTau)
+				.mirostatEta(this.mirostatEta)
+				.penalizeNewline(this.penalizeNewline)
+				.stop(this.stop)
+				.build();
 	}
 
 	private @Nullable ThinkOption toThinkOption(@Nullable OllamaThinkProperties thinkOption) {

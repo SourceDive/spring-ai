@@ -66,10 +66,10 @@ public class OllamaEmbeddingProperties {
 
 	public OllamaEmbeddingOptions toOptions() {
 		return OllamaEmbeddingOptions.builder()
-			.model(this.model)
-			.truncate(this.truncate)
-			.keepAlive(this.keepAlive)
-			.build();
+				.model(this.model)
+				.truncate(this.truncate)
+				.keepAlive(this.keepAlive)
+				.build();
 	}
 
 	private Options options = new Options();

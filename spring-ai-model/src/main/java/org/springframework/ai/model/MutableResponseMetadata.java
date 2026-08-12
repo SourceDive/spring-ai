@@ -16,13 +16,13 @@
 
 package org.springframework.ai.model;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-
-import org.jspecify.annotations.Nullable;
 
 public class MutableResponseMetadata implements ResponseMetadata {
 
@@ -30,9 +30,10 @@ public class MutableResponseMetadata implements ResponseMetadata {
 
 	/**
 	 * Puts an element to the context.
-	 * @param key key
+	 *
+	 * @param key    key
 	 * @param object value
-	 * @param <T> value type
+	 * @param <T>    value type
 	 * @return this for chaining
 	 */
 	public <T> MutableResponseMetadata put(String key, T object) {
@@ -42,17 +43,20 @@ public class MutableResponseMetadata implements ResponseMetadata {
 
 	/**
 	 * Gets an entry from the context. Returns {@code null} when entry is not present.
+	 *
 	 * @param key key
 	 * @param <T> value type
 	 * @return entry or {@code null} if not present
 	 */
 	@Override
-	@Nullable public <T> T get(String key) {
+	@Nullable
+	public <T> T get(String key) {
 		return (T) this.map.get(key);
 	}
 
 	/**
 	 * Removes an entry from the context.
+	 *
 	 * @param key key by which to remove an entry
 	 * @return the previous value associated with the key, or null if there was no mapping
 	 * for the key
@@ -63,10 +67,11 @@ public class MutableResponseMetadata implements ResponseMetadata {
 
 	/**
 	 * Gets an entry from the context. Throws exception when entry is not present.
+	 *
 	 * @param key key
 	 * @param <T> value type
-	 * @throws IllegalArgumentException if not present
 	 * @return entry
+	 * @throws IllegalArgumentException if not present
 	 */
 	@Override
 	public <T> T getRequired(Object key) {
@@ -79,6 +84,7 @@ public class MutableResponseMetadata implements ResponseMetadata {
 
 	/**
 	 * Checks if context contains a key.
+	 *
 	 * @param key key
 	 * @return {@code true} when the context contains the entry with the given key
 	 */
@@ -89,9 +95,10 @@ public class MutableResponseMetadata implements ResponseMetadata {
 
 	/**
 	 * Returns an element or default if not present.
-	 * @param key key
+	 *
+	 * @param key           key
 	 * @param defaultObject default object to return
-	 * @param <T> value type
+	 * @param <T>           value type
 	 * @return object or default if not present
 	 */
 	@Override
@@ -116,9 +123,10 @@ public class MutableResponseMetadata implements ResponseMetadata {
 	/**
 	 * Returns an element or calls a mapping function if entry not present. The function
 	 * will insert the value to the map.
-	 * @param key key
+	 *
+	 * @param key             key
 	 * @param mappingFunction mapping function
-	 * @param <T> value type
+	 * @param <T>             value type
 	 * @return object or one derived from the mapping function if not present
 	 */
 	public <T> T computeIfAbsent(String key, Function<Object, ? extends T> mappingFunction) {

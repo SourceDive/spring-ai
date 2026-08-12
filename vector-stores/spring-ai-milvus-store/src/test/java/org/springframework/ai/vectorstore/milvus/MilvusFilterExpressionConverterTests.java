@@ -16,27 +16,17 @@
 
 package org.springframework.ai.vectorstore.milvus;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Christian Tzolov
@@ -57,8 +47,8 @@ public class MilvusFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("metadata[\"genre\"] == \"drama\" && metadata[\"year\"] >= 2020");
 	}
 
@@ -74,9 +64,9 @@ public class MilvusFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo(
 				"metadata[\"year\"] >= 2020 || metadata[\"country\"] == \"BG\" && metadata[\"city\"] != \"Sofia\"");
 	}
@@ -108,8 +98,8 @@ public class MilvusFilterExpressionConverterTests {
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo("metadata[\"temperature\"] >= -15.6 && metadata[\"temperature\"] <= 20.13");
 	}
@@ -117,11 +107,11 @@ public class MilvusFilterExpressionConverterTests {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"country 1 2 3\"] == \"BG\"");
 
 		vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"\\\"country 1 2 3\\\"\"] == \"BG\"");
 
 		vectorExpr = this.converter.convertExpression(new Expression(EQ, new Key("'country 1 2 3'"), new Value("BG")));
@@ -157,14 +147,14 @@ public class MilvusFilterExpressionConverterTests {
 						new Expression(LT, new Key("temperature"), new Value(25))),
 				new Expression(LTE, new Key("humidity"), new Value(80))));
 		assertThat(vectorExpr)
-			.isEqualTo("metadata[\"price\"] > 1000 && metadata[\"temperature\"] < 25 && metadata[\"humidity\"] <= 80");
+				.isEqualTo("metadata[\"price\"] > 1000 && metadata[\"temperature\"] < 25 && metadata[\"humidity\"] <= 80");
 	}
 
 	@Test
 	public void testNin() {
 		// region not in ["A", "B", "C"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("region"), new Value(List.of("A", "B", "C"))));
+				.convertExpression(new Expression(NIN, new Key("region"), new Value(List.of("A", "B", "C"))));
 		assertThat(vectorExpr).isEqualTo("metadata[\"region\"] not in [\"A\",\"B\",\"C\"]");
 	}
 
@@ -193,7 +183,7 @@ public class MilvusFilterExpressionConverterTests {
 	public void testLongValue() {
 		// timestamp >= 1640995200000L
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(GTE, new Key("timestamp"), new Value(1640995200000L)));
+				.convertExpression(new Expression(GTE, new Key("timestamp"), new Value(1640995200000L)));
 		assertThat(vectorExpr).isEqualTo("metadata[\"timestamp\"] >= 1640995200000");
 	}
 
@@ -208,7 +198,7 @@ public class MilvusFilterExpressionConverterTests {
 	public void testMixedTypesList() {
 		// tags in [1, "priority", true]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("tags"), new Value(List.of(1, "priority", true))));
+				.convertExpression(new Expression(IN, new Key("tags"), new Value(List.of(1, "priority", true))));
 		assertThat(vectorExpr).isEqualTo("metadata[\"tags\"] in [1,\"priority\",true]");
 	}
 
@@ -216,7 +206,7 @@ public class MilvusFilterExpressionConverterTests {
 	public void testEmptyList() {
 		// categories in []
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("categories"), new Value(List.of())));
+				.convertExpression(new Expression(IN, new Key("categories"), new Value(List.of())));
 		assertThat(vectorExpr).isEqualTo("metadata[\"categories\"] in []");
 	}
 
@@ -224,7 +214,7 @@ public class MilvusFilterExpressionConverterTests {
 	public void testSingleItemList() {
 		// status in ["active"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
+				.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
 		assertThat(vectorExpr).isEqualTo("metadata[\"status\"] in [\"active\"]");
 	}
 
@@ -232,7 +222,7 @@ public class MilvusFilterExpressionConverterTests {
 	public void testKeyWithDots() {
 		// "value.field" >= 18
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(GTE, new Key("value.field"), new Value(18)));
+				.convertExpression(new Expression(GTE, new Key("value.field"), new Value(18)));
 		assertThat(vectorExpr).isEqualTo("metadata[\"value.field\"] >= 18");
 	}
 
@@ -240,7 +230,7 @@ public class MilvusFilterExpressionConverterTests {
 	public void testKeyWithSpecialCharacters() {
 		// "field-name_with@symbols" == "value"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field-name_with@symbols"), new Value("value")));
+				.convertExpression(new Expression(EQ, new Key("field-name_with@symbols"), new Value("value")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"field-name_with@symbols\"] == \"value\"");
 	}
 
@@ -265,15 +255,15 @@ public class MilvusFilterExpressionConverterTests {
 				new Expression(EQ, new Key("type"), new Value("special"))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("metadata[\"value\"] < 50 || metadata[\"value\"] > 200 || metadata[\"type\"] == \"special\"");
+				.isEqualTo("metadata[\"value\"] < 50 || metadata[\"value\"] > 200 || metadata[\"type\"] == \"special\"");
 	}
 
 	@Test
 	public void testNegativeNumbers() {
 		// temperature >= -20 AND temperature <= -5
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-20)),
-					new Expression(LTE, new Key("temperature"), new Value(-5))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-20)),
+						new Expression(LTE, new Key("temperature"), new Value(-5))));
 
 		assertThat(vectorExpr).isEqualTo("metadata[\"temperature\"] >= -20 && metadata[\"temperature\"] <= -5");
 	}
@@ -297,7 +287,7 @@ public class MilvusFilterExpressionConverterTests {
 		// Test with a very long string value
 		String longValue = "This is a very long string that might be used as a value in a filter expression to test how the converter handles lengthy text content that could potentially cause issues with string manipulation";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("content"), new Value(longValue)));
+				.convertExpression(new Expression(EQ, new Key("content"), new Value(longValue)));
 		assertThat(vectorExpr).isEqualTo("metadata[\"content\"] == \"" + longValue + "\"");
 	}
 
@@ -305,8 +295,8 @@ public class MilvusFilterExpressionConverterTests {
 	public void testRangeQuery() {
 		// value >= 10 AND value <= 100
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("value"), new Value(10)),
-					new Expression(LTE, new Key("value"), new Value(100))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("value"), new Value(10)),
+						new Expression(LTE, new Key("value"), new Value(100))));
 
 		assertThat(vectorExpr).isEqualTo("metadata[\"value\"] >= 10 && metadata[\"value\"] <= 100");
 	}
@@ -326,21 +316,21 @@ public class MilvusFilterExpressionConverterTests {
 	@Test
 	public void testKeyWithSingleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
+				.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"x' OR 1=1--\"] == \"dummy\"");
 	}
 
 	@Test
 	public void testKeyWithDoubleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\"inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\"inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"key\\\"inject\"] == \"v\"");
 	}
 
 	@Test
 	public void testKeyWithBackslash() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo("metadata[\"key\\\\inject\"] == \"v\"");
 	}
 
@@ -351,12 +341,12 @@ public class MilvusFilterExpressionConverterTests {
 		// Single quote passes through unchanged (JSON does not require escaping), but the
 		// outer double quotes prevent it from breaking out of the string literal.
 		assertThat(MilvusFilterExpressionConverter.toFilterExpressionLiteral("x' || doc_id != 'x"))
-			.isEqualTo("\"x' || doc_id != 'x\"");
+				.isEqualTo("\"x' || doc_id != 'x\"");
 		// Double quotes, backslashes and control chars are JSON-escaped.
 		assertThat(MilvusFilterExpressionConverter.toFilterExpressionLiteral("with\"dquote"))
-			.isEqualTo("\"with\\\"dquote\"");
+				.isEqualTo("\"with\\\"dquote\"");
 		assertThat(MilvusFilterExpressionConverter.toFilterExpressionLiteral("back\\slash\nnewline"))
-			.isEqualTo("\"back\\\\slash\\nnewline\"");
+				.isEqualTo("\"back\\\\slash\\nnewline\"");
 	}
 
 }

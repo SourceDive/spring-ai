@@ -16,14 +16,7 @@
 
 package org.springframework.ai.mcp.client.webflux.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.McpSseClientConnectionDetails;
 import org.springframework.ai.mcp.client.common.autoconfigure.NamedClientMcpTransport;
 import org.springframework.ai.mcp.client.common.autoconfigure.PropertiesMcpSseClientConnectionDetails;
@@ -40,6 +33,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Auto-configuration for WebFlux-based Server-Sent Events (SSE) client transport in the
@@ -66,7 +65,7 @@ import org.springframework.web.reactive.function.client.WebClient;
  */
 @AutoConfiguration
 @ConditionalOnClass(WebFluxSseClientTransport.class)
-@EnableConfigurationProperties({ McpSseClientProperties.class, McpClientCommonProperties.class })
+@EnableConfigurationProperties({McpSseClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 @Deprecated(since = "2.0.0", forRemoval = true)
@@ -88,18 +87,19 @@ public class SseWebFluxTransportAutoConfiguration {
 	 * <li>JsonMapper for JSON processing
 	 * <li>Server connection parameters from properties
 	 * </ul>
-	 * @param connectionDetails the SSE client properties containing server configurations
+	 *
+	 * @param connectionDetails        the SSE client properties containing server configurations
 	 * @param webClientBuilderProvider the provider for WebClient.Builder
-	 * @param jsonMapperProvider the provider for JsonMapper or a new instance if not
-	 * available
-	 * @param transportCustomizers provider for
-	 * {@link McpClientCustomizer<WebFluxSseClientTransport.Builder>} beans
+	 * @param jsonMapperProvider       the provider for JsonMapper or a new instance if not
+	 *                                 available
+	 * @param transportCustomizers     provider for
+	 *                                 {@link McpClientCustomizer<WebFluxSseClientTransport.Builder>} beans
 	 * @return list of named MCP transports
 	 */
 	@Bean
 	public List<NamedClientMcpTransport> sseWebFluxClientTransports(McpSseClientConnectionDetails connectionDetails,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ObjectProvider<JsonMapper> jsonMapperProvider,
-			ObjectProvider<McpClientCustomizer<WebFluxSseClientTransport.Builder>> transportCustomizers) {
+	                                                                ObjectProvider<WebClient.Builder> webClientBuilderProvider, ObjectProvider<JsonMapper> jsonMapperProvider,
+	                                                                ObjectProvider<McpClientCustomizer<WebFluxSseClientTransport.Builder>> transportCustomizers) {
 
 		List<NamedClientMcpTransport> sseTransports = new ArrayList<>();
 
@@ -113,8 +113,8 @@ public class SseWebFluxTransportAutoConfiguration {
 			var webClientBuilder = webClientBuilderTemplate.clone().baseUrl(url);
 			String sseEndpoint = Objects.requireNonNullElse(serverParameters.getValue().sseEndpoint(), "/sse");
 			var transportBuilder = WebFluxSseClientTransport.builder(webClientBuilder)
-				.sseEndpoint(sseEndpoint)
-				.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
+					.sseEndpoint(sseEndpoint)
+					.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
 
 			for (McpClientCustomizer<WebFluxSseClientTransport.Builder> customizer : transportCustomizers) {
 				customizer.customize(connectionName, transportBuilder);

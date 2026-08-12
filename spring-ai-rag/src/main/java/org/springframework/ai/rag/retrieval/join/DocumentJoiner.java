@@ -16,12 +16,12 @@
 
 package org.springframework.ai.rag.retrieval.join;
 
+import org.springframework.ai.document.Document;
+import org.springframework.ai.rag.Query;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.rag.Query;
 
 /**
  * A component for combining documents retrieved based on multiple queries and from
@@ -35,8 +35,9 @@ public interface DocumentJoiner extends Function<Map<Query, List<List<Document>>
 
 	/**
 	 * Joins documents retrieved across multiple queries and daa sources.
+	 *
 	 * @param documentsForQuery a map of queries and the corresponding list of documents
-	 * retrieved
+	 *                          retrieved
 	 * @return a single collection of documents
 	 */
 	List<Document> join(Map<Query, List<List<Document>>> documentsForQuery);

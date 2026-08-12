@@ -16,8 +16,6 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.List;
-
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.observation.DefaultMeterObservationHandler;
@@ -27,8 +25,6 @@ import io.micrometer.observation.tck.TestObservationRegistryAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.observation.DefaultChatModelObservationConvention;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -38,6 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -108,18 +107,18 @@ public class OpenAiChatModelHttpObservabilityIT {
 		assertThat(responses).isNotEmpty();
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.hasObservationWithNameEqualTo(HTTP_OBSERVATION_NAME);
+				.hasObservationWithNameEqualTo(HTTP_OBSERVATION_NAME);
 		assertHttpTimerRecorded();
 		assertConnectionPoolGaugesBound();
 	}
 
 	private void assertHttpObservationParentedUnderChatModel() {
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.hasObservationWithNameEqualTo(HTTP_OBSERVATION_NAME)
-			.that()
-			.hasParentObservationContextMatching(
-					parent -> DefaultChatModelObservationConvention.DEFAULT_NAME.equals(parent.getName()),
-					"parent observation '%s'".formatted(DefaultChatModelObservationConvention.DEFAULT_NAME));
+				.hasObservationWithNameEqualTo(HTTP_OBSERVATION_NAME)
+				.that()
+				.hasParentObservationContextMatching(
+						parent -> DefaultChatModelObservationConvention.DEFAULT_NAME.equals(parent.getName()),
+						"parent observation '%s'".formatted(DefaultChatModelObservationConvention.DEFAULT_NAME));
 	}
 
 	private void assertHttpTimerRecorded() {
@@ -130,12 +129,12 @@ public class OpenAiChatModelHttpObservabilityIT {
 
 	private void assertConnectionPoolGaugesBound() {
 		long poolMeters = this.meterRegistry.getMeters()
-			.stream()
-			.map(m -> m.getId().getName())
-			.filter(n -> n.startsWith("okhttp.pool"))
-			.count();
+				.stream()
+				.map(m -> m.getId().getName())
+				.filter(n -> n.startsWith("okhttp.pool"))
+				.count();
 		assertThat(poolMeters).as("OkHttpConnectionPoolMetrics should register at least one okhttp.pool.* gauge")
-			.isGreaterThan(0);
+				.isGreaterThan(0);
 	}
 
 	@SpringBootConfiguration
@@ -157,12 +156,12 @@ public class OpenAiChatModelHttpObservabilityIT {
 
 		@Bean
 		public OpenAiChatModel openaiSdkChatModel(TestObservationRegistry observationRegistry,
-				MeterRegistry meterRegistry) {
+		                                          MeterRegistry meterRegistry) {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder().build())
-				.observationRegistry(observationRegistry)
-				.meterRegistry(meterRegistry)
-				.build();
+					.options(OpenAiChatOptions.builder().build())
+					.observationRegistry(observationRegistry)
+					.meterRegistry(meterRegistry)
+					.build();
 		}
 
 	}

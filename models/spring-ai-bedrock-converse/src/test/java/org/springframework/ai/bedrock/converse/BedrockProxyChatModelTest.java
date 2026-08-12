@@ -16,9 +16,6 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.net.URL;
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +23,6 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import software.amazon.awssdk.core.exception.SdkClientException;
-import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
-import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
-import software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock;
-
 import org.springframework.ai.bedrock.converse.api.BedrockCacheOptions;
 import org.springframework.ai.bedrock.converse.api.BedrockCacheStrategy;
 import org.springframework.ai.bedrock.converse.api.MediaFetcher;
@@ -42,6 +32,15 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.util.MimeType;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock;
+
+import java.net.URL;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -69,7 +68,7 @@ class BedrockProxyChatModelTest {
 	void shouldIgnoreExceptionAndUseDefault() {
 		try (MockedStatic<DefaultAwsRegionProviderChain> mocked = mockStatic(DefaultAwsRegionProviderChain.class)) {
 			when(this.awsRegionProviderBuilder.build().getRegion())
-				.thenThrow(SdkClientException.builder().message("failed load").build());
+					.thenThrow(SdkClientException.builder().message("failed load").build());
 			mocked.when(DefaultAwsRegionProviderChain::builder).thenReturn(this.awsRegionProviderBuilder);
 			BedrockProxyChatModel.builder().build();
 		}
@@ -79,7 +78,7 @@ class BedrockProxyChatModelTest {
 	void sanitizeDocumentNameShouldReplaceDotsWithHyphens() {
 		String name = "media-vnd.openxmlformats-officedocument.spreadsheetml.sheet-abc123";
 		assertThat(BedrockProxyChatModel.sanitizeDocumentName(name))
-			.isEqualTo("media-vnd-openxmlformats-officedocument-spreadsheetml-sheet-abc123");
+				.isEqualTo("media-vnd-openxmlformats-officedocument-spreadsheetml-sheet-abc123");
 	}
 
 	@Test
@@ -102,29 +101,29 @@ class BedrockProxyChatModelTest {
 	void fileProtocolUrlMediaThrowsIllegalArgumentException() throws Exception {
 		BedrockProxyChatModel model = newModel();
 		Media media = Media.builder()
-			.mimeType(MimeType.valueOf("image/png"))
-			.data(new URL("file:///etc/passwd"))
-			.build();
+				.mimeType(MimeType.valueOf("image/png"))
+				.data(new URL("file:///etc/passwd"))
+				.build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Failed to read media data from URL")
-			.cause()
-			.isInstanceOf(SecurityException.class)
-			.hasMessageContaining("Unsupported URL protocol: file");
+				.hasMessageContaining("Failed to read media data from URL")
+				.cause()
+				.isInstanceOf(SecurityException.class)
+				.hasMessageContaining("Unsupported URL protocol: file");
 	}
 
 	@Test
 	void ftpProtocolUrlMediaThrowsIllegalArgumentException() throws Exception {
 		BedrockProxyChatModel model = newModel();
 		Media media = Media.builder()
-			.mimeType(MimeType.valueOf("image/png"))
-			.data(new URL("ftp://internal-server/data.png"))
-			.build();
+				.mimeType(MimeType.valueOf("image/png"))
+				.data(new URL("ftp://internal-server/data.png"))
+				.build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(IllegalArgumentException.class)
-			.cause()
-			.isInstanceOf(SecurityException.class)
-			.hasMessageContaining("Unsupported URL protocol: ftp");
+				.cause()
+				.isInstanceOf(SecurityException.class)
+				.hasMessageContaining("Unsupported URL protocol: ftp");
 	}
 
 	// -------------------------------------------------------------------------
@@ -135,13 +134,13 @@ class BedrockProxyChatModelTest {
 	void loopbackHttpUrlMediaThrowsIllegalArgumentException() throws Exception {
 		BedrockProxyChatModel model = newModel();
 		Media media = Media.builder()
-			.mimeType(MimeType.valueOf("image/png"))
-			.data(new URL("http://127.0.0.1/image.png"))
-			.build();
+				.mimeType(MimeType.valueOf("image/png"))
+				.data(new URL("http://127.0.0.1/image.png"))
+				.build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(IllegalArgumentException.class)
-			.cause()
-			.isInstanceOf(SecurityException.class);
+				.cause()
+				.isInstanceOf(SecurityException.class);
 	}
 
 	@Test
@@ -149,13 +148,13 @@ class BedrockProxyChatModelTest {
 		// Primary scenario: AWS IMDS credential theft via URL object
 		BedrockProxyChatModel model = newModel();
 		Media media = Media.builder()
-			.mimeType(MimeType.valueOf("image/png"))
-			.data(new URL("http://169.254.169.254/latest/meta-data/iam/security-credentials/"))
-			.build();
+				.mimeType(MimeType.valueOf("image/png"))
+				.data(new URL("http://169.254.169.254/latest/meta-data/iam/security-credentials/"))
+				.build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(IllegalArgumentException.class)
-			.cause()
-			.isInstanceOf(SecurityException.class);
+				.cause()
+				.isInstanceOf(SecurityException.class);
 	}
 
 	// -------------------------------------------------------------------------
@@ -168,13 +167,13 @@ class BedrockProxyChatModelTest {
 		// 127.0.0.1 passes isValidURLStrict (has dots) but is blocked by
 		// assertNoInternalAddress
 		Media media = Media.builder()
-			.mimeType(MimeType.valueOf("image/png"))
-			.data("http://127.0.0.1/image.png")
-			.build();
+				.mimeType(MimeType.valueOf("image/png"))
+				.data("http://127.0.0.1/image.png")
+				.build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("URL is not valid under strict validation rules")
-			.isInstanceOf(SecurityException.class);
+				.hasMessageContaining("URL is not valid under strict validation rules")
+				.isInstanceOf(SecurityException.class);
 	}
 
 	@Test
@@ -182,12 +181,12 @@ class BedrockProxyChatModelTest {
 		// Primary scenario: AWS IMDS credential theft via String URL
 		BedrockProxyChatModel model = newModel();
 		Media media = Media.builder()
-			.mimeType(MimeType.valueOf("image/png"))
-			.data("http://169.254.169.254/latest/meta-data/iam/security-credentials/")
-			.build();
+				.mimeType(MimeType.valueOf("image/png"))
+				.data("http://169.254.169.254/latest/meta-data/iam/security-credentials/")
+				.build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(RuntimeException.class)
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	// -------------------------------------------------------------------------
@@ -202,9 +201,9 @@ class BedrockProxyChatModelTest {
 		Media media = Media.builder().mimeType(MimeType.valueOf("image/png")).data("http://evil.com/image.png").build();
 
 		assertThatThrownBy(() -> model.mapMediaToContentBlock(media)).isInstanceOf(RuntimeException.class)
-			.cause()
-			.isInstanceOf(SecurityException.class)
-			.hasMessageContaining("evil.com");
+				.cause()
+				.isInstanceOf(SecurityException.class)
+				.hasMessageContaining("evil.com");
 	}
 
 	@Test
@@ -212,11 +211,11 @@ class BedrockProxyChatModelTest {
 		BedrockProxyChatModel model = newModel();
 
 		BedrockChatOptions options = BedrockChatOptions.builder()
-			.cacheOptions(BedrockCacheOptions.builder()
-				.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
-				.multiBlockSystemCaching(true)
-				.build())
-			.build();
+				.cacheOptions(BedrockCacheOptions.builder()
+						.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+						.multiBlockSystemCaching(true)
+						.build())
+				.build();
 
 		Prompt prompt = new Prompt(List.of(new SystemMessage("Static system instructions."),
 				new SystemMessage("Dynamic RAG context."), new UserMessage("Question?")), options);
@@ -240,11 +239,11 @@ class BedrockProxyChatModelTest {
 		BedrockProxyChatModel model = newModel();
 
 		BedrockChatOptions options = BedrockChatOptions.builder()
-			.cacheOptions(BedrockCacheOptions.builder()
-				.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
-				.multiBlockSystemCaching(true)
-				.build())
-			.build();
+				.cacheOptions(BedrockCacheOptions.builder()
+						.strategy(BedrockCacheStrategy.SYSTEM_ONLY)
+						.multiBlockSystemCaching(true)
+						.build())
+				.build();
 
 		Prompt prompt = new Prompt(List.of(new SystemMessage("Only system message."), new UserMessage("Question?")),
 				options);
@@ -264,8 +263,8 @@ class BedrockProxyChatModelTest {
 
 		// multiBlockSystemCaching not set: defaults to false.
 		BedrockChatOptions options = BedrockChatOptions.builder()
-			.cacheOptions(BedrockCacheOptions.builder().strategy(BedrockCacheStrategy.SYSTEM_ONLY).build())
-			.build();
+				.cacheOptions(BedrockCacheOptions.builder().strategy(BedrockCacheStrategy.SYSTEM_ONLY).build())
+				.build();
 
 		Prompt prompt = new Prompt(List.of(new SystemMessage("Static system instructions."),
 				new SystemMessage("Dynamic RAG context."), new UserMessage("Question?")), options);
@@ -285,11 +284,11 @@ class BedrockProxyChatModelTest {
 		BedrockProxyChatModel model = newModel();
 
 		BedrockChatOptions options = BedrockChatOptions.builder()
-			.cacheOptions(BedrockCacheOptions.builder()
-				.strategy(BedrockCacheStrategy.SYSTEM_AND_TOOLS)
-				.multiBlockSystemCaching(true)
-				.build())
-			.build();
+				.cacheOptions(BedrockCacheOptions.builder()
+						.strategy(BedrockCacheStrategy.SYSTEM_AND_TOOLS)
+						.multiBlockSystemCaching(true)
+						.build())
+				.build();
 
 		Prompt prompt = new Prompt(
 				List.of(new SystemMessage("Static."), new SystemMessage("Dynamic."), new UserMessage("Question?")),
@@ -310,11 +309,11 @@ class BedrockProxyChatModelTest {
 		BedrockProxyChatModel model = newModel();
 
 		BedrockChatOptions options = BedrockChatOptions.builder()
-			.cacheOptions(BedrockCacheOptions.builder()
-				.strategy(BedrockCacheStrategy.NONE)
-				.multiBlockSystemCaching(true)
-				.build())
-			.build();
+				.cacheOptions(BedrockCacheOptions.builder()
+						.strategy(BedrockCacheStrategy.NONE)
+						.multiBlockSystemCaching(true)
+						.build())
+				.build();
 
 		Prompt prompt = new Prompt(
 				List.of(new SystemMessage("Static."), new SystemMessage("Dynamic."), new UserMessage("Question?")),

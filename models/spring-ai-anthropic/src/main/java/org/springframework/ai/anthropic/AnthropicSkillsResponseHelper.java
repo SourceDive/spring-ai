@@ -16,27 +16,20 @@
 
 package org.springframework.ai.anthropic;
 
+import com.anthropic.client.AnthropicClient;
+import com.anthropic.core.http.HttpResponse;
+import com.anthropic.models.beta.files.FileMetadata;
+import com.anthropic.models.messages.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.util.Assert;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.anthropic.client.AnthropicClient;
-import com.anthropic.core.http.HttpResponse;
-import com.anthropic.models.beta.files.FileMetadata;
-import com.anthropic.models.messages.BashCodeExecutionOutputBlock;
-import com.anthropic.models.messages.BashCodeExecutionToolResultBlock;
-import com.anthropic.models.messages.CodeExecutionOutputBlock;
-import com.anthropic.models.messages.CodeExecutionToolResultBlock;
-import com.anthropic.models.messages.CodeExecutionToolResultBlockContent;
-import com.anthropic.models.messages.ContentBlock;
-import com.anthropic.models.messages.Message;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.util.Assert;
 
 /**
  * Helper utilities for working with Anthropic Claude Skills responses and files. Provides
@@ -58,6 +51,7 @@ public final class AnthropicSkillsResponseHelper {
 	/**
 	 * Extract all file IDs from a chat response. Searches through all content blocks in
 	 * the underlying SDK {@link Message} stored in response metadata.
+	 *
 	 * @param response the chat response to search
 	 * @return list of file IDs found in the response (empty list if none found)
 	 */
@@ -75,11 +69,9 @@ public final class AnthropicSkillsResponseHelper {
 		for (ContentBlock block : message.content()) {
 			if (block.isContainerUpload()) {
 				fileIds.add(block.asContainerUpload().fileId());
-			}
-			else if (block.isBashCodeExecutionToolResult()) {
+			} else if (block.isBashCodeExecutionToolResult()) {
 				extractFileIdsFromBashResult(block.asBashCodeExecutionToolResult(), fileIds);
-			}
-			else if (block.isCodeExecutionToolResult()) {
+			} else if (block.isCodeExecutionToolResult()) {
 				extractFileIdsFromCodeExecutionResult(block.asCodeExecutionToolResult(), fileIds);
 			}
 		}
@@ -88,6 +80,7 @@ public final class AnthropicSkillsResponseHelper {
 
 	/**
 	 * Extract container ID from a chat response for multi-turn conversation reuse.
+	 *
 	 * @param response the chat response
 	 * @return container ID if present, null otherwise
 	 */
@@ -110,8 +103,9 @@ public final class AnthropicSkillsResponseHelper {
 	 * Filenames returned by the API are validated before use: null/blank names, absolute
 	 * paths, multi-segment paths, and {@code .}/{@code ..} segments are rejected. An
 	 * invalid name aborts the batch; any files already written remain on disk.
-	 * @param response the chat response containing file IDs
-	 * @param client the Anthropic client to use for downloading (beta files API)
+	 *
+	 * @param response  the chat response containing file IDs
+	 * @param client    the Anthropic client to use for downloading (beta files API)
 	 * @param targetDir directory to save files (must exist)
 	 * @return list of paths to saved files
 	 * @throws IOException if file download, saving, or filename validation fails
@@ -153,8 +147,7 @@ public final class AnthropicSkillsResponseHelper {
 		Path name;
 		try {
 			name = Path.of(rawName);
-		}
-		catch (InvalidPathException ex) {
+		} catch (InvalidPathException ex) {
 			throw new IOException("Invalid filename for file '" + fileId + "': " + rawName, ex);
 		}
 		if (name.isAbsolute() || name.getRoot() != null) {
@@ -181,7 +174,7 @@ public final class AnthropicSkillsResponseHelper {
 	}
 
 	private static void extractFileIdsFromBashResult(BashCodeExecutionToolResultBlock resultBlock,
-			List<String> fileIds) {
+	                                                 List<String> fileIds) {
 		BashCodeExecutionToolResultBlock.Content content = resultBlock.content();
 		if (content.isBashCodeExecutionResultBlock()) {
 			for (BashCodeExecutionOutputBlock outputBlock : content.asBashCodeExecutionResultBlock().content()) {
@@ -191,7 +184,7 @@ public final class AnthropicSkillsResponseHelper {
 	}
 
 	private static void extractFileIdsFromCodeExecutionResult(CodeExecutionToolResultBlock resultBlock,
-			List<String> fileIds) {
+	                                                          List<String> fileIds) {
 		CodeExecutionToolResultBlockContent content = resultBlock.content();
 		if (content.isResultBlock()) {
 			for (CodeExecutionOutputBlock outputBlock : content.asResultBlock().content()) {

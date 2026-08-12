@@ -31,9 +31,9 @@ class CompositeResponseTextCleanerTest {
 	@Test
 	void shouldApplyCleanersInOrder() {
 		var cleaner = CompositeResponseTextCleaner.builder()
-			.addCleaner(text -> text.replace("A", "B"))
-			.addCleaner(text -> text.replace("B", "C"))
-			.build();
+				.addCleaner(text -> text.replace("A", "B"))
+				.addCleaner(text -> text.replace("B", "C"))
+				.build();
 
 		String result = cleaner.clean("AAA");
 		assertThat(result).isEqualTo("CCC");
@@ -64,11 +64,11 @@ class CompositeResponseTextCleanerTest {
 	@Test
 	void shouldHandleComplexPipeline() {
 		var cleaner = CompositeResponseTextCleaner.builder()
-			.addCleaner(new WhitespaceCleaner())
-			.addCleaner(new ThinkingTagCleaner())
-			.addCleaner(new MarkdownCodeBlockCleaner())
-			.addCleaner(new WhitespaceCleaner())
-			.build();
+				.addCleaner(new WhitespaceCleaner())
+				.addCleaner(new ThinkingTagCleaner())
+				.addCleaner(new MarkdownCodeBlockCleaner())
+				.addCleaner(new WhitespaceCleaner())
+				.build();
 
 		String input = """
 
@@ -90,8 +90,8 @@ class CompositeResponseTextCleanerTest {
 	@Test
 	void shouldThrowExceptionWhenCleanersIsNull() {
 		assertThatThrownBy(() -> CompositeResponseTextCleaner.builder().addCleaner(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("cleaner cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("cleaner cannot be null");
 	}
 
 	@Test

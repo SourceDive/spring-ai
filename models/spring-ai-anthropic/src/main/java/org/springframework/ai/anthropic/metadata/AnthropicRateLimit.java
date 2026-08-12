@@ -16,16 +16,15 @@
 
 package org.springframework.ai.anthropic.metadata;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-
 import com.anthropic.core.http.Headers;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.EmptyRateLimit;
 import org.springframework.ai.chat.metadata.RateLimit;
 import org.springframework.util.Assert;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 
 /**
  * {@link RateLimit} implementation for the Anthropic SDK.
@@ -39,9 +38,9 @@ import org.springframework.util.Assert;
  *
  * @author Gorre Surya
  * @author Soby Chacko
- * @since 2.0.0-M8
  * @see RateLimit
  * @see <a href="https://docs.anthropic.com/en/api/rate-limits">Anthropic rate limits</a>
+ * @since 2.0.0-M8
  */
 @SuppressWarnings("NullAway")
 public class AnthropicRateLimit implements RateLimit {
@@ -95,10 +94,10 @@ public class AnthropicRateLimit implements RateLimit {
 	private final @Nullable Duration outputTokensReset;
 
 	public AnthropicRateLimit(@Nullable Long requestsLimit, @Nullable Long requestsRemaining,
-			@Nullable Duration requestsReset, @Nullable Long tokensLimit, @Nullable Long tokensRemaining,
-			@Nullable Duration tokensReset, @Nullable Long inputTokensLimit, @Nullable Long inputTokensRemaining,
-			@Nullable Duration inputTokensReset, @Nullable Long outputTokensLimit, @Nullable Long outputTokensRemaining,
-			@Nullable Duration outputTokensReset) {
+	                          @Nullable Duration requestsReset, @Nullable Long tokensLimit, @Nullable Long tokensRemaining,
+	                          @Nullable Duration tokensReset, @Nullable Long inputTokensLimit, @Nullable Long inputTokensRemaining,
+	                          @Nullable Duration inputTokensReset, @Nullable Long outputTokensLimit, @Nullable Long outputTokensRemaining,
+	                          @Nullable Duration outputTokensReset) {
 		this.requestsLimit = requestsLimit;
 		this.requestsRemaining = requestsRemaining;
 		this.requestsReset = requestsReset;
@@ -115,6 +114,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Parses Anthropic rate-limit headers from the given {@link Headers}.
+	 *
 	 * @param headers the HTTP response headers
 	 * @return an {@link AnthropicRateLimit} populated from the headers, or an
 	 * {@link EmptyRateLimit} if no rate-limit headers are present
@@ -181,6 +181,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Returns the maximum number of input tokens allowed within the rate-limit window.
+	 *
 	 * @return the input tokens limit, or {@code null} if Anthropic did not return the
 	 * header
 	 */
@@ -190,6 +191,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Returns the number of input tokens remaining within the current rate-limit window.
+	 *
 	 * @return the remaining input tokens, or {@code null} if Anthropic did not return the
 	 * header
 	 */
@@ -199,6 +201,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Returns the duration until the input-token rate-limit window resets.
+	 *
 	 * @return the duration until reset, or {@code null} if Anthropic did not return the
 	 * header
 	 */
@@ -208,6 +211,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Returns the maximum number of output tokens allowed within the rate-limit window.
+	 *
 	 * @return the output tokens limit, or {@code null} if Anthropic did not return the
 	 * header
 	 */
@@ -217,6 +221,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Returns the number of output tokens remaining within the current rate-limit window.
+	 *
 	 * @return the remaining output tokens, or {@code null} if Anthropic did not return
 	 * the header
 	 */
@@ -226,6 +231,7 @@ public class AnthropicRateLimit implements RateLimit {
 
 	/**
 	 * Returns the duration until the output-token rate-limit window resets.
+	 *
 	 * @return the duration until reset, or {@code null} if Anthropic did not return the
 	 * header
 	 */
@@ -239,10 +245,10 @@ public class AnthropicRateLimit implements RateLimit {
 				+ "tokensLimit: %5$s, tokensRemaining: %6$s, tokensReset: %7$s, "
 				+ "inputTokensLimit: %8$s, inputTokensRemaining: %9$s, inputTokensReset: %10$s, "
 				+ "outputTokensLimit: %11$s, outputTokensRemaining: %12$s, outputTokensReset: %13$s }")
-			.formatted(getClass().getName(), this.requestsLimit, this.requestsRemaining, this.requestsReset,
-					this.tokensLimit, this.tokensRemaining, this.tokensReset, this.inputTokensLimit,
-					this.inputTokensRemaining, this.inputTokensReset, this.outputTokensLimit,
-					this.outputTokensRemaining, this.outputTokensReset);
+				.formatted(getClass().getName(), this.requestsLimit, this.requestsRemaining, this.requestsReset,
+						this.tokensLimit, this.tokensRemaining, this.tokensReset, this.inputTokensLimit,
+						this.inputTokensRemaining, this.inputTokensReset, this.outputTokensLimit,
+						this.outputTokensRemaining, this.outputTokensReset);
 	}
 
 	private static @Nullable Long parseLong(Headers headers, String name) {
@@ -252,8 +258,7 @@ public class AnthropicRateLimit implements RateLimit {
 		}
 		try {
 			return Long.parseLong(values.get(0).trim());
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return null;
 		}
 	}
@@ -267,8 +272,7 @@ public class AnthropicRateLimit implements RateLimit {
 			Instant resetAt = Instant.parse(values.get(0).trim());
 			Duration remaining = Duration.between(Instant.now(), resetAt);
 			return remaining.isNegative() ? Duration.ZERO : remaining;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}

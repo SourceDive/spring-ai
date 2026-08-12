@@ -100,9 +100,9 @@ class OllamaChatModelMetadataIT extends BaseOllamaIT {
 
 		// At least one response should contain thinking metadata
 		boolean hasThinkingMetadata = responses.stream()
-			.flatMap(response -> response.getResults().stream())
-			.map(generation -> generation.getMetadata())
-			.anyMatch(metadata -> metadata != null && metadata.containsKey("thinking"));
+				.flatMap(response -> response.getResults().stream())
+				.map(generation -> generation.getMetadata())
+				.anyMatch(metadata -> metadata != null && metadata.containsKey("thinking"));
 
 		assertThat(hasThinkingMetadata).isTrue();
 	}
@@ -120,9 +120,9 @@ class OllamaChatModelMetadataIT extends BaseOllamaIT {
 
 		// No response should contain thinking metadata
 		boolean hasThinkingMetadata = responses.stream()
-			.flatMap(response -> response.getResults().stream())
-			.map(generation -> generation.getMetadata())
-			.anyMatch(metadata -> metadata != null && metadata.containsKey("thinking"));
+				.flatMap(response -> response.getResults().stream())
+				.map(generation -> generation.getMetadata())
+				.anyMatch(metadata -> metadata != null && metadata.containsKey("thinking"));
 
 		assertThat(hasThinkingMetadata).isFalse();
 	}

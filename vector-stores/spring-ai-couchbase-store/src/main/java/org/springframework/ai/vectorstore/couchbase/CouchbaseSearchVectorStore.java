@@ -16,13 +16,6 @@
 
 package org.springframework.ai.vectorstore.couchbase;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.couchbase.client.core.util.ConsistencyUtil;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
@@ -37,9 +30,6 @@ import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.QueryResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Mono;
-import reactor.util.retry.RetrySpec;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingOptions;
@@ -50,6 +40,11 @@ import org.springframework.ai.vectorstore.observation.AbstractObservationVectorS
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.RetrySpec;
+
+import java.time.Duration;
+import java.util.*;
 
 /**
  * @author Laurent Doguin
@@ -127,8 +122,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 		try {
 			logger.info("Init Cluster Called");
 			initCluster();
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -162,8 +156,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 			String nativeFilter = this.filterExpressionConverter.convertExpression(filterExpression);
 			String sql = String.format("DELETE FROM %s WHERE %s", this.collection.name(), nativeFilter);
 			this.scope.query(sql, QueryOptions.queryOptions().metrics(true));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete documents by filter: " + e.getMessage(), e);
 			}
@@ -198,9 +191,9 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 		// embedding)
 		// by that ObjectMapper, so we use the store's native type and convert explicitly.
 		return result.rowsAs(CouchbaseDocument.class)
-			.stream()
-			.map(cbDoc -> new Document(cbDoc.id(), cbDoc.content(), cbDoc.metadata()))
-			.toList();
+				.stream()
+				.map(cbDoc -> new Document(cbDoc.id(), cbDoc.content(), cbDoc.metadata()))
+				.toList();
 	}
 
 	@Override
@@ -213,8 +206,8 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.COUCHBASE.value(), operationName)
-			.collectionName(this.collection.name())
-			.dimensions(this.embeddingModel.dimensions());
+				.collectionName(this.collection.name())
+				.dimensions(this.embeddingModel.dimensions());
 	}
 
 	public static Builder builder(Cluster cluster, EmbeddingModel embeddingModel) {
@@ -238,31 +231,31 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 		ConsistencyUtil.waitUntilScopePresent(this.cluster.core(), this.bucketName, this.scopeName);
 		Scope s = b.scope(this.scopeName);
 		boolean collectionExist = this.bucket.collections()
-			.getAllScopes()
-			.stream()
-			.map(ScopeSpec::collections)
-			.flatMap(java.util.Collection::stream)
-			.filter(it -> it.scopeName().equals(this.scopeName))
-			.map(CollectionSpec::name)
-			.anyMatch(this.collectionName::equals);
+				.getAllScopes()
+				.stream()
+				.map(ScopeSpec::collections)
+				.flatMap(java.util.Collection::stream)
+				.filter(it -> it.scopeName().equals(this.scopeName))
+				.map(CollectionSpec::name)
+				.anyMatch(this.collectionName::equals);
 		if (!collectionExist) {
 			b.collections().createCollection(this.scopeName, this.collectionName);
 			ConsistencyUtil.waitUntilCollectionPresent(this.cluster.core(), this.bucketName, this.scopeName,
 					this.collectionName);
 			Collection c = s.collection(this.collectionName);
 			Mono.empty()
-				.then(Mono.fromRunnable(
-						() -> c.async()
-							.queryIndexes()
-							.createPrimaryIndex(CreatePrimaryQueryIndexOptions.createPrimaryQueryIndexOptions()
-								.ignoreIfExists(true))))
-				.retryWhen(RetrySpec.backoff(3, Duration.ofMillis(1000)));
+					.then(Mono.fromRunnable(
+							() -> c.async()
+									.queryIndexes()
+									.createPrimaryIndex(CreatePrimaryQueryIndexOptions.createPrimaryQueryIndexOptions()
+											.ignoreIfExists(true))))
+					.retryWhen(RetrySpec.backoff(3, Duration.ofMillis(1000)));
 		}
 
 		boolean indexExist = s.searchIndexes()
-			.getAllIndexes()
-			.stream()
-			.anyMatch(idx -> this.vectorIndexName.equals(idx.name()));
+				.getAllIndexes()
+				.stream()
+				.anyMatch(idx -> this.vectorIndexName.equals(idx.name()));
 		if (!indexExist) {
 			String jsonIndexTemplate = """
 					  {
@@ -385,7 +378,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 
 		/**
 		 * @throws IllegalArgumentException if couchbaseSearchVectorConfig or cluster is
-		 * null
+		 *                                  null
 		 */
 		private Builder(Cluster cluster, EmbeddingModel embeddingModel) {
 			super(embeddingModel);
@@ -395,6 +388,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -405,6 +399,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 
 		/**
 		 * Configures the Couchbase collection storing {@link Document}.
+		 *
 		 * @param collectionName
 		 * @return this builder
 		 */
@@ -418,6 +413,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 		/**
 		 * Configures the Couchbase scope, parent of the selected collection. Search will
 		 * be executed in this scope context.
+		 *
 		 * @param scopeName
 		 * @return this builder
 		 */
@@ -430,6 +426,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 
 		/**
 		 * Configures the Couchbase bucket, parent of the selected Scope.
+		 *
 		 * @param bucketName
 		 * @return this builder
 		 */
@@ -443,6 +440,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 		/**
 		 * Configures the vector index name. This must match the name of the Vector Search
 		 * Index Name in Atlas
+		 *
 		 * @param vectorIndexName
 		 * @return this builder
 		 */
@@ -455,6 +453,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 
 		/**
 		 * The number of dimensions in the vector.
+		 *
 		 * @param dimensions
 		 * @return this builder
 		 */
@@ -468,6 +467,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 		/**
 		 * Choose the method to calculate the similarity between the vector embedding in a
 		 * Vector Search index and the vector embedding in a Vector Search query.
+		 *
 		 * @param similarityFunction
 		 * @return this builder
 		 */
@@ -480,6 +480,7 @@ public class CouchbaseSearchVectorStore extends AbstractObservationVectorStore
 
 		/**
 		 * Choose to prioritize accuracy or latency.
+		 *
 		 * @param indexOptimization
 		 * @return this builder
 		 */

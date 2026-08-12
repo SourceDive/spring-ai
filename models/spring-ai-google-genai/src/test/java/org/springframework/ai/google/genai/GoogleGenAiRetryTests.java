@@ -16,8 +16,6 @@
 
 package org.springframework.ai.google.genai;
 
-import java.io.IOException;
-
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,12 +23,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryListener;
 import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
+
+import java.io.IOException;
 
 /**
  * @author Mark Pollack
@@ -59,10 +58,10 @@ public class GoogleGenAiRetryTests {
 
 		this.chatModel = new org.springframework.ai.google.genai.TestGoogleGenAiGeminiChatModel(this.genAiClient,
 				GoogleGenAiChatOptions.builder()
-					.temperature(0.7)
-					.topP(1.0)
-					.model(GoogleGenAiChatModel.ChatModel.GEMINI_3_1_PRO_PREVIEW.getValue())
-					.build(),
+						.temperature(0.7)
+						.topP(1.0)
+						.model(GoogleGenAiChatModel.ChatModel.GEMINI_3_1_PRO_PREVIEW.getValue())
+						.build(),
 				this.retryTemplate);
 
 		// Mock response will be set in each test

@@ -39,8 +39,8 @@ public class McpHandlerService {
 		// In a real use-case, we would use the chat client to call the LLM again
 
 		return McpSchema.CreateMessageResult
-			.builder(McpSchema.Role.ASSISTANT, "Response " + userPrompt + " with model hint " + modelHint, modelHint)
-			.build();
+				.builder(McpSchema.Role.ASSISTANT, "Response " + userPrompt + " with model hint " + modelHint, modelHint)
+				.build();
 	}
 
 }

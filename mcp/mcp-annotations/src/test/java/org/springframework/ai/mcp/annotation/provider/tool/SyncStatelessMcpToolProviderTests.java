@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.tool;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -30,10 +26,13 @@ import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.util.JsonHelper;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -51,7 +50,7 @@ public class SyncStatelessMcpToolProviderTests {
 	@Test
 	void testConstructorWithNullToolObjects() {
 		assertThatThrownBy(() -> new SyncStatelessMcpToolProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("toolObjects cannot be null");
+				.hasMessageContaining("toolObjects cannot be null");
 	}
 
 	@Test
@@ -303,7 +302,7 @@ public class SyncStatelessMcpToolProviderTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
+				.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
 	}
 
 	@Test
@@ -586,7 +585,7 @@ public class SyncStatelessMcpToolProviderTests {
 	@Test
 	void testToolWithOutputSchemaGeneration() {
 		// Define a custom result class
-		record CustomResult(String message, int count) {
+		record CustomResult (String message,int count){
 		}
 
 		class OutputSchemaTool {
@@ -613,28 +612,28 @@ public class SyncStatelessMcpToolProviderTests {
 		assertThat(outputSchemaString).contains("message");
 		assertThat(outputSchemaString).contains("count");
 		JsonAssertions.assertThatJson(outputSchemaString)
-			.when(Option.IGNORING_ARRAY_ORDER)
-			.isEqualTo(JsonAssertions.json("""
-					{
-						"$schema": "https://json-schema.org/draft/2020-12/schema",
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"count": {
-									"type": "integer",
-									"format": "int32"
+				.when(Option.IGNORING_ARRAY_ORDER)
+				.isEqualTo(JsonAssertions.json("""
+						{
+							"$schema": "https://json-schema.org/draft/2020-12/schema",
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"count": {
+										"type": "integer",
+										"format": "int32"
+									},
+									"message": {
+										"type": "string"
+									}
 								},
-								"message": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"count",
-								"message"
-							]
+								"required": [
+									"count",
+									"message"
+								]
+							}
 						}
-					}
 						"""));
 	}
 
@@ -676,7 +675,7 @@ public class SyncStatelessMcpToolProviderTests {
 	@Test
 	void testToolWithListReturnType() {
 
-		record CustomResult(String message) {
+		record CustomResult (String message){
 		}
 
 		class ListResponseTool {
@@ -717,7 +716,7 @@ public class SyncStatelessMcpToolProviderTests {
 	@Test
 	void testToolWithStructuredListReturnType() {
 
-		record CustomResult(String message) {
+		record CustomResult (String message){
 		}
 
 		class ListResponseTool {

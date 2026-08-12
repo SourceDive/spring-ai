@@ -16,14 +16,13 @@
 
 package org.springframework.ai.bedrock.converse.api;
 
-import java.util.Map;
-
+import org.springframework.ai.content.Media;
+import org.springframework.util.MimeType;
 import software.amazon.awssdk.services.bedrockruntime.model.DocumentFormat;
 import software.amazon.awssdk.services.bedrockruntime.model.ImageFormat;
 import software.amazon.awssdk.services.bedrockruntime.model.VideoFormat;
 
-import org.springframework.ai.content.Media;
-import org.springframework.util.MimeType;
+import java.util.Map;
 
 /**
  * The BedrockMediaFormat class provides mappings between MIME types and their
@@ -88,11 +87,9 @@ public abstract class BedrockMediaFormat {
 	public static String getFormatAsString(MimeType mimeType) {
 		if (isSupportedDocumentFormat(mimeType)) {
 			return getDocumentFormat(mimeType).toString();
-		}
-		else if (isSupportedImageFormat(mimeType)) {
+		} else if (isSupportedImageFormat(mimeType)) {
 			return getImageFormat(mimeType).toString();
-		}
-		else if (isSupportedVideoFormat(mimeType)) {
+		} else if (isSupportedVideoFormat(mimeType)) {
 			return getVideoFormat(mimeType).toString();
 		}
 		throw new IllegalArgumentException("Unsupported media format: " + mimeType);

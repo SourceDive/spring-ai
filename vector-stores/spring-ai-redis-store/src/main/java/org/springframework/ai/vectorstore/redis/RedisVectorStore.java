@@ -16,38 +16,9 @@
 
 package org.springframework.ai.vectorstore.redis;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.RedisClient;
-import redis.clients.jedis.json.Path2;
-import redis.clients.jedis.search.FTCreateParams;
-import redis.clients.jedis.search.IndexDataType;
-import redis.clients.jedis.search.Query;
-import redis.clients.jedis.search.RediSearchUtil;
-import redis.clients.jedis.search.Schema.FieldType;
-import redis.clients.jedis.search.SearchResult;
-import redis.clients.jedis.search.schemafields.NumericField;
-import redis.clients.jedis.search.schemafields.SchemaField;
-import redis.clients.jedis.search.schemafields.TagField;
-import redis.clients.jedis.search.schemafields.TextField;
-import redis.clients.jedis.search.schemafields.VectorField;
-import redis.clients.jedis.search.schemafields.VectorField.VectorAlgorithm;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -64,6 +35,19 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.RedisClient;
+import redis.clients.jedis.json.Path2;
+import redis.clients.jedis.search.*;
+import redis.clients.jedis.search.Schema.FieldType;
+import redis.clients.jedis.search.schemafields.*;
+import redis.clients.jedis.search.schemafields.VectorField.VectorAlgorithm;
+
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Redis-based vector store implementation using Redis Stack with Redis Query Engine and
@@ -445,8 +429,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Deleted " + deletedCount + " documents matching filter expression");
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter", e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -464,8 +447,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		if (this.distanceMetric == DistanceMetric.IP) {
 			// For IP metric, temporarily disable threshold filtering
 			effectiveThreshold = 0.0f;
-		}
-		else {
+		} else {
 			effectiveThreshold = (float) request.getSimilarityThreshold();
 		}
 
@@ -487,9 +469,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		}
 
 		Query query = new Query(queryString).addParam(EMBEDDING_PARAM_NAME, RediSearchUtil.toByteArray(embedding))
-			.returnFields(returnFields.toArray(new String[0]))
-			.limit(0, request.getTopK())
-			.dialect(2);
+				.returnFields(returnFields.toArray(new String[0]))
+				.limit(0, request.getTopK())
+				.dialect(2);
 
 		SearchResult result = this.jedisClient.ftSearch(this.indexName, query);
 
@@ -522,9 +504,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		var id = doc.getId().substring(this.prefix.length());
 		var content = doc.hasProperty(this.contentFieldName) ? doc.getString(this.contentFieldName) : "";
 		Map<String, Object> metadata = this.metadataFields.stream()
-			.map(MetadataField::name)
-			.filter(doc::hasProperty)
-			.collect(Collectors.toMap(Function.identity(), doc::getString));
+				.map(MetadataField::name)
+				.filter(doc::hasProperty)
+				.collect(Collectors.toMap(Function.identity(), doc::getString));
 
 		// Get similarity score first
 		float similarity = similarityScore(doc);
@@ -558,8 +540,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 				}
 
 				return normalizedTextScore;
-			}
-			catch (NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				// If we can't parse the score, fall back to default
 				if (logger.isWarnEnabled()) {
 					logger.warn("Could not parse text search score: " + doc.getString("$score"));
@@ -691,11 +672,11 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		List<SchemaField> fields = new ArrayList<>();
 		fields.add(TextField.of(jsonPath(this.contentFieldName)).as(this.contentFieldName).weight(1.0));
 		fields.add(VectorField.builder()
-			.fieldName(jsonPath(this.embeddingFieldName))
-			.algorithm(vectorAlgorithm())
-			.attributes(vectorAttrs)
-			.as(this.embeddingFieldName)
-			.build());
+				.fieldName(jsonPath(this.embeddingFieldName))
+				.algorithm(vectorAlgorithm())
+				.attributes(vectorAttrs)
+				.as(this.embeddingFieldName)
+				.build());
 
 		if (!CollectionUtils.isEmpty(this.metadataFields)) {
 			for (MetadataField field : this.metadataFields) {
@@ -736,10 +717,10 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		};
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.REDIS.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions())
-			.fieldName(this.embeddingFieldName)
-			.similarityMetric(similarityMetric.value());
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions())
+				.fieldName(this.embeddingFieldName)
+				.similarityMetric(similarityMetric.value());
 	}
 
 	@Override
@@ -751,6 +732,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Gets the list of return fields for queries.
+	 *
 	 * @return list of field names to return in query results
 	 */
 	private List<String> getReturnFields() {
@@ -764,6 +746,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Validates that the specified field is a TEXT field.
+	 *
 	 * @param fieldName the field name to validate
 	 * @throws IllegalArgumentException if the field is not a TEXT field
 	 */
@@ -778,7 +761,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		// Check if it's a metadata field with TEXT type
 		boolean isTextField = this.metadataFields.stream()
-			.anyMatch(field -> field.name().equals(normalizedFieldName) && field.fieldType() == FieldType.TEXT);
+				.anyMatch(field -> field.name().equals(normalizedFieldName) && field.fieldType() == FieldType.TEXT);
 
 		if (!isTextField) {
 			// Log detailed metadata fields for debugging
@@ -786,9 +769,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 				logger.debug("Field not found as TEXT: '" + normalizedFieldName + "'");
 				logger.debug("Content field name: '" + this.contentFieldName + "'");
 				logger.debug("Available TEXT fields: " + this.metadataFields.stream()
-					.filter(field -> field.fieldType() == FieldType.TEXT)
-					.map(MetadataField::name)
-					.toList());
+						.filter(field -> field.fieldType() == FieldType.TEXT)
+						.map(MetadataField::name)
+						.toList());
 			}
 			throw new IllegalArgumentException(String.format("Field '%s' is not a TEXT field", normalizedFieldName));
 		}
@@ -796,6 +779,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Normalizes a field name by removing @ prefix and JSON path prefix.
+	 *
 	 * @param fieldName the field name to normalize
 	 * @return the normalized field name
 	 */
@@ -812,21 +796,23 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Escapes special characters in a query string for Redis search.
+	 *
 	 * @param query the query string to escape
 	 * @return the escaped query string
 	 */
 	private String escapeSpecialCharacters(String query) {
 		return query.replace("-", "\\-")
-			.replace("@", "\\@")
-			.replace(":", "\\:")
-			.replace(".", "\\.")
-			.replace("(", "\\(")
-			.replace(")", "\\)");
+				.replace("@", "\\@")
+				.replace(":", "\\:")
+				.replace(".", "\\.")
+				.replace("(", "\\(")
+				.replace(")", "\\)");
 	}
 
 	/**
 	 * Search for documents matching a text query.
-	 * @param query The text to search for
+	 *
+	 * @param query     The text to search for
 	 * @param textField The field to search in (must be a TEXT field)
 	 * @return List of matching documents with default limit (10)
 	 */
@@ -836,9 +822,10 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Search for documents matching a text query.
-	 * @param query The text to search for
+	 *
+	 * @param query     The text to search for
 	 * @param textField The field to search in (must be a TEXT field)
-	 * @param limit Maximum number of results to return
+	 * @param limit     Maximum number of results to return
 	 * @return List of matching documents
 	 */
 	public List<Document> searchByText(String query, String textField, int limit) {
@@ -847,9 +834,10 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Search for documents matching a text query with optional filter expression.
-	 * @param query The text to search for
-	 * @param textField The field to search in (must be a TEXT field)
-	 * @param limit Maximum number of results to return
+	 *
+	 * @param query            The text to search for
+	 * @param textField        The field to search in (must be a TEXT field)
+	 * @param limit            Maximum number of results to return
 	 * @param filterExpression Optional filter expression
 	 * @return List of matching documents
 	 */
@@ -873,9 +861,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 			// Look for framework AND integration in description, not necessarily as an
 			// exact phrase
 			Query redisQuery = new Query("@description:(framework integration)")
-				.returnFields(getReturnFields().toArray(new String[0]))
-				.limit(0, limit)
-				.dialect(2);
+					.returnFields(getReturnFields().toArray(new String[0]))
+					.limit(0, limit)
+					.dialect(2);
 
 			SearchResult result = this.jedisClient.ftSearch(this.indexName, redisQuery);
 			return result.getDocuments().stream().map(this::toDocument).toList();
@@ -886,8 +874,8 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 				&& !this.stopwords.isEmpty()) {
 			// Find documents containing "framework" if stopwords include common words
 			Query redisQuery = new Query("@content:framework").returnFields(getReturnFields().toArray(new String[0]))
-				.limit(0, limit)
-				.dialect(2);
+					.limit(0, limit)
+					.dialect(2);
 
 			SearchResult result = this.jedisClient.ftSearch(this.indexName, redisQuery);
 			return result.getDocuments().stream().map(this::toDocument).toList();
@@ -908,8 +896,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 			// For multi-word queries, try to match as exact phrase if inOrder is true
 			if (this.inOrder) {
 				queryBuilder.append("\"").append(escapedQuery).append("\"");
-			}
-			else {
+			} else {
 				// For non-inOrder, search for any of the terms
 				String[] terms = escapedQuery.split("\\s+");
 				queryBuilder.append("(");
@@ -928,8 +915,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 				queryBuilder.append(")");
 			}
-		}
-		else {
+		} else {
 			// Single word query - simple match
 			queryBuilder.append(escapedQuery);
 		}
@@ -949,12 +935,10 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 					}
 
 					queryBuilder.append(" @").append(field).append(":{").append(value).append("}");
-				}
-				else {
+				} else {
 					queryBuilder.append(" ").append(filterExpression);
 				}
-			}
-			else {
+			} else {
 				queryBuilder.append(" ").append(filterExpression);
 			}
 		}
@@ -967,8 +951,8 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		// Create and execute the query
 		Query redisQuery = new Query(finalQuery).returnFields(getReturnFields().toArray(new String[0]))
-			.limit(0, limit)
-			.dialect(2);
+				.limit(0, limit)
+				.dialect(2);
 
 		// Set scoring algorithm if different from default
 		if (this.textScorer != DEFAULT_TEXT_SCORER) {
@@ -978,8 +962,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		try {
 			SearchResult result = this.jedisClient.ftSearch(this.indexName, redisQuery);
 			return result.getDocuments().stream().map(this::toDocument).toList();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error executing text search query: " + e.getMessage(), e);
 			}
@@ -991,7 +974,8 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 	 * Search for documents within a specific radius (distance) from the query embedding.
 	 * Unlike KNN search which returns a fixed number of results, range search returns all
 	 * documents that fall within the specified radius.
-	 * @param query The text query to create an embedding from
+	 *
+	 * @param query  The text query to create an embedding from
 	 * @param radius The radius (maximum distance) to search within (0.0 to 1.0)
 	 * @return A list of documents that fall within the specified radius
 	 */
@@ -1002,6 +986,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 	/**
 	 * Search for documents within a specific radius (distance) from the query embedding.
 	 * Uses the configured default range threshold, if available.
+	 *
 	 * @param query The text query to create an embedding from
 	 * @return A list of documents that fall within the default radius
 	 * @throws IllegalStateException if no default range threshold is configured
@@ -1016,7 +1001,8 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 	 * Search for documents within a specific radius (distance) from the query embedding,
 	 * with optional filter expression to narrow down results. Uses the configured default
 	 * range threshold, if available.
-	 * @param query The text query to create an embedding from
+	 *
+	 * @param query            The text query to create an embedding from
 	 * @param filterExpression Optional filter expression to narrow down results
 	 * @return A list of documents that fall within the default radius and match the
 	 * filter
@@ -1031,8 +1017,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 	/**
 	 * Search for documents within a specific radius (distance) from the query embedding,
 	 * with optional filter expression to narrow down results.
-	 * @param query The text query to create an embedding from
-	 * @param radius The radius (maximum distance) to search within (0.0 to 1.0)
+	 *
+	 * @param query            The text query to create an embedding from
+	 * @param radius           The radius (maximum distance) to search within (0.0 to 1.0)
 	 * @param filterExpression Optional filter expression to narrow down results
 	 * @return A list of documents that fall within the specified radius and match the
 	 * filter
@@ -1102,9 +1089,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 			// For very small similarity thresholds, we'll do filtering in memory to be
 			// extra safe
 			SearchRequest.Builder requestBuilder = SearchRequest.builder()
-				.query(query)
-				.topK(1000) // Use a large number to approximate "all" documents
-				.similarityThreshold(radius); // Client-side filtering
+					.query(query)
+					.topK(1000) // Use a large number to approximate "all" documents
+					.similarityThreshold(radius); // Client-side filtering
 
 			if (StringUtils.hasText(filterExpression)) {
 				requestBuilder.filterExpression(filterExpression);
@@ -1139,9 +1126,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		}
 
 		Query query1 = new Query(queryString).addParam("radius", effectiveRadius)
-			.addParam(EMBEDDING_PARAM_NAME, RediSearchUtil.toByteArray(embedding))
-			.returnFields(returnFields.toArray(new String[0]))
-			.dialect(2);
+				.addParam(EMBEDDING_PARAM_NAME, RediSearchUtil.toByteArray(embedding))
+				.returnFields(returnFields.toArray(new String[0]))
+				.dialect(2);
 
 		SearchResult result = this.jedisClient.ftSearch(this.indexName, query1);
 
@@ -1171,6 +1158,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Count all documents in the vector store.
+	 *
 	 * @return the total number of documents
 	 */
 	public long count() {
@@ -1179,6 +1167,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Count documents that match a filter expression string.
+	 *
 	 * @param filterExpression the filter expression string (using Redis query syntax)
 	 * @return the number of matching documents
 	 */
@@ -1189,6 +1178,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	/**
 	 * Count documents that match a filter expression.
+	 *
 	 * @param filterExpression the filter expression to match documents against
 	 * @return the number of matching documents
 	 */
@@ -1201,21 +1191,21 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 	/**
 	 * Executes a count query with the provided filter expression. This method configures
 	 * the Redis query to only return the count without retrieving document data.
+	 *
 	 * @param filterExpression the Redis filter expression string
 	 * @return the count of matching documents
 	 */
 	private long executeCountQuery(String filterExpression) {
 		// Create a query with the filter, limiting to 0 results to only get count
 		Query query = new Query(filterExpression).returnFields("id") // Minimal field to
-			// return
-			.limit(0, 0) // No actual results, just count
-			.dialect(2); // Use dialect 2 for advanced query features
+				// return
+				.limit(0, 0) // No actual results, just count
+				.dialect(2); // Use dialect 2 for advanced query features
 
 		try {
 			SearchResult result = this.jedisClient.ftSearch(this.indexName, query);
 			return result.getTotalResults();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error executing count query: " + e.getMessage(), e);
 			}
@@ -1294,15 +1284,15 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 	public record MetadataField(String name, FieldType fieldType) {
 
-		public static MetadataField text(String name) {
+		public static MetadataField text (String name){
 			return new MetadataField(name, FieldType.TEXT);
 		}
 
-		public static MetadataField numeric(String name) {
+		public static MetadataField numeric (String name){
 			return new MetadataField(name, FieldType.NUMERIC);
 		}
 
-		public static MetadataField tag(String name) {
+		public static MetadataField tag (String name){
 			return new MetadataField(name, FieldType.TAG);
 		}
 
@@ -1352,6 +1342,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis index name.
+		 *
 		 * @param indexName the index name to use
 		 * @return the builder instance
 		 */
@@ -1364,6 +1355,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis key prefix (default: "embedding:").
+		 *
 		 * @param prefix the prefix to use
 		 * @return the builder instance
 		 */
@@ -1376,6 +1368,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis content field name.
+		 *
 		 * @param fieldName the content field name to use
 		 * @return the builder instance
 		 */
@@ -1388,6 +1381,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis embedding field name.
+		 *
 		 * @param fieldName the embedding field name to use
 		 * @return the builder instance
 		 */
@@ -1400,6 +1394,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the Redis vector algorithm.
+		 *
 		 * @param algorithm the vector algorithm to use
 		 * @return the builder instance
 		 */
@@ -1412,6 +1407,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the distance metric for vector similarity.
+		 *
 		 * @param distanceMetric the distance metric to use (COSINE, L2, IP)
 		 * @return the builder instance
 		 */
@@ -1424,6 +1420,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata fields.
+		 *
 		 * @param fields the metadata fields to include
 		 * @return the builder instance
 		 */
@@ -1433,6 +1430,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the metadata fields.
+		 *
 		 * @param fields the list of metadata fields to include
 		 * @return the builder instance
 		 */
@@ -1445,6 +1443,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -1456,6 +1455,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		/**
 		 * Sets the M parameter for HNSW algorithm. This represents the maximum number of
 		 * connections per node in the graph.
+		 *
 		 * @param m the M parameter value to use (typically between 5-100)
 		 * @return the builder instance
 		 */
@@ -1469,8 +1469,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		/**
 		 * Sets the EF_CONSTRUCTION parameter for HNSW algorithm. This is the size of the
 		 * dynamic candidate list during index building.
+		 *
 		 * @param efConstruction the EF_CONSTRUCTION parameter value to use (typically
-		 * between 50-500)
+		 *                       between 50-500)
 		 * @return the builder instance
 		 */
 		public Builder hnswEfConstruction(Integer efConstruction) {
@@ -1483,8 +1484,9 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		/**
 		 * Sets the EF_RUNTIME parameter for HNSW algorithm. This is the size of the
 		 * dynamic candidate list during search.
+		 *
 		 * @param efRuntime the EF_RUNTIME parameter value to use (typically between
-		 * 20-200)
+		 *                  20-200)
 		 * @return the builder instance
 		 */
 		public Builder hnswEfRuntime(Integer efRuntime) {
@@ -1497,6 +1499,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 		/**
 		 * Sets the default range threshold for range searches. This value is used as the
 		 * default similarity threshold when none is specified.
+		 *
 		 * @param defaultRangeThreshold The default threshold value between 0.0 and 1.0
 		 * @return the builder instance
 		 */
@@ -1511,6 +1514,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the text scoring algorithm for text search.
+		 *
 		 * @param textScorer the text scoring algorithm to use
 		 * @return the builder instance
 		 */
@@ -1523,6 +1527,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets whether terms in text search should appear in order.
+		 *
 		 * @param inOrder true if terms should appear in the same order as in the query
 		 * @return the builder instance
 		 */
@@ -1533,6 +1538,7 @@ public class RedisVectorStore extends AbstractObservationVectorStore implements 
 
 		/**
 		 * Sets the stopwords for text search.
+		 *
 		 * @param stopwords the set of stopwords to filter out from queries
 		 * @return the builder instance
 		 */

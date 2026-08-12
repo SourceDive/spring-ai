@@ -16,16 +16,15 @@
 
 package org.springframework.ai.ollama.management;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.ollama.BaseOllamaIT;
 import org.springframework.ai.ollama.api.OllamaModel;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

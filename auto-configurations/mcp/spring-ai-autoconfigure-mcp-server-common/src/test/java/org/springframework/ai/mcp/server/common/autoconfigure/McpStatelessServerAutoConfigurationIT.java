@@ -16,41 +16,19 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessAsyncServer;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncCompletionSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncPromptSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncResourceSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncResourceTemplateSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncToolSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncCompletionSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncPromptSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncResourceSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.server.McpStatelessServerFeatures.*;
 import io.modelcontextprotocol.server.McpStatelessSyncServer;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpStatelessServerTransport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.SyncMcpToolCallback;
-import org.springframework.ai.mcp.annotation.McpArg;
-import org.springframework.ai.mcp.annotation.McpComplete;
-import org.springframework.ai.mcp.annotation.McpPrompt;
-import org.springframework.ai.mcp.annotation.McpResource;
-import org.springframework.ai.mcp.annotation.McpTool;
-import org.springframework.ai.mcp.annotation.McpToolParam;
+import org.springframework.ai.mcp.annotation.*;
 import org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.annotations.StatelessServerSpecificationFactoryAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
@@ -63,6 +41,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -70,10 +56,10 @@ import static org.mockito.Mockito.when;
 public class McpStatelessServerAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mcp.server.protocol=STATELESS")
-		.withConfiguration(AutoConfigurations.of(McpServerStatelessAutoConfiguration.class,
-				StatelessToolCallbackConverterAutoConfiguration.class))
-		.withUserConfiguration(TestStatelessTransportConfiguration.class);
+			.withPropertyValues("spring.ai.mcp.server.protocol=STATELESS")
+			.withConfiguration(AutoConfigurations.of(McpServerStatelessAutoConfiguration.class,
+					StatelessToolCallbackConverterAutoConfiguration.class))
+			.withUserConfiguration(TestStatelessTransportConfiguration.class);
 
 	@Test
 	void defaultConfiguration() {
@@ -99,53 +85,53 @@ public class McpStatelessServerAutoConfigurationIT {
 	@Test
 	void asyncConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.name=test-server",
-					"spring.ai.mcp.server.version=2.0.0", "spring.ai.mcp.server.instructions=My MCP Server",
-					"spring.ai.mcp.server.request-timeout=30s")
-			.run(context -> {
-				assertThat(context).hasSingleBean(McpStatelessAsyncServer.class);
-				assertThat(context).doesNotHaveBean(McpStatelessSyncServer.class);
+				.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.name=test-server",
+						"spring.ai.mcp.server.version=2.0.0", "spring.ai.mcp.server.instructions=My MCP Server",
+						"spring.ai.mcp.server.request-timeout=30s")
+				.run(context -> {
+					assertThat(context).hasSingleBean(McpStatelessAsyncServer.class);
+					assertThat(context).doesNotHaveBean(McpStatelessSyncServer.class);
 
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getName()).isEqualTo("test-server");
-				assertThat(properties.getVersion()).isEqualTo("2.0.0");
-				assertThat(properties.getInstructions()).isEqualTo("My MCP Server");
-				assertThat(properties.getType()).isEqualTo(McpServerProperties.ApiType.ASYNC);
-				assertThat(properties.getRequestTimeout().getSeconds()).isEqualTo(30);
-			});
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getName()).isEqualTo("test-server");
+					assertThat(properties.getVersion()).isEqualTo("2.0.0");
+					assertThat(properties.getInstructions()).isEqualTo("My MCP Server");
+					assertThat(properties.getType()).isEqualTo(McpServerProperties.ApiType.ASYNC);
+					assertThat(properties.getRequestTimeout().getSeconds()).isEqualTo(30);
+				});
 	}
 
 	@Test
 	void syncToolCallbackRegistrationControl() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=SYNC", "spring.ai.mcp.server.tool-callback-converter=true")
-			.run(context -> assertThat(context).hasBean("syncTools"));
+				.withPropertyValues("spring.ai.mcp.server.type=SYNC", "spring.ai.mcp.server.tool-callback-converter=true")
+				.run(context -> assertThat(context).hasBean("syncTools"));
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=SYNC", "spring.ai.mcp.server.tool-callback-converter=false")
-			.run(context -> assertThat(context).doesNotHaveBean("syncTools"));
+				.withPropertyValues("spring.ai.mcp.server.type=SYNC", "spring.ai.mcp.server.tool-callback-converter=false")
+				.run(context -> assertThat(context).doesNotHaveBean("syncTools"));
 	}
 
 	@Test
 	void asyncToolCallbackRegistrationControl() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.tool-callback-converter=true")
-			.run(context -> assertThat(context).hasBean("asyncTools"));
+				.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.tool-callback-converter=true")
+				.run(context -> assertThat(context).hasBean("asyncTools"));
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.tool-callback-converter=false")
-			.run(context -> assertThat(context).doesNotHaveBean("asyncTools"));
+				.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.tool-callback-converter=false")
+				.run(context -> assertThat(context).doesNotHaveBean("asyncTools"));
 	}
 
 	@Test
 	void syncServerInstructionsConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.instructions=Sync Server Instructions")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getInstructions()).isEqualTo("Sync Server Instructions");
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getInstructions()).isEqualTo("Sync Server Instructions");
 
-				McpStatelessSyncServer server = context.getBean(McpStatelessSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					McpStatelessSyncServer server = context.getBean(McpStatelessSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
@@ -169,11 +155,11 @@ public class McpStatelessServerAutoConfigurationIT {
 	@Test
 	void toolSpecificationConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.expose-mcp-client-tools=true")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				List<SyncToolSpecification> tools = context.getBean("syncTools", List.class);
-				assertThat(tools).hasSize(1);
-			});
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					List<SyncToolSpecification> tools = context.getBean("syncTools", List.class);
+					assertThat(tools).hasSize(1);
+				});
 	}
 
 	@Test
@@ -195,12 +181,12 @@ public class McpStatelessServerAutoConfigurationIT {
 	@Test
 	void asyncToolSpecificationConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.expose-mcp-client-tools=true")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				List<AsyncToolSpecification> tools = context.getBean("asyncTools", List.class);
-				assertThat(tools).hasSize(1);
-			});
+				.withPropertyValues("spring.ai.mcp.server.type=ASYNC", "spring.ai.mcp.server.expose-mcp-client-tools=true")
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					List<AsyncToolSpecification> tools = context.getBean("asyncTools", List.class);
+					assertThat(tools).hasSize(1);
+				});
 	}
 
 	@Test
@@ -208,7 +194,7 @@ public class McpStatelessServerAutoConfigurationIT {
 		this.contextRunner.withUserConfiguration(CustomCapabilitiesConfiguration.class).run(context -> {
 			assertThat(context).hasSingleBean(McpSchema.ServerCapabilities.Builder.class);
 			assertThat(context.getBean(McpSchema.ServerCapabilities.Builder.class))
-				.isInstanceOf(CustomCapabilitiesBuilder.class);
+					.isInstanceOf(CustomCapabilitiesBuilder.class);
 		});
 	}
 
@@ -223,49 +209,49 @@ public class McpStatelessServerAutoConfigurationIT {
 	@Test
 	void asyncRootsChangeHandlerConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.type=ASYNC")
-			.withUserConfiguration(TestAsyncRootsHandlerConfiguration.class)
-			.run(context -> {
-				McpStatelessAsyncServer server = context.getBean(McpStatelessAsyncServer.class);
-				assertThat(server).isNotNull();
-			});
+				.withUserConfiguration(TestAsyncRootsHandlerConfiguration.class)
+				.run(context -> {
+					McpStatelessAsyncServer server = context.getBean(McpStatelessAsyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
 	void capabilitiesConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.capabilities.tool=false",
-				"spring.ai.mcp.server.capabilities.resource=false", "spring.ai.mcp.server.capabilities.prompt=false",
-				"spring.ai.mcp.server.capabilities.completion=false")
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getCapabilities().isTool()).isFalse();
-				assertThat(properties.getCapabilities().isResource()).isFalse();
-				assertThat(properties.getCapabilities().isPrompt()).isFalse();
-				assertThat(properties.getCapabilities().isCompletion()).isFalse();
+						"spring.ai.mcp.server.capabilities.resource=false", "spring.ai.mcp.server.capabilities.prompt=false",
+						"spring.ai.mcp.server.capabilities.completion=false")
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getCapabilities().isTool()).isFalse();
+					assertThat(properties.getCapabilities().isResource()).isFalse();
+					assertThat(properties.getCapabilities().isPrompt()).isFalse();
+					assertThat(properties.getCapabilities().isCompletion()).isFalse();
 
-				// Verify the server is configured with the disabled capabilities
-				McpStatelessSyncServer server = context.getBean(McpStatelessSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					// Verify the server is configured with the disabled capabilities
+					McpStatelessSyncServer server = context.getBean(McpStatelessSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
 	void toolResponseMimeTypeConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.tool-response-mime-type.test-tool=application/json",
-					"spring.ai.mcp.server.expose-mcp-client-tools=true")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getToolResponseMimeType()).containsEntry("test-tool", "application/json");
+				.withPropertyValues("spring.ai.mcp.server.tool-response-mime-type.test-tool=application/json",
+						"spring.ai.mcp.server.expose-mcp-client-tools=true")
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getToolResponseMimeType()).containsEntry("test-tool", "application/json");
 
-				// Verify the MIME type is applied to the tool specifications
-				List<SyncToolSpecification> tools = context.getBean("syncTools", List.class);
-				assertThat(tools).hasSize(1);
+					// Verify the MIME type is applied to the tool specifications
+					List<SyncToolSpecification> tools = context.getBean("syncTools", List.class);
+					assertThat(tools).hasSize(1);
 
-				// The server should be properly configured with the tool
-				McpStatelessSyncServer server = context.getBean(McpStatelessSyncServer.class);
-				assertThat(server).isNotNull();
-			});
+					// The server should be properly configured with the tool
+					McpStatelessSyncServer server = context.getBean(McpStatelessSyncServer.class);
+					assertThat(server).isNotNull();
+				});
 	}
 
 	@Test
@@ -303,94 +289,94 @@ public class McpStatelessServerAutoConfigurationIT {
 	@Test
 	void asyncCompletionSpecificationConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.type=ASYNC")
-			.withUserConfiguration(TestAsyncCompletionConfiguration.class)
-			.run(context -> {
-				List<AsyncCompletionSpecification> completions = context.getBean("testAsyncCompletions", List.class);
-				assertThat(completions).hasSize(1);
-			});
+				.withUserConfiguration(TestAsyncCompletionConfiguration.class)
+				.run(context -> {
+					List<AsyncCompletionSpecification> completions = context.getBean("testAsyncCompletions", List.class);
+					assertThat(completions).hasSize(1);
+				});
 	}
 
 	@Test
 	void toolCallbackProviderConfiguration() {
 		this.contextRunner.withUserConfiguration(TestToolCallbackProviderConfiguration.class)
-			.run(context -> assertThat(context).hasSingleBean(ToolCallbackProvider.class));
+				.run(context -> assertThat(context).hasSingleBean(ToolCallbackProvider.class));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	void syncStatelessServerSpecificationConfiguration() {
 		this.contextRunner
-			.withUserConfiguration(McpServerAnnotationScannerAutoConfiguration.class,
-					StatelessServerSpecificationFactoryAutoConfiguration.class)
-			.withBean(SyncTestMcpSpecsComponent.class)
-			.run(context -> {
-				McpStatelessSyncServer syncServer = context.getBean(McpStatelessSyncServer.class);
-				McpStatelessAsyncServer asyncServer = (McpStatelessAsyncServer) ReflectionTestUtils.getField(syncServer,
-						"asyncServer");
+				.withUserConfiguration(McpServerAnnotationScannerAutoConfiguration.class,
+						StatelessServerSpecificationFactoryAutoConfiguration.class)
+				.withBean(SyncTestMcpSpecsComponent.class)
+				.run(context -> {
+					McpStatelessSyncServer syncServer = context.getBean(McpStatelessSyncServer.class);
+					McpStatelessAsyncServer asyncServer = (McpStatelessAsyncServer) ReflectionTestUtils.getField(syncServer,
+							"asyncServer");
 
-				CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "tools");
-				assertThat(tools).hasSize(1);
-				assertThat(tools.get(0).tool().name()).isEqualTo("add");
+					CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "tools");
+					assertThat(tools).hasSize(1);
+					assertThat(tools.get(0).tool().name()).isEqualTo("add");
 
-				ConcurrentHashMap<String, AsyncResourceSpecification> resources = (ConcurrentHashMap<String, AsyncResourceSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "resources");
-				assertThat(resources).hasSize(1);
-				assertThat(resources.get("simple://static")).isNotNull();
+					ConcurrentHashMap<String, AsyncResourceSpecification> resources = (ConcurrentHashMap<String, AsyncResourceSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "resources");
+					assertThat(resources).hasSize(1);
+					assertThat(resources.get("simple://static")).isNotNull();
 
-				ConcurrentHashMap<String, AsyncResourceTemplateSpecification> resourceTemplates = (ConcurrentHashMap<String, AsyncResourceTemplateSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "resourceTemplates");
-				assertThat(resourceTemplates).hasSize(1);
-				assertThat(resourceTemplates.get("config://{key}")).isNotNull();
+					ConcurrentHashMap<String, AsyncResourceTemplateSpecification> resourceTemplates = (ConcurrentHashMap<String, AsyncResourceTemplateSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "resourceTemplates");
+					assertThat(resourceTemplates).hasSize(1);
+					assertThat(resourceTemplates.get("config://{key}")).isNotNull();
 
-				ConcurrentHashMap<String, AsyncPromptSpecification> prompts = (ConcurrentHashMap<String, AsyncPromptSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "prompts");
-				assertThat(prompts).hasSize(1);
-				assertThat(prompts.get("greeting")).isNotNull();
+					ConcurrentHashMap<String, AsyncPromptSpecification> prompts = (ConcurrentHashMap<String, AsyncPromptSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "prompts");
+					assertThat(prompts).hasSize(1);
+					assertThat(prompts.get("greeting")).isNotNull();
 
-				ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification> completions = (ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "completions");
-				assertThat(completions).hasSize(1);
-				assertThat(completions.keySet().iterator().next()).isInstanceOf(McpSchema.CompleteReference.class);
-			});
+					ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification> completions = (ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "completions");
+					assertThat(completions).hasSize(1);
+					assertThat(completions.keySet().iterator().next()).isInstanceOf(McpSchema.CompleteReference.class);
+				});
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	void asyncStatelessServerSpecificationConfiguration() {
 		this.contextRunner
-			.withUserConfiguration(McpServerAnnotationScannerAutoConfiguration.class,
-					StatelessServerSpecificationFactoryAutoConfiguration.class)
-			.withBean(AsyncTestMcpSpecsComponent.class)
-			.withPropertyValues("spring.ai.mcp.server.type=async")
-			.run(context -> {
-				McpStatelessAsyncServer asyncServer = context.getBean(McpStatelessAsyncServer.class);
+				.withUserConfiguration(McpServerAnnotationScannerAutoConfiguration.class,
+						StatelessServerSpecificationFactoryAutoConfiguration.class)
+				.withBean(AsyncTestMcpSpecsComponent.class)
+				.withPropertyValues("spring.ai.mcp.server.type=async")
+				.run(context -> {
+					McpStatelessAsyncServer asyncServer = context.getBean(McpStatelessAsyncServer.class);
 
-				CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "tools");
-				assertThat(tools).hasSize(1);
-				assertThat(tools.get(0).tool().name()).isEqualTo("add");
+					CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "tools");
+					assertThat(tools).hasSize(1);
+					assertThat(tools.get(0).tool().name()).isEqualTo("add");
 
-				ConcurrentHashMap<String, AsyncResourceSpecification> resources = (ConcurrentHashMap<String, AsyncResourceSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "resources");
-				assertThat(resources).hasSize(1);
-				assertThat(resources.get("simple://static")).isNotNull();
+					ConcurrentHashMap<String, AsyncResourceSpecification> resources = (ConcurrentHashMap<String, AsyncResourceSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "resources");
+					assertThat(resources).hasSize(1);
+					assertThat(resources.get("simple://static")).isNotNull();
 
-				ConcurrentHashMap<String, AsyncResourceTemplateSpecification> resourceTemplates = (ConcurrentHashMap<String, AsyncResourceTemplateSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "resourceTemplates");
-				assertThat(resourceTemplates).hasSize(1);
-				assertThat(resourceTemplates.get("config://{key}")).isNotNull();
+					ConcurrentHashMap<String, AsyncResourceTemplateSpecification> resourceTemplates = (ConcurrentHashMap<String, AsyncResourceTemplateSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "resourceTemplates");
+					assertThat(resourceTemplates).hasSize(1);
+					assertThat(resourceTemplates.get("config://{key}")).isNotNull();
 
-				ConcurrentHashMap<String, AsyncPromptSpecification> prompts = (ConcurrentHashMap<String, AsyncPromptSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "prompts");
-				assertThat(prompts).hasSize(1);
-				assertThat(prompts.get("greeting")).isNotNull();
+					ConcurrentHashMap<String, AsyncPromptSpecification> prompts = (ConcurrentHashMap<String, AsyncPromptSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "prompts");
+					assertThat(prompts).hasSize(1);
+					assertThat(prompts.get("greeting")).isNotNull();
 
-				ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification> completions = (ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification>) ReflectionTestUtils
-					.getField(asyncServer, "completions");
-				assertThat(completions).hasSize(1);
-				assertThat(completions.keySet().iterator().next()).isInstanceOf(McpSchema.CompleteReference.class);
-			});
+					ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification> completions = (ConcurrentHashMap<McpSchema.CompleteReference, McpStatelessServerFeatures.AsyncCompletionSpecification>) ReflectionTestUtils
+							.getField(asyncServer, "completions");
+					assertThat(completions).hasSize(1);
+					assertThat(completions.keySet().iterator().next()).isInstanceOf(McpSchema.CompleteReference.class);
+				});
 	}
 
 	@Configuration
@@ -461,8 +447,8 @@ public class McpStatelessServerAutoConfigurationIT {
 				Mockito.when(mockTool.description()).thenReturn("Provider Tool");
 				when(mockClient.getClientInfo()).thenReturn(new McpSchema.Implementation("testClient", "1.0.0"));
 
-				return new ToolCallback[] {
-						SyncMcpToolCallback.builder().mcpClient(mockClient).tool(mockTool).build() };
+				return new ToolCallback[]{
+						SyncMcpToolCallback.builder().mcpClient(mockClient).tool(mockTool).build()};
 			};
 		}
 
@@ -476,7 +462,7 @@ public class McpStatelessServerAutoConfigurationIT {
 
 			BiFunction<McpTransportContext, McpSchema.CompleteRequest, McpSchema.CompleteResult> completionHandler = (
 					context, request) -> new McpSchema.CompleteResult(
-							new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false));
+					new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false));
 
 			return List.of(new McpStatelessServerFeatures.SyncCompletionSpecification(
 					new McpSchema.PromptReference("ref/prompt", "code_review", "Code review"), completionHandler));
@@ -491,7 +477,7 @@ public class McpStatelessServerAutoConfigurationIT {
 		List<AsyncCompletionSpecification> testAsyncCompletions() {
 			BiFunction<McpTransportContext, McpSchema.CompleteRequest, Mono<McpSchema.CompleteResult>> completionHandler = (
 					context, request) -> Mono.just(new McpSchema.CompleteResult(
-							new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false)));
+					new McpSchema.CompleteResult.CompleteCompletion(List.of(), 0, false)));
 
 			return List.of(new McpStatelessServerFeatures.AsyncCompletionSpecification(
 					new McpSchema.PromptReference("ref/prompt", "code_review", "Code review"), completionHandler));
@@ -542,7 +528,7 @@ public class McpStatelessServerAutoConfigurationIT {
 				annotations = @McpTool.McpAnnotations(title = "Rectangle Area Calculator", readOnlyHint = true,
 						destructiveHint = false, idempotentHint = true))
 		public int add(@McpToolParam(description = "First number", required = true) int a,
-				@McpToolParam(description = "Second number", required = true) int b) {
+		               @McpToolParam(description = "Second number", required = true) int b) {
 			return a + b;
 		}
 
@@ -569,9 +555,9 @@ public class McpStatelessServerAutoConfigurationIT {
 		@McpComplete(prompt = "city-search")
 		public List<String> completeCityName(String prefix) {
 			return Stream.of("New York", "Los Angeles", "Chicago", "Houston", "Phoenix")
-				.filter(city -> city.toLowerCase().startsWith(prefix.toLowerCase()))
-				.limit(10)
-				.toList();
+					.filter(city -> city.toLowerCase().startsWith(prefix.toLowerCase()))
+					.limit(10)
+					.toList();
 		}
 
 	}
@@ -583,7 +569,7 @@ public class McpStatelessServerAutoConfigurationIT {
 				annotations = @McpTool.McpAnnotations(title = "Rectangle Area Calculator", readOnlyHint = true,
 						destructiveHint = false, idempotentHint = true))
 		public Mono<Integer> add(@McpToolParam(description = "First number", required = true) int a,
-				@McpToolParam(description = "Second number", required = true) int b) {
+		                         @McpToolParam(description = "Second number", required = true) int b) {
 			return Mono.just(a + b);
 		}
 
@@ -604,15 +590,15 @@ public class McpStatelessServerAutoConfigurationIT {
 			String message = "Hello, " + name + "! How can I help you today?";
 
 			return Mono.just(new McpSchema.GetPromptResult("Greeting", List
-				.of(new McpSchema.PromptMessage(McpSchema.Role.ASSISTANT, new McpSchema.TextContent(message)))));
+					.of(new McpSchema.PromptMessage(McpSchema.Role.ASSISTANT, new McpSchema.TextContent(message)))));
 		}
 
 		@McpComplete(prompt = "city-search")
 		public Mono<List<String>> completeCityName(String prefix) {
 			return Mono.just(Stream.of("New York", "Los Angeles", "Chicago", "Houston", "Phoenix")
-				.filter(city -> city.toLowerCase().startsWith(prefix.toLowerCase()))
-				.limit(10)
-				.toList());
+					.filter(city -> city.toLowerCase().startsWith(prefix.toLowerCase()))
+					.limit(10)
+					.toList());
 		}
 
 	}

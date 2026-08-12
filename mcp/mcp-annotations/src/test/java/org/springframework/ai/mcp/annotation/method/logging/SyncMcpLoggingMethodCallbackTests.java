@@ -16,14 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
-import java.lang.reflect.Method;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpLogging;
+
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -44,9 +43,9 @@ public class SyncMcpLoggingMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleLoggingMessage", LoggingMessageNotification.class);
 
 		Consumer<LoggingMessageNotification> callback = SyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		callback.accept(TEST_NOTIFICATION);
 
@@ -60,9 +59,9 @@ public class SyncMcpLoggingMethodCallbackTests {
 				String.class);
 
 		Consumer<LoggingMessageNotification> callback = SyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		callback.accept(TEST_NOTIFICATION);
 
@@ -77,8 +76,8 @@ public class SyncMcpLoggingMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", LoggingMessageNotification.class);
 
 		assertThatThrownBy(() -> SyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have void return type");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have void return type");
 	}
 
 	@Test
@@ -88,8 +87,8 @@ public class SyncMcpLoggingMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> SyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have either 1 parameter (LoggingMessageNotification) or 3 parameters");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have either 1 parameter (LoggingMessageNotification) or 3 parameters");
 	}
 
 	@Test
@@ -98,8 +97,8 @@ public class SyncMcpLoggingMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> SyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type LoggingMessageNotification");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type LoggingMessageNotification");
 	}
 
 	@Test
@@ -108,8 +107,8 @@ public class SyncMcpLoggingMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterTypes", String.class, int.class, boolean.class);
 
 		assertThatThrownBy(() -> SyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("First parameter must be of type LoggingLevel");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("First parameter must be of type LoggingLevel");
 	}
 
 	@Test
@@ -118,12 +117,12 @@ public class SyncMcpLoggingMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleLoggingMessage", LoggingMessageNotification.class);
 
 		Consumer<LoggingMessageNotification> callback = SyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		assertThatThrownBy(() -> callback.accept(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Notification must not be null");
+				.hasMessageContaining("Notification must not be null");
 	}
 
 	/**

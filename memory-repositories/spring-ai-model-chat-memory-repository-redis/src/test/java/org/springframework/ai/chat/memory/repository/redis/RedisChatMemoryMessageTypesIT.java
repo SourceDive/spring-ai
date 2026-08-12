@@ -16,31 +16,21 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.redis.testcontainers.RedisContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import redis.clients.jedis.RedisClient;
 
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Bean;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,7 +47,7 @@ class RedisChatMemoryMessageTypesIT {
 	static RedisContainer redisContainer = new RedisContainer("redis/redis-stack:latest");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	private RedisChatMemoryRepository chatMemory;
 
@@ -66,12 +56,12 @@ class RedisChatMemoryMessageTypesIT {
 	@BeforeEach
 	void setUp() {
 		this.jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 		this.chatMemory = RedisChatMemoryRepository.builder()
-			.jedisClient(this.jedisClient)
-			.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
-			.build();
+				.jedisClient(this.jedisClient)
+				.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
+				.build();
 
 		this.chatMemory.clear("test-conversation");
 	}
@@ -117,7 +107,7 @@ class RedisChatMemoryMessageTypesIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM"})
 	void shouldStoreAndRetrieveSingleMessage(String content, MessageType messageType) {
 		this.contextRunner.run(context -> {
 			String conversationId = UUID.randomUUID().toString();
@@ -163,9 +153,9 @@ class RedisChatMemoryMessageTypesIT {
 
 			// Create a System message with metadata using builder
 			SystemMessage systemMessage = SystemMessage.builder()
-				.text("You are a specialized AI assistant for legal questions")
-				.metadata(Map.of("domain", "legal", "version", "2.0", "restricted", "true"))
-				.build();
+					.text("You are a specialized AI assistant for legal questions")
+					.metadata(Map.of("domain", "legal", "version", "2.0", "restricted", "true"))
+					.build();
 
 			// Store the message
 			this.chatMemory.add(conversationId, systemMessage);
@@ -225,14 +215,14 @@ class RedisChatMemoryMessageTypesIT {
 
 			// Create messages with metadata using builder
 			UserMessage userMessage = UserMessage.builder()
-				.text("Hello with metadata")
-				.metadata(Map.of("source", "web", "user_id", "12345"))
-				.build();
+					.text("Hello with metadata")
+					.metadata(Map.of("source", "web", "user_id", "12345"))
+					.build();
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("Hi there!")
-				.properties(Map.of("model", "gpt-4", "temperature", "0.7"))
-				.build();
+					.content("Hi there!")
+					.properties(Map.of("model", "gpt-4", "temperature", "0.7"))
+					.build();
 
 			// Store messages with metadata
 			this.chatMemory.add(conversationId, userMessage);
@@ -253,8 +243,8 @@ class RedisChatMemoryMessageTypesIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "ASSISTANT,model=gpt-4;temperature=0.7;api_version=1.0", "USER,source=web;user_id=12345;client=mobile",
-			"SYSTEM,domain=legal;version=2.0;restricted=true" })
+	@CsvSource({"ASSISTANT,model=gpt-4;temperature=0.7;api_version=1.0", "USER,source=web;user_id=12345;client=mobile",
+			"SYSTEM,domain=legal;version=2.0;restricted=true"})
 	void shouldStoreAndRetrieveMessageWithMetadata(MessageType messageType, String metadataString) {
 		this.contextRunner.run(context -> {
 			String conversationId = UUID.randomUUID().toString();
@@ -317,11 +307,11 @@ class RedisChatMemoryMessageTypesIT {
 							"{\"operation\": \"add\", \"args\": [1, 2]}"));
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("I'll check that for you.")
-				.properties(Map.of("model", "gpt-4"))
-				.toolCalls(toolCalls)
-				.media(List.of())
-				.build();
+					.content("I'll check that for you.")
+					.properties(Map.of("model", "gpt-4"))
+					.toolCalls(toolCalls)
+					.media(List.of())
+					.build();
 
 			// Store message with tool calls
 			this.chatMemory.add(conversationId, assistantMessage);
@@ -359,8 +349,8 @@ class RedisChatMemoryMessageTypesIT {
 
 			// Create the message with a single tool response
 			ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-				.responses(List.of(weatherResponse))
-				.build();
+					.responses(List.of(weatherResponse))
+					.build();
 
 			// Store the message
 			this.chatMemory.add(conversationId, toolResponseMessage);
@@ -404,9 +394,9 @@ class RedisChatMemoryMessageTypesIT {
 
 			// Create the message with multiple tool responses and metadata
 			ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-				.responses(List.of(weatherResponse, calculatorResponse, databaseResponse))
-				.metadata(Map.of("source", "tools-api", "version", "1.0"))
-				.build();
+					.responses(List.of(weatherResponse, calculatorResponse, databaseResponse))
+					.metadata(Map.of("source", "tools-api", "version", "1.0"))
+					.build();
 
 			// Store the message
 			this.chatMemory.add(conversationId, toolResponseMessage);
@@ -459,20 +449,20 @@ class RedisChatMemoryMessageTypesIT {
 
 			// Assistant requests weather information via tool
 			List<AssistantMessage.ToolCall> toolCalls = List
-				.of(new AssistantMessage.ToolCall("weather-req-1", "function", "weather", "{\"location\":\"Paris\"}"));
+					.of(new AssistantMessage.ToolCall("weather-req-1", "function", "weather", "{\"location\":\"Paris\"}"));
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("I'll check the weather for you.")
-				.properties(Map.of())
-				.toolCalls(toolCalls)
-				.media(List.of())
-				.build();
+					.content("I'll check the weather for you.")
+					.properties(Map.of())
+					.toolCalls(toolCalls)
+					.media(List.of())
+					.build();
 
 			// Tool provides weather information
 			ToolResponseMessage.ToolResponse weatherResponse = new ToolResponseMessage.ToolResponse("weather-req-1",
 					"weather", "{\"location\":\"Paris\",\"temperature\":\"22°C\",\"conditions\":\"Partly Cloudy\"}");
 			ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-				.responses(List.of(weatherResponse))
-				.build();
+					.responses(List.of(weatherResponse))
+					.build();
 
 			// Assistant summarizes the information
 			AssistantMessage finalResponse = new AssistantMessage(
@@ -518,20 +508,20 @@ class RedisChatMemoryMessageTypesIT {
 
 			// Assistant using tool to check weather
 			List<AssistantMessage.ToolCall> toolCalls = List
-				.of(new AssistantMessage.ToolCall("weather-tool-1", "function", "weather", "{\"location\":\"Paris\"}"));
+					.of(new AssistantMessage.ToolCall("weather-tool-1", "function", "weather", "{\"location\":\"Paris\"}"));
 			AssistantMessage assistantToolCall = AssistantMessage.builder()
-				.content("I'll check the weather in Paris for you.")
-				.properties(Map.of())
-				.toolCalls(toolCalls)
-				.media(List.of())
-				.build();
+					.content("I'll check the weather in Paris for you.")
+					.properties(Map.of())
+					.toolCalls(toolCalls)
+					.media(List.of())
+					.build();
 
 			// Tool response
 			ToolResponseMessage.ToolResponse weatherResponse = new ToolResponseMessage.ToolResponse("weather-tool-1",
 					"weather", "{\"location\":\"Paris\",\"temperature\":\"24°C\",\"conditions\":\"Sunny\"}");
 			ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-				.responses(List.of(weatherResponse))
-				.build();
+					.responses(List.of(weatherResponse))
+					.build();
 
 			// Final assistant response using the tool information
 			AssistantMessage assistantFinal = new AssistantMessage("The weather in Paris is currently 24°C and sunny.");
@@ -566,11 +556,9 @@ class RedisChatMemoryMessageTypesIT {
 				// For each specific message type, verify type-specific properties
 				if (expected instanceof SystemMessage) {
 					assertThat(actual).isInstanceOf(SystemMessage.class);
-				}
-				else if (expected instanceof UserMessage) {
+				} else if (expected instanceof UserMessage) {
 					assertThat(actual).isInstanceOf(UserMessage.class);
-				}
-				else if (expected instanceof AssistantMessage) {
+				} else if (expected instanceof AssistantMessage) {
 					assertThat(actual).isInstanceOf(AssistantMessage.class);
 
 					// If the original had tool calls, verify they're preserved
@@ -583,10 +571,9 @@ class RedisChatMemoryMessageTypesIT {
 
 						// Check first tool call details
 						assertThat(actualAssistant.getToolCalls().get(0).name())
-							.isEqualTo(expectedAssistant.getToolCalls().get(0).name());
+								.isEqualTo(expectedAssistant.getToolCalls().get(0).name());
 					}
-				}
-				else if (expected instanceof ToolResponseMessage) {
+				} else if (expected instanceof ToolResponseMessage) {
 					assertThat(actual).isInstanceOf(ToolResponseMessage.class);
 
 					ToolResponseMessage expectedTool = (ToolResponseMessage) expected;
@@ -596,9 +583,9 @@ class RedisChatMemoryMessageTypesIT {
 
 					// Check response details
 					assertThat(actualTool.getResponses().get(0).name())
-						.isEqualTo(expectedTool.getResponses().get(0).name());
+							.isEqualTo(expectedTool.getResponses().get(0).name());
 					assertThat(actualTool.getResponses().get(0).id())
-						.isEqualTo(expectedTool.getResponses().get(0).id());
+							.isEqualTo(expectedTool.getResponses().get(0).id());
 				}
 			}
 		});
@@ -666,11 +653,11 @@ class RedisChatMemoryMessageTypesIT {
 		@Bean
 		RedisChatMemoryRepository chatMemory() {
 			return RedisChatMemoryRepository.builder()
-				.jedisClient(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build())
-				.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
-				.build();
+					.jedisClient(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build())
+					.indexName("test-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
+					.build();
 		}
 
 	}

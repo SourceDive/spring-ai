@@ -33,14 +33,14 @@ import org.springframework.context.annotation.Bean;
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ CouchbaseSearchVectorStore.class, EmbeddingModel.class, Cluster.class })
+@ConditionalOnClass({CouchbaseSearchVectorStore.class, EmbeddingModel.class, Cluster.class})
 @EnableConfigurationProperties(CouchbaseSearchVectorStoreProperties.class)
 public class CouchbaseSearchVectorStoreAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public CouchbaseSearchVectorStore vectorStore(CouchbaseSearchVectorStoreProperties properties, Cluster cluster,
-			EmbeddingModel embeddingModel) {
+	                                              EmbeddingModel embeddingModel) {
 		var builder = CouchbaseSearchVectorStore.builder(cluster, embeddingModel);
 
 		PropertyMapper mapper = PropertyMapper.get();

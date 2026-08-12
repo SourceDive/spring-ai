@@ -16,25 +16,24 @@
 
 package org.springframework.ai.mcp.annotation.method.complete;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
 import io.modelcontextprotocol.spec.McpSchema.CompleteResult;
 import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
 import io.modelcontextprotocol.util.DefaultMcpUriTemplateManagerFactory;
+import org.springframework.ai.mcp.annotation.McpComplete;
 import reactor.core.publisher.Mono;
 
-import org.springframework.ai.mcp.annotation.McpComplete;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * Class for creating BiFunction callbacks around complete methods with asynchronous
  * support.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpComplete} into
  * callback functions that can be used to handle completion requests asynchronously. It
  * supports various method signatures and return types, and handles both prompt and URI
@@ -55,12 +54,13 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * converts the result to a CompleteResult.
+	 *
 	 * @param exchange The server exchange, may be null if the method doesn't require it
-	 * @param request The complete request, must not be null
+	 * @param request  The complete request, must not be null
 	 * @return A Mono that emits the complete result
 	 * @throws McpCompleteMethodException if there is an error invoking the complete
-	 * method
-	 * @throws IllegalArgumentException if the request is null
+	 *                                    method
+	 * @throws IllegalArgumentException   if the request is null
 	 */
 	@Override
 	public Mono<CompleteResult> apply(McpAsyncServerExchange exchange, CompleteRequest request) {
@@ -78,15 +78,15 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 
 			// Convert the result to a CompleteResult
 			return convertToCompleteResultMono(result);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return Mono
-				.error(new McpCompleteMethodException("Error invoking complete method: " + this.method.getName(), e));
+					.error(new McpCompleteMethodException("Error invoking complete method: " + this.method.getName(), e));
 		}
 	}
 
 	/**
 	 * Converts the method result to a Mono<CompleteResult>.
+	 *
 	 * @param result The method result
 	 * @return A Mono that emits the CompleteResult
 	 */
@@ -104,6 +104,7 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 
 	/**
 	 * Converts a result object to a CompleteResult.
+	 *
 	 * @param result The result object
 	 * @return The CompleteResult
 	 */
@@ -127,8 +128,7 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 			for (Object item : list) {
 				if (item instanceof String) {
 					values.add((String) item);
-				}
-				else {
+				} else {
 					throw new IllegalArgumentException("List items must be of type String");
 				}
 			}
@@ -145,6 +145,7 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 
 	/**
 	 * Validates that the method return type is compatible with the complete callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -174,6 +175,7 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 
 	/**
 	 * Checks if a parameter type is compatible with the exchange type.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -185,6 +187,7 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -208,6 +211,7 @@ public final class AsyncMcpCompleteMethodCallback extends AbstractMcpCompleteMet
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpCompleteMethodCallback instance
 		 */
 		@Override

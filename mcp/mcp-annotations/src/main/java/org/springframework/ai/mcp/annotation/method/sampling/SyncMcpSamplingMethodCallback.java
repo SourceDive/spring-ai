@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.sampling;
 
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
+import org.springframework.ai.mcp.annotation.McpSampling;
+
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
-
-import org.springframework.ai.mcp.annotation.McpSampling;
-
 /**
  * Class for creating Function callbacks around sampling methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpSampling} into
  * callback functions that can be used to handle sampling requests. It supports methods
  * with a single CreateMessageRequest parameter.
@@ -45,11 +44,12 @@ public final class SyncMcpSamplingMethodCallback extends AbstractMcpSamplingMeth
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns the result.
+	 *
 	 * @param request The sampling request, must not be null
 	 * @return The result of the method invocation
 	 * @throws McpSamplingMethodException if there is an error invoking the sampling
-	 * method
-	 * @throws IllegalArgumentException if the request is null
+	 *                                    method
+	 * @throws IllegalArgumentException   if the request is null
 	 */
 	@Override
 	public CreateMessageResult apply(CreateMessageRequest request) {
@@ -67,14 +67,14 @@ public final class SyncMcpSamplingMethodCallback extends AbstractMcpSamplingMeth
 
 			// Return the result
 			return (CreateMessageResult) result;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new McpSamplingMethodException("Error invoking sampling method: " + this.method.getName(), e);
 		}
 	}
 
 	/**
 	 * Validates that the method return type is compatible with the sampling callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -90,6 +90,7 @@ public final class SyncMcpSamplingMethodCallback extends AbstractMcpSamplingMeth
 
 	/**
 	 * Checks if a parameter type is compatible with the exchange type.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -102,6 +103,7 @@ public final class SyncMcpSamplingMethodCallback extends AbstractMcpSamplingMeth
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -118,6 +120,7 @@ public final class SyncMcpSamplingMethodCallback extends AbstractMcpSamplingMeth
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new SyncMcpSamplingMethodCallback instance
 		 */
 		@Override

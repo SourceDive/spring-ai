@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.tool;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
@@ -32,10 +28,13 @@ import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.context.MetaProvider;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,7 +52,7 @@ public class SyncMcpToolProviderTests {
 	@Test
 	void testConstructorWithNullToolObjects() {
 		assertThatThrownBy(() -> new SyncMcpToolProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("toolObjects cannot be null");
+				.hasMessageContaining("toolObjects cannot be null");
 	}
 
 	@Test
@@ -305,7 +304,7 @@ public class SyncMcpToolProviderTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
+				.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
 	}
 
 	@Test
@@ -589,9 +588,9 @@ public class SyncMcpToolProviderTests {
 	void testToolWithOutputSchemaGeneration() {
 
 		// Define a custom result class
-		record CustomResult(
+		record CustomResult (
 				@JsonPropertyDescription("customResultMessage") @JsonProperty(required = false) String message,
-				@JsonProperty(required = true) int count) {
+		@JsonProperty(required = true) int count){
 		}
 
 		class OutputSchemaTool {
@@ -659,7 +658,7 @@ public class SyncMcpToolProviderTests {
 	@Test
 	void testToolWithListReturnType() {
 
-		record CustomResult(String message) {
+		record CustomResult (String message){
 		}
 
 		class ListResponseTool {
@@ -683,7 +682,7 @@ public class SyncMcpToolProviderTests {
 		assertThat(toolSpec.tool().outputSchema()).isNull();
 
 		BiFunction<McpSyncServerExchange, CallToolRequest, McpSchema.CallToolResult> callHandler = toolSpec
-			.callHandler();
+				.callHandler();
 
 		McpSchema.CallToolResult result = callHandler.apply(mock(McpSyncServerExchange.class),
 				new CallToolRequest("list-response", Map.of("input", "test")));
@@ -701,7 +700,7 @@ public class SyncMcpToolProviderTests {
 	@Test
 	void testToolWithStructuredListReturnType() {
 
-		record CustomResult(String message) {
+		record CustomResult (String message){
 		}
 
 		class ListResponseTool {
@@ -725,7 +724,7 @@ public class SyncMcpToolProviderTests {
 		assertThat(toolSpec.tool().outputSchema()).isNotNull();
 
 		BiFunction<McpSyncServerExchange, CallToolRequest, McpSchema.CallToolResult> callHandler = toolSpec
-			.callHandler();
+				.callHandler();
 
 		McpSchema.CallToolResult result = callHandler.apply(mock(McpSyncServerExchange.class),
 				new CallToolRequest("list-response", Map.of("input", "test")));

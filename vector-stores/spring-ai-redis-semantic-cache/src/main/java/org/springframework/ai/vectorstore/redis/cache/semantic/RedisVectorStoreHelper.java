@@ -16,11 +16,10 @@
 
 package org.springframework.ai.vectorstore.redis.cache.semantic;
 
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.redis.RedisVectorStore;
 import org.springframework.ai.vectorstore.redis.RedisVectorStore.MetadataField;
+import redis.clients.jedis.RedisClient;
 
 /**
  * Helper utility for creating and configuring Redis-based vector stores for semantic
@@ -41,7 +40,8 @@ public final class RedisVectorStoreHelper {
 
 	/**
 	 * Creates a pre-configured RedisVectorStore suitable for semantic caching.
-	 * @param jedisClient The Redis client to use
+	 *
+	 * @param jedisClient    The Redis client to use
 	 * @param embeddingModel The embedding model to use for vectorization
 	 * @return A configured RedisVectorStore instance
 	 */
@@ -51,21 +51,22 @@ public final class RedisVectorStoreHelper {
 
 	/**
 	 * Creates a pre-configured RedisVectorStore with custom index name and prefix.
-	 * @param jedisClient The Redis client to use
+	 *
+	 * @param jedisClient    The Redis client to use
 	 * @param embeddingModel The embedding model to use for vectorization
-	 * @param indexName The name of the search index to create
-	 * @param prefix The key prefix to use for Redis documents
+	 * @param indexName      The name of the search index to create
+	 * @param prefix         The key prefix to use for Redis documents
 	 * @return A configured RedisVectorStore instance
 	 */
 	public static RedisVectorStore createVectorStore(RedisClient jedisClient, EmbeddingModel embeddingModel,
-			String indexName, String prefix) {
+	                                                 String indexName, String prefix) {
 		RedisVectorStore vectorStore = RedisVectorStore.builder(jedisClient, embeddingModel)
-			.indexName(indexName)
-			.prefix(prefix)
-			.metadataFields(MetadataField.text("response"), MetadataField.text("response_text"),
-					MetadataField.numeric("ttl"))
-			.initializeSchema(true)
-			.build();
+				.indexName(indexName)
+				.prefix(prefix)
+				.metadataFields(MetadataField.text("response"), MetadataField.text("response_text"),
+						MetadataField.numeric("ttl"))
+				.initializeSchema(true)
+				.build();
 
 		vectorStore.afterPropertiesSet();
 		return vectorStore;

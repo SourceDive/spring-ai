@@ -16,11 +16,10 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ModelOptions;
+
+import java.util.List;
 
 /**
  * {@link ModelOptions} representing the common options that are portable across different
@@ -30,56 +29,72 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Returns the model to use for the chat.
+	 *
 	 * @return the model to use for the chat
 	 */
-	@Nullable String getModel();
+	@Nullable
+	String getModel();
 
 	/**
 	 * Returns the frequency penalty to use for the chat.
+	 *
 	 * @return the frequency penalty to use for the chat
 	 */
-	@Nullable Double getFrequencyPenalty();
+	@Nullable
+	Double getFrequencyPenalty();
 
 	/**
 	 * Returns the maximum number of tokens to use for the chat.
+	 *
 	 * @return the maximum number of tokens to use for the chat
 	 */
-	@Nullable Integer getMaxTokens();
+	@Nullable
+	Integer getMaxTokens();
 
 	/**
 	 * Returns the presence penalty to use for the chat.
+	 *
 	 * @return the presence penalty to use for the chat
 	 */
-	@Nullable Double getPresencePenalty();
+	@Nullable
+	Double getPresencePenalty();
 
 	/**
 	 * Returns the stop sequences to use for the chat.
+	 *
 	 * @return the stop sequences to use for the chat
 	 */
-	@Nullable List<String> getStopSequences();
+	@Nullable
+	List<String> getStopSequences();
 
 	/**
 	 * Returns the temperature to use for the chat.
+	 *
 	 * @return the temperature to use for the chat
 	 */
-	@Nullable Double getTemperature();
+	@Nullable
+	Double getTemperature();
 
 	/**
 	 * Returns the top K to use for the chat.
+	 *
 	 * @return the top K to use for the chat
 	 */
-	@Nullable Integer getTopK();
+	@Nullable
+	Integer getTopK();
 
 	/**
 	 * Returns the top P to use for the chat.
+	 *
 	 * @return the top P to use for the chat
 	 */
-	@Nullable Double getTopP();
+	@Nullable
+	Double getTopP();
 
 	/**
 	 * Returns a new {@link Builder} initialized with the values of this
 	 * {@link ChatOptions}.
-	 *
+	 * <p>
 	 * Concrete ChatOptions classes must implement this and return the most concrete
 	 * builder implementation.
 	 */
@@ -87,6 +102,7 @@ public interface ChatOptions extends ModelOptions {
 
 	/**
 	 * Creates a new {@link Builder} to create the default {@link ChatOptions}.
+	 *
 	 * @return Returns a new {@link Builder}.
 	 */
 	static ChatOptions.Builder<?> builder() {
@@ -102,6 +118,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the model to use for the chat.
+		 *
 		 * @param model
 		 * @return the builder
 		 */
@@ -109,6 +126,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the frequency penalty to use for the chat.
+		 *
 		 * @param frequencyPenalty
 		 * @return the builder.
 		 */
@@ -116,6 +134,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the maximum number of tokens to use for the chat.
+		 *
 		 * @param maxTokens
 		 * @return the builder.
 		 */
@@ -123,6 +142,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the presence penalty to use for the chat.
+		 *
 		 * @param presencePenalty
 		 * @return the builder.
 		 */
@@ -130,6 +150,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the stop sequences to use for the chat.
+		 *
 		 * @param stopSequences
 		 * @return the builder.
 		 */
@@ -137,6 +158,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the temperature to use for the chat.
+		 *
 		 * @param temperature
 		 * @return the builder.
 		 */
@@ -144,6 +166,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the top K to use for the chat.
+		 *
 		 * @param topK
 		 * @return the builder.
 		 */
@@ -151,6 +174,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Builds with the top P to use for the chat.
+		 *
 		 * @param topP
 		 * @return the builder.
 		 */
@@ -158,6 +182,7 @@ public interface ChatOptions extends ModelOptions {
 
 		/**
 		 * Build the {@link ChatOptions}.
+		 *
 		 * @return the Chat options.
 		 */
 		ChatOptions build();

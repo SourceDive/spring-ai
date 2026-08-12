@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.mcp.annotation.spring.scan;
 
-import org.jspecify.annotations.NullMarked;

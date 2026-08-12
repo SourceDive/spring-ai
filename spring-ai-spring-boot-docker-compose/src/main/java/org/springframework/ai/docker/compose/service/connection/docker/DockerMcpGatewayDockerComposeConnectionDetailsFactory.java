@@ -16,13 +16,13 @@
 
 package org.springframework.ai.docker.compose.service.connection.docker;
 
-import java.util.Map;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.McpSseClientConnectionDetails;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpSseClientProperties;
 import org.springframework.boot.docker.compose.core.RunningService;
 import org.springframework.boot.docker.compose.service.connection.DockerComposeConnectionDetailsFactory;
 import org.springframework.boot.docker.compose.service.connection.DockerComposeConnectionSource;
+
+import java.util.Map;
 
 /**
  * A {@link DockerComposeConnectionDetailsFactory} implementation that creates

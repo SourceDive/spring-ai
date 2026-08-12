@@ -16,21 +16,16 @@
 
 package org.springframework.ai.ollama;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.messages.ToolResponseMessage.ToolResponse;
-import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.ai.ollama.api.OllamaModel;
 import org.springframework.ai.retry.RetryUtils;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,10 +39,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OllamaChatRequestTests {
 
 	private final OllamaChatModel chatModel = OllamaChatModel.builder()
-		.ollamaApi(OllamaApi.builder().build())
-		.options(OllamaChatOptions.builder().model("MODEL_NAME").topK(99).temperature(66.6).numGPU(1).build())
-		.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-		.build();
+			.ollamaApi(OllamaApi.builder().build())
+			.options(OllamaChatOptions.builder().model("MODEL_NAME").topK(99).temperature(66.6).numGPU(1).build())
+			.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+			.build();
 
 	@Test
 	void createRequestWithOptions() {
@@ -70,11 +65,11 @@ class OllamaChatRequestTests {
 	void createRequestWithPromptOllamaOptions() {
 		// Runtime options should override the default options.
 		OllamaChatOptions promptOptions = OllamaChatOptions.builder()
-			.model(OllamaModel.QWEN_2_5_3B)
-			.temperature(0.8)
-			.topP(0.5)
-			.numGPU(2)
-			.build();
+				.model(OllamaModel.QWEN_2_5_3B)
+				.temperature(0.8)
+				.topP(0.5)
+				.numGPU(2)
+				.build();
 		var prompt = new Prompt("Test message content", promptOptions);
 
 		var request = this.chatModel.ollamaChatRequest(prompt, true);

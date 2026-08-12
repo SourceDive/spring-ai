@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.milvus;
 
-import org.jspecify.annotations.NullMarked;

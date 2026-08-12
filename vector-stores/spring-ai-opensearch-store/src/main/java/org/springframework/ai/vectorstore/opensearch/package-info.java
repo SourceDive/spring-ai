@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.opensearch;
 
-import org.jspecify.annotations.NullMarked;

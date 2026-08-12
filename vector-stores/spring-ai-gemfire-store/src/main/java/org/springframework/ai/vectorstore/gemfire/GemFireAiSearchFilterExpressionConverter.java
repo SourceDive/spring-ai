@@ -16,16 +16,16 @@
 
 package org.springframework.ai.vectorstore.gemfire;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * GemFireAiSearchFilterExpressionConverter is a class that converts Filter.Expression
@@ -52,20 +52,17 @@ public class GemFireAiSearchFilterExpressionConverter extends AbstractFilterExpr
 			context.append("(");
 			this.convertOperand(expression.right(), context);
 			context.append(")");
-		}
-		else if (expression.type() == Filter.ExpressionType.GT || expression.type() == Filter.ExpressionType.GTE) {
+		} else if (expression.type() == Filter.ExpressionType.GT || expression.type() == Filter.ExpressionType.GTE) {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
 			context.append(" TO *]");
-		}
-		else if (expression.type() == Filter.ExpressionType.LT || expression.type() == Filter.ExpressionType.LTE) {
+		} else if (expression.type() == Filter.ExpressionType.LT || expression.type() == Filter.ExpressionType.LTE) {
 			this.convertOperand(expression.left(), context);
 			context.append("[* TO ");
 			this.convertOperand(expression.right(), context);
 			context.append(getOperationSymbol(expression));
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
@@ -117,8 +114,7 @@ public class GemFireAiSearchFilterExpressionConverter extends AbstractFilterExpr
 					this.doAddValueRangeSpitter(filterValue, context);
 				}
 			}
-		}
-		else {
+		} else {
 			this.doSingleValue(normalizeDateString(filterValue.value()), context);
 		}
 	}
@@ -127,11 +123,9 @@ public class GemFireAiSearchFilterExpressionConverter extends AbstractFilterExpr
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			context.append(this.dateFormat.format(date));
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			emitLuceneString(text, context);
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}

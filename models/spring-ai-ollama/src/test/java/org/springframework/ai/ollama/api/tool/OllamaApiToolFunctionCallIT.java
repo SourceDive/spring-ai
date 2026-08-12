@@ -16,14 +16,8 @@
 
 package org.springframework.ai.ollama.api.tool;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.ollama.BaseOllamaIT;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaApi.ChatResponse;
@@ -33,6 +27,11 @@ import org.springframework.ai.ollama.api.OllamaApi.Message.ToolCall;
 import org.springframework.ai.ollama.api.OllamaModel;
 import org.springframework.ai.ollama.api.tool.MockWeatherService.Unit;
 import org.springframework.ai.util.JsonHelper;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,9 +59,9 @@ public class OllamaApiToolFunctionCallIT extends BaseOllamaIT {
 	public void toolFunctionCall() {
 		// Step 1: send the conversation and available functions to the model
 		var message = Message.builder(Role.USER)
-			.content(
-					"What's the weather like in San Francisco, Tokyo, and Paris? Return a list with the temperature in Celsius for each of the three locations.")
-			.build();
+				.content(
+						"What's the weather like in San Francisco, Tokyo, and Paris? Return a list with the temperature in Celsius for each of the three locations.")
+				.build();
 
 		var functionTool = new OllamaApi.ChatRequest.Tool(new OllamaApi.ChatRequest.Tool.Function("getCurrentWeather",
 				"Find the current weather conditions, forecasts, and temperatures for a location, like a city or state.",
@@ -86,9 +85,9 @@ public class OllamaApiToolFunctionCallIT extends BaseOllamaIT {
 		List<Message> messages = new ArrayList<>(List.of(message));
 
 		OllamaApi.ChatRequest chatCompletionRequest = OllamaApi.ChatRequest.builder(MODEL)
-			.messages(messages)
-			.tools(List.of(functionTool))
-			.build();
+				.messages(messages)
+				.tools(List.of(functionTool))
+				.build();
 
 		ChatResponse chatCompletion = ollamaApi.chat(chatCompletionRequest);
 
@@ -118,8 +117,8 @@ public class OllamaApiToolFunctionCallIT extends BaseOllamaIT {
 
 				// extend conversation with function response.
 				messages.add(Message.builder(Role.TOOL)
-					.content("" + weatherResponse.temp() + weatherRequest.unit())
-					.build());
+						.content("" + weatherResponse.temp() + weatherRequest.unit())
+						.build());
 			}
 		}
 

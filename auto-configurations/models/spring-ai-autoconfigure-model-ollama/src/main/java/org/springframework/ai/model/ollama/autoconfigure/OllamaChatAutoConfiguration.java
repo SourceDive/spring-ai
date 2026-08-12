@@ -52,29 +52,29 @@ import org.springframework.core.retry.RetryTemplate;
 @ConditionalOnClass(OllamaChatModel.class)
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.OLLAMA,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OllamaChatProperties.class, OllamaInitializationProperties.class })
+@EnableConfigurationProperties({OllamaChatProperties.class, OllamaInitializationProperties.class})
 public class OllamaChatAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OllamaChatModel ollamaChatModel(OllamaApi ollamaApi, OllamaChatProperties properties,
-			OllamaInitializationProperties initProperties, ToolCallingManager toolCallingManager,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<RetryTemplate> retryTemplate) {
+	                                       OllamaInitializationProperties initProperties, ToolCallingManager toolCallingManager,
+	                                       ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                       ObjectProvider<RetryTemplate> retryTemplate) {
 		var chatModelPullStrategy = initProperties.getChat().isInclude() ? initProperties.getPullModelStrategy()
 				: PullModelStrategy.NEVER;
 
 		var chatModel = OllamaChatModel.builder()
-			.ollamaApi(ollamaApi)
-			.options(properties.toOptions())
-			.toolCallingManager(toolCallingManager)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.modelManagementOptions(
-					new ModelManagementOptions(chatModelPullStrategy, initProperties.getChat().getAdditionalModels(),
-							initProperties.getTimeout(), initProperties.getMaxRetries()))
-			.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
-			.build();
+				.ollamaApi(ollamaApi)
+				.options(properties.toOptions())
+				.toolCallingManager(toolCallingManager)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.modelManagementOptions(
+						new ModelManagementOptions(chatModelPullStrategy, initProperties.getChat().getAdditionalModels(),
+								initProperties.getTimeout(), initProperties.getMaxRetries()))
+				.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 

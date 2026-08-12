@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.model.image.observation.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

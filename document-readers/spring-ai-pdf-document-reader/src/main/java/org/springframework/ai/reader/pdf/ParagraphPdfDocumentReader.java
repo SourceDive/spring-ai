@@ -16,16 +16,11 @@
 
 package org.springframework.ai.reader.pdf;
 
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentReader;
 import org.springframework.ai.reader.pdf.config.ParagraphManager;
@@ -37,10 +32,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Uses the PDF catalog (e.g. TOC) information to split the input PDF into text paragraphs
  * and output a single {@link Document} per paragraph.
- *
+ * <p>
  * This class provides methods for reading and processing PDF documents. It uses the
  * Apache PDFBox library for parsing PDF content and converting it into text paragraphs.
  * The paragraphs are grouped into {@link Document} objects.
@@ -73,6 +72,7 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructs a ParagraphPdfDocumentReader using a resource URL.
+	 *
 	 * @param resourceUrl The URL of the PDF resource.
 	 */
 	public ParagraphPdfDocumentReader(String resourceUrl) {
@@ -81,6 +81,7 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructs a ParagraphPdfDocumentReader using a resource.
+	 *
 	 * @param pdfResource The PDF resource.
 	 */
 	public ParagraphPdfDocumentReader(Resource pdfResource) {
@@ -89,8 +90,9 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructs a ParagraphPdfDocumentReader using a resource URL and a configuration.
+	 *
 	 * @param resourceUrl The URL of the PDF resource.
-	 * @param config The configuration for PDF document processing.
+	 * @param config      The configuration for PDF document processing.
 	 */
 	public ParagraphPdfDocumentReader(String resourceUrl, PdfDocumentReaderConfig config) {
 		this(new DefaultResourceLoader().getResource(resourceUrl), config);
@@ -98,8 +100,9 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 
 	/**
 	 * Constructs a ParagraphPdfDocumentReader using a resource and a configuration.
+	 *
 	 * @param pdfResource The PDF resource.
-	 * @param config The configuration for PDF document processing.
+	 * @param config      The configuration for PDF document processing.
 	 */
 	public ParagraphPdfDocumentReader(Resource pdfResource, PdfDocumentReaderConfig config) {
 
@@ -113,17 +116,16 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 			this.paragraphTextExtractor = new ParagraphManager(this.document);
 
 			this.resourceFileName = pdfResource.getFilename();
-		}
-		catch (IllegalArgumentException iae) {
+		} catch (IllegalArgumentException iae) {
 			throw iae;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Reads and processes the PDF document to extract paragraphs.
+	 *
 	 * @return A list of {@link Document} objects representing paragraphs.
 	 */
 	@Override
@@ -211,16 +213,13 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 				if (pageNumber == startPage && pageNumber == endPage) {
 					y = toPos;
 					h = fromPos - toPos;
-				}
-				else if (pageNumber == startPage) {
+				} else if (pageNumber == startPage) {
 					y = 0;
 					h = fromPos;
-				}
-				else if (pageNumber == endPage) {
+				} else if (pageNumber == endPage) {
 					y = toPos;
 					h = (int) pageHeight - toPos;
-				}
-				else {
+				} else {
 					y = 0;
 					h = (int) pageHeight;
 				}
@@ -246,8 +245,7 @@ public class ParagraphPdfDocumentReader implements DocumentReader {
 			}
 
 			return text;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

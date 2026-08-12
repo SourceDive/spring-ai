@@ -16,10 +16,7 @@
 
 package org.springframework.ai.vectorstore.mariadb.autoconfigure;
 
-import javax.sql.DataSource;
-
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -36,12 +33,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
+
 /**
  * @author Diego Dupin
  * @since 1.0.0
  */
 @AutoConfiguration
-@ConditionalOnClass({ MariaDBVectorStore.class, DataSource.class, JdbcTemplate.class })
+@ConditionalOnClass({MariaDBVectorStore.class, DataSource.class, JdbcTemplate.class})
 @EnableConfigurationProperties(org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.MARIADB,
 		matchIfMissing = true)
@@ -56,28 +55,28 @@ public class MariaDbStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MariaDBVectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel,
-			org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreProperties properties,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                      org.springframework.ai.vectorstore.mariadb.autoconfigure.MariaDbStoreProperties properties,
+	                                      ObjectProvider<ObservationRegistry> observationRegistry,
+	                                      ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                      BatchingStrategy batchingStrategy) {
 
 		var initializeSchema = properties.isInitializeSchema();
 
 		MariaDBBuilder builder = MariaDBVectorStore.builder(jdbcTemplate, embeddingModel)
-			.vectorTableName(properties.getTableName())
-			.schemaValidation(properties.isSchemaValidation())
-			.dimensions(properties.getDimensions())
-			.distanceType(properties.getDistanceType())
-			.contentFieldName(properties.getContentFieldName())
-			.embeddingFieldName(properties.getEmbeddingFieldName())
-			.idFieldName(properties.getIdFieldName())
-			.metadataFieldName(properties.getMetadataFieldName())
-			.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
-			.initializeSchema(initializeSchema)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.maxDocumentBatchSize(properties.getMaxDocumentBatchSize());
+				.vectorTableName(properties.getTableName())
+				.schemaValidation(properties.isSchemaValidation())
+				.dimensions(properties.getDimensions())
+				.distanceType(properties.getDistanceType())
+				.contentFieldName(properties.getContentFieldName())
+				.embeddingFieldName(properties.getEmbeddingFieldName())
+				.idFieldName(properties.getIdFieldName())
+				.metadataFieldName(properties.getMetadataFieldName())
+				.removeExistingVectorStoreTable(properties.isRemoveExistingVectorStoreTable())
+				.initializeSchema(initializeSchema)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.maxDocumentBatchSize(properties.getMaxDocumentBatchSize());
 		if (properties.getSchemaName() != null) {
 			builder.schemaName(properties.getSchemaName());
 		}

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.rag.advisor;
 
-import org.jspecify.annotations.NullMarked;

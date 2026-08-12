@@ -16,13 +16,12 @@
 
 package org.springframework.ai.model.mistralai.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.mistralai.ocr.MistralAiOcrOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * Configuration properties for Mistral AI OCR.

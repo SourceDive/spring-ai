@@ -16,16 +16,11 @@
 
 package org.springframework.ai.mcp.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import io.modelcontextprotocol.spec.McpSchema.Role;
-
 import org.springframework.ai.mcp.annotation.context.DefaultMetaProvider;
 import org.springframework.ai.mcp.annotation.context.MetaProvider;
+
+import java.lang.annotation.*;
 
 /**
  * Marks a method as a MCP Resource.
@@ -35,7 +30,7 @@ import org.springframework.ai.mcp.annotation.context.MetaProvider;
  * @author Vadzim Shurmialiou
  * @author Craig Walls
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface McpResource {
@@ -72,11 +67,12 @@ public @interface McpResource {
 	 * Optional annotations for the client. Note: The default annotations value is
 	 * ignored.
 	 */
-	McpAnnotations annotations() default @McpAnnotations(audience = { Role.USER }, lastModified = "", priority = 0.5);
+	McpAnnotations annotations() default @McpAnnotations(audience = {Role.USER}, lastModified = "", priority = 0.5);
 
 	/**
 	 * Optional meta provider class that supplies data for "_meta" field for this resource
 	 * declaration. Defaults to {@link DefaultMetaProvider} implementation.
+	 *
 	 * @return the meta provider class to use for this resource
 	 */
 	Class<? extends MetaProvider> metaProvider() default DefaultMetaProvider.class;
@@ -99,7 +95,7 @@ public @interface McpResource {
 
 		/**
 		 * Describes how important this data is for operating the server.
-		 *
+		 * <p>
 		 * A value of 1 means “most important,” and indicates that the data is effectively
 		 * required, while 0 means “least important,” and indicates that the data is
 		 * entirely optional.

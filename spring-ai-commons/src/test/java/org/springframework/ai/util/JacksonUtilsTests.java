@@ -16,12 +16,12 @@
 
 package org.springframework.ai.util;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,8 +43,7 @@ class JacksonUtilsTests {
 			var output = jsonMapper.readValue("{\"name\":\"Amoeba\",\"lifespan\":\"PT42S\"}", clazz);
 			assertThat(output).isEqualTo(new Cell("Amoeba", Duration.of(42L, ChronoUnit.SECONDS)));
 
-		}
-		finally {
+		} finally {
 			Thread.currentThread().setContextClassLoader(previousLoader);
 		}
 

@@ -16,11 +16,10 @@
 
 package org.springframework.ai.tool.execution;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,23 +84,23 @@ class DefaultToolExecutionExceptionProcessorTests {
 	@Test
 	void processAlwaysThrows() {
 		DefaultToolExecutionExceptionProcessor processor = DefaultToolExecutionExceptionProcessor.builder()
-			.alwaysThrow(true)
-			.build();
+				.alwaysThrow(true)
+				.build();
 
 		assertThatThrownBy(() -> processor.process(this.toolExecutionException))
-			.hasMessage(this.toolException.getMessage())
-			.hasCauseInstanceOf(this.toolException.getClass())
-			.asInstanceOf(type(ToolExecutionException.class))
-			.extracting(ToolExecutionException::getToolDefinition)
-			.isEqualTo(this.toolDefinition);
+				.hasMessage(this.toolException.getMessage())
+				.hasCauseInstanceOf(this.toolException.getClass())
+				.asInstanceOf(type(ToolExecutionException.class))
+				.extracting(ToolExecutionException::getToolDefinition)
+				.isEqualTo(this.toolDefinition);
 	}
 
 	@Test
 	void processRethrows() {
 		DefaultToolExecutionExceptionProcessor processor = DefaultToolExecutionExceptionProcessor.builder()
-			.alwaysThrow(false)
-			.rethrowExceptions(List.of(IllegalStateException.class))
-			.build();
+				.alwaysThrow(false)
+				.rethrowExceptions(List.of(IllegalStateException.class))
+				.build();
 
 		assertThatThrownBy(() -> processor.process(this.toolExecutionException)).isEqualTo(this.toolException);
 	}
@@ -109,9 +108,9 @@ class DefaultToolExecutionExceptionProcessorTests {
 	@Test
 	void processRethrowsExceptionSubclasses() {
 		DefaultToolExecutionExceptionProcessor processor = DefaultToolExecutionExceptionProcessor.builder()
-			.alwaysThrow(false)
-			.rethrowExceptions(List.of(RuntimeException.class))
-			.build();
+				.alwaysThrow(false)
+				.rethrowExceptions(List.of(RuntimeException.class))
+				.build();
 
 		assertThatThrownBy(() -> processor.process(this.toolExecutionException)).isEqualTo(this.toolException);
 	}
@@ -119,9 +118,9 @@ class DefaultToolExecutionExceptionProcessorTests {
 	@Test
 	void processRethrowsOnlySelectExceptions() {
 		DefaultToolExecutionExceptionProcessor processor = DefaultToolExecutionExceptionProcessor.builder()
-			.alwaysThrow(false)
-			.rethrowExceptions(List.of(IllegalStateException.class))
-			.build();
+				.alwaysThrow(false)
+				.rethrowExceptions(List.of(IllegalStateException.class))
+				.build();
 
 		ToolExecutionException exception = new ToolExecutionException(this.toolDefinition,
 				new RuntimeException("This exception was not rethrown"));
@@ -135,11 +134,11 @@ class DefaultToolExecutionExceptionProcessorTests {
 		DefaultToolExecutionExceptionProcessor processor = DefaultToolExecutionExceptionProcessor.builder().build();
 
 		assertThatThrownBy(() -> processor.process(this.toolExecutionCheckedException))
-			.hasMessage(this.toolCheckedException.getMessage())
-			.hasCauseInstanceOf(this.toolCheckedException.getClass())
-			.asInstanceOf(type(ToolExecutionException.class))
-			.extracting(ToolExecutionException::getToolDefinition)
-			.isEqualTo(this.toolDefinition);
+				.hasMessage(this.toolCheckedException.getMessage())
+				.hasCauseInstanceOf(this.toolCheckedException.getClass())
+				.asInstanceOf(type(ToolExecutionException.class))
+				.extracting(ToolExecutionException::getToolDefinition)
+				.isEqualTo(this.toolDefinition);
 	}
 
 	@Test
@@ -147,10 +146,10 @@ class DefaultToolExecutionExceptionProcessorTests {
 		DefaultToolExecutionExceptionProcessor processor = DefaultToolExecutionExceptionProcessor.builder().build();
 
 		assertThatThrownBy(() -> processor.process(this.toolExecutionError)).hasMessage(this.toolError.getMessage())
-			.hasCauseInstanceOf(this.toolError.getClass())
-			.asInstanceOf(type(ToolExecutionException.class))
-			.extracting(ToolExecutionException::getToolDefinition)
-			.isEqualTo(this.toolDefinition);
+				.hasCauseInstanceOf(this.toolError.getClass())
+				.asInstanceOf(type(ToolExecutionException.class))
+				.extracting(ToolExecutionException::getToolDefinition)
+				.isEqualTo(this.toolDefinition);
 	}
 
 }

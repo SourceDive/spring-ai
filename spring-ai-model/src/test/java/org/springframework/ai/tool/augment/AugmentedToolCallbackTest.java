@@ -16,32 +16,24 @@
 
 package org.springframework.ai.tool.augment;
 
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.ai.tool.definition.ToolDefinition;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.argThat;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -139,17 +131,15 @@ class AugmentedToolCallbackTest {
 			assertThrows(IllegalArgumentException.class, () -> {
 				try {
 					java.lang.reflect.Constructor<?> constructor = AugmentedToolCallback.class
-						.getConstructor(ToolCallback.class, Class.class, Consumer.class, boolean.class);
+							.getConstructor(ToolCallback.class, Class.class, Consumer.class, boolean.class);
 					constructor.newInstance(mockDelegate, String.class, (Consumer<String>) args -> {
 					}, false);
-				}
-				catch (java.lang.reflect.InvocationTargetException e) {
+				} catch (java.lang.reflect.InvocationTargetException e) {
 					if (e.getCause() instanceof IllegalArgumentException) {
 						throw (IllegalArgumentException) e.getCause();
 					}
 					throw new RuntimeException(e.getCause());
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			});
@@ -158,7 +148,7 @@ class AugmentedToolCallbackTest {
 		@Test
 		@DisplayName("Should throw exception for record with no fields")
 		void shouldThrowExceptionForRecordWithNoFields() {
-			record EmptyRecord() {
+			record EmptyRecord () {
 			}
 
 			when(mockDelegate.getToolDefinition()).thenReturn(mockToolDefinition);
@@ -231,8 +221,7 @@ class AugmentedToolCallbackTest {
 				String fieldName = requiredField.asText();
 				if ("originalField".equals(fieldName)) {
 					foundOriginal = true;
-				}
-				else if ("name".equals(fieldName)) {
+				} else if ("name".equals(fieldName)) {
 					foundName = true;
 				}
 			}
@@ -382,8 +371,7 @@ class AugmentedToolCallbackTest {
 				try {
 					JsonNode inputNode = JsonMapper.shared().readTree(input);
 					return inputNode.has("originalField") && !inputNode.has("name") && !inputNode.has("age");
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					return false;
 				}
 			}));
@@ -433,8 +421,7 @@ class AugmentedToolCallbackTest {
 				try {
 					JsonNode inputNode = JsonMapper.shared().readTree(input);
 					return inputNode.has("originalField") && inputNode.has("name") && inputNode.has("age");
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					return false;
 				}
 			}));
@@ -539,8 +526,7 @@ class AugmentedToolCallbackTest {
 				try {
 					JsonNode inputNode = JsonMapper.shared().readTree(input);
 					return inputNode.has("productId") && !inputNode.has("value");
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					return false;
 				}
 			}));
@@ -588,7 +574,7 @@ class AugmentedToolCallbackTest {
 
 	// Test record classes
 	public record TestArguments(@ToolParam(description = "Test name field", required = true) String name,
-			@ToolParam(description = "Test age field", required = false) int age) {
+	                            @ToolParam(description = "Test age field", required = false) int age) {
 	}
 
 	public record SimpleArguments(@ToolParam(description = "Simple field", required = true) String value) {

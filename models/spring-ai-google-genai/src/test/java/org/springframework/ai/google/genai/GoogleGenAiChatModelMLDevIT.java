@@ -16,13 +16,9 @@
 
 package org.springframework.ai.google.genai;
 
-import java.util.List;
-import java.util.Map;
-
 import com.google.genai.Client;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -36,6 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,10 +59,10 @@ class GoogleGenAiChatModelMLDevIT {
 		Prompt prompt = new Prompt(
 				new UserMessage("What are the top 3 most famous pirates in history? Use Google Search."),
 				GoogleGenAiChatOptions.builder()
-					.model(ChatModel.GEMINI_2_5_FLASH)
-					.googleSearchRetrieval(true)
-					.includeServerSideToolInvocations(false)
-					.build());
+						.model(ChatModel.GEMINI_2_5_FLASH)
+						.googleSearchRetrieval(true)
+						.includeServerSideToolInvocations(false)
+						.build());
 
 		ChatResponse response = this.chatModel.call(prompt);
 		assertThat(response.getResult().getOutput().getText()).isNotEmpty();
@@ -75,10 +74,10 @@ class GoogleGenAiChatModelMLDevIT {
 		Prompt prompt = new Prompt(
 				new UserMessage("What are the top 3 most famous pirates in history? Use Google Search."),
 				GoogleGenAiChatOptions.builder()
-					.model(ChatModel.GEMINI_3_1_PRO_PREVIEW)
-					.googleSearchRetrieval(true)
-					.includeServerSideToolInvocations(true)
-					.build());
+						.model(ChatModel.GEMINI_3_1_PRO_PREVIEW)
+						.googleSearchRetrieval(true)
+						.includeServerSideToolInvocations(true)
+						.build());
 
 		ChatResponse response = this.chatModel.call(prompt);
 		assertThat(response.getResult().getOutput().getText()).isNotEmpty();
@@ -96,22 +95,22 @@ class GoogleGenAiChatModelMLDevIT {
 	@SuppressWarnings("unchecked")
 	void functionCallingWithGoogleSearchAndServerSideToolInvocations() {
 		var weatherToolCallback = FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-			.description("Get the current weather in a given location")
-			.inputType(MockWeatherService.Request.class)
-			.build();
+				.description("Get the current weather in a given location")
+				.inputType(MockWeatherService.Request.class)
+				.build();
 
 		String response = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(ToolCallingAdvisor.builder().build())
-			.build()
-			.prompt()
-			.options(GoogleGenAiChatOptions.builder()
-				.model(ChatModel.GEMINI_2_5_FLASH)
-				.googleSearchRetrieval(false)
-				.includeServerSideToolInvocations(false))
-			.user("What's the weather like in San Francisco? Return the temperature in Celsius")
-			.tools(weatherToolCallback)
-			.call()
-			.content();
+				.defaultAdvisors(ToolCallingAdvisor.builder().build())
+				.build()
+				.prompt()
+				.options(GoogleGenAiChatOptions.builder()
+						.model(ChatModel.GEMINI_2_5_FLASH)
+						.googleSearchRetrieval(false)
+						.includeServerSideToolInvocations(false))
+				.user("What's the weather like in San Francisco? Return the temperature in Celsius")
+				.tools(weatherToolCallback)
+				.call()
+				.content();
 
 		// Function call should have been executed — weather data should be in response
 		assertThat(response).containsIgnoringCase("30");
@@ -121,22 +120,22 @@ class GoogleGenAiChatModelMLDevIT {
 	@SuppressWarnings("unchecked")
 	void functionCallingWithGoogleSearchAndServerSideToolInvocationsGemini3x() {
 		var weatherToolCallback = FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-			.description("Get the current weather in a given location")
-			.inputType(MockWeatherService.Request.class)
-			.build();
+				.description("Get the current weather in a given location")
+				.inputType(MockWeatherService.Request.class)
+				.build();
 
 		String response = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(ToolCallingAdvisor.builder().build())
-			.build()
-			.prompt()
-			.options(GoogleGenAiChatOptions.builder()
-				.model(ChatModel.GEMINI_3_5_FLASH)
-				.googleSearchRetrieval(true)
-				.includeServerSideToolInvocations(true))
-			.user("What's the weather like in San Francisco? Return the temperature in Celsius. Also, search online for the latest news about San Francisco.")
-			.tools(weatherToolCallback)
-			.call()
-			.content();
+				.defaultAdvisors(ToolCallingAdvisor.builder().build())
+				.build()
+				.prompt()
+				.options(GoogleGenAiChatOptions.builder()
+						.model(ChatModel.GEMINI_3_5_FLASH)
+						.googleSearchRetrieval(true)
+						.includeServerSideToolInvocations(true))
+				.user("What's the weather like in San Francisco? Return the temperature in Celsius. Also, search online for the latest news about San Francisco.")
+				.tools(weatherToolCallback)
+				.call()
+				.content();
 
 		// Function call should have been executed — weather data should be in response
 		assertThat(response).containsIgnoringCase("30");
@@ -154,11 +153,11 @@ class GoogleGenAiChatModelMLDevIT {
 		@Bean
 		public GoogleGenAiChatModel googleGenAiChatModel(Client genAiClient) {
 			return GoogleGenAiChatModel.builder()
-				.genAiClient(genAiClient)
-				.options(
-						GoogleGenAiChatOptions.builder().model(GoogleGenAiChatModel.ChatModel.GEMINI_3_5_FLASH).build())
-				.toolCallingManager(ToolCallingManager.builder().build())
-				.build();
+					.genAiClient(genAiClient)
+					.options(
+							GoogleGenAiChatOptions.builder().model(GoogleGenAiChatModel.ChatModel.GEMINI_3_5_FLASH).build())
+					.toolCallingManager(ToolCallingManager.builder().build())
+					.build();
 		}
 
 	}

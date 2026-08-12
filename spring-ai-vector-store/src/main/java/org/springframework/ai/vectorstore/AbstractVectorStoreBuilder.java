@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * {@link VectorStore}. Provides default implementations for observation-related settings.
  *
  * @param <T> the concrete builder type, enabling method chaining with the correct return
- * type
+ *            type
  */
 public abstract class AbstractVectorStoreBuilder<T extends AbstractVectorStoreBuilder<T>>
 		implements VectorStore.Builder<T> {
@@ -67,6 +67,7 @@ public abstract class AbstractVectorStoreBuilder<T extends AbstractVectorStoreBu
 	/**
 	 * Returns this builder cast to the concrete builder type. Used internally to enable
 	 * proper method chaining in subclasses.
+	 *
 	 * @return this builder cast to the concrete type
 	 */
 	@SuppressWarnings("unchecked")
@@ -89,6 +90,7 @@ public abstract class AbstractVectorStoreBuilder<T extends AbstractVectorStoreBu
 
 	/**
 	 * Sets the batching strategy.
+	 *
 	 * @param batchingStrategy the strategy to use
 	 * @return the builder instance
 	 */

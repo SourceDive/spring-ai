@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.tool;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpToolListChanged;
+import org.springframework.ai.mcp.annotation.method.changed.tool.AsyncToolListChangedSpecification;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpToolListChanged;
-import org.springframework.ai.mcp.annotation.method.changed.tool.AsyncToolListChangedSpecification;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,15 +39,15 @@ public class AsyncMcpToolListChangedProviderTests {
 
 	private static final List<McpSchema.Tool> TEST_TOOLS = List.of(
 			McpSchema.Tool.builder()
-				.name("test-tool-1")
-				.description("Test Tool 1")
-				.inputSchema(McpJsonDefaults.getMapper(), "{}")
-				.build(),
+					.name("test-tool-1")
+					.description("Test Tool 1")
+					.inputSchema(McpJsonDefaults.getMapper(), "{}")
+					.build(),
 			McpSchema.Tool.builder()
-				.name("test-tool-2")
-				.description("Test Tool 2")
-				.inputSchema(McpJsonDefaults.getMapper(), "{}")
-				.build());
+					.name("test-tool-2")
+					.description("Test Tool 2")
+					.inputSchema(McpJsonDefaults.getMapper(), "{}")
+					.build());
 
 	@Test
 	void testGetToolListChangedSpecifications() {
@@ -57,8 +56,8 @@ public class AsyncMcpToolListChangedProviderTests {
 
 		List<AsyncToolListChangedSpecification> specifications = provider.getToolListChangedSpecifications();
 		List<Function<List<McpSchema.Tool>, Mono<Void>>> consumers = specifications.stream()
-			.map(AsyncToolListChangedSpecification::toolListChangeHandler)
-			.toList();
+				.map(AsyncToolListChangedSpecification::toolListChangeHandler)
+				.toList();
 
 		// Should find 2 annotated methods (2 Mono<Void>. Ignores the void method)
 		assertThat(consumers).hasSize(2);
@@ -104,9 +103,9 @@ public class AsyncMcpToolListChangedProviderTests {
 		AsyncMcpToolListChangedProvider provider = new AsyncMcpToolListChangedProvider(List.of());
 
 		List<Function<List<McpSchema.Tool>, Mono<Void>>> consumers = provider.getToolListChangedSpecifications()
-			.stream()
-			.map(AsyncToolListChangedSpecification::toolListChangeHandler)
-			.toList();
+				.stream()
+				.map(AsyncToolListChangedSpecification::toolListChangeHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -118,9 +117,9 @@ public class AsyncMcpToolListChangedProviderTests {
 		AsyncMcpToolListChangedProvider provider = new AsyncMcpToolListChangedProvider(List.of(handler1, handler2));
 
 		List<Function<List<McpSchema.Tool>, Mono<Void>>> consumers = provider.getToolListChangedSpecifications()
-			.stream()
-			.map(AsyncToolListChangedSpecification::toolListChangeHandler)
-			.toList();
+				.stream()
+				.map(AsyncToolListChangedSpecification::toolListChangeHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

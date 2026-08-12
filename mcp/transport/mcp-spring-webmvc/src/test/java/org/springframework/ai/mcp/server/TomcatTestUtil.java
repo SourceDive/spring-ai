@@ -63,8 +63,7 @@ public final class TomcatTestUtil {
 			// Configure and start the connector with async support
 			var connector = tomcat.getConnector();
 			connector.setAsyncTimeout(3000); // 3 seconds timeout for async requests
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 

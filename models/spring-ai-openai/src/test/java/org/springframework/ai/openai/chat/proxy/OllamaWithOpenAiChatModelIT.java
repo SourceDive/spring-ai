@@ -16,22 +16,11 @@
 
 package org.springframework.ai.openai.chat.proxy;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.ollama.OllamaContainer;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -60,6 +49,16 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.MimeTypeUtils;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.ollama.OllamaContainer;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -81,7 +80,7 @@ class OllamaWithOpenAiChatModelIT {
 	private static final String MULTIMODAL_MODEL = "gemma3:4b";
 
 	private static final boolean SKIP_CONTAINER_CREATION = Boolean
-		.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
+			.parseBoolean(System.getenv().getOrDefault("OLLAMA_WITH_REUSE", "false"));
 
 	static OllamaContainer ollamaContainer;
 
@@ -140,24 +139,24 @@ class OllamaWithOpenAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).containsIgnoringCase("Copenhag");
 
 		// Validate reasoning content is populated in stream (might be empty, but
 		// shouldn't be null)
 		String stitchedReasoningContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getMetadata)
-			.map(metadata -> metadata.get("reasoningContent") != null ? metadata.get("reasoningContent").toString()
-					: "")
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getMetadata)
+				.map(metadata -> metadata.get("reasoningContent") != null ? metadata.get("reasoningContent").toString()
+						: "")
+				.collect(Collectors.joining());
 
 		assertThat(stitchedReasoningContent).isNotNull();
 	}
@@ -173,9 +172,9 @@ class OllamaWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -194,16 +193,16 @@ class OllamaWithOpenAiChatModelIT {
 				Return ONLY the JSON without any markdown formatting or comments.
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage(),
 				OpenAiChatOptions.builder()
-					.model(DEFAULT_OLLAMA_MODEL)
-					.responseFormat(OpenAiChatModel.ResponseFormat.builder()
-						.type(OpenAiChatModel.ResponseFormat.Type.JSON_OBJECT)
-						.build())
-					.build());
+						.model(DEFAULT_OLLAMA_MODEL)
+						.responseFormat(OpenAiChatModel.ResponseFormat.builder()
+								.type(OpenAiChatModel.ResponseFormat.Type.JSON_OBJECT)
+								.build())
+						.build());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generation.getOutput().getText());
@@ -221,13 +220,13 @@ class OllamaWithOpenAiChatModelIT {
 		ToolCallingManager toolCallingManager = DefaultToolCallingManager.builder().build();
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model(DEFAULT_OLLAMA_MODEL)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description(
-						"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(DEFAULT_OLLAMA_MODEL)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description(
+								"Find the weather conditions, forecasts, and temperatures for a location, like a city or state.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		Prompt prompt = new Prompt(messages, options);
 
@@ -246,12 +245,12 @@ class OllamaWithOpenAiChatModelIT {
 		var imageData = new ClassPathResource("/test.png");
 
 		var userMessage = UserMessage.builder()
-			.text("Explain what do you see on this picture?")
-			.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
-			.build();
+				.text("Explain what do you see on this picture?")
+				.media(List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageData)))
+				.build();
 
 		var response = this.chatModel
-			.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(MULTIMODAL_MODEL).build()));
+				.call(new Prompt(List.of(userMessage), OpenAiChatOptions.builder().model(MULTIMODAL_MODEL).build()));
 		assertThat(response.getResult().getOutput().getText()).containsAnyOf("bananas", "apple", "bowl", "basket",
 				"fruit stand");
 	}
@@ -259,11 +258,11 @@ class OllamaWithOpenAiChatModelIT {
 	@Test
 	void validateCallResponseMetadata() {
 		ChatResponse response = ChatClient.create(this.chatModel)
-			.prompt()
-			.options(OpenAiChatOptions.builder().model(DEFAULT_OLLAMA_MODEL))
-			.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
-			.call()
-			.chatResponse();
+				.prompt()
+				.options(OpenAiChatOptions.builder().model(DEFAULT_OLLAMA_MODEL))
+				.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
+				.call()
+				.chatResponse();
 		assertThat(response.getMetadata().getId()).isNotEmpty();
 		assertThat(response.getMetadata().getModel()).containsIgnoringCase(DEFAULT_OLLAMA_MODEL);
 		assertThat(response.getMetadata().getUsage().getPromptTokens()).isPositive();
@@ -283,9 +282,9 @@ class OllamaWithOpenAiChatModelIT {
 		Map<String, Object> extraBody = Map.of("max_tokens", 2);
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model(DEFAULT_OLLAMA_MODEL)
-			.extraBody(extraBody)
-			.build();
+				.model(DEFAULT_OLLAMA_MODEL)
+				.extraBody(extraBody)
+				.build();
 
 		Prompt prompt = new Prompt("Tell me a short joke.", options);
 
@@ -332,13 +331,13 @@ class OllamaWithOpenAiChatModelIT {
 		@Bean
 		public OpenAiChatModel openAiSdkChatModel() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(getBaseUrl())
-					.apiKey(new NoopApiKey())
-					.model(DEFAULT_OLLAMA_MODEL)
-					.timeout(Duration.ofMinutes(5))
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(getBaseUrl())
+							.apiKey(new NoopApiKey())
+							.model(DEFAULT_OLLAMA_MODEL)
+							.timeout(Duration.ofMinutes(5))
+							.build())
+					.build();
 		}
 
 	}

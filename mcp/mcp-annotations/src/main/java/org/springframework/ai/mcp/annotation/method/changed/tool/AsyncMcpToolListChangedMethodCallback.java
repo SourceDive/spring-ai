@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.tool;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import org.springframework.ai.mcp.annotation.McpToolListChanged;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpToolListChanged;
-
 /**
  * Class for creating Function callbacks around tool list changed consumer methods that
  * return Mono.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpToolListChanged}
  * into callback functions that can be used to handle tool list change notifications in a
  * reactive way. It supports methods with a single List&lt;McpSchema.Tool&gt; parameter.
@@ -47,11 +46,12 @@ public final class AsyncMcpToolListChangedMethodCallback extends AbstractMcpTool
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns a Mono that completes when the method execution is done.
+	 *
 	 * @param updatedTools The updated list of tools, must not be null
 	 * @return A Mono that completes when the method execution is done
 	 * @throws McpToolListChangedConsumerMethodException if there is an error invoking the
-	 * tool list changed consumer method
-	 * @throws IllegalArgumentException if the updatedTools is null
+	 *                                                   tool list changed consumer method
+	 * @throws IllegalArgumentException                  if the updatedTools is null
 	 */
 	@Override
 	public Mono<Void> apply(List<McpSchema.Tool> updatedTools) {
@@ -86,8 +86,7 @@ public final class AsyncMcpToolListChangedMethodCallback extends AbstractMcpTool
 			}
 			// If the method returns void, return an empty Mono
 			return Mono.empty();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return Mono.error(new McpToolListChangedConsumerMethodException(
 					"Error invoking tool list changed consumer method: " + this.method.getName(), e));
 		}
@@ -96,6 +95,7 @@ public final class AsyncMcpToolListChangedMethodCallback extends AbstractMcpTool
 	/**
 	 * Validates that the method return type is compatible with the tool list changed
 	 * consumer callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -111,6 +111,7 @@ public final class AsyncMcpToolListChangedMethodCallback extends AbstractMcpTool
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -127,6 +128,7 @@ public final class AsyncMcpToolListChangedMethodCallback extends AbstractMcpTool
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpToolListChangedMethodCallback instance
 		 */
 		@Override

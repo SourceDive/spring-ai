@@ -18,8 +18,6 @@ package org.springframework.ai.vectorstore.chroma.autoconfigure;
 
 import io.micrometer.observation.ObservationRegistry;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.chroma.vectorstore.ChromaApi;
 import org.springframework.ai.chroma.vectorstore.ChromaVectorStore;
 import org.springframework.ai.embedding.BatchingStrategy;
@@ -36,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for Chroma Vector Store.
@@ -46,8 +45,8 @@ import org.springframework.web.client.RestClient;
  * @author Sebastien Deleuze
  */
 @AutoConfiguration
-@ConditionalOnClass({ EmbeddingModel.class, RestClient.class, ChromaVectorStore.class, JsonMapper.class })
-@EnableConfigurationProperties({ ChromaApiProperties.class, ChromaVectorStoreProperties.class })
+@ConditionalOnClass({EmbeddingModel.class, RestClient.class, ChromaVectorStore.class, JsonMapper.class})
+@EnableConfigurationProperties({ChromaApiProperties.class, ChromaVectorStoreProperties.class})
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.CHROMA,
 		matchIfMissing = true)
 public class ChromaVectorStoreAutoConfiguration {
@@ -61,21 +60,20 @@ public class ChromaVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ChromaApi chromaApi(ChromaApiProperties apiProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider, ChromaConnectionDetails connectionDetails,
-			JsonMapper jsonMapper) {
+	                           ObjectProvider<RestClient.Builder> restClientBuilderProvider, ChromaConnectionDetails connectionDetails,
+	                           JsonMapper jsonMapper) {
 
 		String chromaUrl = String.format("%s:%s", connectionDetails.getHost(), connectionDetails.getPort());
 
 		var chromaApi = ChromaApi.builder()
-			.baseUrl(chromaUrl)
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.jsonMapper(jsonMapper)
-			.build();
+				.baseUrl(chromaUrl)
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.jsonMapper(jsonMapper)
+				.build();
 
 		if (StringUtils.hasText(connectionDetails.getKeyToken())) {
 			chromaApi.withKeyToken(connectionDetails.getKeyToken());
-		}
-		else if (StringUtils.hasText(apiProperties.getUsername()) && StringUtils.hasText(apiProperties.getPassword())) {
+		} else if (StringUtils.hasText(apiProperties.getUsername()) && StringUtils.hasText(apiProperties.getPassword())) {
 			chromaApi.withBasicAuthCredentials(apiProperties.getUsername(), apiProperties.getPassword());
 		}
 
@@ -91,18 +89,18 @@ public class ChromaVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ChromaVectorStore vectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi,
-			ChromaVectorStoreProperties storeProperties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy chromaBatchingStrategy) {
+	                                     ChromaVectorStoreProperties storeProperties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                     BatchingStrategy chromaBatchingStrategy) {
 		return ChromaVectorStore.builder(chromaApi, embeddingModel)
-			.collectionName(storeProperties.getCollectionName())
-			.databaseName(storeProperties.getDatabaseName())
-			.tenantName(storeProperties.getTenantName())
-			.initializeSchema(storeProperties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
-			.batchingStrategy(chromaBatchingStrategy)
-			.build();
+				.collectionName(storeProperties.getCollectionName())
+				.databaseName(storeProperties.getDatabaseName())
+				.tenantName(storeProperties.getTenantName())
+				.initializeSchema(storeProperties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable(() -> null))
+				.batchingStrategy(chromaBatchingStrategy)
+				.build();
 	}
 
 	static class PropertiesChromaConnectionDetails implements ChromaConnectionDetails {

@@ -16,12 +16,6 @@
 
 package org.springframework.ai.vectorstore.pinecone;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;
@@ -32,9 +26,6 @@ import io.pinecone.unsigned_indices_model.VectorWithUnsignedIndices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -50,6 +41,10 @@ import org.springframework.ai.vectorstore.observation.AbstractObservationVectorS
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.*;
 
 /**
  * A VectorStore implementation backed by Pinecone, a cloud-based vector database. This
@@ -83,6 +78,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Creates a new PineconeVectorStore using the builder pattern.
+	 *
 	 * @param builder The configured builder instance
 	 */
 	protected PineconeVectorStore(Builder builder) {
@@ -103,17 +99,17 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 	 * Creates a new builder for constructing a PineconeVectorStore instance. This builder
 	 * implements a type-safe step pattern that guides users through the required
 	 * configuration fields in a specific order, followed by optional configurations.
-	 *
+	 * <p>
 	 * Required fields must be provided in this sequence:
 	 * <ol>
 	 * <li>embeddingModel (provided to this method)</li>
 	 * <li>apiKey</li>
 	 * <li>indexName</li>
 	 * </ol>
-	 *
+	 * <p>
 	 * After all required fields are set, optional configurations can be added using the
 	 * fluent builder pattern.
-	 *
+	 * <p>
 	 * Example usage: <pre>{@code
 	 * PineconeVectorStore store = PineconeVectorStore.builder(embeddingModel)
 	 *     .apiKey("your-api-key")
@@ -121,6 +117,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 	 *     .namespace("optional")  // optional configuration
 	 *     .build();
 	 * }</pre>
+	 *
 	 * @param embeddingModel the embedding model to use for vector transformations
 	 * @return the first step of the builder requiring API key configuration
 	 * @throws IllegalArgumentException if embeddingModel is null
@@ -131,6 +128,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Adds a list of documents to the vector store based on the namespace.
+	 *
 	 * @param documents The list of documents to be added.
 	 * @param namespace The namespace to add the documents to
 	 */
@@ -148,6 +146,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Adds a list of documents to the vector store.
+	 *
 	 * @param documents The list of documents to be added.
 	 */
 	@Override
@@ -157,6 +156,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Converts the document metadata to a Protobuf Struct.
+	 *
 	 * @param document The document containing metadata.
 	 * @return The metadata as a Protobuf Struct.
 	 */
@@ -164,18 +164,18 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 		try {
 			var structBuilder = Struct.newBuilder();
 			JsonFormat.parser()
-				.ignoringUnknownFields()
-				.merge(JsonMapper.shared().writeValueAsString(document.getMetadata()), structBuilder);
+					.ignoringUnknownFields()
+					.merge(JsonMapper.shared().writeValueAsString(document.getMetadata()), structBuilder);
 			structBuilder.putFields(this.pineconeContentFieldName, contentValue(document));
 			return structBuilder.build();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Retrieves the content value of a document.
+	 *
 	 * @param document The document.
 	 * @return The content value.
 	 */
@@ -185,8 +185,9 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Deletes a list of documents by their IDs based on the namespace.
+	 *
 	 * @param documentIds The list of document IDs to be deleted.
-	 * @param namespace The namespace of the document IDs.
+	 * @param namespace   The namespace of the document IDs.
 	 */
 	public void delete(List<String> documentIds, String namespace) {
 		this.pinecone.getIndexConnection(this.pineconeIndexName).delete(documentIds, false, namespace, null);
@@ -194,6 +195,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Deletes a list of documents by their IDs.
+	 *
 	 * @param documentIds The list of document IDs to be deleted.
 	 */
 	@Override
@@ -209,10 +211,10 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 		float[] queryEmbedding = this.embeddingModel.embed(request.getQuery());
 
 		var queryRequestBuilder = QueryRequest.newBuilder()
-			.addAllVector(EmbeddingUtils.toList(queryEmbedding))
-			.setTopK(request.getTopK())
-			.setIncludeMetadata(true)
-			.setNamespace(namespace);
+				.addAllVector(EmbeddingUtils.toList(queryEmbedding))
+				.setTopK(request.getTopK())
+				.setIncludeMetadata(true)
+				.setNamespace(namespace);
 
 		if (StringUtils.hasText(nativeExpressionFilters)) {
 			queryRequestBuilder.setFilter(metadataFiltersToStruct(nativeExpressionFilters));
@@ -222,26 +224,26 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 				? metadataFiltersToStruct(nativeExpressionFilters) : null;
 
 		QueryResponseWithUnsignedIndices queryResponse = this.pinecone.getIndexConnection(this.pineconeIndexName)
-			.queryByVector(request.getTopK(), EmbeddingUtils.toList(queryEmbedding), namespace, filterStruct, false,
-					true);
+				.queryByVector(request.getTopK(), EmbeddingUtils.toList(queryEmbedding), namespace, filterStruct, false,
+						true);
 
 		return queryResponse.getMatchesList()
-			.stream()
-			.filter(scoredVector -> scoredVector.getScore() >= request.getSimilarityThreshold())
-			.map(scoredVector -> {
-				var id = scoredVector.getId();
-				Struct metadataStruct = scoredVector.getMetadata();
-				var content = metadataStruct.getFieldsOrThrow(this.pineconeContentFieldName).getStringValue();
-				Map<String, Object> metadata = extractMetadata(metadataStruct);
-				metadata.put(this.pineconeDistanceMetadataFieldName, 1 - scoredVector.getScore());
-				return Document.builder()
-					.id(id)
-					.text(content)
-					.metadata(metadata)
-					.score((double) scoredVector.getScore())
-					.build();
-			})
-			.toList();
+				.stream()
+				.filter(scoredVector -> scoredVector.getScore() >= request.getSimilarityThreshold())
+				.map(scoredVector -> {
+					var id = scoredVector.getId();
+					Struct metadataStruct = scoredVector.getMetadata();
+					var content = metadataStruct.getFieldsOrThrow(this.pineconeContentFieldName).getStringValue();
+					Map<String, Object> metadata = extractMetadata(metadataStruct);
+					metadata.put(this.pineconeDistanceMetadataFieldName, 1 - scoredVector.getScore());
+					return Document.builder()
+							.id(id)
+							.text(content)
+							.metadata(metadata)
+							.score((double) scoredVector.getScore())
+							.build();
+				})
+				.toList();
 	}
 
 	@Override
@@ -254,11 +256,11 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 			// by doing a similarity search with an empty query and then passing the ID's
 			// of the documents to the delete(Id) API method.
 			SearchRequest searchRequest = SearchRequest.builder()
-				.query("") // empty query since we only want filter matches
-				.filterExpression(filterExpression)
-				.topK(10000) // large enough to get all matches
-				.similarityThresholdAll()
-				.build();
+					.query("") // empty query since we only want filter matches
+					.filterExpression(filterExpression)
+					.topK(10000) // large enough to get all matches
+					.similarityThresholdAll()
+					.build();
 
 			List<Document> matchingDocs = similaritySearch(searchRequest, this.pineconeNamespace);
 
@@ -270,8 +272,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 					logger.debug("Deleted " + idsToDelete.size() + " documents matching filter expression");
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Failed to delete documents by filter", e);
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
@@ -287,14 +288,14 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 			var structBuilder = Struct.newBuilder();
 			JsonFormat.parser().ignoringUnknownFields().merge(metadataFilters, structBuilder);
 			return structBuilder.build();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Extracts metadata from a Protobuf Struct.
+	 *
 	 * @param metadataStruct The Protobuf Struct containing metadata.
 	 * @return The metadata as a map.
 	 */
@@ -306,8 +307,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 			});
 			metadata.remove(this.pineconeContentFieldName);
 			return metadata;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -316,10 +316,10 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.PINECONE.value(), operationName)
-			.collectionName(this.pineconeIndexName)
-			.dimensions(this.embeddingModel.dimensions())
-			.namespace(this.pineconeNamespace)
-			.fieldName(this.pineconeContentFieldName);
+				.collectionName(this.pineconeIndexName)
+				.dimensions(this.embeddingModel.dimensions())
+				.namespace(this.pineconeNamespace)
+				.fieldName(this.pineconeContentFieldName);
 	}
 
 	@Override
@@ -333,13 +333,13 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 	 * Builder class for creating {@link PineconeVectorStore} instances. This implements a
 	 * type-safe step builder pattern to ensure all required fields are provided in a
 	 * specific order before optional configuration.
-	 *
+	 * <p>
 	 * The required fields must be provided in this sequence: 1. embeddingModel (via
 	 * builder method) 2. apiKey 3. indexName
-	 *
+	 * <p>
 	 * After all required fields are set, optional configurations can be provided using
 	 * the fluent builder pattern.
-	 *
+	 * <p>
 	 * Example usage: <pre>{@code
 	 * PineconeVectorStore store = PineconeVectorStore.builder(embeddingModel)
 	 *     .apiKey("your-api-key")
@@ -350,10 +350,14 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 	 */
 	public static class Builder extends AbstractVectorStoreBuilder<Builder> {
 
-		/** Required field for Pinecone API authentication */
+		/**
+		 * Required field for Pinecone API authentication
+		 */
 		private final String apiKey;
 
-		/** Required field specifying the Pinecone index name */
+		/**
+		 * Required field specifying the Pinecone index name
+		 */
 		private final String indexName;
 
 		// Optional fields with default values
@@ -372,6 +376,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 		/**
 		 * Sets the Pinecone namespace. Note: The free-tier (gcp-starter) doesn't support
 		 * Namespaces.
+		 *
 		 * @param namespace The namespace to use (leave empty for free tier)
 		 * @return The builder instance
 		 */
@@ -382,6 +387,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Sets the content field name.
+		 *
 		 * @param contentFieldName The content field name to use
 		 * @return The builder instance
 		 */
@@ -392,6 +398,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Sets the distance metadata field name.
+		 *
 		 * @param distanceMetadataFieldName The distance metadata field name to use
 		 * @return The builder instance
 		 */
@@ -403,6 +410,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 		/**
 		 * Builds a new PineconeVectorStore instance with the configured properties.
+		 *
 		 * @return A new PineconeVectorStore instance
 		 * @throws IllegalStateException if the builder is in an invalid state
 		 */
@@ -418,6 +426,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 			/**
 			 * Sets the Pinecone API key and moves to index name configuration.
+			 *
 			 * @param apiKey The Pinecone API key
 			 * @return The next builder step for index name
 			 * @throws IllegalArgumentException if apiKey is null or empty
@@ -433,6 +442,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 			/**
 			 * Sets the index name and returns the builder for optional configuration.
+			 *
 			 * @param indexName The Pinecone index name
 			 * @return The builder for optional configurations
 			 * @throws IllegalArgumentException if indexName is null or empty
@@ -451,6 +461,7 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 
 			/**
 			 * Initiates the step builder sequence with the embedding model.
+			 *
 			 * @param embeddingModel The embedding model to use
 			 * @return The first step for API key configuration
 			 * @throws IllegalArgumentException if embeddingModel is null
@@ -460,17 +471,21 @@ public class PineconeVectorStore extends AbstractObservationVectorStore {
 				return new ApiKeyStep(embeddingModel);
 			}
 
-			private record ApiKeyStep(EmbeddingModel embeddingModel) implements BuilderWithApiKey {
+			private record ApiKeyStep(EmbeddingModel embeddingModel) implements
+
+			BuilderWithApiKey {
 				@Override
-				public BuilderWithIndexName apiKey(String apiKey) {
+				public BuilderWithIndexName apiKey (String apiKey){
 					Assert.hasText(apiKey, "ApiKey must not be null or empty");
 					return new IndexNameStep(this.embeddingModel, apiKey);
 				}
 			}
 
-			private record IndexNameStep(EmbeddingModel embeddingModel, String apiKey) implements BuilderWithIndexName {
+			private record IndexNameStep(EmbeddingModel embeddingModel, String apiKey) implements
+
+			BuilderWithIndexName {
 				@Override
-				public Builder indexName(String indexName) {
+				public Builder indexName (String indexName){
 					Assert.hasText(indexName, "IndexName must not be null or empty");
 					return new Builder(this.embeddingModel, this.apiKey, indexName);
 				}

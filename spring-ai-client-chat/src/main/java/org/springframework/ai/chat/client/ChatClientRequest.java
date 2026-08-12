@@ -16,19 +16,18 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a request processed by a {@link ChatClient} that ultimately is used to build
  * a {@link Prompt} to be sent to an AI model.
  *
- * @param prompt The prompt to be sent to the AI model
+ * @param prompt  The prompt to be sent to the AI model
  * @param context The contextual data through the execution chain
  * @author Thomas Vitale
  * @since 1.0.0
@@ -41,15 +40,15 @@ public record ChatClientRequest(Prompt prompt, Map<String, @Nullable Object> con
 		Assert.noNullElements(context.keySet(), "context keys cannot be null");
 	}
 
-	public ChatClientRequest copy() {
+	public ChatClientRequest copy () {
 		return new ChatClientRequest(this.prompt.copy(), new HashMap<>(this.context));
 	}
 
-	public Builder mutate() {
+	public Builder mutate () {
 		return new Builder().prompt(this.prompt.copy()).context(new HashMap<>(this.context));
 	}
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

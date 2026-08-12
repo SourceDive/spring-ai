@@ -84,7 +84,7 @@ public class GemFireVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * The number of buckets to use for partitioning the data. Default value is {@code 0}.
-	 *
+	 * <p>
 	 * To specify custom buckets, use "spring.ai.vectorstore.gemfire.buckets";
 	 *
 	 */
@@ -92,28 +92,28 @@ public class GemFireVectorStoreProperties extends CommonVectorStoreProperties {
 
 	/**
 	 * Set to true if GemFire cluster is ssl enabled
-	 *
+	 * <p>
 	 * To specify sslEnabled, use "spring.ai.vectorstore.gemfire.ssl-enabled";
 	 */
 	private boolean sslEnabled = GemFireVectorStore.DEFAULT_SSL_ENABLED;
 
 	/**
 	 * Configures the username for the GemFire VectorStore connection
-	 *
+	 * <p>
 	 * To specify username, use "spring.ai.vectorstore.gemfire.username";
 	 */
 	private @Nullable String username;
 
 	/**
 	 * Configures the password for the GemFire VectorStore connection
-	 *
+	 * <p>
 	 * To specify password, use "spring.ai.vectorstore.gemfire.password";
 	 */
 	private @Nullable String password;
 
 	/**
 	 * Configures the token for the GemFire VectorStore connection
-	 *
+	 * <p>
 	 * To specify token, use "spring.ai.vectorstore.gemfire.token";
 	 */
 	private @Nullable String token;

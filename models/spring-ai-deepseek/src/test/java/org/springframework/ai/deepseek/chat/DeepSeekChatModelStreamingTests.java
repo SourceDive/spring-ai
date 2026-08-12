@@ -16,20 +16,11 @@
 
 package org.springframework.ai.deepseek.chat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.deepseek.DeepSeekChatModel;
@@ -43,6 +34,14 @@ import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionRequest;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
@@ -72,15 +71,15 @@ public class DeepSeekChatModelStreamingTests {
 		}
 
 		given(this.api.chatCompletionStream(isA(ChatCompletionRequest.class)))
-			.willReturn(Flux.fromIterable(chunks).index().map(n -> {
-				// The downstream consumer prefetches a buffer of 256 items (indices
-				// 0..255). Release the latch once that buffer has been filled by the
-				// producer.
-				if (n.getT1() == 255) {
-					latch.countDown();
-				}
-				return n.getT2();
-			}));
+				.willReturn(Flux.fromIterable(chunks).index().map(n -> {
+					// The downstream consumer prefetches a buffer of 256 items (indices
+					// 0..255). Release the latch once that buffer has been filled by the
+					// producer.
+					if (n.getT1() == 255) {
+						latch.countDown();
+					}
+					return n.getT2();
+				}));
 
 		Flux<ChatResponse> result = this.chatModel.stream(new Prompt("Count to 300"));
 
@@ -124,12 +123,12 @@ public class DeepSeekChatModelStreamingTests {
 		RetryTemplate retryTemplate = RetryUtils.DEFAULT_RETRY_TEMPLATE;
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 		this.chatModel = DeepSeekChatModel.builder()
-			.deepSeekApi(this.api)
-			.options(DeepSeekChatOptions.builder().build())
-			.toolCallingManager(toolCallingManager)
-			.retryTemplate(retryTemplate)
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.deepSeekApi(this.api)
+				.options(DeepSeekChatOptions.builder().build())
+				.toolCallingManager(toolCallingManager)
+				.retryTemplate(retryTemplate)
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 	}
 
 }

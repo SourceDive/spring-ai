@@ -28,7 +28,9 @@ import org.springframework.util.StringUtils;
  * @author Thomas Vitale
  * @since 1.0.0
  */
-public record DefaultToolDefinition(String name, String description, String inputSchema) implements ToolDefinition {
+public record DefaultToolDefinition(String name, String description, String inputSchema) implements
+
+ToolDefinition {
 
 	public DefaultToolDefinition {
 		Assert.hasText(name, "name cannot be null or empty");
@@ -36,7 +38,7 @@ public record DefaultToolDefinition(String name, String description, String inpu
 		Assert.hasText(inputSchema, "inputSchema cannot be null or empty");
 	}
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

@@ -17,10 +17,6 @@
 package org.springframework.ai.vectorstore.redis.autoconfigure;
 
 import io.micrometer.observation.ObservationRegistry;
-import redis.clients.jedis.DefaultJedisClientConfig;
-import redis.clients.jedis.JedisClientConfig;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.embedding.BatchingStrategy;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.TokenCountBatchingStrategy;
@@ -35,6 +31,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.JedisClientConfig;
+import redis.clients.jedis.RedisClient;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for Redis Vector Store.
@@ -47,7 +46,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
  * @author Yanming Zhou
  */
 @AutoConfiguration
-@ConditionalOnClass({ RedisClient.class, JedisConnectionFactory.class, RedisVectorStore.class, EmbeddingModel.class })
+@ConditionalOnClass({RedisClient.class, JedisConnectionFactory.class, RedisVectorStore.class, EmbeddingModel.class})
 @EnableConfigurationProperties(RedisVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.REDIS,
 		matchIfMissing = true)
@@ -55,6 +54,7 @@ public class RedisVectorStoreAutoConfiguration {
 
 	/**
 	 * Creates a default batching strategy for the vector store.
+	 *
 	 * @return a token count batching strategy
 	 */
 	@Bean
@@ -65,30 +65,31 @@ public class RedisVectorStoreAutoConfiguration {
 
 	/**
 	 * Creates a Redis vector store.
-	 * @param embeddingModel the embedding model
-	 * @param properties the Redis vector store properties
+	 *
+	 * @param embeddingModel         the embedding model
+	 * @param properties             the Redis vector store properties
 	 * @param jedisConnectionFactory the Jedis connection factory
-	 * @param observationRegistry the observation registry
-	 * @param convention the custom observation convention
-	 * @param batchingStrategy the batching strategy
+	 * @param observationRegistry    the observation registry
+	 * @param convention             the custom observation convention
+	 * @param batchingStrategy       the batching strategy
 	 * @return the configured Redis vector store
 	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public RedisVectorStore vectorStore(final EmbeddingModel embeddingModel,
-			final RedisVectorStoreProperties properties, final JedisConnectionFactory jedisConnectionFactory,
-			final ObjectProvider<ObservationRegistry> observationRegistry,
-			final ObjectProvider<VectorStoreObservationConvention> convention,
-			final BatchingStrategy batchingStrategy) {
+	                                    final RedisVectorStoreProperties properties, final JedisConnectionFactory jedisConnectionFactory,
+	                                    final ObjectProvider<ObservationRegistry> observationRegistry,
+	                                    final ObjectProvider<VectorStoreObservationConvention> convention,
+	                                    final BatchingStrategy batchingStrategy) {
 
 		RedisClient jedisClient = jedisClient(jedisConnectionFactory);
 		RedisVectorStore.Builder builder = RedisVectorStore.builder(jedisClient, embeddingModel)
-			.initializeSchema(properties.isInitializeSchema())
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(convention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.indexName(properties.getIndexName())
-			.prefix(properties.getPrefix());
+				.initializeSchema(properties.isInitializeSchema())
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(convention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.indexName(properties.getIndexName())
+				.prefix(properties.getPrefix());
 
 		// Configure HNSW parameters if available
 		hnswConfiguration(builder, properties);
@@ -98,14 +99,15 @@ public class RedisVectorStoreAutoConfiguration {
 
 	/**
 	 * Configures the HNSW-related parameters on the builder.
-	 * @param builder the Redis vector store builder
+	 *
+	 * @param builder    the Redis vector store builder
 	 * @param properties the Redis vector store properties
 	 */
 	private void hnswConfiguration(final RedisVectorStore.Builder builder,
-			final RedisVectorStoreProperties properties) {
+	                               final RedisVectorStoreProperties properties) {
 		builder.hnswM(properties.getHnsw().getM())
-			.hnswEfConstruction(properties.getHnsw().getEfConstruction())
-			.hnswEfRuntime(properties.getHnsw().getEfRuntime());
+				.hnswEfConstruction(properties.getHnsw().getEfConstruction())
+				.hnswEfRuntime(properties.getHnsw().getEfRuntime());
 	}
 
 	private RedisClient jedisClient(final JedisConnectionFactory jedisConnectionFactory) {
@@ -114,11 +116,11 @@ public class RedisVectorStoreAutoConfiguration {
 		int port = jedisConnectionFactory.getPort();
 
 		JedisClientConfig clientConfig = DefaultJedisClientConfig.builder()
-			.ssl(jedisConnectionFactory.isUseSsl())
-			.clientName(jedisConnectionFactory.getClientName())
-			.timeoutMillis(jedisConnectionFactory.getTimeout())
-			.password(jedisConnectionFactory.getPassword())
-			.build();
+				.ssl(jedisConnectionFactory.isUseSsl())
+				.clientName(jedisConnectionFactory.getClientName())
+				.timeoutMillis(jedisConnectionFactory.getTimeout())
+				.password(jedisConnectionFactory.getPassword())
+				.build();
 
 		return RedisClient.builder().hostAndPort(host, port).clientConfig(clientConfig).build();
 	}

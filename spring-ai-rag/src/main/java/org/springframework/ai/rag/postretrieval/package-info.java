@@ -23,4 +23,3 @@
 @NullMarked
 package org.springframework.ai.rag.postretrieval;
 
-import org.jspecify.annotations.NullMarked;

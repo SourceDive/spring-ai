@@ -16,18 +16,17 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.template.NoOpTemplateRenderer;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,14 +48,14 @@ class SystemPromptTemplateTests {
 	@Test
 	void createWithEmptyTemplate() {
 		assertThatThrownBy(() -> new SystemPromptTemplate("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
 	void createWithNullTemplate() {
 		String template = null;
 		assertThatThrownBy(() -> new SystemPromptTemplate(template)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
@@ -71,7 +70,7 @@ class SystemPromptTemplateTests {
 	void createWithNullResource() {
 		Resource resource = null;
 		assertThatThrownBy(() -> new SystemPromptTemplate(resource)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.hasMessageContaining("resource cannot be null");
 	}
 
 	@Test
@@ -79,8 +78,8 @@ class SystemPromptTemplateTests {
 		String template = "Hello!";
 		Map<String, Object> variables = null;
 		assertThatThrownBy(() -> SystemPromptTemplate.builder().template(template).variables(variables).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("variables cannot be null");
 	}
 
 	@Test
@@ -89,8 +88,8 @@ class SystemPromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put(null, "value");
 		assertThatThrownBy(() -> SystemPromptTemplate.builder().template(template).variables(variables).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables keys cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("variables keys cannot be null");
 	}
 
 	@Test
@@ -111,9 +110,9 @@ class SystemPromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("name", "Spring AI");
 		PromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {name}!")
-			.variables(variables)
-			.build();
+				.template("Hello {name}!")
+				.variables(variables)
+				.build();
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -122,9 +121,9 @@ class SystemPromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("greeting", "Hello");
 		PromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("{greeting} {name}!")
-			.variables(variables)
-			.build();
+				.template("{greeting} {name}!")
+				.variables(variables)
+				.build();
 
 		Map<String, Object> additionalVariables = new HashMap<>();
 		additionalVariables.put("name", "Spring AI");
@@ -172,9 +171,9 @@ class SystemPromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("name", "Spring AI");
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {name}!")
-			.variables(variables)
-			.build();
+				.template("Hello {name}!")
+				.variables(variables)
+				.build();
 		Prompt prompt = systemPromptTemplate.create(variables);
 		assertThat(prompt.getContents()).isEqualTo("Hello Spring AI!");
 	}
@@ -183,9 +182,9 @@ class SystemPromptTemplateTests {
 	void createWithCustomRenderer() {
 		TemplateRenderer customRenderer = new NoOpTemplateRenderer();
 		PromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {name}!")
-			.renderer(customRenderer)
-			.build();
+				.template("Hello {name}!")
+				.renderer(customRenderer)
+				.build();
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello {name}!");
 	}
 
@@ -195,8 +194,8 @@ class SystemPromptTemplateTests {
 		Resource resource = new ByteArrayResource(template.getBytes());
 
 		assertThatThrownBy(() -> SystemPromptTemplate.builder().template(template).resource(resource).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Only one of template or resource can be set");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Only one of template or resource can be set");
 	}
 
 	// --- Builder Pattern Tests ---
@@ -215,9 +214,9 @@ class SystemPromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("name", "Spring AI");
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {name}!")
-			.variables(variables) // Use builder's variable method
-			.build();
+				.template("Hello {name}!")
+				.variables(variables) // Use builder's variable method
+				.build();
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -233,9 +232,9 @@ class SystemPromptTemplateTests {
 	@Test
 	void addVariable_Builder() {
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {name}!")
-			.variables(Map.of("name", "Spring AI")) // Use variables() method
-			.build();
+				.template("Hello {name}!")
+				.variables(Map.of("name", "Spring AI")) // Use variables() method
+				.build();
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -250,9 +249,9 @@ class SystemPromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("greeting", "Hello");
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("{greeting} {name}!")
-			.variables(variables) // Set default variables via builder
-			.build();
+				.template("{greeting} {name}!")
+				.variables(variables) // Set default variables via builder
+				.build();
 
 		Map<String, Object> additionalVariables = new HashMap<>();
 		additionalVariables.put("name", "Spring AI");
@@ -268,9 +267,9 @@ class SystemPromptTemplateTests {
 		variables.put("content", resource);
 
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {content}!")
-			.variables(variables) // Set resource variable via builder
-			.build();
+				.template("Hello {content}!")
+				.variables(variables) // Set resource variable via builder
+				.build();
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -280,10 +279,10 @@ class SystemPromptTemplateTests {
 		Map<String, Object> overwriteVars = Map.of("name", "Overwritten", "noun", "Day");
 
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template("Hello {name} {noun}!")
-			.variables(initialVars) // Set initial variables
-			.variables(overwriteVars) // Overwrite with new variables
-			.build();
+				.template("Hello {name} {noun}!")
+				.variables(initialVars) // Set initial variables
+				.variables(overwriteVars) // Overwrite with new variables
+				.build();
 
 		// Expect only variables from the last call to be present
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello Overwritten Day!");
@@ -295,9 +294,9 @@ class SystemPromptTemplateTests {
 		TemplateRenderer customRenderer = new CustomTestRenderer();
 
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.template(template)
-			.renderer(customRenderer) // Set custom renderer
-			.build();
+				.template(template)
+				.renderer(customRenderer) // Set custom renderer
+				.build();
 
 		assertThat(systemPromptTemplate.render()).isEqualTo(template + " (Rendered by Custom)");
 	}
@@ -309,9 +308,9 @@ class SystemPromptTemplateTests {
 		Map<String, Object> vars = Map.of("name", "Builder");
 
 		SystemPromptTemplate systemPromptTemplate = SystemPromptTemplate.builder()
-			.resource(templateResource)
-			.variables(vars)
-			.build();
+				.resource(templateResource)
+				.variables(vars)
+				.build();
 
 		assertThat(systemPromptTemplate.render()).isEqualTo("Hello Builder from Resource!");
 	}

@@ -16,9 +16,9 @@
 
 package org.springframework.ai.mistralai.ocr;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,37 +34,37 @@ class MistralAiOcrOptionsTests {
 	@Test
 	void testBuilderWithAllFields() {
 		MistralAiOcrOptions options = MistralAiOcrOptions.builder()
-			.model("custom-model")
-			.id("test-id")
-			.pages(List.of(0, 1, 2))
-			.includeImageBase64(true)
-			.imageLimit(5)
-			.imageMinSize(100)
-			.build();
+				.model("custom-model")
+				.id("test-id")
+				.pages(List.of(0, 1, 2))
+				.includeImageBase64(true)
+				.imageLimit(5)
+				.imageMinSize(100)
+				.build();
 
 		assertThat(options).extracting("model", "id", "pages", "includeImageBase64", "imageLimit", "imageMinSize")
-			.containsExactly("custom-model", "test-id", List.of(0, 1, 2), true, 5, 100);
+				.containsExactly("custom-model", "test-id", List.of(0, 1, 2), true, 5, 100);
 	}
 
 	@Test
 	void testEqualsAndHashCode() {
 		MistralAiOcrOptions options1 = MistralAiOcrOptions.builder()
-			.model("custom-model")
-			.id("test-id")
-			.pages(List.of(0, 1, 2))
-			.includeImageBase64(true)
-			.imageLimit(5)
-			.imageMinSize(100)
-			.build();
+				.model("custom-model")
+				.id("test-id")
+				.pages(List.of(0, 1, 2))
+				.includeImageBase64(true)
+				.imageLimit(5)
+				.imageMinSize(100)
+				.build();
 
 		MistralAiOcrOptions options2 = MistralAiOcrOptions.builder()
-			.model("custom-model")
-			.id("test-id")
-			.pages(List.of(0, 1, 2))
-			.includeImageBase64(true)
-			.imageLimit(5)
-			.imageMinSize(100)
-			.build();
+				.model("custom-model")
+				.id("test-id")
+				.pages(List.of(0, 1, 2))
+				.includeImageBase64(true)
+				.imageLimit(5)
+				.imageMinSize(100)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -84,13 +84,13 @@ class MistralAiOcrOptionsTests {
 	@Test
 	void testGetters() {
 		MistralAiOcrOptions options = MistralAiOcrOptions.builder()
-			.model("my-model")
-			.id("id-123")
-			.pages(List.of(3, 4))
-			.includeImageBase64(false)
-			.imageLimit(2)
-			.imageMinSize(50)
-			.build();
+				.model("my-model")
+				.id("id-123")
+				.pages(List.of(3, 4))
+				.includeImageBase64(false)
+				.imageLimit(2)
+				.imageMinSize(50)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("my-model");
 		assertThat(options.getId()).isEqualTo("id-123");

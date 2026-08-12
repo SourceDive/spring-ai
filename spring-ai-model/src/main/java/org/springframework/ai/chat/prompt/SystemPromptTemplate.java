@@ -16,13 +16,13 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.Map;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 public class SystemPromptTemplate extends PromptTemplate {
 
@@ -97,14 +97,11 @@ public class SystemPromptTemplate extends PromptTemplate {
 		public SystemPromptTemplate build() {
 			if (this.template != null && this.resource != null) {
 				throw new IllegalArgumentException("Only one of template or resource can be set");
-			}
-			else if (this.resource != null) {
+			} else if (this.resource != null) {
 				return new SystemPromptTemplate(this.resource, this.variables, this.renderer);
-			}
-			else if (this.template != null) {
+			} else if (this.template != null) {
 				return new SystemPromptTemplate(this.template, this.variables, this.renderer);
-			}
-			else {
+			} else {
 				throw new IllegalStateException("Neither template nor resource is set");
 			}
 		}

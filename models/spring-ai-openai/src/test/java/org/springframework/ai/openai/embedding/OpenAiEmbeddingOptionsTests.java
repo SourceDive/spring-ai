@@ -16,14 +16,13 @@
 
 package org.springframework.ai.openai.embedding;
 
-import java.util.List;
-import java.util.Map;
-
 import com.openai.models.embeddings.EmbeddingCreateParams;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.embedding.EmbeddingOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,9 +46,9 @@ class OpenAiEmbeddingOptionsTests {
 	@Test
 	void encodingFormatCanBeConfigured() {
 		OpenAiEmbeddingOptions options = OpenAiEmbeddingOptions.builder()
-			.model("test-model")
-			.encodingFormat(OpenAiEmbeddingOptions.EncodingFormat.FLOAT)
-			.build();
+				.model("test-model")
+				.encodingFormat(OpenAiEmbeddingOptions.EncodingFormat.FLOAT)
+				.build();
 
 		EmbeddingCreateParams createParams = options.toOpenAiCreateParams(List.of("test input"));
 
@@ -59,9 +58,9 @@ class OpenAiEmbeddingOptionsTests {
 	@Test
 	void encodingFormatIsCopiedAndMerged() {
 		OpenAiEmbeddingOptions source = OpenAiEmbeddingOptions.builder()
-			.model("test-model")
-			.encodingFormat(OpenAiEmbeddingOptions.EncodingFormat.FLOAT)
-			.build();
+				.model("test-model")
+				.encodingFormat(OpenAiEmbeddingOptions.EncodingFormat.FLOAT)
+				.build();
 
 		OpenAiEmbeddingOptions copied = OpenAiEmbeddingOptions.builder().from(source).build();
 		OpenAiEmbeddingOptions merged = OpenAiEmbeddingOptions.builder().model("other-model").merge(source).build();
@@ -83,20 +82,20 @@ class OpenAiEmbeddingOptionsTests {
 	@Test
 	void testOptionsBuilderMergeCustomHeaders() {
 		OpenAiEmbeddingOptions defaultOptions = OpenAiEmbeddingOptions.builder()
-			.customHeaders(Map.of("default-header", "default-value"))
-			.build();
+				.customHeaders(Map.of("default-header", "default-value"))
+				.build();
 
 		OpenAiEmbeddingOptions requestOptions = OpenAiEmbeddingOptions.builder()
-			.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
-			.build();
+				.customHeaders(Map.of("merged-header1", "merged-value1", "merged-header2", "merged-value2"))
+				.build();
 
 		OpenAiEmbeddingOptions mergedOptions = OpenAiEmbeddingOptions.builder()
-			.from(defaultOptions)
-			.merge(requestOptions)
-			.build();
+				.from(defaultOptions)
+				.merge(requestOptions)
+				.build();
 		assertThat(mergedOptions.getCustomHeaders()).containsEntry("default-header", "default-value")
-			.containsEntry("merged-header1", "merged-value1")
-			.containsEntry("merged-header2", "merged-value2");
+				.containsEntry("merged-header1", "merged-value1")
+				.containsEntry("merged-header2", "merged-value2");
 	}
 
 }

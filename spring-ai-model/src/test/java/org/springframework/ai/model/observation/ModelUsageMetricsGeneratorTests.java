@@ -16,18 +16,17 @@
 
 package org.springframework.ai.model.observation;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import io.micrometer.common.KeyValue;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.observation.conventions.AiObservationMetricAttributes;
 import org.springframework.ai.observation.conventions.AiObservationMetricNames;
 import org.springframework.ai.observation.conventions.AiTokenType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,17 +45,17 @@ class ModelUsageMetricsGeneratorTests {
 
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(3);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-			.counter()
-			.count()).isEqualTo(1000);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+				.counter()
+				.count()).isEqualTo(1000);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
-			.counter()
-			.count()).isEqualTo(500);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
+				.counter()
+				.count()).isEqualTo(500);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.counter()
-			.count()).isEqualTo(1500);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.counter()
+				.count()).isEqualTo(1500);
 	}
 
 	@Test
@@ -67,13 +66,13 @@ class ModelUsageMetricsGeneratorTests {
 
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(2);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-			.counter()
-			.count()).isEqualTo(1000);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+				.counter()
+				.count()).isEqualTo(1000);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.counter()
-			.count()).isEqualTo(1000);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.counter()
+				.count()).isEqualTo(1000);
 	}
 
 	private Observation.Context buildContext() {
@@ -91,17 +90,17 @@ class ModelUsageMetricsGeneratorTests {
 
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(3);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
-			.counter()
-			.count()).isEqualTo(0);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.INPUT.value())
+				.counter()
+				.count()).isEqualTo(0);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
-			.counter()
-			.count()).isEqualTo(0);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.OUTPUT.value())
+				.counter()
+				.count()).isEqualTo(0);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.counter()
-			.count()).isEqualTo(0);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.counter()
+				.count()).isEqualTo(0);
 	}
 
 	@Test
@@ -112,9 +111,9 @@ class ModelUsageMetricsGeneratorTests {
 
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value()).meters()).hasSize(1);
 		assertThat(meterRegistry.get(AiObservationMetricNames.TOKEN_USAGE.value())
-			.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
-			.counter()
-			.count()).isEqualTo(100);
+				.tag(AiObservationMetricAttributes.TOKEN_TYPE.value(), AiTokenType.TOTAL.value())
+				.counter()
+				.count()).isEqualTo(100);
 	}
 
 	static class TestUsage implements Usage {

@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.provider.sampling;
 
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.ai.mcp.annotation.McpSampling;
 import org.springframework.ai.mcp.annotation.method.sampling.AsyncSamplingSpecification;
 import org.springframework.ai.mcp.annotation.method.sampling.SamplingTestHelper;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,10 +47,10 @@ public class AsyncMcpSamplingProviderTests {
 			@McpSampling(clients = "test-client")
 			public Mono<CreateMessageResult> handleAsyncSamplingRequest(CreateMessageRequest request) {
 				return Mono.just(CreateMessageResult.builder()
-					.role(io.modelcontextprotocol.spec.McpSchema.Role.ASSISTANT)
-					.content(new TextContent("This is an async response to the sampling request"))
-					.model("test-model")
-					.build());
+						.role(io.modelcontextprotocol.spec.McpSchema.Role.ASSISTANT)
+						.content(new TextContent("This is an async response to the sampling request"))
+						.model("test-model")
+						.build());
 			}
 
 		}
@@ -72,14 +71,14 @@ public class AsyncMcpSamplingProviderTests {
 			assertThat(result).isNotNull();
 			assertThat(result.content()).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content()).text())
-				.isEqualTo("This is an async response to the sampling request");
+					.isEqualTo("This is an async response to the sampling request");
 		}).verifyComplete();
 	}
 
 	@Test
 	void testNullSamplingObjects() {
 		assertThatThrownBy(() -> new AsyncMcpSamplingProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("samplingObjects cannot be null");
+				.hasMessageContaining("samplingObjects cannot be null");
 	}
 
 	@Test
@@ -90,10 +89,10 @@ public class AsyncMcpSamplingProviderTests {
 			@McpSampling(clients = "test-client")
 			public Mono<CreateMessageResult> handleDirectSamplingRequest(CreateMessageRequest request) {
 				return Mono.just(CreateMessageResult.builder()
-					.role(io.modelcontextprotocol.spec.McpSchema.Role.ASSISTANT)
-					.content(new TextContent("This is a direct response to the sampling request"))
-					.model("test-model")
-					.build());
+						.role(io.modelcontextprotocol.spec.McpSchema.Role.ASSISTANT)
+						.content(new TextContent("This is a direct response to the sampling request"))
+						.model("test-model")
+						.build());
 			}
 
 		}
@@ -114,7 +113,7 @@ public class AsyncMcpSamplingProviderTests {
 			assertThat(result).isNotNull();
 			assertThat(result.content()).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content()).text())
-				.isEqualTo("This is a direct response to the sampling request");
+					.isEqualTo("This is a direct response to the sampling request");
 		}).verifyComplete();
 	}
 

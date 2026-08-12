@@ -16,11 +16,11 @@
 
 package org.springframework.ai.embedding;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.ModelRequest;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a request to embed a list of documents.

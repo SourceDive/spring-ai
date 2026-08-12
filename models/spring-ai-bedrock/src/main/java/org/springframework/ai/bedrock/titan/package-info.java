@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.bedrock.titan;
 
-import org.jspecify.annotations.NullMarked;

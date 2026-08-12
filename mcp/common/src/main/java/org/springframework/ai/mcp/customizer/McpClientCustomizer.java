@@ -28,8 +28,8 @@ package org.springframework.ai.mcp.customizer;
  * transports (here, HttpClient Streamable HTTP).
  *
  * @param <B> the type of the MCP component to customize, e.g.
- * {@link io.modelcontextprotocol.client.McpClient.SyncSpec} or
- * {@link io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport.Builder}
+ *            {@link io.modelcontextprotocol.client.McpClient.SyncSpec} or
+ *            {@link io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport.Builder}
  * @author Daniel Garnier-Moiroux
  * @since 2.0.0
  */
@@ -40,7 +40,8 @@ public interface McpClientCustomizer<B> {
 	 * <p>
 	 * This method is called for each MCP component being created, allowing for
 	 * component-specific customizations based on the component's name.
-	 * @param name the name of the MCP component being customized
+	 *
+	 * @param name             the name of the MCP component being customized
 	 * @param componentBuilder the component to customize
 	 */
 	void customize(String name, B componentBuilder);

@@ -18,10 +18,6 @@ package org.springframework.ai.mcp.server.common.autoconfigure;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.modelcontextprotocol.spec.McpSchema;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.ai.util.JacksonUtils;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -29,6 +25,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 @AutoConfiguration
 @ConditionalOnClass(McpSchema.class)
@@ -50,6 +49,7 @@ public class McpServerJsonMapperAutoConfiguration {
 	 * <p>
 	 * This bean can be overridden by providing a custom {@link JsonMapper} bean with the
 	 * name "mcpServerJsonMapper".
+	 *
 	 * @return configured {@link JsonMapper} instance for MCP server operations
 	 */
 	// NOTE: defaultCandidate=false prevents this MCP specific mapper from being injected
@@ -57,15 +57,15 @@ public class McpServerJsonMapperAutoConfiguration {
 	@Bean(name = "mcpServerJsonMapper", defaultCandidate = false)
 	public JsonMapper mcpServerJsonMapper() {
 		return JsonMapper.builder()
-			// Deserialization configuration
-			.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-			// Serialization configuration
-			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-			// Register Jackson modules via server loader
-			.addModules(JacksonUtils.instantiateAvailableModules())
-			.changeDefaultPropertyInclusion(
-					incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
-			.build();
+				// Deserialization configuration
+				.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+				// Serialization configuration
+				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+				// Register Jackson modules via server loader
+				.addModules(JacksonUtils.instantiateAvailableModules())
+				.changeDefaultPropertyInclusion(
+						incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+				.build();
 	}
 
 }

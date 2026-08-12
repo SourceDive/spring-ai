@@ -16,19 +16,18 @@
 
 package org.springframework.ai.model.transformers.autoconfigure;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configuration properties for the Transformer Embedding model.
@@ -45,8 +44,7 @@ public class TransformersEmbeddingModelProperties {
 	static {
 		try {
 			DEFAULT_CACHE_DIRECTORY = Files.createTempDirectory("spring-ai-model-cache").toAbsolutePath().toString();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Could not create default cache dir", e);
 		}
 	}
@@ -176,7 +174,7 @@ public class TransformersEmbeddingModelProperties {
 		/**
 		 * Run on a GPU or with another provider (optional).
 		 * https://onnxruntime.ai/docs/get-started/with-java.html#run-on-a-gpu-or-with-another-provider-optional
-		 *
+		 * <p>
 		 * The GPU device ID to execute on. Only applicable if >= 0. Ignored otherwise.
 		 */
 		private int gpuDeviceId = -1;

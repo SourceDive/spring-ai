@@ -16,11 +16,11 @@
 
 package org.springframework.ai.model;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Interface representing metadata associated with an AI model's response.
@@ -32,23 +32,27 @@ public interface ResponseMetadata {
 
 	/**
 	 * Gets an entry from the context. Returns {@code null} when entry is not present.
+	 *
 	 * @param key key
 	 * @param <T> value type
 	 * @return entry or {@code null} if not present
 	 */
-	@Nullable <T> T get(String key);
+	@Nullable
+	<T> T get(String key);
 
 	/**
 	 * Gets an entry from the context. Throws exception when entry is not present.
+	 *
 	 * @param key key
 	 * @param <T> value type
-	 * @throws IllegalArgumentException if not present
 	 * @return entry
+	 * @throws IllegalArgumentException if not present
 	 */
 	<T> T getRequired(Object key);
 
 	/**
 	 * Checks if context contains a key.
+	 *
 	 * @param key key
 	 * @return {@code true} when the context contains the entry with the given key
 	 */
@@ -56,18 +60,20 @@ public interface ResponseMetadata {
 
 	/**
 	 * Returns an element or default if not present.
-	 * @param key key
+	 *
+	 * @param key           key
 	 * @param defaultObject default object to return
-	 * @param <T> value type
+	 * @param <T>           value type
 	 * @return object or default if not present
 	 */
 	<T> T getOrDefault(Object key, T defaultObject);
 
 	/**
 	 * Returns an element or default if not present.
-	 * @param key key
+	 *
+	 * @param key                   key
 	 * @param defaultObjectSupplier supplier for default object to return
-	 * @param <T> value type
+	 * @param <T>                   value type
 	 * @return object or default if not present
 	 * @since 1.11.0
 	 */
@@ -82,6 +88,7 @@ public interface ResponseMetadata {
 
 	/**
 	 * Returns {@code true} if this map contains no key-value mappings.
+	 *
 	 * @return {@code true} if this map contains no key-value mappings
 	 */
 	boolean isEmpty();

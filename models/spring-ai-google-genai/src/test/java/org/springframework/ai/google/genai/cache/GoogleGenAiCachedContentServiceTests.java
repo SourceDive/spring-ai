@@ -16,9 +16,6 @@
 
 package org.springframework.ai.google.genai.cache;
 
-import java.time.Duration;
-import java.time.Instant;
-
 import com.google.genai.Client;
 import com.google.genai.types.Content;
 import com.google.genai.types.Part;
@@ -26,9 +23,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.ai.google.genai.TestGoogleGenAiCachedContentService;
 import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContentService.CachedContentPage;
+
+import java.time.Duration;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -62,20 +61,20 @@ public class GoogleGenAiCachedContentServiceTests {
 		Duration ttl = Duration.ofHours(1);
 
 		Content systemContent = Content.builder()
-			.parts(Part.builder().text("You are a helpful assistant.").build())
-			.build();
+				.parts(Part.builder().text("You are a helpful assistant.").build())
+				.build();
 
 		Content contextContent = Content.builder()
-			.parts(Part.builder().text("Additional context here.").build())
-			.build();
+				.parts(Part.builder().text("Additional context here.").build())
+				.build();
 
 		CachedContentRequest request = CachedContentRequest.builder()
-			.model(model)
-			.displayName(displayName)
-			.systemInstruction(systemContent)
-			.addContent(contextContent)
-			.ttl(ttl)
-			.build();
+				.model(model)
+				.displayName(displayName)
+				.systemInstruction(systemContent)
+				.addContent(contextContent)
+				.ttl(ttl)
+				.build();
 
 		// Execute
 		GoogleGenAiCachedContent result = this.service.create(request);
@@ -101,11 +100,11 @@ public class GoogleGenAiCachedContentServiceTests {
 		Content content = Content.builder().parts(Part.builder().text("Test content").build()).build();
 
 		CachedContentRequest request = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("Test Cache")
-			.addContent(content)
-			.ttl(Duration.ofHours(1))
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("Test Cache")
+				.addContent(content)
+				.ttl(Duration.ofHours(1))
+				.build();
 
 		GoogleGenAiCachedContent created = this.service.create(request);
 		String name = created.getName();
@@ -132,11 +131,11 @@ public class GoogleGenAiCachedContentServiceTests {
 		Content content = Content.builder().parts(Part.builder().text("Test content").build()).build();
 
 		CachedContentRequest createRequest = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("Original Name")
-			.addContent(content)
-			.ttl(Duration.ofHours(1))
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("Original Name")
+				.addContent(content)
+				.ttl(Duration.ofHours(1))
+				.build();
 
 		GoogleGenAiCachedContent created = this.service.create(createRequest);
 		String name = created.getName();
@@ -158,12 +157,12 @@ public class GoogleGenAiCachedContentServiceTests {
 	@Test
 	void testUpdateNonExistentCachedContent() {
 		CachedContentUpdateRequest updateRequest = CachedContentUpdateRequest.builder()
-			.ttl(Duration.ofHours(2))
-			.build();
+				.ttl(Duration.ofHours(2))
+				.build();
 
 		assertThatThrownBy(() -> this.service.update("cachedContent/nonexistent", updateRequest))
-			.isInstanceOf(TestGoogleGenAiCachedContentService.CachedContentException.class)
-			.hasMessageContaining("Cached content not found");
+				.isInstanceOf(TestGoogleGenAiCachedContentService.CachedContentException.class)
+				.hasMessageContaining("Cached content not found");
 	}
 
 	@Test
@@ -172,11 +171,11 @@ public class GoogleGenAiCachedContentServiceTests {
 		Content content = Content.builder().parts(Part.builder().text("Test content").build()).build();
 
 		CachedContentRequest request = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("To Delete")
-			.addContent(content)
-			.ttl(Duration.ofHours(1))
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("To Delete")
+				.addContent(content)
+				.ttl(Duration.ofHours(1))
+				.build();
 
 		GoogleGenAiCachedContent created = this.service.create(request);
 		String name = created.getName();
@@ -206,11 +205,11 @@ public class GoogleGenAiCachedContentServiceTests {
 			Content content = Content.builder().parts(Part.builder().text("Content " + i).build()).build();
 
 			CachedContentRequest request = CachedContentRequest.builder()
-				.model("gemini-2.0-flash")
-				.displayName("Cache " + i)
-				.addContent(content)
-				.ttl(Duration.ofHours(i + 1))
-				.build();
+					.model("gemini-2.0-flash")
+					.displayName("Cache " + i)
+					.addContent(content)
+					.ttl(Duration.ofHours(i + 1))
+					.build();
 			this.service.create(request);
 		}
 
@@ -239,11 +238,11 @@ public class GoogleGenAiCachedContentServiceTests {
 
 		Instant expiredTime = Instant.now().minus(Duration.ofHours(1));
 		CachedContentRequest request = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("Expired Cache")
-			.addContent(content)
-			.expireTime(expiredTime)
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("Expired Cache")
+				.addContent(content)
+				.expireTime(expiredTime)
+				.build();
 
 		GoogleGenAiCachedContent cached = this.service.create(request);
 
@@ -259,11 +258,11 @@ public class GoogleGenAiCachedContentServiceTests {
 
 		Instant futureTime = Instant.now().plus(Duration.ofHours(1));
 		CachedContentRequest request = CachedContentRequest.builder()
-			.model("gemini-2.0-flash")
-			.displayName("Valid Cache")
-			.addContent(content)
-			.expireTime(futureTime)
-			.build();
+				.model("gemini-2.0-flash")
+				.displayName("Valid Cache")
+				.addContent(content)
+				.expireTime(futureTime)
+				.build();
 
 		GoogleGenAiCachedContent cached = this.service.create(request);
 
@@ -280,11 +279,11 @@ public class GoogleGenAiCachedContentServiceTests {
 			Content content = Content.builder().parts(Part.builder().text("Content " + i).build()).build();
 
 			CachedContentRequest request = CachedContentRequest.builder()
-				.model("gemini-2.0-flash")
-				.displayName("Cache " + i)
-				.addContent(content)
-				.ttl(Duration.ofHours(1))
-				.build();
+					.model("gemini-2.0-flash")
+					.displayName("Cache " + i)
+					.addContent(content)
+					.ttl(Duration.ofHours(1))
+					.build();
 			this.service.create(request);
 		}
 

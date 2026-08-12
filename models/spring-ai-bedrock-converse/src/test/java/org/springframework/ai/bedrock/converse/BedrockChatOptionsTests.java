@@ -16,14 +16,13 @@
 
 package org.springframework.ai.bedrock.converse;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.bedrock.converse.BedrockChatOptions.Builder;
 import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.ai.test.options.AbstractChatOptionsTests;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,23 +47,23 @@ class BedrockChatOptionsTests extends AbstractChatOptionsTests<BedrockChatOption
 	@Test
 	void testBuilderWithAllFields() {
 		BedrockChatOptions options = BedrockChatOptions.builder()
-			.model("test-model")
-			.frequencyPenalty(0.0)
-			.maxTokens(100)
-			.presencePenalty(0.0)
-			.requestParameters(Map.of("requestId", "1234"))
-			.stopSequences(List.of("stop1", "stop2"))
-			.temperature(0.7)
-			.topP(0.8)
-			.topK(50)
-			.outputSchema("{\"type\":\"object\"}")
-			.build();
+				.model("test-model")
+				.frequencyPenalty(0.0)
+				.maxTokens(100)
+				.presencePenalty(0.0)
+				.requestParameters(Map.of("requestId", "1234"))
+				.stopSequences(List.of("stop1", "stop2"))
+				.temperature(0.7)
+				.topP(0.8)
+				.topK(50)
+				.outputSchema("{\"type\":\"object\"}")
+				.build();
 
 		assertThat(options)
-			.extracting("model", "frequencyPenalty", "maxTokens", "presencePenalty", "requestParameters",
-					"stopSequences", "temperature", "topP", "topK")
-			.containsExactly("test-model", 0.0, 100, 0.0, Map.of("requestId", "1234"), List.of("stop1", "stop2"), 0.7,
-					0.8, 50);
+				.extracting("model", "frequencyPenalty", "maxTokens", "presencePenalty", "requestParameters",
+						"stopSequences", "temperature", "topP", "topK")
+				.containsExactly("test-model", 0.0, 100, 0.0, Map.of("requestId", "1234"), List.of("stop1", "stop2"), 0.7,
+						0.8, 50);
 		assertThat(options.getOutputSchema()).isEqualTo("{\"type\":\"object\"}");
 	}
 
@@ -92,12 +91,12 @@ class BedrockChatOptionsTests extends AbstractChatOptionsTests<BedrockChatOption
 	@Test
 	void testCombineWithCollections() {
 		BedrockChatOptions base = BedrockChatOptions.builder()
-			.requestParameters(Map.of("base-key", "base-value"))
-			.build();
+				.requestParameters(Map.of("base-key", "base-value"))
+				.build();
 
 		BedrockChatOptions override = BedrockChatOptions.builder()
-			.requestParameters(Map.of("override-key", "override-value"))
-			.build();
+				.requestParameters(Map.of("override-key", "override-value"))
+				.build();
 
 		BedrockChatOptions merged = base.mutate().combineWith(override.mutate()).build();
 

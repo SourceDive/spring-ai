@@ -16,13 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.method.elicitation;
 
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
+import org.springframework.ai.mcp.annotation.McpElicitation;
 import reactor.core.publisher.Mono;
 
-import org.springframework.ai.mcp.annotation.McpElicitation;
+import java.util.Map;
 
 /**
  * Example class demonstrating asynchronous elicitation method usage.
@@ -42,7 +41,7 @@ public class AsyncMcpElicitationMethodCallbackExample {
 	public Mono<ElicitResult> handleDeclineElicitationRequest(ElicitRequest request) {
 		// Example implementation that declines the request after a delay
 		return Mono.delay(java.time.Duration.ofMillis(100))
-			.then(Mono.just(new ElicitResult(ElicitResult.Action.DECLINE, null)));
+				.then(Mono.just(new ElicitResult(ElicitResult.Action.DECLINE, null)));
 	}
 
 	@McpElicitation(clients = "my-client-id")

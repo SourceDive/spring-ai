@@ -42,6 +42,7 @@ public interface TextToSpeechModel extends Model<TextToSpeechPrompt, TextToSpeec
 
 	/**
 	 * Gets the options for this model.
+	 *
 	 * @return the options
 	 * @since 2.0.0
 	 */

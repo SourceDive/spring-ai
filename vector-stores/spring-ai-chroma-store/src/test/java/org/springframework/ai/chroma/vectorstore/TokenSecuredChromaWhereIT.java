@@ -16,15 +16,8 @@
 
 package org.springframework.ai.chroma.vectorstore;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.chromadb.ChromaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.chroma.ChromaImage;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -37,13 +30,19 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
+import org.testcontainers.chromadb.ChromaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * ChromaDB with static API Token Authentication:
  * https://docs.trychroma.com/deployment/auth
- *
+ * <p>
  * Test cases are based on the Chroma:
  * https://docs.trychroma.com/usage-guide#using-where-filters and the related
  * https://github.com/chroma-core/chroma/blob/main/examples/basic_functionality/in_not_in_filtering.ipynb
@@ -64,12 +63,12 @@ public class TokenSecuredChromaWhereIT {
 	 */
 	@Container
 	static ChromaDBContainer chromaContainer = new ChromaDBContainer(ChromaImage.DEFAULT_IMAGE)
-		.withEnv("CHROMA_SERVER_AUTHN_CREDENTIALS", CHROMA_SERVER_AUTH_CREDENTIALS)
-		.withEnv("CHROMA_SERVER_AUTHN_PROVIDER", "chromadb.auth.token_authn.TokenAuthenticationServerProvider");
+			.withEnv("CHROMA_SERVER_AUTHN_CREDENTIALS", CHROMA_SERVER_AUTH_CREDENTIALS)
+			.withEnv("CHROMA_SERVER_AUTHN_PROVIDER", "chromadb.auth.token_authn.TokenAuthenticationServerProvider");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("spring.ai.openai.apiKey=" + System.getenv("OPENAI_API_KEY"));
 
 	@Test
 	public void withInFiltersExpressions1() {
@@ -88,9 +87,9 @@ public class TokenSecuredChromaWhereIT {
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("author in ['john', 'jill']")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("author in ['john', 'jill']")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(d -> d.getId()).toList()).containsExactlyInAnyOrder("1", "3");
@@ -105,9 +104,9 @@ public class TokenSecuredChromaWhereIT {
 			VectorStore vectorStore = context.getBean(VectorStore.class);
 
 			vectorStore
-				.add(List.of(new Document("1", "Article by john", Map.of("author", "john", "article_type", "blog")),
-						new Document("2", "Article by Jack", Map.of("author", "jack", "article_type", "social")),
-						new Document("3", "Article by Jill", Map.of("author", "jill", "article_type", "paper"))));
+					.add(List.of(new Document("1", "Article by john", Map.of("author", "john", "article_type", "blog")),
+							new Document("2", "Article by Jack", Map.of("author", "jack", "article_type", "social")),
+							new Document("3", "Article by Jill", Map.of("author", "jill", "article_type", "paper"))));
 
 			var request = SearchRequest.builder().query("Give me articles by john").topK(5).build();
 
@@ -115,17 +114,17 @@ public class TokenSecuredChromaWhereIT {
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("author in ['john', 'jill'] && 'article_type' == 'blog'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("author in ['john', 'jill'] && 'article_type' == 'blog'")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo("1");
 
 			results = vectorStore.similaritySearch(SearchRequest.from(request)
-				.similarityThresholdAll()
-				.filterExpression("author in ['john'] || 'article_type' == 'paper'")
-				.build());
+					.similarityThresholdAll()
+					.filterExpression("author in ['john'] || 'article_type' == 'paper'")
+					.build());
 
 			assertThat(results).hasSize(2);
 
@@ -144,9 +143,9 @@ public class TokenSecuredChromaWhereIT {
 		@Bean
 		public ChromaApi chromaApi(RestClient.Builder builder) {
 			var chromaApi = ChromaApi.builder()
-				.baseUrl(chromaContainer.getEndpoint())
-				.restClientBuilder(builder)
-				.build();
+					.baseUrl(chromaContainer.getEndpoint())
+					.restClientBuilder(builder)
+					.build();
 			chromaApi.withKeyToken(CHROMA_SERVER_AUTH_CREDENTIALS);
 			return chromaApi;
 		}
@@ -154,17 +153,17 @@ public class TokenSecuredChromaWhereIT {
 		@Bean
 		public VectorStore chromaVectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi) {
 			return ChromaVectorStore.builder(chromaApi, embeddingModel)
-				.collectionName("TestCollection")
-				.initializeSchema(true)
-				.build();
+					.collectionName("TestCollection")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

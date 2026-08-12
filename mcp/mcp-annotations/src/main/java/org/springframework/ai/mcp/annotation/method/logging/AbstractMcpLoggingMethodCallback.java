@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpLogging;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 /**
  * Abstract base class for creating callbacks around logging consumer methods.
- *
+ * <p>
  * This class provides common functionality for both synchronous and asynchronous logging
  * consumer method callbacks. It contains shared logic for method validation, argument
  * building, and other common operations.
@@ -42,8 +41,9 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 	/**
 	 * Constructor for AbstractMcpLoggingConsumerMethodCallback.
+	 *
 	 * @param method The method to create a callback for
-	 * @param bean The bean instance that contains the method
+	 * @param bean   The bean instance that contains the method
 	 */
 	protected AbstractMcpLoggingMethodCallback(Method method, Object bean) {
 		Assert.notNull(method, "Method can't be null!");
@@ -60,6 +60,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 	 * <p>
 	 * This method checks that the return type is valid and that the parameters match the
 	 * expected pattern.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the method signature is not compatible
 	 */
@@ -76,6 +77,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 	 * Validates that the method return type is compatible with the logging consumer
 	 * callback. This method should be implemented by subclasses to handle specific return
 	 * type validation.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -84,6 +86,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 	/**
 	 * Validates method parameters. This method provides common validation logic and
 	 * delegates exchange type checking to subclasses.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the parameters are not compatible
 	 */
@@ -106,8 +109,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 						+ method.getName() + " in " + method.getDeclaringClass().getName() + " has parameter of type "
 						+ parameters[0].getType().getName());
 			}
-		}
-		else {
+		} else {
 			// Three parameters must be LoggingLevel, String, String
 			if (!LoggingLevel.class.isAssignableFrom(parameters[0].getType())) {
 				throw new IllegalArgumentException("First parameter must be of type LoggingLevel: " + method.getName()
@@ -132,8 +134,9 @@ public abstract class AbstractMcpLoggingMethodCallback {
 	 * <p>
 	 * This method constructs an array of arguments based on the method's parameter types
 	 * and the available values (exchange, notification).
-	 * @param method The method to build arguments for
-	 * @param exchange The server exchange
+	 *
+	 * @param method       The method to build arguments for
+	 * @param exchange     The server exchange
 	 * @param notification The logging message notification
 	 * @return An array of arguments for the method invocation
 	 */
@@ -144,8 +147,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 		if (parameters.length == 1) {
 			// Single parameter (LoggingMessageNotification)
 			args[0] = notification;
-		}
-		else {
+		} else {
 			// Three parameters (LoggingLevel, String, String)
 			args[0] = notification.level();
 			args[1] = notification.logger();
@@ -164,8 +166,9 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message and cause.
+		 *
 		 * @param message The detail message
-		 * @param cause The cause
+		 * @param cause   The cause
 		 */
 		public McpLoggingConsumerMethodException(String message, Throwable cause) {
 			super(message, cause);
@@ -173,6 +176,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message.
+		 *
 		 * @param message The detail message
 		 */
 		public McpLoggingConsumerMethodException(String message) {
@@ -198,6 +202,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Set the method to create a callback for.
+		 *
 		 * @param method The method to create a callback for
 		 * @return This builder
 		 */
@@ -209,6 +214,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Set the bean instance that contains the method.
+		 *
 		 * @param bean The bean instance
 		 * @return This builder
 		 */
@@ -220,6 +226,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Set the logging consumer annotation.
+		 *
 		 * @param loggingConsumer The logging consumer annotation
 		 * @return This builder
 		 */
@@ -231,6 +238,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Validate the builder state.
+		 *
 		 * @throws IllegalArgumentException if the builder state is invalid
 		 */
 		protected void validate() {
@@ -244,6 +252,7 @@ public abstract class AbstractMcpLoggingMethodCallback {
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new callback instance
 		 */
 		public abstract R build();

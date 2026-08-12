@@ -16,14 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.method.resource.AbstractMcpResourceMethodCallback.ContentType;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

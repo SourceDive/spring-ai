@@ -16,12 +16,11 @@
 
 package org.springframework.ai.chat.client;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.prompt.Prompt;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.prompt.Prompt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,21 +35,21 @@ class ChatClientRequestTests {
 	@Test
 	void whenPromptIsNullThenThrow() {
 		assertThatThrownBy(() -> new ChatClientRequest(null, Map.of())).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("prompt cannot be null");
+				.hasMessage("prompt cannot be null");
 
 		assertThatThrownBy(() -> ChatClientRequest.builder().prompt(null).context(Map.of()).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("prompt cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("prompt cannot be null");
 	}
 
 	@Test
 	void whenContextIsNullThenThrow() {
 		assertThatThrownBy(() -> new ChatClientRequest(new Prompt(), null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.hasMessage("context cannot be null");
 
 		assertThatThrownBy(() -> ChatClientRequest.builder().prompt(new Prompt()).context(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("context cannot be null");
 	}
 
 	@Test
@@ -58,8 +57,8 @@ class ChatClientRequestTests {
 		Map<String, Object> context = new HashMap<>();
 		context.put(null, "something");
 		assertThatThrownBy(() -> new ChatClientRequest(new Prompt(), context))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context keys cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("context keys cannot be null");
 	}
 
 	@Test
@@ -105,9 +104,9 @@ class ChatClientRequestTests {
 	void whenMutateWithNewContextKeysThenMerged() {
 		Prompt prompt = new Prompt("test message");
 		ChatClientRequest original = ChatClientRequest.builder()
-			.prompt(prompt)
-			.context(Map.of("existing", "value"))
-			.build();
+				.prompt(prompt)
+				.context(Map.of("existing", "value"))
+				.build();
 
 		ChatClientRequest mutated = original.mutate().context("new1", "newValue1").context("new2", "newValue2").build();
 
@@ -122,9 +121,9 @@ class ChatClientRequestTests {
 	void whenMutateWithOverridingContextKeysThenOverridden() {
 		Prompt prompt = new Prompt("test message");
 		ChatClientRequest original = ChatClientRequest.builder()
-			.prompt(prompt)
-			.context(Map.of("key", "originalValue", "other", "untouched"))
-			.build();
+				.prompt(prompt)
+				.context(Map.of("key", "originalValue", "other", "untouched"))
+				.build();
 
 		ChatClientRequest mutated = original.mutate().context("key", "newValue").build();
 
@@ -139,9 +138,9 @@ class ChatClientRequestTests {
 		Prompt newPrompt = new Prompt("new message");
 
 		ChatClientRequest original = ChatClientRequest.builder()
-			.prompt(originalPrompt)
-			.context(Map.of("key", "value"))
-			.build();
+				.prompt(originalPrompt)
+				.context(Map.of("key", "value"))
+				.build();
 
 		ChatClientRequest mutated = original.mutate().prompt(newPrompt).build();
 
@@ -154,9 +153,9 @@ class ChatClientRequestTests {
 	void whenMutateContextWithMapThenMerged() {
 		Prompt prompt = new Prompt("test message");
 		ChatClientRequest original = ChatClientRequest.builder()
-			.prompt(prompt)
-			.context(Map.of("existing", "value"))
-			.build();
+				.prompt(prompt)
+				.context(Map.of("existing", "value"))
+				.build();
 
 		Map<String, Object> newContext = Map.of("new1", "value1", "new2", "value2");
 		ChatClientRequest mutated = original.mutate().context(newContext).build();
@@ -176,9 +175,9 @@ class ChatClientRequestTests {
 		java.util.List<String> list = java.util.List.of("item1", "item2");
 
 		ChatClientRequest request = ChatClientRequest.builder()
-			.prompt(prompt)
-			.context(Map.of("map", nestedMap, "list", list, "string", "value", "number", 123, "boolean", true))
-			.build();
+				.prompt(prompt)
+				.context(Map.of("map", nestedMap, "list", list, "string", "value", "number", 123, "boolean", true))
+				.build();
 
 		assertThat(request.context().get("map")).isEqualTo(nestedMap);
 		assertThat(request.context().get("list")).isEqualTo(list);

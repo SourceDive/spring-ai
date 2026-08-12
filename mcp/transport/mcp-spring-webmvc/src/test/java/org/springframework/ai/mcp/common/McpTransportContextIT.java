@@ -16,31 +16,19 @@
 
 package org.springframework.ai.mcp.common;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
-
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.client.transport.customizer.McpSyncHttpClientRequestCustomizer;
 import io.modelcontextprotocol.common.McpTransportContext;
-import io.modelcontextprotocol.server.McpServer;
-import io.modelcontextprotocol.server.McpServerFeatures;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures;
-import io.modelcontextprotocol.server.McpStatelessSyncServer;
-import io.modelcontextprotocol.server.McpSyncServer;
-import io.modelcontextprotocol.server.McpSyncServerExchange;
-import io.modelcontextprotocol.server.McpTransportContextExtractor;
+import io.modelcontextprotocol.server.*;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
 import org.springframework.ai.mcp.server.TomcatTestUtil;
 import org.springframework.ai.mcp.server.TomcatTestUtil.TomcatServer;
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcSseServerTransportProvider;
@@ -52,6 +40,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -95,7 +88,7 @@ public class McpTransportContextIT {
 	};
 
 	private final McpSyncHttpClientRequestCustomizer clientRequestCustomizer = (builder, method, endpoint, body,
-			context) -> {
+	                                                                            context) -> {
 		var headerValue = context.get("client-side-header-value");
 		if (headerValue != null) {
 			builder.header(HEADER_NAME, headerValue.toString());
@@ -104,9 +97,9 @@ public class McpTransportContextIT {
 
 	private static final BiFunction<McpTransportContext, McpSchema.CallToolRequest, McpSchema.CallToolResult> statelessHandler = (
 			transportContext, request) -> McpSchema.CallToolResult.builder()
-				.content(
-						List.of(new McpSchema.TextContent(transportContext.get("server-side-header-value").toString())))
-				.build();
+			.content(
+					List.of(new McpSchema.TextContent(transportContext.get("server-side-header-value").toString())))
+			.build();
 
 	private static final BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> statefulHandler = (
 			exchange, request) -> statelessHandler.apply(exchange.transportContext(), request);
@@ -123,9 +116,9 @@ public class McpTransportContextIT {
 	private McpSyncClient sseClient;
 
 	private static final McpSchema.Tool tool = McpSchema.Tool.builder()
-		.name("test-tool")
-		.description("return the value of the x-test header from call tool request")
-		.build();
+			.name("test-tool")
+			.description("return the value of the x-test header from call tool request")
+			.build();
 
 	@AfterEach
 	public void after() {
@@ -148,14 +141,14 @@ public class McpTransportContextIT {
 
 		CLIENT_SIDE_HEADER_VALUE_HOLDER.set("some important value");
 		McpSchema.CallToolResult response = this.streamableClient
-			.callTool(new McpSchema.CallToolRequest("test-tool", Map.of()));
+				.callTool(new McpSchema.CallToolRequest("test-tool", Map.of()));
 
 		assertThat(response).isNotNull();
 		assertThat(response.content()).hasSize(1)
-			.first()
-			.extracting(McpSchema.TextContent.class::cast)
-			.extracting(McpSchema.TextContent::text)
-			.isEqualTo("some important value");
+				.first()
+				.extracting(McpSchema.TextContent.class::cast)
+				.extracting(McpSchema.TextContent::text)
+				.isEqualTo("some important value");
 	}
 
 	@Test
@@ -168,14 +161,14 @@ public class McpTransportContextIT {
 
 		CLIENT_SIDE_HEADER_VALUE_HOLDER.set("some important value");
 		McpSchema.CallToolResult response = this.streamableClient
-			.callTool(new McpSchema.CallToolRequest("test-tool", Map.of()));
+				.callTool(new McpSchema.CallToolRequest("test-tool", Map.of()));
 
 		assertThat(response).isNotNull();
 		assertThat(response.content()).hasSize(1)
-			.first()
-			.extracting(McpSchema.TextContent.class::cast)
-			.extracting(McpSchema.TextContent::text)
-			.isEqualTo("some important value");
+				.first()
+				.extracting(McpSchema.TextContent.class::cast)
+				.extracting(McpSchema.TextContent::text)
+				.isEqualTo("some important value");
 	}
 
 	@Test
@@ -187,14 +180,14 @@ public class McpTransportContextIT {
 
 		CLIENT_SIDE_HEADER_VALUE_HOLDER.set("some important value");
 		McpSchema.CallToolResult response = this.sseClient
-			.callTool(new McpSchema.CallToolRequest("test-tool", Map.of()));
+				.callTool(new McpSchema.CallToolRequest("test-tool", Map.of()));
 
 		assertThat(response).isNotNull();
 		assertThat(response.content()).hasSize(1)
-			.first()
-			.extracting(McpSchema.TextContent.class::cast)
-			.extracting(McpSchema.TextContent::text)
-			.isEqualTo("some important value");
+				.first()
+				.extracting(McpSchema.TextContent.class::cast)
+				.extracting(McpSchema.TextContent::text)
+				.isEqualTo("some important value");
 	}
 
 	private void startTomcat(Class<?> componentClass) {
@@ -202,23 +195,22 @@ public class McpTransportContextIT {
 		try {
 			this.tomcatServer.tomcat().start();
 			assertThat(this.tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 		int port = this.tomcatServer.tomcat().getConnector().getLocalPort();
 		this.streamableClient = McpClient
-			.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
-				.httpRequestCustomizer(this.clientRequestCustomizer)
-				.build())
-			.transportContextProvider(this.clientContextProvider)
-			.build();
+				.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
+						.httpRequestCustomizer(this.clientRequestCustomizer)
+						.build())
+				.transportContextProvider(this.clientContextProvider)
+				.build();
 		this.sseClient = McpClient
-			.sync(HttpClientSseClientTransport.builder("http://127.0.0.1:" + port)
-				.httpRequestCustomizer(this.clientRequestCustomizer)
-				.build())
-			.transportContextProvider(this.clientContextProvider)
-			.build();
+				.sync(HttpClientSseClientTransport.builder("http://127.0.0.1:" + port)
+						.httpRequestCustomizer(this.clientRequestCustomizer)
+						.build())
+				.transportContextProvider(this.clientContextProvider)
+				.build();
 	}
 
 	private void stopTomcat() {
@@ -226,8 +218,7 @@ public class McpTransportContextIT {
 			try {
 				this.tomcatServer.tomcat().stop();
 				this.tomcatServer.tomcat().destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}
@@ -251,9 +242,9 @@ public class McpTransportContextIT {
 		@Bean
 		public McpStatelessSyncServer mcpStatelessServer(WebMvcStatelessServerTransport transportProvider) {
 			return McpServer.sync(transportProvider)
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.tools(new McpStatelessServerFeatures.SyncToolSpecification(tool, statelessHandler))
-				.build();
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.tools(new McpStatelessServerFeatures.SyncToolSpecification(tool, statelessHandler))
+					.build();
 		}
 
 	}
@@ -277,9 +268,9 @@ public class McpTransportContextIT {
 		@Bean
 		public McpSyncServer mcpStreamableServer(WebMvcStreamableServerTransportProvider transportProvider) {
 			return McpServer.sync(transportProvider)
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.tools(new McpServerFeatures.SyncToolSpecification(tool, statefulHandler))
-				.build();
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.tools(new McpServerFeatures.SyncToolSpecification(tool, statefulHandler))
+					.build();
 		}
 
 	}
@@ -292,9 +283,9 @@ public class McpTransportContextIT {
 		public WebMvcSseServerTransportProvider webMvcSseServerTransport() {
 
 			return WebMvcSseServerTransportProvider.builder()
-				.contextExtractor(serverContextExtractor)
-				.messageEndpoint("/mcp/message")
-				.build();
+					.contextExtractor(serverContextExtractor)
+					.messageEndpoint("/mcp/message")
+					.build();
 		}
 
 		@Bean
@@ -305,9 +296,9 @@ public class McpTransportContextIT {
 		@Bean
 		public McpSyncServer mcpSseServer(WebMvcSseServerTransportProvider transportProvider) {
 			return McpServer.sync(transportProvider)
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.tools(new McpServerFeatures.SyncToolSpecification(tool, statefulHandler))
-				.build();
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.tools(new McpServerFeatures.SyncToolSpecification(tool, statefulHandler))
+					.build();
 
 		}
 

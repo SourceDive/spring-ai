@@ -16,23 +16,22 @@
 
 package org.springframework.ai.vectorstore.bedrockknowledgebase;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
-import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
+import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -56,8 +55,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author Yuriy Bezsonov
  */
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "BEDROCK_KB_ID", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AWS_ACCESS_KEY_ID", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "BEDROCK_KB_ID", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AWS_ACCESS_KEY_ID", matches = ".+")})
 class BedrockKnowledgeBaseVectorStoreIT {
 
 	private static String knowledgeBaseId;
@@ -65,7 +64,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 	private static String awsRegion;
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	@BeforeAll
 	static void beforeAll() {
@@ -80,7 +79,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 
 			// Search with low threshold to ensure we get results
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("policy").topK(5).similarityThreshold(0.0).build());
+					.similaritySearch(SearchRequest.builder().query("policy").topK(5).similarityThreshold(0.0).build());
 
 			// Verify response structure - KB should have documents
 			assertThat(results).isNotEmpty();
@@ -98,7 +97,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 			VectorStore vectorStore = context.getBean(VectorStore.class);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("document").topK(2).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("document").topK(2).similarityThresholdAll().build());
 
 			assertThat(results).hasSizeLessThanOrEqualTo(2);
 		});
@@ -131,7 +130,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 			VectorStore vectorStore = context.getBean(VectorStore.class);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("travel").topK(5).similarityThreshold(0.0).build());
+					.similaritySearch(SearchRequest.builder().query("travel").topK(5).similarityThreshold(0.0).build());
 
 			// KB should have documents
 			assertThat(results).isNotEmpty();
@@ -175,7 +174,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 			VectorStore vectorStore = context.getBean(VectorStore.class);
 
 			assertThatThrownBy(() -> vectorStore.delete(List.of("id")))
-				.isInstanceOf(UnsupportedOperationException.class);
+					.isInstanceOf(UnsupportedOperationException.class);
 		});
 	}
 
@@ -185,7 +184,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 			VectorStore vectorStore = context.getBean(VectorStore.class);
 
 			assertThatThrownBy(() -> vectorStore.similaritySearch(SearchRequest.builder().query("").build()))
-				.isInstanceOf(IllegalArgumentException.class);
+					.isInstanceOf(IllegalArgumentException.class);
 		});
 	}
 
@@ -213,8 +212,7 @@ class BedrockKnowledgeBaseVectorStoreIT {
 						SearchRequest.builder().query("expense report").topK(3).similarityThreshold(0.0).build());
 				// If HYBRID is supported, verify results
 				assertThat(results).isNotNull();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				// HYBRID may not be supported - verify it's the expected error
 				assertThat(e.getMessage()).containsIgnoringCase("HYBRID");
 			}
@@ -228,11 +226,11 @@ class BedrockKnowledgeBaseVectorStoreIT {
 
 			// Search with a filter - even if no results match, should not throw
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("policy")
-				.topK(5)
-				.similarityThreshold(0.0)
-				.filterExpression("category == 'travel'")
-				.build());
+					.query("policy")
+					.topK(5)
+					.similarityThreshold(0.0)
+					.filterExpression("category == 'travel'")
+					.build());
 
 			// Filter may return empty if no matching metadata, but should not throw
 			assertThat(results).isNotNull();
@@ -245,17 +243,17 @@ class BedrockKnowledgeBaseVectorStoreIT {
 		@Bean
 		BedrockAgentRuntimeClient bedrockAgentRuntimeClient() {
 			return BedrockAgentRuntimeClient.builder()
-				.region(Region.of(awsRegion))
-				.credentialsProvider(DefaultCredentialsProvider.create())
-				.build();
+					.region(Region.of(awsRegion))
+					.credentialsProvider(DefaultCredentialsProvider.create())
+					.build();
 		}
 
 		@Bean
 		BedrockKnowledgeBaseVectorStore vectorStore(BedrockAgentRuntimeClient client) {
 			return BedrockKnowledgeBaseVectorStore.builder(client, knowledgeBaseId)
-				.topK(10)
-				.similarityThreshold(0.0)
-				.build();
+					.topK(10)
+					.similarityThreshold(0.0)
+					.build();
 		}
 
 	}
@@ -266,16 +264,16 @@ class BedrockKnowledgeBaseVectorStoreIT {
 		@Bean
 		BedrockAgentRuntimeClient bedrockAgentRuntimeClient() {
 			return BedrockAgentRuntimeClient.builder()
-				.region(Region.of(awsRegion))
-				.credentialsProvider(DefaultCredentialsProvider.create())
-				.build();
+					.region(Region.of(awsRegion))
+					.credentialsProvider(DefaultCredentialsProvider.create())
+					.build();
 		}
 
 		@Bean
 		BedrockKnowledgeBaseVectorStore vectorStore(BedrockAgentRuntimeClient client) {
 			return BedrockKnowledgeBaseVectorStore.builder(client, knowledgeBaseId)
-				.searchType(SearchType.SEMANTIC)
-				.build();
+					.searchType(SearchType.SEMANTIC)
+					.build();
 		}
 
 	}
@@ -286,16 +284,16 @@ class BedrockKnowledgeBaseVectorStoreIT {
 		@Bean
 		BedrockAgentRuntimeClient bedrockAgentRuntimeClient() {
 			return BedrockAgentRuntimeClient.builder()
-				.region(Region.of(awsRegion))
-				.credentialsProvider(DefaultCredentialsProvider.create())
-				.build();
+					.region(Region.of(awsRegion))
+					.credentialsProvider(DefaultCredentialsProvider.create())
+					.build();
 		}
 
 		@Bean
 		BedrockKnowledgeBaseVectorStore vectorStore(BedrockAgentRuntimeClient client) {
 			return BedrockKnowledgeBaseVectorStore.builder(client, knowledgeBaseId)
-				.searchType(SearchType.HYBRID)
-				.build();
+					.searchType(SearchType.HYBRID)
+					.build();
 		}
 
 	}

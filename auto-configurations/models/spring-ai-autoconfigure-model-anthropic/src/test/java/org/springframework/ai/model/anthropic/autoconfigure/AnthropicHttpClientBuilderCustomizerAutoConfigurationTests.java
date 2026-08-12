@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.anthropic.autoconfigure;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.anthropic.http.okhttp.AnthropicHttpClientBuilderCustomizer;
 import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,35 +40,35 @@ class AnthropicHttpClientBuilderCustomizerAutoConfigurationTests {
 	void customizerIsAppliedToChatModel() {
 		AtomicInteger invocations = new AtomicInteger();
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(
-					AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.withBean(AnthropicHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
-			.run(context -> assertThat(invocations.get())
-				.as("customizer must be called twice — once for the sync client and once for the async client")
-				.isEqualTo(2));
+				.withConfiguration(
+						AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.withBean(AnthropicHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
+				.run(context -> assertThat(invocations.get())
+						.as("customizer must be called twice — once for the sync client and once for the async client")
+						.isEqualTo(2));
 	}
 
 	@Test
 	void multipleCustomizersAreAllApplied() {
 		AtomicInteger invocations = new AtomicInteger();
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(
-					AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.withBean("first", AnthropicHttpClientBuilderCustomizer.class,
-					() -> builder -> invocations.incrementAndGet())
-			.withBean("second", AnthropicHttpClientBuilderCustomizer.class,
-					() -> builder -> invocations.incrementAndGet())
-			.run(context -> assertThat(invocations.get())
-				.as("each customizer must be called twice (once per client), so 2 customizers × 2 = 4")
-				.isEqualTo(4));
+				.withConfiguration(
+						AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.withBean("first", AnthropicHttpClientBuilderCustomizer.class,
+						() -> builder -> invocations.incrementAndGet())
+				.withBean("second", AnthropicHttpClientBuilderCustomizer.class,
+						() -> builder -> invocations.incrementAndGet())
+				.run(context -> assertThat(invocations.get())
+						.as("each customizer must be called twice (once per client), so 2 customizers × 2 = 4")
+						.isEqualTo(4));
 	}
 
 	@Test
 	void noCustomizerBeanIsToleratedGracefully() {
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(
-					AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> assertThat(context).hasNotFailed());
+				.withConfiguration(
+						AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> assertThat(context).hasNotFailed());
 	}
 
 }

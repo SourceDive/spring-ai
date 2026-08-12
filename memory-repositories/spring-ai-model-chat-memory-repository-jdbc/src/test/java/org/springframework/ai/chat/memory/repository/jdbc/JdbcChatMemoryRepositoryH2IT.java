@@ -26,7 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
  * @author Yanming Zhou
  */
 @SpringBootTest
-@TestPropertySource(properties = { "spring.datasource.url=jdbc:h2:mem:mydb" })
+@TestPropertySource(properties = {"spring.datasource.url=jdbc:h2:mem:mydb"})
 @Sql(scripts = "classpath:org/springframework/ai/chat/memory/repository/jdbc/schema-h2.sql",
 		executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class JdbcChatMemoryRepositoryH2IT extends AbstractJdbcChatMemoryRepositoryIT {

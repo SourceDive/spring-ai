@@ -16,17 +16,16 @@
 
 package org.springframework.ai.anthropic;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import com.anthropic.models.messages.CacheControlEphemeral;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.util.Assert;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Resolves cache eligibility for messages based on the provided
@@ -56,8 +55,8 @@ public class CacheEligibilityResolver {
 	private final Set<MessageType> cacheEligibleMessageTypes;
 
 	public CacheEligibilityResolver(AnthropicCacheStrategy cacheStrategy,
-			Map<MessageType, AnthropicCacheTtl> messageTypeTtl, Map<MessageType, Integer> messageTypeMinContentLengths,
-			Function<@Nullable String, Integer> contentLengthFunction, Set<MessageType> cacheEligibleMessageTypes) {
+	                                Map<MessageType, AnthropicCacheTtl> messageTypeTtl, Map<MessageType, Integer> messageTypeMinContentLengths,
+	                                Function<@Nullable String, Integer> contentLengthFunction, Set<MessageType> cacheEligibleMessageTypes) {
 		this.cacheStrategy = cacheStrategy;
 		this.messageTypeTtl = messageTypeTtl;
 		this.messageTypeMinContentLengths = messageTypeMinContentLengths;

@@ -16,12 +16,11 @@
 
 package org.springframework.ai.vectorstore.mongodb.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.vectorstore.properties.CommonVectorStoreProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 /**
  * Configuration properties for MongoDB Atlas Vector Store.

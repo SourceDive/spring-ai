@@ -16,12 +16,8 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.template.NoOpTemplateRenderer;
@@ -29,6 +25,9 @@ import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,14 +49,14 @@ class PromptTemplateTests {
 	@Test
 	void createWithEmptyTemplate() {
 		assertThatThrownBy(() -> new PromptTemplate("")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
 	void createWithNullTemplate() {
 		String template = null;
 		assertThatThrownBy(() -> new PromptTemplate(template)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("template cannot be null or empty");
+				.hasMessageContaining("template cannot be null or empty");
 	}
 
 	@Test
@@ -72,7 +71,7 @@ class PromptTemplateTests {
 	void createWithNullResource() {
 		Resource resource = null;
 		assertThatThrownBy(() -> new PromptTemplate(resource)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.hasMessageContaining("resource cannot be null");
 	}
 
 	@Test
@@ -80,8 +79,8 @@ class PromptTemplateTests {
 		String template = "Hello!";
 		Map<String, Object> variables = null;
 		assertThatThrownBy(() -> PromptTemplate.builder().template(template).variables(variables).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("variables cannot be null");
 	}
 
 	@Test
@@ -90,8 +89,8 @@ class PromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put(null, "value");
 		assertThatThrownBy(() -> PromptTemplate.builder().template(template).variables(variables).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("variables keys cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("variables keys cannot be null");
 	}
 
 	@Test
@@ -120,9 +119,9 @@ class PromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("greeting", "Hello");
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("{greeting} {name}!")
-			.variables(variables)
-			.build();
+				.template("{greeting} {name}!")
+				.variables(variables)
+				.build();
 
 		Map<String, Object> additionalVariables = new HashMap<>();
 		additionalVariables.put("name", "Spring AI");
@@ -178,9 +177,9 @@ class PromptTemplateTests {
 	void createWithCustomRenderer() {
 		TemplateRenderer customRenderer = new NoOpTemplateRenderer();
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("Hello {name}!")
-			.renderer(customRenderer)
-			.build();
+				.template("Hello {name}!")
+				.renderer(customRenderer)
+				.build();
 		assertThat(promptTemplate.render()).isEqualTo("Hello {name}!");
 	}
 
@@ -190,8 +189,8 @@ class PromptTemplateTests {
 		Resource resource = new ByteArrayResource(template.getBytes());
 
 		assertThatThrownBy(() -> PromptTemplate.builder().template(template).resource(resource).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Only one of template or resource can be set");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Only one of template or resource can be set");
 	}
 
 	// --- Builder Pattern Tests ---
@@ -210,9 +209,9 @@ class PromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("name", "Spring AI");
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("Hello {name}!")
-			.variables(variables) // Use builder's variable method
-			.build();
+				.template("Hello {name}!")
+				.variables(variables) // Use builder's variable method
+				.build();
 		assertThat(promptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -228,9 +227,9 @@ class PromptTemplateTests {
 	@Test
 	void addVariable_Builder() {
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("Hello {name}!")
-			.variables(Map.of("name", "Spring AI")) // Use variables() method
-			.build();
+				.template("Hello {name}!")
+				.variables(Map.of("name", "Spring AI")) // Use variables() method
+				.build();
 		assertThat(promptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -245,9 +244,9 @@ class PromptTemplateTests {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("greeting", "Hello");
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("{greeting} {name}!")
-			.variables(variables) // Set default variables via builder
-			.build();
+				.template("{greeting} {name}!")
+				.variables(variables) // Set default variables via builder
+				.build();
 
 		Map<String, Object> additionalVariables = new HashMap<>();
 		additionalVariables.put("name", "Spring AI");
@@ -263,9 +262,9 @@ class PromptTemplateTests {
 		variables.put("content", resource);
 
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("Hello {content}!")
-			.variables(variables) // Set resource variable via builder
-			.build();
+				.template("Hello {content}!")
+				.variables(variables) // Set resource variable via builder
+				.build();
 		assertThat(promptTemplate.render()).isEqualTo("Hello Spring AI!");
 	}
 
@@ -275,10 +274,10 @@ class PromptTemplateTests {
 		Map<String, Object> overwriteVars = Map.of("name", "Overwritten", "noun", "Day");
 
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("Hello {name} {noun}!")
-			.variables(initialVars) // Set initial variables
-			.variables(overwriteVars) // Overwrite with new variables
-			.build();
+				.template("Hello {name} {noun}!")
+				.variables(initialVars) // Set initial variables
+				.variables(overwriteVars) // Overwrite with new variables
+				.build();
 
 		// Expect only variables from the last call to be present
 		assertThat(promptTemplate.render()).isEqualTo("Hello Overwritten Day!");
@@ -290,9 +289,9 @@ class PromptTemplateTests {
 		TemplateRenderer customRenderer = new CustomTestRenderer();
 
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.renderer(customRenderer) // Set custom renderer
-			.build();
+				.template(template)
+				.renderer(customRenderer) // Set custom renderer
+				.build();
 
 		assertThat(promptTemplate.render()).isEqualTo(template + " (Rendered by Custom)");
 	}
@@ -314,9 +313,9 @@ class PromptTemplateTests {
 
 		// Build PromptTemplate: bind the Resource to "name" in this.variables
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template("How {name}")
-			.variables(Map.of("name", resource))
-			.build();
+				.template("How {name}")
+				.variables(Map.of("name", resource))
+				.build();
 
 		assertThat(promptTemplate.render(Map.of())).isEqualTo("How Hello, world!");
 	}

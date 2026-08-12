@@ -16,18 +16,19 @@
 
 package org.springframework.ai.vectorstore.opensearch.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.boot.autoconfigure.service.connection.ConnectionDetails;
+
+import java.util.List;
 
 public interface OpenSearchConnectionDetails extends ConnectionDetails {
 
 	List<String> getUris();
 
-	@Nullable String getUsername();
+	@Nullable
+	String getUsername();
 
-	@Nullable String getPassword();
+	@Nullable
+	String getPassword();
 
 }

@@ -16,9 +16,9 @@
 
 package org.springframework.ai.model.chat.memory.repository.jdbc.autoconfigure;
 
-import javax.sql.DataSource;
-
 import org.springframework.boot.jdbc.init.PropertiesBasedDataSourceScriptDatabaseInitializer;
+
+import javax.sql.DataSource;
 
 /**
  * Performs database initialization for the JDBC Chat Memory Repository.

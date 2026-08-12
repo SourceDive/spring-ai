@@ -16,22 +16,21 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.util.List;
-import java.util.Map;
-
 import com.redis.testcontainers.RedisContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,7 +48,7 @@ class RedisChatMemoryWithSchemaIT {
 	static RedisContainer redisContainer = new RedisContainer("redis/redis-stack:latest");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	private RedisChatMemoryRepository chatMemory;
 
@@ -58,8 +57,8 @@ class RedisChatMemoryWithSchemaIT {
 	@BeforeEach
 	void setUp() {
 		this.jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 
 		// Define metadata schema for proper indexing
 		List<Map<String, String>> metadataFields = List.of(Map.of("name", "priority", "type", "tag"),
@@ -70,10 +69,10 @@ class RedisChatMemoryWithSchemaIT {
 		String uniqueIndexName = "test-schema-" + System.currentTimeMillis();
 
 		this.chatMemory = RedisChatMemoryRepository.builder()
-			.jedisClient(this.jedisClient)
-			.indexName(uniqueIndexName)
-			.metadataFields(metadataFields)
-			.build();
+				.jedisClient(this.jedisClient)
+				.indexName(uniqueIndexName)
+				.metadataFields(metadataFields)
+				.build();
 
 		// Clear existing test data
 		this.chatMemory.findConversationIds().forEach(this.chatMemory::clear);
@@ -117,34 +116,34 @@ class RedisChatMemoryWithSchemaIT {
 
 			// Test finding by tag metadata (priority)
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> highPriorityMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("priority", "high", 10);
+					.findByMetadata("priority", "high", 10);
 
 			assertThat(highPriorityMessages).hasSize(1);
 			assertThat(highPriorityMessages.get(0).message().getText()).isEqualTo("High priority task");
 
 			// Test finding by tag metadata (category)
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> taskMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("category", "task", 10);
+					.findByMetadata("category", "task", 10);
 
 			assertThat(taskMessages).hasSize(1);
 
 			// Test finding by numeric metadata (score)
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> highScoreMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("score", 95, 10);
+					.findByMetadata("score", 95, 10);
 
 			assertThat(highScoreMessages).hasSize(1);
 			assertThat(highScoreMessages.get(0).message().getMetadata().get("score")).isEqualTo(95.0);
 
 			// Test finding by numeric metadata (confidence)
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> confidentMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("confidence", 0.95, 10);
+					.findByMetadata("confidence", 0.95, 10);
 
 			assertThat(confidentMessages).hasSize(1);
 			assertThat(confidentMessages.get(0).message().getMetadata().get("model")).isEqualTo("gpt-4");
 
 			// Test with non-existent metadata key (not in schema)
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> nonExistentMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("nonexistent", "value", 10);
+					.findByMetadata("nonexistent", "value", 10);
 
 			assertThat(nonExistentMessages).isEmpty();
 
@@ -167,14 +166,14 @@ class RedisChatMemoryWithSchemaIT {
 
 			// Defined field should work with exact match
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> priorityMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("priority", "medium", 10);
+					.findByMetadata("priority", "medium", 10);
 
 			assertThat(priorityMessages).hasSize(1);
 
 			// Undefined field will fall back to text search in general metadata
 			// This may or may not find the message depending on how the text is indexed
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> customMessages = ((AdvancedRedisChatMemoryRepository) this.chatMemory)
-				.findByMetadata("customField", "customValue", 10);
+					.findByMetadata("customField", "customValue", 10);
 
 			// The result depends on whether the general metadata text field caught this
 			// In practice, users should define all metadata fields they want to search on
@@ -197,12 +196,12 @@ class RedisChatMemoryWithSchemaIT {
 			String uniqueIndexName = "test-schema-app-" + System.currentTimeMillis();
 
 			return RedisChatMemoryRepository.builder()
-				.jedisClient(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build())
-				.indexName(uniqueIndexName)
-				.metadataFields(metadataFields)
-				.build();
+					.jedisClient(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build())
+					.indexName(uniqueIndexName)
+					.metadataFields(metadataFields)
+					.build();
 		}
 
 	}

@@ -16,16 +16,12 @@
 
 package org.springframework.ai.vectorstore.cassandra;
 
-import java.util.List;
-
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -33,13 +29,16 @@ import org.springframework.ai.vectorstore.cassandra.CassandraVectorStore.SchemaC
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Example integration-test to use against the schema and full wiki datasets in stable
  * format available from https://github.com/datastax-labs/colbert-wikipedia-data
- *
+ * <p>
  * Use `mvn failsafe:integration-test -Dit.test=WikiVectorStoreExample`
  *
  * @author Mick Semb Wever
@@ -50,7 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WikiVectorStoreExample {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	@Test
 	void ensureBeanGetsCreated() {
@@ -91,31 +90,31 @@ class WikiVectorStoreExample {
 					new SchemaColumn("id", DataTypes.INT));
 
 			return CassandraVectorStore.builder(embeddingModel)
-				.session(cqlSession)
-				.keyspace("wikidata")
-				.table("articles")
-				.partitionKeys(partitionColumns)
-				.clusteringKeys(clusteringColumns)
-				.contentColumnName("body")
-				.embeddingColumnName("all_minilm_l6_v2_embedding")
-				.indexName("all_minilm_l6_v2_ann")
-				.initializeSchema(false)
-				.addMetadataColumns(extraColumns)
-				.primaryKeyTranslator((List<Object> primaryKeys) -> {
-					// the deliminator used to join fields together into the document's id
-					// is arbitrary, here "§¶" is used
-					if (primaryKeys.isEmpty()) {
-						return "test§¶0";
-					}
-					return String.format("%s§¶%s", primaryKeys.get(2), primaryKeys.get(3));
-				})
-				.documentIdTranslator(id -> {
-					String[] parts = id.split("§¶");
-					String title = parts[0];
-					int chunk_no = 0 < parts.length ? Integer.parseInt(parts[1]) : 0;
-					return List.of("simplewiki", "en", title, chunk_no, 0);
-				})
-				.build();
+					.session(cqlSession)
+					.keyspace("wikidata")
+					.table("articles")
+					.partitionKeys(partitionColumns)
+					.clusteringKeys(clusteringColumns)
+					.contentColumnName("body")
+					.embeddingColumnName("all_minilm_l6_v2_embedding")
+					.indexName("all_minilm_l6_v2_ann")
+					.initializeSchema(false)
+					.addMetadataColumns(extraColumns)
+					.primaryKeyTranslator((List<Object> primaryKeys) -> {
+						// the deliminator used to join fields together into the document's id
+						// is arbitrary, here "§¶" is used
+						if (primaryKeys.isEmpty()) {
+							return "test§¶0";
+						}
+						return String.format("%s§¶%s", primaryKeys.get(2), primaryKeys.get(3));
+					})
+					.documentIdTranslator(id -> {
+						String[] parts = id.split("§¶");
+						String title = parts[0];
+						int chunk_no = 0 < parts.length ? Integer.parseInt(parts[1]) : 0;
+						return List.of("simplewiki", "en", title, chunk_no, 0);
+					})
+					.build();
 		}
 
 		@Bean
@@ -127,8 +126,8 @@ class WikiVectorStoreExample {
 		@Bean
 		public CqlSession cqlSession() {
 			return new CqlSessionBuilder()
-				// presumes a local C* cluster is running
-				.build();
+					// presumes a local C* cluster is running
+					.build();
 		}
 
 	}

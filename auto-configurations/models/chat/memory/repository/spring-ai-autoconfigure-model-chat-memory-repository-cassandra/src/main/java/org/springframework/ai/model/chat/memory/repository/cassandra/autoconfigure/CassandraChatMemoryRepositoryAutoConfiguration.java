@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  */
 // Ordering is to make sure ChatMemoryRepository bean is cassandra one
 @AutoConfiguration(before = ChatMemoryAutoConfiguration.class)
-@ConditionalOnClass({ CassandraChatMemoryRepository.class, CqlSession.class })
+@ConditionalOnClass({CassandraChatMemoryRepository.class, CqlSession.class})
 @EnableConfigurationProperties(CassandraChatMemoryRepositoryProperties.class)
 public class CassandraChatMemoryRepositoryAutoConfiguration {
 
@@ -46,10 +46,10 @@ public class CassandraChatMemoryRepositoryAutoConfiguration {
 			CassandraChatMemoryRepositoryProperties properties, CqlSession cqlSession) {
 
 		var builder = CassandraChatMemoryRepositoryConfig.builder()
-			.withCqlSession(cqlSession)
-			.withKeyspaceName(properties.getKeyspace())
-			.withTableName(properties.getTable())
-			.withMessagesColumnName(properties.getMessagesColumn());
+				.withCqlSession(cqlSession)
+				.withKeyspaceName(properties.getKeyspace())
+				.withTableName(properties.getTable())
+				.withMessagesColumnName(properties.getMessagesColumn());
 
 		if (!properties.isInitializeSchema()) {
 			builder.disallowSchemaChanges();

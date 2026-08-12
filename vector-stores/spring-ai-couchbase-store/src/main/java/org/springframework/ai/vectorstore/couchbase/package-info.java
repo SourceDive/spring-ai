@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.couchbase;
 
-import org.jspecify.annotations.NullMarked;

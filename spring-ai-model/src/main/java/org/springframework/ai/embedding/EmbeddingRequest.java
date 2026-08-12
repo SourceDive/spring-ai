@@ -16,11 +16,10 @@
 
 package org.springframework.ai.embedding;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ModelRequest;
+
+import java.util.List;
 
 /**
  * Request to embed a list of input instructions.

@@ -16,17 +16,8 @@
 
 package org.springframework.ai.aot;
 
-import java.util.Set;
-
 import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.messages.AbstractMessage;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.content.Content;
 import org.springframework.ai.content.MediaContent;
 import org.springframework.ai.tool.ToolCallback;
@@ -35,6 +26,8 @@ import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.Set;
 
 public class SpringAiCoreRuntimeHints implements RuntimeHintsRegistrar {
 

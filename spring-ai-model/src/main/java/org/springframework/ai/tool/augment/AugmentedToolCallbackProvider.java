@@ -16,14 +16,13 @@
 
 package org.springframework.ai.tool.augment;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
+
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 /**
  * @author Christian Tzolov
@@ -40,13 +39,13 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 	private final Class<T> argumentType;
 
 	public AugmentedToolCallbackProvider(Object toolObject, Class<T> argumentType,
-			Consumer<AugmentedArgumentEvent<T>> argumentConsumer, boolean removeExtraArgumentsAfterProcessing) {
+	                                     Consumer<AugmentedArgumentEvent<T>> argumentConsumer, boolean removeExtraArgumentsAfterProcessing) {
 		this(MethodToolCallbackProvider.builder().toolObjects(toolObject).build(), argumentType, argumentConsumer,
 				removeExtraArgumentsAfterProcessing);
 	}
 
 	public AugmentedToolCallbackProvider(ToolCallbackProvider delegate, Class<T> argumentType,
-			Consumer<AugmentedArgumentEvent<T>> argumentConsumer, boolean removeExtraArgumentsAfterProcessing) {
+	                                     Consumer<AugmentedArgumentEvent<T>> argumentConsumer, boolean removeExtraArgumentsAfterProcessing) {
 		this.delegate = delegate;
 		this.argumentType = argumentType;
 		this.argumentConsumer = argumentConsumer;
@@ -57,14 +56,15 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 	public ToolCallback[] getToolCallbacks() {
 
 		return Arrays.stream(this.delegate.getToolCallbacks())
-			.map(toolCallback -> new AugmentedToolCallback<T>(toolCallback, this.argumentType, this.argumentConsumer,
-					this.removeExtraArgumentsAfterProcessing))
-			.toArray(ToolCallback[]::new);
+				.map(toolCallback -> new AugmentedToolCallback<T>(toolCallback, this.argumentType, this.argumentConsumer,
+						this.removeExtraArgumentsAfterProcessing))
+				.toArray(ToolCallback[]::new);
 
 	}
 
 	/**
 	 * Creates a new builder instance
+	 *
 	 * @param <T> the argument type
 	 * @return a new builder
 	 */
@@ -89,6 +89,7 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 
 		/**
 		 * Sets the delegate ToolCallbackProvider
+		 *
 		 * @param delegate the delegate provider
 		 * @return this builder
 		 */
@@ -99,6 +100,7 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 
 		/**
 		 * Sets the tool object (alternative to delegate)
+		 *
 		 * @param toolObject the tool object
 		 * @return this builder
 		 */
@@ -109,6 +111,7 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 
 		/**
 		 * Sets the argument type
+		 *
 		 * @param argumentType the class of the argument type
 		 * @return this builder
 		 */
@@ -119,6 +122,7 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 
 		/**
 		 * Sets the argument consumer
+		 *
 		 * @param argumentConsumer the consumer for arguments
 		 * @return this builder
 		 */
@@ -129,6 +133,7 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 
 		/**
 		 * Sets whether to remove extra arguments after processing
+		 *
 		 * @param removeExtraArgumentsAfterProcessing true to remove extra arguments
 		 * @return this builder
 		 */
@@ -139,6 +144,7 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 
 		/**
 		 * Builds the {@link AugmentedToolCallbackProvider} instance.
+		 *
 		 * @return the built instance
 		 * @throws IllegalStateException if required fields are not set
 		 */
@@ -161,12 +167,10 @@ public class AugmentedToolCallbackProvider<T extends Record> implements ToolCall
 			if (this.toolObject != null) {
 				return new AugmentedToolCallbackProvider<>(this.toolObject, this.argumentType, this.argumentConsumer,
 						this.removeExtraArgumentsAfterProcessing);
-			}
-			else if (this.delegate != null) { // Redundant if condition to please NullAway
+			} else if (this.delegate != null) { // Redundant if condition to please NullAway
 				return new AugmentedToolCallbackProvider<>(this.delegate, this.argumentType, this.argumentConsumer,
 						this.removeExtraArgumentsAfterProcessing);
-			}
-			else {
+			} else {
 				throw new IllegalStateException();
 			}
 		}

@@ -49,8 +49,8 @@ public class OpenAiChatModelNoOpApiKeysIT {
 		@Bean
 		public OpenAiChatModel openAiClient() {
 			return OpenAiChatModel.builder()
-				.options(org.springframework.ai.openai.OpenAiChatOptions.builder().apiKey(new NoopApiKey()).build())
-				.build();
+					.options(org.springframework.ai.openai.OpenAiChatOptions.builder().apiKey(new NoopApiKey()).build())
+					.build();
 		}
 
 	}

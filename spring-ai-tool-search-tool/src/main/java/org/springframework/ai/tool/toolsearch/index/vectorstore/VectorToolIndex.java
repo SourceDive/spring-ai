@@ -16,19 +16,9 @@
 
 package org.springframework.ai.tool.toolsearch.index.vectorstore;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.toolsearch.ToolIndex;
 import org.springframework.ai.tool.toolsearch.ToolReference;
@@ -39,6 +29,11 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.util.Assert;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Vector-based tool searcher for semantic search of tool descriptions.
@@ -72,8 +67,9 @@ public class VectorToolIndex implements Closeable, ToolIndex {
 
 	/**
 	 * Creates a new VectorToolIndex with the given vector store.
+	 *
 	 * @param vectorStore the vector store to use for storing and searching tool
-	 * embeddings
+	 *                    embeddings
 	 */
 	public VectorToolIndex(VectorStore vectorStore) {
 		Assert.notNull(vectorStore, "VectorStore must not be null");
@@ -91,8 +87,7 @@ public class VectorToolIndex implements Closeable, ToolIndex {
 			if (logger.isInfoEnabled()) {
 				logger.info("Cleared " + toolIds.size() + " tools for sessionId=" + sessionId);
 			}
-		}
-		else if (logger.isInfoEnabled()) {
+		} else if (logger.isInfoEnabled()) {
 			logger.info("No tools found for sessionId=" + sessionId);
 		}
 	}
@@ -141,40 +136,41 @@ public class VectorToolIndex implements Closeable, ToolIndex {
 				DEFAULT_SIMILARITY_THRESHOLD);
 
 		List<ToolReference> toolReferences = docs.stream()
-			.map(doc -> ToolReference.builder()
-				.toolName((String) Objects.requireNonNull(doc.getMetadata().get(METADATA_TOOL_NAME)))
-				.relevanceScore(Objects.requireNonNullElse(doc.getScore(), 0.0))
-				.summary((String) Objects.requireNonNull(doc.getMetadata().get(METADATA_TOOL_DESCRIPTION)))
-				.build())
-			.toList();
+				.map(doc -> ToolReference.builder()
+						.toolName((String) Objects.requireNonNull(doc.getMetadata().get(METADATA_TOOL_NAME)))
+						.relevanceScore(Objects.requireNonNullElse(doc.getScore(), 0.0))
+						.summary((String) Objects.requireNonNull(doc.getMetadata().get(METADATA_TOOL_DESCRIPTION)))
+						.build())
+				.toList();
 
 		return ToolSearchResponse.builder()
-			.toolReferences(toolReferences)
-			.totalMatches(toolReferences.size())
-			.searchMetadata(SearchMetadata.builder()
-				.searchType(this.getClass().getSimpleName())
-				.query(toolSearchRequest.query())
-				.build())
-			.build();
+				.toolReferences(toolReferences)
+				.totalMatches(toolReferences.size())
+				.searchMetadata(SearchMetadata.builder()
+						.searchType(this.getClass().getSimpleName())
+						.query(toolSearchRequest.query())
+						.build())
+				.build();
 	}
 
 	/**
 	 * Searches the vector store with full control over parameters.
-	 * @param queryString the search query
-	 * @param sessionId if non-null, restricts results to this session's indexed tools
-	 * @param maxResults maximum number of results to return
+	 *
+	 * @param queryString         the search query
+	 * @param sessionId           if non-null, restricts results to this session's indexed tools
+	 * @param maxResults          maximum number of results to return
 	 * @param similarityThreshold minimum similarity score (0.0–1.0)
 	 * @return matching documents sorted by descending similarity score
 	 */
 	private List<Document> doSearch(String queryString, @Nullable String sessionId, int maxResults,
-			double similarityThreshold) {
+	                                double similarityThreshold) {
 		var b = new FilterExpressionBuilder();
 		SearchRequest searchRequest = SearchRequest.builder()
-			.query(queryString)
-			.topK(maxResults)
-			.similarityThreshold(similarityThreshold)
-			.filterExpression(sessionId != null ? b.eq(METADATA_SESSION_ID, sessionId).build() : null)
-			.build();
+				.query(queryString)
+				.topK(maxResults)
+				.similarityThreshold(similarityThreshold)
+				.filterExpression(sessionId != null ? b.eq(METADATA_SESSION_ID, sessionId).build() : null)
+				.build();
 
 		return this.vectorStore.similaritySearch(searchRequest);
 	}

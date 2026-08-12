@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -102,8 +101,8 @@ class ToolCallingChatOptionsTests {
 				defaultToolContext);
 		assertThat(mergedToolContext).hasSize(3);
 		assertThat(mergedToolContext).containsEntry("key1", "value1")
-			.containsEntry("key2", "value2")
-			.containsEntry("key3", "value3");
+				.containsEntry("key2", "value2")
+				.containsEntry("key3", "value3");
 	}
 
 	@Test
@@ -158,8 +157,8 @@ class ToolCallingChatOptionsTests {
 	void shouldEnsureUniqueToolNames() {
 		List<ToolCallback> toolCallbacks = List.of(new TestToolCallback("toolA"), new TestToolCallback("toolA"));
 		assertThatThrownBy(() -> ToolCallingChatOptions.validateToolCallbacks(toolCallbacks))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name (toolA)");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Multiple tools with the same name (toolA)");
 	}
 
 	static class TestToolCallback implements ToolCallback {

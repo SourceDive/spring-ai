@@ -20,15 +20,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Christian Tzolov
@@ -48,8 +45,8 @@ public class PgVectorEmbeddingDimensionsTests {
 		final int explicitDimensions = 696;
 
 		PgVectorStore pgVectorStore = PgVectorStore.builder(this.jdbcTemplate, this.embeddingModel)
-			.dimensions(explicitDimensions)
-			.build();
+				.dimensions(explicitDimensions)
+				.build();
 		var dim = pgVectorStore.embeddingDimensions();
 
 		assertThat(dim).isEqualTo(explicitDimensions);
@@ -107,8 +104,8 @@ public class PgVectorEmbeddingDimensionsTests {
 		given(this.embeddingModel.dimensions()).willReturn(embeddingModelDimensions);
 
 		PgVectorStore pgVectorStore = PgVectorStore.builder(this.jdbcTemplate, this.embeddingModel)
-			.dimensions(0)
-			.build();
+				.dimensions(0)
+				.build();
 		int actualDimensions = pgVectorStore.embeddingDimensions();
 
 		assertThat(actualDimensions).isEqualTo(embeddingModelDimensions);
@@ -121,8 +118,8 @@ public class PgVectorEmbeddingDimensionsTests {
 		given(this.embeddingModel.dimensions()).willReturn(embeddingModelDimensions);
 
 		PgVectorStore pgVectorStore = PgVectorStore.builder(this.jdbcTemplate, this.embeddingModel)
-			.dimensions(-1)
-			.build();
+				.dimensions(-1)
+				.build();
 		int actualDimensions = pgVectorStore.embeddingDimensions();
 
 		assertThat(actualDimensions).isEqualTo(embeddingModelDimensions);

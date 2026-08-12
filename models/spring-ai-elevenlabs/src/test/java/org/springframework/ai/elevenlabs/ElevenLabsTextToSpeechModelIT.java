@@ -16,12 +16,8 @@
 
 package org.springframework.ai.elevenlabs;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.audio.tts.Speech;
 import org.springframework.ai.audio.tts.TextToSpeechPrompt;
 import org.springframework.ai.audio.tts.TextToSpeechResponse;
@@ -29,6 +25,9 @@ import org.springframework.ai.elevenlabs.api.ElevenLabsApi;
 import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -84,22 +83,22 @@ public class ElevenLabsTextToSpeechModelIT {
 	@Test
 	void invalidVoiceId() {
 		ElevenLabsTextToSpeechOptions options = ElevenLabsTextToSpeechOptions.builder()
-			.model("eleven_turbo_v2_5")
-			.voiceId("invalid-voice-id")
-			.outputFormat(ElevenLabsApi.OutputFormat.MP3_44100_128.getValue())
-			.build();
+				.model("eleven_turbo_v2_5")
+				.voiceId("invalid-voice-id")
+				.outputFormat(ElevenLabsApi.OutputFormat.MP3_44100_128.getValue())
+				.build();
 
 		TextToSpeechPrompt speechPrompt = new TextToSpeechPrompt("Hello, this is a text-to-speech example.", options);
 
 		assertThatThrownBy(() -> this.textToSpeechModel.call(speechPrompt)).isInstanceOf(NonTransientAiException.class)
-			.hasMessageContaining("An invalid ID has been received: 'invalid-voice-id'");
+				.hasMessageContaining("An invalid ID has been received: 'invalid-voice-id'");
 	}
 
 	@Test
 	void emptyInputText() {
 		TextToSpeechPrompt prompt = new TextToSpeechPrompt("");
 		assertThatThrownBy(() -> this.textToSpeechModel.call(prompt)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("A voiceId must be specified in the ElevenLabsSpeechOptions.");
+				.hasMessageContaining("A voiceId must be specified in the ElevenLabsSpeechOptions.");
 	}
 
 }

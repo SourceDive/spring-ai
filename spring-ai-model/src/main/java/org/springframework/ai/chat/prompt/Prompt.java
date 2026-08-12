@@ -16,23 +16,13 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-
 import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.model.ModelRequest;
 import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * The Prompt class represents a prompt used in AI model requests. A prompt consists of
@@ -142,6 +132,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 
 	/**
 	 * Get all system messages in the prompt.
+	 *
 	 * @return a list of all system messages in the prompt
 	 */
 	public List<SystemMessage> getSystemMessages() {
@@ -156,6 +147,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 
 	/**
 	 * Get all user messages in the prompt.
+	 *
 	 * @return a list of all user messages in the prompt
 	 */
 	public List<UserMessage> getUserMessages() {
@@ -198,24 +190,20 @@ public class Prompt implements ModelRequest<List<Message>> {
 		this.messages.forEach(message -> {
 			if (message instanceof UserMessage userMessage) {
 				messagesCopy.add(userMessage.copy());
-			}
-			else if (message instanceof SystemMessage systemMessage) {
+			} else if (message instanceof SystemMessage systemMessage) {
 				messagesCopy.add(systemMessage.copy());
-			}
-			else if (message instanceof AssistantMessage assistantMessage) {
+			} else if (message instanceof AssistantMessage assistantMessage) {
 				messagesCopy.add(AssistantMessage.builder()
-					.content(Objects.requireNonNullElse(assistantMessage.getText(), ""))
-					.properties(assistantMessage.getMetadata())
-					.toolCalls(assistantMessage.getToolCalls())
-					.build());
-			}
-			else if (message instanceof ToolResponseMessage toolResponseMessage) {
+						.content(Objects.requireNonNullElse(assistantMessage.getText(), ""))
+						.properties(assistantMessage.getMetadata())
+						.toolCalls(assistantMessage.getToolCalls())
+						.build());
+			} else if (message instanceof ToolResponseMessage toolResponseMessage) {
 				messagesCopy.add(ToolResponseMessage.builder()
-					.responses(new ArrayList<>(toolResponseMessage.getResponses()))
-					.metadata(new HashMap<>(toolResponseMessage.getMetadata()))
-					.build());
-			}
-			else {
+						.responses(new ArrayList<>(toolResponseMessage.getResponses()))
+						.metadata(new HashMap<>(toolResponseMessage.getMetadata()))
+						.build());
+			} else {
 				throw new IllegalArgumentException("Unsupported message type: " + message.getClass().getName());
 			}
 		});
@@ -226,6 +214,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the first system message in the prompt with the provided function. If no
 	 * system message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented system message.
 	 */
 	public Prompt augmentSystemMessage(Function<SystemMessage, SystemMessage> systemMessageAugmenter) {
@@ -250,6 +239,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the last system message in the prompt with the provided text. If no system
 	 * message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented system message.
 	 */
 	public Prompt augmentSystemMessage(String newSystemText) {
@@ -259,6 +249,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the last user message in the prompt with the provided function. If no user
 	 * message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented user message.
 	 */
 	public Prompt augmentUserMessage(Function<UserMessage, UserMessage> userMessageAugmenter) {
@@ -280,6 +271,7 @@ public class Prompt implements ModelRequest<List<Message>> {
 	/**
 	 * Augments the last user message in the prompt with the provided text. If no user
 	 * message is found, a new one is created with the provided text.
+	 *
 	 * @return a new {@link Prompt} instance with the augmented user message.
 	 */
 	public Prompt augmentUserMessage(String newUserText) {

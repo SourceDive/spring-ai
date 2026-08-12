@@ -16,13 +16,9 @@
 
 package org.springframework.ai.mcp.annotation.method.sampling;
 
-import java.util.List;
+import io.modelcontextprotocol.spec.McpSchema.*;
 
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.ModelPreferences;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.SamplingMessage;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import java.util.List;
 
 /**
  * Test helper for sampling tests.
@@ -36,6 +32,7 @@ public final class SamplingTestHelper {
 
 	/**
 	 * Helper method to create a sample request.
+	 *
 	 * @return A sample request
 	 */
 	public static CreateMessageRequest createSampleRequest() {
@@ -43,12 +40,12 @@ public final class SamplingTestHelper {
 				new TextContent("Hello, can you help me with a task?"));
 
 		return CreateMessageRequest.builder()
-			.messages(List.of(userMessage))
-			.modelPreferences(ModelPreferences.builder().addHint("claude-3-haiku").build())
-			.systemPrompt("You are a helpful assistant.")
-			.temperature(0.7)
-			.maxTokens(100)
-			.build();
+				.messages(List.of(userMessage))
+				.modelPreferences(ModelPreferences.builder().addHint("claude-3-haiku").build())
+				.systemPrompt("You are a helpful assistant.")
+				.temperature(0.7)
+				.maxTokens(100)
+				.build();
 	}
 
 }

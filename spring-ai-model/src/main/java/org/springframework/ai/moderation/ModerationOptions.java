@@ -28,6 +28,7 @@ import org.springframework.ai.model.ModelOptions;
  */
 public interface ModerationOptions extends ModelOptions {
 
-	@Nullable String getModel();
+	@Nullable
+	String getModel();
 
 }

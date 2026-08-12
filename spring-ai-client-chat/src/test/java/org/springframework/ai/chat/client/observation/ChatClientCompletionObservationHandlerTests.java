@@ -16,12 +16,9 @@
 
 package org.springframework.ai.chat.client.observation;
 
-import java.util.List;
-
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -30,6 +27,8 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,19 +51,19 @@ class ChatClientCompletionObservationHandlerTests {
 	@Test
 	void whenSupportedObservationContextThenReturnTrue() {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
+				.build();
 		assertThat(this.observationHandler.supportsContext(context)).isTrue();
 	}
 
 	@Test
 	void whenEmptyResponseThenOutputNothing(CapturedOutput output) {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
+				.build();
 		var response = ChatClientResponse.builder()
-			.chatResponse(ChatResponse.builder().generations(List.of(new Generation(new AssistantMessage("")))).build())
-			.build();
+				.chatResponse(ChatResponse.builder().generations(List.of(new Generation(new AssistantMessage("")))).build())
+				.build();
 		context.setResponse(response);
 
 		this.observationHandler.onStop(context);
@@ -77,8 +76,8 @@ class ChatClientCompletionObservationHandlerTests {
 	@Test
 	void whenNullResponseThenOutputNothing(CapturedOutput output) {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
+				.build();
 
 		this.observationHandler.onStop(context);
 		assertThat(output).contains("""
@@ -90,13 +89,13 @@ class ChatClientCompletionObservationHandlerTests {
 	@Test
 	void whenResponseWithTextThenOutputIt(CapturedOutput output) {
 		var context = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt(List.of())).build())
+				.build();
 		var response = ChatClientResponse.builder()
-			.chatResponse(ChatResponse.builder()
-				.generations(List.of(new Generation(new AssistantMessage("Test message"))))
-				.build())
-			.build();
+				.chatResponse(ChatResponse.builder()
+						.generations(List.of(new Generation(new AssistantMessage("Test message"))))
+						.build())
+				.build();
 		context.setResponse(response);
 
 		this.observationHandler.onStop(context);

@@ -16,16 +16,9 @@
 
 package org.springframework.ai.integration.tests.vectorstore;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.integration.tests.TestApplication;
@@ -34,6 +27,12 @@ import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,27 +50,26 @@ public class SimpleVectorStoreIT {
 
 	List<Document> documents = List.of(
 			Document.builder()
-				.id("471a8c78-549a-4b2c-bce5-ef3ae6579be3")
-				.text(getText("classpath:/test/data/spring.ai.txt"))
-				.metadata(Map.of("meta1", "meta1"))
-				.build(),
+					.id("471a8c78-549a-4b2c-bce5-ef3ae6579be3")
+					.text(getText("classpath:/test/data/spring.ai.txt"))
+					.metadata(Map.of("meta1", "meta1"))
+					.build(),
 			Document.builder()
-				.id("bc51d7f7-627b-4ba6-adf4-f0bcd1998f8f")
-				.text(getText("classpath:/test/data/time.shelter.txt"))
-				.metadata(Map.of())
-				.build(),
+					.id("bc51d7f7-627b-4ba6-adf4-f0bcd1998f8f")
+					.text(getText("classpath:/test/data/time.shelter.txt"))
+					.metadata(Map.of())
+					.build(),
 			Document.builder()
-				.id("d0237682-1150-44ff-b4d2-1be9b1731ee5")
-				.text(getText("classpath:/test/data/great.depression.txt"))
-				.metadata(Map.of("meta2", "meta2"))
-				.build());
+					.id("d0237682-1150-44ff-b4d2-1be9b1731ee5")
+					.text(getText("classpath:/test/data/great.depression.txt"))
+					.metadata(Map.of("meta2", "meta2"))
+					.build());
 
 	public static String getText(String uri) {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -84,15 +82,15 @@ public class SimpleVectorStoreIT {
 	@Test
 	public void searchWithThreshold() {
 		Document document = Document.builder()
-			.id(UUID.randomUUID().toString())
-			.text("Spring AI rocks!!")
-			.metadata("meta1", "meta1")
-			.build();
+				.id(UUID.randomUUID().toString())
+				.text("Spring AI rocks!!")
+				.metadata("meta1", "meta1")
+				.build();
 
 		this.vectorStore.add(List.of(document));
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 		assertThat(results).hasSize(1);
 		Document resultDoc = results.get(0);
@@ -102,10 +100,10 @@ public class SimpleVectorStoreIT {
 		assertThat(resultDoc.getMetadata()).containsKey(DocumentMetadata.DISTANCE.value());
 
 		Document sameIdDocument = Document.builder()
-			.id(document.getId())
-			.text("The World is Big and Salvation Lurks Around the Corner")
-			.metadata("meta2", "meta2")
-			.build();
+				.id(document.getId())
+				.text("The World is Big and Salvation Lurks Around the Corner")
+				.metadata("meta2", "meta2")
+				.build();
 
 		this.vectorStore.add(List.of(sameIdDocument));
 

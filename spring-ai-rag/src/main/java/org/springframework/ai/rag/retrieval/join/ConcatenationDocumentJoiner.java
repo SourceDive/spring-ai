@@ -16,19 +16,18 @@
 
 package org.springframework.ai.rag.retrieval.join;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.rag.Query;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.rag.Query;
-import org.springframework.util.Assert;
 
 /**
  * Combines documents retrieved based on multiple queries and from multiple data sources
@@ -52,15 +51,15 @@ public class ConcatenationDocumentJoiner implements DocumentJoiner {
 		logger.debug("Joining documents by concatenation");
 
 		return new ArrayList<>(documentsForQuery.values()
-			.stream()
-			.flatMap(List::stream)
-			.flatMap(List::stream)
-			.collect(Collectors.toMap(Document::getId, Function.identity(), (existing, duplicate) -> existing))
-			.values()
-			.stream()
-			.sorted(Comparator.comparingDouble((Document doc) -> doc.getScore() != null ? doc.getScore() : 0.0)
-				.reversed())
-			.toList());
+				.stream()
+				.flatMap(List::stream)
+				.flatMap(List::stream)
+				.collect(Collectors.toMap(Document::getId, Function.identity(), (existing, duplicate) -> existing))
+				.values()
+				.stream()
+				.sorted(Comparator.comparingDouble((Document doc) -> doc.getScore() != null ? doc.getScore() : 0.0)
+						.reversed())
+				.toList());
 	}
 
 }

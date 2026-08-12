@@ -16,13 +16,8 @@
 
 package org.springframework.ai.model.openai.autoconfigure.tool;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -35,6 +30,10 @@ import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,76 +41,76 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FunctionCallbackInPromptIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
-				org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(OpenAiChatAutoConfiguration.class,
+					org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.model=" + "gpt-4o-mini", "spring.ai.openai.chat.temperature=1")
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.model=" + "gpt-4o-mini", "spring.ai.openai.chat.temperature=1")
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				ChatClient chatClient = ChatClient.builder(chatModel).build();
+					ChatClient chatClient = ChatClient.builder(chatModel).build();
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.");
 
-				var promptOptions = OpenAiChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = OpenAiChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				Prompt prompt = new Prompt(List.of(userMessage), promptOptions);
+					Prompt prompt = new Prompt(List.of(userMessage), promptOptions);
 
-				ChatResponse response = chatClient.prompt(prompt).call().chatResponse();
+					ChatResponse response = chatClient.prompt(prompt).call().chatResponse();
 
-				assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
-			});
+					assertThat(response.getResult().getOutput().getText()).contains("30", "10", "15");
+				});
 	}
 
 	@Test
 	void streamingFunctionCallTest() {
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.chat.model=" + "gpt-4o-mini", "spring.ai.openai.chat.temperature=1")
-			.run(context -> {
+				.withPropertyValues("spring.ai.openai.chat.model=" + "gpt-4o-mini", "spring.ai.openai.chat.temperature=1")
+				.run(context -> {
 
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				UserMessage userMessage = new UserMessage(
-						"What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.");
+					UserMessage userMessage = new UserMessage(
+							"What's the weather like in San Francisco, Tokyo, and Paris? Please use the provided tools to get the weather for all 3 cities.");
 
-				var promptOptions = OpenAiChatOptions.builder()
-					.toolCallbacks(
-							List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-								.description("Get the weather in location")
-								.inputType(MockWeatherService.Request.class)
-								.build()))
-					.build();
+					var promptOptions = OpenAiChatOptions.builder()
+							.toolCallbacks(
+									List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+											.description("Get the weather in location")
+											.inputType(MockWeatherService.Request.class)
+											.build()))
+							.build();
 
-				Flux<ChatResponse> response = ChatClient.create(chatModel)
-					.prompt(new Prompt(List.of(userMessage), promptOptions))
-					.stream()
-					.chatResponse();
+					Flux<ChatResponse> response = ChatClient.create(chatModel)
+							.prompt(new Prompt(List.of(userMessage), promptOptions))
+							.stream()
+							.chatResponse();
 
-				String content = response.collectList()
-					.blockOptional()
-					.stream()
-					.flatMap(List::stream)
-					.map(ChatResponse::getResults)
-					.flatMap(List::stream)
-					.map(Generation::getOutput)
-					.map(AssistantMessage::getText)
-					.collect(Collectors.joining());
+					String content = response.collectList()
+							.blockOptional()
+							.stream()
+							.flatMap(List::stream)
+							.map(ChatResponse::getResults)
+							.flatMap(List::stream)
+							.map(Generation::getOutput)
+							.map(AssistantMessage::getText)
+							.collect(Collectors.joining());
 
-				assertThat(content).contains("30", "10", "15");
-			});
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 }

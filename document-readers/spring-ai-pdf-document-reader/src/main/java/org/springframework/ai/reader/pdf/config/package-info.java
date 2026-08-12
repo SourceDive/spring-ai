@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.reader.pdf.config;
 
-import org.jspecify.annotations.NullMarked;

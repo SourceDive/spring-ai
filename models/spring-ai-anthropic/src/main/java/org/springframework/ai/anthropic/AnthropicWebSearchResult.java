@@ -22,8 +22,8 @@ import org.jspecify.annotations.Nullable;
  * Represents an individual web search result returned by Anthropic's built-in web search
  * tool. Accessible via {@code chatResponse.getMetadata().get("web-search-results")}.
  *
- * @param title the page title
- * @param url the source URL
+ * @param title   the page title
+ * @param url     the source URL
  * @param pageAge how old the page is, or null if not available
  * @author Soby Chacko
  * @since 1.0.0

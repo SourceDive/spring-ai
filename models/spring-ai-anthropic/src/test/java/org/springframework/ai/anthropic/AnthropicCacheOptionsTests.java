@@ -43,11 +43,11 @@ class AnthropicCacheOptionsTests {
 	@Test
 	void builderOverrides() {
 		AnthropicCacheOptions options = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS)
-			.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
-			.messageTypeMinContentLength(MessageType.SYSTEM, 100)
-			.contentLengthFunction(s -> s != null ? s.length() * 2 : 0)
-			.build();
+				.strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS)
+				.messageTypeTtl(MessageType.SYSTEM, AnthropicCacheTtl.ONE_HOUR)
+				.messageTypeMinContentLength(MessageType.SYSTEM, 100)
+				.contentLengthFunction(s -> s != null ? s.length() * 2 : 0)
+				.build();
 
 		assertThat(options.getStrategy()).isEqualTo(AnthropicCacheStrategy.SYSTEM_AND_TOOLS);
 		assertThat(options.getMessageTypeTtl().get(MessageType.SYSTEM)).isEqualTo(AnthropicCacheTtl.ONE_HOUR);
@@ -82,12 +82,12 @@ class AnthropicCacheOptionsTests {
 	@Test
 	void cacheToolResultsParticipatesInEqualsAndHashCode() {
 		AnthropicCacheOptions withFlag = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
-			.cacheToolResults(true)
-			.build();
+				.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
+				.cacheToolResults(true)
+				.build();
 		AnthropicCacheOptions withoutFlag = AnthropicCacheOptions.builder()
-			.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
-			.build();
+				.strategy(AnthropicCacheStrategy.CONVERSATION_HISTORY)
+				.build();
 
 		assertThat(withFlag).isNotEqualTo(withoutFlag);
 		assertThat(withFlag.hashCode()).isNotEqualTo(withoutFlag.hashCode());

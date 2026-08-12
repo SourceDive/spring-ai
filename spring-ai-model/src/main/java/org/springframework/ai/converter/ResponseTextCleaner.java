@@ -31,9 +31,11 @@ public interface ResponseTextCleaner {
 
 	/**
 	 * Clean the given text by removing unwanted patterns, tags, or formatting.
+	 *
 	 * @param text the raw text from LLM response
 	 * @return the cleaned text ready for parsing
 	 */
-	@Nullable String clean(@Nullable String text);
+	@Nullable
+	String clean(@Nullable String text);
 
 }

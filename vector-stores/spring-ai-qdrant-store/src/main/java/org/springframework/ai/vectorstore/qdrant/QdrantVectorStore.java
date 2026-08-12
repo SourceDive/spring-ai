@@ -16,14 +16,6 @@
 
 package org.springframework.ai.vectorstore.qdrant;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.IntStream;
-
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.grpc.Collections.Distance;
 import io.qdrant.client.grpc.Collections.VectorParams;
@@ -35,7 +27,6 @@ import io.qdrant.client.grpc.Points.ScoredPoint;
 import io.qdrant.client.grpc.Points.SearchPoints;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -48,6 +39,10 @@ import org.springframework.ai.vectorstore.observation.AbstractObservationVectorS
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.IntStream;
 
 /**
  * Qdrant vectorStore implementation. This store supports creating, updating, deleting,
@@ -147,6 +142,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 	/**
 	 * Protected constructor for creating a QdrantVectorStore instance using the builder
 	 * pattern.
+	 *
 	 * @param builder the {@link Builder} containing all configuration settings
 	 * @throws IllegalArgumentException if qdrant client is missing
 	 * @see Builder
@@ -166,6 +162,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 	/**
 	 * Creates a new QdrantBuilder instance. This is the recommended way to instantiate a
 	 * QdrantVectorStore.
+	 *
 	 * @param qdrantClient the client for interfacing with Qdrant
 	 * @return a new QdrantBuilder instance
 	 */
@@ -175,6 +172,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 
 	/**
 	 * Adds a list of documents to the vector store.
+	 *
 	 * @param documents The list of documents to be added.
 	 */
 	@Override
@@ -188,32 +186,31 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 			List<PointStruct> points = IntStream.range(0, documents.size()).mapToObj(i -> {
 				Document document = documents.get(i);
 				return PointStruct.newBuilder()
-					.setId(io.qdrant.client.PointIdFactory.id(UUID.fromString(document.getId())))
-					.setVectors(io.qdrant.client.VectorsFactory.vectors(embeddings.get(i)))
-					.putAllPayload(toPayload(document))
-					.build();
+						.setId(io.qdrant.client.PointIdFactory.id(UUID.fromString(document.getId())))
+						.setVectors(io.qdrant.client.VectorsFactory.vectors(embeddings.get(i)))
+						.putAllPayload(toPayload(document))
+						.build();
 			}).toList();
 
 			this.qdrantClient.upsertAsync(this.collectionName, points).get();
-		}
-		catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
+		} catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Deletes a list of documents by their IDs.
+	 *
 	 * @param documentIds The list of document IDs to be deleted.
 	 */
 	@Override
 	public void doDelete(List<String> documentIds) {
 		try {
 			List<PointId> ids = documentIds.stream()
-				.map(id -> io.qdrant.client.PointIdFactory.id(UUID.fromString(id)))
-				.toList();
+					.map(id -> io.qdrant.client.PointIdFactory.id(UUID.fromString(id)))
+					.toList();
 			this.qdrantClient.deleteAsync(this.collectionName, ids).get();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -226,16 +223,15 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 			Filter filter = this.filterExpressionConverter.convertExpression(filterExpression);
 
 			io.qdrant.client.grpc.Points.UpdateResult response = this.qdrantClient
-				.deleteAsync(this.collectionName, filter)
-				.get();
+					.deleteAsync(this.collectionName, filter)
+					.get();
 
 			if (response.getStatus() != io.qdrant.client.grpc.Points.UpdateStatus.Completed) {
 				throw new IllegalStateException("Failed to delete documents by filter: " + response.getStatus());
 			}
 
 			logger.debug("Deleted documents matching filter expression");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete documents by filter: " + e.getMessage(), e);
 			}
@@ -245,8 +241,9 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 
 	/**
 	 * Performs a similarity search on the vector store.
+	 *
 	 * @param request The {@link SearchRequest} object containing the query and other
-	 * search parameters.
+	 *                search parameters.
 	 * @return A list of documents that are similar to the query.
 	 */
 	@Override
@@ -259,26 +256,26 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 			float[] queryEmbedding = this.embeddingModel.embed(request.getQuery());
 
 			var searchPoints = SearchPoints.newBuilder()
-				.setCollectionName(this.collectionName)
-				.setLimit(request.getTopK())
-				.setWithPayload(io.qdrant.client.WithPayloadSelectorFactory.enable(true))
-				.addAllVector(EmbeddingUtils.toList(queryEmbedding))
-				.setFilter(filter)
-				.setScoreThreshold((float) request.getSimilarityThreshold())
-				.build();
+					.setCollectionName(this.collectionName)
+					.setLimit(request.getTopK())
+					.setWithPayload(io.qdrant.client.WithPayloadSelectorFactory.enable(true))
+					.addAllVector(EmbeddingUtils.toList(queryEmbedding))
+					.setFilter(filter)
+					.setScoreThreshold((float) request.getSimilarityThreshold())
+					.build();
 
 			var queryResponse = this.qdrantClient.searchAsync(searchPoints).get();
 
 			return queryResponse.stream().map(this::toDocument).toList();
 
-		}
-		catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
+		} catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Returns {@link Document} using the {@link ScoredPoint}
+	 *
 	 * @param point ScoredPoint containing the query response.
 	 * @return the {@link Document} representing the response.
 	 */
@@ -292,14 +289,14 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 			var content = (String) metadata.remove(this.contentFieldName);
 
 			return Document.builder().id(id).text(content).metadata(metadata).score((double) point.getScore()).build();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
 	 * Converts the document metadata to a Protobuf Struct.
+	 *
 	 * @param document The document containing metadata.
 	 * @return The metadata as a Protobuf Struct.
 	 */
@@ -309,8 +306,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 			payload.put(this.contentFieldName,
 					io.qdrant.client.ValueFactory.value(Objects.requireNonNullElse(document.getText(), "")));
 			return payload;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -325,9 +321,9 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 		// Create the collection if it does not exist.
 		if (!isCollectionExists()) {
 			var vectorParams = VectorParams.newBuilder()
-				.setDistance(Distance.Cosine)
-				.setSize(this.embeddingModel.dimensions())
-				.build();
+					.setDistance(Distance.Cosine)
+					.setSize(this.embeddingModel.dimensions())
+					.build();
 			this.qdrantClient.createCollectionAsync(this.collectionName, vectorParams).get();
 		}
 	}
@@ -335,8 +331,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 	private boolean isCollectionExists() {
 		try {
 			return this.qdrantClient.listCollectionsAsync().get().stream().anyMatch(c -> c.equals(this.collectionName));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -345,8 +340,8 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.QDRANT.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName(this.collectionName);
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName(this.collectionName);
 
 	}
 
@@ -376,6 +371,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 		/**
 		 * Creates a new builder instance with the required QdrantClient and
 		 * EmbeddingModel.
+		 *
 		 * @param qdrantClient the client for Qdrant operations
 		 * @throws IllegalArgumentException if qdrantClient is null
 		 */
@@ -387,8 +383,9 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the Qdrant collection name.
+		 *
 		 * @param collectionName the name of the collection to use (defaults to
-		 * {@value DEFAULT_COLLECTION_NAME})
+		 *                       {@value DEFAULT_COLLECTION_NAME})
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
 		 */
@@ -400,8 +397,9 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures the Qdrant content field name.
+		 *
 		 * @param contentFieldName the name of the content field to use (defaults to
-		 * {@value DEFAULT_CONTENT_FIELD_NAME})
+		 *                         {@value DEFAULT_CONTENT_FIELD_NAME})
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if contentFieldName is null or empty
 		 */
@@ -413,6 +411,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Configures whether to initialize the collection schema.
+		 *
 		 * @param initializeSchema true to initialize schema automatically
 		 * @return this builder instance
 		 */
@@ -424,6 +423,7 @@ public class QdrantVectorStore extends AbstractObservationVectorStore implements
 		/**
 		 * Builds and returns a new QdrantVectorStore instance with the configured
 		 * settings.
+		 *
 		 * @return a new QdrantVectorStore instance
 		 * @throws IllegalStateException if the builder configuration is invalid
 		 */

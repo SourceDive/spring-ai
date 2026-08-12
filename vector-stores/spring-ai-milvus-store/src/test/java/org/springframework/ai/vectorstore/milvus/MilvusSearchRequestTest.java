@@ -38,12 +38,12 @@ class MilvusSearchRequestTest {
 		String searchParamsJson = "{\"nprobe\":128}";
 
 		MilvusSearchRequest request = MilvusSearchRequest.milvusBuilder()
-			.query(query)
-			.topK(topK)
-			.similarityThreshold(similarityThreshold)
-			.nativeExpression(nativeExpression)
-			.searchParamsJson(searchParamsJson)
-			.build();
+				.query(query)
+				.topK(topK)
+				.similarityThreshold(similarityThreshold)
+				.nativeExpression(nativeExpression)
+				.searchParamsJson(searchParamsJson)
+				.build();
 
 		assertThat(request.getQuery()).isEqualTo(query);
 		assertThat(request.getTopK()).isEqualTo(topK);
@@ -137,11 +137,11 @@ class MilvusSearchRequestTest {
 	@Test
 	void shouldUpdateFieldsWithMultipleCalls() {
 		MilvusSearchRequest request = MilvusSearchRequest.milvusBuilder()
-			.query("initial")
-			.query("updated")
-			.topK(1)
-			.topK(1)
-			.build();
+				.query("initial")
+				.query("updated")
+				.topK(1)
+				.topK(1)
+				.build();
 
 		assertThat(request.getQuery()).isEqualTo("updated");
 		assertThat(request.getTopK()).isEqualTo(1);

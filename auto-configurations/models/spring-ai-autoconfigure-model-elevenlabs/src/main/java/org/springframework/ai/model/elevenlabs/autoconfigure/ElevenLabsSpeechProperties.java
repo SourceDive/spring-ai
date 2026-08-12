@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.elevenlabs.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.elevenlabs.ElevenLabsTextToSpeechOptions;
 import org.springframework.ai.elevenlabs.api.ElevenLabsApi;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * Configuration properties for the ElevenLabs Text-to-Speech API.
@@ -204,21 +203,21 @@ public class ElevenLabsSpeechProperties {
 
 	public ElevenLabsTextToSpeechOptions toOptions() {
 		return ElevenLabsTextToSpeechOptions.builder()
-			.modelId(this.modelId)
-			.voiceId(this.voiceId)
-			.enableLogging(this.enableLogging)
-			.outputFormat(this.outputFormat)
-			.voiceSettings(this.voiceSettings)
-			.languageCode(this.languageCode)
-			.pronunciationDictionaryLocators(this.pronunciationDictionaryLocators)
-			.seed(this.seed)
-			.previousText(this.previousText)
-			.nextText(this.nextText)
-			.previousRequestIds(this.previousRequestIds)
-			.nextRequestIds(this.nextRequestIds)
-			.applyTextNormalization(this.applyTextNormalization)
-			.applyLanguageTextNormalization(this.applyLanguageTextNormalization)
-			.build();
+				.modelId(this.modelId)
+				.voiceId(this.voiceId)
+				.enableLogging(this.enableLogging)
+				.outputFormat(this.outputFormat)
+				.voiceSettings(this.voiceSettings)
+				.languageCode(this.languageCode)
+				.pronunciationDictionaryLocators(this.pronunciationDictionaryLocators)
+				.seed(this.seed)
+				.previousText(this.previousText)
+				.nextText(this.nextText)
+				.previousRequestIds(this.previousRequestIds)
+				.nextRequestIds(this.nextRequestIds)
+				.applyTextNormalization(this.applyTextNormalization)
+				.applyLanguageTextNormalization(this.applyLanguageTextNormalization)
+				.build();
 	}
 
 	private Options options = new Options();

@@ -16,11 +16,8 @@
 
 package org.springframework.ai.ollama;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -30,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,9 +50,9 @@ public class OllamaEmbeddingOptionsTestsIT extends BaseOllamaIT {
 		Integer expectedDimensions = 1024;
 
 		OllamaEmbeddingOptions options = OllamaEmbeddingOptions.builder()
-			.model(MODEL)
-			.dimensions(expectedDimensions)
-			.build();
+				.model(MODEL)
+				.dimensions(expectedDimensions)
+				.build();
 
 		assertThat(options.getDimensions()).isEqualTo(expectedDimensions);
 		assertThat(options.getModel()).isEqualTo(MODEL);
@@ -65,9 +64,9 @@ public class OllamaEmbeddingOptionsTestsIT extends BaseOllamaIT {
 		Integer expectedDimensions = 768;
 
 		OllamaEmbeddingOptions options = OllamaEmbeddingOptions.builder()
-			.model(MODEL)
-			.dimensions(expectedDimensions)
-			.build();
+				.model(MODEL)
+				.dimensions(expectedDimensions)
+				.build();
 
 		assertThat(options.getDimensions()).isEqualTo(expectedDimensions);
 		assertThat(options.getModel()).isEqualTo(MODEL);
@@ -109,9 +108,9 @@ public class OllamaEmbeddingOptionsTestsIT extends BaseOllamaIT {
 		Integer expectedDimensions = 1536;
 
 		OllamaEmbeddingOptions options = OllamaEmbeddingOptions.builder()
-			.model(MODEL)
-			.dimensions(expectedDimensions)
-			.build();
+				.model(MODEL)
+				.dimensions(expectedDimensions)
+				.build();
 
 		var optionsMap = options.toMap();
 
@@ -133,9 +132,9 @@ public class OllamaEmbeddingOptionsTestsIT extends BaseOllamaIT {
 
 		// Create options with dimensions parameter
 		OllamaEmbeddingOptions optionsWithDimensions = OllamaEmbeddingOptions.builder()
-			.model(MODEL)
-			.dimensions(customDimensions)
-			.build();
+				.model(MODEL)
+				.dimensions(customDimensions)
+				.build();
 
 		// Call embedding model
 		EmbeddingRequest request = new EmbeddingRequest(List.of(testText), optionsWithDimensions);
@@ -171,9 +170,9 @@ public class OllamaEmbeddingOptionsTestsIT extends BaseOllamaIT {
 
 		// With dimensions parameter
 		OllamaEmbeddingOptions optionsWithDimensions = OllamaEmbeddingOptions.builder()
-			.model(MODEL)
-			.dimensions(1024)
-			.build();
+				.model(MODEL)
+				.dimensions(1024)
+				.build();
 
 		EmbeddingRequest requestWithDimensions = new EmbeddingRequest(List.of(testText), optionsWithDimensions);
 		EmbeddingResponse responseWithDimensions = this.embeddingModel.call(requestWithDimensions);
@@ -208,9 +207,9 @@ public class OllamaEmbeddingOptionsTestsIT extends BaseOllamaIT {
 		@Bean
 		public OllamaEmbeddingModel ollamaEmbedding(OllamaApi ollamaApi) {
 			return OllamaEmbeddingModel.builder()
-				.ollamaApi(ollamaApi)
-				.options(OllamaEmbeddingOptions.builder().model(MODEL).build())
-				.build();
+					.ollamaApi(ollamaApi)
+					.options(OllamaEmbeddingOptions.builder().model(MODEL).build())
+					.build();
 		}
 
 	}

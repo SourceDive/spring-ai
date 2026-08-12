@@ -16,13 +16,6 @@
 
 package org.springframework.ai.vectorstore.opensearch;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
@@ -40,7 +33,6 @@ import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.CreateIndexResponse;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -55,6 +47,13 @@ import org.springframework.ai.vectorstore.observation.AbstractObservationVectorS
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * OpenSearch-based vector store implementation using OpenSearch's vector search
@@ -190,6 +189,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 	/**
 	 * Creates a new OpenSearchVectorStore using the builder pattern.
+	 *
 	 * @param builder The configured builder instance
 	 */
 	protected OpenSearchVectorStore(Builder builder) {
@@ -212,6 +212,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 	/**
 	 * Creates a new builder instance for configuring an OpenSearchVectorStore.
+	 *
 	 * @return A new OpenSearchBuilder instance
 	 */
 	public static Builder builder(OpenSearchClient openSearchClient, EmbeddingModel embeddingModel) {
@@ -236,11 +237,10 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 			// Conditionally set document ID based on manageDocumentIds flag
 			if (this.manageDocumentIds) {
 				bulkRequestBuilder.operations(op -> op
-					.index(idx -> idx.index(this.index).id(openSearchDocument.id()).document(openSearchDocument)));
-			}
-			else {
+						.index(idx -> idx.index(this.index).id(openSearchDocument.id()).document(openSearchDocument)));
+			} else {
 				bulkRequestBuilder
-					.operations(op -> op.index(idx -> idx.index(this.index).document(openSearchDocument)));
+						.operations(op -> op.index(idx -> idx.index(this.index).document(openSearchDocument)));
 			}
 		}
 		bulkRequest(bulkRequestBuilder.build());
@@ -265,8 +265,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 	private BulkResponse bulkRequest(BulkRequest bulkRequest) {
 		try {
 			return this.openSearchClient.bulk(bulkRequest);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -280,8 +279,8 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 			// Create delete by query request
 			DeleteByQueryRequest request = new DeleteByQueryRequest.Builder().index(this.index)
-				.query(q -> q.queryString(qs -> qs.query(filterStr)))
-				.build();
+					.query(q -> q.queryString(qs -> qs.query(filterStr)))
+					.build();
 
 			DeleteByQueryResponse response = this.openSearchClient.deleteByQuery(request);
 			if (logger.isDebugEnabled()) {
@@ -291,8 +290,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 			if (!response.failures().isEmpty()) {
 				throw new IllegalStateException("Failed to delete some documents: " + response.failures());
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete documents by filter: " + e.getMessage());
 			}
@@ -308,49 +306,49 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 	}
 
 	public List<Document> similaritySearch(float[] embedding, int topK, double similarityThreshold,
-			Filter.@Nullable Expression filterExpression) {
+	                                       Filter.@Nullable Expression filterExpression) {
 		return similaritySearch(
 				this.useApproximateKnn ? buildApproximateQuery(embedding, topK, similarityThreshold, filterExpression)
 						: buildExactQuery(embedding, topK, similarityThreshold, filterExpression));
 	}
 
 	private org.opensearch.client.opensearch.core.SearchRequest buildApproximateQuery(float[] embedding, int topK,
-			double similarityThreshold, Filter.@Nullable Expression filterExpression) {
+	                                                                                  double similarityThreshold, Filter.@Nullable Expression filterExpression) {
 		return new org.opensearch.client.opensearch.core.SearchRequest.Builder().index(this.index)
-			.query(Query.of(builder -> builder.knn(knnQueryBuilder -> knnQueryBuilder
-				.filter(Query
-					.of(queryBuilder -> queryBuilder.queryString(queryStringQuerybuilder -> queryStringQuerybuilder
-						.query(getOpenSearchQueryString(filterExpression)))))
-				.field("embedding")
-				.k(topK)
-				.vector(toFloatList(embedding)))))
-			.minScore(similarityThreshold)
-			.build();
+				.query(Query.of(builder -> builder.knn(knnQueryBuilder -> knnQueryBuilder
+						.filter(Query
+								.of(queryBuilder -> queryBuilder.queryString(queryStringQuerybuilder -> queryStringQuerybuilder
+										.query(getOpenSearchQueryString(filterExpression)))))
+						.field("embedding")
+						.k(topK)
+						.vector(toFloatList(embedding)))))
+				.minScore(similarityThreshold)
+				.build();
 	}
 
 	private org.opensearch.client.opensearch.core.SearchRequest buildExactQuery(float[] embedding, int topK,
-			double similarityThreshold, Filter.@Nullable Expression filterExpression) {
+	                                                                            double similarityThreshold, Filter.@Nullable Expression filterExpression) {
 		return new org.opensearch.client.opensearch.core.SearchRequest.Builder()
-			.query(buildExactQuery(embedding, filterExpression))
-			.index(this.index)
-			.sort(sortOptionsBuilder -> sortOptionsBuilder
-				.score(scoreSortBuilder -> scoreSortBuilder.order(SortOrder.Desc)))
-			.size(topK)
-			.minScore(similarityThreshold)
-			.build();
+				.query(buildExactQuery(embedding, filterExpression))
+				.index(this.index)
+				.sort(sortOptionsBuilder -> sortOptionsBuilder
+						.score(scoreSortBuilder -> scoreSortBuilder.order(SortOrder.Desc)))
+				.size(topK)
+				.minScore(similarityThreshold)
+				.build();
 	}
 
 	private Query buildExactQuery(float[] embedding, Filter.@Nullable Expression filterExpression) {
 		return Query.of(queryBuilder -> queryBuilder.scriptScore(scriptScoreQueryBuilder -> {
 			scriptScoreQueryBuilder
-				.query(queryBuilder2 -> queryBuilder2.queryString(queryStringQuerybuilder -> queryStringQuerybuilder
-					.query(getOpenSearchQueryString(filterExpression))))
-				.script(scriptBuilder -> scriptBuilder
-					.inline(inlineScriptBuilder -> inlineScriptBuilder.source("knn_score")
-						.lang(langBuilder -> langBuilder.custom("knn"))
-						.params("field", JsonData.of("embedding"))
-						.params("query_value", JsonData.of(toFloatList(embedding)))
-						.params("space_type", JsonData.of(this.similarityFunction))));
+					.query(queryBuilder2 -> queryBuilder2.queryString(queryStringQuerybuilder -> queryStringQuerybuilder
+							.query(getOpenSearchQueryString(filterExpression))))
+					.script(scriptBuilder -> scriptBuilder
+							.inline(inlineScriptBuilder -> inlineScriptBuilder.source("knn_score")
+									.lang(langBuilder -> langBuilder.custom("knn"))
+									.params("field", JsonData.of("embedding"))
+									.params("query_value", JsonData.of(toFloatList(embedding)))
+									.params("space_type", JsonData.of(this.similarityFunction))));
 			// https://opensearch.org/docs/latest/search-plugins/knn/knn-score-script
 			// k-NN ensures non-negative scores by adding 1 to cosine similarity,
 			// extending OpenSearch scores to 0-2.
@@ -377,13 +375,12 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 	private List<Document> similaritySearch(org.opensearch.client.opensearch.core.SearchRequest searchRequest) {
 		try {
 			return this.openSearchClient.search(searchRequest, Document.class)
-				.hits()
-				.hits()
-				.stream()
-				.map(this::toDocument)
-				.toList();
-		}
-		catch (IOException e) {
+					.hits()
+					.hits()
+					.stream()
+					.map(this::toDocument)
+					.toList();
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -402,10 +399,9 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 	public boolean exists(String targetIndex) {
 		try {
 			BooleanResponse response = this.openSearchClient.indices()
-				.exists(existRequestBuilder -> existRequestBuilder.index(targetIndex));
+					.exists(existRequestBuilder -> existRequestBuilder.index(targetIndex));
 			return response.value();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -414,13 +410,12 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 		JsonpMapper jsonpMapper = this.openSearchClient._transport().jsonpMapper();
 		try {
 			return this.openSearchClient.indices()
-				.create(new CreateIndexRequest.Builder().index(index)
-					.settings(settingsBuilder -> settingsBuilder.knn(true))
-					.mappings(TypeMapping._DESERIALIZER.deserialize(
-							jsonpMapper.jsonProvider().createParser(new StringReader(mappingJson)), jsonpMapper))
-					.build());
-		}
-		catch (IOException e) {
+					.create(new CreateIndexRequest.Builder().index(index)
+							.settings(settingsBuilder -> settingsBuilder.knn(true))
+							.mappings(TypeMapping._DESERIALIZER.deserialize(
+									jsonpMapper.jsonProvider().createParser(new StringReader(mappingJson)), jsonpMapper))
+							.build());
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -456,8 +451,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 						}
 						""".formatted(this.dimensions > 0 ? this.dimensions : this.embeddingModel.dimensions(),
 						this.similarityFunction);
-			}
-			else {
+			} else {
 				// Use provided mapping or default exact k-NN mapping
 				finalMappingJson = String.format(this.mappingJson, this.embeddingModel.dimensions());
 			}
@@ -468,16 +462,15 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.OPENSEARCH.value(), operationName)
-			.collectionName(this.index)
-			.dimensions(this.embeddingModel.dimensions())
-			.similarityMetric(getSimilarityFunction());
+				.collectionName(this.index)
+				.dimensions(this.embeddingModel.dimensions())
+				.similarityMetric(getSimilarityFunction());
 	}
 
 	private String getSimilarityFunction() {
 		if ("cosinesimil".equalsIgnoreCase(this.similarityFunction)) {
 			return VectorStoreSimilarityMetric.COSINE.value();
-		}
-		else if ("l2".equalsIgnoreCase(this.similarityFunction)) {
+		} else if ("l2".equalsIgnoreCase(this.similarityFunction)) {
 			return VectorStoreSimilarityMetric.EUCLIDEAN.value();
 		}
 
@@ -494,9 +487,9 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 	/**
 	 * The representation of {@link Document} along with its embedding.
 	 *
-	 * @param id The id of the document
-	 * @param content The content of the document
-	 * @param metadata The metadata of the document
+	 * @param id        The id of the document
+	 * @param content   The content of the document
+	 * @param metadata  The metadata of the document
 	 * @param embedding The vectors representing the content of the document
 	 */
 	public record OpenSearchDocument(String id, String content, Map<String, Object> metadata, float[] embedding) {
@@ -527,6 +520,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 		/**
 		 * Sets the OpenSearch client.
+		 *
 		 * @param openSearchClient The OpenSearch client to use
 		 * @throws IllegalArgumentException if openSearchClient is null
 		 */
@@ -538,6 +532,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 		/**
 		 * Sets the index name.
+		 *
 		 * @param index The name of the index to use
 		 * @return The builder instance
 		 * @throws IllegalArgumentException if index is null or empty
@@ -550,6 +545,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 		/**
 		 * Sets the JSON mapping for the index.
+		 *
 		 * @param mappingJson The JSON mapping to use
 		 * @return The builder instance
 		 * @throws IllegalArgumentException if mappingJson is null or empty
@@ -562,6 +558,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return The builder instance
 		 */
@@ -572,6 +569,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 		/**
 		 * Sets the filter expression converter.
+		 *
 		 * @param converter The filter expression converter to use
 		 * @return The builder instance
 		 * @throws IllegalArgumentException if converter is null
@@ -586,6 +584,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 		 * Sets the similarity function for vector comparison. See
 		 * https://opensearch.org/docs/latest/search-plugins/knn/approximate-knn/#spaces
 		 * for available functions.
+		 *
 		 * @param similarityFunction The similarity function to use
 		 * @return The builder instance
 		 * @throws IllegalArgumentException if similarityFunction is null or empty
@@ -601,6 +600,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 		 * method is used for faster searches and maintains good performance even at large
 		 * scales. If false, the exact brute-force k-NN method is used for precise and
 		 * highly accurate searches.
+		 *
 		 * @param useApproximateKnn true to use approximate k-NN, false for exact k-NN
 		 * @return The builder instance
 		 * @see <a href=
@@ -619,6 +619,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 		 * Sets the number of dimensions for the vector embeddings. This is used when
 		 * creating the index mapping for approximate k-NN. If not set, defaults to 1536
 		 * or uses the embedding model's dimensions.
+		 *
 		 * @param dimensions The number of dimensions
 		 * @return The builder instance
 		 * @throws IllegalArgumentException if dimensions is less than or equal to 0
@@ -642,8 +643,9 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 		 * method may not work as expected since document IDs are auto-generated by
 		 * OpenSearch.
 		 * </p>
+		 *
 		 * @param manageDocumentIds true to manage document IDs (default), false to let
-		 * OpenSearch auto-generate IDs
+		 *                          OpenSearch auto-generate IDs
 		 * @return The builder instance
 		 */
 		public Builder manageDocumentIds(boolean manageDocumentIds) {
@@ -653,6 +655,7 @@ public class OpenSearchVectorStore extends AbstractObservationVectorStore implem
 
 		/**
 		 * Builds a new OpenSearchVectorStore instance with the configured properties.
+		 *
 		 * @return A new OpenSearchVectorStore instance
 		 * @throws IllegalStateException if the builder is in an invalid state
 		 */

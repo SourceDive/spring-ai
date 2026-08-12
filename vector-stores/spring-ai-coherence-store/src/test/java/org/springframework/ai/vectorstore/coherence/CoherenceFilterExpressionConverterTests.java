@@ -114,7 +114,7 @@ public class CoherenceFilterExpressionConverterTests {
 	void testStringWithSpecialCharacters() {
 		final Expression e = new FilterExpressionTextParser().parse("description == 'This has \"quotes\" and spaces'");
 		assertThat(CONVERTER.convert(e))
-			.isEqualTo(Filters.equal(extractor("description"), "This has \"quotes\" and spaces"));
+				.isEqualTo(Filters.equal(extractor("description"), "This has \"quotes\" and spaces"));
 	}
 
 	@Test

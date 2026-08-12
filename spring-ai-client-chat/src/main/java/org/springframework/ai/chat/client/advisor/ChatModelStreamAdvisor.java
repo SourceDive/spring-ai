@@ -16,12 +16,7 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
@@ -29,6 +24,10 @@ import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.Map;
 
 /**
  * A {@link StreamAdvisor} that uses a {@link ChatModel} to generate a streaming response.
@@ -47,15 +46,15 @@ public final class ChatModelStreamAdvisor implements StreamAdvisor {
 
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 		Assert.notNull(chatClientRequest, "the chatClientRequest cannot be null");
 
 		return this.chatModel.stream(chatClientRequest.prompt())
-			.map(chatResponse -> ChatClientResponse.builder()
-				.chatResponse(chatResponse)
-				.context(Map.copyOf(chatClientRequest.context()))
-				.build())
-			.publishOn(Schedulers.boundedElastic()); // TODO add option to disable
+				.map(chatResponse -> ChatClientResponse.builder()
+						.chatResponse(chatResponse)
+						.context(Map.copyOf(chatClientRequest.context()))
+						.build())
+				.publishOn(Schedulers.boundedElastic()); // TODO add option to disable
 	}
 
 	@Override

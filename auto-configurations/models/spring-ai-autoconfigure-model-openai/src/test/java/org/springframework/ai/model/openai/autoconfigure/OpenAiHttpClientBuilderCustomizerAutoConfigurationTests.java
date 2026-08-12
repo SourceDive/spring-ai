@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.ai.openai.http.okhttp.OpenAiHttpClientBuilderCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,41 +38,41 @@ class OpenAiHttpClientBuilderCustomizerAutoConfigurationTests {
 	void customizerIsAppliedToChatModel() {
 		AtomicInteger invocations = new AtomicInteger();
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.withBean(OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
-			.run(context -> assertThat(invocations.get())
-				.as("customizer must be called at least once when chat model is created")
-				.isPositive());
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.withBean(OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
+				.run(context -> assertThat(invocations.get())
+						.as("customizer must be called at least once when chat model is created")
+						.isPositive());
 	}
 
 	@Test
 	void customizerIsAppliedToEmbeddingModel() {
 		AtomicInteger invocations = new AtomicInteger();
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(AutoConfigurations.of(OpenAiEmbeddingAutoConfiguration.class))
-			.withBean(OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
-			.run(context -> assertThat(invocations.get()).isPositive());
+				.withConfiguration(AutoConfigurations.of(OpenAiEmbeddingAutoConfiguration.class))
+				.withBean(OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
+				.run(context -> assertThat(invocations.get()).isPositive());
 	}
 
 	@Test
 	void multipleCustomizersAreAllApplied() {
 		AtomicInteger invocations = new AtomicInteger();
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.withBean("first", OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
-			.withBean("second", OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
-			.run(context -> assertThat(invocations.get()).as("both customizers must be applied")
-				.isGreaterThanOrEqualTo(2));
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.withBean("first", OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
+				.withBean("second", OpenAiHttpClientBuilderCustomizer.class, () -> builder -> invocations.incrementAndGet())
+				.run(context -> assertThat(invocations.get()).as("both customizers must be applied")
+						.isGreaterThanOrEqualTo(2));
 	}
 
 	@Test
 	void noCustomizerBeanIsToleratedGracefully() {
 		new ApplicationContextRunner().withPropertyValues(COMMON_PROPS)
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> assertThat(context).hasNotFailed());
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> assertThat(context).hasNotFailed());
 	}
 
 }

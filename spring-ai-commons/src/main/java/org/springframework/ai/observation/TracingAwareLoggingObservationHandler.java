@@ -41,8 +41,9 @@ public class TracingAwareLoggingObservationHandler<T extends Observation.Context
 
 	/**
 	 * Creates a new instance.
+	 *
 	 * @param delegate ObservationHandler instance to delegate the handler method calls to
-	 * @param tracer Tracer instance to create the scope with
+	 * @param tracer   Tracer instance to create the scope with
 	 */
 	public TracingAwareLoggingObservationHandler(ObservationHandler<T> delegate, Tracer tracer) {
 		this.delegate = delegate;
@@ -82,15 +83,14 @@ public class TracingAwareLoggingObservationHandler<T extends Observation.Context
 	@Override
 	public void onStop(T context) {
 		TracingObservationHandler.TracingContext tracingContext = context
-			.getRequired(TracingObservationHandler.TracingContext.class);
+				.getRequired(TracingObservationHandler.TracingContext.class);
 		Span currentSpan = tracingContext.getSpan();
 		if (currentSpan != null) {
 			try (CurrentTraceContext.Scope ignored = this.tracer.currentTraceContext()
-				.maybeScope(currentSpan.context())) {
+					.maybeScope(currentSpan.context())) {
 				this.delegate.onStop(context);
 			}
-		}
-		else {
+		} else {
 			this.delegate.onStop(context);
 		}
 	}

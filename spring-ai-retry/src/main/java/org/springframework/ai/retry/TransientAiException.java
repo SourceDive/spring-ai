@@ -30,6 +30,7 @@ public class TransientAiException extends RuntimeException {
 
 	/**
 	 * Constructor with message.
+	 *
 	 * @param message the exception message
 	 */
 	public TransientAiException(final String message) {
@@ -38,8 +39,9 @@ public class TransientAiException extends RuntimeException {
 
 	/**
 	 * Constructor with message and cause.
+	 *
 	 * @param message the exception message
-	 * @param cause the exception cause
+	 * @param cause   the exception cause
 	 */
 	public TransientAiException(final String message, final @Nullable Throwable cause) {
 		super(message, cause);

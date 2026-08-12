@@ -16,12 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -31,7 +25,6 @@ import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.DefaultMcpUriTemplateManagerFactory;
 import io.modelcontextprotocol.util.McpUriTemplateManager;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
-
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
@@ -40,9 +33,15 @@ import org.springframework.ai.mcp.annotation.context.DefaultMcpSyncRequestContex
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Abstract base class for creating callbacks around resource methods.
- *
+ * <p>
  * This class provides common functionality for both synchronous and asynchronous resource
  * method callbacks. It contains shared logic for method validation, argument building,
  * and other common operations.
@@ -95,20 +94,21 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 	/**
 	 * Constructor for AbstractMcpResourceMethodCallback.
-	 * @param method The method to create a callback for
-	 * @param bean The bean instance that contains the method
-	 * @param uri The URI for the resource
-	 * @param name The name of the resource (optional)
-	 * @param description The description of the resource (optional)
-	 * @param mimeType The MIME type of the resource (optional)
-	 * @param resultConverter The result converter
+	 *
+	 * @param method                   The method to create a callback for
+	 * @param bean                     The bean instance that contains the method
+	 * @param uri                      The URI for the resource
+	 * @param name                     The name of the resource (optional)
+	 * @param description              The description of the resource (optional)
+	 * @param mimeType                 The MIME type of the resource (optional)
+	 * @param resultConverter          The result converter
 	 * @param uriTemplateMangerFactory The URI template manager factory
-	 * @param contentType The content type
-	 * @param meta The resource metadata to propagate to content-level _meta
+	 * @param contentType              The content type
+	 * @param meta                     The resource metadata to propagate to content-level _meta
 	 */
 	protected AbstractMcpResourceMethodCallback(Method method, Object bean, String uri, String name, String description,
-			String mimeType, McpReadResourceResultConverter resultConverter,
-			McpUriTemplateManagerFactory uriTemplateMangerFactory, ContentType contentType, Map<String, Object> meta) {
+	                                            String mimeType, McpReadResourceResultConverter resultConverter,
+	                                            McpUriTemplateManagerFactory uriTemplateMangerFactory, ContentType contentType, Map<String, Object> meta) {
 
 		Assert.hasText(uri, "URI can't be null or empty!");
 		Assert.notNull(method, "Method can't be null!");
@@ -136,6 +136,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 	 * <p>
 	 * This method checks that the return type is valid and that the parameters match the
 	 * expected pattern based on whether URI variables are present.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the method signature is not compatible
 	 */
@@ -148,8 +149,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		if (this.uriVariables.isEmpty()) {
 			this.validateParametersWithoutUriVariables(method);
-		}
-		else {
+		} else {
 			this.validateParametersWithUriVariables(method);
 		}
 	}
@@ -158,6 +158,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 	 * Validates that the method return type is compatible with the resource callback.
 	 * This method should be implemented by subclasses to handle specific return type
 	 * validation.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -166,6 +167,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 	/**
 	 * Validates method parameters when no URI variables are present. This method provides
 	 * common validation logic and delegates exchange type checking to subclasses.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the parameters are not compatible
 	 */
@@ -218,8 +220,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 									+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasRequestContextParam = true;
-			}
-			else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
+			} else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
 				if (hasRequestContextParam) {
 					throw new IllegalArgumentException("Method cannot have more than one request context parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
@@ -230,22 +231,19 @@ public abstract class AbstractMcpResourceMethodCallback {
 									+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasRequestContextParam = true;
-			}
-			else if (McpMeta.class.isAssignableFrom(paramType)) {
+			} else if (McpMeta.class.isAssignableFrom(paramType)) {
 				if (hasMetaParam) {
 					throw new IllegalArgumentException("Method cannot have more than one McpMeta parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasMetaParam = true;
-			}
-			else if (isExchangeOrContextType(paramType)) {
+			} else if (isExchangeOrContextType(paramType)) {
 				if (hasExchangeParam) {
 					throw new IllegalArgumentException("Method cannot have more than one exchange parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasExchangeParam = true;
-			}
-			else if (ReadResourceRequest.class.isAssignableFrom(paramType)
+			} else if (ReadResourceRequest.class.isAssignableFrom(paramType)
 					|| String.class.isAssignableFrom(paramType)) {
 				if (hasRequestOrUriParam) {
 					throw new IllegalArgumentException(
@@ -254,8 +252,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 				}
 				hasRequestOrUriParam = true;
 				hasValidParams = true;
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException(
 						"Method parameters must be exchange, ReadResourceRequest, String, McpMeta, or @McpProgressToken when no URI variables are present: "
 								+ method.getName() + " in " + method.getDeclaringClass().getName()
@@ -276,6 +273,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 	/**
 	 * Validates method parameters when URI variables are present. This method provides
 	 * common validation logic and delegates exchange type checking to subclasses.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the parameters are not compatible
 	 */
@@ -292,22 +290,18 @@ public abstract class AbstractMcpResourceMethodCallback {
 		for (Parameter param : parameters) {
 			if (param.isAnnotationPresent(McpProgressToken.class)) {
 				progressTokenParamCount++;
-			}
-			else {
+			} else {
 				Class<?> paramType = param.getType();
 
 				this.validateParamType(paramType);
 
 				if (McpMeta.class.isAssignableFrom(paramType)) {
 					metaParamCount++;
-				}
-				else if (isExchangeOrContextType(paramType)) {
+				} else if (isExchangeOrContextType(paramType)) {
 					exchangeParamCount++;
-				}
-				else if (ReadResourceRequest.class.isAssignableFrom(paramType)) {
+				} else if (ReadResourceRequest.class.isAssignableFrom(paramType)) {
 					requestParamCount++;
-				}
-				else if (McpSyncRequestContext.class.isAssignableFrom(paramType)) {
+				} else if (McpSyncRequestContext.class.isAssignableFrom(paramType)) {
 					if (hasRequestContextParam) {
 						throw new IllegalArgumentException(
 								"Method cannot have more than one request context parameter: " + method.getName()
@@ -319,8 +313,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 										+ method.getName() + " in " + method.getDeclaringClass().getName());
 					}
 					hasRequestContextParam = true;
-				}
-				else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
+				} else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
 					if (hasRequestContextParam) {
 						throw new IllegalArgumentException(
 								"Method cannot have more than one request context parameter: " + method.getName()
@@ -394,14 +387,15 @@ public abstract class AbstractMcpResourceMethodCallback {
 	 * <p>
 	 * This method constructs an array of arguments based on the method's parameter types
 	 * and the available values (exchange, request, URI variables, progress token).
-	 * @param method The method to build arguments for
-	 * @param exchange The server exchange
-	 * @param request The resource request
+	 *
+	 * @param method            The method to build arguments for
+	 * @param exchange          The server exchange
+	 * @param request           The resource request
 	 * @param uriVariableValues Map of URI variable names to their values
 	 * @return An array of arguments for the method invocation
 	 */
 	protected Object[] buildArgs(Method method, Object exchange, ReadResourceRequest request,
-			Map<String, String> uriVariableValues) {
+	                             Map<String, String> uriVariableValues) {
 		Parameter[] parameters = method.getParameters();
 		Object[] args = new Object[parameters.length];
 
@@ -411,35 +405,30 @@ public abstract class AbstractMcpResourceMethodCallback {
 			if (parameters[i].isAnnotationPresent(McpProgressToken.class)) {
 				// Get progress token from request
 				args[i] = request != null ? request.progressToken() : null;
-			}
-			else if (McpMeta.class.isAssignableFrom(paramType)) {
+			} else if (McpMeta.class.isAssignableFrom(paramType)) {
 				// Inject McpMeta with request metadata
 				args[i] = request != null ? new McpMeta(request.meta()) : new McpMeta(null);
-			}
-			else if (McpTransportContext.class.isAssignableFrom(paramType)
+			} else if (McpTransportContext.class.isAssignableFrom(paramType)
 					|| McpSyncServerExchange.class.isAssignableFrom(paramType)
 					|| McpAsyncServerExchange.class.isAssignableFrom(paramType)) {
 
 				args[i] = this.assignExchangeType(paramType, exchange);
-			}
-			else if (McpSyncRequestContext.class.isAssignableFrom(paramType)) {
+			} else if (McpSyncRequestContext.class.isAssignableFrom(paramType)) {
 				args[i] = DefaultMcpSyncRequestContext.builder()
-					.exchange((McpSyncServerExchange) exchange)
-					.request(request)
-					.build();
-			}
-			else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
+						.exchange((McpSyncServerExchange) exchange)
+						.request(request)
+						.build();
+			} else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
 				args[i] = DefaultMcpAsyncRequestContext.builder()
-					.exchange((McpAsyncServerExchange) exchange)
-					.request(request)
-					.build();
+						.exchange((McpAsyncServerExchange) exchange)
+						.request(request)
+						.build();
 			}
 		}
 
 		if (!this.uriVariables.isEmpty()) {
 			this.buildArgsWithUriVariables(parameters, args, exchange, request, uriVariableValues);
-		}
-		else {
+		} else {
 			this.buildArgsWithoutUriVariables(parameters, args, exchange, request);
 		}
 
@@ -449,14 +438,15 @@ public abstract class AbstractMcpResourceMethodCallback {
 	/**
 	 * Builds arguments for methods with URI variables. This method provides common
 	 * argument building logic for methods with URI variables.
-	 * @param parameters The method parameters
-	 * @param args The arguments array to populate
-	 * @param exchange The server exchange
-	 * @param request The resource request
+	 *
+	 * @param parameters        The method parameters
+	 * @param args              The arguments array to populate
+	 * @param exchange          The server exchange
+	 * @param request           The resource request
 	 * @param uriVariableValues Map of URI variable names to their values
 	 */
 	protected void buildArgsWithUriVariables(Parameter[] parameters, Object[] args, Object exchange,
-			ReadResourceRequest request, Map<String, String> uriVariableValues) {
+	                                         ReadResourceRequest request, Map<String, String> uriVariableValues) {
 
 		// Track which URI variables have been assigned
 		List<String> assignedVariables = new ArrayList<>();
@@ -508,13 +498,14 @@ public abstract class AbstractMcpResourceMethodCallback {
 	/**
 	 * Builds arguments for methods without URI variables. This method provides common
 	 * argument building logic for methods without URI variables.
+	 *
 	 * @param parameters The method parameters
-	 * @param args The arguments array to populate
-	 * @param exchange The server exchange
-	 * @param request The resource request
+	 * @param args       The arguments array to populate
+	 * @param exchange   The server exchange
+	 * @param request    The resource request
 	 */
 	protected void buildArgsWithoutUriVariables(Parameter[] parameters, Object[] args, Object exchange,
-			ReadResourceRequest request) {
+	                                            ReadResourceRequest request) {
 		for (int i = 0; i < parameters.length; i++) {
 			// Skip if parameter is annotated with @McpProgressToken or is McpMeta
 			// (already handled)
@@ -531,11 +522,9 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 			if (ReadResourceRequest.class.isAssignableFrom(paramType)) {
 				args[i] = request;
-			}
-			else if (String.class.isAssignableFrom(paramType)) {
+			} else if (String.class.isAssignableFrom(paramType)) {
 				args[i] = request.uri();
-			}
-			else {
+			} else {
 				args[i] = null; // For any other parameter types
 			}
 		}
@@ -544,6 +533,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 	/**
 	 * Checks if a parameter type is compatible with the exchange type. This method should
 	 * be implemented by subclasses to handle specific exchange type checking.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -552,6 +542,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 	/**
 	 * Returns the content type of the resource.
+	 *
 	 * @return the content type
 	 */
 	public ContentType contentType() {
@@ -591,6 +582,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the method to create a callback for.
+		 *
 		 * @param method The method to create a callback for
 		 * @return This builder
 		 */
@@ -602,6 +594,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the bean instance that contains the method.
+		 *
 		 * @param bean The bean instance
 		 * @return This builder
 		 */
@@ -613,6 +606,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the URI for the resource.
+		 *
 		 * @param uri The URI for the resource
 		 * @return This builder
 		 */
@@ -623,6 +617,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the Mcp Schema resource.
+		 *
 		 * @param resource The resource
 		 * @return This builder
 		 */
@@ -637,6 +632,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the Mcp Schema resource template.
+		 *
 		 * @param resourceTemplate The resource template
 		 * @return This builder
 		 */
@@ -651,6 +647,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the result converter.
+		 *
 		 * @param resultConverter The result converter
 		 * @return This builder
 		 */
@@ -662,6 +659,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the URI template manager factory.
+		 *
 		 * @param uriTemplateManagerFactory The URI template manager factory
 		 * @return This builder
 		 */
@@ -673,6 +671,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the content type.
+		 *
 		 * @param contentType The content type
 		 * @return This builder
 		 */
@@ -683,6 +682,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the name of the resource.
+		 *
 		 * @param name The name of the resource
 		 * @return This builder
 		 */
@@ -693,6 +693,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the description of the resource.
+		 *
 		 * @param description The description of the resource
 		 * @return This builder
 		 */
@@ -703,6 +704,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Set the MIME type of the resource.
+		 *
 		 * @param mimeType The MIME type of the resource
 		 * @return This builder
 		 */
@@ -713,6 +715,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Validate the builder state.
+		 *
 		 * @throws IllegalArgumentException if the builder state is invalid
 		 */
 		protected void validate() {
@@ -739,6 +742,7 @@ public abstract class AbstractMcpResourceMethodCallback {
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new callback instance
 		 */
 		public abstract R build();

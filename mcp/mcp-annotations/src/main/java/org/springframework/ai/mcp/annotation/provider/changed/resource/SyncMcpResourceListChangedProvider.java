@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.resource;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpResourceListChanged;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.changed.resource.SyncMcpResourceListChangedMethodCallback;
 import org.springframework.ai.mcp.annotation.method.changed.resource.SyncResourceListChangedSpecification;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Provider for synchronous resource list changed consumer callbacks.
@@ -63,8 +62,9 @@ public class SyncMcpResourceListChangedProvider {
 
 	/**
 	 * Create a new SyncMcpResourceListChangedProvider.
+	 *
 	 * @param resourceListChangedConsumerObjects the objects containing methods annotated
-	 * with {@link McpResourceListChanged}
+	 *                                           with {@link McpResourceListChanged}
 	 */
 	public SyncMcpResourceListChangedProvider(List<Object> resourceListChangedConsumerObjects) {
 		Assert.notNull(resourceListChangedConsumerObjects, "resourceListChangedConsumerObjects cannot be null");
@@ -73,39 +73,41 @@ public class SyncMcpResourceListChangedProvider {
 
 	/**
 	 * Get the list of resource list changed consumer specifications.
+	 *
 	 * @return the list of resource list changed consumer specifications
 	 */
 	public List<SyncResourceListChangedSpecification> getResourceListChangedSpecifications() {
 
 		List<SyncResourceListChangedSpecification> resourceListChangedConsumers = this.resourceListChangedConsumerObjects
-			.stream()
-			.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
-				.filter(method -> method.isAnnotationPresent(McpResourceListChanged.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpResourceListChangedConsumerMethod -> {
-					var resourceListChangedAnnotation = mcpResourceListChangedConsumerMethod
-						.getAnnotation(McpResourceListChanged.class);
+				.stream()
+				.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
+						.filter(method -> method.isAnnotationPresent(McpResourceListChanged.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpResourceListChangedConsumerMethod -> {
+							var resourceListChangedAnnotation = mcpResourceListChangedConsumerMethod
+									.getAnnotation(McpResourceListChanged.class);
 
-					Consumer<List<McpSchema.Resource>> methodCallback = SyncMcpResourceListChangedMethodCallback
-						.builder()
-						.method(mcpResourceListChangedConsumerMethod)
-						.bean(consumerObject)
-						.resourceListChanged(resourceListChangedAnnotation)
-						.build();
+							Consumer<List<McpSchema.Resource>> methodCallback = SyncMcpResourceListChangedMethodCallback
+									.builder()
+									.method(mcpResourceListChangedConsumerMethod)
+									.bean(consumerObject)
+									.resourceListChanged(resourceListChangedAnnotation)
+									.build();
 
-					return new SyncResourceListChangedSpecification(resourceListChangedAnnotation.clients(),
-							methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncResourceListChangedSpecification(resourceListChangedAnnotation.clients(),
+									methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return resourceListChangedConsumers;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

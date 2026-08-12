@@ -16,17 +16,16 @@
 
 package org.springframework.ai.openai;
 
+import com.openai.azure.AzureOpenAIServiceVersion;
+import com.openai.credential.Credential;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.audio.tts.TextToSpeechOptions;
+
 import java.net.Proxy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import com.openai.azure.AzureOpenAIServiceVersion;
-import com.openai.credential.Credential;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.audio.tts.TextToSpeechOptions;
 
 /**
  * Configuration options for OpenAI text-to-speech using the OpenAI Java SDK.
@@ -117,11 +116,11 @@ public class OpenAiAudioSpeechOptions extends AbstractOpenAiOptions implements T
 	private final Double speed;
 
 	protected OpenAiAudioSpeechOptions(@Nullable String baseUrl, @Nullable String apiKey,
-			@Nullable Credential credential, @Nullable String model, @Nullable String microsoftDeploymentName,
-			@Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
-			@Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
-			@Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
-			@Nullable String input, @Nullable String voice, @Nullable String responseFormat, @Nullable Double speed) {
+	                                   @Nullable Credential credential, @Nullable String model, @Nullable String microsoftDeploymentName,
+	                                   @Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
+	                                   @Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
+	                                   @Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
+	                                   @Nullable String input, @Nullable String voice, @Nullable String responseFormat, @Nullable Double speed) {
 		super(baseUrl, apiKey, credential, model != null ? model : DEFAULT_SPEECH_MODEL, microsoftDeploymentName,
 				microsoftFoundryServiceVersion, organizationId, isMicrosoftFoundry, isGitHubModels, timeout, maxRetries,
 				proxy, customHeaders);
@@ -259,8 +258,7 @@ public class OpenAiAudioSpeechOptions extends AbstractOpenAiOptions implements T
 				if (castFrom.getCustomHeaders() != null) {
 					if (this.customHeaders == null) {
 						this.customHeaders = new HashMap<>(castFrom.getCustomHeaders());
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.customHeaders);
 						merged.putAll(castFrom.getCustomHeaders());
 						this.customHeaders = merged;

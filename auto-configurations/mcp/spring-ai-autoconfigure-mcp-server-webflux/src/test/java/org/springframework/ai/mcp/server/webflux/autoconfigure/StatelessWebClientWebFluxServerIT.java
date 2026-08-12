@@ -16,35 +16,15 @@
 
 package org.springframework.ai.mcp.server.webflux.autoconfigure;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
 import io.modelcontextprotocol.server.McpStatelessSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
-import io.modelcontextprotocol.spec.McpSchema.CompleteResult;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
-import io.modelcontextprotocol.spec.McpSchema.PromptArgument;
-import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-import io.modelcontextprotocol.spec.McpSchema.PromptReference;
-import io.modelcontextprotocol.spec.McpSchema.Resource;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import io.modelcontextprotocol.spec.McpSchema.Tool;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.mcp.McpToolUtils;
 import org.springframework.ai.mcp.client.common.autoconfigure.McpClientAutoConfiguration;
@@ -70,6 +50,13 @@ import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.test.util.TestSocketUtils;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.map;
@@ -79,15 +66,15 @@ public class StatelessWebClientWebFluxServerIT {
 	private static final JacksonMcpJsonMapper jsonMapper = new JacksonMcpJsonMapper(new JsonMapper());
 
 	private final ApplicationContextRunner serverContextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mcp.server.protocol=STATELESS")
-		.withConfiguration(AutoConfigurations.of(McpServerStatelessAutoConfiguration.class,
-				McpServerJsonMapperAutoConfiguration.class, StatelessToolCallbackConverterAutoConfiguration.class,
-				McpServerStatelessWebFluxAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mcp.server.protocol=STATELESS")
+			.withConfiguration(AutoConfigurations.of(McpServerStatelessAutoConfiguration.class,
+					McpServerJsonMapperAutoConfiguration.class, StatelessToolCallbackConverterAutoConfiguration.class,
+					McpServerStatelessWebFluxAutoConfiguration.class));
 
 	private final ApplicationContextRunner clientApplicationContext = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpToolCallbackAutoConfiguration.class,
-				McpClientAutoConfiguration.class, McpClientAnnotationScannerAutoConfiguration.class,
-				StreamableHttpWebFluxTransportAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpToolCallbackAutoConfiguration.class,
+					McpClientAutoConfiguration.class, McpClientAnnotationScannerAutoConfiguration.class,
+					StreamableHttpWebFluxTransportAutoConfiguration.class));
 
 	@Test
 	void clientServerCapabilities() {
@@ -95,144 +82,144 @@ public class StatelessWebClientWebFluxServerIT {
 		int serverPort = TestSocketUtils.findAvailableTcpPort();
 
 		this.serverContextRunner.withUserConfiguration(TestMcpServerConfiguration.class)
-			.withPropertyValues(// @formatter:off
+				.withPropertyValues(// @formatter:off
 			"spring.ai.mcp.server.streamable-http.mcp-endpoint=/mcp",
 					"spring.ai.mcp.server.name=test-mcp-server",
 					"spring.ai.mcp.server.streamable-http.keep-alive-interval=1s",
 					"spring.ai.mcp.server.version=1.0.0") // @formatter:on
-			.run(serverContext -> {
-				// Verify all required beans are present
-				assertThat(serverContext).hasSingleBean(WebFluxStatelessServerTransport.class);
-				assertThat(serverContext).hasSingleBean(RouterFunction.class);
-				assertThat(serverContext).hasSingleBean(McpStatelessSyncServer.class);
+				.run(serverContext -> {
+					// Verify all required beans are present
+					assertThat(serverContext).hasSingleBean(WebFluxStatelessServerTransport.class);
+					assertThat(serverContext).hasSingleBean(RouterFunction.class);
+					assertThat(serverContext).hasSingleBean(McpStatelessSyncServer.class);
 
-				// Verify server properties are configured correctly
-				McpServerProperties properties = serverContext.getBean(McpServerProperties.class);
-				assertThat(properties.getName()).isEqualTo("test-mcp-server");
-				assertThat(properties.getVersion()).isEqualTo("1.0.0");
+					// Verify server properties are configured correctly
+					McpServerProperties properties = serverContext.getBean(McpServerProperties.class);
+					assertThat(properties.getName()).isEqualTo("test-mcp-server");
+					assertThat(properties.getVersion()).isEqualTo("1.0.0");
 
-				McpServerStreamableHttpProperties streamableHttpProperties = serverContext
-					.getBean(McpServerStreamableHttpProperties.class);
-				assertThat(streamableHttpProperties.getMcpEndpoint()).isEqualTo("/mcp");
-				assertThat(streamableHttpProperties.getKeepAliveInterval()).isEqualTo(Duration.ofSeconds(1));
+					McpServerStreamableHttpProperties streamableHttpProperties = serverContext
+							.getBean(McpServerStreamableHttpProperties.class);
+					assertThat(streamableHttpProperties.getMcpEndpoint()).isEqualTo("/mcp");
+					assertThat(streamableHttpProperties.getKeepAliveInterval()).isEqualTo(Duration.ofSeconds(1));
 
-				var httpServer = startHttpServer(serverContext, serverPort);
+					var httpServer = startHttpServer(serverContext, serverPort);
 
-				this.clientApplicationContext.withUserConfiguration(TestMcpClientConfiguration.class)
-					.withPropertyValues(// @formatter:off
+					this.clientApplicationContext.withUserConfiguration(TestMcpClientConfiguration.class)
+							.withPropertyValues(// @formatter:off
 						"spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:" + serverPort,
 						"spring.ai.mcp.client.initialized=false") // @formatter:on
-					.run(clientContext -> {
-						McpSyncClient mcpClient = getMcpSyncClient(clientContext);
-						assertThat(mcpClient).isNotNull();
-						var initResult = mcpClient.initialize();
-						assertThat(initResult).isNotNull();
+							.run(clientContext -> {
+								McpSyncClient mcpClient = getMcpSyncClient(clientContext);
+								assertThat(mcpClient).isNotNull();
+								var initResult = mcpClient.initialize();
+								assertThat(initResult).isNotNull();
 
-						// TOOLS / SAMPLING / ELICITATION
+								// TOOLS / SAMPLING / ELICITATION
 
-						// tool list
-						assertThat(mcpClient.listTools().tools()).hasSize(3);
-						assertThat(mcpClient.listTools().tools()).contains(Tool.builder()
-							.name("tool1")
-							.description("tool1 description")
-							.inputSchema(jsonMapper, """
-									{
-										"": "http://json-schema.org/draft-07/schema#",
-										"type": "object",
-										"properties": {}
-									}
-									""")
-							.build());
-
-						// Call a tool that sends progress notifications
-						CallToolRequest toolRequest = CallToolRequest.builder("tool1").arguments(Map.of()).build();
-
-						CallToolResult response = mcpClient.callTool(toolRequest);
-
-						assertThat(response).isNotNull();
-						assertThat(response.isError()).isFalse();
-						String responseText = ((TextContent) response.content().get(0)).text();
-						assertThat(responseText).contains("CALL RESPONSE");
-
-						// TOOL STRUCTURED OUTPUT
-						// Call tool with valid structured output
-						CallToolResult calculatorToolResponse = mcpClient
-							.callTool(new McpSchema.CallToolRequest("calculator", Map.of("expression", "2 + 3")));
-
-						assertThat(calculatorToolResponse).isNotNull();
-						assertThat(calculatorToolResponse.isError()).isFalse();
-
-						assertThat(calculatorToolResponse.structuredContent()).isNotNull();
-
-						assertThat(calculatorToolResponse.structuredContent())
-							.asInstanceOf(map(String.class, Object.class))
-							.containsEntry("result", 5.0)
-							.containsEntry("operation", "2 + 3")
-							.containsEntry("timestamp", "2024-01-01T10:00:00Z");
-
-						net.javacrumbs.jsonunit.assertj.JsonAssertions
-							.assertThatJson(calculatorToolResponse.structuredContent())
-							.when(Option.IGNORING_ARRAY_ORDER)
-							.when(Option.IGNORING_EXTRA_ARRAY_ITEMS)
-							.isObject()
-							.isEqualTo(net.javacrumbs.jsonunit.assertj.JsonAssertions.json("""
-									{"result":5.0,"operation":"2 + 3","timestamp":"2024-01-01T10:00:00Z"}"""));
-
-						// TOOL FROM MCP TOOL UTILS
-						// Call the tool to ensure arguments are passed correctly
-						CallToolResult toUpperCaseResponse = mcpClient
-							.callTool(new McpSchema.CallToolRequest("toUpperCase", Map.of("input", "hello world")));
-						assertThat(toUpperCaseResponse).isNotNull();
-						assertThat(toUpperCaseResponse.isError()).isFalse();
-						assertThat(toUpperCaseResponse.content()).hasSize(1)
-							.first()
-							.isInstanceOf(TextContent.class)
-							.extracting("text")
-							.isEqualTo("\"HELLO WORLD\"");
-
-						// PROMPT / COMPLETION
-
-						// list prompts
-						assertThat(mcpClient.listPrompts()).isNotNull();
-						assertThat(mcpClient.listPrompts().prompts()).hasSize(1);
-
-						// get prompt
-						GetPromptResult promptResult = mcpClient
-							.getPrompt(new GetPromptRequest("code-completion", Map.of("language", "java")));
-						assertThat(promptResult).isNotNull();
-
-						// completion
-						CompleteRequest completeRequest = new CompleteRequest(
-								new PromptReference("ref/prompt", "code-completion", "Code completion"),
-								new CompleteRequest.CompleteArgument("language", "py"));
-
-						CompleteResult completeResult = mcpClient.completeCompletion(completeRequest);
-
-						assertThat(completeResult).isNotNull();
-						assertThat(completeResult.completion().total()).isEqualTo(10);
-						assertThat(completeResult.completion().values()).containsExactly("python", "pytorch", "pyside");
-						assertThat(completeResult.meta()).isNull();
-
-						// RESOURCES
-						assertThat(mcpClient.listResources()).isNotNull();
-						assertThat(mcpClient.listResources().resources()).hasSize(1);
-						assertThat(mcpClient.listResources().resources().get(0))
-							.isEqualToComparingFieldByFieldRecursively(
-									Resource.builder("file://resource", "Test Resource")
-										.mimeType("text/plain")
-										.description("Test resource description")
+								// tool list
+								assertThat(mcpClient.listTools().tools()).hasSize(3);
+								assertThat(mcpClient.listTools().tools()).contains(Tool.builder()
+										.name("tool1")
+										.description("tool1 description")
+										.inputSchema(jsonMapper, """
+												{
+													"": "http://json-schema.org/draft-07/schema#",
+													"type": "object",
+													"properties": {}
+												}
+												""")
 										.build());
 
-					});
+								// Call a tool that sends progress notifications
+								CallToolRequest toolRequest = CallToolRequest.builder("tool1").arguments(Map.of()).build();
 
-				stopHttpServer(httpServer);
-			});
+								CallToolResult response = mcpClient.callTool(toolRequest);
+
+								assertThat(response).isNotNull();
+								assertThat(response.isError()).isFalse();
+								String responseText = ((TextContent) response.content().get(0)).text();
+								assertThat(responseText).contains("CALL RESPONSE");
+
+								// TOOL STRUCTURED OUTPUT
+								// Call tool with valid structured output
+								CallToolResult calculatorToolResponse = mcpClient
+										.callTool(new McpSchema.CallToolRequest("calculator", Map.of("expression", "2 + 3")));
+
+								assertThat(calculatorToolResponse).isNotNull();
+								assertThat(calculatorToolResponse.isError()).isFalse();
+
+								assertThat(calculatorToolResponse.structuredContent()).isNotNull();
+
+								assertThat(calculatorToolResponse.structuredContent())
+										.asInstanceOf(map(String.class, Object.class))
+										.containsEntry("result", 5.0)
+										.containsEntry("operation", "2 + 3")
+										.containsEntry("timestamp", "2024-01-01T10:00:00Z");
+
+								net.javacrumbs.jsonunit.assertj.JsonAssertions
+										.assertThatJson(calculatorToolResponse.structuredContent())
+										.when(Option.IGNORING_ARRAY_ORDER)
+										.when(Option.IGNORING_EXTRA_ARRAY_ITEMS)
+										.isObject()
+										.isEqualTo(net.javacrumbs.jsonunit.assertj.JsonAssertions.json("""
+												{"result":5.0,"operation":"2 + 3","timestamp":"2024-01-01T10:00:00Z"}"""));
+
+								// TOOL FROM MCP TOOL UTILS
+								// Call the tool to ensure arguments are passed correctly
+								CallToolResult toUpperCaseResponse = mcpClient
+										.callTool(new McpSchema.CallToolRequest("toUpperCase", Map.of("input", "hello world")));
+								assertThat(toUpperCaseResponse).isNotNull();
+								assertThat(toUpperCaseResponse.isError()).isFalse();
+								assertThat(toUpperCaseResponse.content()).hasSize(1)
+										.first()
+										.isInstanceOf(TextContent.class)
+										.extracting("text")
+										.isEqualTo("\"HELLO WORLD\"");
+
+								// PROMPT / COMPLETION
+
+								// list prompts
+								assertThat(mcpClient.listPrompts()).isNotNull();
+								assertThat(mcpClient.listPrompts().prompts()).hasSize(1);
+
+								// get prompt
+								GetPromptResult promptResult = mcpClient
+										.getPrompt(new GetPromptRequest("code-completion", Map.of("language", "java")));
+								assertThat(promptResult).isNotNull();
+
+								// completion
+								CompleteRequest completeRequest = new CompleteRequest(
+										new PromptReference("ref/prompt", "code-completion", "Code completion"),
+										new CompleteRequest.CompleteArgument("language", "py"));
+
+								CompleteResult completeResult = mcpClient.completeCompletion(completeRequest);
+
+								assertThat(completeResult).isNotNull();
+								assertThat(completeResult.completion().total()).isEqualTo(10);
+								assertThat(completeResult.completion().values()).containsExactly("python", "pytorch", "pyside");
+								assertThat(completeResult.meta()).isNull();
+
+								// RESOURCES
+								assertThat(mcpClient.listResources()).isNotNull();
+								assertThat(mcpClient.listResources().resources()).hasSize(1);
+								assertThat(mcpClient.listResources().resources().get(0))
+										.isEqualToComparingFieldByFieldRecursively(
+												Resource.builder("file://resource", "Test Resource")
+														.mimeType("text/plain")
+														.description("Test resource description")
+														.build());
+
+							});
+
+					stopHttpServer(httpServer);
+				});
 	}
 
 	// Helper methods to start and stop the HTTP server
 	private static DisposableServer startHttpServer(ApplicationContext serverContext, int port) {
 		WebFluxStatelessServerTransport mcpStatelessServerTransport = serverContext
-			.getBean(WebFluxStatelessServerTransport.class);
+				.getBean(WebFluxStatelessServerTransport.class);
 		HttpHandler httpHandler = RouterFunctions.toHttpHandler(mcpStatelessServerTransport.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);
 		return HttpServer.create().port(port).handle(adapter).bindNow();
@@ -247,7 +234,7 @@ public class StatelessWebClientWebFluxServerIT {
 	// Helper method to get the MCP sync client
 	private static McpSyncClient getMcpSyncClient(ApplicationContext clientContext) {
 		ObjectProvider<List<McpSyncClient>> mcpClients = clientContext
-			.getBeanProvider(ResolvableType.forClassWithGenerics(List.class, McpSyncClient.class));
+				.getBeanProvider(ResolvableType.forClassWithGenerics(List.class, McpSyncClient.class));
 		return mcpClients.getIfAvailable().get(0);
 	}
 
@@ -258,18 +245,18 @@ public class StatelessWebClientWebFluxServerIT {
 
 			// Tool 1
 			McpStatelessServerFeatures.SyncToolSpecification tool1 = McpStatelessServerFeatures.SyncToolSpecification
-				.builder()
-				.tool(Tool.builder().name("tool1").description("tool1 description").inputSchema(jsonMapper, """
-						{
-							"": "http://json-schema.org/draft-07/schema#",
-							"type": "object",
-							"properties": {}
-						}
-						""").build())
-				.callHandler((exchange, request) -> CallToolResult.builder()
-					.content(List.of(TextContent.builder("CALL RESPONSE").build()))
-					.build())
-				.build();
+					.builder()
+					.tool(Tool.builder().name("tool1").description("tool1 description").inputSchema(jsonMapper, """
+							{
+								"": "http://json-schema.org/draft-07/schema#",
+								"type": "object",
+								"properties": {}
+							}
+							""").build())
+					.callHandler((exchange, request) -> CallToolResult.builder()
+							.content(List.of(TextContent.builder("CALL RESPONSE").build()))
+							.build())
+					.build();
 
 			// Tool 2
 
@@ -280,33 +267,33 @@ public class StatelessWebClientWebFluxServerIT {
 					"required", List.of("result", "operation"));
 
 			Tool calculatorTool = Tool.builder()
-				.name("calculator")
-				.description("Performs mathematical calculations")
-				.outputSchema(outputSchema)
-				.build();
+					.name("calculator")
+					.description("Performs mathematical calculations")
+					.outputSchema(outputSchema)
+					.build();
 
 			McpStatelessServerFeatures.SyncToolSpecification tool2 = McpStatelessServerFeatures.SyncToolSpecification
-				.builder()
-				.tool(calculatorTool)
-				.callHandler((exchange, request) -> {
-					String expression = (String) request.arguments().getOrDefault("expression", "2 + 3");
-					double result = this.evaluateExpression(expression);
-					return CallToolResult.builder()
-						.structuredContent(
-								Map.of("result", result, "operation", expression, "timestamp", "2024-01-01T10:00:00Z"))
-						.build();
-				})
-				.build();
+					.builder()
+					.tool(calculatorTool)
+					.callHandler((exchange, request) -> {
+						String expression = (String) request.arguments().getOrDefault("expression", "2 + 3");
+						double result = this.evaluateExpression(expression);
+						return CallToolResult.builder()
+								.structuredContent(
+										Map.of("result", result, "operation", expression, "timestamp", "2024-01-01T10:00:00Z"))
+								.build();
+					})
+					.build();
 
 			// Tool 3
 
 			// Using a tool with McpToolUtils
 			McpStatelessServerFeatures.SyncToolSpecification tool3 = McpToolUtils
-				.toStatelessSyncToolSpecification(FunctionToolCallback
-					.builder("toUpperCase", (ToUpperCaseRequest req, ToolContext context) -> req.input().toUpperCase())
-					.description("Sets the input string to upper case")
-					.inputType(ToUpperCaseRequest.class)
-					.build(), null);
+					.toStatelessSyncToolSpecification(FunctionToolCallback
+							.builder("toUpperCase", (ToUpperCaseRequest req, ToolContext context) -> req.input().toUpperCase())
+							.description("Sets the input string to upper case")
+							.inputType(ToUpperCaseRequest.class)
+							.build(), null);
 
 			return List.of(tool1, tool2, tool3);
 		}
@@ -326,10 +313,10 @@ public class StatelessWebClientWebFluxServerIT {
 
 						var userMessage = new PromptMessage(Role.USER,
 								TextContent.builder("Hello " + languageArgument + "! How can I assist you today?")
-									.build());
+										.build());
 						return GetPromptResult.builder(List.of(userMessage))
-							.description("A personalized greeting message")
-							.build();
+								.description("A personalized greeting message")
+								.build();
 					});
 
 			return List.of(promptSpecification);
@@ -353,9 +340,9 @@ public class StatelessWebClientWebFluxServerIT {
 		public List<McpStatelessServerFeatures.SyncResourceSpecification> myResources() {
 
 			var systemInfoResource = Resource.builder("file://resource", "Test Resource")
-				.mimeType("text/plain")
-				.description("Test resource description")
-				.build();
+					.mimeType("text/plain")
+					.description("Test resource description")
+					.build();
 
 			var resourceSpecification = new McpStatelessServerFeatures.SyncResourceSpecification(systemInfoResource,
 					(exchange, request) -> {
@@ -365,11 +352,10 @@ public class StatelessWebClientWebFluxServerIT {
 									System.getProperty("java.version"));
 							String jsonContent = new JsonMapper().writeValueAsString(systemInfo);
 							return McpSchema.ReadResourceResult
-								.builder(List.of(new McpSchema.TextResourceContents(request.uri(), "application/json",
-										jsonContent)))
-								.build();
-						}
-						catch (Exception e) {
+									.builder(List.of(new McpSchema.TextResourceContents(request.uri(), "application/json",
+											jsonContent)))
+									.build();
+						} catch (Exception e) {
 							throw new RuntimeException("Failed to generate system info", e);
 						}
 					});

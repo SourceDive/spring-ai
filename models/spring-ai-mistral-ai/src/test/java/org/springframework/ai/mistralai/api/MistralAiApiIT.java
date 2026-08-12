@@ -16,40 +16,27 @@
 
 package org.springframework.ai.mistralai.api;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.springframework.ai.mistralai.ThinkingModelSource;
+import org.springframework.ai.mistralai.ThinkingModelUtils;
+import org.springframework.ai.mistralai.api.MistralAiApi.*;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.*;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk.ImageUrl;
+import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ToolChoice;
+import org.springframework.boot.test.json.BasicJsonTester;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.junit.jupiter.params.ParameterizedTest;
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.mistralai.ThinkingModelSource;
-import org.springframework.ai.mistralai.ThinkingModelUtils;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletion;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ChatCompletionFunction;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ContentChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ImageUrlChunk.ImageUrl;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ReferenceChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.Role;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.TextChunk;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage.ToolCall;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest;
-import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ToolChoice;
-import org.springframework.ai.mistralai.api.MistralAiApi.Embedding;
-import org.springframework.ai.mistralai.api.MistralAiApi.EmbeddingList;
-import org.springframework.ai.mistralai.api.MistralAiApi.FunctionTool;
-import org.springframework.boot.test.json.BasicJsonTester;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeTypeUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,8 +51,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MistralAiApiIT {
 
 	private final MistralAiApi mistralAiApi = MistralAiApi.builder()
-		.apiKey(System.getenv("MISTRAL_AI_API_KEY"))
-		.build();
+			.apiKey(System.getenv("MISTRAL_AI_API_KEY"))
+			.build();
 
 	@Test
 	void chatCompletionEntityWithStringContent() {
@@ -162,7 +149,7 @@ class MistralAiApiIT {
 	@Test
 	void embeddings() {
 		ResponseEntity<EmbeddingList<Embedding>> response = this.mistralAiApi
-			.embeddings(new MistralAiApi.EmbeddingRequest<>("Hello world"));
+				.embeddings(new MistralAiApi.EmbeddingRequest<>("Hello world"));
 
 		assertThat(response).isNotNull();
 		assertThat(response.getBody()).isNotNull();
@@ -265,14 +252,14 @@ class MistralAiApiIT {
 	}
 
 	private static boolean hasContent(List<ChatCompletionChunk> chatCompletionChunks,
-			Function<ChatCompletionMessage, String> extractingContentFunction) {
+	                                  Function<ChatCompletionMessage, String> extractingContentFunction) {
 		return chatCompletionChunks.stream()
-			.map(ChatCompletionChunk::choices)
-			.flatMap(List::stream)
-			.map(ChatCompletionChunk.ChunkChoice::delta)
-			.map(extractingContentFunction)
-			.filter(Objects::nonNull)
-			.anyMatch(Predicate.not(String::isEmpty));
+				.map(ChatCompletionChunk::choices)
+				.flatMap(List::stream)
+				.map(ChatCompletionChunk.ChunkChoice::delta)
+				.map(extractingContentFunction)
+				.filter(Objects::nonNull)
+				.anyMatch(Predicate.not(String::isEmpty));
 	}
 
 }

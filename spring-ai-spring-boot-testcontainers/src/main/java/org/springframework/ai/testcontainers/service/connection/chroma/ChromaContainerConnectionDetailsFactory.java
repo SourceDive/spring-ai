@@ -16,14 +16,13 @@
 
 package org.springframework.ai.testcontainers.service.connection.chroma;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-import org.testcontainers.chromadb.ChromaDBContainer;
-
 import org.springframework.ai.vectorstore.chroma.autoconfigure.ChromaConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.chromadb.ChromaDBContainer;
+
+import java.util.Map;
 
 /**
  * @author Eddú Meléndez

@@ -16,23 +16,9 @@
 
 package org.springframework.ai.deepseek.api;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.model.ApiKey;
 import org.springframework.ai.model.ChatModelDescription;
 import org.springframework.ai.model.SimpleApiKey;
@@ -45,6 +31,15 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Single class implementation of the <a href="https://api-docs.deepseek.com/">DeepSeek
@@ -73,18 +68,19 @@ public class DeepSeekApi {
 
 	/**
 	 * Create a new chat completion api.
-	 * @param baseUrl api base URL.
-	 * @param apiKey DeepSeek apiKey.
-	 * @param headers the http headers to use.
-	 * @param completionsPath the path to the chat completions endpoint.
-	 * @param betaPrefixPath the prefix path to the beta feature endpoint.
-	 * @param restClientBuilder RestClient builder.
-	 * @param webClientBuilder WebClient builder.
+	 *
+	 * @param baseUrl              api base URL.
+	 * @param apiKey               DeepSeek apiKey.
+	 * @param headers              the http headers to use.
+	 * @param completionsPath      the path to the chat completions endpoint.
+	 * @param betaPrefixPath       the prefix path to the beta feature endpoint.
+	 * @param restClientBuilder    RestClient builder.
+	 * @param webClientBuilder     WebClient builder.
 	 * @param responseErrorHandler Response error handler.
 	 */
 	public DeepSeekApi(String baseUrl, ApiKey apiKey, HttpHeaders headers, String completionsPath,
-			String betaPrefixPath, RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                   String betaPrefixPath, RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+	                   ResponseErrorHandler responseErrorHandler) {
 
 		Assert.hasText(completionsPath, "Completions Path must not be null");
 		Assert.hasText(betaPrefixPath, "Beta feature path must not be null");
@@ -99,10 +95,10 @@ public class DeepSeekApi {
 			h.addAll(HttpHeaders.readOnlyHttpHeaders(headers));
 		};
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(finalHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(finalHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 
 		this.webClient = webClientBuilder.clone().baseUrl(baseUrl).defaultHeaders(finalHeaders).build();
 
@@ -110,10 +106,11 @@ public class DeepSeekApi {
 
 	/**
 	 * Create a new chat completion api.
+	 *
 	 * @param completionsPath the path to the chat completions endpoint.
-	 * @param betaPrefixPath the prefix path to the beta feature endpoint.
-	 * @param restClient RestClient instance.
-	 * @param webClient WebClient instance.
+	 * @param betaPrefixPath  the prefix path to the beta feature endpoint.
+	 * @param restClient      RestClient instance.
+	 * @param webClient       WebClient instance.
 	 */
 	public DeepSeekApi(String completionsPath, String betaPrefixPath, RestClient restClient, WebClient webClient) {
 
@@ -130,6 +127,7 @@ public class DeepSeekApi {
 
 	/**
 	 * Creates a model response for the given chat conversation.
+	 *
 	 * @param chatRequest The chat completion request.
 	 * @return Entity response with {@link ChatCompletion} as a body and HTTP status code
 	 * and headers.
@@ -140,16 +138,17 @@ public class DeepSeekApi {
 		Assert.isTrue(Boolean.FALSE.equals(chatRequest.stream()), "Request must set the stream property to false.");
 
 		return this.restClient.post()
-			.uri(this.getEndpoint(chatRequest))
-			.body(chatRequest)
-			.retrieve()
-			.toEntity(ChatCompletion.class);
+				.uri(this.getEndpoint(chatRequest))
+				.body(chatRequest)
+				.retrieve()
+				.toEntity(ChatCompletion.class);
 	}
 
 	/**
 	 * Creates a streaming chat response for the given chat conversation.
+	 *
 	 * @param chatRequest The chat completion request. Must have the stream property set
-	 * to true.
+	 *                    to true.
 	 * @return Returns a {@link Flux} stream from chat completion chunks.
 	 */
 	public Flux<ChatCompletionChunk> chatCompletionStream(ChatCompletionRequest chatRequest) {
@@ -158,15 +157,16 @@ public class DeepSeekApi {
 
 	/**
 	 * Creates a streaming chat response for the given chat conversation.
-	 * @param chatRequest The chat completion request. Must have the stream property set
-	 * to true.
+	 *
+	 * @param chatRequest          The chat completion request. Must have the stream property set
+	 *                             to true.
 	 * @param additionalHttpHeader Optional, additional HTTP headers to be added to the
-	 * request.
+	 *                             request.
 	 * @return Returns a {@link Flux} stream from chat completion chunks.
 	 */
 	@SuppressWarnings("NullAway")
 	public Flux<ChatCompletionChunk> chatCompletionStream(ChatCompletionRequest chatRequest,
-			HttpHeaders additionalHttpHeader) {
+	                                                      HttpHeaders additionalHttpHeader) {
 
 		Assert.notNull(chatRequest, "The request body can not be null.");
 		Assert.isTrue(Boolean.TRUE.equals(chatRequest.stream()), "Request must set the stream property to true.");
@@ -174,49 +174,49 @@ public class DeepSeekApi {
 		AtomicBoolean isInsideTool = new AtomicBoolean(false);
 
 		return this.webClient.post()
-			.uri(this.getEndpoint(chatRequest))
-			.headers(headers -> headers.addAll(HttpHeaders.readOnlyHttpHeaders(additionalHttpHeader)))
-			.body(Mono.just(chatRequest), ChatCompletionRequest.class)
-			.retrieve()
-			.bodyToFlux(String.class)
-			// cancels the flux stream after the "[DONE]" is received.
-			.takeUntil(SSE_DONE_PREDICATE)
-			// filters out the "[DONE]" message.
-			.filter(SSE_DONE_PREDICATE.negate())
-			.mapNotNull(content -> jsonHelper.fromJson(content, ChatCompletionChunk.class))
-			// Detect is the chunk is part of a streaming function call.
-			.map(chunk -> {
-				if (this.chunkMerger.isStreamingToolFunctionCall(chunk)) {
-					isInsideTool.set(true);
-				}
-				return chunk;
-			})
-			// Group all chunks belonging to the same function call.
-			// Flux<ChatCompletionChunk> -> Flux<Flux<ChatCompletionChunk>>
-			.windowUntil(chunk -> {
-				if (isInsideTool.get() && this.chunkMerger.isStreamingToolFunctionCallFinish(chunk)) {
-					isInsideTool.set(false);
-					return true;
-				}
-				return !isInsideTool.get();
-			})
-			// Merging the window chunks into a single chunk.
-			// Reduce the inner Flux<ChatCompletionChunk> window into a single
-			// Mono<ChatCompletionChunk>,
-			// Flux<Flux<ChatCompletionChunk>> -> Flux<Mono<ChatCompletionChunk>>
-			.concatMapIterable(window -> {
-				Mono<ChatCompletionChunk> monoChunk = window.reduce(this.chunkMerger::merge);
-				return List.of(monoChunk);
-			})
-			// Flux<Mono<ChatCompletionChunk>> -> Flux<ChatCompletionChunk>
-			.flatMap(mono -> mono);
+				.uri(this.getEndpoint(chatRequest))
+				.headers(headers -> headers.addAll(HttpHeaders.readOnlyHttpHeaders(additionalHttpHeader)))
+				.body(Mono.just(chatRequest), ChatCompletionRequest.class)
+				.retrieve()
+				.bodyToFlux(String.class)
+				// cancels the flux stream after the "[DONE]" is received.
+				.takeUntil(SSE_DONE_PREDICATE)
+				// filters out the "[DONE]" message.
+				.filter(SSE_DONE_PREDICATE.negate())
+				.mapNotNull(content -> jsonHelper.fromJson(content, ChatCompletionChunk.class))
+				// Detect is the chunk is part of a streaming function call.
+				.map(chunk -> {
+					if (this.chunkMerger.isStreamingToolFunctionCall(chunk)) {
+						isInsideTool.set(true);
+					}
+					return chunk;
+				})
+				// Group all chunks belonging to the same function call.
+				// Flux<ChatCompletionChunk> -> Flux<Flux<ChatCompletionChunk>>
+				.windowUntil(chunk -> {
+					if (isInsideTool.get() && this.chunkMerger.isStreamingToolFunctionCallFinish(chunk)) {
+						isInsideTool.set(false);
+						return true;
+					}
+					return !isInsideTool.get();
+				})
+				// Merging the window chunks into a single chunk.
+				// Reduce the inner Flux<ChatCompletionChunk> window into a single
+				// Mono<ChatCompletionChunk>,
+				// Flux<Flux<ChatCompletionChunk>> -> Flux<Mono<ChatCompletionChunk>>
+				.concatMapIterable(window -> {
+					Mono<ChatCompletionChunk> monoChunk = window.reduce(this.chunkMerger::merge);
+					return List.of(monoChunk);
+				})
+				// Flux<Mono<ChatCompletionChunk>> -> Flux<ChatCompletionChunk>
+				.flatMap(mono -> mono);
 	}
 
 	private String getEndpoint(ChatCompletionRequest request) {
 		boolean isPrefix = request.messages.stream()
-			.map(ChatCompletionMessage::prefix)
-			.filter(Objects::nonNull)
-			.anyMatch(prefix -> prefix);
+				.map(ChatCompletionMessage::prefix)
+				.filter(Objects::nonNull)
+				.anyMatch(prefix -> prefix);
 		String endpointPrefix = isPrefix ? this.betaPrefixPath : "";
 		return endpointPrefix + this.completionsPath;
 	}
@@ -246,6 +246,7 @@ public class DeepSeekApi {
 		 * access DeepSeek-V3 without modification to the model name. The open-source
 		 * DeepSeek-V3 model supports 128K context window, and DeepSeek-V3 on API/Web
 		 * supports 64K context window. Context window: 64k tokens
+		 *
 		 * @deprecated DeepSeek has announced this legacy model name will be deprecated.
 		 * Prefer {@link #DEEPSEEK_V4_FLASH} or {@link #DEEPSEEK_V4_PRO}.
 		 */
@@ -258,6 +259,7 @@ public class DeepSeekApi {
 		 * the accuracy of its responses. Our API provides users with access to the CoT
 		 * content generated by deepseek-reasoner, enabling them to view, display, and
 		 * distill it.
+		 *
 		 * @deprecated DeepSeek has announced this legacy model name will be deprecated.
 		 * Prefer {@link #DEEPSEEK_V4_FLASH} / {@link #DEEPSEEK_V4_PRO} with
 		 * provider-specific reasoning configuration.
@@ -334,7 +336,8 @@ public class DeepSeekApi {
 
 		/**
 		 * Create a tool of type 'function' and the given function definition.
-		 * @param type the tool type
+		 *
+		 * @param type     the tool type
 		 * @param function function definition
 		 */
 		@JsonCreator
@@ -345,6 +348,7 @@ public class DeepSeekApi {
 
 		/**
 		 * Create a tool of type 'function' and the given function definition.
+		 *
 		 * @param function function definition.
 		 */
 		public FunctionTool(Function function) {
@@ -396,22 +400,23 @@ public class DeepSeekApi {
 
 			/**
 			 * Create tool function definition.
+			 *
 			 * @param description A description of what the function does, used by the
-			 * model to choose when and how to call the function.
-			 * @param name The name of the function to be called. Must be a-z, A-Z, 0-9,
-			 * or contain underscores and dashes, with a maximum length of 64.
-			 * @param parameters The parameters the functions accepts, described as a JSON
-			 * Schema object. To describe a function that accepts no parameters, provide
-			 * the value {"type": "object", "properties": {}}.
-			 * @param strict Whether to enable strict schema adherence when generating the
-			 * function call. If set to true, the model will follow the exact schema
-			 * defined in the parameters field. Only a subset of JSON Schema is supported
-			 * when strict is true.
+			 *                    model to choose when and how to call the function.
+			 * @param name        The name of the function to be called. Must be a-z, A-Z, 0-9,
+			 *                    or contain underscores and dashes, with a maximum length of 64.
+			 * @param parameters  The parameters the functions accepts, described as a JSON
+			 *                    Schema object. To describe a function that accepts no parameters, provide
+			 *                    the value {"type": "object", "properties": {}}.
+			 * @param strict      Whether to enable strict schema adherence when generating the
+			 *                    function call. If set to true, the model will follow the exact schema
+			 *                    defined in the parameters field. Only a subset of JSON Schema is supported
+			 *                    when strict is true.
 			 */
 			@JsonCreator
 			public Function(@JsonProperty("description") String description, @JsonProperty("name") String name,
-					@JsonProperty("parameters") Map<String, Object> parameters,
-					@JsonProperty("strict") @Nullable Boolean strict) {
+			                @JsonProperty("parameters") Map<String, Object> parameters,
+			                @JsonProperty("strict") @Nullable Boolean strict) {
 
 				this.description = description;
 				this.name = name;
@@ -421,9 +426,10 @@ public class DeepSeekApi {
 
 			/**
 			 * Create tool function definition.
+			 *
 			 * @param description tool function description.
-			 * @param name tool function name.
-			 * @param jsonSchema tool function schema as json.
+			 * @param name        tool function name.
+			 * @param jsonSchema  tool function schema as json.
 			 */
 			public Function(String description, String name, String jsonSchema) {
 				this(description, name, jsonHelper.fromJsonToMap(jsonSchema), null);
@@ -452,50 +458,50 @@ public class DeepSeekApi {
 	/**
 	 * Creates a model response for the given chat conversation.
 	 *
-	 * @param messages A list of messages comprising the conversation so far.
-	 * @param model ID of the model to use.
+	 * @param messages         A list of messages comprising the conversation so far.
+	 * @param model            ID of the model to use.
 	 * @param frequencyPenalty Number between -2.0 and 2.0. Positive values penalize new
-	 * tokens based on their existing frequency in the text so far, decreasing the model's
-	 * likelihood to repeat the same line verbatim.
-	 * @param maxTokens The maximum number of tokens that can be generated in the chat
-	 * completion. This value can be used to control costs for text generated via API.
-	 * This value is now deprecated in favor of max_completion_tokens, and is not
-	 * compatible with o1 series models.
-	 * @param presencePenalty Number between -2.0 and 2.0. Positive values penalize new
-	 * tokens based on whether they appear in the text so far, increasing the model's
-	 * likelihood to talk about new topics.
-	 * @param responseFormat An object specifying the format that the model must output.
-	 * Setting to { "type": "json_object" } enables JSON mode, which guarantees the
-	 * message the model generates is valid JSON.
-	 * @param stop A string or a list containing up to 4 strings, upon encountering these
-	 * words, the API will cease generating more tokens.
-	 * @param stream If set, partial message deltas will be sent.Tokens will be sent as
-	 * data-only server-sent events as they become available, with the stream terminated
-	 * by a data: [DONE] message.
-	 * @param temperature What sampling temperature to use, between 0 and 2. Higher values
-	 * like 0.8 will make the output more random, while lower values like 0.2 will make it
-	 * more focused and deterministic. We generally recommend altering this or top_p but
-	 * not both.
-	 * @param topP An alternative to sampling with temperature, called nucleus sampling,
-	 * where the model considers the results of the tokens with top_p probability mass. So
-	 * 0.1 means only the tokens comprising the top 10% probability mass are considered.
-	 * We generally recommend altering this or temperature but not both.
-	 * @param logprobs Whether to return log probabilities of the output tokens or not. If
-	 * true, returns the log probabilities of each output token returned in the content of
-	 * message.
-	 * @param topLogprobs An integer between 0 and 20 specifying the number of most likely
-	 * tokens to return at each token position, each with an associated log probability.
-	 * logprobs must be set to true if this parameter is used.
-	 * @param tools A list of tools the model may call. Currently, only functions are
-	 * supported as a tool. Use this to provide a list of functions the model may generate
-	 * JSON inputs for.
-	 * @param toolChoice Controls which (if any) function is called by the model. none
-	 * means the model will not call a function and instead generates a message. auto
-	 * means the model can pick between generating a message or calling a function.
-	 * Specifying a particular function via {"type": "function", "function": {"name":
-	 * "my_function"}} forces the model to call that function. none is the default when no
-	 * functions are present. auto is the default if functions are present. Use the
-	 * {@link ToolChoiceBuilder} to create the tool choice value.
+	 *                         tokens based on their existing frequency in the text so far, decreasing the model's
+	 *                         likelihood to repeat the same line verbatim.
+	 * @param maxTokens        The maximum number of tokens that can be generated in the chat
+	 *                         completion. This value can be used to control costs for text generated via API.
+	 *                         This value is now deprecated in favor of max_completion_tokens, and is not
+	 *                         compatible with o1 series models.
+	 * @param presencePenalty  Number between -2.0 and 2.0. Positive values penalize new
+	 *                         tokens based on whether they appear in the text so far, increasing the model's
+	 *                         likelihood to talk about new topics.
+	 * @param responseFormat   An object specifying the format that the model must output.
+	 *                         Setting to { "type": "json_object" } enables JSON mode, which guarantees the
+	 *                         message the model generates is valid JSON.
+	 * @param stop             A string or a list containing up to 4 strings, upon encountering these
+	 *                         words, the API will cease generating more tokens.
+	 * @param stream           If set, partial message deltas will be sent.Tokens will be sent as
+	 *                         data-only server-sent events as they become available, with the stream terminated
+	 *                         by a data: [DONE] message.
+	 * @param temperature      What sampling temperature to use, between 0 and 2. Higher values
+	 *                         like 0.8 will make the output more random, while lower values like 0.2 will make it
+	 *                         more focused and deterministic. We generally recommend altering this or top_p but
+	 *                         not both.
+	 * @param topP             An alternative to sampling with temperature, called nucleus sampling,
+	 *                         where the model considers the results of the tokens with top_p probability mass. So
+	 *                         0.1 means only the tokens comprising the top 10% probability mass are considered.
+	 *                         We generally recommend altering this or temperature but not both.
+	 * @param logprobs         Whether to return log probabilities of the output tokens or not. If
+	 *                         true, returns the log probabilities of each output token returned in the content of
+	 *                         message.
+	 * @param topLogprobs      An integer between 0 and 20 specifying the number of most likely
+	 *                         tokens to return at each token position, each with an associated log probability.
+	 *                         logprobs must be set to true if this parameter is used.
+	 * @param tools            A list of tools the model may call. Currently, only functions are
+	 *                         supported as a tool. Use this to provide a list of functions the model may generate
+	 *                         JSON inputs for.
+	 * @param toolChoice       Controls which (if any) function is called by the model. none
+	 *                         means the model will not call a function and instead generates a message. auto
+	 *                         means the model can pick between generating a message or calling a function.
+	 *                         Specifying a particular function via {"type": "function", "function": {"name":
+	 *                         "my_function"}} forces the model to call that function. none is the default when no
+	 *                         functions are present. auto is the default if functions are present. Use the
+	 *                         {@link ToolChoiceBuilder} to create the tool choice value.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record ChatCompletionRequest(// @formatter:off
@@ -583,16 +589,16 @@ public class DeepSeekApi {
 	 * Message comprising the conversation.
 	 *
 	 * @param rawContent The contents of the message. The message content is always a
-	 * {@link String}.
-	 * @param role The role of the messages author. Could be one of the {@link Role}
-	 * types.
-	 * @param name An optional name for the participant. Provides the model information to
-	 * differentiate between participants of the same role. In case of Function calling,
-	 * the name is the function name that the message is responding to.
+	 *                   {@link String}.
+	 * @param role       The role of the messages author. Could be one of the {@link Role}
+	 *                   types.
+	 * @param name       An optional name for the participant. Provides the model information to
+	 *                   differentiate between participants of the same role. In case of Function calling,
+	 *                   the name is the function name that the message is responding to.
 	 * @param toolCallId Tool call that this message is responding to. Only applicable for
-	 * the {@link Role#TOOL} role and null otherwise.
-	 * @param toolCalls The tool calls generated by the model, such as function calls.
-	 * Applicable only for {@link Role#ASSISTANT} role and null otherwise.
+	 *                   the {@link Role#TOOL} role and null otherwise.
+	 * @param toolCalls  The tool calls generated by the model, such as function calls.
+	 *                   Applicable only for {@link Role#ASSISTANT} role and null otherwise.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -626,7 +632,7 @@ public class DeepSeekApi {
 		 * @param toolCalls The tool calls generated by the model, such as function calls.
 		 */
 		public ChatCompletionMessage(@Nullable String content, Role role, @Nullable String name,
-				@Nullable String toolCallId, @Nullable List<ToolCall> toolCalls) {
+				@Nullable String toolCallId, @Nullable List < ToolCall > toolCalls) {
 			this(content, role, name, toolCallId, toolCalls, null, null);
 		}
 
@@ -675,7 +681,7 @@ public class DeepSeekApi {
 				@JsonProperty("index") @Nullable Integer index,
 				@JsonProperty("id") String id,
 				@JsonProperty("type") @Nullable String type,
-				@JsonProperty("function") ChatCompletionFunction function) { // @formatter:on
+				@JsonProperty("function") ChatCompletionFunction function){ // @formatter:on
 
 			public ToolCall(String id, @Nullable String type, ChatCompletionFunction function) {
 				this(null, id, type, function);
@@ -694,7 +700,7 @@ public class DeepSeekApi {
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record ChatCompletionFunction(// @formatter:off
 				@JsonProperty("name") String name,
-				@JsonProperty("arguments") String arguments) { // @formatter:on
+				@JsonProperty("arguments") String arguments){ // @formatter:on
 		}
 	}
 
@@ -702,17 +708,17 @@ public class DeepSeekApi {
 	 * Represents a chat completion response returned by model, based on the provided
 	 * input.
 	 *
-	 * @param id A unique identifier for the chat completion.
-	 * @param choices A list of chat completion choices. Can be more than one if n is
-	 * greater than 1.
-	 * @param created The Unix timestamp (in seconds) of when the chat completion was
-	 * created.
-	 * @param model The model used for the chat completion.
+	 * @param id                A unique identifier for the chat completion.
+	 * @param choices           A list of chat completion choices. Can be more than one if n is
+	 *                          greater than 1.
+	 * @param created           The Unix timestamp (in seconds) of when the chat completion was
+	 *                          created.
+	 * @param model             The model used for the chat completion.
 	 * @param systemFingerprint This fingerprint represents the backend configuration that
-	 * the model runs with. Can be used in conjunction with the seed request parameter to
-	 * understand when backend changes have been made that might impact determinism.
-	 * @param object The object type, which is always chat.completion.
-	 * @param usage Usage statistics for the completion request.
+	 *                          the model runs with. Can be used in conjunction with the seed request parameter to
+	 *                          understand when backend changes have been made that might impact determinism.
+	 * @param object            The object type, which is always chat.completion.
+	 * @param usage             Usage statistics for the completion request.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -740,7 +746,7 @@ public class DeepSeekApi {
 				@JsonProperty("finish_reason") @Nullable ChatCompletionFinishReason finishReason,
 				@JsonProperty("index") Integer index,
 				@JsonProperty("message") ChatCompletionMessage message,
-				@JsonProperty("logprobs") @Nullable LogProbs logprobs) { // @formatter:on
+				@JsonProperty("logprobs") @Nullable LogProbs logprobs){ // @formatter:on
 		}
 
 	}
@@ -754,7 +760,7 @@ public class DeepSeekApi {
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record LogProbs(@JsonProperty("content") List<Content> content,
-			@JsonProperty("refusal") List<Content> refusal) {
+	                       @JsonProperty("refusal") List<Content> refusal) {
 
 		/**
 		 * Message content tokens with log probability information.
@@ -776,7 +782,7 @@ public class DeepSeekApi {
 				@JsonProperty("token") String token,
 				@JsonProperty("logprob") Float logprob,
 				@JsonProperty("bytes") List<Integer> probBytes,
-				@JsonProperty("top_logprobs") List<TopLogProbs> topLogprobs) { // @formatter:on
+				@JsonProperty("top_logprobs") List < TopLogProbs > topLogprobs){ // @formatter:on
 
 			/**
 			 * The most likely tokens and their log probability, at this token position.
@@ -794,7 +800,7 @@ public class DeepSeekApi {
 			public record TopLogProbs(// @formatter:off
 					@JsonProperty("token") String token,
 					@JsonProperty("logprob") Float logprob,
-					@JsonProperty("bytes") List<Integer> probBytes) { // @formatter:on
+					@JsonProperty("bytes") List < Integer > probBytes){ // @formatter:on
 			}
 
 		}
@@ -806,11 +812,11 @@ public class DeepSeekApi {
 	/**
 	 * Usage statistics for the completion request.
 	 *
-	 * @param completionTokens Number of tokens in the generated completion. Only
-	 * applicable for completion requests.
-	 * @param promptTokens Number of tokens in the prompt.
-	 * @param totalTokens Total number of tokens used in the request (prompt +
-	 * completion).
+	 * @param completionTokens    Number of tokens in the generated completion. Only
+	 *                            applicable for completion requests.
+	 * @param promptTokens        Number of tokens in the prompt.
+	 * @param totalTokens         Total number of tokens used in the request (prompt +
+	 *                            completion).
 	 * @param promptTokensDetails Breakdown of tokens used in the prompt.
 	 */
 	@JsonInclude(Include.NON_NULL)
@@ -833,7 +839,7 @@ public class DeepSeekApi {
 		@JsonInclude(Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public record PromptTokensDetails(// @formatter:off
-			@JsonProperty("cached_tokens") Integer cachedTokens) { // @formatter:on
+			@JsonProperty("cached_tokens") Integer cachedTokens){ // @formatter:on
 		}
 	}
 
@@ -841,20 +847,20 @@ public class DeepSeekApi {
 	 * Represents a streamed chunk of a chat completion response returned by model, based
 	 * on the provided input.
 	 *
-	 * @param id A unique identifier for the chat completion. Each chunk has the same ID.
-	 * @param choices A list of chat completion choices. Can be more than one if n is
-	 * greater than 1.
-	 * @param created The Unix timestamp (in seconds) of when the chat completion was
-	 * created. Each chunk has the same timestamp.
-	 * @param model The model used for the chat completion.
-	 * @param serviceTier The service tier used for processing the request. This field is
-	 * only included if the service_tier parameter is specified in the request.
+	 * @param id                A unique identifier for the chat completion. Each chunk has the same ID.
+	 * @param choices           A list of chat completion choices. Can be more than one if n is
+	 *                          greater than 1.
+	 * @param created           The Unix timestamp (in seconds) of when the chat completion was
+	 *                          created. Each chunk has the same timestamp.
+	 * @param model             The model used for the chat completion.
+	 * @param serviceTier       The service tier used for processing the request. This field is
+	 *                          only included if the service_tier parameter is specified in the request.
 	 * @param systemFingerprint This fingerprint represents the backend configuration that
-	 * the model runs with. Can be used in conjunction with the seed request parameter to
-	 * understand when backend changes have been made that might impact determinism.
-	 * @param object The object type, which is always 'chat.completion.chunk'.
-	 * @param usage Usage statistics for the completion request. Present in the last chunk
-	 * only if the StreamOptions.includeUsage is set to true.
+	 *                          the model runs with. Can be used in conjunction with the seed request parameter to
+	 *                          understand when backend changes have been made that might impact determinism.
+	 * @param object            The object type, which is always 'chat.completion.chunk'.
+	 * @param usage             Usage statistics for the completion request. Present in the last chunk
+	 *                          only if the StreamOptions.includeUsage is set to true.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -882,7 +888,7 @@ public class DeepSeekApi {
 				@JsonProperty("finish_reason") @Nullable ChatCompletionFinishReason finishReason,
 				@JsonProperty("index") Integer index,
 				@JsonProperty("delta") ChatCompletionMessage delta,
-				@JsonProperty("logprobs") @Nullable LogProbs logprobs) { // @formatter:on
+				@JsonProperty("logprobs") @Nullable LogProbs logprobs){ // @formatter:on
 
 		}
 

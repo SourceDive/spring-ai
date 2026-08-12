@@ -16,19 +16,6 @@
 
 package org.springframework.ai.vectorstore.opensearch;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import org.apache.hc.core5.http.HttpHost;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,9 +28,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.opensearch.testcontainers.OpenSearchContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -57,6 +41,17 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -100,8 +95,7 @@ class OpenSearchVectorStoreIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -122,7 +116,7 @@ class OpenSearchVectorStoreIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l1", "l2", "linf" })
+	@ValueSource(strings = {DEFAULT, "l1", "l2", "linf"})
 	public void addAndSearchTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -132,9 +126,9 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(
 					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build());
@@ -151,14 +145,14 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l1", "l2", "linf" })
+	@ValueSource(strings = {DEFAULT, "l1", "l2", "linf"})
 	public void searchWithFilters(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -178,88 +172,88 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(3));
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG','NL']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG','NL']")
+					.build());
 
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country not in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country not in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country not in ['BG'])")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country not in ['BG'])")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(
-						"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(
+							"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
@@ -268,13 +262,13 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l1", "l2", "linf" })
+	@ValueSource(strings = {DEFAULT, "l1", "l2", "linf"})
 	public void documentUpdateTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -286,12 +280,12 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(document));
 
 			Awaitility.await()
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0).topK(5).build()),
-						hasSize(1));
+					.until(() -> vectorStore
+									.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0).topK(5).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0).topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0).topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -307,8 +301,8 @@ class OpenSearchVectorStoreIT {
 			SearchRequest fooBarSearchRequest = SearchRequest.builder().query("FooBar").topK(5).build();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
-						equalTo("The World is Big and Salvation Lurks Around the Corner"));
+					.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
+							equalTo("The World is Big and Salvation Lurks Around the Corner"));
 
 			results = vectorStore.similaritySearch(fooBarSearchRequest);
 
@@ -328,7 +322,7 @@ class OpenSearchVectorStoreIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l1", "l2", "linf" })
+	@ValueSource(strings = {DEFAULT, "l1", "l2", "linf"})
 	public void searchThresholdTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -338,10 +332,10 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			SearchRequest query = SearchRequest.builder()
-				.query("Great Depression")
-				.topK(50)
-				.similarityThreshold(SearchRequest.SIMILARITY_THRESHOLD_ACCEPT_ALL)
-				.build();
+					.query("Great Depression")
+					.topK(50)
+					.similarityThreshold(SearchRequest.SIMILARITY_THRESHOLD_ACCEPT_ALL)
+					.build();
 
 			Awaitility.await().until(() -> vectorStore.similaritySearch(query), hasSize(3));
 
@@ -354,10 +348,10 @@ class OpenSearchVectorStoreIT {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Great Depression")
-				.topK(50)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Great Depression")
+					.topK(50)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -371,9 +365,9 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(50).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(50).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -422,17 +416,17 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(3));
 
 			vectorStore.delete(List.of(bgDocument.getId(), bgDocument2.getId()));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getMetadata()).containsEntry("country", "NL");
@@ -454,8 +448,8 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(3));
 
 			Filter.Expression filterExpression = new Filter.Expression(Filter.ExpressionType.EQ,
 					new Filter.Key("country"), new Filter.Value("BG"));
@@ -463,11 +457,11 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(filterExpression);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getMetadata()).containsEntry("country", "NL");
@@ -489,17 +483,17 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(3));
 
 			vectorStore.delete("country == 'BG'");
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("The World").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getMetadata()).containsEntry("country", "NL");
@@ -518,8 +512,8 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(doc1, doc2, doc3));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Content").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Content").topK(5).build()),
+							hasSize(3));
 
 			// Complex filter expression: (type == 'A' AND priority > 1)
 			Filter.Expression priorityFilter = new Filter.Expression(Filter.ExpressionType.GT,
@@ -532,17 +526,17 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(complexFilter);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Content").topK(5).build()),
-						hasSize(2));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Content").topK(5).build()),
+							hasSize(2));
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder("A", "B");
+					.containsExactlyInAnyOrder("A", "B");
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("priority")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(1, 1);
+					.containsExactlyInAnyOrder(1, 1);
 		});
 	}
 
@@ -556,7 +550,7 @@ class OpenSearchVectorStoreIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l2", "innerproduct" })
+	@ValueSource(strings = {DEFAULT, "l2", "innerproduct"})
 	public void approximateAddAndSearchTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -566,9 +560,9 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0.0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0.0).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore.similaritySearch(
 					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0.0).build());
@@ -585,14 +579,14 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0.0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0.0).build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l2", "innerproduct" })
+	@ValueSource(strings = {DEFAULT, "l2", "innerproduct"})
 	public void approximateSearchWithFilters(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -609,88 +603,88 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
-						hasSize(3));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(5).build()),
+							hasSize(3));
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'NL'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'NL'")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG'")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country == 'BG' && year == 2020")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country == 'BG' && year == 2020")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country in ['BG','NL']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country in ['BG','NL']")
+					.build());
 
 			assertThat(results).hasSize(3);
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("country not in ['BG']")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("country not in ['BG']")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("NOT(country not in ['BG'])")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("NOT(country not in ['BG'])")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression(
-						"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression(
+							"activationDate > " + ZonedDateTime.parse("1970-01-01T00:00:02Z").toInstant().toEpochMilli())
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
@@ -699,13 +693,13 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(List.of(bgDocument.getId(), nlDocument.getId(), bgDocument2.getId()));
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("The World").topK(1).build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l2", "innerproduct" })
+	@ValueSource(strings = {DEFAULT, "l2", "innerproduct"})
 	public void approximateDocumentUpdateTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -717,12 +711,12 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(List.of(document));
 
 			Awaitility.await()
-				.until(() -> vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0.0).topK(5).build()),
-						hasSize(1));
+					.until(() -> vectorStore
+									.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0.0).topK(5).build()),
+							hasSize(1));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0.0).topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").similarityThreshold(0.0).topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -738,8 +732,8 @@ class OpenSearchVectorStoreIT {
 			SearchRequest fooBarSearchRequest = SearchRequest.builder().query("FooBar").topK(5).build();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
-						equalTo("The World is Big and Salvation Lurks Around the Corner"));
+					.until(() -> vectorStore.similaritySearch(fooBarSearchRequest).get(0).getText(),
+							equalTo("The World is Big and Salvation Lurks Around the Corner"));
 
 			results = vectorStore.similaritySearch(fooBarSearchRequest);
 
@@ -759,7 +753,7 @@ class OpenSearchVectorStoreIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { DEFAULT, "l2" })
+	@ValueSource(strings = {DEFAULT, "l2"})
 	public void approximateSearchThresholdTest(String similarityFunction) {
 
 		getContextRunner().run(context -> {
@@ -769,10 +763,10 @@ class OpenSearchVectorStoreIT {
 			vectorStore.add(this.documents);
 
 			SearchRequest query = SearchRequest.builder()
-				.query("Great Depression")
-				.topK(50)
-				.similarityThreshold(SearchRequest.SIMILARITY_THRESHOLD_ACCEPT_ALL)
-				.build();
+					.query("Great Depression")
+					.topK(50)
+					.similarityThreshold(SearchRequest.SIMILARITY_THRESHOLD_ACCEPT_ALL)
+					.build();
 
 			Awaitility.await().until(() -> vectorStore.similaritySearch(query), hasSize(3));
 
@@ -785,10 +779,10 @@ class OpenSearchVectorStoreIT {
 			double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 			List<Document> results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("Great Depression")
-				.topK(50)
-				.similarityThreshold(similarityThreshold)
-				.build());
+					.query("Great Depression")
+					.topK(50)
+					.similarityThreshold(similarityThreshold)
+					.build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -802,26 +796,26 @@ class OpenSearchVectorStoreIT {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(50).similarityThreshold(0.0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(50).similarityThreshold(0.0).build()),
+							hasSize(0));
 		});
 	}
 
 	@ParameterizedTest(name = "manageDocumentIds={0}")
-	@ValueSource(booleans = { true, false })
+	@ValueSource(booleans = {true, false})
 	void testManageDocumentIdsSetting(boolean manageDocumentIds) {
 		getContextRunner().run(context -> {
 			OpenSearchVectorStore vectorStore = context.getBean("vectorStore", OpenSearchVectorStore.class);
 
 			// Create a new vector store with specific manageDocumentIds setting
 			OpenSearchVectorStore testVectorStore = OpenSearchVectorStore
-				.builder((OpenSearchClient) vectorStore.getNativeClient().orElseThrow(),
-						context.getBean(EmbeddingModel.class))
-				.manageDocumentIds(manageDocumentIds)
-				.index("test_manage_document_ids_" + manageDocumentIds)
-				.initializeSchema(true)
-				.build();
+					.builder((OpenSearchClient) vectorStore.getNativeClient().orElseThrow(),
+							context.getBean(EmbeddingModel.class))
+					.manageDocumentIds(manageDocumentIds)
+					.index("test_manage_document_ids_" + manageDocumentIds)
+					.initializeSchema(true)
+					.build();
 
 			// Ensure the index is fully initialized before adding documents
 			testVectorStore.afterPropertiesSet();
@@ -835,12 +829,12 @@ class OpenSearchVectorStoreIT {
 
 			// Wait for indexing
 			Awaitility.await()
-				.until(() -> testVectorStore
-					.similaritySearch(SearchRequest.builder().query("Test content").topK(2).build()), hasSize(2));
+					.until(() -> testVectorStore
+							.similaritySearch(SearchRequest.builder().query("Test content").topK(2).build()), hasSize(2));
 
 			// Search and verify results
 			List<Document> results = testVectorStore
-				.similaritySearch(SearchRequest.builder().query("Test content").topK(2).build());
+					.similaritySearch(SearchRequest.builder().query("Test content").topK(2).build());
 
 			assertThat(results).hasSize(2);
 
@@ -864,12 +858,12 @@ class OpenSearchVectorStoreIT {
 			// Create vector store with manageDocumentIds=false (AWS OpenSearch Serverless
 			// mode)
 			OpenSearchVectorStore awsCompatibleVectorStore = OpenSearchVectorStore
-				.builder((OpenSearchClient) vectorStore.getNativeClient().orElseThrow(),
-						context.getBean(EmbeddingModel.class))
-				.manageDocumentIds(false)
-				.index("test_aws_serverless_compatible")
-				.initializeSchema(true)
-				.build();
+					.builder((OpenSearchClient) vectorStore.getNativeClient().orElseThrow(),
+							context.getBean(EmbeddingModel.class))
+					.manageDocumentIds(false)
+					.index("test_aws_serverless_compatible")
+					.initializeSchema(true)
+					.build();
 
 			// Ensure the index is fully initialized before adding documents
 			awsCompatibleVectorStore.afterPropertiesSet();
@@ -885,22 +879,22 @@ class OpenSearchVectorStoreIT {
 
 			// Wait for indexing
 			Awaitility.await()
-				.until(() -> awsCompatibleVectorStore
-					.similaritySearch(SearchRequest.builder().query("AWS Serverless").topK(2).build()), hasSize(2));
+					.until(() -> awsCompatibleVectorStore
+							.similaritySearch(SearchRequest.builder().query("AWS Serverless").topK(2).build()), hasSize(2));
 
 			// Search and verify results
 			List<Document> results = awsCompatibleVectorStore
-				.similaritySearch(SearchRequest.builder().query("AWS Serverless").topK(2).build());
+					.similaritySearch(SearchRequest.builder().query("AWS Serverless").topK(2).build());
 
 			assertThat(results).hasSize(2);
 
 			// Verify content is preserved
 			assertThat(results.stream().map(Document::getText).toList())
-				.containsExactlyInAnyOrder("AWS Serverless content 1", "AWS Serverless content 2");
+					.containsExactlyInAnyOrder("AWS Serverless content 1", "AWS Serverless content 2");
 
 			// Verify metadata is preserved
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("env")).toList())
-				.containsOnly("aws-serverless");
+					.containsOnly("aws-serverless");
 
 			// Clean up
 			awsCompatibleVectorStore.delete(List.of("_all"));
@@ -914,12 +908,12 @@ class OpenSearchVectorStoreIT {
 
 			// Create vector store with manageDocumentIds=true (default behavior)
 			OpenSearchVectorStore explicitIdVectorStore = OpenSearchVectorStore
-				.builder((OpenSearchClient) vectorStore.getNativeClient().orElseThrow(),
-						context.getBean(EmbeddingModel.class))
-				.manageDocumentIds(true)
-				.index("test_explicit_ids")
-				.initializeSchema(true)
-				.build();
+					.builder((OpenSearchClient) vectorStore.getNativeClient().orElseThrow(),
+							context.getBean(EmbeddingModel.class))
+					.manageDocumentIds(true)
+					.index("test_explicit_ids")
+					.initializeSchema(true)
+					.build();
 
 			// Ensure the index is fully initialized before adding documents
 			explicitIdVectorStore.afterPropertiesSet();
@@ -934,12 +928,12 @@ class OpenSearchVectorStoreIT {
 
 			// Wait for indexing
 			Awaitility.await()
-				.until(() -> explicitIdVectorStore
-					.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build()), hasSize(2));
+					.until(() -> explicitIdVectorStore
+							.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build()), hasSize(2));
 
 			// Search and verify results
 			List<Document> results = explicitIdVectorStore
-				.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build());
+					.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build());
 
 			assertThat(results).hasSize(2);
 
@@ -949,7 +943,7 @@ class OpenSearchVectorStoreIT {
 
 			// Verify content and metadata
 			assertThat(results.stream().map(Document::getText).toList())
-				.containsExactlyInAnyOrder("Explicit ID content 1", "Explicit ID content 2");
+					.containsExactlyInAnyOrder("Explicit ID content 1", "Explicit ID content 2");
 
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).toList()).containsOnly("explicit");
 
@@ -957,12 +951,12 @@ class OpenSearchVectorStoreIT {
 			explicitIdVectorStore.delete(List.of("explicit-id-1"));
 
 			Awaitility.await()
-				.until(() -> explicitIdVectorStore
-					.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build()), hasSize(1));
+					.until(() -> explicitIdVectorStore
+							.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build()), hasSize(1));
 
 			// Verify only one document remains
 			results = explicitIdVectorStore
-				.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build());
+					.similaritySearch(SearchRequest.builder().query("Explicit ID").topK(2).build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo("explicit-id-2");
@@ -979,10 +973,9 @@ class OpenSearchVectorStoreIT {
 		public OpenSearchClient openSearchClient() {
 			try {
 				return new OpenSearchClient(ApacheHttpClient5TransportBuilder
-					.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
-					.build());
-			}
-			catch (URISyntaxException e) {
+						.builder(HttpHost.create(opensearchContainer.getHttpHostAddress()))
+						.build());
+			} catch (URISyntaxException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -996,98 +989,98 @@ class OpenSearchVectorStoreIT {
 		@Bean
 		@Qualifier("anotherVectorStore")
 		public OpenSearchVectorStore anotherVectorStore(OpenSearchClient openSearchClient,
-				EmbeddingModel embeddingModel) {
+		                                                EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("another_index")
-				.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
-				.initializeSchema(true)
-				.build();
+					.index("another_index")
+					.mappingJson(OpenSearchVectorStore.DEFAULT_MAPPING_EMBEDDING_TYPE_KNN_VECTOR_DIMENSION)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_" + DEFAULT)
 		public OpenSearchVectorStore vectorStoreDefault(OpenSearchClient openSearchClient,
-				EmbeddingModel embeddingModel) {
+		                                                EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_cosinesimil")
-				.initializeSchema(true)
-				.build();
+					.index("index_cosinesimil")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_l2")
 		public OpenSearchVectorStore vectorStoreL2(OpenSearchClient openSearchClient, EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_l2")
-				.similarityFunction("l2")
-				.initializeSchema(true)
-				.build();
+					.index("index_l2")
+					.similarityFunction("l2")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_innerproduct")
 		public OpenSearchVectorStore vectorStoreInnerproduct(OpenSearchClient openSearchClient,
-				EmbeddingModel embeddingModel) {
+		                                                     EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_innerproduct")
-				.similarityFunction("innerproduct")
-				.initializeSchema(true)
-				.build();
+					.index("index_innerproduct")
+					.similarityFunction("innerproduct")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_l1")
 		public OpenSearchVectorStore vectorStoreL1(OpenSearchClient openSearchClient, EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_l1")
-				.similarityFunction("l1")
-				.initializeSchema(true)
-				.build();
+					.index("index_l1")
+					.similarityFunction("l1")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_linf")
 		public OpenSearchVectorStore vectorStoreLinf(OpenSearchClient openSearchClient, EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_linf")
-				.similarityFunction("linf")
-				.initializeSchema(true)
-				.build();
+					.index("index_linf")
+					.similarityFunction("linf")
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_approximate_" + DEFAULT)
 		public OpenSearchVectorStore vectorStoreApproximateDefault(OpenSearchClient openSearchClient,
-				EmbeddingModel embeddingModel) {
+		                                                           EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_approximate_cosinesimil")
-				.useApproximateKnn(true)
-				.initializeSchema(true)
-				.build();
+					.index("index_approximate_cosinesimil")
+					.useApproximateKnn(true)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_approximate_l2")
 		public OpenSearchVectorStore vectorStoreApproximateL2(OpenSearchClient openSearchClient,
-				EmbeddingModel embeddingModel) {
+		                                                      EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_approximate_l2")
-				.similarityFunction("l2")
-				.useApproximateKnn(true)
-				.initializeSchema(true)
-				.build();
+					.index("index_approximate_l2")
+					.similarityFunction("l2")
+					.useApproximateKnn(true)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean("vectorStore_approximate_innerproduct")
 		public OpenSearchVectorStore vectorStoreApproximateInnerproduct(OpenSearchClient openSearchClient,
-				EmbeddingModel embeddingModel) {
+		                                                                EmbeddingModel embeddingModel) {
 			return OpenSearchVectorStore.builder(openSearchClient, embeddingModel)
-				.index("index_approximate_innerproduct")
-				.similarityFunction("innerproduct")
-				.useApproximateKnn(true)
-				.initializeSchema(true)
-				.build();
+					.index("index_approximate_innerproduct")
+					.similarityFunction("innerproduct")
+					.useApproximateKnn(true)
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

@@ -16,18 +16,9 @@
 
 package org.springframework.ai.tool.method;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.core.JacksonException;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
@@ -40,6 +31,14 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
+import tools.jackson.core.JacksonException;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * A {@link ToolCallback} implementation to invoke methods as tools.
@@ -68,7 +67,7 @@ public final class MethodToolCallback implements ToolCallback {
 	private final ToolCallResultConverter toolCallResultConverter;
 
 	public MethodToolCallback(ToolDefinition toolDefinition, @Nullable ToolMetadata toolMetadata, Method toolMethod,
-			@Nullable Object toolObject, @Nullable ToolCallResultConverter toolCallResultConverter) {
+	                          @Nullable Object toolObject, @Nullable ToolCallResultConverter toolCallResultConverter) {
 		Assert.notNull(toolDefinition, "toolDefinition cannot be null");
 		Assert.notNull(toolMethod, "toolMethod cannot be null");
 		Assert.isTrue(Modifier.isStatic(toolMethod.getModifiers()) || toolObject != null,
@@ -125,7 +124,7 @@ public final class MethodToolCallback implements ToolCallback {
 	private void validateToolContextSupport(@Nullable ToolContext toolContext) {
 		var isNonEmptyToolContextProvided = toolContext != null && !CollectionUtils.isEmpty(toolContext.getContext());
 		var isToolContextAcceptedByMethod = Stream.of(this.toolMethod.getParameterTypes())
-			.anyMatch(type -> ClassUtils.isAssignable(ToolContext.class, type));
+				.anyMatch(type -> ClassUtils.isAssignable(ToolContext.class, type));
 		if (isToolContextAcceptedByMethod && !isNonEmptyToolContextProvided) {
 			throw new IllegalArgumentException("ToolContext is required by the method as an argument");
 		}
@@ -135,8 +134,7 @@ public final class MethodToolCallback implements ToolCallback {
 		try {
 			return jsonHelper.fromJson(toolInput, new ParameterizedTypeReference<>() {
 			});
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			logger.warn("Conversion from JSON failed", ex);
 			Throwable cause = (ex.getCause() instanceof JacksonException) ? ex.getCause() : ex;
 			throw new ToolExecutionException(this.getToolDefinition(), cause);
@@ -167,8 +165,7 @@ public final class MethodToolCallback implements ToolCallback {
 			// For generic types, use the fromJson method that accepts Type
 			String json = jsonHelper.toJson(value, true);
 			return jsonHelper.fromJson(json, type);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			logger.warn("Conversion from JSON failed", ex);
 			Throwable cause = (ex.getCause() instanceof JacksonException) ? ex.getCause() : ex;
 			throw new ToolExecutionException(this.getToolDefinition(), cause);
@@ -184,11 +181,9 @@ public final class MethodToolCallback implements ToolCallback {
 		Object result;
 		try {
 			result = this.toolMethod.invoke(this.toolObject, methodArguments);
-		}
-		catch (IllegalAccessException ex) {
+		} catch (IllegalAccessException ex) {
 			throw new IllegalStateException("Could not access method: " + ex.getMessage(), ex);
-		}
-		catch (InvocationTargetException ex) {
+		} catch (InvocationTargetException ex) {
 			throw new ToolExecutionException(this.toolDefinition, ex.getCause());
 		}
 		return result;

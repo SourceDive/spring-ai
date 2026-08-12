@@ -16,13 +16,13 @@
 
 package org.springframework.ai.util;
 
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility methods for {@link String} parsing.
@@ -37,7 +37,7 @@ public abstract class ParsingUtils {
 	private static final String LOWER = "\\p{Ll}";
 
 	private static final String CAMEL_CASE_REGEX = "(?<!(^|[%u_$]))(?=[%u])|(?<!^)(?=[%u][%l])".replace("%u", UPPER)
-		.replace("%l", LOWER);
+			.replace("%l", LOWER);
 
 	private static final Pattern CAMEL_CASE = Pattern.compile(CAMEL_CASE_REGEX);
 
@@ -46,6 +46,7 @@ public abstract class ParsingUtils {
 
 	/**
 	 * Splits up the given camel-case {@link String}.
+	 *
 	 * @param source must not be {@literal null}.
 	 * @return
 	 */
@@ -55,6 +56,7 @@ public abstract class ParsingUtils {
 
 	/**
 	 * Splits up the given camel-case {@link String} and returns the parts in lower case.
+	 *
 	 * @param source must not be {@literal null}.
 	 * @return
 	 */
@@ -66,7 +68,8 @@ public abstract class ParsingUtils {
 	 * Reconcatenates the given camel-case source {@link String} using the given
 	 * delimiter. Will split up the camel-case {@link String} and use an uncapitalized
 	 * version of the parts.
-	 * @param source must not be {@literal null}.
+	 *
+	 * @param source    must not be {@literal null}.
 	 * @param delimiter must not be {@literal null}.
 	 * @return
 	 */

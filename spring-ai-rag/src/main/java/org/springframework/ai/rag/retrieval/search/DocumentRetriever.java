@@ -16,11 +16,11 @@
 
 package org.springframework.ai.rag.retrieval.search;
 
-import java.util.List;
-import java.util.function.Function;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.Query;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Component responsible for retrieving {@link Document}s from an underlying data source,
@@ -35,6 +35,7 @@ public interface DocumentRetriever extends Function<Query, List<Document>> {
 	/**
 	 * Retrieves relevant documents from an underlying data source based on the given
 	 * query.
+	 *
 	 * @param query The query to use for retrieving documents
 	 * @return The list of relevant documents
 	 */

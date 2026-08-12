@@ -16,12 +16,11 @@
 
 package org.springframework.ai.embedding;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.model.ModelResult;
+
 import java.util.Arrays;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.model.ModelResult;
 
 /**
  * Represents a single embedding vector.
@@ -36,8 +35,9 @@ public class Embedding implements ModelResult<float[]> {
 
 	/**
 	 * Creates a new {@link Embedding} instance.
+	 *
 	 * @param embedding the embedding vector values.
-	 * @param index the embedding index in a list of embeddings.
+	 * @param index     the embedding index in a list of embeddings.
 	 */
 	public Embedding(float[] embedding, Integer index) {
 		this(embedding, index, EmbeddingResultMetadata.EMPTY);
@@ -45,9 +45,10 @@ public class Embedding implements ModelResult<float[]> {
 
 	/**
 	 * Creates a new {@link Embedding} instance.
+	 *
 	 * @param embedding the embedding vector values.
-	 * @param index the embedding index in a list of embeddings.
-	 * @param metadata the metadata associated with the embedding.
+	 * @param index     the embedding index in a list of embeddings.
+	 * @param metadata  the metadata associated with the embedding.
 	 */
 	public Embedding(float[] embedding, Integer index, EmbeddingResultMetadata metadata) {
 		this.embedding = embedding;

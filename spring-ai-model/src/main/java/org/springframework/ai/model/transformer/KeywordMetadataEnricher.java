@@ -16,14 +16,9 @@
 
 package org.springframework.ai.model.transformer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -31,6 +26,10 @@ import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentTransformer;
 import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Keyword extractor that uses generative to extract 'excerpt_keywords' metadata field.
@@ -62,7 +61,8 @@ public class KeywordMetadataEnricher implements DocumentTransformer {
 
 	/**
 	 * Create a new {@link KeywordMetadataEnricher} instance.
-	 * @param chatModel the model predictor to use for keyword extraction.
+	 *
+	 * @param chatModel    the model predictor to use for keyword extraction.
 	 * @param keywordCount the number of keywords to extract.
 	 */
 	public KeywordMetadataEnricher(ChatModel chatModel, int keywordCount) {
@@ -75,7 +75,8 @@ public class KeywordMetadataEnricher implements DocumentTransformer {
 
 	/**
 	 * Create a new {@link KeywordMetadataEnricher} instance.
-	 * @param chatModel the model predictor to use for keyword extraction.
+	 *
+	 * @param chatModel        the model predictor to use for keyword extraction.
 	 * @param keywordsTemplate the prompt template to use for keyword extraction.
 	 */
 	public KeywordMetadataEnricher(ChatModel chatModel, PromptTemplate keywordsTemplate) {

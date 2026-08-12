@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.provider.progress;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-
 import org.springframework.ai.mcp.annotation.McpProgress;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.progress.SyncMcpProgressMethodCallback;
 import org.springframework.ai.mcp.annotation.method.progress.SyncProgressSpecification;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Provider for synchronous progress callbacks.
@@ -62,8 +61,9 @@ public class SyncMcpProgressProvider {
 
 	/**
 	 * Create a new SyncMcpProgressProvider.
+	 *
 	 * @param progressObjects the objects containing methods annotated with
-	 * {@link McpProgress}
+	 *                        {@link McpProgress}
 	 */
 	public SyncMcpProgressProvider(List<Object> progressObjects) {
 		this.progressObjects = progressObjects != null ? progressObjects : List.of();
@@ -71,38 +71,40 @@ public class SyncMcpProgressProvider {
 
 	/**
 	 * Get the list of progress specifications.
+	 *
 	 * @return the list of progress specifications
 	 */
 	public List<SyncProgressSpecification> getProgressSpecifications() {
 
 		List<SyncProgressSpecification> progressConsumers = this.progressObjects.stream()
-			.map(progressObject -> Stream.of(doGetClassMethods(progressObject))
-				.filter(method -> method.isAnnotationPresent(McpProgress.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.filter(method -> method.getReturnType() == void.class) // Only void
-																		// return type is
-																		// valid for sync
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpProgressMethod -> {
-					var progressAnnotation = mcpProgressMethod.getAnnotation(McpProgress.class);
+				.map(progressObject -> Stream.of(doGetClassMethods(progressObject))
+						.filter(method -> method.isAnnotationPresent(McpProgress.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.filter(method -> method.getReturnType() == void.class) // Only void
+						// return type is
+						// valid for sync
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpProgressMethod -> {
+							var progressAnnotation = mcpProgressMethod.getAnnotation(McpProgress.class);
 
-					Consumer<ProgressNotification> methodCallback = SyncMcpProgressMethodCallback.builder()
-						.method(mcpProgressMethod)
-						.bean(progressObject)
-						.progress(progressAnnotation)
-						.build();
+							Consumer<ProgressNotification> methodCallback = SyncMcpProgressMethodCallback.builder()
+									.method(mcpProgressMethod)
+									.bean(progressObject)
+									.progress(progressAnnotation)
+									.build();
 
-					return new SyncProgressSpecification(progressAnnotation.clients(), methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncProgressSpecification(progressAnnotation.clients(), methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return progressConsumers;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

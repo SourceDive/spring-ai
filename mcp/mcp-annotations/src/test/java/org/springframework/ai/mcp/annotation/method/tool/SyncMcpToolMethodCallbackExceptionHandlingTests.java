@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpTool;
+
+import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * Tests for exception handling in {@link SyncMcpToolMethodCallback}.
- *
+ * <p>
  * These tests verify the exception handling behavior in the apply() method, specifically
  * the catch block that checks if an exception is an instance of the configured
  * toolCallExceptionClass.
@@ -100,7 +99,7 @@ public class SyncMcpToolMethodCallbackExceptionHandlingTests {
 		// The RuntimeException from callMethod should NOT be caught (not an
 		// IllegalArgumentException)
 		assertThatThrownBy(() -> callback.apply(exchange, request)).isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Error invoking method");
+				.hasMessageContaining("Error invoking method");
 	}
 
 	@Test
@@ -140,8 +139,8 @@ public class SyncMcpToolMethodCallbackExceptionHandlingTests {
 
 		// The RuntimeException wrapper should NOT be caught
 		assertThatThrownBy(() -> callback.apply(exchange, request)).isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Error invoking method")
-			.hasCauseInstanceOf(BusinessException.class);
+				.hasMessageContaining("Error invoking method")
+				.hasCauseInstanceOf(BusinessException.class);
 	}
 
 	@Test

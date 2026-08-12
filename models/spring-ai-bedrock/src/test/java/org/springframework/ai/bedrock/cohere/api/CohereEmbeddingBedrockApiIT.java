@@ -16,18 +16,17 @@
 
 package org.springframework.ai.bedrock.cohere.api;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.bedrock.RequiresAwsCredentials;
 import org.springframework.ai.bedrock.cohere.api.CohereEmbeddingBedrockApi.CohereEmbeddingModel;
 import org.springframework.ai.bedrock.cohere.api.CohereEmbeddingBedrockApi.CohereEmbeddingRequest;
 import org.springframework.ai.bedrock.cohere.api.CohereEmbeddingBedrockApi.CohereEmbeddingResponse;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

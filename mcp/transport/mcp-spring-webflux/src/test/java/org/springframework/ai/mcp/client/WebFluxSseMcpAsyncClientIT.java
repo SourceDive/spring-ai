@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.client;
 
-import java.time.Duration;
-
 import io.modelcontextprotocol.client.AbstractMcpAsyncClientTests;
 import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Timeout;
+import org.springframework.ai.mcp.client.webflux.transport.WebFluxSseClientTransport;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import org.springframework.ai.mcp.client.webflux.transport.WebFluxSseClientTransport;
-import org.springframework.web.reactive.function.client.WebClient;
+import java.time.Duration;
 
 /**
  * Tests for the {@link McpAsyncClient} with {@link WebFluxSseClientTransport}.
@@ -42,9 +41,9 @@ class WebFluxSseMcpAsyncClientIT extends AbstractMcpAsyncClientTests {
 
 	@SuppressWarnings("resource")
 	static GenericContainer<?> container = new GenericContainer<>("docker.io/node:lts-alpine3.23")
-		.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 sse")
-		.withExposedPorts(3001)
-		.waitingFor(Wait.forHttp("/").forStatusCode(404).forPort(3001));
+			.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 sse")
+			.withExposedPorts(3001)
+			.waitingFor(Wait.forHttp("/").forStatusCode(404).forPort(3001));
 
 	@Override
 	protected McpClientTransport createMcpTransport() {

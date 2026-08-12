@@ -20,12 +20,7 @@ import com.openai.models.images.ImageModel;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
-import org.springframework.ai.image.Image;
-import org.springframework.ai.image.ImageOptionsBuilder;
-import org.springframework.ai.image.ImagePrompt;
-import org.springframework.ai.image.ImageResponse;
-import org.springframework.ai.image.ImageResponseMetadata;
+import org.springframework.ai.image.*;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiTestConfiguration;
 import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
@@ -49,10 +44,10 @@ public class OpenAiImageModelIT {
 	@Test
 	void imageAsUrlTest() {
 		var options = ImageOptionsBuilder.builder()
-			.model(ImageModel.GPT_IMAGE_1_MINI.asString())
-			.height(1024)
-			.width(1024)
-			.build();
+				.model(ImageModel.GPT_IMAGE_1_MINI.asString())
+				.height(1024)
+				.width(1024)
+				.build();
 
 		var instructions = """
 				A cup of coffee at a restaurant table in Paris, France.

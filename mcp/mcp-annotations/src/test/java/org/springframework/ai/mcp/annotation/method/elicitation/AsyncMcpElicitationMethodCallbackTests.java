@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.elicitation;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpElicitation;
+import org.springframework.ai.mcp.annotation.method.elicitation.AbstractMcpElicitationMethodCallback.McpElicitationMethodException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpElicitation;
-import org.springframework.ai.mcp.annotation.method.elicitation.AbstractMcpElicitationMethodCallback.McpElicitationMethodException;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -49,9 +48,9 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		Mono<ElicitResult> resultMono = callback.apply(request);
@@ -74,9 +73,9 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		Mono<ElicitResult> resultMono = callback.apply(request);
@@ -96,9 +95,9 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		Mono<ElicitResult> resultMono = callback.apply(request);
@@ -119,8 +118,8 @@ public class AsyncMcpElicitationMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncMcpElicitationMethodCallback.builder().method(method).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>");
 
 	}
 
@@ -132,16 +131,16 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.build();
 
 		Mono<ElicitResult> resultMono = callback.apply(null);
 
 		StepVerifier.create(resultMono)
-			.expectErrorSatisfies(error -> assertThat(error).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Request must not be null"))
-			.verify();
+				.expectErrorSatisfies(error -> assertThat(error).isInstanceOf(IllegalArgumentException.class)
+						.hasMessageContaining("Request must not be null"))
+				.verify();
 	}
 
 	@Test
@@ -153,8 +152,8 @@ public class AsyncMcpElicitationMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncMcpElicitationMethodCallback.builder().method(method).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>");
 	}
 
 	@Disabled
@@ -166,14 +165,14 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 
 		assertThatThrownBy(() -> callback.apply(request)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>");
+				.hasMessageContaining("Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>");
 
 	}
 
@@ -185,8 +184,8 @@ public class AsyncMcpElicitationMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncMcpElicitationMethodCallback.builder().method(method).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type ElicitRequest");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type ElicitRequest");
 	}
 
 	@Test
@@ -197,8 +196,8 @@ public class AsyncMcpElicitationMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncMcpElicitationMethodCallback.builder().method(method).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have at least 1 parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have at least 1 parameter");
 	}
 
 	@Test
@@ -210,16 +209,16 @@ public class AsyncMcpElicitationMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> AsyncMcpElicitationMethodCallback.builder().method(method).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Currently only methods with a single ElicitRequest parameter are supported");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Currently only methods with a single ElicitRequest parameter are supported");
 	}
 
 	@Test
 	void testNullMethod() {
 		assertThatThrownBy(
 				() -> AsyncMcpElicitationMethodCallback.builder().method(null).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -227,8 +226,8 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		Method method = AsyncMcpElicitationMethodCallbackExample.class.getMethod("handleElicitationRequest",
 				ElicitRequest.class);
 		assertThatThrownBy(() -> AsyncMcpElicitationMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -240,27 +239,27 @@ public class AsyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(new AsyncMcpElicitationMethodCallbackExample() {
-				@Override
-				public Mono<ElicitResult> handleElicitationRequest(ElicitRequest request) {
-					throw new RuntimeException("Test exception");
-				}
-			})
-			.build();
+				.method(method)
+				.bean(new AsyncMcpElicitationMethodCallbackExample() {
+					@Override
+					public Mono<ElicitResult> handleElicitationRequest(ElicitRequest request) {
+						throw new RuntimeException("Test exception");
+					}
+				})
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		Mono<ElicitResult> resultMono = callback.apply(request);
 
 		StepVerifier.create(resultMono).expectErrorSatisfies(error -> {
 			assertThat(error).isInstanceOf(McpElicitationMethodException.class)
-				.hasMessageContaining("Error invoking elicitation method")
-				.hasCauseInstanceOf(java.lang.reflect.InvocationTargetException.class)
-				.satisfies(e -> {
-					Throwable cause = e.getCause().getCause();
-					assertThat(cause).isInstanceOf(RuntimeException.class);
-					assertThat(cause.getMessage()).isEqualTo("Test exception");
-				});
+					.hasMessageContaining("Error invoking elicitation method")
+					.hasCauseInstanceOf(java.lang.reflect.InvocationTargetException.class)
+					.satisfies(e -> {
+						Throwable cause = e.getCause().getCause();
+						assertThat(cause).isInstanceOf(RuntimeException.class);
+						assertThat(cause.getMessage()).isEqualTo("Test exception");
+					});
 		}).verify();
 	}
 
@@ -268,7 +267,7 @@ public class AsyncMcpElicitationMethodCallbackTests {
 	void testBuilderValidation() {
 		// Test that builder validates required fields
 		assertThatThrownBy(() -> AsyncMcpElicitationMethodCallback.builder().build())
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -277,9 +276,9 @@ public class AsyncMcpElicitationMethodCallbackTests {
 				ElicitRequest.class);
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.build();
 
 		ElicitRequest customRequest = ElicitationTestHelper.createSampleRequest("Custom async prompt",
 				Map.of("customKey", "customValue", "priority", "high", "async", true));
@@ -301,22 +300,22 @@ public class AsyncMcpElicitationMethodCallbackTests {
 				ElicitRequest.class);
 
 		AsyncMcpElicitationMethodCallback callback = AsyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(new AsyncMcpElicitationMethodCallbackExample() {
-				@Override
-				public Mono<ElicitResult> handleElicitationRequest(ElicitRequest request) {
-					return Mono.error(new RuntimeException("Async test exception"));
-				}
-			})
-			.build();
+				.method(method)
+				.bean(new AsyncMcpElicitationMethodCallbackExample() {
+					@Override
+					public Mono<ElicitResult> handleElicitationRequest(ElicitRequest request) {
+						return Mono.error(new RuntimeException("Async test exception"));
+					}
+				})
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		Mono<ElicitResult> resultMono = callback.apply(request);
 
 		StepVerifier.create(resultMono)
-			.expectErrorSatisfies(
-					error -> assertThat(error).isInstanceOf(RuntimeException.class).hasMessage("Async test exception"))
-			.verify();
+				.expectErrorSatisfies(
+						error -> assertThat(error).isInstanceOf(RuntimeException.class).hasMessage("Async test exception"))
+				.verify();
 	}
 
 }

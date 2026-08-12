@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.common;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.context.DefaultMetaProvider;
 import org.springframework.ai.mcp.annotation.context.MetaProvider;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -48,18 +47,18 @@ final class MetaUtilsTest {
 	void testGetMetaWithUnavailableConstructor() {
 
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> MetaUtils.getMeta(MetaProviderWithUnavailableConstructor.class))
-			.withMessage(
-					"org.springframework.ai.mcp.annotation.common.MetaUtilsTest$MetaProviderWithUnavailableConstructor instantiation failed");
+				.isThrownBy(() -> MetaUtils.getMeta(MetaProviderWithUnavailableConstructor.class))
+				.withMessage(
+						"org.springframework.ai.mcp.annotation.common.MetaUtilsTest$MetaProviderWithUnavailableConstructor instantiation failed");
 	}
 
 	@Test
 	void testGetMetaWithConstructorWithWrongSignature() {
 
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> MetaUtils.getMeta(MetaProviderWithConstructorWithWrongSignature.class))
-			.withMessage(
-					"Required no-arg constructor not found in org.springframework.ai.mcp.annotation.common.MetaUtilsTest$MetaProviderWithConstructorWithWrongSignature");
+				.isThrownBy(() -> MetaUtils.getMeta(MetaProviderWithConstructorWithWrongSignature.class))
+				.withMessage(
+						"Required no-arg constructor not found in org.springframework.ai.mcp.annotation.common.MetaUtilsTest$MetaProviderWithConstructorWithWrongSignature");
 	}
 
 	@Test

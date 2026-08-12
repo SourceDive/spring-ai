@@ -16,20 +16,18 @@
 
 package org.springframework.ai.tool.execution;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.util.JsonHelper;
+
+import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Base64;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.util.JsonHelper;
 
 /**
  * A default implementation of {@link ToolCallResultConverter}.
@@ -53,14 +51,12 @@ public final class DefaultToolCallResultConverter implements ToolCallResultConve
 			final var buf = new ByteArrayOutputStream(1024 * 4);
 			try {
 				ImageIO.write((RenderedImage) result, "PNG", buf);
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				return "Failed to convert tool result to a base64 image: " + e.getMessage();
 			}
 			final var imgB64 = Base64.getEncoder().encodeToString(buf.toByteArray());
 			return jsonHelper.toJson(Map.of("mimeType", "image/png", "data", imgB64));
-		}
-		else {
+		} else {
 			logger.debug("Converting tool result to JSON.");
 			return jsonHelper.toJson(result, true);
 		}

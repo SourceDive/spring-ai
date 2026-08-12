@@ -16,12 +16,6 @@
 
 package org.springframework.ai.model.transformer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -31,6 +25,8 @@ import org.springframework.ai.document.DocumentTransformer;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 /**
  * Title extractor with adjacent sharing that uses generative to extract
@@ -79,7 +75,7 @@ public class SummaryMetadataEnricher implements DocumentTransformer {
 	}
 
 	public SummaryMetadataEnricher(ChatModel chatModel, List<SummaryType> summaryTypes, String summaryTemplate,
-			MetadataMode metadataMode) {
+	                               MetadataMode metadataMode) {
 		Assert.notNull(chatModel, "ChatModel must not be null");
 		Assert.hasText(summaryTemplate, "Summary template must not be empty");
 
@@ -98,10 +94,10 @@ public class SummaryMetadataEnricher implements DocumentTransformer {
 			var documentContext = document.getFormattedContent(this.metadataMode);
 
 			Prompt prompt = new PromptTemplate(this.summaryTemplate)
-				.create(Map.of(CONTEXT_STR_PLACEHOLDER, documentContext));
+					.create(Map.of(CONTEXT_STR_PLACEHOLDER, documentContext));
 			Generation generation = this.chatModel.call(prompt).getResult();
 			documentSummaries
-				.add(generation != null ? Objects.requireNonNullElse(generation.getOutput().getText(), "") : "");
+					.add(generation != null ? Objects.requireNonNullElse(generation.getOutput().getText(), "") : "");
 		}
 
 		for (int i = 0; i < documentSummaries.size(); i++) {

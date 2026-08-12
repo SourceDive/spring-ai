@@ -16,11 +16,11 @@
 
 package org.springframework.ai.mistralai;
 
-import java.util.Set;
-
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ReasoningEffort;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatModel;
 import org.springframework.util.Assert;
+
+import java.util.Set;
 
 /**
  * @author Nicolas Krier

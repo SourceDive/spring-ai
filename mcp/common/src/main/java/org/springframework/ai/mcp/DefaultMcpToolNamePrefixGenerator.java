@@ -16,16 +16,16 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Default implementation of {@link McpToolNamePrefixGenerator} that ensures unique tool
@@ -64,8 +64,8 @@ public class DefaultMcpToolNamePrefixGenerator implements McpToolNamePrefixGener
 		String uniqueToolName = McpToolUtils.format(tool.name());
 
 		if (this.existingConnections
-			.add(new ConnectionId(mcpConnectionInfo.clientInfo(), (mcpConnectionInfo.initializeResult() != null)
-					? mcpConnectionInfo.initializeResult().serverInfo() : null, tool))) {
+				.add(new ConnectionId(mcpConnectionInfo.clientInfo(), (mcpConnectionInfo.initializeResult() != null)
+						? mcpConnectionInfo.initializeResult().serverInfo() : null, tool))) {
 			if (!this.allUsedToolNames.add(uniqueToolName)) {
 				uniqueToolName = "alt_" + this.counter.getAndIncrement() + "_" + uniqueToolName;
 				this.allUsedToolNames.add(uniqueToolName);

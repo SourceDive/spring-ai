@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.stabilityai.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

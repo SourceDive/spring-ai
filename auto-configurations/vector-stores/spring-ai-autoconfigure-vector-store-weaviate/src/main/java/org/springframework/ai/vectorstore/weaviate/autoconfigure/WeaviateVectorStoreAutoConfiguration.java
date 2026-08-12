@@ -47,7 +47,7 @@ import org.springframework.context.annotation.Bean;
  * @author Jonghoon Park
  */
 @AutoConfiguration
-@ConditionalOnClass({ EmbeddingModel.class, WeaviateVectorStore.class })
+@ConditionalOnClass({EmbeddingModel.class, WeaviateVectorStore.class})
 @EnableConfigurationProperties(WeaviateVectorStoreProperties.class)
 @ConditionalOnProperty(name = SpringAIVectorStoreTypes.TYPE, havingValue = SpringAIVectorStoreTypes.WEAVIATE,
 		matchIfMissing = true)
@@ -62,13 +62,12 @@ public class WeaviateVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public WeaviateClient weaviateClient(WeaviateVectorStoreProperties properties,
-			WeaviateConnectionDetails connectionDetails) {
+	                                     WeaviateConnectionDetails connectionDetails) {
 		try {
 			return WeaviateAuthClient.apiKey(
 					new Config(properties.getScheme(), connectionDetails.getHost(), properties.getHeaders()),
 					properties.getApiKey());
-		}
-		catch (AuthException e) {
+		} catch (AuthException e) {
 			throw new IllegalArgumentException("WeaviateClient could not be created.", e);
 		}
 	}
@@ -82,21 +81,21 @@ public class WeaviateVectorStoreAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public WeaviateVectorStore vectorStore(EmbeddingModel embeddingModel, WeaviateClient weaviateClient,
-			WeaviateVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
-			BatchingStrategy batchingStrategy) {
+	                                       WeaviateVectorStoreProperties properties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<VectorStoreObservationConvention> customObservationConvention,
+	                                       BatchingStrategy batchingStrategy) {
 		return WeaviateVectorStore.builder(weaviateClient, embeddingModel)
-			.options(mappingPropertiesToOptions(properties))
-			.filterMetadataFields(properties.getFilterField()
-				.entrySet()
-				.stream()
-				.map(e -> new WeaviateVectorStore.MetadataField(e.getKey(), e.getValue()))
-				.toList())
-			.consistencyLevel(WeaviateVectorStore.ConsistentLevel.valueOf(properties.getConsistencyLevel().name()))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.customObservationConvention(customObservationConvention.getIfAvailable())
-			.batchingStrategy(batchingStrategy)
-			.build();
+				.options(mappingPropertiesToOptions(properties))
+				.filterMetadataFields(properties.getFilterField()
+						.entrySet()
+						.stream()
+						.map(e -> new WeaviateVectorStore.MetadataField(e.getKey(), e.getValue()))
+						.toList())
+				.consistencyLevel(WeaviateVectorStore.ConsistentLevel.valueOf(properties.getConsistencyLevel().name()))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.customObservationConvention(customObservationConvention.getIfAvailable())
+				.batchingStrategy(batchingStrategy)
+				.build();
 	}
 
 	WeaviateVectorStoreOptions mappingPropertiesToOptions(WeaviateVectorStoreProperties properties) {

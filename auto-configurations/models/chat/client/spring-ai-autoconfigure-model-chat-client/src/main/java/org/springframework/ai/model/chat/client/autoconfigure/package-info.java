@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.chat.client.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

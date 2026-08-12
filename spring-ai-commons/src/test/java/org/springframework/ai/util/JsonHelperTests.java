@@ -16,13 +16,12 @@
 
 package org.springframework.ai.util;
 
-import java.lang.reflect.Type;
-import java.time.LocalDateTime;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.ParameterizedTypeReference;
+
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,8 +38,8 @@ class JsonHelperTests {
 	@Test
 	void shouldThrowExceptionWhenJsonIsNull() {
 		assertThatThrownBy(() -> this.jsonHelper.fromJson(null, TestRecord.class))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("json cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("json cannot be null");
 	}
 
 	@Test
@@ -51,15 +50,15 @@ class JsonHelperTests {
 	@Test
 	void shouldThrowExceptionWhenClassIsNull() {
 		assertThatThrownBy(() -> this.jsonHelper.fromJson("{}", (Class<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("type cannot be null");
 	}
 
 	@Test
 	void shouldThrowExceptionWhenTypeIsNull() {
 		assertThatThrownBy(() -> this.jsonHelper.fromJson("{}", (ParameterizedTypeReference<?>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("type cannot be null");
 	}
 
 	@Test

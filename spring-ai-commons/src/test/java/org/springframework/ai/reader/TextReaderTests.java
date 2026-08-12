@@ -16,21 +16,20 @@
 
 package org.springframework.ai.reader;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,11 +74,11 @@ public class TextReaderTests {
 
 		Document defaultDocument = defaultDocuments.get(0);
 		assertThat(defaultDocument.getMetadata()).containsEntry("customKey", "DefaultValue")
-			.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
+				.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
 
 		// Assert on the SOURCE_METADATA for default ByteArrayResource
 		assertThat(defaultDocument.getMetadata().get(TextReader.SOURCE_METADATA))
-			.isEqualTo("Byte array resource [resource loaded from byte array]");
+				.isEqualTo("Byte array resource [resource loaded from byte array]");
 
 		assertThat(defaultDocument.getText()).isEqualTo("Test content");
 
@@ -97,11 +96,11 @@ public class TextReaderTests {
 
 		Document customDocument = customDocuments.get(0);
 		assertThat(customDocument.getMetadata()).containsEntry("customKey", "CustomValue")
-			.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
+				.containsEntry(TextReader.CHARSET_METADATA, "UTF-8");
 
 		// Assert on the SOURCE_METADATA for custom ByteArrayResource
 		assertThat(customDocument.getMetadata().get(TextReader.SOURCE_METADATA))
-			.isEqualTo("Byte array resource [Custom byte array resource]");
+				.isEqualTo("Byte array resource [Custom byte array resource]");
 
 		assertThat(customDocument.getText()).isEqualTo("Another test content");
 	}

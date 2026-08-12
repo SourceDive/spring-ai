@@ -16,11 +16,6 @@
 
 package org.springframework.ai.vectorstore.azure;
 
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.ai.vectorstore.azure.AzureVectorStore.MetadataField;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
@@ -29,6 +24,11 @@ import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Converts {@link Expression} into Azure Search OData filter syntax.
@@ -59,8 +59,7 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 			context.append(", ");
 			this.convertOperand(expression.right(), context);
 			context.append(", ',')");
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
@@ -106,6 +105,7 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 	 * Adds the metadata field prefix to the given identifier name. Azure AI Search
 	 * requires metadata fields to be prefixed with "meta_" to distinguish them from
 	 * system fields.
+	 *
 	 * @param identifier the field identifier without prefix
 	 * @return the prefixed field identifier (e.g., "meta_fieldName")
 	 * @throws IllegalArgumentException if the identifier is not in the allowed list
@@ -132,8 +132,7 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 				}
 			}
 			this.doEndValueRange(filterValue, context);
-		}
-		else {
+		} else {
 			this.doSingleValue(normalizeDateString(filterValue.value()), context);
 		}
 	}
@@ -145,11 +144,9 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 	private void appendListElementContent(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			context.append(this.dateFormat.format(date.toInstant()));
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			appendODataStringContent(text, context);
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}
@@ -158,11 +155,9 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			context.append(this.dateFormat.format(date.toInstant()));
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			emitODataString(text, context);
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}
@@ -184,12 +179,13 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 	 * <p>
 	 * In OData, single quotes within string literals are escaped by doubling them:
 	 * {@code '} → {@code ''}
-	 * @param value the string value to format
+	 *
+	 * @param value   the string value to format
 	 * @param context the context to append the OData string literal to
-	 * @since 2.0.0
 	 * @see <a href=
 	 * "https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PrimitiveLiterals">OData
 	 * Primitive Literals</a>
+	 * @since 2.0.0
 	 */
 	protected static void emitODataString(String value, StringBuilder context) {
 		context.append("'");
@@ -205,8 +201,7 @@ public class AzureAiSearchFilterExpressionConverter extends AbstractFilterExpres
 			char c = value.charAt(i);
 			if (c == '\'') {
 				context.append("''");
-			}
-			else {
+			} else {
 				context.append(c);
 			}
 		}

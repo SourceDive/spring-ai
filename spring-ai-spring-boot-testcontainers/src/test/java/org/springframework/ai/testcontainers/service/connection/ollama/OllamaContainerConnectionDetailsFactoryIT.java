@@ -16,18 +16,11 @@
 
 package org.springframework.ai.testcontainers.service.connection.ollama;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.ollama.OllamaContainer;
-
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.model.ollama.autoconfigure.OllamaEmbeddingAutoConfiguration;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
@@ -38,6 +31,12 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.ollama.OllamaContainer;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,7 +78,7 @@ class OllamaContainerConnectionDetailsFactoryIT {
 	}
 
 	@Configuration(proxyBeanMethods = false)
-	@ImportAutoConfiguration({ RestClientAutoConfiguration.class, OllamaEmbeddingAutoConfiguration.class })
+	@ImportAutoConfiguration({RestClientAutoConfiguration.class, OllamaEmbeddingAutoConfiguration.class})
 	static class Config {
 
 	}

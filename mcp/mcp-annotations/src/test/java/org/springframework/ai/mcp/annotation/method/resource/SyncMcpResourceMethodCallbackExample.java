@@ -16,6 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
+import io.modelcontextprotocol.server.McpSyncServerExchange;
+import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
+import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
+import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
+import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
+import org.mockito.Mockito;
+import org.springframework.ai.mcp.annotation.McpResource;
+import org.springframework.ai.mcp.annotation.adapter.ResourceAdapter;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,16 +33,6 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import io.modelcontextprotocol.server.McpSyncServerExchange;
-import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
-import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
-import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
-import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
-import org.mockito.Mockito;
-
-import org.springframework.ai.mcp.annotation.McpResource;
-import org.springframework.ai.mcp.annotation.adapter.ResourceAdapter;
 
 /**
  * Example demonstrating how to use the {@link SyncMcpResourceMethodCallback} with
@@ -64,21 +63,20 @@ public final class SyncMcpResourceMethodCallbackExample {
 				try {
 					// Create a callback for the method using the Builder pattern
 					BiFunction<McpSyncServerExchange, ReadResourceRequest, ReadResourceResult> callback = SyncMcpResourceMethodCallback
-						.builder()
-						.method(method)
-						.bean(profileProvider)
-						.resource(ResourceAdapter.asResource(resourceAnnotation))
-						.build();
+							.builder()
+							.method(method)
+							.bean(profileProvider)
+							.resource(ResourceAdapter.asResource(resourceAnnotation))
+							.build();
 
 					// Register the callback with the URI pattern from the annotation
 					String uriPattern = resourceAnnotation.uri();
 
 					resourceHandlers.put(uriPattern, callback);
 
-				}
-				catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException e) {
 					System.err
-						.println("Failed to create callback for method " + method.getName() + ": " + e.getMessage());
+							.println("Failed to create callback for method " + method.getName() + ": " + e.getMessage());
 				}
 			}
 		}
@@ -116,7 +114,7 @@ public final class SyncMcpResourceMethodCallbackExample {
 		// Find a handler that matches the URI pattern
 		BiFunction<McpSyncServerExchange, ReadResourceRequest, ReadResourceResult> handler = null;
 		for (Map.Entry<String, BiFunction<McpSyncServerExchange, ReadResourceRequest, ReadResourceResult>> entry : handlers
-			.entrySet()) {
+				.entrySet()) {
 			String pattern = entry.getKey();
 			if (uriMatchesPattern(uri, pattern)) {
 				handler = entry.getValue();
@@ -132,8 +130,7 @@ public final class SyncMcpResourceMethodCallbackExample {
 
 				// Execute the handler
 				ReadResourceResult result = handler.apply(exchange, request);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -291,7 +288,7 @@ public final class SyncMcpResourceMethodCallbackExample {
 		@McpResource(uri = "user-notifications://{username}", name = "User Notifications",
 				description = "Provides notifications for a specific user")
 		public List<ResourceContents> getUserNotifications(McpSyncServerExchange exchange, ReadResourceRequest request,
-				String username) {
+		                                                   String username) {
 			// Generate notifications based on username
 			String notifications = generateNotifications(username);
 
@@ -370,17 +367,13 @@ public final class SyncMcpResourceMethodCallbackExample {
 			// Simple logic to generate a status
 			if (username.equals("john")) {
 				return "🟢 Online";
-			}
-			else if (username.equals("jane")) {
+			} else if (username.equals("jane")) {
 				return "🟠 Away";
-			}
-			else if (username.equals("bob")) {
+			} else if (username.equals("bob")) {
 				return "⚪ Offline";
-			}
-			else if (username.equals("alice")) {
+			} else if (username.equals("alice")) {
 				return "🔴 Busy";
-			}
-			else {
+			} else {
 				return "⚪ Offline";
 			}
 		}

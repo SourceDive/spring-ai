@@ -16,18 +16,17 @@
 
 package org.springframework.ai.ollama.management;
 
-import java.time.Duration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.util.retry.Retry;
-
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaApi.DeleteModelRequest;
 import org.springframework.ai.ollama.api.OllamaApi.ListModelResponse;
 import org.springframework.ai.ollama.api.OllamaApi.PullModelRequest;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 
 /**
  * Manage the lifecycle of models in Ollama.

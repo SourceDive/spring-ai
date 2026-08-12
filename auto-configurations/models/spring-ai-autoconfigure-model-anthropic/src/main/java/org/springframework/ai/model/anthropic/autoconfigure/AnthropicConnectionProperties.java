@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.anthropic.autoconfigure;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import java.net.Proxy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Anthropic connection properties.

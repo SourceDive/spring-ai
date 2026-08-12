@@ -16,12 +16,9 @@
 
 package org.springframework.ai.mcp.client.webflux.autoconfigure;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
@@ -41,6 +38,8 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -85,16 +84,16 @@ class McpToolsConfigurationTests {
 			// MCP server
 			// There is no MCP server in this test, so the context would not even start.
 			String[] clients = ctx
-				.getBeanNamesForType(ResolvableType.forType(new ParameterizedTypeReference<List<McpSyncClient>>() {
-				}));
+					.getBeanNamesForType(ResolvableType.forType(new ParameterizedTypeReference<List<McpSyncClient>>() {
+					}));
 			assertThat(clients).hasSize(1);
 			List<McpSyncClient> syncClients = (List<McpSyncClient>) ctx.getBean(clients[0]);
 			assertThat(syncClients).hasSize(1)
-				.first()
-				.extracting(McpSyncClient::getClientCapabilities)
-				.extracting(McpSchema.ClientCapabilities::sampling)
-				.describedAs("Sampling")
-				.isNotNull();
+					.first()
+					.extracting(McpSyncClient::getClientCapabilities)
+					.extracting(McpSchema.ClientCapabilities::sampling)
+					.describedAs("Sampling")
+					.isNotNull();
 		});
 	}
 
@@ -106,8 +105,8 @@ class McpToolsConfigurationTests {
 	@Test
 	void toolCallbacksRegistered() {
 		var clientApplicationContext = new ApplicationContextRunner()
-			.withUserConfiguration(TestToolCallbackConfiguration.class)
-			.withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class));
+				.withUserConfiguration(TestToolCallbackConfiguration.class)
+				.withConfiguration(AutoConfigurations.of(ToolCallingAutoConfiguration.class));
 
 		clientApplicationContext.run(ctx -> {
 			// Observable behavior
@@ -138,9 +137,9 @@ class McpToolsConfigurationTests {
 			// In a real use-case, we would use the chat client to call the LLM again
 
 			return McpSchema.CreateMessageResult
-				.builder(McpSchema.Role.ASSISTANT, "Response " + userPrompt + " with model hint " + modelHint,
-						modelHint)
-				.build();
+					.builder(McpSchema.Role.ASSISTANT, "Response " + userPrompt + " with model hint " + modelHint,
+							modelHint)
+					.build();
 		}
 
 	}
@@ -178,7 +177,7 @@ class McpToolsConfigurationTests {
 		SyncMcpToolCallbackProvider mcpToolCallbackProvider() {
 			var tcp = mock(SyncMcpToolCallbackProvider.class);
 			when(tcp.getToolCallbacks())
-				.thenThrow(new RuntimeException("mcpToolCallbackProvider#getToolCallbacks should not be called"));
+					.thenThrow(new RuntimeException("mcpToolCallbackProvider#getToolCallbacks should not be called"));
 			return tcp;
 		}
 
@@ -195,20 +194,20 @@ class McpToolsConfigurationTests {
 		}
 
 		static ToolCallback[] toolCallback(String name) {
-			return new ToolCallback[] { new ToolCallback() {
+			return new ToolCallback[]{new ToolCallback() {
 				@Override
 				public ToolDefinition getToolDefinition() {
 					return ToolDefinition.builder()
-						.name(name)
-						.inputSchema(JsonSchemaGenerator.generateForType(String.class))
-						.build();
+							.name(name)
+							.inputSchema(JsonSchemaGenerator.generateForType(String.class))
+							.build();
 				}
 
 				@Override
 				public String call(String toolInput) {
 					return "~~ not implemented ~~";
 				}
-			} };
+			}};
 		}
 
 		static class CustomToolCallbackProvider implements ToolCallbackProvider {

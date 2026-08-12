@@ -16,12 +16,12 @@
 
 package org.springframework.ai.document.id;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class JdkSha256HexIdGeneratorTest {
 

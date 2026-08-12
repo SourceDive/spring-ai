@@ -16,11 +16,8 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -29,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -51,8 +50,8 @@ public class OpenAiChatModelAdditionalHttpHeadersIT {
 		// Use the additional headers to override the Api Key.
 		// Mind that you have to prefix the Api Key with the "Bearer " prefix.
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.customHeaders(Map.of("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY")))
-			.build();
+				.customHeaders(Map.of("Authorization", "Bearer " + System.getenv("OPENAI_API_KEY")))
+				.build();
 
 		ChatResponse response = this.openAiChatModel.call(new Prompt("Tell me a joke", options));
 
@@ -65,11 +64,11 @@ public class OpenAiChatModelAdditionalHttpHeadersIT {
 		@Bean
 		public OpenAiChatModel openAiClient() {
 			return OpenAiChatModel.builder()
-				.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
-					.apiKey("Invalid API Key")
-					.model(org.springframework.ai.openai.OpenAiChatOptions.DEFAULT_CHAT_MODEL)
-					.build())
-				.build();
+					.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
+							.apiKey("Invalid API Key")
+							.model(org.springframework.ai.openai.OpenAiChatOptions.DEFAULT_CHAT_MODEL)
+							.build())
+					.build();
 		}
 
 	}

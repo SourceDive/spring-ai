@@ -16,8 +16,6 @@
 
 package org.springframework.ai.bedrock.api;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
@@ -30,11 +28,11 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.time.Duration;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AbstractBedrockApiTest {
@@ -63,19 +61,19 @@ class AbstractBedrockApiTest {
 	void shouldThrowIllegalArgumentIfAwsDefaultsFailed() {
 		try (MockedStatic<DefaultAwsRegionProviderChain> mocked = mockStatic(DefaultAwsRegionProviderChain.class)) {
 			when(this.awsRegionProviderBuilder.build().getRegion())
-				.thenThrow(SdkClientException.builder().message("failed load").build());
+					.thenThrow(SdkClientException.builder().message("failed load").build());
 			mocked.when(DefaultAwsRegionProviderChain::builder).thenReturn(this.awsRegionProviderBuilder);
 			assertThatThrownBy(() -> new TestBedrockApi("modelId", this.awsCredentialsProvider, null, this.jsonMapper,
 					Duration.ofMinutes(5)))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("failed load");
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessageContaining("failed load");
 		}
 	}
 
 	private static class TestBedrockApi extends AbstractBedrockApi<Object, Object, Object> {
 
 		protected TestBedrockApi(String modelId, AwsCredentialsProvider credentialsProvider, Region region,
-				JsonMapper jsonMapper, Duration timeout) {
+		                         JsonMapper jsonMapper, Duration timeout) {
 			super(modelId, credentialsProvider, region, jsonMapper, timeout);
 		}
 

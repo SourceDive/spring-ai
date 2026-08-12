@@ -16,13 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest.ContextInclusionStrategy;
 import io.modelcontextprotocol.spec.McpSchema.Role;
 import io.modelcontextprotocol.spec.McpSchema.SamplingMessage;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -189,12 +189,12 @@ public class DefaultSamplingSpecTests {
 		DefaultSamplingSpec spec = new DefaultSamplingSpec();
 
 		McpRequestContextTypes.SamplingSpec result = spec.message(new TextContent("Test"))
-			.systemPrompt("System")
-			.temperature(0.7)
-			.maxTokens(100)
-			.stopSequences("STOP")
-			.metadata("key", "value")
-			.meta("metaKey", "metaValue");
+				.systemPrompt("System")
+				.temperature(0.7)
+				.maxTokens(100)
+				.stopSequences("STOP")
+				.metadata("key", "value")
+				.meta("metaKey", "metaValue");
 
 		assertThat(result).isSameAs(spec);
 		assertThat(spec.messages).hasSize(1);
@@ -213,7 +213,7 @@ public class DefaultSamplingSpecTests {
 		DefaultSamplingSpec.DefaultModelPreferenceSpec spec = new DefaultSamplingSpec.DefaultModelPreferenceSpec();
 
 		assertThatThrownBy(() -> spec.modelHint(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Model hint must not be null");
+				.hasMessageContaining("Model hint must not be null");
 	}
 
 	@Test
@@ -221,7 +221,7 @@ public class DefaultSamplingSpecTests {
 		DefaultSamplingSpec.DefaultModelPreferenceSpec spec = new DefaultSamplingSpec.DefaultModelPreferenceSpec();
 
 		assertThatThrownBy(() -> spec.modelHints((String[]) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Models must not be null");
+				.hasMessageContaining("Models must not be null");
 	}
 
 }

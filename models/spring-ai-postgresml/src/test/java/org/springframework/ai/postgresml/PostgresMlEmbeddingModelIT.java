@@ -16,21 +16,12 @@
 
 package org.springframework.ai.postgresml;
 
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.embedding.EmbeddingOptions;
@@ -44,6 +35,14 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.boot.jdbc.test.autoconfigure.JdbcTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,11 +60,11 @@ class PostgresMlEmbeddingModelIT {
 	@ServiceConnection
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
 			DockerImageName.parse("ghcr.io/postgresml/postgresml:2.8.1").asCompatibleSubstituteFor("postgres"))
-		.withCommand("sleep", "infinity")
-		.withUsername("postgresml")
-		.withPassword("postgresml")
-		.withDatabaseName("postgresml")
-		.waitingFor(Wait.forLogMessage(".*Starting dashboard.*\\s", 1));
+			.withCommand("sleep", "infinity")
+			.withUsername("postgresml")
+			.withPassword("postgresml")
+			.withDatabaseName("postgresml")
+			.waitingFor(Wait.forLogMessage(".*Starting dashboard.*\\s", 1));
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -90,9 +89,9 @@ class PostgresMlEmbeddingModelIT {
 	void embedWithPgVector() {
 		PostgresMlEmbeddingModel embeddingModel = new PostgresMlEmbeddingModel(this.jdbcTemplate,
 				PostgresMlEmbeddingOptions.builder()
-					.transformer("distilbert-base-uncased")
-					.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
-					.build(),
+						.transformer("distilbert-base-uncased")
+						.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
+						.build(),
 				true);
 		embeddingModel.afterPropertiesSet();
 
@@ -116,11 +115,11 @@ class PostgresMlEmbeddingModelIT {
 	void embedWithKwargs() {
 		PostgresMlEmbeddingModel embeddingModel = new PostgresMlEmbeddingModel(this.jdbcTemplate,
 				PostgresMlEmbeddingOptions.builder()
-					.transformer("distilbert-base-uncased")
-					.vectorType(PostgresMlEmbeddingModel.VectorType.PG_ARRAY)
-					.kwargs(Map.of("device", "cpu"))
-					.metadataMode(MetadataMode.EMBED)
-					.build(),
+						.transformer("distilbert-base-uncased")
+						.vectorType(PostgresMlEmbeddingModel.VectorType.PG_ARRAY)
+						.kwargs(Map.of("device", "cpu"))
+						.metadataMode(MetadataMode.EMBED)
+						.build(),
 				true);
 		embeddingModel.afterPropertiesSet();
 
@@ -130,33 +129,33 @@ class PostgresMlEmbeddingModelIT {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "PG_ARRAY", "PG_VECTOR" })
+	@ValueSource(strings = {"PG_ARRAY", "PG_VECTOR"})
 	void embedForResponse(String vectorType) {
 		PostgresMlEmbeddingModel embeddingModel = new PostgresMlEmbeddingModel(this.jdbcTemplate,
 				PostgresMlEmbeddingOptions.builder()
-					.transformer("distilbert-base-uncased")
-					.vectorType(VectorType.valueOf(vectorType))
-					.build(),
+						.transformer("distilbert-base-uncased")
+						.vectorType(VectorType.valueOf(vectorType))
+						.build(),
 				true);
 		embeddingModel.afterPropertiesSet();
 
 		EmbeddingResponse embeddingResponse = embeddingModel
-			.embedForResponse(List.of("Hello World!", "Spring AI!", "LLM!"));
+				.embedForResponse(List.of("Hello World!", "Spring AI!", "LLM!"));
 
 		assertThat(embeddingResponse).isNotNull();
 		assertThat(embeddingResponse.getResults()).hasSize(3);
 
 		EmbeddingResponseMetadata metadata = embeddingResponse.getMetadata();
 		assertThat(metadata.keySet()).as("Metadata should contain exactly the expected keys")
-			.containsExactlyInAnyOrder("transformer", "vector-type", "kwargs");
+				.containsExactlyInAnyOrder("transformer", "vector-type", "kwargs");
 
 		assertThat(metadata.get("transformer").toString())
-			.as("Transformer in metadata should be 'distilbert-base-uncased'")
-			.isEqualTo("distilbert-base-uncased");
+				.as("Transformer in metadata should be 'distilbert-base-uncased'")
+				.isEqualTo("distilbert-base-uncased");
 
 		assertThat(metadata.get("vector-type").toString())
-			.as("Vector type in metadata should match expected vector type")
-			.isEqualTo(vectorType);
+				.as("Vector type in metadata should match expected vector type")
+				.isEqualTo(vectorType);
 
 		assertThat(metadata.get("kwargs").toString()).as("kwargs in metadata should be '{}'").isEqualTo("{}");
 
@@ -173,9 +172,9 @@ class PostgresMlEmbeddingModelIT {
 
 		PostgresMlEmbeddingModel embeddingModel = new PostgresMlEmbeddingModel(this.jdbcTemplate,
 				PostgresMlEmbeddingOptions.builder()
-					.transformer("distilbert-base-uncased")
-					.vectorType(VectorType.PG_VECTOR)
-					.build(),
+						.transformer("distilbert-base-uncased")
+						.vectorType(VectorType.PG_VECTOR)
+						.build(),
 				true);
 		embeddingModel.afterPropertiesSet();
 
@@ -190,15 +189,15 @@ class PostgresMlEmbeddingModelIT {
 		EmbeddingResponseMetadata metadata = embeddingResponse.getMetadata();
 
 		assertThat(metadata.keySet()).as("Metadata should contain exactly the expected keys")
-			.containsExactlyInAnyOrder("transformer", "vector-type", "kwargs");
+				.containsExactlyInAnyOrder("transformer", "vector-type", "kwargs");
 
 		assertThat(metadata.get("transformer").toString())
-			.as("Transformer in metadata should be 'distilbert-base-uncased'")
-			.isEqualTo("distilbert-base-uncased");
+				.as("Transformer in metadata should be 'distilbert-base-uncased'")
+				.isEqualTo("distilbert-base-uncased");
 
 		assertThat(metadata.get("vector-type").toString())
-			.as("Vector type in metadata should match expected vector type")
-			.isEqualTo(VectorType.PG_VECTOR.name());
+				.as("Vector type in metadata should match expected vector type")
+				.isEqualTo(VectorType.PG_VECTOR.name());
 
 		assertThat(metadata.get("kwargs").toString()).as("kwargs in metadata should be '{}'").isEqualTo("{}");
 
@@ -212,11 +211,11 @@ class PostgresMlEmbeddingModelIT {
 		// Override the default options in the request
 		var request2 = new EmbeddingRequest(List.of("Hello World!", "Spring AI!", "LLM!"),
 				PostgresMlEmbeddingOptions.builder()
-					.transformer("intfloat/e5-small")
-					.vectorType(VectorType.PG_ARRAY)
-					.metadataMode(MetadataMode.EMBED)
-					.kwargs(Map.of("device", "cpu"))
-					.build());
+						.transformer("intfloat/e5-small")
+						.vectorType(VectorType.PG_ARRAY)
+						.metadataMode(MetadataMode.EMBED)
+						.kwargs(Map.of("device", "cpu"))
+						.build());
 
 		embeddingResponse = embeddingModel.call(request2);
 
@@ -226,16 +225,16 @@ class PostgresMlEmbeddingModelIT {
 		metadata = embeddingResponse.getMetadata();
 
 		assertThat(metadata.keySet()).as("Metadata should contain exactly the expected keys")
-			.containsExactlyInAnyOrder("transformer", "vector-type", "kwargs");
+				.containsExactlyInAnyOrder("transformer", "vector-type", "kwargs");
 
 		assertThat(metadata.get("transformer").toString()).as("Transformer in metadata should be 'intfloat/e5-small'")
-			.isEqualTo("intfloat/e5-small");
+				.isEqualTo("intfloat/e5-small");
 
 		assertThat(metadata.get("vector-type").toString()).as("Vector type in metadata should be PG_ARRAY")
-			.isEqualTo(VectorType.PG_ARRAY.name());
+				.isEqualTo(VectorType.PG_ARRAY.name());
 
 		assertThat(metadata.get("kwargs").toString()).as("kwargs in metadata should be '{\"device\":\"cpu\"}'")
-			.isEqualTo("{\"device\":\"cpu\"}");
+				.isEqualTo("{\"device\":\"cpu\"}");
 
 		assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).hasSize(384);

@@ -74,7 +74,8 @@ public class MilvusFilterExpressionConverter extends AbstractFilterExpressionCon
 	 * Serialize values using JSON serialization for Milvus filter expressions. Delegates
 	 * to {@link #emitJsonValue(Object, StringBuilder)} for Jackson-based JSON
 	 * serialization.
-	 * @param value the value to serialize
+	 *
+	 * @param value   the value to serialize
 	 * @param context the context to append the JSON representation to
 	 */
 	@Override
@@ -90,6 +91,7 @@ public class MilvusFilterExpressionConverter extends AbstractFilterExpressionCon
 	 * This is intended for callers that build filter expressions by hand (e.g.
 	 * {@code id in [...]} deletes) and need to inline user-supplied values safely without
 	 * manual quote concatenation.
+	 *
 	 * @param value the value to serialize
 	 * @return the escaped literal suitable for inlining in a Milvus filter expression
 	 */

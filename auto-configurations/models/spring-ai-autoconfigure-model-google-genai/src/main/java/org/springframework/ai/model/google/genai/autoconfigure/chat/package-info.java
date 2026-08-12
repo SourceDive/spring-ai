@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.google.genai.autoconfigure.chat;
 
-import org.jspecify.annotations.NullMarked;

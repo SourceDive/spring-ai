@@ -16,17 +16,16 @@
 
 package org.springframework.ai.openai;
 
+import com.openai.azure.AzureOpenAIServiceVersion;
+import com.openai.credential.Credential;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.moderation.ModerationOptions;
+
 import java.net.Proxy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import com.openai.azure.AzureOpenAIServiceVersion;
-import com.openai.credential.Credential;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.moderation.ModerationOptions;
 
 /**
  * OpenAI SDK Moderation Options.
@@ -42,10 +41,10 @@ public class OpenAiModerationOptions extends AbstractOpenAiOptions implements Mo
 	public static final String DEFAULT_MODERATION_MODEL = "omni-moderation-latest";
 
 	protected OpenAiModerationOptions(@Nullable String baseUrl, @Nullable String apiKey,
-			@Nullable Credential credential, @Nullable String model, @Nullable String microsoftDeploymentName,
-			@Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
-			@Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
-			@Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders) {
+	                                  @Nullable Credential credential, @Nullable String model, @Nullable String microsoftDeploymentName,
+	                                  @Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
+	                                  @Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
+	                                  @Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders) {
 		super(baseUrl, apiKey, credential, model != null ? model : DEFAULT_MODERATION_MODEL, microsoftDeploymentName,
 				microsoftFoundryServiceVersion, organizationId, isMicrosoftFoundry, isGitHubModels, timeout, maxRetries,
 				proxy, customHeaders);
@@ -145,8 +144,7 @@ public class OpenAiModerationOptions extends AbstractOpenAiOptions implements Mo
 				if (castFrom.getCustomHeaders() != null) {
 					if (this.customHeaders == null) {
 						this.customHeaders = new HashMap<>(castFrom.getCustomHeaders());
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.customHeaders);
 						merged.putAll(castFrom.getCustomHeaders());
 						this.customHeaders = merged;

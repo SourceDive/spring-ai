@@ -30,7 +30,7 @@ public class TestGoogleGenAiGeminiChatModel extends GoogleGenAiChatModel {
 	private GenerateContentResponse mockGenerateContentResponse;
 
 	public TestGoogleGenAiGeminiChatModel(Client genAiClient, GoogleGenAiChatOptions options,
-			RetryTemplate retryTemplate) {
+	                                      RetryTemplate retryTemplate) {
 		super(genAiClient, options, ToolCallingManager.builder().build(), retryTemplate, null);
 	}
 

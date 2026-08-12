@@ -16,11 +16,6 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -28,8 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
@@ -46,15 +39,17 @@ import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Verifies that {@link ToolCallingAdvisor} is auto-registered (or not) by
@@ -82,9 +77,9 @@ class ToolCallingAdvisorAutoRegistrationTests {
 	void setup() {
 		lenient().when(this.chatModel.getOptions()).thenReturn(DefaultToolCallingChatOptions.builder().build());
 		this.weatherTool = FunctionToolCallback.builder("getWeather", (CityInput in) -> in.city() + ": 25C")
-			.description("Get weather for a city")
-			.inputType(CityInput.class)
-			.build();
+				.description("Get weather for a city")
+				.inputType(CityInput.class)
+				.build();
 	}
 
 	// -------------------------------------------------------------------------
@@ -101,7 +96,7 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 	void stubTwoStreamCallCycle() {
 		when(this.chatModel.stream(any(Prompt.class))).thenReturn(Flux.just(toolCallChatResponse()))
-			.thenReturn(Flux.just(finalChatResponse()));
+				.thenReturn(Flux.just(finalChatResponse()));
 	}
 
 	void stubSingleStreamCallCycle() {
@@ -137,12 +132,12 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			String content = ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			assertThat(content).isNotBlank();
 			// ToolCallingAdvisor looped: initial call + retry after tool execution
@@ -156,13 +151,13 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			// No ToolCallingAdvisor loop — chain traversed exactly once
 			assertThat(counter.getCallCount()).isEqualTo(1);
@@ -176,13 +171,13 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.advisors(a -> a.param(ChatClientAttributes.TOOL_CALL_ADVISOR_AUTO_REGISTER.getKey(), false))
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.advisors(a -> a.param(ChatClientAttributes.TOOL_CALL_ADVISOR_AUTO_REGISTER.getKey(), false))
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			assertThat(counter.getCallCount()).isEqualTo(1);
 			verify(chatModel, times(1)).call(any(Prompt.class));
@@ -195,13 +190,13 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.advisors(AdvisorParams.toolCallAdvisorAutoRegister(false))
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.advisors(AdvisorParams.toolCallAdvisorAutoRegister(false))
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			assertThat(counter.getCallCount()).isEqualTo(1);
 			verify(chatModel, times(1)).call(any(Prompt.class));
@@ -229,11 +224,11 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(new DynamicToolInjectingAdvisor(weatherTool), counter)
-				.user("weather?")
-				.call()
-				.content();
+					.prompt()
+					.advisors(new DynamicToolInjectingAdvisor(weatherTool), counter)
+					.user("weather?")
+					.call()
+					.content();
 
 			assertThat(counter.getCallCount()).isGreaterThanOrEqualTo(2);
 			verify(chatModel, times(2)).call(any(Prompt.class));
@@ -244,7 +239,7 @@ class ToolCallingAdvisorAutoRegistrationTests {
 			stubTwoCallCycle();
 			// Override default: model already has the weather tool baked into its options
 			when(chatModel.getOptions())
-				.thenReturn(DefaultToolCallingChatOptions.builder().toolCallbacks(List.of(weatherTool)).build());
+					.thenReturn(DefaultToolCallingChatOptions.builder().toolCallbacks(List.of(weatherTool)).build());
 
 			var counter = new ChainIterationCountingAdvisor();
 			// No tools added via ChatClient API — tools come from the model's default
@@ -262,12 +257,12 @@ class ToolCallingAdvisorAutoRegistrationTests {
 			var counter = new ChainIterationCountingAdvisor();
 			// Tools supplied via .options() instead of .toolCallbacks()
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.user("weather?")
-				.options(DefaultToolCallingChatOptions.builder().toolCallbacks(List.of(weatherTool)))
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.user("weather?")
+					.options(DefaultToolCallingChatOptions.builder().toolCallbacks(List.of(weatherTool)))
+					.call()
+					.content();
 
 			assertThat(counter.getCallCount()).isGreaterThanOrEqualTo(2);
 			verify(chatModel, times(2)).call(any(Prompt.class));
@@ -282,12 +277,12 @@ class ToolCallingAdvisorAutoRegistrationTests {
 			// second
 			// one
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(ToolCallingAdvisor.builder().build(), counter)
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.prompt()
+					.advisors(ToolCallingAdvisor.builder().build(), counter)
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			// Explicit advisor controls the loop; model called exactly twice — not four
 			assertThat(counter.getCallCount()).isGreaterThanOrEqualTo(2);
@@ -305,14 +300,14 @@ class ToolCallingAdvisorAutoRegistrationTests {
 					DefaultToolExecutionResult.builder().conversationHistory(List.of()).returnDirect(false).build());
 
 			ChatClient
-				.builder(chatModel, ObservationRegistry.NOOP, null, null,
-						ToolCallingAdvisor.builder().toolCallingManager(customManager))
-				.build()
-				.prompt()
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.builder(chatModel, ObservationRegistry.NOOP, null, null,
+							ToolCallingAdvisor.builder().toolCallingManager(customManager))
+					.build()
+					.prompt()
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			// The injected manager — not the default — handled the tool call
 			verify(customManager).executeToolCalls(any(), any());
@@ -322,12 +317,12 @@ class ToolCallingAdvisorAutoRegistrationTests {
 		@Test
 		void throwsWhenMultipleToolAdvisorsRegistered() {
 			assertThatThrownBy(() -> ChatClient.create(chatModel)
-				.prompt()
-				.advisors(ToolCallingAdvisor.builder().build(), ToolCallingAdvisor.builder().build())
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content()).isInstanceOf(IllegalStateException.class).hasMessageContaining("At most one ToolAdvisor");
+					.prompt()
+					.advisors(ToolCallingAdvisor.builder().build(), ToolCallingAdvisor.builder().build())
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content()).isInstanceOf(IllegalStateException.class).hasMessageContaining("At most one ToolAdvisor");
 		}
 
 		@Test
@@ -337,12 +332,12 @@ class ToolCallingAdvisorAutoRegistrationTests {
 			var counter = new ChainIterationCountingAdvisor();
 			// Any ToolCallHandlingAdvisor in the chain blocks auto-registration
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(new NoOpToolCallHandlingAdvisor(), counter)
-				.user("weather?")
-				.tools(weatherTool)
-				.call()
-				.content();
+					.prompt()
+					.advisors(new NoOpToolCallHandlingAdvisor(), counter)
+					.user("weather?")
+					.tools(weatherTool)
+					.call()
+					.content();
 
 			assertThat(counter.getCallCount()).isEqualTo(1);
 			verify(chatModel, times(1)).call(any(Prompt.class));
@@ -363,16 +358,16 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			String content = ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.user("weather?")
-				.tools(weatherTool)
-				.stream()
-				.content()
-				.collectList()
-				.block()
-				.stream()
-				.reduce("", String::concat);
+					.prompt()
+					.advisors(counter)
+					.user("weather?")
+					.tools(weatherTool)
+					.stream()
+					.content()
+					.collectList()
+					.block()
+					.stream()
+					.reduce("", String::concat);
 
 			assertThat(content).isNotBlank();
 			assertThat(counter.getCallCount()).isGreaterThanOrEqualTo(2);
@@ -384,15 +379,15 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(counter)
-				.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
-				.user("weather?")
-				.tools(weatherTool)
-				.stream()
-				.content()
-				.collectList()
-				.block();
+					.prompt()
+					.advisors(counter)
+					.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
+					.user("weather?")
+					.tools(weatherTool)
+					.stream()
+					.content()
+					.collectList()
+					.block();
 
 			assertThat(counter.getCallCount()).isEqualTo(1);
 		}
@@ -404,13 +399,13 @@ class ToolCallingAdvisorAutoRegistrationTests {
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient.create(chatModel)
-				.prompt()
-				.advisors(new DynamicToolInjectingAdvisor(weatherTool), counter)
-				.user("weather?")
-				.stream()
-				.content()
-				.collectList()
-				.block();
+					.prompt()
+					.advisors(new DynamicToolInjectingAdvisor(weatherTool), counter)
+					.user("weather?")
+					.stream()
+					.content()
+					.collectList()
+					.block();
 
 			assertThat(counter.getCallCount()).isGreaterThanOrEqualTo(2);
 		}
@@ -511,9 +506,9 @@ class ToolCallingAdvisorAutoRegistrationTests {
 			if (request.prompt().getOptions() instanceof ToolCallingChatOptions opts) {
 				var newOpts = opts.mutate().toolCallbacks(List.of(this.tool)).build();
 				return ChatClientRequest.builder()
-					.prompt(new Prompt(request.prompt().getInstructions(), newOpts))
-					.context(request.context())
-					.build();
+						.prompt(new Prompt(request.prompt().getInstructions(), newOpts))
+						.context(request.context())
+						.build();
 			}
 			return request;
 		}

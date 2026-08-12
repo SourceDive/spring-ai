@@ -16,13 +16,6 @@
 
 package org.springframework.ai.mcp.client.webflux.transport;
 
-import java.net.URI;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.client.transport.InvalidSseMessageEndpointException;
 import io.modelcontextprotocol.client.transport.SseMessageEndpointValidator;
 import io.modelcontextprotocol.json.McpJsonMapper;
@@ -30,13 +23,10 @@ import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.JSONRPCRequest;
 import io.modelcontextprotocol.util.McpJsonMapperUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import reactor.core.publisher.Flux;
@@ -45,12 +35,14 @@ import reactor.core.publisher.Sinks;
 import reactor.test.StepVerifier;
 import tools.jackson.databind.json.JsonMapper;
 
-import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.web.reactive.function.client.WebClient;
+import java.net.URI;
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -67,9 +59,9 @@ class WebFluxSseClientTransportIT {
 
 	@SuppressWarnings("resource")
 	static GenericContainer<?> container = new GenericContainer<>("docker.io/node:lts-alpine3.23")
-		.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 sse")
-		.withExposedPorts(3001)
-		.waitingFor(Wait.forHttp("/").forStatusCode(404));
+			.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 sse")
+			.withExposedPorts(3001)
+			.waitingFor(Wait.forHttp("/").forStatusCode(404));
 
 	private TestSseClientTransport transport;
 
@@ -101,7 +93,7 @@ class WebFluxSseClientTransportIT {
 	void afterEach() {
 		if (this.transport != null) {
 			assertThatCode(() -> this.transport.closeGracefully().block(Duration.ofSeconds(10)))
-				.doesNotThrowAnyException();
+					.doesNotThrowAnyException();
 		}
 	}
 
@@ -113,12 +105,12 @@ class WebFluxSseClientTransportIT {
 	@Test
 	void constructorValidation() {
 		assertThatThrownBy(() -> new WebFluxSseClientTransport(null, McpJsonMapperUtils.JSON_MAPPER))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("WebClient.Builder must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("WebClient.Builder must not be null");
 
 		assertThatThrownBy(() -> new WebFluxSseClientTransport(this.webClientBuilder, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("jsonMapper must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("jsonMapper must not be null");
 	}
 
 	@Test
@@ -130,20 +122,20 @@ class WebFluxSseClientTransportIT {
 		// Test builder with custom ObjectMapper
 		JsonMapper customMapper = JsonMapper.builder().build();
 		WebFluxSseClientTransport transport2 = WebFluxSseClientTransport.builder(this.webClientBuilder)
-			.jsonMapper(new JacksonMcpJsonMapper(customMapper))
-			.build();
+				.jsonMapper(new JacksonMcpJsonMapper(customMapper))
+				.build();
 		assertThatCode(() -> transport2.closeGracefully().block()).doesNotThrowAnyException();
 
 		// Test builder with custom SSE endpoint
 		WebFluxSseClientTransport transport3 = WebFluxSseClientTransport.builder(this.webClientBuilder)
-			.sseEndpoint("/custom-sse")
-			.build();
+				.sseEndpoint("/custom-sse")
+				.build();
 		assertThatCode(() -> transport3.closeGracefully().block()).doesNotThrowAnyException();
 
 		// Test builder with all custom parameters
 		WebFluxSseClientTransport transport4 = WebFluxSseClientTransport.builder(this.webClientBuilder)
-			.sseEndpoint("/custom-sse")
-			.build();
+				.sseEndpoint("/custom-sse")
+				.build();
 		assertThatCode(() -> transport4.closeGracefully().block()).doesNotThrowAnyException();
 	}
 
@@ -162,8 +154,7 @@ class WebFluxSseClientTransportIT {
 			StepVerifier.create(this.transport.closeGracefully()).verifyComplete();
 
 			assertThat(droppedErrors).hasSize(0);
-		}
-		finally {
+		} finally {
 			reactor.core.publisher.Hooks.resetOnErrorDropped();
 		}
 	}
@@ -310,7 +301,7 @@ class WebFluxSseClientTransportIT {
 
 		// Verify both messages are processed
 		StepVerifier.create(this.transport.sendMessage(message1).then(this.transport.sendMessage(message2)))
-			.verifyComplete();
+				.verifyComplete();
 
 		// Verify message count
 		assertThat(this.transport.getInboundMessageCount()).isEqualTo(2);
@@ -362,13 +353,13 @@ class WebFluxSseClientTransportIT {
 	void testMessageEndpointValidationRejects() {
 		TestSseClientTransport transport = new TestSseClientTransport(this.webClientBuilder,
 				McpJsonMapperUtils.JSON_MAPPER, (sseUri, messageEndpoint) -> {
-					throw new InvalidSseMessageEndpointException("boom", messageEndpoint);
-				});
+			throw new InvalidSseMessageEndpointException("boom", messageEndpoint);
+		});
 
 		try {
 			// fails to connect
 			StepVerifier.create(transport.connect(Function.identity()))
-				.verifyErrorMatches(WebFluxSseClientTransportIT::isInvalidEndpointError);
+					.verifyErrorMatches(WebFluxSseClientTransportIT::isInvalidEndpointError);
 
 			// Since connection failed, there is no message endpoint, and no message can
 			// be sent
@@ -376,9 +367,8 @@ class WebFluxSseClientTransportIT {
 					Map.of("key", "value"));
 
 			StepVerifier.create(transport.sendMessage(testMessage))
-				.verifyErrorMatches(WebFluxSseClientTransportIT::isInvalidEndpointError);
-		}
-		finally {
+					.verifyErrorMatches(WebFluxSseClientTransportIT::isInvalidEndpointError);
+		} finally {
 			transport.closeGracefully();
 		}
 	}
@@ -399,7 +389,7 @@ class WebFluxSseClientTransportIT {
 		private Sinks.Many<ServerSentEvent<String>> events = Sinks.many().unicast().onBackpressureBuffer();
 
 		private TestSseClientTransport(WebClient.Builder webClientBuilder, McpJsonMapper jsonMapper,
-				SseMessageEndpointValidator validator) {
+		                               SseMessageEndpointValidator validator) {
 			super(webClientBuilder, jsonMapper, "/sse", validator);
 		}
 

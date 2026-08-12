@@ -16,13 +16,12 @@
 
 package org.springframework.ai.postgresml;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
 import org.springframework.ai.embedding.EmbeddingOptions;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,11 +44,11 @@ public class PostgresMlEmbeddingOptionsTests {
 	@Test
 	public void newOptions() {
 		PostgresMlEmbeddingOptions options = PostgresMlEmbeddingOptions.builder()
-			.transformer("intfloat/e5-small")
-			.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
-			.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
-			.kwargs(Map.of("device", "cpu"))
-			.build();
+				.transformer("intfloat/e5-small")
+				.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
+				.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
+				.kwargs(Map.of("device", "cpu"))
+				.build();
 
 		assertThat(options.getTransformer()).isEqualTo("intfloat/e5-small");
 		assertThat(options.getVectorType()).isEqualTo(PostgresMlEmbeddingModel.VectorType.PG_VECTOR);
@@ -73,9 +72,9 @@ public class PostgresMlEmbeddingOptionsTests {
 
 		// Partial override
 		options = embeddingModel.mergeOptions(PostgresMlEmbeddingOptions.builder()
-			.transformer("intfloat/e5-small")
-			.kwargs(Map.of("device", "cpu"))
-			.build());
+				.transformer("intfloat/e5-small")
+				.kwargs(Map.of("device", "cpu"))
+				.build());
 
 		assertThat(options.getTransformer()).isEqualTo("intfloat/e5-small");
 		assertThat(options.getVectorType()).isEqualTo(PostgresMlEmbeddingModel.VectorType.PG_ARRAY); // Default
@@ -84,11 +83,11 @@ public class PostgresMlEmbeddingOptionsTests {
 
 		// Complete override
 		options = embeddingModel.mergeOptions(PostgresMlEmbeddingOptions.builder()
-			.transformer("intfloat/e5-small")
-			.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
-			.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
-			.kwargs(Map.of("device", "cpu"))
-			.build());
+				.transformer("intfloat/e5-small")
+				.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
+				.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
+				.kwargs(Map.of("device", "cpu"))
+				.build());
 
 		assertThat(options.getTransformer()).isEqualTo("intfloat/e5-small");
 		assertThat(options.getVectorType()).isEqualTo(PostgresMlEmbeddingModel.VectorType.PG_VECTOR);
@@ -129,7 +128,7 @@ public class PostgresMlEmbeddingOptionsTests {
 	@Test
 	public void allMetadataModes() {
 		for (org.springframework.ai.document.MetadataMode mode : org.springframework.ai.document.MetadataMode
-			.values()) {
+				.values()) {
 			PostgresMlEmbeddingOptions options = PostgresMlEmbeddingOptions.builder().metadataMode(mode).build();
 
 			assertThat(options.getMetadataMode()).isEqualTo(mode);
@@ -156,9 +155,9 @@ public class PostgresMlEmbeddingOptionsTests {
 		PostgresMlEmbeddingModel embeddingModel = new PostgresMlEmbeddingModel(jdbcTemplate);
 
 		PostgresMlEmbeddingOptions original = PostgresMlEmbeddingOptions.builder()
-			.transformer("original-model")
-			.kwargs(Map.of("original", "value"))
-			.build();
+				.transformer("original-model")
+				.kwargs(Map.of("original", "value"))
+				.build();
 
 		PostgresMlEmbeddingOptions merged = embeddingModel.mergeOptions(original);
 
@@ -180,7 +179,7 @@ public class PostgresMlEmbeddingOptionsTests {
 				Map.of("normalize_embeddings", true, "batch_size", 64));
 
 		PostgresMlEmbeddingOptions options = embeddingModel
-			.mergeOptions(PostgresMlEmbeddingOptions.builder().kwargs(complexKwargs).build());
+				.mergeOptions(PostgresMlEmbeddingOptions.builder().kwargs(complexKwargs).build());
 
 		assertThat(options.getKwargs()).hasSize(3);
 		assertThat(options.getKwargs().get("device")).isEqualTo("cuda:0");
@@ -191,13 +190,13 @@ public class PostgresMlEmbeddingOptionsTests {
 	@Test
 	public void builderChaining() {
 		PostgresMlEmbeddingOptions options = PostgresMlEmbeddingOptions.builder()
-			.transformer("model-1")
-			.transformer("model-2") // Should override previous value
-			.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
-			.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
-			.kwargs(Map.of("key1", "value1"))
-			.kwargs(Map.of("key2", "value2")) // Should override previous kwargs
-			.build();
+				.transformer("model-1")
+				.transformer("model-2") // Should override previous value
+				.vectorType(PostgresMlEmbeddingModel.VectorType.PG_VECTOR)
+				.metadataMode(org.springframework.ai.document.MetadataMode.ALL)
+				.kwargs(Map.of("key1", "value1"))
+				.kwargs(Map.of("key2", "value2")) // Should override previous kwargs
+				.build();
 
 		assertThat(options.getTransformer()).isEqualTo("model-2");
 		assertThat(options.getKwargs()).containsEntry("key2", "value2");

@@ -21,11 +21,10 @@ import io.modelcontextprotocol.spec.McpClientTransport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Timeout;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebClientStreamableHttpTransport;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 @Timeout(15)
 public class WebClientStreamableHttpSyncClientIT extends AbstractMcpSyncClientTests {
@@ -34,9 +33,9 @@ public class WebClientStreamableHttpSyncClientIT extends AbstractMcpSyncClientTe
 
 	@SuppressWarnings("resource")
 	static GenericContainer<?> container = new GenericContainer<>("docker.io/node:lts-alpine3.23")
-		.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 streamableHttp")
-		.withExposedPorts(3001)
-		.waitingFor(Wait.forHttp("/").forStatusCode(404));
+			.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 streamableHttp")
+			.withExposedPorts(3001)
+			.waitingFor(Wait.forHttp("/").forStatusCode(404));
 
 	@Override
 	protected McpClientTransport createMcpTransport() {

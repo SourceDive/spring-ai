@@ -16,9 +16,9 @@
 
 package org.springframework.ai.moderation;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * This class represents the scores for different categories of content. Each category has

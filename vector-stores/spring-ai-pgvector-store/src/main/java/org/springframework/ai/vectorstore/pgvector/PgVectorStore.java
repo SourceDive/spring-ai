@@ -16,21 +16,10 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
 import com.pgvector.PGvector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.postgresql.util.PGobject;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -46,13 +35,15 @@ import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SqlTypeValue;
-import org.springframework.jdbc.core.StatementCreatorUtils;
+import org.springframework.jdbc.core.*;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * PostgreSQL-based vector store implementation using the pgvector extension.
@@ -346,8 +337,7 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 		// Execute the delete
 		try {
 			this.jdbcTemplate.update(sql);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to delete documents by filter", e);
 		}
 	}
@@ -448,8 +438,8 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 
 		if (this.createIndexMethod != PgIndexType.NONE) {
 			this.jdbcTemplate.execute(String.format("""
-					CREATE INDEX IF NOT EXISTS %s ON %s USING %s (embedding %s)
-					""", this.getVectorIndexName(), this.getFullyQualifiedTableName(), this.createIndexMethod,
+							CREATE INDEX IF NOT EXISTS %s ON %s USING %s (embedding %s)
+							""", this.getVectorIndexName(), this.getFullyQualifiedTableName(), this.createIndexMethod,
 					this.getDistanceType().index));
 		}
 	}
@@ -495,8 +485,7 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 			if (embeddingDimensions > 0) {
 				return embeddingDimensions;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.warn("Failed to obtain the embedding dimensions from the embedding model and fall backs to default:"
 					+ OPENAI_EMBEDDING_DIMENSION_SIZE, e);
 		}
@@ -507,10 +496,10 @@ public class PgVectorStore extends AbstractObservationVectorStore implements Ini
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.PG_VECTOR.value(), operationName)
-			.collectionName(this.vectorTableName)
-			.dimensions(this.embeddingDimensions())
-			.namespace(this.schemaName)
-			.similarityMetric(getSimilarityMetric());
+				.collectionName(this.vectorTableName)
+				.dimensions(this.embeddingDimensions())
+				.namespace(this.schemaName)
+				.similarityMetric(getSimilarityMetric());
 	}
 
 	private String getSimilarityMetric() {

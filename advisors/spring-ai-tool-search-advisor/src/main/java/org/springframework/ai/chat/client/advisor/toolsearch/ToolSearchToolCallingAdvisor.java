@@ -16,21 +16,7 @@
 
 package org.springframework.ai.chat.client.advisor.toolsearch;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.HexFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
@@ -58,6 +44,12 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * CallAdvisor that integrates a tool search mechanism into the tool calling workflow. It
@@ -105,7 +97,8 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 	 */
 	private final boolean referenceToolNameAccumulation;
 
-	@Nullable private final Integer maxResults;
+	@Nullable
+	private final Integer maxResults;
 
 	private final String sessionIdKeyName;
 
@@ -119,9 +112,9 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 	private final ToolIndexEvictionStrategy evictionStrategy;
 
 	protected ToolSearchToolCallingAdvisor(ToolCallingManager toolCallingManager, int advisorOrder,
-			ToolExecutionEligibilityChecker toolExecutionEligibilityChecker, ToolIndex toolIndex,
-			String systemMessageSuffix, boolean referenceToolNameAccumulation, @Nullable Integer maxResults,
-			boolean conversationHistoryEnabled, String sessionIdKeyName, ToolIndexEvictionStrategy evictionStrategy) {
+	                                       ToolExecutionEligibilityChecker toolExecutionEligibilityChecker, ToolIndex toolIndex,
+	                                       String systemMessageSuffix, boolean referenceToolNameAccumulation, @Nullable Integer maxResults,
+	                                       boolean conversationHistoryEnabled, String sessionIdKeyName, ToolIndexEvictionStrategy evictionStrategy) {
 
 		super(toolCallingManager, toolExecutionEligibilityChecker, advisorOrder, conversationHistoryEnabled);
 		this.toolIndex = toolIndex;
@@ -131,9 +124,9 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		this.sessionIdKeyName = sessionIdKeyName;
 		this.evictionStrategy = evictionStrategy;
 		this.toolSearchToolCallback = MethodToolCallbackProvider.builder()
-			.toolObjects(new ToolSearchTool(toolIndex, maxResults))
-			.build()
-			.getToolCallbacks()[0];
+				.toolObjects(new ToolSearchTool(toolIndex, maxResults))
+				.build()
+				.getToolCallbacks()[0];
 	}
 
 	@Override
@@ -148,7 +141,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 
 	@Override
 	protected ChatClientRequest doInitializeLoop(ChatClientRequest chatClientRequest,
-			CallAdvisorChain callAdvisorChain) {
+	                                             CallAdvisorChain callAdvisorChain) {
 		if (chatClientRequest.prompt().getOptions() instanceof ToolCallingChatOptions) {
 			return initializeSession(chatClientRequest);
 		}
@@ -169,7 +162,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 
 	@Override
 	protected ChatClientRequest doInitializeLoopStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                                   StreamAdvisorChain streamAdvisorChain) {
 		if (chatClientRequest.prompt().getOptions() instanceof ToolCallingChatOptions) {
 			return initializeSession(chatClientRequest);
 		}
@@ -178,7 +171,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 
 	@Override
 	protected ChatClientRequest doBeforeStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                           StreamAdvisorChain streamAdvisorChain) {
 		if (chatClientRequest.prompt().getOptions() instanceof ToolCallingChatOptions) {
 			return prepareIteration(chatClientRequest);
 		}
@@ -206,10 +199,10 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		// assume that if tool options are present, they are valid and contain either tool
 		// callbacks or tool names to search for.
 		List<ToolReference> toolReferences = this.toolCallingManager
-			.resolveToolDefinitions(Objects.requireNonNull(toolOptions))
-			.stream()
-			.map(toolDef -> ToolReference.builder().toolName(toolDef.name()).summary(toolDef.description()).build())
-			.toList();
+				.resolveToolDefinitions(Objects.requireNonNull(toolOptions))
+				.stream()
+				.map(toolDef -> ToolReference.builder().toolName(toolDef.name()).summary(toolDef.description()).build())
+				.toList();
 
 		// Re-index only when the tool set has changed for this session.
 		// compute() serializes concurrent requests for the same session so that only one
@@ -226,33 +219,33 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		ConcurrentHashMap<String, ToolCallback> cachedResolvedToolCallbacks = new ConcurrentHashMap<>();
 		if (!CollectionUtils.isEmpty(toolOptions.getToolCallbacks())) {
 			toolOptions.getToolCallbacks()
-				.forEach(tc -> cachedResolvedToolCallbacks.putIfAbsent(tc.getToolDefinition().name(), tc));
+					.forEach(tc -> cachedResolvedToolCallbacks.putIfAbsent(tc.getToolDefinition().name(), tc));
 		}
 
 		chatClientRequest.context().put(CACHED_TOOL_CALLBACKS_KEY, cachedResolvedToolCallbacks);
 		chatClientRequest.context().put(ToolSearchTool.TOOL_SEARCH_TOOL_SESSION_ID_KEY, sessionId);
 
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt()
-				.copy()
-				.augmentSystemMessage(systemMessage -> systemMessage.copy()
-					.mutate()
-					.text(systemMessage.getText() + this.systemMessageSuffix)
-					.build()))
-			.build();
+				.prompt(chatClientRequest.prompt()
+						.copy()
+						.augmentSystemMessage(systemMessage -> systemMessage.copy()
+								.mutate()
+								.text(systemMessage.getText() + this.systemMessageSuffix)
+								.build()))
+				.build();
 	}
 
 	// Selects tools discovered via previous toolSearchTool calls and injects them into
 	// options.
-	@SuppressWarnings({ "null", "unchecked" })
+	@SuppressWarnings({"null", "unchecked"})
 	private ChatClientRequest prepareIteration(ChatClientRequest chatClientRequest) {
 		ToolCallingChatOptions toolOptions = Objects
-			.requireNonNull((ToolCallingChatOptions) chatClientRequest.prompt().getOptions());
+				.requireNonNull((ToolCallingChatOptions) chatClientRequest.prompt().getOptions());
 
 		Set<ToolCallback> selectedToolCallbacks = new HashSet<>(List.of(this.toolSearchToolCallback));
 
 		var cachedToolCallbacks = (Map<String, ToolCallback>) chatClientRequest.context()
-			.get(CACHED_TOOL_CALLBACKS_KEY);
+				.get(CACHED_TOOL_CALLBACKS_KEY);
 
 		if (cachedToolCallbacks != null) {
 			this.extractToolNameReferences(chatClientRequest.prompt().getInstructions()).forEach(toolName -> {
@@ -263,15 +256,15 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		}
 
 		ToolCallingChatOptions toolOptionsCopy = ((ToolCallingChatOptions.Builder<?>) toolOptions.mutate())
-			.toolCallbacks(new ArrayList<>(selectedToolCallbacks))
-			.toolContext(ToolSearchTool.TOOL_SEARCH_TOOL_SESSION_ID_KEY,
-					Objects.requireNonNull(
-							chatClientRequest.context().get(ToolSearchTool.TOOL_SEARCH_TOOL_SESSION_ID_KEY)))
-			.build();
+				.toolCallbacks(new ArrayList<>(selectedToolCallbacks))
+				.toolContext(ToolSearchTool.TOOL_SEARCH_TOOL_SESSION_ID_KEY,
+						Objects.requireNonNull(
+								chatClientRequest.context().get(ToolSearchTool.TOOL_SEARCH_TOOL_SESSION_ID_KEY)))
+				.build();
 
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().mutate().chatOptions(toolOptionsCopy).build())
-			.build();
+				.prompt(chatClientRequest.prompt().mutate().chatOptions(toolOptionsCopy).build())
+				.build();
 	}
 
 	/**
@@ -279,6 +272,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 	 * <p>
 	 * Call this when a conversation is known to be over (e.g., on logout or session
 	 * expiry) to free resources held by the underlying {@link ToolIndex}.
+	 *
 	 * @param sessionId the session to evict
 	 */
 	public void evictSession(String sessionId) {
@@ -294,11 +288,11 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 	private List<String> extractToolNameReferences(List<Message> messages) {
 
 		List<ToolResponse> toolSearchToolResponses = messages.stream()
-			.filter(m -> m.getMessageType() == MessageType.TOOL)
-			.map(r -> ((ToolResponseMessage) r).getResponses())
-			.flatMap(List::stream)
-			.filter(r -> r.name().equalsIgnoreCase(this.toolSearchToolCallback.getToolDefinition().name()))
-			.toList();
+				.filter(m -> m.getMessageType() == MessageType.TOOL)
+				.map(r -> ((ToolResponseMessage) r).getResponses())
+				.flatMap(List::stream)
+				.filter(r -> r.name().equalsIgnoreCase(this.toolSearchToolCallback.getToolDefinition().name()))
+				.toList();
 
 		if (CollectionUtils.isEmpty(toolSearchToolResponses)) {
 			return List.of();
@@ -308,10 +302,10 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 				: List.of(toolSearchToolResponses.get(toolSearchToolResponses.size() - 1));
 
 		return toolSearchToolResponses.stream()
-			.map(r -> jsonHelper.fromJson(r.responseData(), new ParameterizedTypeReference<List<String>>() {
-			}))
-			.flatMap(List::stream)
-			.toList();
+				.map(r -> jsonHelper.fromJson(r.responseData(), new ParameterizedTypeReference<List<String>>() {
+				}))
+				.flatMap(List::stream)
+				.toList();
 	}
 
 	private String getSessionId(Map<String, @Nullable Object> context) {
@@ -339,8 +333,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 				digest.update((byte) 1); // entry separator
 			});
 			return HexFormat.of().formatHex(digest.digest());
-		}
-		catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException e) {
 			throw new IllegalStateException("SHA-256 not available", e);
 		}
 	}
@@ -351,6 +344,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 
 	/**
 	 * Creates a new Builder instance for constructing a ToolSearchToolCallingAdvisor.
+	 *
 	 * @return a new Builder instance
 	 */
 	public static Builder<?> builder() {
@@ -364,17 +358,20 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 	 * options specific to tool search functionality.
 	 *
 	 * @param <T> the builder type, used for self-referential generics to support method
-	 * chaining in subclasses
+	 *            chaining in subclasses
 	 */
 	public static class Builder<T extends Builder<T>> extends ToolCallingAdvisor.Builder<T> {
 
-		@Nullable private ToolIndex toolIndex;
+		@Nullable
+		private ToolIndex toolIndex;
 
-		@Nullable private String systemMessageSuffix;
+		@Nullable
+		private String systemMessageSuffix;
 
 		private boolean referenceToolNameAccumulation = true;
 
-		@Nullable private Integer maxResults;
+		@Nullable
+		private Integer maxResults;
 
 		private String sessionIdKeyName = ChatMemory.CONVERSATION_ID;
 
@@ -396,6 +393,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 
 		/**
 		 * Sets the ToolIndex to be used for finding tools.
+		 *
 		 * @param toolIndex the ToolIndex instance
 		 * @return this Builder instance for method chaining
 		 */
@@ -409,6 +407,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		 * Sets the maximum number of tool references to return in tool search results.
 		 * This is the human/user defined default value used when invoking the tool search
 		 * tool.
+		 *
 		 * @param maxResults
 		 * @return
 		 */
@@ -421,6 +420,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		 * Sets the key name in the context where the conversation ID is stored. By
 		 * default, it is "conversationId", but it can be customized if the conversation
 		 * ID is stored under a different key in the context.
+		 *
 		 * @param sessionIdKeyName
 		 * @return
 		 */
@@ -444,6 +444,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		 * Combine with {@link TtlEvictionStrategy} via {@link CompositeEvictionStrategy}
 		 * to also release indexes for sessions that have been idle longer than a fixed
 		 * duration.
+		 *
 		 * @param evictionStrategy the eviction strategy to use; must not be {@code null}
 		 * @return this Builder instance for method chaining
 		 * @see LruEvictionStrategy
@@ -459,6 +460,7 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 		/**
 		 * Builds and returns a new ToolSearchToolCallingAdvisor instance with the
 		 * configured properties.
+		 *
 		 * @return a new ToolSearchToolCallingAdvisor instance
 		 * @throws IllegalArgumentException if required parameters are null or invalid
 		 */
@@ -468,10 +470,9 @@ public class ToolSearchToolCallingAdvisor extends ToolCallingAdvisor {
 			if (!StringUtils.hasText(this.systemMessageSuffix)) {
 				try {
 					this.systemMessageSuffix = new DefaultResourceLoader()
-						.getResource("classpath:/DEFAULT_SYSTEM_PROMPT_SUFFIX.md")
-						.getContentAsString(StandardCharsets.UTF_8);
-				}
-				catch (Exception ex) {
+							.getResource("classpath:/DEFAULT_SYSTEM_PROMPT_SUFFIX.md")
+							.getContentAsString(StandardCharsets.UTF_8);
+				} catch (Exception ex) {
 					throw new IllegalArgumentException(
 							"Failed to load default system message suffix from classpath resource", ex);
 				}

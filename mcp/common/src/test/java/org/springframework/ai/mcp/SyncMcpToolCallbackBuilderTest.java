@@ -45,10 +45,10 @@ class SyncMcpToolCallbackBuilderTest {
 		when(tool.description()).thenReturn("Test tool description");
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(mcpClient)
+				.mcpClient(mcpClient)
 
-			.tool(tool)
-			.build();
+				.tool(tool)
+				.build();
 
 		assertThat(callback).isNotNull();
 		assertThat(callback.getOriginalToolName()).isEqualTo("test-tool");
@@ -69,11 +69,11 @@ class SyncMcpToolCallbackBuilderTest {
 		ToolContextToMcpMetaConverter customConverter = ToolContextToMcpMetaConverter.defaultConverter();
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(mcpClient)
-			.tool(tool)
-			.prefixedToolName(customPrefixedName)
-			.toolContextToMcpMetaConverter(customConverter)
-			.build();
+				.mcpClient(mcpClient)
+				.tool(tool)
+				.prefixedToolName(customPrefixedName)
+				.toolContextToMcpMetaConverter(customConverter)
+				.build();
 
 		assertThat(callback).isNotNull();
 		assertThat(callback.getOriginalToolName()).isEqualTo("test-tool");
@@ -89,8 +89,8 @@ class SyncMcpToolCallbackBuilderTest {
 		when(tool.description()).thenReturn("Test tool description");
 
 		assertThatThrownBy(() -> SyncMcpToolCallback.builder().tool(tool).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("MCP client must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("MCP client must not be null");
 	}
 
 	@Test
@@ -98,8 +98,8 @@ class SyncMcpToolCallbackBuilderTest {
 		McpSyncClient mcpClient = Mockito.mock(McpSyncClient.class);
 
 		assertThatThrownBy(() -> SyncMcpToolCallback.builder().mcpClient(mcpClient).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("MCP tool must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("MCP tool must not be null");
 	}
 
 	@Test
@@ -113,11 +113,11 @@ class SyncMcpToolCallbackBuilderTest {
 		when(tool.description()).thenReturn("Test tool description");
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(mcpClient)
-			.tool(tool)
-			.prefixedToolName("chained_tool_name")
-			.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
-			.build();
+				.mcpClient(mcpClient)
+				.tool(tool)
+				.prefixedToolName("chained_tool_name")
+				.toolContextToMcpMetaConverter(ToolContextToMcpMetaConverter.defaultConverter())
+				.build();
 
 		assertThat(callback).isNotNull();
 		assertThat(callback.getToolDefinition().name()).isEqualTo("chained_tool_name");
@@ -150,10 +150,10 @@ class SyncMcpToolCallbackBuilderTest {
 		String customName = "custom-name-with-dashes";
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(mcpClient)
-			.tool(tool)
-			.prefixedToolName(customName)
-			.build();
+				.mcpClient(mcpClient)
+				.tool(tool)
+				.prefixedToolName(customName)
+				.build();
 
 		assertThat(callback.getOriginalToolName()).isEqualTo("original-name");
 		assertThat(callback.getToolDefinition().name()).isEqualTo(customName);
@@ -170,10 +170,10 @@ class SyncMcpToolCallbackBuilderTest {
 		when(tool.description()).thenReturn("Description");
 
 		SyncMcpToolCallback callback = SyncMcpToolCallback.builder()
-			.mcpClient(mcpClient)
-			.tool(tool)
-			.prefixedToolName(null)
-			.build();
+				.mcpClient(mcpClient)
+				.tool(tool)
+				.prefixedToolName(null)
+				.build();
 
 		// When null, it should use the default normalized name
 		assertThat(callback).isNotNull();
@@ -207,11 +207,11 @@ class SyncMcpToolCallbackBuilderTest {
 		when(tool.description()).thenReturn("Test description");
 
 		assertThatThrownBy(() -> SyncMcpToolCallback.builder()
-			.mcpClient(mcpClient)
-			.tool(tool)
-			.toolContextToMcpMetaConverter(null)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("ToolContextToMcpMetaConverter must not be null");
+				.mcpClient(mcpClient)
+				.tool(tool)
+				.toolContextToMcpMetaConverter(null)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("ToolContextToMcpMetaConverter must not be null");
 	}
 
 }

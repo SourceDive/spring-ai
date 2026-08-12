@@ -16,16 +16,15 @@
 
 package org.springframework.ai.document;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.document.id.IdGenerator;
 import org.springframework.util.MimeTypeUtils;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,7 +58,7 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithIdGeneratorNull() {
 		assertThatThrownBy(() -> this.builder.idGenerator(null).build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("idGenerator cannot be null");
+				.hasMessageContaining("idGenerator cannot be null");
 	}
 
 	@Test
@@ -73,11 +72,11 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithIdNullOrEmpty() {
 		assertThatThrownBy(() -> this.builder.text("text").id(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("id cannot be null or empty");
 
 		assertThatThrownBy(() -> this.builder.text("text").id("").build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.hasMessageContaining("id cannot be null or empty");
 	}
 
 	@Test
@@ -112,8 +111,8 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithMetadataMapNull() {
 		assertThatThrownBy(() -> this.builder.text("text").metadata(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata cannot be null");
 	}
 
 	@Test
@@ -127,15 +126,15 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithMetadataKeyNull() {
 		assertThatThrownBy(() -> this.builder.text("text").metadata(null, "value").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata key cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata key cannot be null");
 	}
 
 	@Test
 	void testWithMetadataValueNull() {
 		assertThatThrownBy(() -> this.builder.text("text").metadata("key", null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata value cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata value cannot be null");
 	}
 
 	@Test
@@ -163,8 +162,8 @@ public class DocumentBuilderTests {
 	@Test
 	void testWithWhitespaceOnlyId() {
 		assertThatThrownBy(() -> this.builder.text("text").id("   ").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("id cannot be null or empty");
 	}
 
 	@Test
@@ -182,15 +181,15 @@ public class DocumentBuilderTests {
 	@Test
 	void testMultipleMetadataKeyValueCalls() {
 		Document document = this.builder.text("text")
-			.metadata("key1", "value1")
-			.metadata("key2", "value2")
-			.metadata("key3", 123)
-			.build();
+				.metadata("key1", "value1")
+				.metadata("key2", "value2")
+				.metadata("key3", 123)
+				.build();
 
 		assertThat(document.getMetadata()).hasSize(3)
-			.containsEntry("key1", "value1")
-			.containsEntry("key2", "value2")
-			.containsEntry("key3", 123);
+				.containsEntry("key1", "value1")
+				.containsEntry("key2", "value2")
+				.containsEntry("key3", 123);
 	}
 
 	@Test
@@ -209,13 +208,13 @@ public class DocumentBuilderTests {
 		metadata.put("mapKey", "mapValue");
 
 		Document document = this.builder.text("text")
-			.metadata(metadata)
-			.metadata("additionalKey", "additionalValue")
-			.build();
+				.metadata(metadata)
+				.metadata("additionalKey", "additionalValue")
+				.build();
 
 		assertThat(document.getMetadata()).hasSize(2)
-			.containsEntry("mapKey", "mapValue")
-			.containsEntry("additionalKey", "additionalValue");
+				.containsEntry("mapKey", "mapValue")
+				.containsEntry("additionalKey", "additionalValue");
 	}
 
 	@Test
@@ -230,9 +229,9 @@ public class DocumentBuilderTests {
 	@Test
 	void testOverwritingMetadataWithSameKey() {
 		Document document = this.builder.text("text")
-			.metadata("key", "firstValue")
-			.metadata("key", "secondValue")
-			.build();
+				.metadata("key", "firstValue")
+				.metadata("key", "secondValue")
+				.build();
 
 		assertThat(document.getMetadata()).hasSize(1).containsEntry("key", "secondValue");
 	}
@@ -258,19 +257,19 @@ public class DocumentBuilderTests {
 		nestedMap.put("nested", "value");
 
 		Document document = this.builder.text("text")
-			.metadata("string", "text")
-			.metadata("integer", 42)
-			.metadata("double", 3.14)
-			.metadata("boolean", true)
-			.metadata("map", nestedMap)
-			.build();
+				.metadata("string", "text")
+				.metadata("integer", 42)
+				.metadata("double", 3.14)
+				.metadata("boolean", true)
+				.metadata("map", nestedMap)
+				.build();
 
 		assertThat(document.getMetadata()).hasSize(5)
-			.containsEntry("string", "text")
-			.containsEntry("integer", 42)
-			.containsEntry("double", 3.14)
-			.containsEntry("boolean", true)
-			.containsEntry("map", nestedMap);
+				.containsEntry("string", "text")
+				.containsEntry("integer", 42)
+				.containsEntry("double", 3.14)
+				.containsEntry("boolean", true)
+				.containsEntry("map", nestedMap);
 	}
 
 	@Test
@@ -318,16 +317,16 @@ public class DocumentBuilderTests {
 	@Test
 	void testMetadataWithSpecialCharacterKeys() {
 		Document document = this.builder.text("test")
-			.metadata("key-with-dashes", "value1")
-			.metadata("key.with.dots", "value2")
-			.metadata("key_with_underscores", "value3")
-			.metadata("key with spaces", "value4")
-			.build();
+				.metadata("key-with-dashes", "value1")
+				.metadata("key.with.dots", "value2")
+				.metadata("key_with_underscores", "value3")
+				.metadata("key with spaces", "value4")
+				.build();
 
 		assertThat(document.getMetadata()).containsEntry("key-with-dashes", "value1")
-			.containsEntry("key.with.dots", "value2")
-			.containsEntry("key_with_underscores", "value3")
-			.containsEntry("key with spaces", "value4");
+				.containsEntry("key.with.dots", "value2")
+				.containsEntry("key_with_underscores", "value3")
+				.containsEntry("key with spaces", "value4");
 	}
 
 	@Test
@@ -355,11 +354,11 @@ public class DocumentBuilderTests {
 	@Test
 	void testBuilderMethodChaining() {
 		Document document = this.builder.text("chained")
-			.id("chain-id")
-			.metadata("key1", "value1")
-			.metadata("key2", "value2")
-			.score(0.75)
-			.build();
+				.id("chain-id")
+				.metadata("key1", "value1")
+				.metadata("key2", "value2")
+				.score(0.75)
+				.build();
 
 		assertThat(document.getText()).isEqualTo("chained");
 		assertThat(document.getId()).isEqualTo("chain-id");
@@ -381,10 +380,10 @@ public class DocumentBuilderTests {
 		newMetadata.put("map-key", "map-value");
 
 		Document document = this.builder.text("test")
-			.metadata("old-key", "old-value")
-			.metadata("another-key", "another-value")
-			.metadata(newMetadata) // This should replace all previous metadata
-			.build();
+				.metadata("old-key", "old-value")
+				.metadata("another-key", "another-value")
+				.metadata(newMetadata) // This should replace all previous metadata
+				.build();
 
 		assertThat(document.getMetadata()).hasSize(1);
 		assertThat(document.getMetadata()).containsEntry("map-key", "map-value");
@@ -395,12 +394,12 @@ public class DocumentBuilderTests {
 	@Test
 	void testMetadataKeyValuePairsAccumulation() {
 		Document document = this.builder.text("test")
-			.metadata("a", "1")
-			.metadata("b", "2")
-			.metadata("c", "3")
-			.metadata("d", "4")
-			.metadata("e", "5")
-			.build();
+				.metadata("a", "1")
+				.metadata("b", "2")
+				.metadata("c", "3")
+				.metadata("d", "4")
+				.metadata("e", "5")
+				.build();
 
 		assertThat(document.getMetadata()).hasSize(5);
 		assertThat(document.getMetadata().keySet()).containsExactlyInAnyOrder("a", "b", "c", "d", "e");

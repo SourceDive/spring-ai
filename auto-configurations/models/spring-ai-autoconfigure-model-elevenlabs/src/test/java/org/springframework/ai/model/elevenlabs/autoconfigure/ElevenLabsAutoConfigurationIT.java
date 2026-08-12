@@ -38,12 +38,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ElevenLabsAutoConfigurationIT {
 
 	private static final org.apache.commons.logging.Log logger = org.apache.commons.logging.LogFactory
-		.getLog(ElevenLabsAutoConfigurationIT.class);
+			.getLog(ElevenLabsAutoConfigurationIT.class);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.elevenlabs.api-key=" + System.getenv("ELEVEN_LABS_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(ElevenLabsAutoConfiguration.class, RestClientAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class, WebClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.elevenlabs.api-key=" + System.getenv("ELEVEN_LABS_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(ElevenLabsAutoConfiguration.class, RestClientAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class, WebClientAutoConfiguration.class));
 
 	@Test
 	void speech() {
@@ -52,8 +52,8 @@ public class ElevenLabsAutoConfigurationIT {
 			byte[] response = speechModel.call("H");
 			assertThat(response).isNotNull();
 			assertThat(verifyMp3FrameHeader(response))
-				.withFailMessage("Expected MP3 frame header to be present in the response, but it was not found.")
-				.isTrue();
+					.withFailMessage("Expected MP3 frame header to be present in the response, but it was not found.")
+					.isTrue();
 			assertThat(response).isNotEmpty();
 		});
 	}
@@ -65,8 +65,8 @@ public class ElevenLabsAutoConfigurationIT {
 			byte[] response = speechModel.call("Hello");
 			assertThat(response).isNotNull();
 			assertThat(verifyMp3FrameHeader(response))
-				.withFailMessage("Expected MP3 frame header to be present in the response, but it was not found.")
-				.isTrue();
+					.withFailMessage("Expected MP3 frame header to be present in the response, but it was not found.")
+					.isTrue();
 			assertThat(response).isNotEmpty();
 		});
 	}

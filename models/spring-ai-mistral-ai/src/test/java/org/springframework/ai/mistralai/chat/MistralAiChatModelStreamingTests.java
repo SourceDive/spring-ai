@@ -16,20 +16,11 @@
 
 package org.springframework.ai.mistralai.chat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.mistralai.MistralAiChatModel;
@@ -43,6 +34,14 @@ import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
@@ -72,12 +71,12 @@ public class MistralAiChatModelStreamingTests {
 		}
 
 		given(this.api.chatCompletionStream(isA(ChatCompletionRequest.class)))
-			.willReturn(Flux.fromIterable(chunks).index().map(n -> {
-				if (n.getT1() == 256) {
-					latch.countDown();
-				}
-				return n.getT2();
-			}));
+				.willReturn(Flux.fromIterable(chunks).index().map(n -> {
+					if (n.getT1() == 256) {
+						latch.countDown();
+					}
+					return n.getT2();
+				}));
 
 		Flux<ChatResponse> result = this.chatModel.stream(new Prompt("Count to 300"));
 
@@ -122,12 +121,12 @@ public class MistralAiChatModelStreamingTests {
 		ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 		ObservationRegistry observationRegistry = ObservationRegistry.NOOP;
 		this.chatModel = MistralAiChatModel.builder()
-			.mistralAiApi(this.api)
-			.options(MistralAiChatOptions.builder().build())
-			.toolCallingManager(toolCallingManager)
-			.retryTemplate(retryTemplate)
-			.observationRegistry(ObservationRegistry.NOOP)
-			.build();
+				.mistralAiApi(this.api)
+				.options(MistralAiChatOptions.builder().build())
+				.toolCallingManager(toolCallingManager)
+				.retryTemplate(retryTemplate)
+				.observationRegistry(ObservationRegistry.NOOP)
+				.build();
 	}
 
 }

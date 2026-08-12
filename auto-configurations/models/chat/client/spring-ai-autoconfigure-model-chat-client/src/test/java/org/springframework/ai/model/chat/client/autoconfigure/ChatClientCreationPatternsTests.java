@@ -53,8 +53,8 @@ import static org.mockito.Mockito.mock;
 class ChatClientCreationPatternsTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ChatClientAutoConfiguration.class))
-		.withBean(ChatModel.class, () -> mock(ChatModel.class));
+			.withConfiguration(AutoConfigurations.of(ChatClientAutoConfiguration.class))
+			.withBean(ChatModel.class, () -> mock(ChatModel.class));
 
 	// -------------------------------------------------------------------------
 	// Pattern 1: Multiple ChatClients with a Single Model Type (prototype pattern)
@@ -98,16 +98,16 @@ class ChatClientCreationPatternsTests {
 	@Test
 	void prototypeBuilderAppliesChatClientBuilderCustomizers() {
 		this.contextRunner
-			.withUserConfiguration(SingleModelMultipleClientsConfig.class, SystemPromptCustomizerConfig.class)
-			.run(context -> {
-				assertThat(context).hasNotFailed();
-				// Both clients built from the auto-configured builder
-				// should have customizers applied via the prototype-scoped builder
-				ChatClient defaultClient = context.getBean("defaultChatClient", ChatClient.class);
-				ChatClient customClient = context.getBean("customChatClient", ChatClient.class);
-				assertThat(defaultClient).isNotNull();
-				assertThat(customClient).isNotNull();
-			});
+				.withUserConfiguration(SingleModelMultipleClientsConfig.class, SystemPromptCustomizerConfig.class)
+				.run(context -> {
+					assertThat(context).hasNotFailed();
+					// Both clients built from the auto-configured builder
+					// should have customizers applied via the prototype-scoped builder
+					ChatClient defaultClient = context.getBean("defaultChatClient", ChatClient.class);
+					ChatClient customClient = context.getBean("customChatClient", ChatClient.class);
+					assertThat(defaultClient).isNotNull();
+					assertThat(customClient).isNotNull();
+				});
 	}
 
 	// -------------------------------------------------------------------------
@@ -127,35 +127,35 @@ class ChatClientCreationPatternsTests {
 	@Test
 	void configurerPatternAppliesChatClientBuilderCustomizers() {
 		this.contextRunner.withUserConfiguration(MultipleModelTypesConfig.class, SystemPromptCustomizerConfig.class)
-			.run(context -> {
-				assertThat(context).hasNotFailed();
-				// Both clients should have the customizer-applied system text
-				ChatClient primaryClient = context.getBean("primaryModelChatClient", ChatClient.class);
-				ChatClient secondaryClient = context.getBean("secondaryModelChatClient", ChatClient.class);
+				.run(context -> {
+					assertThat(context).hasNotFailed();
+					// Both clients should have the customizer-applied system text
+					ChatClient primaryClient = context.getBean("primaryModelChatClient", ChatClient.class);
+					ChatClient secondaryClient = context.getBean("secondaryModelChatClient", ChatClient.class);
 
-				Object primaryRequest = ReflectionTestUtils.getField(primaryClient, "defaultChatClientRequest");
-				Object secondaryRequest = ReflectionTestUtils.getField(secondaryClient, "defaultChatClientRequest");
+					Object primaryRequest = ReflectionTestUtils.getField(primaryClient, "defaultChatClientRequest");
+					Object secondaryRequest = ReflectionTestUtils.getField(secondaryClient, "defaultChatClientRequest");
 
-				String primarySystemText = (String) ReflectionTestUtils.getField(primaryRequest, "systemText");
-				String secondarySystemText = (String) ReflectionTestUtils.getField(secondaryRequest, "systemText");
+					String primarySystemText = (String) ReflectionTestUtils.getField(primaryRequest, "systemText");
+					String secondarySystemText = (String) ReflectionTestUtils.getField(secondaryRequest, "systemText");
 
-				assertThat(primarySystemText).isEqualTo("Customized by ChatClientBuilderCustomizer.");
-				assertThat(secondarySystemText).isEqualTo("Customized by ChatClientBuilderCustomizer.");
-			});
+					assertThat(primarySystemText).isEqualTo("Customized by ChatClientBuilderCustomizer.");
+					assertThat(secondarySystemText).isEqualTo("Customized by ChatClientBuilderCustomizer.");
+				});
 	}
 
 	@Test
 	void configurerPatternWiresObservationRegistry() {
 		ObservationRegistry registry = ObservationRegistry.create();
 		this.contextRunner.withBean(ObservationRegistry.class, () -> registry)
-			.withUserConfiguration(MultipleModelTypesConfig.class)
-			.run(context -> {
-				assertThat(context).hasNotFailed();
-				// Verify the builder used the provided ObservationRegistry (not NOOP)
-				// by checking the builder was constructed without failure
-				assertThat(context.getBean("primaryModelChatClient", ChatClient.class)).isNotNull();
-				assertThat(context.getBean("secondaryModelChatClient", ChatClient.class)).isNotNull();
-			});
+				.withUserConfiguration(MultipleModelTypesConfig.class)
+				.run(context -> {
+					assertThat(context).hasNotFailed();
+					// Verify the builder used the provided ObservationRegistry (not NOOP)
+					// by checking the builder was constructed without failure
+					assertThat(context.getBean("primaryModelChatClient", ChatClient.class)).isNotNull();
+					assertThat(context.getBean("secondaryModelChatClient", ChatClient.class)).isNotNull();
+				});
 	}
 
 	@Test
@@ -239,29 +239,29 @@ class ChatClientCreationPatternsTests {
 		@Bean
 		@Primary
 		ChatClient primaryModelChatClient(@Qualifier("primaryChatModel") ChatModel chatModel,
-				ChatClientBuilderConfigurer configurer, ObjectProvider<ObservationRegistry> observationRegistry,
-				ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
-				ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
-				ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
+		                                  ChatClientBuilderConfigurer configurer, ObjectProvider<ObservationRegistry> observationRegistry,
+		                                  ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
+		                                  ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
+		                                  ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
 			return buildChatClient(chatModel, configurer, observationRegistry, chatClientObservationConvention,
 					advisorObservationConvention, toolCallingAdvisorBuilder);
 		}
 
 		@Bean
 		ChatClient secondaryModelChatClient(@Qualifier("secondaryChatModel") ChatModel chatModel,
-				ChatClientBuilderConfigurer configurer, ObjectProvider<ObservationRegistry> observationRegistry,
-				ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
-				ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
-				ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
+		                                    ChatClientBuilderConfigurer configurer, ObjectProvider<ObservationRegistry> observationRegistry,
+		                                    ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
+		                                    ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
+		                                    ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
 			return buildChatClient(chatModel, configurer, observationRegistry, chatClientObservationConvention,
 					advisorObservationConvention, toolCallingAdvisorBuilder);
 		}
 
 		private ChatClient buildChatClient(ChatModel chatModel, ChatClientBuilderConfigurer configurer,
-				ObjectProvider<ObservationRegistry> observationRegistry,
-				ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
-				ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
-				ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
+		                                   ObjectProvider<ObservationRegistry> observationRegistry,
+		                                   ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
+		                                   ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
+		                                   ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
 			ChatClient.Builder builder = ChatClient.builder(chatModel,
 					observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP),
 					chatClientObservationConvention.getIfUnique(), advisorObservationConvention.getIfUnique(),

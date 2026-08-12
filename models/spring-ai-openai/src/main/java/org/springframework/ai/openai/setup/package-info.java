@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.openai.setup;
 
-import org.jspecify.annotations.NullMarked;

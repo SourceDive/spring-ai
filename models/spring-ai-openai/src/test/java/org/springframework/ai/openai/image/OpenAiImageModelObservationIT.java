@@ -61,10 +61,10 @@ public class OpenAiImageModelObservationIT {
 	@Test
 	void observationForImageOperation() throws InterruptedException {
 		var options = OpenAiImageOptions.builder()
-			.model(ImageModel.GPT_IMAGE_1_MINI.asString())
-			.height(1024)
-			.width(1024)
-			.build();
+				.model(ImageModel.GPT_IMAGE_1_MINI.asString())
+				.height(1024)
+				.width(1024)
+				.build();
 
 		var instructions = """
 				A cup of coffee at a restaurant table in Paris, France.
@@ -78,23 +78,23 @@ public class OpenAiImageModelObservationIT {
 		Thread.sleep(200); // Wait for observation to be recorded
 
 		TestObservationRegistryAssert.assertThat(this.observationRegistry)
-			.doesNotHaveAnyRemainingCurrentObservation()
-			.hasObservationWithNameEqualTo(DefaultImageModelObservationConvention.DEFAULT_NAME)
-			.that()
-			.hasContextualNameEqualTo("image " + ImageModel.GPT_IMAGE_1_MINI.asString())
-			.hasLowCardinalityKeyValue(
-					ImageModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
-					AiOperationType.IMAGE.value())
-			.hasLowCardinalityKeyValue(ImageModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
-					AiProvider.OPENAI.value())
-			.hasLowCardinalityKeyValue(
-					ImageModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL.asString(),
-					ImageModel.GPT_IMAGE_1_MINI.asString())
-			.hasHighCardinalityKeyValue(
-					ImageModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_IMAGE_SIZE.asString(),
-					"1024x1024")
-			.hasBeenStarted()
-			.hasBeenStopped();
+				.doesNotHaveAnyRemainingCurrentObservation()
+				.hasObservationWithNameEqualTo(DefaultImageModelObservationConvention.DEFAULT_NAME)
+				.that()
+				.hasContextualNameEqualTo("image " + ImageModel.GPT_IMAGE_1_MINI.asString())
+				.hasLowCardinalityKeyValue(
+						ImageModelObservationDocumentation.LowCardinalityKeyNames.AI_OPERATION_TYPE.asString(),
+						AiOperationType.IMAGE.value())
+				.hasLowCardinalityKeyValue(ImageModelObservationDocumentation.LowCardinalityKeyNames.AI_PROVIDER.asString(),
+						AiProvider.OPENAI.value())
+				.hasLowCardinalityKeyValue(
+						ImageModelObservationDocumentation.LowCardinalityKeyNames.REQUEST_MODEL.asString(),
+						ImageModel.GPT_IMAGE_1_MINI.asString())
+				.hasHighCardinalityKeyValue(
+						ImageModelObservationDocumentation.HighCardinalityKeyNames.REQUEST_IMAGE_SIZE.asString(),
+						"1024x1024")
+				.hasBeenStarted()
+				.hasBeenStopped();
 	}
 
 	@SpringBootConfiguration

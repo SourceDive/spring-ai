@@ -17,12 +17,7 @@
 package org.springframework.ai.mcp.annotation.spring.scan;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Container for Beans that have method with MCP annotations
@@ -38,8 +33,8 @@ public abstract class AbstractMcpAnnotatedBeans {
 	public void addMcpAnnotatedBean(Object bean, Set<Class<? extends Annotation>> annotations) {
 		this.beansWithCustomAnnotations.add(bean);
 		annotations
-			.forEach(annotationType -> this.beansByAnnotation.computeIfAbsent(annotationType, k -> new ArrayList<>())
-				.add(bean));
+				.forEach(annotationType -> this.beansByAnnotation.computeIfAbsent(annotationType, k -> new ArrayList<>())
+						.add(bean));
 	}
 
 	public List<Object> getAllAnnotatedBeans() {

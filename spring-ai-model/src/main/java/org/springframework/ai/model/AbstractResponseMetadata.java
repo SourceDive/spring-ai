@@ -16,12 +16,12 @@
 
 package org.springframework.ai.model;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.jspecify.annotations.Nullable;
 
 public class AbstractResponseMetadata {
 
@@ -43,6 +43,7 @@ public class AbstractResponseMetadata {
 
 	/**
 	 * Gets an entry from the context. Returns {@code null} when entry is not present.
+	 *
 	 * @param key key
 	 * @param <T> value type
 	 * @return entry or {@code null} if not present
@@ -53,6 +54,7 @@ public class AbstractResponseMetadata {
 
 	/**
 	 * Gets an entry from the context. Throws exception when entry is not present.
+	 *
 	 * @param key key
 	 * @param <T> value type
 	 * @return entry
@@ -68,6 +70,7 @@ public class AbstractResponseMetadata {
 
 	/**
 	 * Checks if context contains a key.
+	 *
 	 * @param key key
 	 * @return {@code true} when the context contains the entry with the given key
 	 */
@@ -77,9 +80,10 @@ public class AbstractResponseMetadata {
 
 	/**
 	 * Returns an element or default if not present.
-	 * @param key key
+	 *
+	 * @param key           key
 	 * @param defaultObject default object to return
-	 * @param <T> value type
+	 * @param <T>           value type
 	 * @return object or default if not present
 	 */
 	public <T> T getOrDefault(Object key, T defaultObject) {

@@ -16,11 +16,8 @@
 
 package org.springframework.ai.openai.chat.client;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -33,6 +30,8 @@ import org.springframework.ai.openai.OpenAiTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 @SpringBootTest(classes = OpenAiTestConfiguration.class)
 @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
@@ -53,13 +52,13 @@ class OpenAiChatClientMemoryAdvisorReproIT {
 		List<Message> messages = List.of(userMessage);
 		Prompt prompt = new Prompt(messages);
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 		MessageChatMemoryAdvisor advisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
 
 		ChatClient chatClient = ChatClient.builder(this.chatModel)
-			.defaultAdvisors(a -> a.advisors(advisor).param(ChatMemory.CONVERSATION_ID, "666"))
-			.build();
+				.defaultAdvisors(a -> a.advisors(advisor).param(ChatMemory.CONVERSATION_ID, "666"))
+				.build();
 
 		// Act: call should succeed without exception (issue #2339 is fixed)
 		chatClient.prompt(prompt).call().chatResponse(); // Should not throw

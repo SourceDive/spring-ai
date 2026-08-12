@@ -16,18 +16,17 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.DefaultChatOptions;
 import org.springframework.ai.chat.prompt.DefaultChatOptionsBuilder;
 
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Default implementation of {@link StructuredOutputChatOptions}.
- *
+ * <p>
  * Mainly to be used in model generic tests, as concrete chat implementations typically
  * use dedicated sub implementations specific to the model.
  *
@@ -39,9 +38,9 @@ public class DefaultStructuredOutputChatOptions extends DefaultChatOptions imple
 	private final @Nullable String outputSchema;
 
 	protected DefaultStructuredOutputChatOptions(@Nullable String model, @Nullable Double frequencyPenalty,
-			@Nullable Integer maxTokens, @Nullable Double presencePenalty, @Nullable List<String> stopSequences,
-			@Nullable Double temperature, @Nullable Integer topK, @Nullable Double topP,
-			@Nullable String outputSchema) {
+	                                             @Nullable Integer maxTokens, @Nullable Double presencePenalty, @Nullable List<String> stopSequences,
+	                                             @Nullable Double temperature, @Nullable Integer topK, @Nullable Double topP,
+	                                             @Nullable String outputSchema) {
 		super(model, frequencyPenalty, maxTokens, presencePenalty, stopSequences, temperature, topK, topP);
 		this.outputSchema = outputSchema;
 	}
@@ -54,15 +53,15 @@ public class DefaultStructuredOutputChatOptions extends DefaultChatOptions imple
 	@Override
 	public StructuredOutputChatOptions.Builder<?> mutate() {
 		return StructuredOutputChatOptions.builder()
-			.model(this.getModel())
-			.frequencyPenalty(this.getFrequencyPenalty())
-			.maxTokens(this.getMaxTokens())
-			.presencePenalty(this.getPresencePenalty())
-			.stopSequences(this.getStopSequences())
-			.temperature(this.getTemperature())
-			.topK(this.getTopK())
-			.topP(this.getTopP())
-			.outputSchema(this.getOutputSchema());
+				.model(this.getModel())
+				.frequencyPenalty(this.getFrequencyPenalty())
+				.maxTokens(this.getMaxTokens())
+				.presencePenalty(this.getPresencePenalty())
+				.stopSequences(this.getStopSequences())
+				.temperature(this.getTemperature())
+				.topK(this.getTopK())
+				.topP(this.getTopP())
+				.outputSchema(this.getOutputSchema());
 	}
 
 	@Override

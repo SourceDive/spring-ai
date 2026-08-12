@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.resource;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpResourceListChanged;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,13 +38,13 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 
 	private static final List<McpSchema.Resource> TEST_RESOURCES = List.of(
 			McpSchema.Resource.builder("file:///test1.txt", "test-resource-1")
-				.description("Test Resource 1")
-				.mimeType("text/plain")
-				.build(),
+					.description("Test Resource 1")
+					.mimeType("text/plain")
+					.build(),
 			McpSchema.Resource.builder("file:///test2.txt", "test-resource-2")
-				.description("Test Resource 2")
-				.mimeType("text/plain")
-				.build());
+					.description("Test Resource 2")
+					.mimeType("text/plain")
+					.build());
 
 	@Test
 	void testValidMethodWithResourceList() throws Exception {
@@ -53,9 +52,9 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleResourceListChanged", List.class);
 
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_RESOURCES)).verifyComplete();
 
@@ -71,9 +70,9 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleResourceListChangedVoid", List.class);
 
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_RESOURCES)).verifyComplete();
 
@@ -89,8 +88,8 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", List.class);
 
 		assertThatThrownBy(() -> AsyncMcpResourceListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have void or Mono<Void> return type");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have void or Mono<Void> return type");
 	}
 
 	@Test
@@ -100,9 +99,9 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 
 		// This will pass validation since we can't check the generic type at runtime
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		// But it will fail at runtime when we try to cast the result
 		StepVerifier.create(callback.apply(TEST_RESOURCES)).verifyError(ClassCastException.class);
@@ -114,8 +113,8 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterCount", List.class, String.class);
 
 		assertThatThrownBy(() -> AsyncMcpResourceListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Resource>)");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Resource>)");
 	}
 
 	@Test
@@ -124,8 +123,8 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> AsyncMcpResourceListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Parameter must be of type List<McpSchema.Resource>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Parameter must be of type List<McpSchema.Resource>");
 	}
 
 	@Test
@@ -134,8 +133,8 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("noParameters");
 
 		assertThatThrownBy(() -> AsyncMcpResourceListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Resource>)");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Resource>)");
 	}
 
 	@Test
@@ -144,13 +143,13 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleResourceListChanged", List.class);
 
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(null))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Updated resources list must not be null"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
+						.hasMessageContaining("Updated resources list must not be null"));
 	}
 
 	@Test
@@ -159,9 +158,9 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleResourceListChanged", List.class);
 
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		List<McpSchema.Resource> emptyList = List.of();
 		StepVerifier.create(callback.apply(emptyList)).verifyComplete();
@@ -175,8 +174,8 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		ValidMethods bean = new ValidMethods();
 
 		assertThatThrownBy(() -> AsyncMcpResourceListChangedMethodCallback.builder().method(null).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -184,8 +183,8 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleResourceListChanged", List.class);
 
 		assertThatThrownBy(() -> AsyncMcpResourceListChangedMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -206,9 +205,9 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ThrowingMethod.class.getMethod("handleResourceListChanged", List.class);
 
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_RESOURCES)).verifyError(RuntimeException.class);
 	}
@@ -229,14 +228,14 @@ public class AsyncMcpResourceListChangedMethodCallbackTests {
 		Method method = ThrowingVoidMethod.class.getMethod("handleResourceListChanged", List.class);
 
 		Function<List<McpSchema.Resource>, Mono<Void>> callback = AsyncMcpResourceListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_RESOURCES))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(
-					AbstractMcpResourceListChangedMethodCallback.McpResourceListChangedConsumerMethodException.class)
-				.hasMessageContaining("Error invoking resource list changed consumer method"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(
+								AbstractMcpResourceListChangedMethodCallback.McpResourceListChangedConsumerMethodException.class)
+						.hasMessageContaining("Error invoking resource list changed consumer method"));
 	}
 
 	/**

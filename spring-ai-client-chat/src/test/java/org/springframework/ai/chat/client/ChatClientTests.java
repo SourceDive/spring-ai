@@ -16,26 +16,13 @@
 
 package org.springframework.ai.chat.client;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -47,6 +34,14 @@ import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -80,7 +75,7 @@ public class ChatClientTests {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -134,7 +129,7 @@ public class ChatClientTests {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -144,12 +139,12 @@ public class ChatClientTests {
 				}));
 
 		var chatClient = ChatClient.builder(this.chatModel)
-			.defaultSystem(s -> s.text("Default system text {param1}, {param2}")
-				.param("param1", "value1")
-				.param("param2", "value2")
-				.metadata("metadata1", "svalue1")
-				.metadata("metadata2", "svalue2"))
-			.build();
+				.defaultSystem(s -> s.text("Default system text {param1}, {param2}")
+						.param("param1", "value1")
+						.param("param2", "value2")
+						.metadata("metadata1", "svalue1")
+						.metadata("metadata2", "svalue2"))
+				.build();
 
 		var content = chatClient.prompt("What's Spring AI?").call().content();
 
@@ -159,9 +154,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getText()).isEqualTo("Default system text value1, value2");
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("metadata1", "svalue1")
-			.containsEntry("metadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("metadata1", "svalue1")
+				.containsEntry("metadata2", "svalue2");
 
 		// Streaming
 		content = join(chatClient.prompt("What's Spring AI?").stream().content());
@@ -172,9 +167,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getText()).isEqualTo("Default system text value1, value2");
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("metadata1", "svalue1")
-			.containsEntry("metadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("metadata1", "svalue1")
+				.containsEntry("metadata2", "svalue2");
 
 		// Override single default system parameter
 		content = chatClient.prompt("What's Spring AI?").system(s -> s.param("param1", "value1New")).call().content();
@@ -184,23 +179,23 @@ public class ChatClientTests {
 		assertThat(systemMessage.getText()).isEqualTo("Default system text value1New, value2");
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("metadata1", "svalue1")
-			.containsEntry("metadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("metadata1", "svalue1")
+				.containsEntry("metadata2", "svalue2");
 
 		// Override default system metadata
 		content = chatClient.prompt("What's Spring AI?")
-			.system(s -> s.metadata("metadata1", "svalue1New"))
-			.call()
-			.content();
+				.system(s -> s.metadata("metadata1", "svalue1New"))
+				.call()
+				.content();
 		assertThat(content).isEqualTo("response");
 		systemMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(systemMessage.getText()).isEqualTo("Default system text value1, value2");
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("metadata1", "svalue1New")
-			.containsEntry("metadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("metadata1", "svalue1New")
+				.containsEntry("metadata2", "svalue2");
 
 		// streaming
 		content = join(
@@ -213,36 +208,36 @@ public class ChatClientTests {
 
 		// Override default system text
 		content = chatClient.prompt("What's Spring AI?")
-			.system(s -> s.text("Override default system text {param3}").param("param3", "value3"))
-			.call()
-			.content();
+				.system(s -> s.text("Override default system text {param3}").param("param3", "value3"))
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("response");
 		systemMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(systemMessage.getText()).isEqualTo("Override default system text value3");
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("metadata1", "svalue1")
-			.containsEntry("metadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("metadata1", "svalue1")
+				.containsEntry("metadata2", "svalue2");
 
 		// Streaming
 		content = join(chatClient.prompt("What's Spring AI?")
-			.system(s -> s.text("Override default system text {param3}")
-				.param("param3", "value3")
-				.metadata("metadata3", "svalue3"))
-			.stream()
-			.content());
+				.system(s -> s.text("Override default system text {param3}")
+						.param("param3", "value3")
+						.metadata("metadata3", "svalue3"))
+				.stream()
+				.content());
 
 		assertThat(content).isEqualTo("response");
 		systemMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(systemMessage.getText()).isEqualTo("Override default system text value3");
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getMetadata()).hasSize(4)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("metadata1", "svalue1")
-			.containsEntry("metadata2", "svalue2")
-			.containsEntry("metadata3", "svalue3");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("metadata1", "svalue1")
+				.containsEntry("metadata2", "svalue2")
+				.containsEntry("metadata3", "svalue3");
 	}
 
 	@Test
@@ -252,7 +247,7 @@ public class ChatClientTests {
 		given(this.chatModel.getOptions()).willReturn(options);
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -293,9 +288,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getText()).isEqualTo("Default system text value1, value2");
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("smetadata1", "svalue1")
-			.containsEntry("smetadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("smetadata1", "svalue1")
+				.containsEntry("smetadata2", "svalue2");
 
 		UserMessage userMessage = (UserMessage) prompt.getInstructions().get(1);
 		assertThat(userMessage.getMessageType()).isEqualTo(USER);
@@ -303,14 +298,14 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_JPEG);
 		assertThat(userMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1")
-			.containsEntry("umetadata2", "udata2");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1")
+				.containsEntry("umetadata2", "udata2");
 
 		var fco = (ToolCallingChatOptions) prompt.getOptions();
 
 		assertThat(fco.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactlyInAnyOrder("fun1", "fun2", "fun3");
+				.containsExactlyInAnyOrder("fun1", "fun2", "fun3");
 
 		// Streaming
 		content = join(chatClient.prompt().stream().content());
@@ -323,9 +318,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getText()).isEqualTo("Default system text value1, value2");
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("smetadata1", "svalue1")
-			.containsEntry("smetadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("smetadata1", "svalue1")
+				.containsEntry("smetadata2", "svalue2");
 
 		userMessage = (UserMessage) prompt.getInstructions().get(1);
 		assertThat(userMessage.getMessageType()).isEqualTo(USER);
@@ -333,14 +328,14 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_JPEG);
 		assertThat(userMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1")
-			.containsEntry("umetadata2", "udata2");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1")
+				.containsEntry("umetadata2", "udata2");
 
 		fco = (ToolCallingChatOptions) prompt.getOptions();
 
 		assertThat(fco.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactlyInAnyOrder("fun1", "fun2", "fun3");
+				.containsExactlyInAnyOrder("fun1", "fun2", "fun3");
 
 		// mutate builder
 		// @formatter:off
@@ -362,9 +357,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getText()).isEqualTo("Mutated default system text value1, value2");
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("smetadata1", "svalue1")
-			.containsEntry("smetadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("smetadata1", "svalue1")
+				.containsEntry("smetadata2", "svalue2");
 
 		userMessage = (UserMessage) prompt.getInstructions().get(1);
 		assertThat(userMessage.getMessageType()).isEqualTo(USER);
@@ -372,14 +367,14 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_JPEG);
 		assertThat(userMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1")
-			.containsEntry("umetadata2", "udata2");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1")
+				.containsEntry("umetadata2", "udata2");
 
 		fco = (ToolCallingChatOptions) prompt.getOptions();
 
 		assertThat(fco.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun4");
+				.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun4");
 
 		// Streaming
 		content = join(chatClient.prompt().stream().content());
@@ -392,9 +387,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getText()).isEqualTo("Mutated default system text value1, value2");
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("smetadata1", "svalue1")
-			.containsEntry("smetadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("smetadata1", "svalue1")
+				.containsEntry("smetadata2", "svalue2");
 
 		userMessage = (UserMessage) prompt.getInstructions().get(1);
 		assertThat(userMessage.getMessageType()).isEqualTo(USER);
@@ -402,14 +397,14 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_JPEG);
 		assertThat(userMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1")
-			.containsEntry("umetadata2", "udata2");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1")
+				.containsEntry("umetadata2", "udata2");
 
 		fco = (ToolCallingChatOptions) prompt.getOptions();
 
 		assertThat(fco.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun4");
+				.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun4");
 
 	}
 
@@ -420,7 +415,7 @@ public class ChatClientTests {
 		given(this.chatModel.getOptions()).willReturn(options);
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
 				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("response")))), (state, sink) -> {
@@ -468,9 +463,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getText()).isEqualTo("New default system text value1, value2");
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("smetadata1", "svalue1")
-			.containsEntry("smetadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("smetadata1", "svalue1")
+				.containsEntry("smetadata2", "svalue2");
 
 		UserMessage userMessage = (UserMessage) prompt.getInstructions().get(1);
 		assertThat(userMessage.getMessageType()).isEqualTo(USER);
@@ -478,14 +473,14 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_JPEG);
 		assertThat(userMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1")
-			.containsEntry("umetadata2", "userData2");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1")
+				.containsEntry("umetadata2", "userData2");
 
 		var tco = (ToolCallingChatOptions) prompt.getOptions();
 
 		assertThat(tco.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun5");
+				.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun5");
 
 		// Streaming
 		// @formatter:off
@@ -509,9 +504,9 @@ public class ChatClientTests {
 		assertThat(systemMessage.getMessageType()).isEqualTo(MessageType.SYSTEM);
 		assertThat(systemMessage.getText()).isEqualTo("New default system text value1, value2");
 		assertThat(systemMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", MessageType.SYSTEM)
-			.containsEntry("smetadata1", "svalue1")
-			.containsEntry("smetadata2", "svalue2");
+				.containsEntry("messageType", MessageType.SYSTEM)
+				.containsEntry("smetadata1", "svalue1")
+				.containsEntry("smetadata2", "svalue2");
 
 		userMessage = (UserMessage) prompt.getInstructions().get(1);
 		assertThat(userMessage.getMessageType()).isEqualTo(USER);
@@ -519,14 +514,14 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_JPEG);
 		assertThat(userMessage.getMetadata()).hasSize(3)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1")
-			.containsEntry("umetadata2", "userData2");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1")
+				.containsEntry("umetadata2", "userData2");
 
 		var tcoptions = (ToolCallingChatOptions) prompt.getOptions();
 
 		assertThat(tcoptions.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun5");
+				.containsExactlyInAnyOrder("fun1", "fun2", "fun3", "fun5");
 	}
 
 	@Test
@@ -534,7 +529,7 @@ public class ChatClientTests {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).defaultUser("Default user text").build();
 
@@ -561,10 +556,10 @@ public class ChatClientTests {
 	void simpleUserPromptAsString() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		assertThat(ChatClient.builder(this.chatModel).build().prompt("User prompt").call().content())
-			.isEqualTo("response");
+				.isEqualTo("response");
 
 		Message userMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(userMessage.getText()).isEqualTo("User prompt");
@@ -576,10 +571,10 @@ public class ChatClientTests {
 	void simpleUserPrompt() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		assertThat(ChatClient.builder(this.chatModel).build().prompt().user("User prompt").call().content())
-			.isEqualTo("response");
+				.isEqualTo("response");
 
 		Message userMessage = this.promptCaptor.getValue().getInstructions().get(0);
 		assertThat(userMessage.getText()).isEqualTo("User prompt");
@@ -591,16 +586,16 @@ public class ChatClientTests {
 	void simpleUserPromptObject() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var media = new Media(MimeTypeUtils.IMAGE_JPEG,
 				new DefaultResourceLoader().getResource("classpath:/bikes.json"));
 
 		UserMessage message = UserMessage.builder()
-			.text("User prompt")
-			.media(List.of(media))
-			.metadata(Map.of("umetadata1", "udata1"))
-			.build();
+				.text("User prompt")
+				.media(List.of(media))
+				.metadata(Map.of("umetadata1", "udata1"))
+				.build();
 		Prompt prompt = new Prompt(message);
 		assertThat(ChatClient.builder(this.chatModel).build().prompt(prompt).call().content()).isEqualTo("response");
 
@@ -610,22 +605,22 @@ public class ChatClientTests {
 		assertThat(userMessage.getText()).isEqualTo("User prompt");
 		assertThat(((UserMessage) userMessage).getMedia()).hasSize(1);
 		assertThat(((UserMessage) userMessage).getMetadata()).hasSize(2)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1");
 	}
 
 	@Test
 	void simpleSystemPrompt() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		String response = ChatClient.builder(this.chatModel)
-			.build()
-			.prompt("What's Spring AI?")
-			.system("System prompt")
-			.call()
-			.content();
+				.build()
+				.prompt("What's Spring AI?")
+				.system("System prompt")
+				.call()
+				.content();
 
 		assertThat(response).isEqualTo("response");
 
@@ -640,7 +635,7 @@ public class ChatClientTests {
 	@Test
 	void complexCall() throws MalformedURLException {
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var modelOptions = ToolCallingChatOptions.builder().build();
 		given(this.chatModel.getOptions()).willReturn(modelOptions);
@@ -673,15 +668,15 @@ public class ChatClientTests {
 		assertThat(userMessage.getMedia()).hasSize(1);
 		assertThat(userMessage.getMedia().iterator().next().getMimeType()).isEqualTo(MimeTypeUtils.IMAGE_PNG);
 		assertThat(userMessage.getMedia().iterator().next().getData())
-			.isEqualTo("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png");
+				.isEqualTo("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png");
 		assertThat(userMessage.getMetadata()).hasSize(2)
-			.containsEntry("messageType", USER)
-			.containsEntry("umetadata1", "udata1");
+				.containsEntry("messageType", USER)
+				.containsEntry("umetadata1", "udata1");
 
 		ToolCallingChatOptions promptOptions = (ToolCallingChatOptions) this.promptCaptor.getValue().getOptions();
 
 		assertThat(promptOptions.getToolCallbacks()).extracting(cb -> cb.getToolDefinition().name())
-			.containsExactly("function1");
+				.containsExactly("function1");
 	}
 
 	// Constructors
@@ -689,27 +684,27 @@ public class ChatClientTests {
 	@Test
 	void whenCreateAndChatModelIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.create(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatModel cannot be null");
+				.hasMessage("chatModel cannot be null");
 	}
 
 	@Test
 	void whenCreateAndObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.create(this.chatModel, null, null, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	@Test
 	void whenBuilderAndChatModelIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.builder(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("chatModel cannot be null");
+				.hasMessage("chatModel cannot be null");
 	}
 
 	@Test
 	void whenBuilderAndObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> ChatClient.builder(this.chatModel, null, null, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("observationRegistry cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("observationRegistry cannot be null");
 	}
 
 	// Prompt Tests - User
@@ -718,7 +713,7 @@ public class ChatClientTests {
 	void whenPromptWithStringContent() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var content = chatClient.prompt("my question").call().content();
@@ -735,7 +730,7 @@ public class ChatClientTests {
 	void whenPromptWithMessages() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new SystemMessage("instructions"), UserMessage.builder().text("my question").build());
@@ -754,7 +749,7 @@ public class ChatClientTests {
 	void whenPromptWithStringContentAndUserText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var content = chatClient.prompt("my question").user("another question").call().content();
@@ -772,7 +767,7 @@ public class ChatClientTests {
 	void whenPromptWithHistoryAndUserText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new UserMessage("my question"), new AssistantMessage("your answer"));
@@ -791,7 +786,7 @@ public class ChatClientTests {
 	void whenPromptWithUserMessageAndUserText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new UserMessage("my question"));
@@ -810,7 +805,7 @@ public class ChatClientTests {
 	void whenMessagesWithHistoryAndUserText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new UserMessage("my question"), new AssistantMessage("your answer"));
@@ -829,7 +824,7 @@ public class ChatClientTests {
 	void whenMessagesWithUserMessageAndUserText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new UserMessage("my question"));
@@ -850,7 +845,7 @@ public class ChatClientTests {
 	void whenPromptWithMessagesAndSystemText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new UserMessage("my question"), new AssistantMessage("your answer"));
@@ -869,7 +864,7 @@ public class ChatClientTests {
 	void whenPromptWithSystemMessageAndNoSystemText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
@@ -888,7 +883,7 @@ public class ChatClientTests {
 	void whenPromptWithSystemMessageAndSystemText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		var prompt = new Prompt(new SystemMessage("instructions"), new UserMessage("my question"));
@@ -907,16 +902,16 @@ public class ChatClientTests {
 	void whenMessagesAndSystemText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new UserMessage("my question"), new AssistantMessage("your answer"));
 		var content = chatClient.prompt()
-			.messages(messages)
-			.system("instructions")
-			.user("another question")
-			.call()
-			.content();
+				.messages(messages)
+				.system("instructions")
+				.user("another question")
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("response");
 
@@ -931,7 +926,7 @@ public class ChatClientTests {
 	void whenMessagesWithSystemMessageAndNoSystemText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new SystemMessage("instructions"), new UserMessage("my question"));
@@ -950,16 +945,16 @@ public class ChatClientTests {
 	void whenMessagesWithSystemMessageAndSystemText() {
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("response")))));
 
 		var chatClient = ChatClient.builder(this.chatModel).build();
 		List<Message> messages = List.of(new SystemMessage("instructions"), new UserMessage("my question"));
 		var content = chatClient.prompt()
-			.messages(messages)
-			.system("other instructions")
-			.user("another question")
-			.call()
-			.content();
+				.messages(messages)
+				.system("other instructions")
+				.user("another question")
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("response");
 

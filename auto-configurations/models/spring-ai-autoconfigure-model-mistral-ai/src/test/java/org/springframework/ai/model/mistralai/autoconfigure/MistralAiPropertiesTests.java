@@ -37,136 +37,136 @@ public class MistralAiPropertiesTests {
 	public void embeddingProperties() {
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.mistralai.base-url=TEST_BASE_URL", "spring.ai.mistralai.api-key=abc123",
-					"spring.ai.mistralai.embedding.options.model=MODEL_XYZ")
-			.withConfiguration(AutoConfigurations.of(MistralAiEmbeddingAutoConfiguration.class,
-					RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(MistralAiEmbeddingProperties.class);
-				var connectionProperties = context.getBean(MistralAiCommonProperties.class);
+				.withPropertyValues("spring.ai.mistralai.base-url=TEST_BASE_URL", "spring.ai.mistralai.api-key=abc123",
+						"spring.ai.mistralai.embedding.options.model=MODEL_XYZ")
+				.withConfiguration(AutoConfigurations.of(MistralAiEmbeddingAutoConfiguration.class,
+						RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(MistralAiEmbeddingProperties.class);
+					var connectionProperties = context.getBean(MistralAiCommonProperties.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(embeddingProperties.getApiKey()).isNull();
-				assertThat(embeddingProperties.getBaseUrl()).isEqualTo(MistralAiCommonProperties.DEFAULT_BASE_URL);
+					assertThat(embeddingProperties.getApiKey()).isNull();
+					assertThat(embeddingProperties.getBaseUrl()).isEqualTo(MistralAiCommonProperties.DEFAULT_BASE_URL);
 
-				assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(embeddingProperties.toOptions().getModel()).isEqualTo("MODEL_XYZ");
-			});
+					assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(embeddingProperties.toOptions().getModel()).isEqualTo("MODEL_XYZ");
+				});
 	}
 
 	@Test
 	public void chatOptionsTest() {
 
 		new ApplicationContextRunner().withPropertyValues("spring.ai.mistralai.base-url=TEST_BASE_URL",
-				"spring.ai.mistralai.chat.tools[0].function.name=myFunction1",
-				"spring.ai.mistralai.chat.tools[0].function.description=function description",
-				"spring.ai.mistralai.chat.tools[0].function.jsonSchema=" + """
-						{
-							"type": "object",
-							"properties": {
-								"location": {
-									"type": "string",
-									"description": "The city and state e.g. San Francisco, CA"
-								},
-								"lat": {
-									"type": "number",
-									"description": "The city latitude"
-								},
-								"lon": {
-									"type": "number",
-									"description": "The city longitude"
-								},
-								"unit": {
-									"type": "string",
-									"enum": ["c", "f"]
+						"spring.ai.mistralai.chat.tools[0].function.name=myFunction1",
+						"spring.ai.mistralai.chat.tools[0].function.description=function description",
+						"spring.ai.mistralai.chat.tools[0].function.jsonSchema=" + """
+								{
+									"type": "object",
+									"properties": {
+										"location": {
+											"type": "string",
+											"description": "The city and state e.g. San Francisco, CA"
+										},
+										"lat": {
+											"type": "number",
+											"description": "The city latitude"
+										},
+										"lon": {
+											"type": "number",
+											"description": "The city longitude"
+										},
+										"unit": {
+											"type": "string",
+											"enum": ["c", "f"]
+										}
+									},
+									"required": ["location", "lat", "lon", "unit"]
 								}
-							},
-							"required": ["location", "lat", "lon", "unit"]
-						}
-						""",
+								""",
 
-				"spring.ai.mistralai.api-key=abc123", "spring.ai.mistralai.embedding.base-url=TEST_BASE_URL2",
-				"spring.ai.mistralai.embedding.api-key=456", "spring.ai.mistralai.embedding.options.model=MODEL_XYZ")
-			.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class,
-					RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-					ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class))
-			.run(context -> {
+						"spring.ai.mistralai.api-key=abc123", "spring.ai.mistralai.embedding.base-url=TEST_BASE_URL2",
+						"spring.ai.mistralai.embedding.api-key=456", "spring.ai.mistralai.embedding.options.model=MODEL_XYZ")
+				.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class,
+						RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+						ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class))
+				.run(context -> {
 
-				var chatProperties = context.getBean(MistralAiChatProperties.class);
+					var chatProperties = context.getBean(MistralAiChatProperties.class);
 
-				var tool = chatProperties.toOptions().getTools().get(0);
-				assertThat(tool.getType()).isEqualTo(MistralAiApi.FunctionTool.Type.FUNCTION);
-				var function = tool.getFunction();
-				assertThat(function.getName()).isEqualTo("myFunction1");
-				assertThat(function.getDescription()).isEqualTo("function description");
-				assertThat(function.getParameters()).isNotEmpty();
-			});
+					var tool = chatProperties.toOptions().getTools().get(0);
+					assertThat(tool.getType()).isEqualTo(MistralAiApi.FunctionTool.Type.FUNCTION);
+					var function = tool.getFunction();
+					assertThat(function.getName()).isEqualTo("myFunction1");
+					assertThat(function.getDescription()).isEqualTo("function description");
+					assertThat(function.getParameters()).isNotEmpty();
+				});
 	}
 
 	@Test
 	public void embeddingOverrideConnectionProperties() {
 
 		new ApplicationContextRunner().withPropertyValues("spring.ai.mistralai.base-url=TEST_BASE_URL",
-				"spring.ai.mistralai.api-key=abc123", "spring.ai.mistralai.embedding.base-url=TEST_BASE_URL2",
-				"spring.ai.mistralai.embedding.api-key=456", "spring.ai.mistralai.embedding.options.model=MODEL_XYZ")
-			.withConfiguration(AutoConfigurations.of(MistralAiEmbeddingAutoConfiguration.class,
-					RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
-			.run(context -> {
-				var embeddingProperties = context.getBean(MistralAiEmbeddingProperties.class);
-				var connectionProperties = context.getBean(MistralAiCommonProperties.class);
+						"spring.ai.mistralai.api-key=abc123", "spring.ai.mistralai.embedding.base-url=TEST_BASE_URL2",
+						"spring.ai.mistralai.embedding.api-key=456", "spring.ai.mistralai.embedding.options.model=MODEL_XYZ")
+				.withConfiguration(AutoConfigurations.of(MistralAiEmbeddingAutoConfiguration.class,
+						RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
+				.run(context -> {
+					var embeddingProperties = context.getBean(MistralAiEmbeddingProperties.class);
+					var connectionProperties = context.getBean(MistralAiCommonProperties.class);
 
-				assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
 
-				assertThat(embeddingProperties.getApiKey()).isEqualTo("456");
-				assertThat(embeddingProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL2");
+					assertThat(embeddingProperties.getApiKey()).isEqualTo("456");
+					assertThat(embeddingProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL2");
 
-				assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(embeddingProperties.toOptions().getModel()).isEqualTo("MODEL_XYZ");
-			});
+					assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(embeddingProperties.toOptions().getModel()).isEqualTo("MODEL_XYZ");
+				});
 	}
 
 	@Test
 	public void embeddingOptionsTest() {
 
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.mistralai.api-key=API_KEY", "spring.ai.mistralai.base-url=TEST_BASE_URL",
-					"spring.ai.mistralai.embedding.options.model=MODEL_XYZ",
-					"spring.ai.mistralai.embedding.options.encoding-format=MyEncodingFormat")
-			.withConfiguration(AutoConfigurations.of(MistralAiEmbeddingAutoConfiguration.class,
-					RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
-			.run(context -> {
-				var connectionProperties = context.getBean(MistralAiCommonProperties.class);
-				var embeddingProperties = context.getBean(MistralAiEmbeddingProperties.class);
+				.withPropertyValues("spring.ai.mistralai.api-key=API_KEY", "spring.ai.mistralai.base-url=TEST_BASE_URL",
+						"spring.ai.mistralai.embedding.options.model=MODEL_XYZ",
+						"spring.ai.mistralai.embedding.options.encoding-format=MyEncodingFormat")
+				.withConfiguration(AutoConfigurations.of(MistralAiEmbeddingAutoConfiguration.class,
+						RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class))
+				.run(context -> {
+					var connectionProperties = context.getBean(MistralAiCommonProperties.class);
+					var embeddingProperties = context.getBean(MistralAiEmbeddingProperties.class);
 
-				assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
-				assertThat(connectionProperties.getApiKey()).isEqualTo("API_KEY");
+					assertThat(connectionProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(connectionProperties.getApiKey()).isEqualTo("API_KEY");
 
-				assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(embeddingProperties.toOptions().getModel()).isEqualTo("MODEL_XYZ");
-				assertThat(embeddingProperties.getEncodingFormat()).isEqualTo("MyEncodingFormat");
-				assertThat(embeddingProperties.toOptions().getEncodingFormat()).isEqualTo("MyEncodingFormat");
-			});
+					assertThat(embeddingProperties.getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(embeddingProperties.toOptions().getModel()).isEqualTo("MODEL_XYZ");
+					assertThat(embeddingProperties.getEncodingFormat()).isEqualTo("MyEncodingFormat");
+					assertThat(embeddingProperties.toOptions().getEncodingFormat()).isEqualTo("MyEncodingFormat");
+				});
 	}
 
 	@Test
 	public void moderationOptionsTest() {
 		new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.mistralai.moderation.base-url=TEST_BASE_URL",
-					"spring.ai.mistralai.moderation.api-key=abc123",
-					"spring.ai.mistralai.moderation.options.model=MODERATION_MODEL")
-			.withConfiguration(
-					AutoConfigurations.of(MistralAiModerationAutoConfiguration.class, RestClientAutoConfiguration.class,
-							SpringAiRetryAutoConfiguration.class, WebClientAutoConfiguration.class))
-			.run(context -> {
-				var moderationProperties = context.getBean(MistralAiModerationProperties.class);
-				assertThat(moderationProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
-				assertThat(moderationProperties.getApiKey()).isEqualTo("abc123");
-				assertThat(moderationProperties.getModel()).isEqualTo("MODERATION_MODEL");
-				assertThat(moderationProperties.toOptions().getModel()).isEqualTo("MODERATION_MODEL");
-			});
+				.withPropertyValues("spring.ai.mistralai.moderation.base-url=TEST_BASE_URL",
+						"spring.ai.mistralai.moderation.api-key=abc123",
+						"spring.ai.mistralai.moderation.options.model=MODERATION_MODEL")
+				.withConfiguration(
+						AutoConfigurations.of(MistralAiModerationAutoConfiguration.class, RestClientAutoConfiguration.class,
+								SpringAiRetryAutoConfiguration.class, WebClientAutoConfiguration.class))
+				.run(context -> {
+					var moderationProperties = context.getBean(MistralAiModerationProperties.class);
+					assertThat(moderationProperties.getBaseUrl()).isEqualTo("TEST_BASE_URL");
+					assertThat(moderationProperties.getApiKey()).isEqualTo("abc123");
+					assertThat(moderationProperties.getModel()).isEqualTo("MODERATION_MODEL");
+					assertThat(moderationProperties.toOptions().getModel()).isEqualTo("MODERATION_MODEL");
+				});
 	}
 
 }

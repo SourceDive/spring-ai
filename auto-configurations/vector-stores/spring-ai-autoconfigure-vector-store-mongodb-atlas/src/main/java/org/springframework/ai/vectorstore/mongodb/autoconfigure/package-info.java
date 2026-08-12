@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.mongodb.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

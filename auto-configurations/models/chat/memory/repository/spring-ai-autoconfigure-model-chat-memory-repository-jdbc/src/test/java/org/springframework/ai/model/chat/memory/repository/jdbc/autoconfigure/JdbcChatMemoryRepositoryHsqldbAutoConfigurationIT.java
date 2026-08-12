@@ -16,12 +16,9 @@
 
 package org.springframework.ai.model.chat.memory.repository.jdbc.autoconfigure;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -37,23 +34,25 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT.TestConfig.class,
-		properties = { "spring.datasource.url=jdbc:hsqldb:mem:chat_memory_auto_configuration_test;DB_CLOSE_DELAY=-1",
+		properties = {"spring.datasource.url=jdbc:hsqldb:mem:chat_memory_auto_configuration_test;DB_CLOSE_DELAY=-1",
 				"spring.datasource.username=sa", "spring.datasource.password=",
 				"spring.datasource.driver-class-name=org.hsqldb.jdbcDriver",
 				"spring.ai.chat.memory.repository.jdbc.initialize-schema=always", "spring.sql.init.mode=always",
 				"spring.jpa.hibernate.ddl-auto=none", "spring.jpa.defer-datasource-initialization=true",
 				"spring.sql.init.continue-on-error=true", "spring.sql.init.schema-locations=classpath:schema.sql",
 				"logging.level.org.springframework.jdbc=DEBUG",
-				"logging.level.org.springframework.boot.sql.init=DEBUG" })
+				"logging.level.org.springframework.boot.sql.init=DEBUG"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@ImportAutoConfiguration({ org.springframework.ai.model.chat.memory.autoconfigure.ChatMemoryAutoConfiguration.class,
+@ImportAutoConfiguration({org.springframework.ai.model.chat.memory.autoconfigure.ChatMemoryAutoConfiguration.class,
 		JdbcChatMemoryRepositoryAutoConfiguration.class, JdbcTemplateAutoConfiguration.class,
-		DataSourceAutoConfiguration.class })
+		DataSourceAutoConfiguration.class})
 public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 
 	@Autowired
@@ -77,7 +76,7 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 
 		// Create index
 		this.jdbcTemplate
-			.execute("CREATE INDEX SPRING_AI_CHAT_MEMORY_IDX ON SPRING_AI_CHAT_MEMORY(conversation_id, sequence_id)");
+				.execute("CREATE INDEX SPRING_AI_CHAT_MEMORY_IDX ON SPRING_AI_CHAT_MEMORY(conversation_id, sequence_id)");
 	}
 
 	@Test
@@ -91,8 +90,7 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 					"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SPRING_AI_CHAT_MEMORY'",
 					Integer.class) > 0;
 			assertThat(tableExists).isTrue();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Failed to check if table exists: " + e.getMessage());
 		}
@@ -115,7 +113,7 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 		chatMemory.add(conversationId, List.of(assistantMessage));
 		assertThat(chatMemory.get(conversationId)).hasSize(2);
 		assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
-			.containsExactly(userMessage.getText(), assistantMessage.getText());
+				.containsExactly(userMessage.getText(), assistantMessage.getText());
 
 		chatMemory.clear(conversationId);
 		assertThat(chatMemory.get(conversationId)).isEmpty();
@@ -125,7 +123,7 @@ public class JdbcChatMemoryRepositoryHsqldbAutoConfigurationIT {
 		chatMemory.add(conversationId, multipleMessages);
 		assertThat(chatMemory.get(conversationId)).hasSize(multipleMessages.size());
 		assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
-			.containsExactlyElementsOf(multipleMessages.stream().map(Message::getText).toList());
+				.containsExactlyElementsOf(multipleMessages.stream().map(Message::getText).toList());
 	}
 
 	@SpringBootConfiguration

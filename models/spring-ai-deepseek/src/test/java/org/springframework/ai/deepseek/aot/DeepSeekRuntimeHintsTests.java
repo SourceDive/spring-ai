@@ -16,13 +16,12 @@
 
 package org.springframework.ai.deepseek.aot;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.deepseek.api.DeepSeekApi;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.ai.aot.AiRuntimeHints.findJsonAnnotatedClassesInPackage;

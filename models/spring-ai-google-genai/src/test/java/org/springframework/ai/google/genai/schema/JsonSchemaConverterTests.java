@@ -44,14 +44,14 @@ class JsonSchemaConverterTests {
 	void fromJsonShouldThrowOnInvalidJson() {
 		String invalidJson = "{invalid:json}";
 		assertThatThrownBy(() -> JsonSchemaConverter.fromJson(invalidJson)).isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Failed to parse JSON");
+				.hasMessageContaining("Failed to parse JSON");
 	}
 
 	@Test
 	void convertToOpenApiSchemaShouldThrowOnNullInput() {
 		assertThatThrownBy(() -> JsonSchemaConverter.convertToOpenApiSchema(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("JSON Schema node must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("JSON Schema node must not be null");
 	}
 
 	@Test
@@ -69,8 +69,8 @@ class JsonSchemaConverterTests {
 		ObjectNode schema = JsonSchemaConverter.fromJson(json);
 
 		assertThatThrownBy(() -> JsonSchemaConverter.convertToOpenApiSchema(schema))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Google's Structured Output schema doesn't support $defs property");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Google's Structured Output schema doesn't support $defs property");
 	}
 
 	@Test
@@ -85,7 +85,7 @@ class JsonSchemaConverterTests {
 	@Test
 	void fromJsonShouldHandleEmptyString() {
 		assertThatThrownBy(() -> JsonSchemaConverter.fromJson("")).isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Failed to parse JSON");
+				.hasMessageContaining("Failed to parse JSON");
 	}
 
 	@Test
@@ -293,21 +293,21 @@ class JsonSchemaConverterTests {
 			ObjectNode result = JsonSchemaConverter.convertToOpenApiSchema(JsonSchemaConverter.fromJson(json));
 
 			assertThat(result.get("properties")
-				.get("user")
-				.get("properties")
-				.get("address")
-				.get("properties")
-				.get("street")
-				.get("type")
-				.asText()).isEqualTo("string");
+					.get("user")
+					.get("properties")
+					.get("address")
+					.get("properties")
+					.get("street")
+					.get("type")
+					.asText()).isEqualTo("string");
 			assertThat(result.get("properties")
-				.get("user")
-				.get("properties")
-				.get("address")
-				.get("properties")
-				.get("city")
-				.get("type")
-				.asText()).isEqualTo("string");
+					.get("user")
+					.get("properties")
+					.get("address")
+					.get("properties")
+					.get("city")
+					.get("type")
+					.asText()).isEqualTo("string");
 		}
 
 	}

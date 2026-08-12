@@ -16,15 +16,11 @@
 
 package org.springframework.ai.deepseek;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.deepseek.api.DeepSeekApi;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletion;
@@ -39,6 +35,9 @@ import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,10 +65,10 @@ public class DeepSeekRetryTests {
 		retryTemplate.setRetryListener(this.retryListener);
 
 		this.chatModel = DeepSeekChatModel.builder()
-			.deepSeekApi(this.deepSeekApi)
-			.options(DeepSeekChatOptions.builder().model(DeepSeekApi.DEFAULT_CHAT_MODEL).build())
-			.retryTemplate(retryTemplate)
-			.build();
+				.deepSeekApi(this.deepSeekApi)
+				.options(DeepSeekChatOptions.builder().model(DeepSeekApi.DEFAULT_CHAT_MODEL).build())
+				.retryTemplate(retryTemplate)
+				.build();
 	}
 
 	@Test
@@ -81,9 +80,9 @@ public class DeepSeekRetryTests {
 				"chat.completion", new DeepSeekApi.Usage(10, 10, 10));
 
 		given(this.deepSeekApi.chatCompletionEntity(isA(ChatCompletionRequest.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(ResponseEntity.of(Optional.of(expectedChatCompletion)));
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(ResponseEntity.of(Optional.of(expectedChatCompletion)));
 
 		var result = this.chatModel.call(new Prompt("text"));
 
@@ -96,7 +95,7 @@ public class DeepSeekRetryTests {
 	@Test
 	public void deepSeekChatNonTransientError() {
 		given(this.deepSeekApi.chatCompletionEntity(isA(ChatCompletionRequest.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 		assertThrows(RuntimeException.class, () -> this.chatModel.call(new Prompt("text")));
 	}
 
@@ -109,9 +108,9 @@ public class DeepSeekRetryTests {
 				"chat.completion", new DeepSeekApi.Usage(10, 10, 10));
 
 		given(this.deepSeekApi.chatCompletionEntity(isA(ChatCompletionRequest.class)))
-			.willThrow(new TransientAiException("Transient Error 1"))
-			.willThrow(new TransientAiException("Transient Error 2"))
-			.willReturn(ResponseEntity.of(Optional.of(expectedChatCompletion)));
+				.willThrow(new TransientAiException("Transient Error 1"))
+				.willThrow(new TransientAiException("Transient Error 2"))
+				.willReturn(ResponseEntity.of(Optional.of(expectedChatCompletion)));
 
 		var result = this.chatModel.call(new Prompt("text"));
 
@@ -124,7 +123,7 @@ public class DeepSeekRetryTests {
 	@Test
 	public void deepSeekChatStreamNonTransientError() {
 		given(this.deepSeekApi.chatCompletionStream(isA(ChatCompletionRequest.class)))
-			.willThrow(new RuntimeException("Non Transient Error"));
+				.willThrow(new RuntimeException("Non Transient Error"));
 		assertThrows(RuntimeException.class, () -> this.chatModel.stream(new Prompt("text")).collectList().block());
 	}
 

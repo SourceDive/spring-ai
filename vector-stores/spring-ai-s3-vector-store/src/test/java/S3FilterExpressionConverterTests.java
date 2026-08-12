@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.core.document.Document;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
 import org.springframework.ai.vectorstore.s3.S3VectorFilterSearchExpressionConverter;
+import software.amazon.awssdk.core.document.Document;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,7 +56,7 @@ class S3FilterExpressionConverterTests {
 				new Filter.Expression(ExpressionType.EQ, new Filter.Key("country"), new Filter.Value("BG")));
 
 		Document filter = Document
-			.fromMap(Map.of("country", Document.fromMap(Map.of("$eq", Document.fromString("BG")))));
+				.fromMap(Map.of("country", Document.fromMap(Map.of("$eq", Document.fromString("BG")))));
 
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
@@ -81,7 +80,7 @@ class S3FilterExpressionConverterTests {
 				new Filter.Expression(ExpressionType.IN, new Filter.Key("genre"), new Filter.Value(genres)));
 
 		Document filter = Document.fromMap(Map.of("genre", Document
-			.fromMap(Map.of("$in", Document.fromList(genres.stream().map(Document::fromString).toList())))));
+				.fromMap(Map.of("$in", Document.fromList(genres.stream().map(Document::fromString).toList())))));
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
 
@@ -94,25 +93,25 @@ class S3FilterExpressionConverterTests {
 						new Filter.Expression(ExpressionType.NE, new Filter.Key("city"), new Filter.Value("Sofia")))));
 
 		Document filter = Document
-			.fromMap(
-					Map.of("$or",
-							Document
-								.fromList(
-										List.of(Document.fromMap(Map
-											.of("year", Document.fromMap(Map.of("$gte", Document.fromNumber(2020))))),
-												Document
-													.fromMap(
-															Map.of("$and",
-																	Document.fromList(List.of(
-																			Document
-																				.fromMap(Map.of("country",
-																						Document.fromMap(Map.of(
-																								"$eq",
-																								Document.fromString(
-																										"BG"))))),
-																			Document.fromMap(Map.of("city", Document
-																				.fromMap(Map.of("$ne", Document
-																					.fromString("Sofia")))))))))))));
+				.fromMap(
+						Map.of("$or",
+								Document
+										.fromList(
+												List.of(Document.fromMap(Map
+																.of("year", Document.fromMap(Map.of("$gte", Document.fromNumber(2020))))),
+														Document
+																.fromMap(
+																		Map.of("$and",
+																				Document.fromList(List.of(
+																						Document
+																								.fromMap(Map.of("country",
+																										Document.fromMap(Map.of(
+																												"$eq",
+																												Document.fromString(
+																														"BG"))))),
+																						Document.fromMap(Map.of("city", Document
+																								.fromMap(Map.of("$ne", Document
+																										.fromString("Sofia")))))))))))));
 
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
@@ -127,23 +126,23 @@ class S3FilterExpressionConverterTests {
 						new Filter.Value(List.of("Sofia", "Plovdiv")))));
 
 		Document filter = Document
-			.fromMap(
-					Map.of("$and",
-							Document
-								.fromList(List.of(
-										Document
-											.fromMap(Map.of("$or",
-													Document.fromList(List.of(
-															Document.fromMap(Map.of("year",
-																	Document.fromMap(Map.of("$gte",
-																			Document.fromNumber(2020))))),
-															Document.fromMap(Map.of("country",
-																	Document.fromMap(Map.of("$eq",
-																			Document.fromString("BG"))))))))),
-										Document.fromMap(Map.of("city",
-												Document.fromMap(Map.of("$nin",
-														Document.fromList(List.of(Document.fromString("Sofia"),
-																Document.fromString("Plovdiv")))))))))));
+				.fromMap(
+						Map.of("$and",
+								Document
+										.fromList(List.of(
+												Document
+														.fromMap(Map.of("$or",
+																Document.fromList(List.of(
+																		Document.fromMap(Map.of("year",
+																				Document.fromMap(Map.of("$gte",
+																						Document.fromNumber(2020))))),
+																		Document.fromMap(Map.of("country",
+																				Document.fromMap(Map.of("$eq",
+																						Document.fromString("BG"))))))))),
+												Document.fromMap(Map.of("city",
+														Document.fromMap(Map.of("$nin",
+																Document.fromList(List.of(Document.fromString("Sofia"),
+																		Document.fromString("Plovdiv")))))))))));
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
 
@@ -157,24 +156,24 @@ class S3FilterExpressionConverterTests {
 						new Filter.Value(List.of("BG", "NL", "US")))));
 
 		Document filter = Document
-			.fromMap(
-					Map.of("$and",
-							Document
-								.fromList(List.of(
-										Document
-											.fromMap(Map.of("$and",
-													Document.fromList(List.of(
-															Document.fromMap(Map.of("isOpen",
-																	Document.fromMap(Map.of("$eq",
-																			Document.fromBoolean(true))))),
-															Document.fromMap(Map.of("year",
-																	Document.fromMap(Map.of("$gte",
-																			Document.fromNumber(2020))))))))),
-										Document.fromMap(Map.of("country",
-												Document.fromMap(Map.of("$in",
-														Document.fromList(List.of(Document.fromString("BG"),
-																Document.fromString("NL"),
-																Document.fromString("US")))))))))));
+				.fromMap(
+						Map.of("$and",
+								Document
+										.fromList(List.of(
+												Document
+														.fromMap(Map.of("$and",
+																Document.fromList(List.of(
+																		Document.fromMap(Map.of("isOpen",
+																				Document.fromMap(Map.of("$eq",
+																						Document.fromBoolean(true))))),
+																		Document.fromMap(Map.of("year",
+																				Document.fromMap(Map.of("$gte",
+																						Document.fromNumber(2020))))))))),
+												Document.fromMap(Map.of("country",
+														Document.fromMap(Map.of("$in",
+																Document.fromList(List.of(Document.fromString("BG"),
+																		Document.fromString("NL"),
+																		Document.fromString("US")))))))))));
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
 
@@ -187,7 +186,7 @@ class S3FilterExpressionConverterTests {
 		Document filter = Document.fromMap(Map.of("$and", Document.fromList(List.of(
 				Document.fromMap(Map.of("temperature", Document.fromMap(Map.of("$gte", Document.fromNumber(-15.6))))),
 				Document
-					.fromMap(Map.of("temperature", Document.fromMap(Map.of("$lte", Document.fromNumber(20.13)))))))));
+						.fromMap(Map.of("temperature", Document.fromMap(Map.of("$lte", Document.fromNumber(20.13)))))))));
 
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
@@ -197,14 +196,14 @@ class S3FilterExpressionConverterTests {
 		Document vectorExpr = this.converter.convertExpression(
 				new Filter.Expression(ExpressionType.EQ, new Filter.Key("\"country 1 2 3\""), new Filter.Value("BG")));
 		Document filter = Document
-			.fromMap(Map.of("\"country 1 2 3\"", Document.fromMap(Map.of("$eq", Document.fromString("BG")))));
+				.fromMap(Map.of("\"country 1 2 3\"", Document.fromMap(Map.of("$eq", Document.fromString("BG")))));
 
 		assertThat(vectorExpr).isEqualTo(filter);
 
 		vectorExpr = this.converter.convertExpression(
 				new Filter.Expression(ExpressionType.EQ, new Filter.Key("'country 1 2 3'"), new Filter.Value("BG")));
 		filter = Document
-			.fromMap(Map.of("'country 1 2 3'", Document.fromMap(Map.of("$eq", Document.fromString("BG")))));
+				.fromMap(Map.of("'country 1 2 3'", Document.fromMap(Map.of("$eq", Document.fromString("BG")))));
 		assertThat(vectorExpr).isEqualTo(filter);
 	}
 

@@ -16,25 +16,24 @@
 
 package org.springframework.ai.vectorstore.cassandra;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.datastax.oss.driver.api.core.metadata.schema.ColumnMetadata;
 import com.datastax.oss.driver.api.core.type.DataType;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.core.type.ListType;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.shaded.guava.common.base.Preconditions;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Converts {@link org.springframework.ai.vectorstore.filter.Filter.Expression} into CQL
@@ -50,7 +49,7 @@ class CassandraFilterExpressionConverter extends AbstractFilterExpressionConvert
 	CassandraFilterExpressionConverter(Collection<ColumnMetadata> columns) {
 
 		this.columnsByName = columns.stream()
-			.collect(Collectors.toMap(c -> c.getName().asInternal(), Function.identity()));
+				.collect(Collectors.toMap(c -> c.getName().asInternal(), Function.identity()));
 	}
 
 	private static void doOperand(ExpressionType type, StringBuilder context) {
@@ -106,8 +105,7 @@ class CassandraFilterExpressionConverter extends AbstractFilterExpressionConvert
 		if (ExpressionType.IN.equals(expression.type())) {
 			Preconditions.checkArgument(v instanceof Collection);
 			doListValue(column, v, context);
-		}
-		else {
+		} else {
 			doValue(column, v, context);
 		}
 	}
@@ -157,7 +155,8 @@ class CassandraFilterExpressionConverter extends AbstractFilterExpressionConvert
 	 * {@link #doValue(ColumnMetadata, Object, StringBuilder)} that leverages the driver's
 	 * CodecRegistry. This method is not used in the normal flow and will throw an
 	 * exception if called.
-	 * @param value the value to convert
+	 *
+	 * @param value   the value to convert
 	 * @param context the context to append the string representation to
 	 * @throws UnsupportedOperationException always, as this method should not be called
 	 */

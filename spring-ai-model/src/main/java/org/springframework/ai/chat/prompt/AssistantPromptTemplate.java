@@ -16,11 +16,11 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.Map;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.core.io.Resource;
+
+import java.util.Map;
 
 public class AssistantPromptTemplate extends PromptTemplate {
 

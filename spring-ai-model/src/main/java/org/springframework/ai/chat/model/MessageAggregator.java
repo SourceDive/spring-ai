@@ -16,27 +16,21 @@
 
 package org.springframework.ai.chat.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.AssistantMessage.ToolCall;
+import org.springframework.ai.chat.metadata.*;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.AssistantMessage.ToolCall;
-import org.springframework.ai.chat.metadata.ChatGenerationMetadata;
-import org.springframework.ai.chat.metadata.ChatResponseMetadata;
-import org.springframework.ai.chat.metadata.EmptyRateLimit;
-import org.springframework.ai.chat.metadata.PromptMetadata;
-import org.springframework.ai.chat.metadata.RateLimit;
-import org.springframework.ai.chat.metadata.Usage;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * Helper that for streaming chat responses, aggregate the chat response messages into a

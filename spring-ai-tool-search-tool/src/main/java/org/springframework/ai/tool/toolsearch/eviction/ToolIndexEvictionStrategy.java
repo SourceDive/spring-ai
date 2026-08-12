@@ -16,9 +16,9 @@
 
 package org.springframework.ai.tool.toolsearch.eviction;
 
-import java.util.Set;
-
 import org.springframework.ai.tool.toolsearch.ToolIndex;
+
+import java.util.Set;
 
 /**
  * Strategy that decides which session tool indexes should be evicted.
@@ -43,6 +43,7 @@ public interface ToolIndexEvictionStrategy {
 	 * Implementations should update their internal tracking state for {@code sessionId}
 	 * and return the set of session IDs whose tool indexes must now be cleared. The
 	 * returned set must never include the currently-accessed {@code sessionId}.
+	 *
 	 * @param sessionId the session being accessed
 	 * @return session IDs to evict; never {@code null}, may be empty
 	 */
@@ -53,6 +54,7 @@ public interface ToolIndexEvictionStrategy {
 	 * returned it from {@link #onAccess}, or because of an explicit eviction request.
 	 * <p>
 	 * Implementations should remove any internal tracking state for the evicted session.
+	 *
 	 * @param sessionId the session that was evicted
 	 */
 	void onRemoved(String sessionId);

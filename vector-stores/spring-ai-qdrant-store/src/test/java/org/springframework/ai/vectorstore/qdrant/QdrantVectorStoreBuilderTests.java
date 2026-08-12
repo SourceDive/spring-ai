@@ -58,11 +58,11 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void customConfiguration() {
 		QdrantVectorStore vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("custom_collection")
-			.contentFieldName("custom_content_field")
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy())
-			.build();
+				.collectionName("custom_collection")
+				.contentFieldName("custom_content_field")
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy())
+				.build();
 
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("collectionName", "custom_collection");
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("contentFieldName", "custom_content_field");
@@ -73,46 +73,46 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void nullQdrantClientInConstructorShouldThrowException() {
 		assertThatThrownBy(() -> QdrantVectorStore.builder(null, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("EmbeddingModel must be configured");
+				.hasMessage("EmbeddingModel must be configured");
 	}
 
 	@Test
 	void nullEmbeddingModelShouldThrowException() {
 		assertThatThrownBy(() -> QdrantVectorStore.builder(this.qdrantClient, null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("EmbeddingModel must be configured");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("EmbeddingModel must be configured");
 	}
 
 	@Test
 	void emptyCollectionNameShouldThrowException() {
 		assertThatThrownBy(
 				() -> QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel).collectionName("").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("collectionName must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("collectionName must not be empty");
 	}
 
 	@Test
 	void nullBatchingStrategyShouldThrowException() {
 		assertThatThrownBy(
 				() -> QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel).batchingStrategy(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("BatchingStrategy must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("BatchingStrategy must not be null");
 	}
 
 	@Test
 	void nullCollectionNameShouldThrowException() {
 		assertThatThrownBy(
 				() -> QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel).collectionName(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("collectionName must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("collectionName must not be empty");
 	}
 
 	@Test
 	void whitespaceOnlyCollectionNameShouldThrowException() {
 		assertThatThrownBy(
 				() -> QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel).collectionName("   ").build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("collectionName must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("collectionName must not be empty");
 	}
 
 	@Test
@@ -128,10 +128,10 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void builderShouldAllowMethodChaining() {
 		QdrantVectorStore vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("test_collection")
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy())
-			.build();
+				.collectionName("test_collection")
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy())
+				.build();
 
 		assertThat(vectorStore).isNotNull();
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("collectionName", "test_collection");
@@ -141,7 +141,7 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void builderShouldMaintainStateAcrossMultipleCalls() {
 		QdrantVectorStore.Builder builder = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("persistent_collection");
+				.collectionName("persistent_collection");
 
 		QdrantVectorStore vectorStore1 = builder.build();
 		QdrantVectorStore vectorStore2 = builder.initializeSchema(true).build();
@@ -158,11 +158,11 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void builderShouldOverridePreviousValues() {
 		QdrantVectorStore vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("first_collection")
-			.collectionName("second_collection")
-			.initializeSchema(true)
-			.initializeSchema(false)
-			.build();
+				.collectionName("first_collection")
+				.collectionName("second_collection")
+				.initializeSchema(true)
+				.initializeSchema(false)
+				.build();
 
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("collectionName", "second_collection");
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("initializeSchema", false);
@@ -184,12 +184,12 @@ class QdrantVectorStoreBuilderTests {
 		TokenCountBatchingStrategy strategy2 = new TokenCountBatchingStrategy();
 
 		QdrantVectorStore vectorStore1 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.batchingStrategy(strategy1)
-			.build();
+				.batchingStrategy(strategy1)
+				.build();
 
 		QdrantVectorStore vectorStore2 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.batchingStrategy(strategy2)
-			.build();
+				.batchingStrategy(strategy2)
+				.build();
 
 		assertThat(vectorStore1).hasFieldOrPropertyWithValue("batchingStrategy", strategy1);
 		assertThat(vectorStore2).hasFieldOrPropertyWithValue("batchingStrategy", strategy2);
@@ -197,13 +197,13 @@ class QdrantVectorStoreBuilderTests {
 
 	@Test
 	void builderShouldAcceptValidCollectionNames() {
-		String[] validNames = { "collection_with_underscores", "collection-with-dashes", "collection123", "Collection",
-				"c", "very_long_collection_name_that_should_still_be_valid_according_to_most_naming_conventions" };
+		String[] validNames = {"collection_with_underscores", "collection-with-dashes", "collection123", "Collection",
+				"c", "very_long_collection_name_that_should_still_be_valid_according_to_most_naming_conventions"};
 
 		for (String name : validNames) {
 			QdrantVectorStore vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-				.collectionName(name)
-				.build();
+					.collectionName(name)
+					.build();
 
 			assertThat(vectorStore).hasFieldOrPropertyWithValue("collectionName", name);
 		}
@@ -212,10 +212,10 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void builderStateShouldBeIndependentBetweenInstances() {
 		QdrantVectorStore.Builder builder1 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("collection1");
+				.collectionName("collection1");
 
 		QdrantVectorStore.Builder builder2 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("collection2");
+				.collectionName("collection2");
 
 		QdrantVectorStore vectorStore1 = builder1.build();
 		QdrantVectorStore vectorStore2 = builder2.build();
@@ -249,8 +249,8 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void builderShouldCreateImmutableConfiguration() {
 		QdrantVectorStore.Builder builder = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("test_collection")
-			.initializeSchema(true);
+				.collectionName("test_collection")
+				.initializeSchema(true);
 
 		QdrantVectorStore vectorStore1 = builder.build();
 
@@ -270,8 +270,8 @@ class QdrantVectorStoreBuilderTests {
 	@Test
 	void builderShouldHandleNullQdrantClientCorrectly() {
 		assertThatThrownBy(() -> QdrantVectorStore.builder(null, this.embeddingModel))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("QdrantClient must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("QdrantClient must not be null");
 	}
 
 	@Test
@@ -283,7 +283,7 @@ class QdrantVectorStoreBuilderTests {
 
 		// Should fail when trying to build with invalid configuration set later
 		assertThatThrownBy(() -> builder.collectionName("").build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("collectionName must not be empty");
+				.hasMessage("collectionName must not be empty");
 	}
 
 	@Test
@@ -293,10 +293,10 @@ class QdrantVectorStoreBuilderTests {
 		TokenCountBatchingStrategy strategy3 = new TokenCountBatchingStrategy();
 
 		QdrantVectorStore vectorStore = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.batchingStrategy(strategy1)
-			.batchingStrategy(strategy2)
-			.batchingStrategy(strategy3)
-			.build();
+				.batchingStrategy(strategy1)
+				.batchingStrategy(strategy2)
+				.batchingStrategy(strategy3)
+				.build();
 
 		assertThat(vectorStore).hasFieldOrPropertyWithValue("batchingStrategy", strategy3);
 	}
@@ -305,20 +305,20 @@ class QdrantVectorStoreBuilderTests {
 	void builderShouldHandleCollectionNameEdgeCases() {
 		// Test single character collection name
 		QdrantVectorStore vectorStore1 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("a")
-			.build();
+				.collectionName("a")
+				.build();
 		assertThat(vectorStore1).hasFieldOrPropertyWithValue("collectionName", "a");
 
 		// Test collection name with numbers only
 		QdrantVectorStore vectorStore2 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("12345")
-			.build();
+				.collectionName("12345")
+				.build();
 		assertThat(vectorStore2).hasFieldOrPropertyWithValue("collectionName", "12345");
 
 		// Test collection name starting with number
 		QdrantVectorStore vectorStore3 = QdrantVectorStore.builder(this.qdrantClient, this.embeddingModel)
-			.collectionName("1collection")
-			.build();
+				.collectionName("1collection")
+				.build();
 		assertThat(vectorStore3).hasFieldOrPropertyWithValue("collectionName", "1collection");
 	}
 
@@ -328,8 +328,8 @@ class QdrantVectorStoreBuilderTests {
 
 		// Each method should return the builder for chaining
 		QdrantVectorStore.Builder result = builder.collectionName("test")
-			.initializeSchema(true)
-			.batchingStrategy(new TokenCountBatchingStrategy());
+				.initializeSchema(true)
+				.batchingStrategy(new TokenCountBatchingStrategy());
 
 		assertThat(result).isSameAs(builder);
 	}
@@ -340,10 +340,10 @@ class QdrantVectorStoreBuilderTests {
 
 		// Call configuration methods multiple times in different orders
 		builder.initializeSchema(true)
-			.collectionName("first")
-			.initializeSchema(false)
-			.collectionName("second")
-			.initializeSchema(true);
+				.collectionName("first")
+				.initializeSchema(false)
+				.collectionName("second")
+				.initializeSchema(true);
 
 		QdrantVectorStore vectorStore = builder.build();
 

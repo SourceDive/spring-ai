@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
@@ -28,8 +24,6 @@ import io.modelcontextprotocol.spec.McpClientTransport;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.annotations.McpClientAnnotationScannerAutoConfiguration;
 import org.springframework.ai.mcp.client.common.autoconfigure.configurer.McpSyncClientConfigurer;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpClientCommonProperties;
@@ -39,6 +33,11 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -87,12 +86,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class McpClientAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpToolCallbackAutoConfiguration.class,
-				McpClientAutoConfiguration.class, McpClientAnnotationScannerAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpToolCallbackAutoConfiguration.class,
+					McpClientAutoConfiguration.class, McpClientAnnotationScannerAutoConfiguration.class));
 
 	/**
 	 * Tests the default MCP client auto-configuration.
-	 *
+	 * <p>
 	 * Note: We use 'spring.ai.mcp.client.initialized=false' to prevent the
 	 * auto-configuration from calling client.initialize() explicitly, which would cause a
 	 * 20-second timeout waiting for real MCP protocol communication. This allows us to
@@ -102,38 +101,38 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void defaultConfiguration() {
 		this.contextRunner.withUserConfiguration(TestTransportConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.initialized=false")
-			.run(context -> {
-				List<McpSyncClient> clients = context.getBean("mcpSyncClients", List.class);
-				assertThat(clients).hasSize(1);
+				.withPropertyValues("spring.ai.mcp.client.initialized=false")
+				.run(context -> {
+					List<McpSyncClient> clients = context.getBean("mcpSyncClients", List.class);
+					assertThat(clients).hasSize(1);
 
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.getName()).isEqualTo("spring-ai-mcp-client");
-				assertThat(properties.getVersion()).isEqualTo("1.0.0");
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.SYNC);
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(20));
-				assertThat(properties.isInitialized()).isFalse();
-			});
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.getName()).isEqualTo("spring-ai-mcp-client");
+					assertThat(properties.getVersion()).isEqualTo("1.0.0");
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.SYNC);
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(20));
+					assertThat(properties.isInitialized()).isFalse();
+				});
 	}
 
 	@Test
 	void asyncConfiguration() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.type=ASYNC", "spring.ai.mcp.client.name=test-client",
-					"spring.ai.mcp.client.version=2.0.0", "spring.ai.mcp.client.request-timeout=60s",
-					"spring.ai.mcp.client.initialized=false")
-			.withUserConfiguration(TestTransportConfiguration.class)
-			.run(context -> {
-				List<McpAsyncClient> clients = context.getBean("mcpAsyncClients", List.class);
-				assertThat(clients).hasSize(1);
+				.withPropertyValues("spring.ai.mcp.client.type=ASYNC", "spring.ai.mcp.client.name=test-client",
+						"spring.ai.mcp.client.version=2.0.0", "spring.ai.mcp.client.request-timeout=60s",
+						"spring.ai.mcp.client.initialized=false")
+				.withUserConfiguration(TestTransportConfiguration.class)
+				.run(context -> {
+					List<McpAsyncClient> clients = context.getBean("mcpAsyncClients", List.class);
+					assertThat(clients).hasSize(1);
 
-				McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
-				assertThat(properties.getName()).isEqualTo("test-client");
-				assertThat(properties.getVersion()).isEqualTo("2.0.0");
-				assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
-				assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(60));
-				assertThat(properties.isInitialized()).isFalse();
-			});
+					McpClientCommonProperties properties = context.getBean(McpClientCommonProperties.class);
+					assertThat(properties.getName()).isEqualTo("test-client");
+					assertThat(properties.getVersion()).isEqualTo("2.0.0");
+					assertThat(properties.getType()).isEqualTo(McpClientCommonProperties.ClientType.ASYNC);
+					assertThat(properties.getRequestTimeout()).isEqualTo(Duration.ofSeconds(60));
+					assertThat(properties.isInitialized()).isFalse();
+				});
 	}
 
 	@Test
@@ -147,7 +146,7 @@ public class McpClientAutoConfigurationIT {
 
 	/**
 	 * Tests MCP client auto-configuration with custom transport.
-	 *
+	 * <p>
 	 * Note: We use 'spring.ai.mcp.client.initialized=false' to prevent the
 	 * auto-configuration from calling client.initialize() explicitly, which would cause a
 	 * 20-second timeout waiting for real MCP protocol communication. This allows us to
@@ -157,17 +156,17 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void customTransportConfiguration() {
 		this.contextRunner.withUserConfiguration(CustomTransportConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.initialized=false")
-			.run(context -> {
-				List<NamedClientMcpTransport> transports = context.getBean("customTransports", List.class);
-				assertThat(transports).hasSize(1);
-				assertThat(transports.get(0).transport()).isInstanceOf(CustomClientTransport.class);
-			});
+				.withPropertyValues("spring.ai.mcp.client.initialized=false")
+				.run(context -> {
+					List<NamedClientMcpTransport> transports = context.getBean("customTransports", List.class);
+					assertThat(transports).hasSize(1);
+					assertThat(transports.get(0).transport()).isInstanceOf(CustomClientTransport.class);
+				});
 	}
 
 	/**
 	 * Tests MCP client auto-configuration with custom client customizers.
-	 *
+	 * <p>
 	 * Note: We use 'spring.ai.mcp.client.initialized=false' to prevent the
 	 * auto-configuration from calling client.initialize() explicitly, which would cause a
 	 * 20-second timeout waiting for real MCP protocol communication. This allows us to
@@ -177,23 +176,23 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void clientCustomization() {
 		this.contextRunner.withUserConfiguration(TestTransportConfiguration.class, CustomizerConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.initialized=false")
-			.run(context -> {
-				assertThat(context).hasSingleBean(McpSyncClientConfigurer.class);
-				List<McpSyncClient> clients = context.getBean("mcpSyncClients", List.class);
-				assertThat(clients).hasSize(1);
-			});
+				.withPropertyValues("spring.ai.mcp.client.initialized=false")
+				.run(context -> {
+					assertThat(context).hasSingleBean(McpSyncClientConfigurer.class);
+					List<McpSyncClient> clients = context.getBean("mcpSyncClients", List.class);
+					assertThat(clients).hasSize(1);
+				});
 	}
 
 	/**
 	 * Tests that MCP client beans are created when using initialized=false.
-	 *
+	 * <p>
 	 * Note: The toolCallbacks bean doesn't exist with initialized=false because it
 	 * depends on fully initialized MCP clients. The mcpSyncClients bean does exist even
 	 * with initialized=false, which tests the actual auto-configuration behavior we care
 	 * about - that MCP client beans are created without requiring full protocol
 	 * initialization.
-	 *
+	 * <p>
 	 * We use 'spring.ai.mcp.client.initialized=false' to prevent the auto-configuration
 	 * from calling client.initialize() explicitly, which would cause a 20-second timeout
 	 * waiting for real MCP protocol communication. This allows us to test bean creation
@@ -202,12 +201,12 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void toolCallbacksCreation() {
 		this.contextRunner.withUserConfiguration(TestTransportConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.initialized=false")
-			.run(context -> {
-				assertThat(context).hasBean("mcpSyncClients");
-				List<?> clients = context.getBean("mcpSyncClients", List.class);
-				assertThat(clients).isNotNull();
-			});
+				.withPropertyValues("spring.ai.mcp.client.initialized=false")
+				.run(context -> {
+					assertThat(context).hasBean("mcpSyncClients");
+					List<?> clients = context.getBean("mcpSyncClients", List.class);
+					assertThat(clients).isNotNull();
+				});
 	}
 
 	@Test
@@ -219,18 +218,18 @@ public class McpClientAutoConfigurationIT {
 		});
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.annotation-scanner.enabled=false",
-					"spring.ai.mcp.client.type=ASYNC")
-			.run(context -> {
-				assertThat(context).hasBean("mcpAsyncClients");
-				List<?> clients = context.getBean("mcpAsyncClients", List.class);
-				assertThat(clients).isNotNull();
-			});
+				.withPropertyValues("spring.ai.mcp.client.annotation-scanner.enabled=false",
+						"spring.ai.mcp.client.type=ASYNC")
+				.run(context -> {
+					assertThat(context).hasBean("mcpAsyncClients");
+					List<?> clients = context.getBean("mcpAsyncClients", List.class);
+					assertThat(clients).isNotNull();
+				});
 	}
 
 	/**
 	 * Tests that closeable wrapper beans are created properly.
-	 *
+	 * <p>
 	 * Note: We use 'spring.ai.mcp.client.initialized=false' to prevent the
 	 * auto-configuration from calling client.initialize() explicitly, which would cause a
 	 * 20-second timeout waiting for real MCP protocol communication. This allows us to
@@ -240,9 +239,9 @@ public class McpClientAutoConfigurationIT {
 	@Test
 	void closeableWrappersCreation() {
 		this.contextRunner.withUserConfiguration(TestTransportConfiguration.class)
-			.withPropertyValues("spring.ai.mcp.client.initialized=false")
-			.run(context -> assertThat(context)
-				.hasSingleBean(McpClientAutoConfiguration.CloseableMcpSyncClients.class));
+				.withPropertyValues("spring.ai.mcp.client.initialized=false")
+				.run(context -> assertThat(context)
+						.hasSingleBean(McpClientAutoConfiguration.CloseableMcpSyncClients.class));
 	}
 
 	@Configuration
@@ -281,7 +280,8 @@ public class McpClientAutoConfigurationIT {
 		@Bean
 		McpClientCustomizer<McpClient.SyncSpec> testCustomizer() {
 			return (name, spec) -> {
-				/* no-op */ };
+				/* no-op */
+			};
 		}
 
 	}

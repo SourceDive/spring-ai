@@ -16,30 +16,23 @@
 
 package org.springframework.ai.mcp.annotation.method.prompt;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpError;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
-import io.modelcontextprotocol.spec.McpSchema.Prompt;
-import io.modelcontextprotocol.spec.McpSchema.PromptArgument;
-import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpArg;
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,11 +58,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("failing-prompt", "A prompt that throws an exception");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -79,7 +72,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		// The new error handling should throw McpError instead of
 		// McpPromptMethodException
 		assertThatThrownBy(() -> callback.apply(exchange, request)).isInstanceOf(McpError.class)
-			.hasMessageContaining("Error invoking prompt method");
+				.hasMessageContaining("Error invoking prompt method");
 	}
 
 	@Test
@@ -90,11 +83,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("greeting", "A simple greeting prompt");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -120,11 +113,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("exchange-greeting", "A greeting prompt with exchange");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -149,11 +142,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("arguments-greeting", "A greeting prompt with arguments");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -178,11 +171,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("individual-args", "A prompt with individual arguments");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -209,11 +202,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mixed-args", "A prompt with mixed argument types");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -229,7 +222,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		PromptMessage message = result.messages().get(0);
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		assertThat(((TextContent) message.content()).text())
-			.isEqualTo("Hello John, you are 30 years old (with exchange)");
+				.isEqualTo("Hello John, you are 30 years old (with exchange)");
 	}
 
 	@Test
@@ -240,11 +233,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("list-messages", "A prompt returning a list of messages");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -272,11 +265,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("string-prompt", "A prompt returning a string");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -300,11 +293,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("single-message", "A prompt returning a single message");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -329,11 +322,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("string-list", "A prompt returning a list of strings");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -368,8 +361,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return either GetPromptResult, List<PromptMessage>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must return either GetPromptResult, List<PromptMessage>");
 	}
 
 	@Test
@@ -382,8 +375,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one exchange parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one exchange parameter");
 	}
 
 	@Test
@@ -396,8 +389,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one GetPromptRequest parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one GetPromptRequest parameter");
 	}
 
 	@Test
@@ -409,8 +402,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one Map parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one Map parameter");
 	}
 
 	@Test
@@ -421,16 +414,16 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("greeting", "A simple greeting prompt");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 
 		assertThatThrownBy(() -> callback.apply(exchange, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Request must not be null");
+				.hasMessageContaining("Request must not be null");
 	}
 
 	@Test
@@ -441,11 +434,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("progress-token", "A prompt with progress token");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -474,11 +467,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mixed-with-progress", "A prompt with mixed args and progress token");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -494,7 +487,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		// Since GetPromptRequest doesn't have progressToken, it should be null
 		assertThat(((TextContent) message.content()).text())
-			.isEqualTo("Hello John from mixed-with-progress (no token)");
+				.isEqualTo("Hello John from mixed-with-progress (no token)");
 	}
 
 	@Test
@@ -507,8 +500,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one @McpProgressToken parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one @McpProgressToken parameter");
 	}
 
 	@Test
@@ -519,11 +512,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("meta-prompt", "A prompt with meta parameter");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -541,7 +534,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		PromptMessage message = result.messages().get(0);
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		assertThat(((TextContent) message.content()).text())
-			.contains("Hello John, Meta: {userId=user123, sessionId=session456}");
+				.contains("Hello John, Meta: {userId=user123, sessionId=session456}");
 	}
 
 	@Test
@@ -552,11 +545,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("meta-prompt", "A prompt with meta parameter");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -584,11 +577,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("mixed-with-meta", "A prompt with mixed args and meta");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -605,7 +598,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		PromptMessage message = result.messages().get(0);
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		assertThat(((TextContent) message.content()).text())
-			.isEqualTo("Hello John from mixed-with-meta, Meta: {userId=user123}");
+				.isEqualTo("Hello John from mixed-with-meta, Meta: {userId=user123}");
 	}
 
 	@Test
@@ -617,8 +610,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one McpMeta parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one McpMeta parameter");
 	}
 
 	@Test
@@ -630,11 +623,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("sync-request-context-prompt", "A prompt with sync request context");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -649,7 +642,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		PromptMessage message = result.messages().get(0);
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		assertThat(((TextContent) message.content()).text())
-			.isEqualTo("Hello with sync context from sync-request-context-prompt");
+				.isEqualTo("Hello with sync context from sync-request-context-prompt");
 	}
 
 	@Test
@@ -661,11 +654,11 @@ public class SyncMcpPromptMethodCallbackTests {
 		Prompt prompt = createTestPrompt("sync-context-with-args", "A prompt with sync context and arguments");
 
 		BiFunction<McpSyncServerExchange, GetPromptRequest, GetPromptResult> callback = SyncMcpPromptMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt(prompt)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt(prompt)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		Map<String, Object> args = new HashMap<>();
@@ -680,7 +673,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		PromptMessage message = result.messages().get(0);
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		assertThat(((TextContent) message.content()).text())
-			.isEqualTo("Hello John with sync context from sync-context-with-args");
+				.isEqualTo("Hello John with sync context from sync-context-with-args");
 	}
 
 	@Test
@@ -693,8 +686,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one request context parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one request context parameter");
 	}
 
 	@Test
@@ -707,9 +700,9 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		assertThatThrownBy(
 				() -> SyncMcpPromptMethodCallback.builder().method(method).bean(provider).prompt(prompt).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Async complete methods should use McpAsyncRequestContext instead of McpSyncRequestContext parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Async complete methods should use McpAsyncRequestContext instead of McpSyncRequestContext parameter");
 	}
 
 	private static class TestPromptProvider {
@@ -728,7 +721,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		@McpPrompt(name = "exchange-greeting", description = "A greeting prompt with exchange")
 		public GetPromptResult getPromptWithExchange(McpSyncServerExchange exchange, GetPromptRequest request) {
 			return new GetPromptResult("Greeting with exchange", List
-				.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello with exchange from " + request.name()))));
+					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello with exchange from " + request.name()))));
 		}
 
 		@McpPrompt(name = "arguments-greeting", description = "A greeting prompt with arguments")
@@ -748,8 +741,8 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		@McpPrompt(name = "mixed-args", description = "A prompt with mixed argument types")
 		public GetPromptResult getPromptWithMixedArgs(McpSyncServerExchange exchange,
-				@McpArg(name = "name", description = "The user's name", required = true) String name,
-				@McpArg(name = "age", description = "The user's age", required = true) Integer age) {
+		                                              @McpArg(name = "name", description = "The user's name", required = true) String name,
+		                                              @McpArg(name = "age", description = "The user's age", required = true) Integer age) {
 			return new GetPromptResult("Mixed arguments prompt", List.of(new PromptMessage(Role.ASSISTANT,
 					new TextContent("Hello " + name + ", you are " + age + " years old (with exchange)"))));
 		}
@@ -781,7 +774,7 @@ public class SyncMcpPromptMethodCallbackTests {
 		}
 
 		public GetPromptResult duplicateExchangeParameters(McpSyncServerExchange exchange1,
-				McpSyncServerExchange exchange2) {
+		                                                   McpSyncServerExchange exchange2) {
 			return new GetPromptResult("Invalid", List.of());
 		}
 
@@ -795,7 +788,7 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		@McpPrompt(name = "progress-token", description = "A prompt with progress token")
 		public GetPromptResult getPromptWithProgressToken(@McpProgressToken String progressToken,
-				@McpArg(name = "name", description = "The user's name", required = true) String name) {
+		                                                  @McpArg(name = "name", description = "The user's name", required = true) String name) {
 			String tokenInfo = progressToken != null ? " (token: " + progressToken + ")" : " (no token)";
 			return new GetPromptResult("Progress token prompt",
 					List.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello " + name + tokenInfo))));
@@ -803,16 +796,16 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		@McpPrompt(name = "mixed-with-progress", description = "A prompt with mixed args and progress token")
 		public GetPromptResult getPromptWithMixedAndProgress(McpSyncServerExchange exchange,
-				@McpProgressToken String progressToken,
-				@McpArg(name = "name", description = "The user's name", required = true) String name,
-				GetPromptRequest request) {
+		                                                     @McpProgressToken String progressToken,
+		                                                     @McpArg(name = "name", description = "The user's name", required = true) String name,
+		                                                     GetPromptRequest request) {
 			String tokenInfo = progressToken != null ? " (token: " + progressToken + ")" : " (no token)";
 			return new GetPromptResult("Mixed with progress prompt", List.of(new PromptMessage(Role.ASSISTANT,
 					new TextContent("Hello " + name + " from " + request.name() + tokenInfo))));
 		}
 
 		public GetPromptResult duplicateProgressTokenParameters(@McpProgressToken String token1,
-				@McpProgressToken String token2) {
+		                                                        @McpProgressToken String token2) {
 			return new GetPromptResult("Invalid", List.of());
 		}
 
@@ -821,13 +814,13 @@ public class SyncMcpPromptMethodCallbackTests {
 				@McpArg(name = "name", description = "The user's name", required = true) String name, McpMeta meta) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return new GetPromptResult("Meta prompt", List
-				.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello " + name + ", Meta: " + metaInfo))));
+					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Hello " + name + ", Meta: " + metaInfo))));
 		}
 
 		@McpPrompt(name = "mixed-with-meta", description = "A prompt with mixed args and meta")
 		public GetPromptResult getPromptWithMixedAndMeta(McpSyncServerExchange exchange,
-				@McpArg(name = "name", description = "The user's name", required = true) String name, McpMeta meta,
-				GetPromptRequest request) {
+		                                                 @McpArg(name = "name", description = "The user's name", required = true) String name, McpMeta meta,
+		                                                 GetPromptRequest request) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return new GetPromptResult("Mixed with meta prompt", List.of(new PromptMessage(Role.ASSISTANT,
 					new TextContent("Hello " + name + " from " + request.name() + ", Meta: " + metaInfo))));
@@ -846,14 +839,14 @@ public class SyncMcpPromptMethodCallbackTests {
 
 		@McpPrompt(name = "sync-context-with-args", description = "A prompt with sync context and arguments")
 		public GetPromptResult getPromptWithSyncContextAndArgs(McpSyncRequestContext context,
-				@McpArg(name = "name", description = "The user's name", required = true) String name) {
+		                                                       @McpArg(name = "name", description = "The user's name", required = true) String name) {
 			GetPromptRequest request = (GetPromptRequest) context.request();
 			return new GetPromptResult("Sync context with args prompt", List.of(new PromptMessage(Role.ASSISTANT,
 					new TextContent("Hello " + name + " with sync context from " + request.name()))));
 		}
 
 		public GetPromptResult duplicateSyncRequestContextParameters(McpSyncRequestContext context1,
-				McpSyncRequestContext context2) {
+		                                                             McpSyncRequestContext context2) {
 			return new GetPromptResult("Invalid", List.of());
 		}
 

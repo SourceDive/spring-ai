@@ -17,11 +17,10 @@
 package org.springframework.ai.testcontainers.service.connection.qdrant;
 
 import org.jspecify.annotations.Nullable;
-import org.testcontainers.qdrant.QdrantContainer;
-
 import org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.qdrant.QdrantContainer;
 
 /**
  * @author Eddú Meléndez

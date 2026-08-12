@@ -104,6 +104,7 @@ public class ChatClientBuilderProperties {
 
 		/**
 		 * Whether to log the completion content in the observations.
+		 *
 		 * @since 1.1.0
 		 */
 		private boolean logCompletion = false;

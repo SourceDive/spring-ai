@@ -16,24 +16,12 @@
 
 package org.springframework.ai.vectorstore.neo4j;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
-import org.testcontainers.containers.Neo4jContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -48,6 +36,13 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.testcontainers.containers.Neo4jContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -67,7 +62,7 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 	static Neo4jContainer<?> neo4jContainer = new Neo4jContainer<>(Neo4jImage.DEFAULT_IMAGE).withRandomPassword();
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	List<Document> documents = List.of(
 			new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!",
@@ -80,7 +75,7 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 	@BeforeEach
 	void cleanDatabase() {
 		this.contextRunner
-			.run(context -> context.getBean(Driver.class).executableQuery("MATCH (n) DETACH DELETE n").execute());
+				.run(context -> context.getBean(Driver.class).executableQuery("MATCH (n) DETACH DELETE n").execute());
 	}
 
 	@Override
@@ -100,13 +95,13 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(3).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(3).build());
 
 			assertThat(results).hasSizeGreaterThanOrEqualTo(1);
 
 			// Verify at least one result contains "Great Depression" and has meta2
 			assertThat(results)
-				.anyMatch(doc -> doc.getText().contains("Great Depression") && doc.getMetadata().containsKey("meta2"));
+					.anyMatch(doc -> doc.getText().contains("Great Depression") && doc.getMetadata().containsKey("meta2"));
 
 			// Verify all results have distance metadata
 			assertThat(results).allMatch(doc -> doc.getMetadata().containsKey(DocumentMetadata.DISTANCE.value()));
@@ -115,7 +110,7 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 			assertThat(results2).isEmpty();
 		});
 	}
@@ -136,41 +131,41 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 			SearchRequest searchRequest = SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.build();
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.build();
 
 			List<Document> results = vectorStore.similaritySearch(searchRequest);
 
 			assertThat(results).hasSize(3);
 
 			results = vectorStore
-				.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'NL'").build());
+					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'NL'").build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore
-				.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country in ['NL']").build());
+					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country in ['NL']").build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore
-				.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country nin ['BG']").build());
+					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country nin ['BG']").build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore
-				.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country not in ['BG']").build());
+					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country not in ['BG']").build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 			results = vectorStore
-				.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'BG'").build());
+					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == 'BG'").build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
@@ -183,33 +178,33 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-				.filterExpression("(country == 'BG' && year == 2020) || (country == 'NL')")
-				.build());
+					.filterExpression("(country == 'BG' && year == 2020) || (country == 'NL')")
+					.build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.get(0).getId()).isIn(bgDocument.getId(), nlDocument.getId());
 			assertThat(results.get(1).getId()).isIn(bgDocument.getId(), nlDocument.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.from(searchRequest)
-				.filterExpression("NOT((country == 'BG' && year == 2020) || (country == 'NL'))")
-				.build());
+					.filterExpression("NOT((country == 'BG' && year == 2020) || (country == 'NL'))")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
 
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("The World")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("\"foo bar 1\" == 'bar.foo'")
-				.build());
+					.query("The World")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("\"foo bar 1\" == 'bar.foo'")
+					.build());
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
 
 			assertThatExceptionOfType(FilterExpressionTextParser.FilterExpressionParseException.class)
-				.isThrownBy(() -> vectorStore
-					.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == NL").build()))
-				.withMessageContaining("Line: 1:17, Error: no viable alternative at input 'NL'");
+					.isThrownBy(() -> vectorStore
+							.similaritySearch(SearchRequest.from(searchRequest).filterExpression("country == NL").build()))
+					.withMessageContaining("Line: 1:17, Error: no viable alternative at input 'NL'");
 		});
 	}
 
@@ -226,7 +221,7 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(List.of(document));
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -263,7 +258,7 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.add(this.documents);
 
 			List<Document> fullResult = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(5).similarityThresholdAll().build());
 
 			List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -288,27 +283,27 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 	@Test
 	void ensureVectorIndexGetsCreated() {
 		this.contextRunner.run(context -> assertThat(context.getBean(Driver.class)
-			.executableQuery(
-					"SHOW indexes yield name, type WHERE name = 'spring-ai-document-index' AND type = 'VECTOR' return count(*) > 0")
-			.execute()
-			.records()
-			.get(0) // get first record
-			.get(0)
-			.asBoolean()) // get returned result
-			.isTrue());
+				.executableQuery(
+						"SHOW indexes yield name, type WHERE name = 'spring-ai-document-index' AND type = 'VECTOR' return count(*) > 0")
+				.execute()
+				.records()
+				.get(0) // get first record
+				.get(0)
+				.asBoolean()) // get returned result
+				.isTrue());
 	}
 
 	@Test
 	void ensureIdIndexGetsCreated() {
 		this.contextRunner.run(context -> assertThat(context.getBean(Driver.class)
-			.executableQuery(
-					"SHOW indexes yield labelsOrTypes, properties, type WHERE any(x in labelsOrTypes where x = 'Document')  AND any(x in properties where x = 'id') AND type = 'RANGE' return count(*) > 0")
-			.execute()
-			.records()
-			.get(0) // get first record
-			.get(0)
-			.asBoolean()) // get returned result
-			.isTrue());
+				.executableQuery(
+						"SHOW indexes yield labelsOrTypes, properties, type WHERE any(x in labelsOrTypes where x = 'Document')  AND any(x in properties where x = 'id') AND type = 'RANGE' return count(*) > 0")
+				.execute()
+				.records()
+				.get(0) // get first record
+				.get(0)
+				.asBoolean()) // get returned result
+				.isTrue());
 	}
 
 	@Test
@@ -333,13 +328,13 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			vectorStore.delete(complexFilter);
 
 			var results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
+					.similaritySearch(SearchRequest.builder().query("Content").topK(5).similarityThresholdAll().build());
 
 			assertThat(results).hasSize(2);
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder("A", "B");
+					.containsExactlyInAnyOrder("A", "B");
 			assertThat(results.stream().map(doc -> doc.getMetadata().get("priority")).collect(Collectors.toList()))
-				.containsExactlyInAnyOrder(1L, 1L);
+					.containsExactlyInAnyOrder(1L, 1L);
 		});
 	}
 
@@ -361,9 +356,9 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			// Create VectorStore with custom database name (neo4j is the default
 			// database)
 			VectorStore vectorStore = Neo4jVectorStore.builder(driver, embeddingModel)
-				.databaseName("neo4j")
-				.initializeSchema(true)
-				.build();
+					.databaseName("neo4j")
+					.initializeSchema(true)
+					.build();
 
 			// Add documents using doAdd (which should respect the sessionConfig)
 			Document doc = new Document("Test content for custom database", Map.of("testKey", "testValue"));
@@ -373,16 +368,16 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			// This ensures the sessionConfig was used correctly
 			try (var session = driver.session(org.neo4j.driver.SessionConfig.forDatabase("neo4j"))) {
 				var count = session
-					.run("MATCH (n:Document {id: $id}) RETURN count(n) as count", Map.of("id", doc.getId()))
-					.single()
-					.get("count")
-					.asLong();
+						.run("MATCH (n:Document {id: $id}) RETURN count(n) as count", Map.of("id", doc.getId()))
+						.single()
+						.get("count")
+						.asLong();
 				assertThat(count).isEqualTo(1);
 			}
 
 			// Verify through the VectorStore API as well
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Test content").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Test content").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getId()).isEqualTo(doc.getId());
@@ -403,9 +398,9 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			// Create VectorStore with custom SessionConfig
 			var sessionConfig = org.neo4j.driver.SessionConfig.forDatabase("neo4j");
 			VectorStore vectorStore = Neo4jVectorStore.builder(driver, embeddingModel)
-				.sessionConfig(sessionConfig)
-				.initializeSchema(true)
-				.build();
+					.sessionConfig(sessionConfig)
+					.initializeSchema(true)
+					.build();
 
 			// Add multiple documents to test batch processing
 			List<Document> docs = List.of(
@@ -418,11 +413,11 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 			// Verify documents were added to the correct database by querying directly
 			try (var session = driver.session(sessionConfig)) {
 				var count = session
-					.run("MATCH (n:Document) WHERE n.id IN $ids RETURN count(n) as count",
-							Map.of("ids", docs.stream().map(Document::getId).toList()))
-					.single()
-					.get("count")
-					.asLong();
+						.run("MATCH (n:Document) WHERE n.id IN $ids RETURN count(n) as count",
+								Map.of("ids", docs.stream().map(Document::getId).toList()))
+						.single()
+						.get("count")
+						.asLong();
 				assertThat(count).isEqualTo(3);
 			}
 
@@ -432,15 +427,15 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 
 			assertThat(results).hasSize(3);
 			assertThat(results.stream().map(Document::getId).toList())
-				.containsExactlyInAnyOrderElementsOf(docs.stream().map(Document::getId).toList());
+					.containsExactlyInAnyOrderElementsOf(docs.stream().map(Document::getId).toList());
 
 			// Verify we can search with filters
 			results = vectorStore.similaritySearch(SearchRequest.builder()
-				.query("document custom session")
-				.topK(5)
-				.similarityThresholdAll()
-				.filterExpression("index == 2")
-				.build());
+					.query("document custom session")
+					.topK(5)
+					.similarityThresholdAll()
+					.filterExpression("index == 2")
+					.build());
 
 			assertThat(results).hasSize(1);
 			assertThat(results.get(0).getMetadata()).containsEntry("index", 2L);
@@ -454,13 +449,13 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 	void vectorIndexDimensionsDefaultAndOverwriteWorks() {
 		this.contextRunner.run(context -> {
 			var result = context.getBean(Driver.class)
-				.executableQuery(
-						"SHOW VECTOR INDEXES yield name, options return name, options['indexConfig']['vector.dimensions'] as dimensions")
-				.execute()
-				.records()
-				.stream()
-				.map(r -> r.get("name").asString() + r.get("dimensions").asInt())
-				.toList();
+					.executableQuery(
+							"SHOW VECTOR INDEXES yield name, options return name, options['indexConfig']['vector.dimensions'] as dimensions")
+					.execute()
+					.records()
+					.stream()
+					.map(r -> r.get("name").asString() + r.get("dimensions").asInt())
+					.toList();
 			assertThat(result).containsExactlyInAnyOrder("secondIndex123", "spring-ai-document-index1536");
 		});
 	}
@@ -479,11 +474,11 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 		public VectorStore vectorStoreWithCustomDimension(Driver driver, EmbeddingModel embeddingModel) {
 
 			return Neo4jVectorStore.builder(driver, embeddingModel)
-				.initializeSchema(true)
-				.indexName("secondIndex")
-				.embeddingProperty("somethingElse")
-				.embeddingDimension(123)
-				.build();
+					.initializeSchema(true)
+					.indexName("secondIndex")
+					.embeddingProperty("somethingElse")
+					.embeddingDimension(123)
+					.build();
 		}
 
 		@Bean
@@ -495,9 +490,9 @@ class Neo4jVectorStoreIT extends BaseVectorStoreTests {
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

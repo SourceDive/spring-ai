@@ -16,24 +16,19 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.redis.testcontainers.RedisContainer;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import redis.clients.jedis.RedisClient;
 
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.Bean;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +45,7 @@ class RedisChatMemoryAdvancedQueryIT {
 	static RedisContainer redisContainer = new RedisContainer("redis/redis-stack:latest");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	@Test
 	void shouldFindMessagesByType_singleConversation() {
@@ -72,7 +67,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding by USER type
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> userMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.USER, 10);
+					.findByType(MessageType.USER, 10);
 
 			assertThat(userMessages).hasSize(2);
 			assertThat(userMessages.get(0).message().getText()).isEqualTo("User message 1");
@@ -82,7 +77,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding by SYSTEM type
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> systemMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.SYSTEM, 10);
+					.findByType(MessageType.SYSTEM, 10);
 
 			assertThat(systemMessages).hasSize(2);
 			assertThat(systemMessages.get(0).message().getText()).isEqualTo("System message 1");
@@ -90,7 +85,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding by ASSISTANT type
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> assistantMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.ASSISTANT, 10);
+					.findByType(MessageType.ASSISTANT, 10);
 
 			assertThat(assistantMessages).hasSize(2);
 			assertThat(assistantMessages.get(0).message().getText()).isEqualTo("Assistant message 1");
@@ -98,7 +93,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding by TOOL type (should be empty)
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> toolMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.TOOL, 10);
+					.findByType(MessageType.TOOL, 10);
 
 			assertThat(toolMessages).isEmpty();
 		});
@@ -124,7 +119,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Find all USER messages across conversations
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> userMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.USER, 10);
+					.findByType(MessageType.USER, 10);
 
 			assertThat(userMessages).hasSize(3);
 
@@ -157,7 +152,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Retrieve with a limit of 3
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> messages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.USER, 3);
+					.findByType(MessageType.USER, 3);
 
 			// Verify only 3 messages are returned
 			assertThat(messages).hasSize(3);
@@ -182,7 +177,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Find TOOL type messages
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> toolMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.TOOL, 10);
+					.findByType(MessageType.TOOL, 10);
 
 			assertThat(toolMessages).hasSize(1);
 			assertThat(toolMessages.get(0).message()).isInstanceOf(ToolResponseMessage.class);
@@ -209,7 +204,7 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Search for system messages which don't exist
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> systemMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByType(MessageType.SYSTEM, 10);
+					.findByType(MessageType.SYSTEM, 10);
 
 			// Verify an empty list is returned (not null)
 			assertThat(systemMessages).isNotNull().isEmpty();
@@ -232,16 +227,16 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Search for messages containing "programming"
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> programmingMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("programming", 10);
+					.findByContent("programming", 10);
 
 			assertThat(programmingMessages).hasSize(4);
 			// Verify all messages contain "programming"
 			programmingMessages
-				.forEach(msg -> assertThat(msg.message().getText().toLowerCase()).contains("programming"));
+					.forEach(msg -> assertThat(msg.message().getText().toLowerCase()).contains("programming"));
 
 			// Search for messages containing "Java"
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> javaMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("Java", 10);
+					.findByContent("Java", 10);
 
 			assertThat(javaMessages).hasSize(2); // Only exact case matches
 			// Verify messages are from conversation 1 only
@@ -249,14 +244,14 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Search for messages containing "Spring"
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> springMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("Spring", 10);
+					.findByContent("Spring", 10);
 
 			assertThat(springMessages).hasSize(1);
 			assertThat(springMessages.get(0).message().getText()).contains("Spring Boot");
 
 			// Test with limit
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> limitedMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("programming", 2);
+					.findByContent("programming", 2);
 
 			assertThat(limitedMessages).hasSize(2);
 
@@ -296,31 +291,31 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding messages in full time range across all conversations
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> allMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByTimeRange(null, java.time.Instant.ofEpochMilli(startTime),
-						java.time.Instant.ofEpochMilli(endTime), 10);
+					.findByTimeRange(null, java.time.Instant.ofEpochMilli(startTime),
+							java.time.Instant.ofEpochMilli(endTime), 10);
 
 			assertThat(allMessages).hasSize(4);
 
 			// Test finding messages in first half of time range
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> firstHalfMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByTimeRange(null, java.time.Instant.ofEpochMilli(startTime),
-						java.time.Instant.ofEpochMilli(midTime), 10);
+					.findByTimeRange(null, java.time.Instant.ofEpochMilli(startTime),
+							java.time.Instant.ofEpochMilli(midTime), 10);
 
 			assertThat(firstHalfMessages).hasSize(2);
 			assertThat(firstHalfMessages.stream().allMatch(m -> m.conversationId().equals(conversationId1))).isTrue();
 
 			// Test finding messages in specific conversation within time range
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> conv2Messages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByTimeRange(conversationId2, java.time.Instant.ofEpochMilli(startTime),
-						java.time.Instant.ofEpochMilli(endTime), 10);
+					.findByTimeRange(conversationId2, java.time.Instant.ofEpochMilli(startTime),
+							java.time.Instant.ofEpochMilli(endTime), 10);
 
 			assertThat(conv2Messages).hasSize(2);
 			assertThat(conv2Messages.stream().allMatch(m -> m.conversationId().equals(conversationId2))).isTrue();
 
 			// Test with limit
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> limitedTimeMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByTimeRange(null, java.time.Instant.ofEpochMilli(startTime),
-						java.time.Instant.ofEpochMilli(endTime), 2);
+					.findByTimeRange(null, java.time.Instant.ofEpochMilli(startTime),
+							java.time.Instant.ofEpochMilli(endTime), 2);
 
 			assertThat(limitedTimeMessages).hasSize(2);
 
@@ -362,34 +357,34 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding by string metadata
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> highPriorityMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByMetadata("priority", "high", 10);
+					.findByMetadata("priority", "high", 10);
 
 			assertThat(highPriorityMessages).hasSize(1);
 			assertThat(highPriorityMessages.get(0).message().getText()).isEqualTo("User message with metadata");
 
 			// Test finding by category
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> questionMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByMetadata("category", "question", 10);
+					.findByMetadata("category", "question", 10);
 
 			assertThat(questionMessages).hasSize(2);
 
 			// Test finding by numeric metadata
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> highScoreMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByMetadata("score", 95, 10);
+					.findByMetadata("score", 95, 10);
 
 			assertThat(highScoreMessages).hasSize(1);
 			assertThat(highScoreMessages.get(0).message().getMetadata().get("score")).isEqualTo(95.0);
 
 			// Test finding by double metadata
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> confidentMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByMetadata("confidence", 0.95, 10);
+					.findByMetadata("confidence", 0.95, 10);
 
 			assertThat(confidentMessages).hasSize(1);
 			assertThat(confidentMessages.get(0).message().getMessageType()).isEqualTo(MessageType.ASSISTANT);
 
 			// Test with non-existent metadata
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> nonExistentMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByMetadata("nonexistent", "value", 10);
+					.findByMetadata("nonexistent", "value", 10);
 
 			assertThat(nonExistentMessages).isEmpty();
 
@@ -417,7 +412,7 @@ class RedisChatMemoryAdvancedQueryIT {
 			// Test custom query for USER messages containing "Redis"
 			String customQuery = "@type:USER @content:Redis";
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> redisUserMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.executeQuery(customQuery, 10);
+					.executeQuery(customQuery, 10);
 
 			assertThat(redisUserMessages).hasSize(1);
 			assertThat(redisUserMessages.get(0).message().getText()).contains("Redis");
@@ -429,7 +424,7 @@ class RedisChatMemoryAdvancedQueryIT {
 			String escapedConvId = conversationId1.replace("-", "\\-");
 			String convQuery = "@conversation_id:{" + escapedConvId + "}";
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> conv1Messages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.executeQuery(convQuery, 10);
+					.executeQuery(convQuery, 10);
 
 			assertThat(conv1Messages).hasSize(2);
 			assertThat(conv1Messages.stream().allMatch(m -> m.conversationId().equals(conversationId1))).isTrue();
@@ -437,13 +432,13 @@ class RedisChatMemoryAdvancedQueryIT {
 			// Test complex query combining type and content
 			String complexQuery = "(@type:USER | @type:ASSISTANT) @content:Redis";
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> complexResults = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.executeQuery(complexQuery, 10);
+					.executeQuery(complexQuery, 10);
 
 			assertThat(complexResults).hasSize(2);
 
 			// Test with limit
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> limitedResults = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.executeQuery("*", 2);
+					.executeQuery("*", 2);
 
 			assertThat(limitedResults).hasSize(2);
 
@@ -466,14 +461,14 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test finding content with special characters
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> plusMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("C++", 10);
+					.findByContent("C++", 10);
 
 			assertThat(plusMessages).hasSize(1);
 			assertThat(plusMessages.get(0).message().getText()).contains("C++");
 
 			// Test finding content with colon - search for "answer is" instead
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> colonMessages = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("answer is", 10);
+					.findByContent("answer is", 10);
 
 			assertThat(colonMessages).hasSize(1);
 
@@ -493,25 +488,25 @@ class RedisChatMemoryAdvancedQueryIT {
 
 			// Test content that doesn't exist
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> noContentMatch = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByContent("nonexistent", 10);
+					.findByContent("nonexistent", 10);
 			assertThat(noContentMatch).isEmpty();
 
 			// Test time range with no messages
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> noTimeMatch = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByTimeRange(conversationId, java.time.Instant.now().plusSeconds(3600), // Future
-																							// time
-						java.time.Instant.now().plusSeconds(7200), // Even more future
-						10);
+					.findByTimeRange(conversationId, java.time.Instant.now().plusSeconds(3600), // Future
+							// time
+							java.time.Instant.now().plusSeconds(7200), // Even more future
+							10);
 			assertThat(noTimeMatch).isEmpty();
 
 			// Test metadata that doesn't exist
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> noMetadataMatch = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.findByMetadata("nonexistent", "value", 10);
+					.findByMetadata("nonexistent", "value", 10);
 			assertThat(noMetadataMatch).isEmpty();
 
 			// Test custom query with no matches
 			List<AdvancedRedisChatMemoryRepository.MessageWithConversation> noQueryMatch = ((AdvancedRedisChatMemoryRepository) chatMemory)
-				.executeQuery("@type:FUNCTION", 10);
+					.executeQuery("@type:FUNCTION", 10);
 			assertThat(noQueryMatch).isEmpty();
 
 			// Clean up
@@ -534,12 +529,12 @@ class RedisChatMemoryAdvancedQueryIT {
 			String uniqueIndexName = "test-adv-app-" + System.currentTimeMillis();
 
 			return RedisChatMemoryRepository.builder()
-				.jedisClient(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build())
-				.indexName(uniqueIndexName)
-				.metadataFields(metadataFields)
-				.build();
+					.jedisClient(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build())
+					.indexName(uniqueIndexName)
+					.metadataFields(metadataFields)
+					.build();
 		}
 
 	}

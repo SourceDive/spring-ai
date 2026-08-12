@@ -16,18 +16,13 @@
 
 package org.springframework.ai.vectorstore.s3;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
-
+import org.springframework.ai.vectorstore.filter.Filter;
 import software.amazon.awssdk.core.SdkNumber;
 import software.amazon.awssdk.core.document.Document;
 
-import org.springframework.ai.vectorstore.filter.Filter;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Default implementation of {@link S3VectorFilterExpressionConverter}
@@ -71,7 +66,7 @@ public class S3VectorFilterSearchExpressionConverter implements S3VectorFilterEx
 			case LTE:
 			case LT:
 				return Document.fromMap(Map.of(((Filter.Key) expression.left()).key(), Document
-					.fromMap(Map.of(operationType, wrapValue(Objects.requireNonNull(expression.right()))))));
+						.fromMap(Map.of(operationType, wrapValue(Objects.requireNonNull(expression.right()))))));
 
 			case IN:
 			case NIN:
@@ -93,15 +88,12 @@ public class S3VectorFilterSearchExpressionConverter implements S3VectorFilterEx
 	private Document wrapValue(Filter.Operand operand) {
 		if (operand instanceof Filter.Value) {
 			return convertToDocument(((Filter.Value) operand).value());
-		}
-		else if (operand instanceof Filter.Key) {
+		} else if (operand instanceof Filter.Key) {
 			return Document.fromString(((Filter.Key) operand).key());
-		}
-		else if (operand instanceof Filter.Group) {
+		} else if (operand instanceof Filter.Group) {
 			Filter.Expression expression = ((Filter.Group) operand).content();
 			return convertExpression(expression);
-		}
-		else {
+		} else {
 			return convertExpression((Filter.Expression) operand);
 		}
 	}

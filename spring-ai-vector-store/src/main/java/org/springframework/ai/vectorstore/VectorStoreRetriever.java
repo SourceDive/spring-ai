@@ -16,9 +16,9 @@
 
 package org.springframework.ai.vectorstore;
 
-import java.util.List;
-
 import org.springframework.ai.document.Document;
+
+import java.util.List;
 
 /**
  * A functional interface that provides read-only access to vector store retrieval
@@ -38,8 +38,9 @@ public interface VectorStoreRetriever {
 	/**
 	 * Retrieves documents by query embedding similarity and metadata filters to retrieve
 	 * exactly the number of nearest-neighbor results that match the request criteria.
+	 *
 	 * @param request Search request for set search parameters, such as the query text,
-	 * topK, similarity threshold and metadata filter expressions.
+	 *                topK, similarity threshold and metadata filter expressions.
 	 * @return Returns documents that match the query request conditions.
 	 */
 	List<Document> similaritySearch(SearchRequest request);
@@ -47,6 +48,7 @@ public interface VectorStoreRetriever {
 	/**
 	 * Retrieves documents by query embedding similarity using the default
 	 * {@link SearchRequest}'s search criteria.
+	 *
 	 * @param query Text to use for embedding similarity comparison.
 	 * @return Returns a list of documents that have embeddings similar to the query text
 	 * embedding.

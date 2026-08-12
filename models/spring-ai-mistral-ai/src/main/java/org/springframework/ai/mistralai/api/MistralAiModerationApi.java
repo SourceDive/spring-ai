@@ -16,12 +16,9 @@
 
 package org.springframework.ai.mistralai.api;
 
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClient;
+
+import java.util.function.Consumer;
 
 /**
  * Mistral AI Moderation API.
@@ -44,7 +43,7 @@ public class MistralAiModerationApi {
 	private final RestClient restClient;
 
 	public MistralAiModerationApi(String baseUrl, String apiKey, RestClient.Builder restClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                              ResponseErrorHandler responseErrorHandler) {
 
 		Consumer<HttpHeaders> jsonContentHeaders = headers -> {
 			headers.setBearerAuth(apiKey);
@@ -52,10 +51,10 @@ public class MistralAiModerationApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 	}
 
 	public ResponseEntity<MistralAiModerationResponse> moderate(MistralAiModerationRequest mistralAiModerationRequest) {
@@ -64,10 +63,10 @@ public class MistralAiModerationApi {
 		Assert.notNull(mistralAiModerationRequest.model(), "Model cannot be null.");
 
 		return this.restClient.post()
-			.uri("v1/moderations")
-			.body(mistralAiModerationRequest)
-			.retrieve()
-			.toEntity(MistralAiModerationResponse.class);
+				.uri("v1/moderations")
+				.body(mistralAiModerationRequest)
+				.retrieve()
+				.toEntity(MistralAiModerationResponse.class);
 	}
 
 	public static Builder builder() {

@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 /**
  * Configuration options for the ChatClient request.
- *
+ * <p>
  * Preset advisors parameters that can be passed as configuration options to the Advisor
  * context.
  *
@@ -54,7 +54,7 @@ public final class AdvisorParams {
 	 * {@link ChatClient.EntityParamSpec#useProviderStructuredOutput()}.
 	 */
 	public static final Consumer<ChatClient.AdvisorSpec> ENABLE_NATIVE_STRUCTURED_OUTPUT = a -> a
-		.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey(), true);
+			.param(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey(), true);
 
 	/**
 	 * Controls whether a

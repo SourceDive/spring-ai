@@ -16,20 +16,19 @@
 
 package org.springframework.ai.rag.generation.augmentation;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.util.PromptAssert;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Augments the user query with contextual data from the content of the provided
@@ -80,8 +79,8 @@ public final class ContextualQueryAugmenter implements QueryAugmenter {
 	 * Default document formatter that just joins document text with newlines
 	 */
 	private static final Function<List<Document>, String> DEFAULT_DOCUMENT_FORMATTER = documents -> documents.stream()
-		.map(Document::getText)
-		.collect(Collectors.joining(System.lineSeparator()));
+			.map(Document::getText)
+			.collect(Collectors.joining(System.lineSeparator()));
 
 	private final PromptTemplate promptTemplate;
 
@@ -92,8 +91,8 @@ public final class ContextualQueryAugmenter implements QueryAugmenter {
 	private final Function<List<Document>, String> documentFormatter;
 
 	public ContextualQueryAugmenter(@Nullable PromptTemplate promptTemplate,
-			@Nullable PromptTemplate emptyContextPromptTemplate, @Nullable Boolean allowEmptyContext,
-			@Nullable Function<List<Document>, String> documentFormatter) {
+	                                @Nullable PromptTemplate emptyContextPromptTemplate, @Nullable Boolean allowEmptyContext,
+	                                @Nullable Function<List<Document>, String> documentFormatter) {
 		this.promptTemplate = promptTemplate != null ? promptTemplate : DEFAULT_PROMPT_TEMPLATE;
 		this.emptyContextPromptTemplate = emptyContextPromptTemplate != null ? emptyContextPromptTemplate
 				: DEFAULT_EMPTY_CONTEXT_PROMPT_TEMPLATE;

@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.resource;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import org.springframework.ai.mcp.annotation.McpResourceListChanged;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Consumer;
 
-import io.modelcontextprotocol.spec.McpSchema;
-
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
-
 /**
  * Class for creating Consumer callbacks around resource list changed consumer methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with
  * {@link McpResourceListChanged} into callback functions that can be used to handle
  * resource list change notifications. It supports methods with a single
@@ -45,10 +44,11 @@ public final class SyncMcpResourceListChangedMethodCallback extends AbstractMcpR
 	 * Accept the resource list change notification and process it.
 	 * <p>
 	 * This method builds the arguments for the method call and invokes the method.
+	 *
 	 * @param updatedResources The updated list of resources, must not be null
 	 * @throws McpResourceListChangedConsumerMethodException if there is an error invoking
-	 * the resource list changed consumer method
-	 * @throws IllegalArgumentException if the updatedResources is null
+	 *                                                       the resource list changed consumer method
+	 * @throws IllegalArgumentException                      if the updatedResources is null
 	 */
 	@Override
 	public void accept(List<McpSchema.Resource> updatedResources) {
@@ -63,8 +63,7 @@ public final class SyncMcpResourceListChangedMethodCallback extends AbstractMcpR
 			// Invoke the method
 			this.method.setAccessible(true);
 			this.method.invoke(this.bean, args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new McpResourceListChangedConsumerMethodException(
 					"Error invoking resource list changed consumer method: " + this.method.getName(), e);
 		}
@@ -73,6 +72,7 @@ public final class SyncMcpResourceListChangedMethodCallback extends AbstractMcpR
 	/**
 	 * Validates that the method return type is compatible with the resource list changed
 	 * consumer callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -88,6 +88,7 @@ public final class SyncMcpResourceListChangedMethodCallback extends AbstractMcpR
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -104,6 +105,7 @@ public final class SyncMcpResourceListChangedMethodCallback extends AbstractMcpR
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new SyncMcpResourceListChangedMethodCallback instance
 		 */
 		@Override

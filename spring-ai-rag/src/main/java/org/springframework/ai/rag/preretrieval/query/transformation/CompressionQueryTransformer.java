@@ -16,13 +16,9 @@
 
 package org.springframework.ai.rag.preretrieval.query.transformation;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
@@ -31,6 +27,9 @@ import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.util.PromptAssert;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Uses a large language model to compress a conversation history and a follow-up query
@@ -80,11 +79,11 @@ public class CompressionQueryTransformer implements QueryTransformer {
 		logger.debug("Compressing conversation history and follow-up query into a standalone query");
 
 		var compressedQueryText = this.chatClient.prompt()
-			.user(user -> user.text(this.promptTemplate.getTemplate())
-				.param("history", formatConversationHistory(query.history()))
-				.param("query", query.text()))
-			.call()
-			.content();
+				.user(user -> user.text(this.promptTemplate.getTemplate())
+						.param("history", formatConversationHistory(query.history()))
+						.param("query", query.text()))
+				.call()
+				.content();
 
 		if (!StringUtils.hasText(compressedQueryText)) {
 			logger.warn("Query compression result is null/empty. Returning the input query unchanged.");
@@ -100,10 +99,10 @@ public class CompressionQueryTransformer implements QueryTransformer {
 		}
 
 		return history.stream()
-			.filter(message -> message.getMessageType().equals(MessageType.USER)
-					|| message.getMessageType().equals(MessageType.ASSISTANT))
-			.map(message -> "%s: %s".formatted(message.getMessageType(), message.getText()))
-			.collect(Collectors.joining("\n"));
+				.filter(message -> message.getMessageType().equals(MessageType.USER)
+						|| message.getMessageType().equals(MessageType.ASSISTANT))
+				.map(message -> "%s: %s".formatted(message.getMessageType(), message.getText()))
+				.collect(Collectors.joining("\n"));
 	}
 
 	public static Builder builder() {

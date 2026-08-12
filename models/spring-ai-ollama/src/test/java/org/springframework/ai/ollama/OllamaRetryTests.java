@@ -16,15 +16,11 @@
 
 package org.springframework.ai.ollama;
 
-import java.time.Instant;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -40,12 +36,13 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.time.Instant;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for the OllamaRetryTests class.
@@ -74,10 +71,10 @@ class OllamaRetryTests {
 		this.retryTemplate.setRetryListener(this.retryListener);
 
 		this.chatModel = OllamaChatModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(OllamaChatOptions.builder().model(MODEL).temperature(0.9).build())
-			.retryTemplate(this.retryTemplate)
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(OllamaChatOptions.builder().model(MODEL).temperature(0.9).build())
+				.retryTemplate(this.retryTemplate)
+				.build();
 	}
 
 	@Test
@@ -88,9 +85,9 @@ class OllamaRetryTests {
 				null, null, null, null, null, null);
 
 		when(this.ollamaApi.chat(isA(OllamaApi.ChatRequest.class)))
-			.thenThrow(new TransientAiException("Transient Error 1"))
-			.thenThrow(new TransientAiException("Transient Error 2"))
-			.thenReturn(expectedChatResponse);
+				.thenThrow(new TransientAiException("Transient Error 1"))
+				.thenThrow(new TransientAiException("Transient Error 2"))
+				.thenReturn(expectedChatResponse);
 
 		var result = this.chatModel.call(new Prompt(promptText));
 
@@ -123,11 +120,11 @@ class OllamaRetryTests {
 		String promptText = "Invalid request";
 
 		when(this.ollamaApi.chat(isA(OllamaApi.ChatRequest.class)))
-			.thenThrow(new NonTransientAiException("Model not found"));
+				.thenThrow(new NonTransientAiException("Model not found"));
 
 		assertThatThrownBy(() -> this.chatModel.call(new Prompt(promptText)))
-			.isInstanceOf(NonTransientAiException.class)
-			.hasMessage("Model not found");
+				.isInstanceOf(NonTransientAiException.class)
+				.hasMessage("Model not found");
 
 		assertThat(this.retryListener.onSuccessRetryCount).isEqualTo(0);
 		assertThat(this.retryListener.onErrorRetryCount).isEqualTo(0);
@@ -141,13 +138,13 @@ class OllamaRetryTests {
 
 		var expectedChatResponse = new OllamaApi.ChatResponse("CHAT_COMPLETION_ID", Instant.now(),
 				OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-					.content("AI is artificial intelligence...")
-					.build(),
+						.content("AI is artificial intelligence...")
+						.build(),
 				null, true, null, null, null, null, null, null);
 
 		when(this.ollamaApi.chat(isA(OllamaApi.ChatRequest.class)))
-			.thenThrow(new TransientAiException("Temporary overload"))
-			.thenReturn(expectedChatResponse);
+				.thenThrow(new TransientAiException("Temporary overload"))
+				.thenReturn(expectedChatResponse);
 
 		var result = this.chatModel.call(prompt);
 
@@ -167,8 +164,8 @@ class OllamaRetryTests {
 				null, true, null, null, null, null, null, null);
 
 		when(this.ollamaApi.chat(isA(OllamaApi.ChatRequest.class)))
-			.thenThrow(new ResourceAccessException("Connection timeout"))
-			.thenReturn(expectedChatResponse);
+				.thenThrow(new ResourceAccessException("Connection timeout"))
+				.thenReturn(expectedChatResponse);
 
 		var result = this.chatModel.call(new Prompt(promptText, customOptions));
 
@@ -185,8 +182,8 @@ class OllamaRetryTests {
 				null, null, null, null);
 
 		when(this.ollamaApi.chat(isA(OllamaApi.ChatRequest.class)))
-			.thenThrow(new TransientAiException("Rate limit exceeded"))
-			.thenReturn(expectedChatResponse);
+				.thenThrow(new TransientAiException("Rate limit exceeded"))
+				.thenReturn(expectedChatResponse);
 
 		var result = this.chatModel.call(new Prompt(promptText));
 

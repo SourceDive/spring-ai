@@ -16,16 +16,15 @@
 
 package org.springframework.ai.chat.model;
 
-import java.util.Arrays;
-
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.Model;
+import reactor.core.publisher.Flux;
+
+import java.util.Arrays;
 
 public interface ChatModel extends Model<Prompt, ChatResponse>, StreamingChatModel {
 
@@ -46,6 +45,7 @@ public interface ChatModel extends Model<Prompt, ChatResponse>, StreamingChatMod
 
 	/**
 	 * Gets the chat options for this model.
+	 *
 	 * @return the chat options
 	 * @since 2.0.0
 	 */

@@ -47,9 +47,10 @@ public final class MilvusSearchRequest extends SearchRequest {
 	/**
 	 * Private constructor to initialize a MilvusSearchRequest using the base request and
 	 * builder.
+	 *
 	 * @param baseRequest The base {@link SearchRequest} containing standard search
-	 * fields.
-	 * @param builder The {@link MilvusBuilder} containing Milvus-specific parameters.
+	 *                    fields.
+	 * @param builder     The {@link MilvusBuilder} containing Milvus-specific parameters.
 	 */
 	private MilvusSearchRequest(SearchRequest baseRequest, MilvusBuilder builder) {
 		super(baseRequest); // Copy all standard fields
@@ -59,6 +60,7 @@ public final class MilvusSearchRequest extends SearchRequest {
 
 	/**
 	 * Retrieves the native Milvus filter expression.
+	 *
 	 * @return A string representing the native Milvus expression, or {@code null} if not
 	 * set.
 	 */
@@ -68,6 +70,7 @@ public final class MilvusSearchRequest extends SearchRequest {
 
 	/**
 	 * Retrieves the JSON-encoded search parameters.
+	 *
 	 * @return A JSON string containing search parameters, or {@code null} if not set.
 	 */
 	public @Nullable String getSearchParamsJson() {
@@ -76,6 +79,7 @@ public final class MilvusSearchRequest extends SearchRequest {
 
 	/**
 	 * Creates a new {@link MilvusBuilder} for constructing a {@link MilvusSearchRequest}.
+	 *
 	 * @return A new {@link MilvusBuilder} instance.
 	 */
 	public static MilvusBuilder milvusBuilder() {
@@ -143,6 +147,7 @@ public final class MilvusSearchRequest extends SearchRequest {
 
 		/**
 		 * Sets the native Milvus filter expression.
+		 *
 		 * @param nativeExpression The native Milvus expression string.
 		 * @return This builder instance.
 		 */
@@ -153,6 +158,7 @@ public final class MilvusSearchRequest extends SearchRequest {
 
 		/**
 		 * Sets the JSON-encoded search parameters.
+		 *
 		 * @param searchParamsJson A JSON string containing search parameters.
 		 * @return This builder instance.
 		 */
@@ -163,6 +169,7 @@ public final class MilvusSearchRequest extends SearchRequest {
 
 		/**
 		 * Builds and returns a {@link MilvusSearchRequest} instance.
+		 *
 		 * @return A new {@link MilvusSearchRequest} object with the specified parameters.
 		 */
 		public MilvusSearchRequest build() {

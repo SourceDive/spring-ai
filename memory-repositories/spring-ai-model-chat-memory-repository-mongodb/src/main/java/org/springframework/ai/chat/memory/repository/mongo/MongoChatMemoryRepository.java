@@ -16,25 +16,20 @@
 
 package org.springframework.ai.chat.memory.repository.mongo;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * An implementation of {@link ChatMemoryRepository} for MongoDB.
@@ -60,17 +55,17 @@ public final class MongoChatMemoryRepository implements ChatMemoryRepository {
 	@Override
 	public List<Message> findByConversationId(String conversationId) {
 		var messages = this.mongoTemplate.query(Conversation.class)
-			.matching(Query.query(Criteria.where("conversationId").is(conversationId))
-				.with(Sort.by("timestamp").ascending()));
+				.matching(Query.query(Criteria.where("conversationId").is(conversationId))
+						.with(Sort.by("timestamp").ascending()));
 		return messages.stream().map(MongoChatMemoryRepository::mapMessage).filter(Objects::nonNull).toList();
 	}
 
 	@Override
 	public void saveAll(String conversationId, List<Message> messages) {
 		List<Message> persistableMessages = messages.stream()
-			.filter(m -> !(m instanceof ToolResponseMessage)
-					&& !(m instanceof AssistantMessage am && am.hasToolCalls()))
-			.toList();
+				.filter(m -> !(m instanceof ToolResponseMessage)
+						&& !(m instanceof AssistantMessage am && am.hasToolCalls()))
+				.toList();
 		if (logger.isWarnEnabled() && persistableMessages.size() < messages.size()) {
 			logger.warn(
 					"MongoChatMemoryRepository does not support tool call messages. Some messages were filtered out for conversation: "
@@ -78,10 +73,10 @@ public final class MongoChatMemoryRepository implements ChatMemoryRepository {
 		}
 		deleteByConversationId(conversationId);
 		var conversations = persistableMessages.stream()
-			.map(message -> new Conversation(conversationId,
-					new Conversation.Message(message.getText(), message.getMessageType().name(), message.getMetadata()),
-					Instant.now()))
-			.toList();
+				.map(message -> new Conversation(conversationId,
+						new Conversation.Message(message.getText(), message.getMessageType().name(), message.getMetadata()),
+						Instant.now()))
+				.toList();
 		this.mongoTemplate.insert(conversations, Conversation.class);
 	}
 
@@ -95,7 +90,7 @@ public final class MongoChatMemoryRepository implements ChatMemoryRepository {
 		return switch (conversation.message().type()) {
 			case "USER" -> UserMessage.builder().text(content).metadata(conversation.message().metadata()).build();
 			case "ASSISTANT" ->
-				AssistantMessage.builder().content(content).properties(conversation.message().metadata()).build();
+					AssistantMessage.builder().content(content).properties(conversation.message().metadata()).build();
 			case "SYSTEM" -> SystemMessage.builder().text(content).metadata(conversation.message().metadata()).build();
 			// this implementation doesn't support tool calls message persistence, so
 			// TOOL rows are filtered out by the caller

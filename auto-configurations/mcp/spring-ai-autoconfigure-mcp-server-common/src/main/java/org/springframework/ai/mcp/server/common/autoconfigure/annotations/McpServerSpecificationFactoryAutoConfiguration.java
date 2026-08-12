@@ -16,10 +16,7 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure.annotations;
 
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpServerFeatures;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.McpResource;
@@ -35,6 +32,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * @author Christian Tzolov
@@ -56,7 +55,7 @@ public class McpServerSpecificationFactoryAutoConfiguration {
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 
 			List<McpServerFeatures.SyncResourceSpecification> syncResourceSpecifications = SyncMcpAnnotationProviders
-				.resourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
+					.resourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
 			return syncResourceSpecifications;
 		}
 
@@ -65,7 +64,7 @@ public class McpServerSpecificationFactoryAutoConfiguration {
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 
 			List<McpServerFeatures.SyncResourceTemplateSpecification> syncResourceTemplateSpecifications = SyncMcpAnnotationProviders
-				.resourceTemplateSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
+					.resourceTemplateSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
 			return syncResourceTemplateSpecifications;
 		}
 
@@ -73,14 +72,14 @@ public class McpServerSpecificationFactoryAutoConfiguration {
 		public List<McpServerFeatures.SyncPromptSpecification> promptSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return SyncMcpAnnotationProviders
-				.promptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
+					.promptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
 		}
 
 		@Bean
 		public List<McpServerFeatures.SyncCompletionSpecification> completionSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return SyncMcpAnnotationProviders
-				.completeSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
+					.completeSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
 		}
 
 		@Bean
@@ -100,7 +99,7 @@ public class McpServerSpecificationFactoryAutoConfiguration {
 		public List<McpServerFeatures.AsyncResourceSpecification> resourceSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.resourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
+					.resourceSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
 		}
 
 		@Bean
@@ -108,28 +107,28 @@ public class McpServerSpecificationFactoryAutoConfiguration {
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 
 			return AsyncMcpAnnotationProviders
-				.resourceTemplateSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
+					.resourceTemplateSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpResource.class));
 		}
 
 		@Bean
 		public List<McpServerFeatures.AsyncPromptSpecification> promptSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.promptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
+					.promptSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpPrompt.class));
 		}
 
 		@Bean
 		public List<McpServerFeatures.AsyncCompletionSpecification> completionSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.completeSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
+					.completeSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpComplete.class));
 		}
 
 		@Bean
 		public List<McpServerFeatures.AsyncToolSpecification> toolSpecs(
 				ServerMcpAnnotatedBeans beansWithMcpMethodAnnotations) {
 			return AsyncMcpAnnotationProviders
-				.toolSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpTool.class));
+					.toolSpecifications(beansWithMcpMethodAnnotations.getBeansByAnnotation(McpTool.class));
 		}
 
 	}

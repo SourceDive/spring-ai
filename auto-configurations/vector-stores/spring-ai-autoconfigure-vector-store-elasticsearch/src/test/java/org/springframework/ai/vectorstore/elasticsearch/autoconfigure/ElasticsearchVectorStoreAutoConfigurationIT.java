@@ -16,20 +16,10 @@
 
 package org.springframework.ai.vectorstore.elasticsearch.autoconfigure;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.elasticsearch.ElasticsearchContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -46,6 +36,15 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.elasticsearch.ElasticsearchContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -57,15 +56,15 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 	@Container
 	private static final ElasticsearchContainer elasticsearchContainer = new ElasticsearchContainer(
 			"elasticsearch:9.2.0")
-		.withEnv("xpack.security.enabled", "false");
+			.withEnv("xpack.security.enabled", "false");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
-				ElasticsearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
-				"spring.ai.vectorstore.elasticsearch.initialize-schema=true",
-				"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+			.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
+					ElasticsearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
+					"spring.ai.vectorstore.elasticsearch.initialize-schema=true",
+					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 
 	private List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -88,9 +87,9 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(1));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(1));
 
 			observationRegistry.clear();
 
@@ -117,9 +116,9 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			Awaitility.await()
-				.until(() -> vectorStore.similaritySearch(
-						SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-						hasSize(0));
+					.until(() -> vectorStore.similaritySearch(
+									SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+							hasSize(0));
 		});
 	}
 
@@ -127,36 +126,36 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 	public void propertiesTest() {
 
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
-					ElasticsearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
-					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
-					"spring.ai.vectorstore.elasticsearch.initialize-schema=true",
-					"spring.ai.vectorstore.elasticsearch.index-name=example",
-					"spring.ai.vectorstore.elasticsearch.dimensions=1024",
-					"spring.ai.vectorstore.elasticsearch.dense-vector-indexing=true",
-					"spring.ai.vectorstore.elasticsearch.similarity=cosine",
-					"spring.ai.vectorstore.elasticsearch.embedding-field-name=custom_embedding_field")
-			.run(context -> {
-				var properties = context.getBean(ElasticsearchVectorStoreProperties.class);
-				var elasticsearchVectorStore = context.getBean(ElasticsearchVectorStore.class);
+				.withConfiguration(AutoConfigurations.of(ElasticsearchRestClientAutoConfiguration.class,
+						ElasticsearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
+				.withPropertyValues("spring.elasticsearch.uris=" + elasticsearchContainer.getHttpHostAddress(),
+						"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
+						"spring.ai.vectorstore.elasticsearch.initialize-schema=true",
+						"spring.ai.vectorstore.elasticsearch.index-name=example",
+						"spring.ai.vectorstore.elasticsearch.dimensions=1024",
+						"spring.ai.vectorstore.elasticsearch.dense-vector-indexing=true",
+						"spring.ai.vectorstore.elasticsearch.similarity=cosine",
+						"spring.ai.vectorstore.elasticsearch.embedding-field-name=custom_embedding_field")
+				.run(context -> {
+					var properties = context.getBean(ElasticsearchVectorStoreProperties.class);
+					var elasticsearchVectorStore = context.getBean(ElasticsearchVectorStore.class);
 
-				assertThat(properties).isNotNull();
-				assertThat(properties.getIndexName()).isEqualTo("example");
-				assertThat(properties.getDimensions()).isEqualTo(1024);
-				assertThat(properties.getSimilarity()).isEqualTo(SimilarityFunction.cosine);
+					assertThat(properties).isNotNull();
+					assertThat(properties.getIndexName()).isEqualTo("example");
+					assertThat(properties.getDimensions()).isEqualTo(1024);
+					assertThat(properties.getSimilarity()).isEqualTo(SimilarityFunction.cosine);
 
-				assertThat(properties.getEmbeddingFieldName()).isEqualTo("custom_embedding_field");
+					assertThat(properties.getEmbeddingFieldName()).isEqualTo("custom_embedding_field");
 
-				assertThat(elasticsearchVectorStore).isNotNull();
+					assertThat(elasticsearchVectorStore).isNotNull();
 
-				Field optionsField = ElasticsearchVectorStore.class.getDeclaredField("options");
-				optionsField.setAccessible(true);
-				var options = (ElasticsearchVectorStoreOptions) optionsField.get(elasticsearchVectorStore);
+					Field optionsField = ElasticsearchVectorStore.class.getDeclaredField("options");
+					optionsField.setAccessible(true);
+					var options = (ElasticsearchVectorStoreOptions) optionsField.get(elasticsearchVectorStore);
 
-				assertThat(options).isNotNull();
-				assertThat(options.getEmbeddingFieldName()).isEqualTo("custom_embedding_field");
-			});
+					assertThat(options).isNotNull();
+					assertThat(options.getEmbeddingFieldName()).isEqualTo("custom_embedding_field");
+				});
 	}
 
 	@Test
@@ -190,8 +189,7 @@ class ElasticsearchVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

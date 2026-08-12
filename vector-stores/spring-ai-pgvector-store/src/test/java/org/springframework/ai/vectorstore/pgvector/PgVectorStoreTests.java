@@ -16,15 +16,11 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -34,15 +30,12 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Muthukumaran Navaneethakrishnan
@@ -73,9 +66,9 @@ public class PgVectorStoreTests {
 			"'customvectorstore\u0000', false", // Null byte included
 			"'customvectorstore\n', false", // Newline character
 			"12345678901234567890123456789012345678901234567890123456789012345, false" // More
-	// than
-	// 64
-	// characters
+			// than
+			// 64
+			// characters
 	})
 	void isValidTable(String tableName, Boolean expected) {
 		assertThat(PgVectorSchemaValidator.isValidNameForDatabaseObject(tableName)).isEqualTo(expected);
@@ -101,14 +94,14 @@ public class PgVectorStoreTests {
 		verify(jdbcTemplate, times(10)).batchUpdate(anyString(), batchUpdateCaptor.capture());
 
 		assertThat(batchUpdateCaptor.getAllValues()).hasSize(10)
-			.allSatisfy(BatchPreparedStatementSetter::getBatchSize)
-			.satisfies(batches -> {
-				for (int i = 0; i < 9; i++) {
-					assertThat(batches.get(i).getBatchSize()).as("Batch at index %d should have size 10", i)
-						.isEqualTo(1000);
-				}
-				assertThat(batches.get(9).getBatchSize()).as("Last batch should have size 989").isEqualTo(989);
-			});
+				.allSatisfy(BatchPreparedStatementSetter::getBatchSize)
+				.satisfies(batches -> {
+					for (int i = 0; i < 9; i++) {
+						assertThat(batches.get(i).getBatchSize()).as("Batch at index %d should have size 10", i)
+								.isEqualTo(1000);
+					}
+					assertThat(batches.get(9).getBatchSize()).as("Last batch should have size 989").isEqualTo(989);
+				});
 	}
 
 	@Test
@@ -164,19 +157,19 @@ public class PgVectorStoreTests {
 		var jdbcTemplate = mock(JdbcTemplate.class);
 		var embeddingModel = mock(EmbeddingModel.class);
 		when(embeddingModel.dimensions()).thenReturn(3);
-		when(embeddingModel.embed(anyString())).thenReturn(new float[] { 0.1f, 0.2f, 0.3f });
+		when(embeddingModel.embed(anyString())).thenReturn(new float[]{0.1f, 0.2f, 0.3f});
 		when(jdbcTemplate.query(anyString(), ArgumentMatchers.<RowMapper<Document>>any(), any(), any(), any(), any()))
-			.thenReturn(List.of());
+				.thenReturn(List.of());
 
 		var store = PgVectorStore.builder(jdbcTemplate, embeddingModel).build();
 
 		var expression = new FilterExpressionTextParser().parse("\"O'Brien\" == 'x'");
 		var request = SearchRequest.builder()
-			.query("hello")
-			.topK(5)
-			.similarityThresholdAll()
-			.filterExpression(expression)
-			.build();
+				.query("hello")
+				.topK(5)
+				.similarityThresholdAll()
+				.filterExpression(expression)
+				.build();
 
 		store.doSimilaritySearch(request);
 

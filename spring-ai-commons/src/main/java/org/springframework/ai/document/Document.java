@@ -16,28 +16,27 @@
 
 package org.springframework.ai.document;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.document.id.IdGenerator;
 import org.springframework.ai.document.id.RandomIdGenerator;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * A document is a container for the content and metadata of a document. It also contains
  * the document's unique ID.
- *
+ * <p>
  * A Document can hold either text content or media content, but not both.
- *
+ * <p>
  * It is intended to be used to take data from external sources as part of spring-ai's ETL
  * pipeline.
  *
@@ -77,7 +76,7 @@ import org.springframework.util.StringUtils;
  * }
  * }</pre>
  */
-@JsonIgnoreProperties({ "contentFormatter", "embedding" })
+@JsonIgnoreProperties({"contentFormatter", "embedding"})
 public class Document {
 
 	public static final ContentFormatter DEFAULT_CONTENT_FORMATTER = DefaultContentFormatter.defaultConfig();
@@ -148,7 +147,7 @@ public class Document {
 	}
 
 	private Document(String id, @Nullable String text, @Nullable Media media, Map<String, Object> metadata,
-			@Nullable Double score) {
+	                 @Nullable Double score) {
 		Assert.hasText(id, "id cannot be null or empty");
 		Assert.notNull(metadata, "metadata cannot be null");
 		Assert.noNullElements(metadata.keySet(), "metadata cannot have null keys");
@@ -171,6 +170,7 @@ public class Document {
 	 * <p>
 	 * This ID is either explicitly provided during document creation or generated using
 	 * the configured {@link IdGenerator} (defaults to {@link RandomIdGenerator}).
+	 *
 	 * @return the unique identifier of this document
 	 * @see RandomIdGenerator
 	 */
@@ -180,6 +180,7 @@ public class Document {
 
 	/**
 	 * Returns the document's text content, if any.
+	 *
 	 * @return the text content if {@link #isText()} is true, null otherwise
 	 * @see #isText()
 	 * @see #getMedia()
@@ -190,6 +191,7 @@ public class Document {
 
 	/**
 	 * Determines whether this document contains text or media content.
+	 *
 	 * @return true if this document contains text content (accessible via
 	 * {@link #getText()}), false if it contains media content (accessible via
 	 * {@link #getMedia()})
@@ -200,6 +202,7 @@ public class Document {
 
 	/**
 	 * Returns the document's media content, if any.
+	 *
 	 * @return the media content if {@link #isText()} is false, null otherwise
 	 * @see #isText()
 	 * @see #getText()
@@ -232,6 +235,7 @@ public class Document {
 	 * <p>
 	 * The metadata values are restricted to simple types (string, int, float, boolean)
 	 * for compatibility with Vector Databases.
+	 *
 	 * @return the metadata map
 	 */
 	public Map<String, Object> getMetadata() {
@@ -244,6 +248,7 @@ public class Document {
 
 	/**
 	 * Returns the content formatter associated with this document.
+	 *
 	 * @return the current ContentFormatter instance used for formatting the document
 	 * content.
 	 */
@@ -253,6 +258,7 @@ public class Document {
 
 	/**
 	 * Replace the document's {@link ContentFormatter}.
+	 *
 	 * @param contentFormatter new formatter to use.
 	 */
 	public void setContentFormatter(ContentFormatter contentFormatter) {
@@ -316,6 +322,7 @@ public class Document {
 		 * <p>
 		 * Either text or media content must be set before building the document, but not
 		 * both.
+		 *
 		 * @param text the text content
 		 * @return the builder instance
 		 * @see #media(Media)
@@ -330,6 +337,7 @@ public class Document {
 		 * <p>
 		 * Either text or media content must be set before building the document, but not
 		 * both.
+		 *
 		 * @param media the media content
 		 * @return the builder instance
 		 * @see #text(String)
@@ -365,6 +373,7 @@ public class Document {
 		 * </ul>
 		 * <p>
 		 * Higher values typically indicate greater relevance or similarity.
+		 *
 		 * @param score the document score, may be null
 		 * @return the builder instance
 		 */

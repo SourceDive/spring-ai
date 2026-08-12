@@ -16,22 +16,11 @@
 
 package org.springframework.ai.testcontainers.service.connection.opensearch;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.localstack.LocalStackContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.transformers.TransformersEmbeddingModel;
@@ -46,18 +35,28 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.containers.localstack.LocalStackContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasSize;
 
 @SpringJUnitConfig
-@TestPropertySource(properties = { "spring.ai.vectorstore.opensearch.index-name=auto-spring-ai-document-index",
+@TestPropertySource(properties = {"spring.ai.vectorstore.opensearch.index-name=auto-spring-ai-document-index",
 		"spring.ai.vectorstore.opensearch.initialize-schema=true",
 		"spring.ai.vectorstore.opensearch.mapping-json="
 				+ AwsOpenSearchContainerConnectionDetailsFactoryIT.MAPPING_JSON,
 		"spring.ai.vectorstore.opensearch.aws.domain-name=testcontainers-domain",
-		"spring.ai.vectorstore.opensearch.aws.service-name=es" })
+		"spring.ai.vectorstore.opensearch.aws.service-name=es"})
 @Testcontainers
 class AwsOpenSearchContainerConnectionDetailsFactoryIT {
 
@@ -67,7 +66,7 @@ class AwsOpenSearchContainerConnectionDetailsFactoryIT {
 	@ServiceConnection
 	private static final LocalStackContainer localstack = new LocalStackContainer(
 			DockerImageName.parse("localstack/localstack:3.8.1"))
-		.withEnv("LOCALSTACK_HOST", "localhost.localstack.cloud");
+			.withEnv("LOCALSTACK_HOST", "localhost.localstack.cloud");
 
 	private final List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -79,15 +78,15 @@ class AwsOpenSearchContainerConnectionDetailsFactoryIT {
 
 	@BeforeAll
 	static void beforeAll() throws IOException, InterruptedException {
-		String[] createDomainCmd = { "awslocal", "opensearch", "create-domain", "--domain-name",
-				"testcontainers-domain", "--region", localstack.getRegion() };
+		String[] createDomainCmd = {"awslocal", "opensearch", "create-domain", "--domain-name",
+				"testcontainers-domain", "--region", localstack.getRegion()};
 		localstack.execInContainer(createDomainCmd);
 
-		String[] describeDomainCmd = { "awslocal", "opensearch", "describe-domain", "--domain-name",
-				"testcontainers-domain", "--region", localstack.getRegion() };
+		String[] describeDomainCmd = {"awslocal", "opensearch", "describe-domain", "--domain-name",
+				"testcontainers-domain", "--region", localstack.getRegion()};
 		await().pollInterval(Duration.ofSeconds(30)).atMost(Duration.ofSeconds(300)).untilAsserted(() -> {
 			org.testcontainers.containers.Container.ExecResult execResult = localstack
-				.execInContainer(describeDomainCmd);
+					.execInContainer(describeDomainCmd);
 			String response = execResult.getStdout();
 			JSONArray processed = JsonPath.read(response, "$.DomainStatus[?(@.Processing == false)]");
 			assertThat(processed).isNotEmpty();
@@ -100,12 +99,12 @@ class AwsOpenSearchContainerConnectionDetailsFactoryIT {
 		this.vectorStore.add(this.documents);
 
 		Awaitility.await()
-			.until(() -> this.vectorStore.similaritySearch(
-					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-					hasSize(1));
+				.until(() -> this.vectorStore.similaritySearch(
+								SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+						hasSize(1));
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build());
+				.similaritySearch(SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build());
 
 		assertThat(results).hasSize(1);
 		Document resultDoc = results.get(0);
@@ -119,17 +118,16 @@ class AwsOpenSearchContainerConnectionDetailsFactoryIT {
 		this.vectorStore.delete(this.documents.stream().map(Document::getId).toList());
 
 		Awaitility.await()
-			.until(() -> this.vectorStore.similaritySearch(
-					SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
-					hasSize(0));
+				.until(() -> this.vectorStore.similaritySearch(
+								SearchRequest.builder().query("Great Depression").topK(1).similarityThreshold(0).build()),
+						hasSize(0));
 	}
 
 	private String getText(String uri) {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

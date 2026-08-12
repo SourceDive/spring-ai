@@ -16,9 +16,6 @@
 
 package org.springframework.ai.openai;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.openai.client.OpenAIClient;
 import com.openai.models.moderations.ModerationCreateParams;
 import com.openai.models.moderations.ModerationCreateResponse;
@@ -26,18 +23,12 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.moderation.Categories;
-import org.springframework.ai.moderation.CategoryScores;
-import org.springframework.ai.moderation.Generation;
-import org.springframework.ai.moderation.Moderation;
-import org.springframework.ai.moderation.ModerationModel;
-import org.springframework.ai.moderation.ModerationOptions;
-import org.springframework.ai.moderation.ModerationPrompt;
-import org.springframework.ai.moderation.ModerationResponse;
-import org.springframework.ai.moderation.ModerationResult;
+import org.springframework.ai.moderation.*;
 import org.springframework.ai.openai.http.okhttp.OpenAiHttpClientBuilderCustomizer;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OpenAI SDK Moderation Model implementation.
@@ -61,10 +52,9 @@ public final class OpenAiModerationModel implements ModerationModel {
 	private OpenAiModerationModel(Builder builder) {
 		if (builder.options == null) {
 			this.options = OpenAiModerationOptions.builder()
-				.model(OpenAiModerationOptions.DEFAULT_MODERATION_MODEL)
-				.build();
-		}
-		else {
+					.model(OpenAiModerationOptions.DEFAULT_MODERATION_MODEL)
+					.build();
+		} else {
 			this.options = builder.options;
 		}
 
@@ -93,13 +83,12 @@ public final class OpenAiModerationModel implements ModerationModel {
 		OpenAiModerationOptions options = merge(moderationPrompt.getOptions(), this.options);
 
 		ModerationCreateParams.Builder builder = ModerationCreateParams.builder()
-			.input(ModerationCreateParams.Input.ofString(text));
+				.input(ModerationCreateParams.Input.ofString(text));
 
 		String model;
 		if (options.getDeploymentName() != null) {
 			model = options.getDeploymentName();
-		}
-		else {
+		} else {
 			model = options.getModel();
 		}
 		Assert.notNull(model, "Model must not be null");
@@ -122,47 +111,47 @@ public final class OpenAiModerationModel implements ModerationModel {
 
 		for (com.openai.models.moderations.Moderation result : response.results()) {
 			Categories categories = Categories.builder()
-				.sexual(result.categories().sexual())
-				.hate(result.categories().hate())
-				.harassment(result.categories().harassment())
-				.selfHarm(result.categories().selfHarm())
-				.sexualMinors(result.categories().sexualMinors())
-				.hateThreatening(result.categories().hateThreatening())
-				.violenceGraphic(result.categories().violenceGraphic())
-				.selfHarmIntent(result.categories().selfHarmIntent())
-				.selfHarmInstructions(result.categories().selfHarmInstructions())
-				.harassmentThreatening(result.categories().harassmentThreatening())
-				.violence(result.categories().violence())
-				.build();
+					.sexual(result.categories().sexual())
+					.hate(result.categories().hate())
+					.harassment(result.categories().harassment())
+					.selfHarm(result.categories().selfHarm())
+					.sexualMinors(result.categories().sexualMinors())
+					.hateThreatening(result.categories().hateThreatening())
+					.violenceGraphic(result.categories().violenceGraphic())
+					.selfHarmIntent(result.categories().selfHarmIntent())
+					.selfHarmInstructions(result.categories().selfHarmInstructions())
+					.harassmentThreatening(result.categories().harassmentThreatening())
+					.violence(result.categories().violence())
+					.build();
 
 			CategoryScores categoryScores = CategoryScores.builder()
-				.hate(result.categoryScores().hate())
-				.hateThreatening(result.categoryScores().hateThreatening())
-				.harassment(result.categoryScores().harassment())
-				.harassmentThreatening(result.categoryScores().harassmentThreatening())
-				.selfHarm(result.categoryScores().selfHarm())
-				.selfHarmIntent(result.categoryScores().selfHarmIntent())
-				.selfHarmInstructions(result.categoryScores().selfHarmInstructions())
-				.sexual(result.categoryScores().sexual())
-				.sexualMinors(result.categoryScores().sexualMinors())
-				.violence(result.categoryScores().violence())
-				.violenceGraphic(result.categoryScores().violenceGraphic())
-				.build();
+					.hate(result.categoryScores().hate())
+					.hateThreatening(result.categoryScores().hateThreatening())
+					.harassment(result.categoryScores().harassment())
+					.harassmentThreatening(result.categoryScores().harassmentThreatening())
+					.selfHarm(result.categoryScores().selfHarm())
+					.selfHarmIntent(result.categoryScores().selfHarmIntent())
+					.selfHarmInstructions(result.categoryScores().selfHarmInstructions())
+					.sexual(result.categoryScores().sexual())
+					.sexualMinors(result.categoryScores().sexualMinors())
+					.violence(result.categoryScores().violence())
+					.violenceGraphic(result.categoryScores().violenceGraphic())
+					.build();
 
 			ModerationResult moderationResult = ModerationResult.builder()
-				.categories(categories)
-				.categoryScores(categoryScores)
-				.flagged(result.flagged())
-				.build();
+					.categories(categories)
+					.categoryScores(categoryScores)
+					.flagged(result.flagged())
+					.build();
 
 			moderationResults.add(moderationResult);
 		}
 
 		Moderation moderation = Moderation.builder()
-			.id(response.id())
-			.model(response.model())
-			.results(moderationResults)
-			.build();
+				.id(response.id())
+				.model(response.model())
+				.results(moderationResults)
+				.build();
 
 		return new ModerationResponse(new Generation(moderation));
 	}

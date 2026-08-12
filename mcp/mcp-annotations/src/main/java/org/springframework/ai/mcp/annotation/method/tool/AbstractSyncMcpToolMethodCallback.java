@@ -16,36 +16,36 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-
 import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes;
+
+import java.lang.reflect.Method;
 
 /**
  * Abstract base class for creating Function callbacks around synchronous tool methods.
- *
+ * <p>
  * This class extends {@link AbstractAsyncMcpToolMethodCallback} and provides synchronous
  * wrapper methods for handling tool requests. It converts the asynchronous reactive
  * methods from the parent class into synchronous equivalents suitable for blocking
  * operations.
  *
  * @param <T> The type of the context parameter (e.g., McpTransportContext or
- * McpSyncServerExchange)
+ *            McpSyncServerExchange)
  * @author Christian Tzolov
  */
 public abstract class AbstractSyncMcpToolMethodCallback<T, RC extends McpRequestContextTypes<?>>
 		extends AbstractAsyncMcpToolMethodCallback<T, RC> {
 
 	protected AbstractSyncMcpToolMethodCallback(ReturnMode returnMode, Method toolMethod, Object toolObject,
-			Class<? extends Throwable> toolCallExceptionClass) {
+	                                            Class<? extends Throwable> toolCallExceptionClass) {
 		super(returnMode, toolMethod, toolObject, toolCallExceptionClass);
 	}
 
 	/**
 	 * Processes the result of the method invocation and converts it to a CallToolResult.
 	 * This is a synchronous wrapper around the parent class's reactive result processing.
+	 *
 	 * @param result The result from the method invocation
 	 * @return A CallToolResult representing the processed result
 	 */
@@ -56,20 +56,22 @@ public abstract class AbstractSyncMcpToolMethodCallback<T, RC extends McpRequest
 	/**
 	 * Creates an error result for exceptions that occur during method invocation. This is
 	 * a synchronous wrapper around the parent class's reactive error handling.
+	 *
 	 * @param e The exception that occurred
 	 * @return A CallToolResult representing the error
 	 */
 	protected CallToolResult createSyncErrorResult(Exception e) {
 		Throwable rootCause = findCauseUsingPlainJava(e);
 		return CallToolResult.builder()
-			.isError(true)
-			.addTextContent(e.getMessage() + System.lineSeparator() + rootCause.getMessage())
-			.build();
+				.isError(true)
+				.addTextContent(e.getMessage() + System.lineSeparator() + rootCause.getMessage())
+				.build();
 	}
 
 	/**
 	 * Validates that the request is not null. This is a synchronous wrapper around the
 	 * parent class's reactive validation.
+	 *
 	 * @param request The request to validate
 	 * @throws IllegalArgumentException if the request is null
 	 */

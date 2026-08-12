@@ -16,14 +16,10 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
-
 import org.springframework.ai.mcp.annotation.spring.ClientMcpAsyncHandlersRegistry;
 import org.springframework.ai.mcp.annotation.spring.ClientMcpSyncHandlersRegistry;
 import org.springframework.ai.mcp.client.common.autoconfigure.configurer.McpAsyncClientConfigurer;
@@ -38,6 +34,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Auto-configuration for Model Context Protocol (MCP) client support.
@@ -105,9 +104,10 @@ public class McpClientAutoConfiguration {
 	/**
 	 * Create a dynamic client name based on the client name and the name of the server
 	 * connection.
-	 * @param clientName the client name as defined by the configuration
+	 *
+	 * @param clientName           the client name as defined by the configuration
 	 * @param serverConnectionName the name of the server connection being used by the
-	 * client
+	 *                             client
 	 * @return the connected client name
 	 */
 	private String connectedClientName(String clientName, String serverConnectionName) {
@@ -137,18 +137,19 @@ public class McpClientAutoConfiguration {
 	 * <p>
 	 * If initialization is enabled in properties, the clients are automatically
 	 * initialized.
+	 *
 	 * @param mcpSyncClientConfigurer the configurer for customizing client creation
-	 * @param commonProperties common MCP client properties
-	 * @param transportsProvider provider of named MCP transports
+	 * @param commonProperties        common MCP client properties
+	 * @param transportsProvider      provider of named MCP transports
 	 * @return list of configured MCP sync clients
 	 */
 	@Bean
 	@ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "type", havingValue = "SYNC",
 			matchIfMissing = true)
 	public List<McpSyncClient> mcpSyncClients(McpSyncClientConfigurer mcpSyncClientConfigurer,
-			McpClientCommonProperties commonProperties,
-			ObjectProvider<List<NamedClientMcpTransport>> transportsProvider,
-			ObjectProvider<ClientMcpSyncHandlersRegistry> clientMcpSyncHandlersRegistry) {
+	                                          McpClientCommonProperties commonProperties,
+	                                          ObjectProvider<List<NamedClientMcpTransport>> transportsProvider,
+	                                          ObjectProvider<ClientMcpSyncHandlersRegistry> clientMcpSyncHandlersRegistry) {
 
 		List<McpSyncClient> mcpSyncClients = new ArrayList<>();
 
@@ -162,23 +163,23 @@ public class McpClientAutoConfiguration {
 						namedTransport.name(), commonProperties.getVersion());
 
 				McpClient.SyncSpec spec = McpClient.sync(namedTransport.transport())
-					.clientInfo(clientInfo)
-					.requestTimeout(commonProperties.getRequestTimeout());
+						.clientInfo(clientInfo)
+						.requestTimeout(commonProperties.getRequestTimeout());
 
 				clientMcpSyncHandlersRegistry.ifAvailable(registry -> spec
-					.sampling(samplingRequest -> registry.handleSampling(namedTransport.name(), samplingRequest))
-					.elicitation(
-							elicitationRequest -> registry.handleElicitation(namedTransport.name(), elicitationRequest))
-					.loggingConsumer(loggingMessageNotification -> registry.handleLogging(namedTransport.name(),
-							loggingMessageNotification))
-					.progressConsumer(progressNotification -> registry.handleProgress(namedTransport.name(),
-							progressNotification))
-					.toolsChangeConsumer(newTools -> registry.handleToolListChanged(namedTransport.name(), newTools))
-					.promptsChangeConsumer(
-							newPrompts -> registry.handlePromptListChanged(namedTransport.name(), newPrompts))
-					.resourcesChangeConsumer(
-							newResources -> registry.handleResourceListChanged(namedTransport.name(), newResources))
-					.capabilities(registry.getCapabilities(namedTransport.name())));
+						.sampling(samplingRequest -> registry.handleSampling(namedTransport.name(), samplingRequest))
+						.elicitation(
+								elicitationRequest -> registry.handleElicitation(namedTransport.name(), elicitationRequest))
+						.loggingConsumer(loggingMessageNotification -> registry.handleLogging(namedTransport.name(),
+								loggingMessageNotification))
+						.progressConsumer(progressNotification -> registry.handleProgress(namedTransport.name(),
+								progressNotification))
+						.toolsChangeConsumer(newTools -> registry.handleToolListChanged(namedTransport.name(), newTools))
+						.promptsChangeConsumer(
+								newPrompts -> registry.handlePromptListChanged(namedTransport.name(), newPrompts))
+						.resourcesChangeConsumer(
+								newResources -> registry.handleResourceListChanged(namedTransport.name(), newResources))
+						.capabilities(registry.getCapabilities(namedTransport.name())));
 
 				McpClient.SyncSpec customizedSpec = mcpSyncClientConfigurer.configure(namedTransport.name(), spec);
 
@@ -197,6 +198,7 @@ public class McpClientAutoConfiguration {
 
 	/**
 	 * Creates a closeable wrapper for MCP sync clients to ensure proper resource cleanup.
+	 *
 	 * @param clients the list of MCP sync clients to manage
 	 * @return a closeable wrapper for the clients
 	 */
@@ -214,6 +216,7 @@ public class McpClientAutoConfiguration {
 	 * This configurer aggregates all available
 	 * {@link McpClientCustomizer<McpClient.SyncSpec>} instances to allow for
 	 * customization of MCP sync client creation.
+	 *
 	 * @param customizerProvider provider of MCP sync client customizers
 	 * @return the configured MCP sync client configurer
 	 */
@@ -238,9 +241,9 @@ public class McpClientAutoConfiguration {
 	@Bean
 	@ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "type", havingValue = "ASYNC")
 	public List<McpAsyncClient> mcpAsyncClients(McpAsyncClientConfigurer mcpAsyncClientConfigurer,
-			McpClientCommonProperties commonProperties,
-			ObjectProvider<List<NamedClientMcpTransport>> transportsProvider,
-			ObjectProvider<ClientMcpAsyncHandlersRegistry> clientMcpAsyncHandlersRegistry) {
+	                                            McpClientCommonProperties commonProperties,
+	                                            ObjectProvider<List<NamedClientMcpTransport>> transportsProvider,
+	                                            ObjectProvider<ClientMcpAsyncHandlersRegistry> clientMcpAsyncHandlersRegistry) {
 
 		List<McpAsyncClient> mcpAsyncClients = new ArrayList<>();
 
@@ -253,22 +256,22 @@ public class McpClientAutoConfiguration {
 						this.connectedClientName(commonProperties.getName(), namedTransport.name()),
 						commonProperties.getVersion());
 				McpClient.AsyncSpec spec = McpClient.async(namedTransport.transport())
-					.clientInfo(clientInfo)
-					.requestTimeout(commonProperties.getRequestTimeout());
+						.clientInfo(clientInfo)
+						.requestTimeout(commonProperties.getRequestTimeout());
 				clientMcpAsyncHandlersRegistry.ifAvailable(registry -> spec
-					.sampling(samplingRequest -> registry.handleSampling(namedTransport.name(), samplingRequest))
-					.elicitation(
-							elicitationRequest -> registry.handleElicitation(namedTransport.name(), elicitationRequest))
-					.loggingConsumer(loggingMessageNotification -> registry.handleLogging(namedTransport.name(),
-							loggingMessageNotification))
-					.progressConsumer(progressNotification -> registry.handleProgress(namedTransport.name(),
-							progressNotification))
-					.toolsChangeConsumer(newTools -> registry.handleToolListChanged(namedTransport.name(), newTools))
-					.promptsChangeConsumer(
-							newPrompts -> registry.handlePromptListChanged(namedTransport.name(), newPrompts))
-					.resourcesChangeConsumer(
-							newResources -> registry.handleResourceListChanged(namedTransport.name(), newResources))
-					.capabilities(registry.getCapabilities(namedTransport.name())));
+						.sampling(samplingRequest -> registry.handleSampling(namedTransport.name(), samplingRequest))
+						.elicitation(
+								elicitationRequest -> registry.handleElicitation(namedTransport.name(), elicitationRequest))
+						.loggingConsumer(loggingMessageNotification -> registry.handleLogging(namedTransport.name(),
+								loggingMessageNotification))
+						.progressConsumer(progressNotification -> registry.handleProgress(namedTransport.name(),
+								progressNotification))
+						.toolsChangeConsumer(newTools -> registry.handleToolListChanged(namedTransport.name(), newTools))
+						.promptsChangeConsumer(
+								newPrompts -> registry.handlePromptListChanged(namedTransport.name(), newPrompts))
+						.resourcesChangeConsumer(
+								newResources -> registry.handleResourceListChanged(namedTransport.name(), newResources))
+						.capabilities(registry.getCapabilities(namedTransport.name())));
 
 				McpClient.AsyncSpec customizedSpec = mcpAsyncClientConfigurer.configure(namedTransport.name(), spec);
 
@@ -307,17 +310,21 @@ public class McpClientAutoConfiguration {
 	 * This class is responsible for closing all MCP sync clients when the application
 	 * context is closed, preventing resource leaks.
 	 */
-	public record CloseableMcpSyncClients(List<McpSyncClient> clients) implements AutoCloseable {
+	public record CloseableMcpSyncClients(List<McpSyncClient> clients) implements
+
+	AutoCloseable {
 
 		@Override
-		public void close() {
+		public void close () {
 			this.clients.forEach(McpSyncClient::close);
 		}
 	}
 
-	public record CloseableMcpAsyncClients(List<McpAsyncClient> clients) implements AutoCloseable {
+	public record CloseableMcpAsyncClients(List<McpAsyncClient> clients) implements
+
+	AutoCloseable {
 		@Override
-		public void close() {
+		public void close () {
 			this.clients.forEach(McpAsyncClient::close);
 		}
 	}

@@ -16,14 +16,11 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.List;
-
 import com.openai.client.OpenAIClient;
 import com.openai.client.OpenAIClientAsync;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.observation.ChatModelObservationConvention;
 import org.springframework.ai.model.SpringAIModelProperties;
 import org.springframework.ai.model.SpringAIModels;
@@ -38,6 +35,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 /**
  * Chat {@link AutoConfiguration Auto-configuration} for OpenAI SDK.
  *
@@ -51,7 +50,7 @@ import org.springframework.context.annotation.Bean;
  * @author Sebastien Deleuze
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ OpenAiCommonProperties.class, OpenAiChatProperties.class })
+@EnableConfigurationProperties({OpenAiCommonProperties.class, OpenAiChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
 public class OpenAiChatAutoConfiguration {
@@ -59,10 +58,10 @@ public class OpenAiChatAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiChatModel openAiChatModel(OpenAiCommonProperties commonProperties, OpenAiChatProperties chatProperties,
-			ToolCallingManager toolCallingManager, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<MeterRegistry> meterRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention,
-			ObjectProvider<OpenAiHttpClientBuilderCustomizer> httpClientBuilderCustomizers) {
+	                                       ToolCallingManager toolCallingManager, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                       ObjectProvider<MeterRegistry> meterRegistry,
+	                                       ObjectProvider<ChatModelObservationConvention> observationConvention,
+	                                       ObjectProvider<OpenAiHttpClientBuilderCustomizer> httpClientBuilderCustomizers) {
 
 		var resolvedProperties = OpenAiAutoConfigurationUtil.resolveCommonProperties(commonProperties, chatProperties);
 
@@ -78,13 +77,13 @@ public class OpenAiChatAutoConfiguration {
 				meterRegistryToUse, customizers);
 
 		var chatModel = OpenAiChatModel.builder()
-			.openAiClient(openAIClient)
-			.openAiClientAsync(openAIClientAsync)
-			.options(chatProperties.toOptions())
-			.toolCallingManager(toolCallingManager)
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.meterRegistry(meterRegistryToUse)
-			.build();
+				.openAiClient(openAIClient)
+				.openAiClientAsync(openAIClientAsync)
+				.options(chatProperties.toOptions())
+				.toolCallingManager(toolCallingManager)
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.meterRegistry(meterRegistryToUse)
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
@@ -92,8 +91,8 @@ public class OpenAiChatAutoConfiguration {
 	}
 
 	private OpenAIClient openAiClient(OpenAiCommonProperties commonProperties,
-			ObjectProvider<ObservationRegistry> observationRegistry, @Nullable MeterRegistry meterRegistry,
-			List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                  ObjectProvider<ObservationRegistry> observationRegistry, @Nullable MeterRegistry meterRegistry,
+	                                  List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		return OpenAiSetup.setupSyncClient(commonProperties.getBaseUrl(), commonProperties.getApiKey(),
 				commonProperties.getCredential(), commonProperties.getMicrosoftDeploymentName(),
@@ -105,8 +104,8 @@ public class OpenAiChatAutoConfiguration {
 	}
 
 	private OpenAIClientAsync openAiClientAsync(OpenAiCommonProperties commonProperties,
-			ObjectProvider<ObservationRegistry> observationRegistry, @Nullable MeterRegistry meterRegistry,
-			List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                            ObjectProvider<ObservationRegistry> observationRegistry, @Nullable MeterRegistry meterRegistry,
+	                                            List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		return OpenAiSetup.setupAsyncClient(commonProperties.getBaseUrl(), commonProperties.getApiKey(),
 				commonProperties.getCredential(), commonProperties.getMicrosoftDeploymentName(),

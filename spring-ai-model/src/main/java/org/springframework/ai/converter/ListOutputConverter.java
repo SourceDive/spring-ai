@@ -16,10 +16,10 @@
 
 package org.springframework.ai.converter;
 
+import org.springframework.core.convert.support.DefaultConversionService;
+
 import java.util.Collections;
 import java.util.List;
-
-import org.springframework.core.convert.support.DefaultConversionService;
 
 /**
  * {@link StructuredOutputConverter} implementation that uses a

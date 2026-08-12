@@ -16,8 +16,6 @@
 
 package org.springframework.ai.test.chat.client.advisor;
 
-import java.util.function.Function;
-
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -25,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.function.Function;
 
 /**
  * Mock weather service for testing tool call functionality.
@@ -44,11 +44,9 @@ public class MockWeatherService implements Function<MockWeatherService.Request, 
 		double temperature = 0;
 		if (request.location().contains("Paris")) {
 			temperature = 15;
-		}
-		else if (request.location().contains("Tokyo")) {
+		} else if (request.location().contains("Tokyo")) {
 			temperature = 10;
-		}
-		else if (request.location().contains("San Francisco")) {
+		} else if (request.location().contains("San Francisco")) {
 			temperature = 30;
 		}
 
@@ -86,10 +84,10 @@ public class MockWeatherService implements Function<MockWeatherService.Request, 
 	@JsonInclude(Include.NON_NULL)
 	@JsonClassDescription("Weather API request")
 	public record Request(@JsonProperty(required = true,
-			value = "location") @JsonPropertyDescription("The city and state e.g. San Francisco, CA") String location,
-			@JsonProperty(required = true, value = "lat") @JsonPropertyDescription("The city latitude") double lat,
-			@JsonProperty(required = true, value = "lon") @JsonPropertyDescription("The city longitude") double lon,
-			@JsonProperty(required = true, value = "unit") @JsonPropertyDescription("Temperature unit") Unit unit) {
+								  value = "location") @JsonPropertyDescription("The city and state e.g. San Francisco, CA") String location,
+	                      @JsonProperty(required = true, value = "lat") @JsonPropertyDescription("The city latitude") double lat,
+	                      @JsonProperty(required = true, value = "lon") @JsonPropertyDescription("The city longitude") double lon,
+	                      @JsonProperty(required = true, value = "unit") @JsonPropertyDescription("Temperature unit") Unit unit) {
 
 	}
 
@@ -97,7 +95,7 @@ public class MockWeatherService implements Function<MockWeatherService.Request, 
 	 * Weather Function response.
 	 */
 	public record Response(double temp, double feels_like, double temp_min, double temp_max, int pressure, int humidity,
-			Unit unit) {
+	                       Unit unit) {
 
 	}
 

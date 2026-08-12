@@ -16,6 +16,20 @@
 
 package org.springframework.ai.util.json;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.model.ToolContext;
+import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.ai.util.JacksonUtils;
+import org.springframework.ai.util.JsonHelper;
+import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
+import org.springframework.lang.Nullable;
+import tools.jackson.databind.JsonNode;
+
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.Instant;
@@ -24,27 +38,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import com.fasterxml.jackson.annotation.JsonClassDescription;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.junit.jupiter.api.Test;
-import tools.jackson.databind.JsonNode;
-
-import org.springframework.ai.chat.model.ToolContext;
-import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.ai.util.JacksonUtils;
-import org.springframework.ai.util.JsonHelper;
-import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
-import org.springframework.lang.Nullable;
+import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -674,12 +668,12 @@ class JsonSchemaGeneratorTests {
 		String schema = JsonSchemaGenerator.generateForType(WithMapField.class);
 		JsonNode jsonNode = JacksonUtils.getDefaultJsonMapper().readTree(schema);
 		assertThat(jsonNode.get("additionalProperties").asBoolean())
-			.as("root object schema should have additionalProperties: false")
-			.isFalse();
+				.as("root object schema should have additionalProperties: false")
+				.isFalse();
 		JsonNode scoresNode = jsonNode.get("properties").get("scores");
 		assertThat(scoresNode.path("additionalProperties").asBoolean(true))
-			.as("Map field must not have additionalProperties set to false")
-			.isTrue();
+				.as("Map field must not have additionalProperties set to false")
+				.isTrue();
 	}
 
 	@Test
@@ -742,7 +736,7 @@ class JsonSchemaGeneratorTests {
 		String schemaJson = JsonSchemaGenerator.generateForMethodInput(method);
 
 		assertThat(schemaJson.indexOf("\"$defs\"")).as("$defs must appear before properties in the serialized output")
-			.isLessThan(schemaJson.indexOf("\"properties\""));
+				.isLessThan(schemaJson.indexOf("\"properties\""));
 	}
 
 	@Test
@@ -769,12 +763,12 @@ class JsonSchemaGeneratorTests {
 		assertThat(schemaNode.has("$defs")).as("$defs must be hoisted to the outer schema root").isTrue();
 		assertThat(schemaNode.get("$defs").has("RecursiveFilter")).isTrue();
 		assertThat(schemaNode.at("/properties/request").has("$defs"))
-			.as("$defs must not remain nested inside the parameter sub-schema")
-			.isFalse();
+				.as("$defs must not remain nested inside the parameter sub-schema")
+				.isFalse();
 		assertThat(schemaNode.at("/properties/request/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 		assertThat(schemaNode.at("/$defs/RecursiveFilter/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 	}
 
 	// gh-5888: when two parameters share the same recursive type, the two
@@ -792,9 +786,9 @@ class JsonSchemaGeneratorTests {
 		assertThat(schemaNode.at("/$defs").size()).isEqualTo(1);
 		assertThat(schemaNode.at("/$defs").has("RecursiveFilter")).isTrue();
 		assertThat(schemaNode.at("/properties/a/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 		assertThat(schemaNode.at("/properties/b/properties/filters/items/$ref").asText())
-			.isEqualTo("#/$defs/RecursiveFilter");
+				.isEqualTo("#/$defs/RecursiveFilter");
 	}
 
 	// gh-5888: when two parameters carry different recursive types that share
@@ -814,19 +808,19 @@ class JsonSchemaGeneratorTests {
 		assertThat(schemaNode.at("/$defs/Filter").has("properties")).isTrue();
 		assertThat(schemaNode.at("/$defs/Filter_2").has("properties")).isTrue();
 		assertThat(schemaNode.at("/$defs/Filter/properties").has("label"))
-			.as("first colliding entry retains OuterA.Filter shape (label field)")
-			.isTrue();
+				.as("first colliding entry retains OuterA.Filter shape (label field)")
+				.isTrue();
 		assertThat(schemaNode.at("/$defs/Filter_2/properties").has("code"))
-			.as("second colliding entry retains OuterB.Filter shape (code field)")
-			.isTrue();
+				.as("second colliding entry retains OuterB.Filter shape (code field)")
+				.isTrue();
 		assertThat(schemaNode.at("/properties/a/properties/filters/items/$ref").asText()).isEqualTo("#/$defs/Filter");
 		assertThat(schemaNode.at("/properties/b/properties/filters/items/$ref").asText())
-			.as("second parameter's $ref must be rewritten to the renamed entry")
-			.isEqualTo("#/$defs/Filter_2");
+				.as("second parameter's $ref must be rewritten to the renamed entry")
+				.isEqualTo("#/$defs/Filter_2");
 		assertThat(schemaNode.at("/$defs/Filter/properties/children/items/$ref").asText()).isEqualTo("#/$defs/Filter");
 		assertThat(schemaNode.at("/$defs/Filter_2/properties/children/items/$ref").asText())
-			.as("self-reference inside the renamed entry must follow the rename")
-			.isEqualTo("#/$defs/Filter_2");
+				.as("self-reference inside the renamed entry must follow the rename")
+				.isEqualTo("#/$defs/Filter_2");
 	}
 
 	// gh-5888: when a sub-schema brings in several $defs entries and one of them
@@ -842,20 +836,20 @@ class JsonSchemaGeneratorTests {
 		JsonNode schemaNode = jsonHelper.fromJson(schema, JsonNode.class);
 
 		assertThat(schemaNode.at("/$defs/Filter/properties").has("label")).as("first definition keeps PeerA shape")
-			.isTrue();
+				.isTrue();
 		assertThat(schemaNode.at("/$defs/Filter_2/properties").has("code"))
-			.as("colliding definition is renamed with PeerB shape")
-			.isTrue();
+				.as("colliding definition is renamed with PeerB shape")
+				.isTrue();
 		assertThat(schemaNode.at("/$defs/Wrapper").has("properties")).isTrue();
 		assertThat(schemaNode.at("/$defs/Wrapper/properties/filters/items/$ref").asText())
-			.as("peer Wrapper's $ref to the colliding name must be rewritten to the renamed entry")
-			.isEqualTo("#/$defs/Filter_2");
+				.as("peer Wrapper's $ref to the colliding name must be rewritten to the renamed entry")
+				.isEqualTo("#/$defs/Filter_2");
 		assertThat(schemaNode.at("/$defs/Wrapper/properties/nested/items/$ref").asText())
-			.as("peer Wrapper's self-reference must be left alone")
-			.isEqualTo("#/$defs/Wrapper");
+				.as("peer Wrapper's self-reference must be left alone")
+				.isEqualTo("#/$defs/Wrapper");
 		assertThat(schemaNode.at("/$defs/Filter_2/properties/children/items/$ref").asText())
-			.as("renamed entry's self-reference must follow the rename")
-			.isEqualTo("#/$defs/Filter_2");
+				.as("renamed entry's self-reference must follow the rename")
+				.isEqualTo("#/$defs/Filter_2");
 	}
 
 	// gh-5888: forbidAdditionalProperties walks the whole schema tree including the
@@ -869,8 +863,8 @@ class JsonSchemaGeneratorTests {
 		JsonNode schemaNode = jsonHelper.fromJson(schema, JsonNode.class);
 
 		assertThat(schemaNode.at("/$defs/RecursiveFilter/additionalProperties").asBoolean(true))
-			.as("additionalProperties: false must be propagated into hoisted $defs entries")
-			.isFalse();
+				.as("additionalProperties: false must be propagated into hoisted $defs entries")
+				.isFalse();
 	}
 
 	// gh-5888: ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT must suppress additionalProperties
@@ -885,11 +879,11 @@ class JsonSchemaGeneratorTests {
 
 		assertThat(schemaNode.has("$defs")).isTrue();
 		assertThat(schemaNode.at("/$defs/RecursiveFilter").has("additionalProperties"))
-			.as("ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT must not add additionalProperties to hoisted $defs entries")
-			.isFalse();
+				.as("ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT must not add additionalProperties to hoisted $defs entries")
+				.isFalse();
 		assertThat(schemaNode.has("additionalProperties"))
-			.as("ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT must not add additionalProperties to root schema")
-			.isFalse();
+				.as("ALLOW_ADDITIONAL_PROPERTIES_BY_DEFAULT must not add additionalProperties to root schema")
+				.isFalse();
 	}
 
 	@Test
@@ -913,7 +907,7 @@ class JsonSchemaGeneratorTests {
 	@Test
 	void throwExceptionWhenTypeIsNull() {
 		assertThatThrownBy(() -> JsonSchemaGenerator.generateForType(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("type cannot be null");
+				.hasMessage("type cannot be null");
 	}
 
 	private static List<String> generateConcurrently(Callable<String> generator) throws Exception {
@@ -935,8 +929,7 @@ class JsonSchemaGeneratorTests {
 				schemas.add(future.get(30, TimeUnit.SECONDS));
 			}
 			return schemas;
-		}
-		finally {
+		} finally {
 			executor.shutdownNow();
 		}
 	}
@@ -1053,19 +1046,19 @@ class JsonSchemaGeneratorTests {
 	}
 
 	record AnnotatedPerson(@ToolParam int id, @ToolParam String name,
-			@ToolParam(required = false, description = "The email of the person") String email) {
+	                       @ToolParam(required = false, description = "The email of the person") String email) {
 
 	}
 
 	record JacksonPerson(@JsonProperty(required = true) int id, @JsonProperty(required = true) String name,
-			@JsonProperty String email) {
+	                     @JsonProperty String email) {
 
 	}
 
 	record OpenApiPerson(@Schema(requiredMode = Schema.RequiredMode.REQUIRED) int id,
-			@Schema(requiredMode = Schema.RequiredMode.REQUIRED) String name,
-			@Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED,
-					description = "The email of the person") String email) {
+	                     @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String name,
+	                     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+								 description = "The email of the person") String email) {
 
 	}
 
@@ -1081,9 +1074,9 @@ class JsonSchemaGeneratorTests {
 
 	}
 
-	@JsonPropertyOrder({ "accountId", "accountName", "currency", "totals" })
+	@JsonPropertyOrder({"accountId", "accountName", "currency", "totals"})
 	record OrderedStatement(@JsonProperty(required = true) String accountId,
-			@JsonProperty(required = true) String accountName, String currency, Map<String, Double> totals) {
+	                        @JsonProperty(required = true) String accountName, String currency, Map<String, Double> totals) {
 	}
 
 	static class Person {

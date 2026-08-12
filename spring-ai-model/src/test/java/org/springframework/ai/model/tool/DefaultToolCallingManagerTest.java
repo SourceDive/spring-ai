@@ -16,12 +16,8 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.List;
-import java.util.Map;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -31,6 +27,9 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.tool.metadata.ToolMetadata;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -48,10 +47,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("testTool")
-					.description("A test tool")
-					.inputSchema("{}")
-					.build();
+						.name("testTool")
+						.description("A test tool")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -73,10 +72,10 @@ class DefaultToolCallingManagerTest {
 
 		// Create a ChatResponse
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall))
+				.build();
 		Generation generation = new Generation(assistantMessage);
 		ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
@@ -85,14 +84,14 @@ class DefaultToolCallingManagerTest {
 
 		// Mock the tool callbacks resolution by creating a custom ToolCallbackResolver
 		DefaultToolCallingManager managerWithCallback = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> {
-				if ("testTool".equals(toolName)) {
-					return mockToolCallback;
-				}
-				return null;
-			})
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> {
+					if ("testTool".equals(toolName)) {
+						return mockToolCallback;
+					}
+					return null;
+				})
+				.build();
 
 		// Verify that no exception is thrown
 		assertThatNoException().isThrownBy(() -> managerWithCallback.executeToolCalls(prompt, chatResponse));
@@ -105,10 +104,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("testTool")
-					.description("A test tool")
-					.inputSchema("{}")
-					.build();
+						.name("testTool")
+						.description("A test tool")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -130,10 +129,10 @@ class DefaultToolCallingManagerTest {
 
 		// Create a ChatResponse
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall))
+				.build();
 		Generation generation = new Generation(assistantMessage);
 		ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
@@ -142,14 +141,14 @@ class DefaultToolCallingManagerTest {
 
 		// Mock the tool callbacks resolution by creating a custom ToolCallbackResolver
 		DefaultToolCallingManager managerWithCallback = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> {
-				if ("testTool".equals(toolName)) {
-					return mockToolCallback;
-				}
-				return null;
-			})
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> {
+					if ("testTool".equals(toolName)) {
+						return mockToolCallback;
+					}
+					return null;
+				})
+				.build();
 
 		// Verify that no exception is thrown
 		assertThatNoException().isThrownBy(() -> managerWithCallback.executeToolCalls(prompt, chatResponse));
@@ -162,10 +161,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("tool1")
-					.description("First tool")
-					.inputSchema("{\"type\": \"object\", \"properties\": {\"param\": {\"type\": \"string\"}}}")
-					.build();
+						.name("tool1")
+						.description("First tool")
+						.inputSchema("{\"type\": \"object\", \"properties\": {\"param\": {\"type\": \"string\"}}}")
+						.build();
 			}
 
 			@Override
@@ -183,10 +182,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("tool2")
-					.description("Second tool")
-					.inputSchema("{\"type\": \"object\", \"properties\": {\"value\": {\"type\": \"number\"}}}")
-					.build();
+						.name("tool2")
+						.description("Second tool")
+						.inputSchema("{\"type\": \"object\", \"properties\": {\"value\": {\"type\": \"number\"}}}")
+						.build();
 			}
 
 			@Override
@@ -208,27 +207,27 @@ class DefaultToolCallingManagerTest {
 
 		// Create ChatResponse with multiple tool calls
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall1, toolCall2))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall1, toolCall2))
+				.build();
 		Generation generation = new Generation(assistantMessage);
 		ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
 		Prompt prompt = new Prompt(List.of(new UserMessage("test multiple tools")));
 
 		DefaultToolCallingManager manager = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> {
-				if ("tool1".equals(toolName)) {
-					return toolCallback1;
-				}
-				if ("tool2".equals(toolName)) {
-					return toolCallback2;
-				}
-				return null;
-			})
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> {
+					if ("tool1".equals(toolName)) {
+						return toolCallback1;
+					}
+					if ("tool2".equals(toolName)) {
+						return toolCallback2;
+					}
+					return null;
+				})
+				.build();
 
 		assertThatNoException().isThrownBy(() -> manager.executeToolCalls(prompt, chatResponse));
 	}
@@ -239,10 +238,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("complexTool")
-					.description("A tool with complex JSON input")
-					.inputSchema("{\"type\": \"object\", \"properties\": {\"nested\": {\"type\": \"object\"}}}")
-					.build();
+						.name("complexTool")
+						.description("A tool with complex JSON input")
+						.inputSchema("{\"type\": \"object\", \"properties\": {\"nested\": {\"type\": \"object\"}}}")
+						.build();
 			}
 
 			@Override
@@ -262,19 +261,19 @@ class DefaultToolCallingManagerTest {
 		AssistantMessage.ToolCall toolCall = new AssistantMessage.ToolCall("1", "function", "complexTool", complexJson);
 
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall))
+				.build();
 		Generation generation = new Generation(assistantMessage);
 		ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
 		Prompt prompt = new Prompt(List.of(new UserMessage("test complex json")));
 
 		DefaultToolCallingManager manager = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> "complexTool".equals(toolName) ? complexToolCallback : null)
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> "complexTool".equals(toolName) ? complexToolCallback : null)
+				.build();
 
 		assertThatNoException().isThrownBy(() -> manager.executeToolCalls(prompt, chatResponse));
 	}
@@ -285,10 +284,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("testTool")
-					.description("Test tool")
-					.inputSchema("{}")
-					.build();
+						.name("testTool")
+						.description("Test tool")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -309,19 +308,19 @@ class DefaultToolCallingManagerTest {
 				"{invalid json}");
 
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall))
+				.build();
 		Generation generation = new Generation(assistantMessage);
 		ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
 		Prompt prompt = new Prompt(List.of(new UserMessage("test malformed json")));
 
 		DefaultToolCallingManager manager = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> "testTool".equals(toolName) ? toolCallback : null)
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> "testTool".equals(toolName) ? toolCallback : null)
+				.build();
 
 		assertThatNoException().isThrownBy(() -> manager.executeToolCalls(prompt, chatResponse));
 	}
@@ -332,10 +331,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("nullReturningTool")
-					.description("Tool that returns null")
-					.inputSchema("{}")
-					.build();
+						.name("nullReturningTool")
+						.description("Tool that returns null")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -352,19 +351,19 @@ class DefaultToolCallingManagerTest {
 		AssistantMessage.ToolCall toolCall = new AssistantMessage.ToolCall("1", "function", "nullReturningTool", "{}");
 
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall))
+				.build();
 		Generation generation = new Generation(assistantMessage);
 		ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
 		Prompt prompt = new Prompt(List.of(new UserMessage("test null return")));
 
 		DefaultToolCallingManager manager = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> "nullReturningTool".equals(toolName) ? toolCallback : null)
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> "nullReturningTool".equals(toolName) ? toolCallback : null)
+				.build();
 
 		assertThatNoException().isThrownBy(() -> manager.executeToolCalls(prompt, chatResponse));
 	}
@@ -375,10 +374,10 @@ class DefaultToolCallingManagerTest {
 			@Override
 			public ToolDefinition getToolDefinition() {
 				return DefaultToolDefinition.builder()
-					.name("multiGenTool")
-					.description("Tool for multiple generations")
-					.inputSchema("{}")
-					.build();
+						.name("multiGenTool")
+						.description("Tool for multiple generations")
+						.inputSchema("{}")
+						.build();
 			}
 
 			@Override
@@ -397,16 +396,16 @@ class DefaultToolCallingManagerTest {
 		AssistantMessage.ToolCall toolCall2 = new AssistantMessage.ToolCall("2", "function", "multiGenTool", "{}");
 
 		AssistantMessage assistantMessage1 = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall1))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall1))
+				.build();
 
 		AssistantMessage assistantMessage2 = AssistantMessage.builder()
-			.content("")
-			.properties(Map.of())
-			.toolCalls(List.of(toolCall2))
-			.build();
+				.content("")
+				.properties(Map.of())
+				.toolCalls(List.of(toolCall2))
+				.build();
 
 		Generation generation1 = new Generation(assistantMessage1);
 		Generation generation2 = new Generation(assistantMessage2);
@@ -416,9 +415,9 @@ class DefaultToolCallingManagerTest {
 		Prompt prompt = new Prompt(List.of(new UserMessage("test multiple generations")));
 
 		DefaultToolCallingManager manager = DefaultToolCallingManager.builder()
-			.observationRegistry(ObservationRegistry.NOOP)
-			.toolCallbackResolver(toolName -> "multiGenTool".equals(toolName) ? toolCallback : null)
-			.build();
+				.observationRegistry(ObservationRegistry.NOOP)
+				.toolCallbackResolver(toolName -> "multiGenTool".equals(toolName) ? toolCallback : null)
+				.build();
 
 		assertThatNoException().isThrownBy(() -> manager.executeToolCalls(prompt, chatResponse));
 	}

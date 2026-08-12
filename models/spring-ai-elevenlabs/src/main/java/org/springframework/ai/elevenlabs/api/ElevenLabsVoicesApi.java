@@ -16,15 +16,10 @@
 
 package org.springframework.ai.elevenlabs.api;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ApiKey;
 import org.springframework.ai.model.NoopApiKey;
 import org.springframework.ai.model.SimpleApiKey;
@@ -35,6 +30,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Client for the ElevenLabs Voices API.
@@ -49,14 +48,15 @@ public class ElevenLabsVoicesApi {
 
 	/**
 	 * Create a new ElevenLabs Voices API client.
-	 * @param baseUrl The base URL for the ElevenLabs API.
-	 * @param apiKey Your ElevenLabs API key.
-	 * @param headers the http headers to use.
-	 * @param restClientBuilder A builder for the Spring RestClient.
+	 *
+	 * @param baseUrl              The base URL for the ElevenLabs API.
+	 * @param apiKey               Your ElevenLabs API key.
+	 * @param headers              the http headers to use.
+	 * @param restClientBuilder    A builder for the Spring RestClient.
 	 * @param responseErrorHandler A custom error handler for API responses.
 	 */
 	public ElevenLabsVoicesApi(String baseUrl, ApiKey apiKey, HttpHeaders headers, RestClient.Builder restClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                           ResponseErrorHandler responseErrorHandler) {
 		Consumer<HttpHeaders> jsonContentHeaders = h -> {
 			if (!(apiKey instanceof NoopApiKey)) {
 				h.set("xi-api-key", apiKey.getValue());
@@ -66,15 +66,16 @@ public class ElevenLabsVoicesApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 
 	}
 
 	/**
 	 * Create a new ElevenLabs Voices API client.
+	 *
 	 * @param restClient Spring RestClient instance.
 	 */
 	public ElevenLabsVoicesApi(RestClient restClient) {
@@ -87,6 +88,7 @@ public class ElevenLabsVoicesApi {
 
 	/**
 	 * Retrieves a list of all available voices from the ElevenLabs API.
+	 *
 	 * @return A ResponseEntity containing a Voices object, which contains the list of
 	 * voices.
 	 */
@@ -98,6 +100,7 @@ public class ElevenLabsVoicesApi {
 	 * Gets the default settings for voices. "similarity_boost" corresponds to ”Clarity +
 	 * Similarity Enhancement” in the web app and "stability" corresponds to "Stability"
 	 * slider in the web app.
+	 *
 	 * @return {@link ResponseEntity} containing the {@link VoiceSettings} record.
 	 */
 	public ResponseEntity<VoiceSettings> getDefaultVoiceSettings() {
@@ -108,21 +111,23 @@ public class ElevenLabsVoicesApi {
 	 * Returns the settings for a specific voice. "similarity_boost" corresponds to
 	 * "Clarity + Similarity Enhancement" in the web app and "stability" corresponds to
 	 * the "Stability" slider in the web app.
+	 *
 	 * @param voiceId The ID of the voice to get settings for. Required.
 	 * @return {@link ResponseEntity} containing the {@link VoiceSettings} record.
 	 */
 	public ResponseEntity<VoiceSettings> getVoiceSettings(String voiceId) {
 		Assert.hasText(voiceId, "voiceId cannot be null or empty");
 		return this.restClient.get()
-			.uri("/v1/voices/{voiceId}/settings", voiceId)
-			.retrieve()
-			.toEntity(VoiceSettings.class);
+				.uri("/v1/voices/{voiceId}/settings", voiceId)
+				.retrieve()
+				.toEntity(VoiceSettings.class);
 	}
 
 	/**
 	 * Returns metadata about a specific voice.
+	 *
 	 * @param voiceId ID of the voice to be used. You can use the Get voices endpoint list
-	 * all the available voices. Required.
+	 *                all the available voices. Required.
 	 * @return {@link ResponseEntity} containing the {@link Voice} record.
 	 */
 	public ResponseEntity<Voice> getVoice(String voiceId) {
@@ -190,109 +195,109 @@ public class ElevenLabsVoicesApi {
 	 */
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record Voice(@JsonProperty("voice_id") String voiceId, @JsonProperty("name") String name,
-			@JsonProperty("samples") List<Sample> samples, @JsonProperty("category") CategoryEnum category,
-			@JsonProperty("fine_tuning") FineTuning fineTuning, @JsonProperty("labels") Map<String, String> labels,
-			@JsonProperty("description") String description, @JsonProperty("preview_url") String previewUrl,
-			@JsonProperty("available_for_tiers") List<String> availableForTiers,
-			@JsonProperty("settings") VoiceSettings settings, @JsonProperty("sharing") VoiceSharing sharing,
-			@JsonProperty("high_quality_base_model_ids") List<String> highQualityBaseModelIds,
-			@JsonProperty("verified_languages") List<VerifiedVoiceLanguage> verifiedLanguages,
-			@JsonProperty("safety_control") SafetyControlEnum safetyControl,
-			@JsonProperty("voice_verification") VoiceVerification voiceVerification,
-			@JsonProperty("permission_on_resource") String permissionOnResource,
-			@JsonProperty("is_owner") Boolean isOwner, @JsonProperty("is_legacy") Boolean isLegacy,
-			@JsonProperty("is_mixed") Boolean isMixed, @JsonProperty("created_at_unix") Integer createdAtUnix) {
+	                    @JsonProperty("samples") List<Sample> samples, @JsonProperty("category") CategoryEnum category,
+	                    @JsonProperty("fine_tuning") FineTuning fineTuning, @JsonProperty("labels") Map<String, String> labels,
+	                    @JsonProperty("description") String description, @JsonProperty("preview_url") String previewUrl,
+	                    @JsonProperty("available_for_tiers") List<String> availableForTiers,
+	                    @JsonProperty("settings") VoiceSettings settings, @JsonProperty("sharing") VoiceSharing sharing,
+	                    @JsonProperty("high_quality_base_model_ids") List<String> highQualityBaseModelIds,
+	                    @JsonProperty("verified_languages") List<VerifiedVoiceLanguage> verifiedLanguages,
+	                    @JsonProperty("safety_control") SafetyControlEnum safetyControl,
+	                    @JsonProperty("voice_verification") VoiceVerification voiceVerification,
+	                    @JsonProperty("permission_on_resource") String permissionOnResource,
+	                    @JsonProperty("is_owner") Boolean isOwner, @JsonProperty("is_legacy") Boolean isLegacy,
+	                    @JsonProperty("is_mixed") Boolean isMixed, @JsonProperty("created_at_unix") Integer createdAtUnix) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record Sample(@JsonProperty("sample_id") String sampleId, @JsonProperty("file_name") String fileName,
-			@JsonProperty("mime_type") String mimeType, @JsonProperty("size_bytes") Integer sizeBytes,
-			@JsonProperty("hash") String hash) {
+	                     @JsonProperty("mime_type") String mimeType, @JsonProperty("size_bytes") Integer sizeBytes,
+	                     @JsonProperty("hash") String hash) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record FineTuning(@JsonProperty("is_allowed_to_fine_tune") Boolean isAllowedToFineTune,
-			@JsonProperty("state") Map<String, String> state,
-			@JsonProperty("verification_failures") List<String> verificationFailures,
-			@JsonProperty("verification_attempts_count") Integer verificationAttemptsCount,
-			@JsonProperty("manual_verification_requested") Boolean manualVerificationRequested,
-			@JsonProperty("language") String language, @JsonProperty("progress") Map<String, Double> progress,
-			@JsonProperty("message") Map<String, String> message,
-			@JsonProperty("dataset_duration_seconds") Double datasetDurationSeconds,
-			@JsonProperty("verification_attempts") List<VerificationAttempt> verificationAttempts,
-			@JsonProperty("slice_ids") List<String> sliceIds,
-			@JsonProperty("manual_verification") ManualVerification manualVerification,
-			@JsonProperty("max_verification_attempts") Integer maxVerificationAttempts,
-			@JsonProperty("next_max_verification_attempts_reset_unix_ms") Long nextMaxVerificationAttemptsResetUnixMs) {
+	                         @JsonProperty("state") Map<String, String> state,
+	                         @JsonProperty("verification_failures") List<String> verificationFailures,
+	                         @JsonProperty("verification_attempts_count") Integer verificationAttemptsCount,
+	                         @JsonProperty("manual_verification_requested") Boolean manualVerificationRequested,
+	                         @JsonProperty("language") String language, @JsonProperty("progress") Map<String, Double> progress,
+	                         @JsonProperty("message") Map<String, String> message,
+	                         @JsonProperty("dataset_duration_seconds") Double datasetDurationSeconds,
+	                         @JsonProperty("verification_attempts") List<VerificationAttempt> verificationAttempts,
+	                         @JsonProperty("slice_ids") List<String> sliceIds,
+	                         @JsonProperty("manual_verification") ManualVerification manualVerification,
+	                         @JsonProperty("max_verification_attempts") Integer maxVerificationAttempts,
+	                         @JsonProperty("next_max_verification_attempts_reset_unix_ms") Long nextMaxVerificationAttemptsResetUnixMs) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record VoiceVerification(@JsonProperty("requires_verification") Boolean requiresVerification,
-			@JsonProperty("is_verified") Boolean isVerified,
-			@JsonProperty("verification_failures") List<String> verificationFailures,
-			@JsonProperty("verification_attempts_count") Integer verificationAttemptsCount,
-			@JsonProperty("language") String language,
-			@JsonProperty("verification_attempts") List<VerificationAttempt> verificationAttempts) {
+	                                @JsonProperty("is_verified") Boolean isVerified,
+	                                @JsonProperty("verification_failures") List<String> verificationFailures,
+	                                @JsonProperty("verification_attempts_count") Integer verificationAttemptsCount,
+	                                @JsonProperty("language") String language,
+	                                @JsonProperty("verification_attempts") List<VerificationAttempt> verificationAttempts) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record VerificationAttempt(@JsonProperty("text") String text, @JsonProperty("date_unix") Integer dateUnix,
-			@JsonProperty("accepted") Boolean accepted, @JsonProperty("similarity") Double similarity,
-			@JsonProperty("levenshtein_distance") Double levenshteinDistance,
-			@JsonProperty("recording") Recording recording) {
+	                                  @JsonProperty("accepted") Boolean accepted, @JsonProperty("similarity") Double similarity,
+	                                  @JsonProperty("levenshtein_distance") Double levenshteinDistance,
+	                                  @JsonProperty("recording") Recording recording) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record Recording(@JsonProperty("recording_id") String recordingId,
-			@JsonProperty("mime_type") String mimeType, @JsonProperty("size_bytes") Integer sizeBytes,
-			@JsonProperty("upload_date_unix") Integer uploadDateUnix,
-			@JsonProperty("transcription") String transcription) {
+	                        @JsonProperty("mime_type") String mimeType, @JsonProperty("size_bytes") Integer sizeBytes,
+	                        @JsonProperty("upload_date_unix") Integer uploadDateUnix,
+	                        @JsonProperty("transcription") String transcription) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record ManualVerification(@JsonProperty("extra_text") String extraText,
-			@JsonProperty("request_time_unix") Integer requestTimeUnix,
-			@JsonProperty("files") List<ManualVerificationFile> files) {
+	                                 @JsonProperty("request_time_unix") Integer requestTimeUnix,
+	                                 @JsonProperty("files") List<ManualVerificationFile> files) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record ManualVerificationFile(@JsonProperty("file_id") String fileId,
-			@JsonProperty("file_name") String fileName, @JsonProperty("mime_type") String mimeType,
-			@JsonProperty("size_bytes") Integer sizeBytes, @JsonProperty("upload_date_unix") Integer uploadDateUnix) {
+	                                     @JsonProperty("file_name") String fileName, @JsonProperty("mime_type") String mimeType,
+	                                     @JsonProperty("size_bytes") Integer sizeBytes, @JsonProperty("upload_date_unix") Integer uploadDateUnix) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record VoiceSettings(@JsonProperty("stability") Double stability,
-			@JsonProperty("similarity_boost") Double similarityBoost, @JsonProperty("style") Double style,
-			@JsonProperty("use_speaker_boost") Boolean useSpeakerBoost, @JsonProperty("speed") Double speed) {
+	                            @JsonProperty("similarity_boost") Double similarityBoost, @JsonProperty("style") Double style,
+	                            @JsonProperty("use_speaker_boost") Boolean useSpeakerBoost, @JsonProperty("speed") Double speed) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record VoiceSharing(@JsonProperty("status") StatusEnum status,
-			@JsonProperty("history_item_sample_id") String historyItemSampleId,
-			@JsonProperty("date_unix") Integer dateUnix,
-			@JsonProperty("whitelisted_emails") List<String> whitelistedEmails,
-			@JsonProperty("public_owner_id") String publicOwnerId,
-			@JsonProperty("original_voice_id") String originalVoiceId,
-			@JsonProperty("financial_rewards_enabled") Boolean financialRewardsEnabled,
-			@JsonProperty("free_users_allowed") Boolean freeUsersAllowed,
-			@JsonProperty("live_moderation_enabled") Boolean liveModerationEnabled, @JsonProperty("rate") Double rate,
-			@JsonProperty("notice_period") Integer noticePeriod, @JsonProperty("disable_at_unix") Integer disableAtUnix,
-			@JsonProperty("voice_mixing_allowed") Boolean voiceMixingAllowed,
-			@JsonProperty("featured") Boolean featured, @JsonProperty("category") CategoryEnum category,
-			@JsonProperty("reader_app_enabled") Boolean readerAppEnabled, @JsonProperty("image_url") String imageUrl,
-			@JsonProperty("ban_reason") String banReason, @JsonProperty("liked_by_count") Integer likedByCount,
-			@JsonProperty("cloned_by_count") Integer clonedByCount, @JsonProperty("name") String name,
-			@JsonProperty("description") String description, @JsonProperty("labels") Map<String, String> labels,
-			@JsonProperty("review_status") ReviewStatusEnum reviewStatus,
-			@JsonProperty("review_message") String reviewMessage,
-			@JsonProperty("enabled_in_library") Boolean enabledInLibrary,
-			@JsonProperty("instagram_username") String instagramUsername,
-			@JsonProperty("twitter_username") String twitterUsername,
-			@JsonProperty("youtube_username") String youtubeUsername,
-			@JsonProperty("tiktok_username") String tiktokUsername,
-			@JsonProperty("moderation_check") VoiceSharingModerationCheck moderationCheck,
-			@JsonProperty("reader_restricted_on") List<ReaderResource> readerRestrictedOn) {
+	                           @JsonProperty("history_item_sample_id") String historyItemSampleId,
+	                           @JsonProperty("date_unix") Integer dateUnix,
+	                           @JsonProperty("whitelisted_emails") List<String> whitelistedEmails,
+	                           @JsonProperty("public_owner_id") String publicOwnerId,
+	                           @JsonProperty("original_voice_id") String originalVoiceId,
+	                           @JsonProperty("financial_rewards_enabled") Boolean financialRewardsEnabled,
+	                           @JsonProperty("free_users_allowed") Boolean freeUsersAllowed,
+	                           @JsonProperty("live_moderation_enabled") Boolean liveModerationEnabled, @JsonProperty("rate") Double rate,
+	                           @JsonProperty("notice_period") Integer noticePeriod, @JsonProperty("disable_at_unix") Integer disableAtUnix,
+	                           @JsonProperty("voice_mixing_allowed") Boolean voiceMixingAllowed,
+	                           @JsonProperty("featured") Boolean featured, @JsonProperty("category") CategoryEnum category,
+	                           @JsonProperty("reader_app_enabled") Boolean readerAppEnabled, @JsonProperty("image_url") String imageUrl,
+	                           @JsonProperty("ban_reason") String banReason, @JsonProperty("liked_by_count") Integer likedByCount,
+	                           @JsonProperty("cloned_by_count") Integer clonedByCount, @JsonProperty("name") String name,
+	                           @JsonProperty("description") String description, @JsonProperty("labels") Map<String, String> labels,
+	                           @JsonProperty("review_status") ReviewStatusEnum reviewStatus,
+	                           @JsonProperty("review_message") String reviewMessage,
+	                           @JsonProperty("enabled_in_library") Boolean enabledInLibrary,
+	                           @JsonProperty("instagram_username") String instagramUsername,
+	                           @JsonProperty("twitter_username") String twitterUsername,
+	                           @JsonProperty("youtube_username") String youtubeUsername,
+	                           @JsonProperty("tiktok_username") String tiktokUsername,
+	                           @JsonProperty("moderation_check") VoiceSharingModerationCheck moderationCheck,
+	                           @JsonProperty("reader_restricted_on") List<ReaderResource> readerRestrictedOn) {
 		public enum StatusEnum {
 
 			@JsonProperty("enabled")
@@ -360,18 +365,18 @@ public class ElevenLabsVoicesApi {
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record VoiceSharingModerationCheck(@JsonProperty("date_checked_unix") Integer dateCheckedUnix,
-			@JsonProperty("name_value") String nameValue, @JsonProperty("name_check") Boolean nameCheck,
-			@JsonProperty("description_value") String descriptionValue,
-			@JsonProperty("description_check") Boolean descriptionCheck,
-			@JsonProperty("sample_ids") List<String> sampleIds,
-			@JsonProperty("sample_checks") List<Double> sampleChecks,
-			@JsonProperty("captcha_ids") List<String> captchaIds,
-			@JsonProperty("captcha_checks") List<Double> captchaChecks) {
+	                                          @JsonProperty("name_value") String nameValue, @JsonProperty("name_check") Boolean nameCheck,
+	                                          @JsonProperty("description_value") String descriptionValue,
+	                                          @JsonProperty("description_check") Boolean descriptionCheck,
+	                                          @JsonProperty("sample_ids") List<String> sampleIds,
+	                                          @JsonProperty("sample_checks") List<Double> sampleChecks,
+	                                          @JsonProperty("captcha_ids") List<String> captchaIds,
+	                                          @JsonProperty("captcha_checks") List<Double> captchaChecks) {
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record ReaderResource(@JsonProperty("resource_type") ResourceTypeEnum resourceType,
-			@JsonProperty("resource_id") String resourceId) {
+	                             @JsonProperty("resource_id") String resourceId) {
 
 		public enum ResourceTypeEnum {
 
@@ -395,7 +400,7 @@ public class ElevenLabsVoicesApi {
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public record VerifiedVoiceLanguage(@JsonProperty("language") String language,
-			@JsonProperty("model_id") String modelId, @JsonProperty("accent") String accent) {
+	                                    @JsonProperty("model_id") String modelId, @JsonProperty("accent") String accent) {
 	}
 
 	/**

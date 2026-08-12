@@ -16,12 +16,11 @@
 
 package org.springframework.ai.chat.messages;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,8 +65,8 @@ class SystemMessageTests {
 		SystemMessage message = SystemMessage.builder().text(text).metadata(Map.of("key", "value")).build();
 		assertEquals(text, message.getText());
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key", "value");
 	}
 
 	@Test
@@ -76,8 +75,8 @@ class SystemMessageTests {
 		SystemMessage message = SystemMessage.builder().text(resource).metadata(Map.of("key", "value")).build();
 		assertEquals("Tell me, did you sail across the sun?", message.getText());
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key", "value");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key", "value");
 	}
 
 	@Test
@@ -147,15 +146,15 @@ class SystemMessageTests {
 	void systemMessageBuilderOverwriteMetadata() {
 		String text = "Test message";
 		SystemMessage message = SystemMessage.builder()
-			.text(text)
-			.metadata(Map.of("key1", "value1"))
-			.metadata(Map.of("key2", "value2"))
-			.build();
+				.text(text)
+				.metadata(Map.of("key1", "value1"))
+				.metadata(Map.of("key2", "value2"))
+				.build();
 
 		assertThat(message.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key2", "value2")
-			.doesNotContainKey("key1");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key2", "value2")
+				.doesNotContainKey("key1");
 	}
 
 	@Test
@@ -184,9 +183,9 @@ class SystemMessageTests {
 
 		assertThat(mutated.getText()).isEqualTo(originalText);
 		assertThat(mutated.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key2", "value2")
-			.doesNotContainKey("key1");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key2", "value2")
+				.doesNotContainKey("key1");
 	}
 
 	@Test
@@ -197,8 +196,8 @@ class SystemMessageTests {
 
 		assertThat(result.getText()).isEqualTo("Updated");
 		assertThat(result.getMetadata()).hasSize(2)
-			.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
-			.containsEntry("key2", "value2");
+				.containsEntry(MESSAGE_TYPE, MessageType.SYSTEM)
+				.containsEntry("key2", "value2");
 	}
 
 	@Test

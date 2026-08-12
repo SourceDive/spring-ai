@@ -16,24 +16,9 @@
 
 package org.springframework.ai.test.chat.client.advisor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.chat.client.AdvisorParams;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.ChatClientAttributes;
-import org.springframework.ai.chat.client.ChatClientMessageAggregator;
-import org.springframework.ai.chat.client.ChatClientRequest;
-import org.springframework.ai.chat.client.ChatClientResponse;
+import org.springframework.ai.chat.client.*;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
@@ -50,6 +35,15 @@ import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.ai.tool.metadata.ToolMetadata;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,17 +71,17 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 
 	protected ToolCallback createWeatherToolCallback() {
 		return FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-			.description("Get the weather in location")
-			.inputType(MockWeatherService.Request.class)
-			.build();
+				.description("Get the weather in location")
+				.inputType(MockWeatherService.Request.class)
+				.build();
 	}
 
 	protected ToolCallback createReturnDirectWeatherToolCallback() {
 		return FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-			.description("Get the weather in location")
-			.inputType(MockWeatherService.Request.class)
-			.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
-			.build();
+				.description("Get the weather in location")
+				.inputType(MockWeatherService.Request.class)
+				.toolMetadata(ToolMetadata.builder().returnDirect(true).build())
+				.build();
 	}
 
 	private static String collect(Flux<String> flux) {
@@ -110,11 +104,11 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void autoRegisteredAdvisorExecutesTools() {
 			String response = ChatClient.create(getChatModel())
-				.prompt()
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			assertThat(response).contains("30", "10", "15");
 		}
@@ -122,15 +116,15 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void autoRegisteredAdvisorWithDownstreamMemory() {
 			String response = ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().maxMessages(500).build())
-					.order(1000)
-					.build())
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "auto-register-with-memory"))
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.advisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().maxMessages(500).build())
+							.order(1000)
+							.build())
+					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "auto-register-with-memory"))
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			assertThat(response).contains("30", "10", "15");
 		}
@@ -140,10 +134,10 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var chatClient = ChatClient.builder(getChatModel()).build();
 
 			String response = chatClient.prompt()
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			assertThat(response).contains("30", "10", "15");
 		}
@@ -151,16 +145,16 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void defaultAdvisorsWithMemoryAndAutoRegistration() {
 			var chatClient = ChatClient.builder(getChatModel())
-				.defaultAdvisors(
-						MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).order(1000).build())
-				.build();
+					.defaultAdvisors(
+							MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).order(1000).build())
+					.build();
 
 			String response = chatClient.prompt()
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "default-advisors-memory"))
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "default-advisors-memory"))
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			assertThat(response).contains("30", "10", "15");
 		}
@@ -168,11 +162,11 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void returnDirectWithAutoRegistration() {
 			String response = ChatClient.create(getChatModel())
-				.prompt()
-				.user("What's the weather in Tokyo?")
-				.tools(createReturnDirectWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.user("What's the weather in Tokyo?")
+					.tools(createReturnDirectWeatherToolCallback())
+					.call()
+					.content();
 
 			assertThat(response).contains("temp");
 		}
@@ -191,17 +185,17 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var counter = new ChainIterationCountingAdvisor();
 
 			ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(counter)
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			// chain.copy(this) restarts after ToolCallingAdvisor on every iteration
 			assertThat(counter.getCallCount())
-				.as("ToolCallingAdvisor should loop: at least one tool iteration + final answer")
-				.isGreaterThanOrEqualTo(2);
+					.as("ToolCallingAdvisor should loop: at least one tool iteration + final answer")
+					.isGreaterThanOrEqualTo(2);
 		}
 
 		@Test
@@ -209,18 +203,18 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var counter = new ChainIterationCountingAdvisor();
 
 			ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(counter)
-				.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			// Model handles tools internally; chain traversed exactly once
 			assertThat(counter.getCallCount())
-				.as("Without ToolCallingAdvisor the chain should be traversed exactly once")
-				.isEqualTo(1);
+					.as("Without ToolCallingAdvisor the chain should be traversed exactly once")
+					.isEqualTo(1);
 		}
 
 		@Test
@@ -228,12 +222,12 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var counter = new ChainIterationCountingAdvisor();
 
 			ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(counter)
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			// On the second iteration the request must contain tool-response messages
 			// proving they are visible to every advisor after ToolCallingAdvisor.
@@ -241,15 +235,15 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			assertThat(requests).hasSizeGreaterThanOrEqualTo(2);
 
 			boolean toolResponseVisible = requests.stream()
-				.skip(1) // skip first (no tool results yet)
-				.anyMatch(req -> req.prompt()
-					.getInstructions()
-					.stream()
-					.anyMatch(m -> m instanceof org.springframework.ai.chat.messages.ToolResponseMessage));
+					.skip(1) // skip first (no tool results yet)
+					.anyMatch(req -> req.prompt()
+							.getInstructions()
+							.stream()
+							.anyMatch(m -> m instanceof org.springframework.ai.chat.messages.ToolResponseMessage));
 
 			assertThat(toolResponseVisible)
-				.as("Tool response messages must be visible in the advisor chain on subsequent iterations")
-				.isTrue();
+					.as("Tool response messages must be visible in the advisor chain on subsequent iterations")
+					.isTrue();
 		}
 
 	}
@@ -264,11 +258,11 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void autoRegisteredAdvisorExecutesTools() {
 			String content = collect(ChatClient.create(getChatModel())
-				.prompt()
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.stream()
-				.content());
+					.prompt()
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.stream()
+					.content());
 
 			assertThat(content).contains("30", "10", "15");
 		}
@@ -276,15 +270,15 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void autoRegisteredAdvisorWithDownstreamMemory() {
 			String content = collect(ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().maxMessages(500).build())
-					.order(1000)
-					.build())
-				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "stream-auto-register-with-memory"))
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.stream()
-				.content());
+					.prompt()
+					.advisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().maxMessages(500).build())
+							.order(1000)
+							.build())
+					.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "stream-auto-register-with-memory"))
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.stream()
+					.content());
 
 			assertThat(content).contains("30", "10", "15");
 		}
@@ -292,11 +286,11 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 		@Test
 		void returnDirectWithAutoRegistration() {
 			String content = collect(ChatClient.create(getChatModel())
-				.prompt()
-				.user("What's the weather in Tokyo?")
-				.tools(createReturnDirectWeatherToolCallback())
-				.stream()
-				.content());
+					.prompt()
+					.user("What's the weather in Tokyo?")
+					.tools(createReturnDirectWeatherToolCallback())
+					.stream()
+					.content());
 
 			assertThat(content).contains("temp");
 		}
@@ -315,16 +309,16 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var counter = new ChainIterationCountingAdvisor();
 
 			collect(ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(counter)
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.stream()
-				.content());
+					.prompt()
+					.advisors(counter)
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.stream()
+					.content());
 
 			assertThat(counter.getCallCount())
-				.as("ToolCallingAdvisor should loop on stream: at least one tool iteration + final answer")
-				.isGreaterThanOrEqualTo(2);
+					.as("ToolCallingAdvisor should loop on stream: at least one tool iteration + final answer")
+					.isGreaterThanOrEqualTo(2);
 		}
 
 		@Test
@@ -332,17 +326,17 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var counter = new ChainIterationCountingAdvisor();
 
 			collect(ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(counter)
-				.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.stream()
-				.content());
+					.prompt()
+					.advisors(counter)
+					.advisors(a -> a.param(ChatClientAttributes.TOOL_CALLING_ADVISOR_AUTO_REGISTER.getKey(), false))
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.stream()
+					.content());
 
 			assertThat(counter.getCallCount())
-				.as("Without ToolCallingAdvisor the stream chain should be traversed exactly once")
-				.isEqualTo(1);
+					.as("Without ToolCallingAdvisor the stream chain should be traversed exactly once")
+					.isEqualTo(1);
 		}
 
 	}
@@ -359,13 +353,13 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			var counter = new ChainIterationCountingAdvisor();
 
 			ChatClient.create(getChatModel())
-				.prompt()
-				.advisors(counter)
-				.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
-				.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
-				.tools(createWeatherToolCallback())
-				.call()
-				.content();
+					.prompt()
+					.advisors(counter)
+					.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
+					.user("What's the weather in San Francisco, Tokyo, and Paris in Celsius?")
+					.tools(createWeatherToolCallback())
+					.call()
+					.content();
 
 			assertThat(counter.getCallCount()).isEqualTo(1);
 		}
@@ -384,8 +378,8 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			ToolCallback weatherTool = createWeatherToolCallback();
 			ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 			ToolCallingChatOptions toolOptions = ToolCallingChatOptions.builder()
-				.toolCallbacks(List.of(weatherTool))
-				.build();
+					.toolCallbacks(List.of(weatherTool))
+					.build();
 
 			ChatClient chatClient = ChatClient.create(getChatModel());
 			Prompt currentPrompt = new Prompt(
@@ -393,21 +387,21 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 					toolOptions);
 
 			ChatResponse response = chatClient.prompt()
-				.messages(currentPrompt.getInstructions())
-				.tools(weatherTool)
-				.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
-				.call()
-				.chatResponse();
-
-			while (response != null && response.hasToolCalls()) {
-				ToolExecutionResult result = toolCallingManager.executeToolCalls(currentPrompt, response);
-				currentPrompt = new Prompt(result.conversationHistory(), toolOptions);
-				response = chatClient.prompt()
 					.messages(currentPrompt.getInstructions())
 					.tools(weatherTool)
 					.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
 					.call()
 					.chatResponse();
+
+			while (response != null && response.hasToolCalls()) {
+				ToolExecutionResult result = toolCallingManager.executeToolCalls(currentPrompt, response);
+				currentPrompt = new Prompt(result.conversationHistory(), toolOptions);
+				response = chatClient.prompt()
+						.messages(currentPrompt.getInstructions())
+						.tools(weatherTool)
+						.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
+						.call()
+						.chatResponse();
 			}
 
 			var finalResponse = Objects.requireNonNull(response, "Expected a non-null final ChatResponse");
@@ -420,8 +414,8 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			ToolCallback weatherTool = createWeatherToolCallback();
 			ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 			ToolCallingChatOptions toolOptions = ToolCallingChatOptions.builder()
-				.toolCallbacks(List.of(weatherTool))
-				.build();
+					.toolCallbacks(List.of(weatherTool))
+					.build();
 
 			var counter = new ChainIterationCountingAdvisor();
 			ChatClient chatClient = ChatClient.create(getChatModel());
@@ -431,24 +425,24 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 
 			int chatClientCallCount = 0;
 			ChatResponse response = chatClient.prompt()
-				.messages(currentPrompt.getInstructions())
-				.tools(weatherTool)
-				.advisors(counter)
-				.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
-				.call()
-				.chatResponse();
-			chatClientCallCount++;
-
-			while (response != null && response.hasToolCalls()) {
-				ToolExecutionResult result = toolCallingManager.executeToolCalls(currentPrompt, response);
-				currentPrompt = new Prompt(result.conversationHistory(), toolOptions);
-				response = chatClient.prompt()
 					.messages(currentPrompt.getInstructions())
 					.tools(weatherTool)
 					.advisors(counter)
 					.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
 					.call()
 					.chatResponse();
+			chatClientCallCount++;
+
+			while (response != null && response.hasToolCalls()) {
+				ToolExecutionResult result = toolCallingManager.executeToolCalls(currentPrompt, response);
+				currentPrompt = new Prompt(result.conversationHistory(), toolOptions);
+				response = chatClient.prompt()
+						.messages(currentPrompt.getInstructions())
+						.tools(weatherTool)
+						.advisors(counter)
+						.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
+						.call()
+						.chatResponse();
 				chatClientCallCount++;
 			}
 
@@ -465,8 +459,8 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			ToolCallback weatherTool = createWeatherToolCallback();
 			ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 			ToolCallingChatOptions toolOptions = ToolCallingChatOptions.builder()
-				.toolCallbacks(List.of(weatherTool))
-				.build();
+					.toolCallbacks(List.of(weatherTool))
+					.build();
 
 			ChatClient chatClient = ChatClient.create(getChatModel());
 			Prompt currentPrompt = new Prompt(
@@ -476,22 +470,22 @@ public abstract class AbstractToolCallingAdvisorAutoRegistrationIT {
 			// In streaming mode the caller must aggregate chunks before inspecting for
 			// tool calls — the same step ToolCallingAdvisor performs internally.
 			ChatClientResponse aggregated = aggregateStream(chatClient.prompt()
-				.messages(currentPrompt.getInstructions())
-				.tools(weatherTool)
-				.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
-				.stream()
-				.chatClientResponse());
+					.messages(currentPrompt.getInstructions())
+					.tools(weatherTool)
+					.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
+					.stream()
+					.chatClientResponse());
 
 			while (aggregated.chatResponse() != null && aggregated.chatResponse().hasToolCalls()) {
 				ToolExecutionResult result = toolCallingManager.executeToolCalls(currentPrompt,
 						aggregated.chatResponse());
 				currentPrompt = new Prompt(result.conversationHistory(), toolOptions);
 				aggregated = aggregateStream(chatClient.prompt()
-					.messages(currentPrompt.getInstructions())
-					.tools(weatherTool)
-					.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
-					.stream()
-					.chatClientResponse());
+						.messages(currentPrompt.getInstructions())
+						.tools(weatherTool)
+						.advisors(AdvisorParams.toolCallingAdvisorAutoRegister(false))
+						.stream()
+						.chatClientResponse());
 			}
 
 			var finalChatResponse = Objects.requireNonNull(aggregated.chatResponse());

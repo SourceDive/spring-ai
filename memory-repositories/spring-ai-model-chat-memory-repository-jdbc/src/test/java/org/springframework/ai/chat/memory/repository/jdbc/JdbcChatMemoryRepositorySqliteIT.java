@@ -26,9 +26,9 @@ import org.springframework.test.context.jdbc.Sql;
  * @author guan xu
  */
 @SpringBootTest
-@TestPropertySource(properties = { "spring.datasource.url=jdbc:sqlite::memory:",
+@TestPropertySource(properties = {"spring.datasource.url=jdbc:sqlite::memory:",
 		"spring.datasource.driver-class-name=org.sqlite.JDBC",
-		"spring.ai.chat.memory.repository.jdbc.initialize-schema=always" })
+		"spring.ai.chat.memory.repository.jdbc.initialize-schema=always"})
 @Sql(scripts = "classpath:org/springframework/ai/chat/memory/repository/jdbc/schema-sqlite.sql")
 class JdbcChatMemoryRepositorySqliteIT extends AbstractJdbcChatMemoryRepositoryIT {
 

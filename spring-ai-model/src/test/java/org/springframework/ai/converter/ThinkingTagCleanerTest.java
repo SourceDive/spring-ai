@@ -119,9 +119,9 @@ class ThinkingTagCleanerTest {
 	@Test
 	void shouldSupportBuilderWithoutDefaultPatterns() {
 		var cleaner = ThinkingTagCleaner.builder()
-			.withoutDefaultPatterns()
-			.addPattern("(?s)<mytag>.*?</mytag>\\s*")
-			.build();
+				.withoutDefaultPatterns()
+				.addPattern("(?s)<mytag>.*?</mytag>\\s*")
+				.build();
 
 		String input = "<thinking>Should remain</thinking><mytag>Should be removed</mytag>Content";
 		String result = cleaner.clean(input);
@@ -140,13 +140,13 @@ class ThinkingTagCleanerTest {
 	@Test
 	void shouldThrowExceptionWhenPatternsAreNull() {
 		assertThatThrownBy(() -> new ThinkingTagCleaner((String[]) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("patternStrings cannot be null");
+				.hasMessageContaining("patternStrings cannot be null");
 	}
 
 	@Test
 	void shouldThrowExceptionWhenPatternsAreEmpty() {
 		assertThatThrownBy(() -> new ThinkingTagCleaner(new String[0])).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("patternStrings cannot be empty");
+				.hasMessageContaining("patternStrings cannot be empty");
 	}
 
 }

@@ -20,7 +20,6 @@ import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.Tracer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.chat.client.AdvisorParams;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientBuilderCustomizer;
@@ -39,11 +38,7 @@ import org.springframework.ai.observation.TracingAwareLoggingObservationHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -87,7 +82,7 @@ public class ChatClientAutoConfiguration {
 	@ConditionalOnMissingBean
 	@SuppressWarnings("removal")
 	ChatClientBuilderConfigurer chatClientBuilderConfigurer(ObjectProvider<ChatClientCustomizer> customizerProvider,
-			ObjectProvider<ChatClientBuilderCustomizer> builderCustomizerProvider) {
+	                                                        ObjectProvider<ChatClientBuilderCustomizer> builderCustomizerProvider) {
 		ChatClientBuilderConfigurer configurer = new ChatClientBuilderConfigurer();
 		configurer.setChatClientCustomizers(customizerProvider.orderedStream().toList());
 		configurer.setChatClientBuilderCustomizers(builderCustomizerProvider.orderedStream().toList());
@@ -98,11 +93,11 @@ public class ChatClientAutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnBean(ToolCallingManager.class)
 	ToolCallingAdvisor.Builder<?> toolCallingAdvisorBuilder(ChatClientBuilderProperties properties,
-			ToolCallingManager toolCallingManager,
-			ObjectProvider<ToolExecutionEligibilityChecker> toolExecutionEligibilityChecker) {
+	                                                        ToolCallingManager toolCallingManager,
+	                                                        ObjectProvider<ToolExecutionEligibilityChecker> toolExecutionEligibilityChecker) {
 		var builder = ToolCallingAdvisor.builder()
-			.toolCallingManager(toolCallingManager)
-			.advisorOrder(properties.getToolCalling().getAdvisorOrder());
+				.toolCallingManager(toolCallingManager)
+				.advisorOrder(properties.getToolCalling().getAdvisorOrder());
 
 		toolExecutionEligibilityChecker.ifAvailable(builder::toolExecutionEligibilityChecker);
 
@@ -113,11 +108,11 @@ public class ChatClientAutoConfiguration {
 	@Scope("prototype")
 	@ConditionalOnMissingBean
 	ChatClient.Builder chatClientBuilder(ChatClientBuilderProperties properties,
-			ChatClientBuilderConfigurer chatClientBuilderConfigurer, ChatModel chatModel,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
-			ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
-			ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
+	                                     ChatClientBuilderConfigurer chatClientBuilderConfigurer, ChatModel chatModel,
+	                                     ObjectProvider<ObservationRegistry> observationRegistry,
+	                                     ObjectProvider<ChatClientObservationConvention> chatClientObservationConvention,
+	                                     ObjectProvider<AdvisorObservationConvention> advisorObservationConvention,
+	                                     ObjectProvider<ToolCallingAdvisor.Builder<?>> toolCallingAdvisorBuilder) {
 		ChatClient.Builder builder = ChatClient.builder(chatModel,
 				observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP),
 				chatClientObservationConvention.getIfUnique(), advisorObservationConvention.getIfUnique(),

@@ -16,20 +16,19 @@
 
 package org.springframework.ai.mcp.annotation.provider.progress;
 
+import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import org.springframework.ai.mcp.annotation.McpProgress;
+import org.springframework.ai.mcp.annotation.common.McpPredicates;
+import org.springframework.ai.mcp.annotation.method.progress.AsyncMcpProgressMethodCallback;
+import org.springframework.ai.mcp.annotation.method.progress.AsyncProgressSpecification;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpProgress;
-import org.springframework.ai.mcp.annotation.common.McpPredicates;
-import org.springframework.ai.mcp.annotation.method.progress.AsyncMcpProgressMethodCallback;
-import org.springframework.ai.mcp.annotation.method.progress.AsyncProgressSpecification;
 
 /**
  * Provider for asynchronous progress callbacks.
@@ -65,8 +64,9 @@ public class AsyncMcpProgressProvider {
 
 	/**
 	 * Create a new AsyncMcpProgressProvider.
+	 *
 	 * @param progressObjects the objects containing methods annotated with
-	 * {@link McpProgress}
+	 *                        {@link McpProgress}
 	 */
 	public AsyncMcpProgressProvider(List<Object> progressObjects) {
 		this.progressObjects = progressObjects != null ? progressObjects : List.of();
@@ -74,47 +74,49 @@ public class AsyncMcpProgressProvider {
 
 	/**
 	 * Get the list of progress specifications.
+	 *
 	 * @return the list of progress specifications
 	 */
 	public List<AsyncProgressSpecification> getProgressSpecifications() {
 
 		List<AsyncProgressSpecification> progressHandlers = this.progressObjects.stream()
-			.map(progressObject -> Stream.of(doGetClassMethods(progressObject))
-				.filter(method -> method.isAnnotationPresent(McpProgress.class))
-				.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
-				.filter(method -> {
-					// Check if it's specifically Mono<Void>
-					Type genericReturnType = method.getGenericReturnType();
-					if (genericReturnType instanceof ParameterizedType) {
-						ParameterizedType paramType = (ParameterizedType) genericReturnType;
-						Type[] typeArguments = paramType.getActualTypeArguments();
-						if (typeArguments.length == 1) {
-							return typeArguments[0] == Void.class;
-						}
-					}
-					return false;
-				})
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpProgressMethod -> {
-					var progressAnnotation = mcpProgressMethod.getAnnotation(McpProgress.class);
+				.map(progressObject -> Stream.of(doGetClassMethods(progressObject))
+						.filter(method -> method.isAnnotationPresent(McpProgress.class))
+						.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
+						.filter(method -> {
+							// Check if it's specifically Mono<Void>
+							Type genericReturnType = method.getGenericReturnType();
+							if (genericReturnType instanceof ParameterizedType) {
+								ParameterizedType paramType = (ParameterizedType) genericReturnType;
+								Type[] typeArguments = paramType.getActualTypeArguments();
+								if (typeArguments.length == 1) {
+									return typeArguments[0] == Void.class;
+								}
+							}
+							return false;
+						})
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpProgressMethod -> {
+							var progressAnnotation = mcpProgressMethod.getAnnotation(McpProgress.class);
 
-					Function<ProgressNotification, Mono<Void>> methodCallback = AsyncMcpProgressMethodCallback.builder()
-						.method(mcpProgressMethod)
-						.bean(progressObject)
-						.progress(progressAnnotation)
-						.build();
+							Function<ProgressNotification, Mono<Void>> methodCallback = AsyncMcpProgressMethodCallback.builder()
+									.method(mcpProgressMethod)
+									.bean(progressObject)
+									.progress(progressAnnotation)
+									.build();
 
-					return new AsyncProgressSpecification(progressAnnotation.clients(), methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new AsyncProgressSpecification(progressAnnotation.clients(), methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return progressHandlers;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

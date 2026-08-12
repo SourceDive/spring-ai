@@ -16,10 +16,6 @@
 
 package org.springframework.ai.google.genai.schema;
 
-import java.util.List;
-
-import tools.jackson.databind.node.ObjectNode;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
@@ -29,6 +25,9 @@ import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
 import org.springframework.util.Assert;
+import tools.jackson.databind.node.ObjectNode;
+
+import java.util.List;
 
 /**
  * Implementation of {@link ToolCallingManager} specifically designed for Vertex AI
@@ -52,8 +51,9 @@ public class GoogleGenAiToolCallingManager implements ToolCallingManager {
 
 	/**
 	 * Creates a new instance of GoogleGenAiToolCallingManager.
+	 *
 	 * @param delegateToolCallingManager the underlying tool calling manager that handles
-	 * actual tool execution
+	 *                                   actual tool execution
 	 */
 	public GoogleGenAiToolCallingManager(ToolCallingManager delegateToolCallingManager) {
 		Assert.notNull(delegateToolCallingManager, "Delegate tool calling manager must not be null");
@@ -64,6 +64,7 @@ public class GoogleGenAiToolCallingManager implements ToolCallingManager {
 	 * Resolves tool definitions and converts their input schemas to be compatible with
 	 * Vertex AI's OpenAPI format. This includes converting JSON schemas to OpenAPI format
 	 * and ensuring proper type value casing.
+	 *
 	 * @param chatOptions the options containing tool preferences and configurations
 	 * @return a list of tool definitions with Vertex AI compatible schemas
 	 */
@@ -78,16 +79,17 @@ public class GoogleGenAiToolCallingManager implements ToolCallingManager {
 			JsonSchemaGenerator.convertTypeValuesToUpperCase(openApiSchema);
 
 			return DefaultToolDefinition.builder()
-				.name(td.name())
-				.description(td.description())
-				.inputSchema(openApiSchema.toPrettyString())
-				.build();
+					.name(td.name())
+					.description(td.description())
+					.inputSchema(openApiSchema.toPrettyString())
+					.build();
 		}).toList();
 	}
 
 	/**
 	 * Executes tool calls by delegating to the underlying tool calling manager.
-	 * @param prompt the original prompt that triggered the tool calls
+	 *
+	 * @param prompt       the original prompt that triggered the tool calls
 	 * @param chatResponse the chat response containing the tool calls to execute
 	 * @return the result of executing the tool calls
 	 */

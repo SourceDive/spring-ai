@@ -38,8 +38,7 @@ public class MongoDBAtlasFilterExpressionConverter extends AbstractFilterExpress
 		// Handling AND/OR
 		if (AND.equals(expression.type()) || OR.equals(expression.type())) {
 			doCompoundExpressionType(expression, context);
-		}
-		else {
+		} else {
 			doSingleExpressionType(expression, context);
 		}
 	}
@@ -92,7 +91,8 @@ public class MongoDBAtlasFilterExpressionConverter extends AbstractFilterExpress
 	 * Serialize values using JSON serialization for MongoDB Atlas filter expressions.
 	 * Delegates to {@link #emitJsonValue(Object, StringBuilder)} for Jackson-based JSON
 	 * serialization.
-	 * @param value the value to serialize
+	 *
+	 * @param value   the value to serialize
 	 * @param context the context to append the JSON representation to
 	 */
 	@Override

@@ -16,27 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
+import io.modelcontextprotocol.spec.McpSchema.*;
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest.ContextInclusionStrategy;
+import io.modelcontextprotocol.util.Assert;
+import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.ModelPreferenceSpec;
+import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.SamplingSpec;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import io.modelcontextprotocol.spec.McpSchema.AudioContent;
-import io.modelcontextprotocol.spec.McpSchema.Content;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest.ContextInclusionStrategy;
-import io.modelcontextprotocol.spec.McpSchema.EmbeddedResource;
-import io.modelcontextprotocol.spec.McpSchema.ImageContent;
-import io.modelcontextprotocol.spec.McpSchema.ModelHint;
-import io.modelcontextprotocol.spec.McpSchema.ModelPreferences;
-import io.modelcontextprotocol.spec.McpSchema.ResourceLink;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.SamplingMessage;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import io.modelcontextprotocol.util.Assert;
-
-import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.ModelPreferenceSpec;
-import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.SamplingSpec;
 
 /**
  * @author Christian Tzolov
@@ -103,11 +93,11 @@ public class DefaultSamplingSpec implements SamplingSpec {
 		modelPreferenceSpec.accept(modelPreferencesSpec);
 
 		this.modelPreferences = ModelPreferences.builder()
-			.hints(modelPreferencesSpec.modelHints)
-			.costPriority(modelPreferencesSpec.costPriority)
-			.speedPriority(modelPreferencesSpec.speedPriority)
-			.intelligencePriority(modelPreferencesSpec.intelligencePriority)
-			.build();
+				.hints(modelPreferencesSpec.modelHints)
+				.costPriority(modelPreferencesSpec.costPriority)
+				.speedPriority(modelPreferencesSpec.speedPriority)
+				.intelligencePriority(modelPreferencesSpec.intelligencePriority)
+				.build();
 		return this;
 	}
 

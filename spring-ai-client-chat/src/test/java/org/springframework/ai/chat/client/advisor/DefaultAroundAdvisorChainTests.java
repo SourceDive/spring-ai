@@ -16,27 +16,20 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
-import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.BaseAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
+import org.springframework.ai.chat.client.advisor.api.*;
 import org.springframework.ai.chat.client.advisor.observation.AdvisorObservationContext;
 import org.springframework.ai.chat.client.advisor.observation.AdvisorObservationConvention;
 import org.springframework.ai.chat.client.advisor.observation.DefaultAdvisorObservationConvention;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.test.util.ReflectionTestUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -54,22 +47,22 @@ class DefaultAroundAdvisorChainTests {
 	@Test
 	void whenObservationRegistryIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the observationRegistry must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the observationRegistry must be non-null");
 	}
 
 	@Test
 	void whenAdvisorIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).push(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the advisor must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the advisor must be non-null");
 	}
 
 	@Test
 	void whenAdvisorListIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).pushAll(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the advisors must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the advisors must be non-null");
 	}
 
 	@Test
@@ -77,15 +70,15 @@ class DefaultAroundAdvisorChainTests {
 		List<Advisor> advisors = new ArrayList<>();
 		advisors.add(null);
 		assertThatThrownBy(() -> DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).pushAll(advisors).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the advisors must not contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the advisors must not contain null elements");
 	}
 
 	@Test
 	void getObservationConventionIsNullThenUseDefault() {
 		AdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.create())
-			.observationConvention(null)
-			.build();
+				.observationConvention(null)
+				.build();
 		assertThat(chain).isNotNull();
 	}
 
@@ -127,8 +120,8 @@ class DefaultAroundAdvisorChainTests {
 
 		List<StreamAdvisor> advisors = List.of(mockAdvisor1, mockAdvisor2);
 		StreamAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(advisors)
-			.build();
+				.pushAll(advisors)
+				.build();
 		assertThat(chain.getStreamAdvisors()).containsExactlyInAnyOrder(advisors.toArray(new StreamAdvisor[0]));
 
 		chain.nextStream(ChatClientRequest.builder().prompt(new Prompt("Hello")).build()).blockLast();
@@ -143,7 +136,7 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP).build();
 
 		assertThatThrownBy(() -> chain.copy(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The after advisor must not be null");
+				.hasMessageContaining("The after advisor must not be null");
 	}
 
 	@Test
@@ -153,12 +146,12 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor notInChain = createMockAdvisor("notInChain", 3);
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2))
-			.build();
+				.pushAll(List.of(advisor1, advisor2))
+				.build();
 
 		assertThatThrownBy(() -> chain.copy(notInChain)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The specified advisor is not part of the chain")
-			.hasMessageContaining("notInChain");
+				.hasMessageContaining("The specified advisor is not part of the chain")
+				.hasMessageContaining("notInChain");
 	}
 
 	@Test
@@ -168,8 +161,8 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor3 = createMockAdvisor("advisor3", 3);
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2, advisor3))
-			.build();
+				.pushAll(List.of(advisor1, advisor2, advisor3))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor3);
 
@@ -183,8 +176,8 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor3 = createMockAdvisor("advisor3", 3);
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2, advisor3))
-			.build();
+				.pushAll(List.of(advisor1, advisor2, advisor3))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor1);
 
@@ -201,8 +194,8 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor4 = createMockAdvisor("advisor4", 4);
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2, advisor3, advisor4))
-			.build();
+				.pushAll(List.of(advisor1, advisor2, advisor3, advisor4))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor2);
 
@@ -218,8 +211,8 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor3 = createMockAdvisor("advisor3", 3);
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2, advisor3))
-			.build();
+				.pushAll(List.of(advisor1, advisor2, advisor3))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor1);
 
@@ -242,8 +235,8 @@ class DefaultAroundAdvisorChainTests {
 
 		ObservationRegistry customRegistry = ObservationRegistry.create();
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(customRegistry)
-			.pushAll(List.of(advisor1, advisor2))
-			.build();
+				.pushAll(List.of(advisor1, advisor2))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor1);
 
@@ -268,9 +261,9 @@ class DefaultAroundAdvisorChainTests {
 		};
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.observationConvention(customConvention)
-			.pushAll(List.of(advisor1, advisor2))
-			.build();
+				.observationConvention(customConvention)
+				.pushAll(List.of(advisor1, advisor2))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor1);
 
@@ -283,13 +276,13 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor2 = createMockAdvisor("advisor2", 2);
 
 		CallAdvisorChain chain = DefaultAroundAdvisorChain.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2))
-			.build();
+				.pushAll(List.of(advisor1, advisor2))
+				.build();
 
 		CallAdvisorChain newChain = chain.copy(advisor1);
 
 		assertThat(ReflectionTestUtils.getField(newChain, "observationConvention"))
-			.isInstanceOf(DefaultAdvisorObservationConvention.class);
+				.isInstanceOf(DefaultAdvisorObservationConvention.class);
 	}
 
 	@Test
@@ -298,9 +291,9 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor2 = createMockAdvisor("advisor2", 2);
 
 		DefaultAroundAdvisorChain chain = (DefaultAroundAdvisorChain) DefaultAroundAdvisorChain
-			.builder(ObservationRegistry.NOOP)
-			.pushAll(List.of(advisor1, advisor2))
-			.build();
+				.builder(ObservationRegistry.NOOP)
+				.pushAll(List.of(advisor1, advisor2))
+				.build();
 
 		BaseAdvisorChain mutated = chain.mutate().build();
 
@@ -313,9 +306,9 @@ class DefaultAroundAdvisorChainTests {
 		CallAdvisor advisor2 = createMockAdvisor("advisor2", 2);
 
 		DefaultAroundAdvisorChain chain = (DefaultAroundAdvisorChain) DefaultAroundAdvisorChain
-			.builder(ObservationRegistry.NOOP)
-			.push(advisor1)
-			.build();
+				.builder(ObservationRegistry.NOOP)
+				.push(advisor1)
+				.build();
 
 		chain.mutate().push(advisor2).build();
 

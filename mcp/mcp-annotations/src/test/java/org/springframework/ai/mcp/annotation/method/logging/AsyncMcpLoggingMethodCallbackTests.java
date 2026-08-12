@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
-import java.lang.reflect.Method;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpLogging;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpLogging;
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,9 +45,9 @@ public class AsyncMcpLoggingMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleLoggingMessage", LoggingMessageNotification.class);
 
 		Function<LoggingMessageNotification, Mono<Void>> callback = AsyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -62,9 +61,9 @@ public class AsyncMcpLoggingMethodCallbackTests {
 				String.class);
 
 		Function<LoggingMessageNotification, Mono<Void>> callback = AsyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -79,9 +78,9 @@ public class AsyncMcpLoggingMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleLoggingMessageVoid", LoggingMessageNotification.class);
 
 		Function<LoggingMessageNotification, Mono<Void>> callback = AsyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyComplete();
 
@@ -94,8 +93,8 @@ public class AsyncMcpLoggingMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", LoggingMessageNotification.class);
 
 		assertThatThrownBy(() -> AsyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have void or Mono<Void> return type");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have void or Mono<Void> return type");
 	}
 
 	@Test
@@ -105,9 +104,9 @@ public class AsyncMcpLoggingMethodCallbackTests {
 
 		// This will pass validation since we can't check the generic type at runtime
 		Function<LoggingMessageNotification, Mono<Void>> callback = AsyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		// But it will fail at runtime when we try to cast the result
 		StepVerifier.create(callback.apply(TEST_NOTIFICATION)).verifyError(ClassCastException.class);
@@ -120,8 +119,8 @@ public class AsyncMcpLoggingMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> AsyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have either 1 parameter (LoggingMessageNotification) or 3 parameters");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have either 1 parameter (LoggingMessageNotification) or 3 parameters");
 	}
 
 	@Test
@@ -130,8 +129,8 @@ public class AsyncMcpLoggingMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> AsyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type LoggingMessageNotification");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type LoggingMessageNotification");
 	}
 
 	@Test
@@ -140,8 +139,8 @@ public class AsyncMcpLoggingMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterTypes", String.class, int.class, boolean.class);
 
 		assertThatThrownBy(() -> AsyncMcpLoggingMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("First parameter must be of type LoggingLevel");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("First parameter must be of type LoggingLevel");
 	}
 
 	@Test
@@ -150,13 +149,13 @@ public class AsyncMcpLoggingMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleLoggingMessage", LoggingMessageNotification.class);
 
 		Function<LoggingMessageNotification, Mono<Void>> callback = AsyncMcpLoggingMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		StepVerifier.create(callback.apply(null))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Notification must not be null"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalArgumentException.class)
+						.hasMessageContaining("Notification must not be null"));
 	}
 
 	/**

@@ -28,12 +28,13 @@ import org.springframework.ai.chat.prompt.ChatOptions;
  */
 public interface StructuredOutputChatOptions extends ChatOptions {
 
-	@Nullable String getOutputSchema();
+	@Nullable
+	String getOutputSchema();
 
 	/**
 	 * Returns a new {@link StructuredOutputChatOptions.Builder} initialized with the
 	 * values of this {@link StructuredOutputChatOptions}.
-	 *
+	 * <p>
 	 * Narrows the return type of {@link ChatOptions#mutate()} so generic structured
 	 * output code can chain
 	 * {@code structuredOptions.mutate().outputSchema(schema).build()} without casting.

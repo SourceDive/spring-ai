@@ -42,14 +42,14 @@ public class GemFireWithBasicAuthenticationVectorStoreIT extends GemFireVectorSt
 		@Bean
 		public GemFireVectorStore vectorStore(EmbeddingModel embeddingModel) {
 			return GemFireVectorStore.builder(embeddingModel)
-				.host("localhost")
-				.port(HTTP_SERVICE_PORT)
-				.username("cluster,data")
-				.password("cluster,data")
-				.indexName(INDEX_NAME)
-				.fields(new String[] { "year", "country", "activationDate" })
-				.initializeSchema(true)
-				.build();
+					.host("localhost")
+					.port(HTTP_SERVICE_PORT)
+					.username("cluster,data")
+					.password("cluster,data")
+					.indexName(INDEX_NAME)
+					.fields(new String[]{"year", "country", "activationDate"})
+					.initializeSchema(true)
+					.build();
 		}
 
 		@Bean

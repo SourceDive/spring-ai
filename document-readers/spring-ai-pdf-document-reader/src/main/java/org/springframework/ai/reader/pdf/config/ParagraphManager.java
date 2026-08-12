@@ -16,11 +16,6 @@
 
 package org.springframework.ai.reader.pdf.config;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageTree;
@@ -28,9 +23,13 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The ParagraphManager class is responsible for managing the paragraphs and hierarchy of
@@ -65,8 +64,7 @@ public class ParagraphManager {
 					this.document.getDocumentCatalog().getDocumentOutline(), 0);
 
 			printParagraph(this.rootParagraph, System.out);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
@@ -99,10 +97,11 @@ public class ParagraphManager {
 	 * items into {@link Paragraph} instances under the parentParagraph. For each
 	 * {@link PDOutlineItem} item, recursively call
 	 * {@link ParagraphManager#generateParagraphs} to process its children items.
+	 *
 	 * @param parentParagraph Root paragraph that the bookmark sibling items should be
-	 * added to.
-	 * @param bookmark TOC paragraphs to process.
-	 * @param level Current TOC deepness level.
+	 *                        added to.
+	 * @param bookmark        TOC paragraphs to process.
+	 * @param level           Current TOC deepness level.
 	 * @return Returns a tree of {@link Paragraph}s that represent the PDF document TOC.
 	 * @throws IOException
 	 */
@@ -171,8 +170,7 @@ public class ParagraphManager {
 					resultList.addAll(getParagraphsByLevel(child, level, interLevelText));
 				}
 			}
-		}
-		else if (paragraph.level() == level) {
+		} else if (paragraph.level() == level) {
 			resultList.add(paragraph);
 		}
 
@@ -182,24 +180,24 @@ public class ParagraphManager {
 	/**
 	 * Represents a document paragraph metadata and hierarchy.
 	 *
-	 * @param parent Parent paragraph that will contain a children paragraphs.
-	 * @param title Paragraph title as it appears in the PDF document.
-	 * @param level The TOC deepness level for this paragraph. The root is at level 0.
+	 * @param parent          Parent paragraph that will contain a children paragraphs.
+	 * @param title           Paragraph title as it appears in the PDF document.
+	 * @param level           The TOC deepness level for this paragraph. The root is at level 0.
 	 * @param startPageNumber The page number in the PDF where this paragraph begins.
-	 * @param endPageNumber The page number in the PDF where this paragraph ends.
-	 * @param position The vertical position of the paragraph on the page.
-	 * @param children Sub-paragraphs for this paragraph.
+	 * @param endPageNumber   The page number in the PDF where this paragraph ends.
+	 * @param position        The vertical position of the paragraph on the page.
+	 * @param children        Sub-paragraphs for this paragraph.
 	 */
 	public record Paragraph(@Nullable Paragraph parent, String title, int level, int startPageNumber, int endPageNumber,
-			int position, List<Paragraph> children) {
+	                        int position, List<Paragraph> children) {
 
 		public Paragraph(@Nullable Paragraph parent, String title, int level, int startPageNumber, int endPageNumber,
-				int position) {
+		int position){
 			this(parent, title, level, startPageNumber, endPageNumber, position, new ArrayList<>());
 		}
 
 		@Override
-		public String toString() {
+		public String toString () {
 			String indent = (this.level < 0) ? "" : new String(new char[this.level * 2]).replace('\0', ' ');
 
 			return indent + " " + this.level + ") " + this.title + " [" + this.startPageNumber + ","

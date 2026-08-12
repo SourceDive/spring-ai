@@ -16,12 +16,12 @@
 
 package org.springframework.ai.retry.autoconfigure;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Properties for AI Retry.

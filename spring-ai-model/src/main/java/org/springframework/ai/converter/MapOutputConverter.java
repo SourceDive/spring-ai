@@ -16,16 +16,15 @@
 
 package org.springframework.ai.converter;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.messaging.Message;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.support.MessageBuilder;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link StructuredOutputConverter} implementation that uses a pre-configured

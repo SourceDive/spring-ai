@@ -16,10 +16,6 @@
 
 package org.springframework.ai.vectorstore.redis.cache.semantic.autoconfigure;
 
-import redis.clients.jedis.DefaultJedisClientConfig;
-import redis.clients.jedis.JedisClientConfig;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.chat.cache.semantic.SemanticCache;
 import org.springframework.ai.chat.cache.semantic.SemanticCacheAdvisor;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
@@ -36,6 +32,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.util.StringUtils;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.JedisClientConfig;
+import redis.clients.jedis.RedisClient;
 
 /**
  * Auto-configuration for Redis semantic cache.
@@ -45,8 +44,8 @@ import org.springframework.util.StringUtils;
  * @author Yanming Zhou
  */
 @AutoConfiguration
-@ConditionalOnClass({ DefaultSemanticCache.class, RedisClient.class, CallAdvisor.class, StreamAdvisor.class,
-		TransformersEmbeddingModel.class })
+@ConditionalOnClass({DefaultSemanticCache.class, RedisClient.class, CallAdvisor.class, StreamAdvisor.class,
+		TransformersEmbeddingModel.class})
 @EnableConfigurationProperties(RedisSemanticCacheProperties.class)
 @ConditionalOnProperty(name = "spring.ai.vectorstore.redis.semantic-cache.enabled", havingValue = "true",
 		matchIfMissing = true)
@@ -60,6 +59,7 @@ public class RedisSemanticCacheAutoConfiguration {
 	 * Provides a default EmbeddingModel using the redis/langcache-embed-v1 model. This
 	 * model is specifically designed for semantic caching and provides 768-dimensional
 	 * embeddings. It matches the default model used by RedisVL Python library.
+	 *
 	 * @return the embedding model for semantic caching
 	 * @throws Exception if model initialization fails
 	 */
@@ -77,6 +77,7 @@ public class RedisSemanticCacheAutoConfiguration {
 	/**
 	 * Creates a RedisClient client for Redis connections, honoring the SSL, password,
 	 * client name, and timeout settings from the {@link JedisConnectionFactory}.
+	 *
 	 * @param jedisConnectionFactory the Jedis connection factory
 	 * @return the RedisClient client
 	 */
@@ -88,30 +89,31 @@ public class RedisSemanticCacheAutoConfiguration {
 		int port = jedisConnectionFactory.getPort();
 
 		JedisClientConfig clientConfig = DefaultJedisClientConfig.builder()
-			.ssl(jedisConnectionFactory.isUseSsl())
-			.clientName(jedisConnectionFactory.getClientName())
-			.timeoutMillis(jedisConnectionFactory.getTimeout())
-			.password(jedisConnectionFactory.getPassword())
-			.build();
+				.ssl(jedisConnectionFactory.isUseSsl())
+				.clientName(jedisConnectionFactory.getClientName())
+				.timeoutMillis(jedisConnectionFactory.getTimeout())
+				.password(jedisConnectionFactory.getPassword())
+				.build();
 
 		return RedisClient.builder().hostAndPort(host, port).clientConfig(clientConfig).build();
 	}
 
 	/**
 	 * Creates the semantic cache instance.
-	 * @param jedisClient the Jedis client
+	 *
+	 * @param jedisClient    the Jedis client
 	 * @param embeddingModel the embedding model
-	 * @param properties the semantic cache properties
+	 * @param properties     the semantic cache properties
 	 * @return the configured semantic cache
 	 */
 	@Bean
 	@ConditionalOnMissingBean
 	@ConditionalOnBean(EmbeddingModel.class)
 	public SemanticCache semanticCache(final RedisClient jedisClient, final EmbeddingModel embeddingModel,
-			final RedisSemanticCacheProperties properties) {
+	                                   final RedisSemanticCacheProperties properties) {
 		DefaultSemanticCache.Builder builder = DefaultSemanticCache.builder()
-			.jedisClient(jedisClient)
-			.embeddingModel(embeddingModel);
+				.jedisClient(jedisClient)
+				.embeddingModel(embeddingModel);
 
 		builder.similarityThreshold(properties.getSimilarityThreshold());
 
@@ -128,6 +130,7 @@ public class RedisSemanticCacheAutoConfiguration {
 
 	/**
 	 * Creates the semantic cache advisor for ChatClient integration.
+	 *
 	 * @param semanticCache the semantic cache
 	 * @return the semantic cache advisor
 	 */

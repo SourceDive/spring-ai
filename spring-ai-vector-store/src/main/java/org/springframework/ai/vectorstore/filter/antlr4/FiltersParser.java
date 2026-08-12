@@ -21,16 +21,11 @@ package org.springframework.ai.vectorstore.filter.antlr4;
 // # NOTE: This is ANTLR4 auto-generated code. Do not modify! #
 // ############################################################
 
-import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
-import org.antlr.v4.runtime.tree.*;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
-@SuppressWarnings({ "all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue" })
+import java.util.List;
+
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class FiltersParser extends Parser {
 
 	static {
@@ -51,23 +46,23 @@ public class FiltersParser extends Parser {
 			RULE_identifier = 4, RULE_constant = 5;
 
 	private static String[] makeRuleNames() {
-		return new String[] { "where", "booleanExpression", "constantArray", "compare", "identifier", "constant" };
+		return new String[]{"where", "booleanExpression", "constantArray", "compare", "identifier", "constant"};
 	}
 
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
-		return new String[] { null, null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'",
-				"'>='", "'<'", "'<='", "'!='" };
+		return new String[]{null, null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'",
+				"'>='", "'<'", "'<='", "'!='"};
 	}
 
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 
 	private static String[] makeSymbolicNames() {
-		return new String[] { null, "LONG_SUFFIX", "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS",
+		return new String[]{null, "LONG_SUFFIX", "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS",
 				"RIGHT_SQUARE_BRACKETS", "LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "EQUALS", "MINUS", "PLUS", "GT", "GE",
 				"LT", "LE", "NE", "AND", "OR", "IN", "NIN", "NOT", "IS", "NULL", "BOOLEAN_VALUE", "QUOTED_STRING",
-				"INTEGER_VALUE", "DECIMAL_VALUE", "IDENTIFIER", "WS" };
+				"INTEGER_VALUE", "DECIMAL_VALUE", "IDENTIFIER", "WS"};
 	}
 
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -79,6 +74,7 @@ public class FiltersParser extends Parser {
 	 */
 	@Deprecated
 	public static final String[] tokenNames;
+
 	static {
 		tokenNames = new String[_SYMBOLIC_NAMES.length];
 		for (int i = 0; i < tokenNames.length; i++) {
@@ -189,13 +185,11 @@ public class FiltersParser extends Parser {
 				setState(14);
 				match(EOF);
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -641,7 +635,7 @@ public class FiltersParser extends Parser {
 						setState(19);
 						constant();
 					}
-						break;
+					break;
 					case 2: {
 						_localctx = new InExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -653,7 +647,7 @@ public class FiltersParser extends Parser {
 						setState(23);
 						constantArray();
 					}
-						break;
+					break;
 					case 3: {
 						_localctx = new NinExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -669,19 +663,19 @@ public class FiltersParser extends Parser {
 								setState(27);
 								match(IN);
 							}
-								break;
+							break;
 							case NIN: {
 								setState(28);
 								match(NIN);
 							}
-								break;
+							break;
 							default:
 								throw new NoViableAltException(this);
 						}
 						setState(31);
 						constantArray();
 					}
-						break;
+					break;
 					case 4: {
 						_localctx = new IsNullExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -693,7 +687,7 @@ public class FiltersParser extends Parser {
 						setState(35);
 						match(NULL);
 					}
-						break;
+					break;
 					case 5: {
 						_localctx = new IsNotNullExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -707,7 +701,7 @@ public class FiltersParser extends Parser {
 						setState(40);
 						match(NULL);
 					}
-						break;
+					break;
 					case 6: {
 						_localctx = new GroupExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -719,7 +713,7 @@ public class FiltersParser extends Parser {
 						setState(44);
 						match(RIGHT_PARENTHESIS);
 					}
-						break;
+					break;
 					case 7: {
 						_localctx = new NotExpressionContext(_localctx);
 						_ctx = _localctx;
@@ -729,7 +723,7 @@ public class FiltersParser extends Parser {
 						setState(47);
 						booleanExpression(1);
 					}
-						break;
+					break;
 				}
 				_ctx.stop = _input.LT(-1);
 				setState(58);
@@ -757,7 +751,7 @@ public class FiltersParser extends Parser {
 									setState(52);
 									((AndExpressionContext) _localctx).right = booleanExpression(5);
 								}
-									break;
+								break;
 								case 2: {
 									_localctx = new OrExpressionContext(
 											new BooleanExpressionContext(_parentctx, _parentState));
@@ -771,7 +765,7 @@ public class FiltersParser extends Parser {
 									setState(55);
 									((OrExpressionContext) _localctx).right = booleanExpression(4);
 								}
-									break;
+								break;
 							}
 						}
 					}
@@ -780,13 +774,11 @@ public class FiltersParser extends Parser {
 					_alt = getInterpreter().adaptivePredict(_input, 3, _ctx);
 				}
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			unrollRecursionContexts(_parentctx);
 		}
 		return _localctx;
@@ -880,13 +872,11 @@ public class FiltersParser extends Parser {
 				setState(70);
 				match(RIGHT_SQUARE_BRACKETS);
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -961,21 +951,18 @@ public class FiltersParser extends Parser {
 				_la = _input.LA(1);
 				if (!((((_la) & ~0x3f) == 0 && ((1L << _la) & 127488L) != 0))) {
 					_errHandler.recoverInline(this);
-				}
-				else {
+				} else {
 					if (_input.LA(1) == Token.EOF)
 						matchedEOF = true;
 					_errHandler.reportMatch(this);
 					consume();
 				}
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -1118,7 +1105,8 @@ public class FiltersParser extends Parser {
 			switch (getInterpreter().adaptivePredict(_input, 5, _ctx)) {
 				case 1:
 					_localctx = new CompoundIdentifierContext(_localctx);
-					enterOuterAlt(_localctx, 1); {
+					enterOuterAlt(_localctx, 1);
+				{
 					setState(74);
 					match(IDENTIFIER);
 					setState(75);
@@ -1126,29 +1114,29 @@ public class FiltersParser extends Parser {
 					setState(76);
 					match(IDENTIFIER);
 				}
-					break;
+				break;
 				case 2:
 					_localctx = new SimpleIdentifierContext(_localctx);
-					enterOuterAlt(_localctx, 2); {
+					enterOuterAlt(_localctx, 2);
+				{
 					setState(77);
 					match(IDENTIFIER);
 				}
-					break;
+				break;
 				case 3:
 					_localctx = new QuotedIdentifierContext(_localctx);
-					enterOuterAlt(_localctx, 3); {
+					enterOuterAlt(_localctx, 3);
+				{
 					setState(78);
 					match(QUOTED_STRING);
 				}
-					break;
+				break;
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -1378,7 +1366,8 @@ public class FiltersParser extends Parser {
 			switch (getInterpreter().adaptivePredict(_input, 9, _ctx)) {
 				case 1:
 					_localctx = new LongConstantContext(_localctx);
-					enterOuterAlt(_localctx, 1); {
+					enterOuterAlt(_localctx, 1);
+				{
 					setState(82);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -1388,8 +1377,7 @@ public class FiltersParser extends Parser {
 							_la = _input.LA(1);
 							if (!(_la == MINUS || _la == PLUS)) {
 								_errHandler.recoverInline(this);
-							}
-							else {
+							} else {
 								if (_input.LA(1) == Token.EOF)
 									matchedEOF = true;
 								_errHandler.reportMatch(this);
@@ -1403,10 +1391,11 @@ public class FiltersParser extends Parser {
 					setState(85);
 					match(LONG_SUFFIX);
 				}
-					break;
+				break;
 				case 2:
 					_localctx = new IntegerConstantContext(_localctx);
-					enterOuterAlt(_localctx, 2); {
+					enterOuterAlt(_localctx, 2);
+				{
 					setState(87);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -1416,8 +1405,7 @@ public class FiltersParser extends Parser {
 							_la = _input.LA(1);
 							if (!(_la == MINUS || _la == PLUS)) {
 								_errHandler.recoverInline(this);
-							}
-							else {
+							} else {
 								if (_input.LA(1) == Token.EOF)
 									matchedEOF = true;
 								_errHandler.reportMatch(this);
@@ -1429,10 +1417,11 @@ public class FiltersParser extends Parser {
 					setState(89);
 					match(INTEGER_VALUE);
 				}
-					break;
+				break;
 				case 3:
 					_localctx = new DecimalConstantContext(_localctx);
-					enterOuterAlt(_localctx, 3); {
+					enterOuterAlt(_localctx, 3);
+				{
 					setState(91);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -1442,8 +1431,7 @@ public class FiltersParser extends Parser {
 							_la = _input.LA(1);
 							if (!(_la == MINUS || _la == PLUS)) {
 								_errHandler.recoverInline(this);
-							}
-							else {
+							} else {
 								if (_input.LA(1) == Token.EOF)
 									matchedEOF = true;
 								_errHandler.reportMatch(this);
@@ -1455,29 +1443,29 @@ public class FiltersParser extends Parser {
 					setState(93);
 					match(DECIMAL_VALUE);
 				}
-					break;
+				break;
 				case 4:
 					_localctx = new TextConstantContext(_localctx);
-					enterOuterAlt(_localctx, 4); {
+					enterOuterAlt(_localctx, 4);
+				{
 					setState(94);
 					match(QUOTED_STRING);
 				}
-					break;
+				break;
 				case 5:
 					_localctx = new BooleanConstantContext(_localctx);
-					enterOuterAlt(_localctx, 5); {
+					enterOuterAlt(_localctx, 5);
+				{
 					setState(95);
 					match(BOOLEAN_VALUE);
 				}
-					break;
+				break;
 			}
-		}
-		catch (RecognitionException re) {
+		} catch (RecognitionException re) {
 			_localctx.exception = re;
 			_errHandler.reportError(this, re);
 			_errHandler.recover(this, re);
-		}
-		finally {
+		} finally {
 			exitRule();
 		}
 		return _localctx;
@@ -1564,6 +1552,7 @@ public class FiltersParser extends Parser {
 			+ "\u0000\u0000\u0000`_\u0001\u0000\u0000\u0000a\u000b\u0001\u0000\u0000" + "\u0000\n\u001d08:CORW[`";
 
 	public static final ATN _ATN = new ATNDeserializer().deserialize(_serializedATN.toCharArray());
+
 	static {
 		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
 		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {

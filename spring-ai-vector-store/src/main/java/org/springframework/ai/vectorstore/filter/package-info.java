@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.filter;
 
-import org.jspecify.annotations.NullMarked;

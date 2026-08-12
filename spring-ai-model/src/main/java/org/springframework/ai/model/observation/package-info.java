@@ -21,4 +21,3 @@
 @NullMarked
 package org.springframework.ai.model.observation;
 
-import org.jspecify.annotations.NullMarked;

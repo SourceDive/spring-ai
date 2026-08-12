@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
@@ -27,10 +25,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.tool.ToolCallback;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.tool.ToolCallback;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,8 +49,8 @@ class AsyncMcpToolCallbackProviderTests {
 		when(this.mcpClient.listTools()).thenReturn(Mono.just(listToolsResult));
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.build();
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -85,8 +84,8 @@ class AsyncMcpToolCallbackProviderTests {
 		when(this.mcpClient.listTools()).thenReturn(Mono.just(listToolsResult));
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.build();
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -111,16 +110,16 @@ class AsyncMcpToolCallbackProviderTests {
 		when(this.mcpClient.listTools()).thenReturn(Mono.just(listToolsResult));
 
 		AsyncMcpToolCallbackProvider provider1 = AsyncMcpToolCallbackProvider.builder()
-			.toolNamePrefixGenerator(McpToolNamePrefixGenerator.noPrefix())
-			.mcpClients(this.mcpClient)
-			.build();
+				.toolNamePrefixGenerator(McpToolNamePrefixGenerator.noPrefix())
+				.mcpClients(this.mcpClient)
+				.build();
 
 		assertThatThrownBy(() -> provider1.getToolCallbacks()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Multiple tools with the same name");
+				.hasMessageContaining("Multiple tools with the same name");
 
 		AsyncMcpToolCallbackProvider provider2 = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.build();
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var toolCallbacks = provider2.getToolCallbacks();
 		assertThat(toolCallbacks).hasSize(2);
@@ -158,8 +157,8 @@ class AsyncMcpToolCallbackProviderTests {
 		when(mcpClient2.getClientCapabilities()).thenReturn(clientCapabilities2);
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(mcpClient1, mcpClient2)
-			.build();
+				.mcpClients(mcpClient1, mcpClient2)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -186,8 +185,8 @@ class AsyncMcpToolCallbackProviderTests {
 		// Using the builder without explicit filter (should use default filter that
 		// accepts all)
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.build();
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -212,10 +211,10 @@ class AsyncMcpToolCallbackProviderTests {
 		McpToolFilter rejectAllFilter = (client, tool) -> false;
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.toolFilter(rejectAllFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(this.mcpClient)
-			.build();
+				.toolFilter(rejectAllFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -246,10 +245,10 @@ class AsyncMcpToolCallbackProviderTests {
 		McpToolFilter nameFilter = (client, tool) -> tool.name().contains("2") || tool.name().contains("3");
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.toolFilter(nameFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(this.mcpClient)
-			.build();
+				.toolFilter(nameFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -288,13 +287,13 @@ class AsyncMcpToolCallbackProviderTests {
 
 		// Create a filter that only accepts tools from client1
 		McpToolFilter clientFilter = (mcpConnectionInfo,
-				tool) -> mcpConnectionInfo.clientInfo().name().equals("testClient1");
+		                              tool) -> mcpConnectionInfo.clientInfo().name().equals("testClient1");
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.toolFilter(clientFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(mcpClient1, mcpClient2)
-			.build();
+				.toolFilter(clientFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(mcpClient1, mcpClient2)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -322,14 +321,14 @@ class AsyncMcpToolCallbackProviderTests {
 
 		// Create a filter that only accepts weather tools from the weather service
 		McpToolFilter complexFilter = (mcpConnectionInfo,
-				tool) -> mcpConnectionInfo.clientInfo().name().equals("weather-service")
-						&& tool.name().equals("weather");
+		                               tool) -> mcpConnectionInfo.clientInfo().name().equals("weather-service")
+				&& tool.name().equals("weather");
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.toolFilter(complexFilter)
-			.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
-			.mcpClients(weatherClient)
-			.build();
+				.toolFilter(complexFilter)
+				.toolNamePrefixGenerator(new DefaultMcpToolNamePrefixGenerator())
+				.mcpClients(weatherClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -387,9 +386,9 @@ class AsyncMcpToolCallbackProviderTests {
 		ToolContextToMcpMetaConverter customConverter = ToolContextToMcpMetaConverter.defaultConverter();
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.toolContextToMcpMetaConverter(customConverter)
-			.build();
+				.mcpClients(this.mcpClient)
+				.toolContextToMcpMetaConverter(customConverter)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -411,8 +410,8 @@ class AsyncMcpToolCallbackProviderTests {
 		when(this.mcpClient.listTools()).thenReturn(Mono.just(listToolsResult));
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(List.of(this.mcpClient))
-			.build();
+				.mcpClients(List.of(this.mcpClient))
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -434,8 +433,8 @@ class AsyncMcpToolCallbackProviderTests {
 		when(this.mcpClient.listTools()).thenReturn(Mono.just(listToolsResult));
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.build();
+				.mcpClients(this.mcpClient)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 
@@ -459,9 +458,9 @@ class AsyncMcpToolCallbackProviderTests {
 		McpToolNamePrefixGenerator customGenerator = (mcpConnectionInfo, tool) -> "custom_" + tool.name();
 
 		AsyncMcpToolCallbackProvider provider = AsyncMcpToolCallbackProvider.builder()
-			.mcpClients(this.mcpClient)
-			.toolNamePrefixGenerator(customGenerator)
-			.build();
+				.mcpClients(this.mcpClient)
+				.toolNamePrefixGenerator(customGenerator)
+				.build();
 
 		var callbacks = provider.getToolCallbacks();
 

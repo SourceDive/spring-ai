@@ -16,22 +16,9 @@
 
 package org.springframework.ai.vectorstore.filter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.antlr.v4.runtime.ANTLRErrorStrategy;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.vectorstore.filter.Filter.Operand;
 import org.springframework.ai.vectorstore.filter.antlr4.FiltersBaseVisitor;
 import org.springframework.ai.vectorstore.filter.antlr4.FiltersLexer;
@@ -43,11 +30,17 @@ import org.springframework.ai.vectorstore.filter.antlr4.FiltersParser.SimpleIden
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  *
  * Parse a textual, vector-store agnostic, filter expression language into
  * {@link Filter.Expression}.
- *
+ * <p>
  * The vector-store agnostic, filter expression language is defined by a formal ANTLR4
  * grammar (Filters.g4). The language looks and feels like a subset of the well known SQL
  * WHERE filter expressions. For example, you can use the parser like this:
@@ -154,8 +147,7 @@ public class FilterExpressionTextParser {
 			var filterExpression = filterExpressionVisitor.castToExpression(operand);
 			this.cache.putIfAbsent(textFilterExpression, filterExpression);
 			return filterExpression;
-		}
-		catch (ParseCancellationException e) {
+		} catch (ParseCancellationException e) {
 			var msg = String.join("", this.errorListener.errorMessages);
 			var rootCause = NestedExceptionUtils.getRootCause(e);
 			throw new FilterExpressionParseException(msg, rootCause);
@@ -166,7 +158,9 @@ public class FilterExpressionTextParser {
 		this.cache.clear();
 	}
 
-	/** For testing only */
+	/**
+	 * For testing only
+	 */
 	Map<String, Filter.Expression> getCache() {
 		return this.cache;
 	}
@@ -317,8 +311,7 @@ public class FilterExpressionTextParser {
 			if (expression instanceof Filter.Group group) {
 				// Remove the top-level grouping.
 				return group.content();
-			}
-			else if (expression instanceof Filter.Expression exp) {
+			} else if (expression instanceof Filter.Expression exp) {
 				return exp;
 			}
 			throw new RuntimeException("Invalid expression: " + expression);
@@ -334,7 +327,7 @@ public class FilterExpressionTextParser {
 
 		@Override
 		public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
-				String msg, RecognitionException e) {
+		                        String msg, RecognitionException e) {
 
 			String sourceName = recognizer.getInputStream().getSourceName();
 

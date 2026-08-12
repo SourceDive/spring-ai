@@ -16,16 +16,15 @@
 
 package org.springframework.ai.tokenizer;
 
-import java.util.Base64;
-
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingType;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.content.MediaContent;
 import org.springframework.util.CollectionUtils;
+
+import java.util.Base64;
 
 /**
  * Estimates the number of tokens in a given text or message using the JTokkit encoding
@@ -51,6 +50,7 @@ public class JTokkitTokenCountEstimator implements TokenCountEstimator {
 
 	/**
 	 * Creates a new JTokkitTokenCountEstimator with the specified encoding type.
+	 *
 	 * @param tokenEncodingType the encoding type to use for token counting
 	 */
 	public JTokkitTokenCountEstimator(final EncodingType tokenEncodingType) {
@@ -79,8 +79,7 @@ public class JTokkitTokenCountEstimator implements TokenCountEstimator {
 
 				if (media.getData() instanceof String textData) {
 					tokenCount += this.estimate(textData);
-				}
-				else if (media.getData() instanceof byte[] binaryData) {
+				} else if (media.getData() instanceof byte[] binaryData) {
 					String base64 = Base64.getEncoder().encodeToString(binaryData);
 					tokenCount += this.estimate(base64);
 				}

@@ -16,19 +16,9 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.content.Media;
@@ -38,6 +28,15 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A template for creating prompts. It allows you to define a template string with
@@ -89,8 +88,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		try (InputStream inputStream = resource.getInputStream()) {
 			this.template = StreamUtils.copyToString(inputStream, Charset.defaultCharset());
 			Assert.hasText(this.template, "template cannot be null or empty");
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Failed to read resource", ex);
 		}
 		this.variables.putAll(variables);
@@ -114,8 +112,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		for (Entry<String, Object> entry : this.variables.entrySet()) {
 			if (entry.getValue() instanceof Resource resource) {
 				processedVariables.put(entry.getKey(), renderResource(resource));
-			}
-			else {
+			} else {
 				processedVariables.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -134,8 +131,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		for (Entry<String, Object> entry : mergedVariables.entrySet()) {
 			if (entry.getValue() instanceof Resource resource) {
 				combinedVariables.put(entry.getKey(), renderResource(resource));
-			}
-			else {
+			} else {
 				combinedVariables.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -159,8 +155,7 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 			}
 			// For other Resource types or as fallback
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			if (log.isWarnEnabled()) {
 				log.warn("Failed to render resource: " + resource.getDescription(), e);
 			}
@@ -258,14 +253,11 @@ public class PromptTemplate implements PromptTemplateActions, PromptTemplateMess
 		public PromptTemplate build() {
 			if (this.template != null && this.resource != null) {
 				throw new IllegalArgumentException("Only one of template or resource can be set");
-			}
-			else if (this.resource != null) {
+			} else if (this.resource != null) {
 				return new PromptTemplate(this.resource, this.variables, this.renderer);
-			}
-			else if (this.template != null) {
+			} else if (this.template != null) {
 				return new PromptTemplate(this.template, this.variables, this.renderer);
-			}
-			else {
+			} else {
 				throw new IllegalStateException("Neither template nor resource is set");
 			}
 		}

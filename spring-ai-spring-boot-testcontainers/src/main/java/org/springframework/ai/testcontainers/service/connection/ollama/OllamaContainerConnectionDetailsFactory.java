@@ -16,11 +16,10 @@
 
 package org.springframework.ai.testcontainers.service.connection.ollama;
 
-import org.testcontainers.ollama.OllamaContainer;
-
 import org.springframework.ai.model.ollama.autoconfigure.OllamaConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.ollama.OllamaContainer;
 
 /**
  * @author Eddú Meléndez

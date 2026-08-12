@@ -16,11 +16,10 @@
 
 package org.springframework.ai.model.tool;
 
-import java.util.function.Function;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ChatResponse;
+
+import java.util.function.Function;
 
 /**
  * Interface for determining when tool execution should be performed based on model
@@ -32,6 +31,7 @@ public interface ToolExecutionEligibilityChecker extends Function<ChatResponse, 
 
 	/**
 	 * Determines if the response is a tool call message response.
+	 *
 	 * @param chatResponse The response from the chat model call
 	 * @return true if the response is a tool call message response, false otherwise
 	 */

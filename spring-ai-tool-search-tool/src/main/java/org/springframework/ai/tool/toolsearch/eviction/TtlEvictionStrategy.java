@@ -16,13 +16,13 @@
 
 package org.springframework.ai.tool.toolsearch.eviction;
 
+import org.springframework.util.Assert;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.util.Assert;
 
 /**
  * A {@link ToolIndexEvictionStrategy} that evicts sessions whose last-access time is
@@ -46,6 +46,7 @@ public final class TtlEvictionStrategy implements ToolIndexEvictionStrategy {
 
 	/**
 	 * Creates a new TtlEvictionStrategy.
+	 *
 	 * @param ttl maximum idle time before a session's index is evicted; must be positive
 	 */
 	public TtlEvictionStrategy(Duration ttl) {

@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.tool.toolsearch;
 
-import org.jspecify.annotations.NullMarked;

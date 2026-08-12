@@ -16,7 +16,19 @@
 
 package org.springframework.ai.chat.memory.repository.jdbc;
 
-import java.sql.PreparedStatement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -24,27 +36,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.Assert;
 
 /**
  * An implementation of {@link ChatMemoryRepository} for JDBC.
@@ -76,7 +67,7 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 	private final JdbcChatMemoryRepositoryDialect dialect;
 
 	private JdbcChatMemoryRepository(JdbcTemplate jdbcTemplate, JdbcChatMemoryRepositoryDialect dialect,
-			@Nullable PlatformTransactionManager txManager) {
+	                                 @Nullable PlatformTransactionManager txManager) {
 		Assert.notNull(jdbcTemplate, "jdbcTemplate cannot be null");
 		Assert.notNull(dialect, "dialect cannot be null");
 		this.jdbcTemplate = jdbcTemplate;
@@ -98,9 +89,9 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 	public List<Message> findByConversationId(String conversationId) {
 		Assert.hasText(conversationId, "conversationId cannot be null or empty");
 		return this.jdbcTemplate.query(this.dialect.getSelectMessagesSql(), new MessageRowMapper(), conversationId)
-			.stream()
-			.filter(Objects::nonNull)
-			.toList();
+				.stream()
+				.filter(Objects::nonNull)
+				.toList();
 	}
 
 	@Override
@@ -110,9 +101,9 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 		Assert.noNullElements(messages, "messages cannot contain null elements");
 
 		List<Message> persistableMessages = messages.stream()
-			.filter(m -> !(m instanceof ToolResponseMessage)
-					&& !(m instanceof AssistantMessage am && am.hasToolCalls()))
-			.toList();
+				.filter(m -> !(m instanceof ToolResponseMessage)
+						&& !(m instanceof AssistantMessage am && am.hasToolCalls()))
+				.toList();
 		if (logger.isWarnEnabled() && persistableMessages.size() < messages.size()) {
 			logger.warn(
 					"JdbcChatMemoryRepository does not support tool call messages. Some messages were filtered out for conversation: "
@@ -137,10 +128,12 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 	}
 
 	private record AddBatchPreparedStatement(String conversationId,
-			List<Message> messages) implements BatchPreparedStatementSetter {
+	                                         List<Message> messages) implements
+
+	BatchPreparedStatementSetter {
 
 		@Override
-		public void setValues(PreparedStatement ps, int i) throws SQLException {
+		public void setValues (PreparedStatement ps,int i) throws SQLException {
 			var message = this.messages.get(i);
 
 			ps.setString(1, this.conversationId);
@@ -159,7 +152,7 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 		}
 
 		@Override
-		public int getBatchSize() {
+		public int getBatchSize () {
 			return this.messages.size();
 		}
 	}
@@ -251,8 +244,7 @@ public final class JdbcChatMemoryRepository implements ChatMemoryRepository {
 		private JdbcChatMemoryRepositoryDialect resolveDialect(DataSource dataSource) {
 			if (this.dialect == null) {
 				return JdbcChatMemoryRepositoryDialect.from(dataSource);
-			}
-			else {
+			} else {
 				warnIfDialectMismatch(dataSource, this.dialect);
 				return this.dialect;
 			}

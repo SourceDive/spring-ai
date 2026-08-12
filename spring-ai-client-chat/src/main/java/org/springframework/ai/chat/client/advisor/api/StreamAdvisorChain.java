@@ -16,12 +16,11 @@
 
 package org.springframework.ai.chat.client.advisor.api;
 
-import java.util.List;
-
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 /**
  * A chain of {@link StreamAdvisor} instances orchestrating the execution of a
@@ -49,6 +48,7 @@ public interface StreamAdvisorChain extends AdvisorChain {
 	/**
 	 * Creates a new StreamAdvisorChain copy that contains all advisors after the
 	 * specified advisor.
+	 *
 	 * @param after the StreamAdvisor after which to copy the chain
 	 * @return a new StreamAdvisorChain containing all advisors after the specified
 	 * advisor

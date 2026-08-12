@@ -16,16 +16,15 @@
 
 package org.springframework.ai.chat.client.observation;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.observation.ObservabilityHelper;
 import org.springframework.util.CollectionUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handler for emitting the chat client prompt content to logs.
@@ -42,7 +41,7 @@ public class ChatClientPromptContentObservationHandler implements ObservationHan
 	public void onStop(ChatClientObservationContext context) {
 		if (logger.isInfoEnabled()) {
 			logger
-				.info("Chat Client Prompt Content:\n" + ObservabilityHelper.concatenateEntries(processPrompt(context)));
+					.info("Chat Client Prompt Content:\n" + ObservabilityHelper.concatenateEntries(processPrompt(context)));
 		}
 	}
 
@@ -53,9 +52,9 @@ public class ChatClientPromptContentObservationHandler implements ObservationHan
 
 		var messages = new HashMap<String, Object>();
 		context.getRequest()
-			.prompt()
-			.getInstructions()
-			.forEach(message -> messages.put(message.getMessageType().getValue(), message.getText()));
+				.prompt()
+				.getInstructions()
+				.forEach(message -> messages.put(message.getMessageType().getValue(), message.getText()));
 		return messages;
 	}
 

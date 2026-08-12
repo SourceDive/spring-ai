@@ -16,11 +16,11 @@
 
 package org.springframework.ai.tool.toolsearch;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Reference to a retrieved Tool with its name, relevance score, and summary.
@@ -32,17 +32,20 @@ import org.jspecify.annotations.Nullable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ToolReference(String toolName, @Nullable Double relevanceScore, String summary) {
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 
 	public static class Builder {
 
-		@Nullable private String toolName;
+		@Nullable
+		private String toolName;
 
-		@Nullable private Double relevanceScore;
+		@Nullable
+		private Double relevanceScore;
 
-		@Nullable private String summary;
+		@Nullable
+		private String summary;
 
 		public Builder toolName(String toolName) {
 			this.toolName = toolName;

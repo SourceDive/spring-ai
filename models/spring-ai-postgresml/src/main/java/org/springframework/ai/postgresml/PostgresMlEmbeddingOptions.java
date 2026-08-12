@@ -16,13 +16,12 @@
 
 package org.springframework.ai.postgresml;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.embedding.EmbeddingOptions;
 import org.springframework.ai.postgresml.PostgresMlEmbeddingModel.VectorType;
+
+import java.util.Map;
 
 /**
  * PostgresML Embedding Options.
@@ -58,7 +57,7 @@ public class PostgresMlEmbeddingOptions implements EmbeddingOptions {
 	private final MetadataMode metadataMode;
 
 	protected PostgresMlEmbeddingOptions(@Nullable String transformer, @Nullable VectorType vectorType,
-			@Nullable Map<String, Object> kwargs, @Nullable MetadataMode metadataMode) {
+	                                     @Nullable Map<String, Object> kwargs, @Nullable MetadataMode metadataMode) {
 		this.transformer = transformer != null ? transformer : DEFAULT_TRANSFORMER_MODEL;
 		this.vectorType = vectorType != null ? vectorType : VectorType.PG_ARRAY;
 		this.kwargs = kwargs != null ? Map.copyOf(kwargs) : null;

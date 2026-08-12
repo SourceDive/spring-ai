@@ -16,11 +16,11 @@
 
 package org.springframework.ai.mcp.server.webflux.transport;
 
+import org.springframework.web.reactive.function.server.ServerRequest;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.web.reactive.function.server.ServerRequest;
 
 /**
  * Utility class for working with HTTP headers. Internal use only.
@@ -39,10 +39,10 @@ final class HeaderUtils {
 
 	static Map<String, List<String>> collectHeaders(ServerRequest request) {
 		return request.headers()
-			.asHttpHeaders()
-			.headerSet()
-			.stream()
-			.collect(Collectors.toUnmodifiableMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue));
+				.asHttpHeaders()
+				.headerSet()
+				.stream()
+				.collect(Collectors.toUnmodifiableMap(e -> e.getKey().toLowerCase(), Map.Entry::getValue));
 	}
 
 }

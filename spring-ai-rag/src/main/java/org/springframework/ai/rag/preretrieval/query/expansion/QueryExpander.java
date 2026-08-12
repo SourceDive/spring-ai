@@ -16,10 +16,10 @@
 
 package org.springframework.ai.rag.preretrieval.query.expansion;
 
+import org.springframework.ai.rag.Query;
+
 import java.util.List;
 import java.util.function.Function;
-
-import org.springframework.ai.rag.Query;
 
 /**
  * A component for expanding the input query into a list of queries, addressing challenges
@@ -33,6 +33,7 @@ public interface QueryExpander extends Function<Query, List<Query>> {
 
 	/**
 	 * Expands the given query into a list of queries.
+	 *
 	 * @param query The original query to be expanded
 	 * @return A list of expanded queries
 	 */

@@ -16,14 +16,14 @@
 
 package org.springframework.ai.bedrock.converse.api;
 
+import software.amazon.awssdk.core.document.Document;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import software.amazon.awssdk.core.document.Document;
 
 /**
  * Amazon Bedrock Converse API utils.
@@ -42,38 +42,27 @@ public final class ConverseApiUtils {
 	public static Document convertObjectToDocument(Object value) {
 		if (value == null) {
 			return Document.fromNull();
-		}
-		else if (value instanceof String stringValue) {
+		} else if (value instanceof String stringValue) {
 			return Document.fromString(stringValue);
-		}
-		else if (value instanceof Boolean booleanValue) {
+		} else if (value instanceof Boolean booleanValue) {
 			return Document.fromBoolean(booleanValue);
-		}
-		else if (value instanceof Integer integerValue) {
+		} else if (value instanceof Integer integerValue) {
 			return Document.fromNumber(integerValue);
-		}
-		else if (value instanceof Long longValue) {
+		} else if (value instanceof Long longValue) {
 			return Document.fromNumber(longValue);
-		}
-		else if (value instanceof Float floatValue) {
+		} else if (value instanceof Float floatValue) {
 			return Document.fromNumber(floatValue);
-		}
-		else if (value instanceof Double doubleValue) {
+		} else if (value instanceof Double doubleValue) {
 			return Document.fromNumber(doubleValue);
-		}
-		else if (value instanceof BigDecimal bigDecimalValue) {
+		} else if (value instanceof BigDecimal bigDecimalValue) {
 			return Document.fromNumber(bigDecimalValue);
-		}
-		else if (value instanceof BigInteger bigIntegerValue) {
+		} else if (value instanceof BigInteger bigIntegerValue) {
 			return Document.fromNumber(bigIntegerValue);
-		}
-		else if (value instanceof List listValue) {
+		} else if (value instanceof List listValue) {
 			return Document.fromList(listValue.stream().map(v -> convertObjectToDocument(v)).toList());
-		}
-		else if (value instanceof Map mapValue) {
+		} else if (value instanceof Map mapValue) {
 			return convertMapToDocument(mapValue);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unsupported value type:" + value.getClass().getSimpleName());
 		}
 	}
@@ -99,8 +88,8 @@ public final class ConverseApiUtils {
 
 	private static Document convertMapToDocument(Map<String, Object> value) {
 		Map<String, Document> attr = value.entrySet()
-			.stream()
-			.collect(Collectors.toMap(e -> e.getKey(), e -> convertObjectToDocument(e.getValue())));
+				.stream()
+				.collect(Collectors.toMap(e -> e.getKey(), e -> convertObjectToDocument(e.getValue())));
 
 		return Document.fromMap(attr);
 	}

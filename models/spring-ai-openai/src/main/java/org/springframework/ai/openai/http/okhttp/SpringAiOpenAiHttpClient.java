@@ -16,38 +16,10 @@
 
 package org.springframework.ai.openai.http.okhttp;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.X509TrustManager;
-
 import com.openai.core.RequestOptions;
 import com.openai.core.Timeout;
+import com.openai.core.http.*;
 import com.openai.core.http.Headers;
-import com.openai.core.http.HttpClient;
-import com.openai.core.http.HttpMethod;
-import com.openai.core.http.HttpRequest;
-import com.openai.core.http.HttpRequestBody;
-import com.openai.core.http.HttpResponse;
-import com.openai.core.http.ProxyAuthenticator;
 import com.openai.errors.OpenAIIoException;
 import io.micrometer.context.ContextExecutorService;
 import io.micrometer.context.ContextSnapshotFactory;
@@ -56,20 +28,22 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.okhttp3.OkHttpConnectionPoolMetrics;
 import io.micrometer.core.instrument.binder.okhttp3.OkHttpObservationInterceptor;
 import io.micrometer.observation.ObservationRegistry;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.ConnectionPool;
-import okhttp3.Dispatcher;
-import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import okio.BufferedSink;
 import okio.Okio;
 import org.jspecify.annotations.Nullable;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * OkHttp-backed {@link HttpClient} for the OpenAI Java SDK, with Micrometer's
@@ -114,11 +88,9 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 		Call call = newCall(request, requestOptions);
 		try {
 			return toHttpResponse(call.execute());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new OpenAIIoException("Request failed", e);
-		}
-		finally {
+		} finally {
 			HttpRequestBody body = request.body();
 			if (body != null) {
 				body.close();
@@ -165,8 +137,7 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 		if (this.okHttpClient.cache() != null) {
 			try {
 				this.okHttpClient.cache().close();
-			}
-			catch (IOException ignored) {
+			} catch (IOException ignored) {
 				// Matches SDK behavior: cache close errors during shutdown are swallowed.
 			}
 		}
@@ -178,9 +149,9 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 		Timeout perCallTimeout = requestOptions.getTimeout();
 		if (perCallTimeout != null) {
 			clientBuilder.connectTimeout(perCallTimeout.connect())
-				.readTimeout(perCallTimeout.read())
-				.writeTimeout(perCallTimeout.write())
-				.callTimeout(perCallTimeout.request());
+					.readTimeout(perCallTimeout.read())
+					.writeTimeout(perCallTimeout.write())
+					.callTimeout(perCallTimeout.request());
 		}
 
 		OkHttpClient client = clientBuilder.build();
@@ -306,8 +277,8 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 
 	private static HttpRequest toHttpRequest(Request request) {
 		HttpRequest.Builder builder = HttpRequest.builder()
-			.method(HttpMethod.valueOf(request.method()))
-			.baseUrl(toBaseUrl(request.url()));
+				.method(HttpMethod.valueOf(request.method()))
+				.baseUrl(toBaseUrl(request.url()));
 		for (String segment : request.url().pathSegments()) {
 			builder.addPathSegment(segment);
 		}
@@ -344,8 +315,7 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 		final long length;
 		try {
 			length = source.contentLength();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new OpenAIIoException("Could not read content length", e);
 		}
 		final boolean isOneShot = source.isOneShot();
@@ -372,8 +342,7 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 				try {
 					source.writeTo(sink);
 					sink.flush();
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					throw new OpenAIIoException("Failed to write request body", e);
 				}
 			}
@@ -530,19 +499,19 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 
 		public SpringAiOpenAiHttpClient build() {
 			OkHttpClient.Builder okBuilder = new OkHttpClient.Builder()
-				// Recover from stale pooled connections (OkHttp's default); distinct from
-				// the SDK's status-code/backoff retries, so no duplication. See gh-6318.
-				.retryOnConnectionFailure(true)
-				.pingInterval(Duration.ofMinutes(1))
-				.connectTimeout(this.timeout.connect())
-				.readTimeout(this.timeout.read())
-				.writeTimeout(this.timeout.write())
-				.callTimeout(this.timeout.request())
-				.proxy(this.proxy);
+					// Recover from stale pooled connections (OkHttp's default); distinct from
+					// the SDK's status-code/backoff retries, so no duplication. See gh-6318.
+					.retryOnConnectionFailure(true)
+					.pingInterval(Duration.ofMinutes(1))
+					.connectTimeout(this.timeout.connect())
+					.readTimeout(this.timeout.read())
+					.writeTimeout(this.timeout.write())
+					.callTimeout(this.timeout.request())
+					.proxy(this.proxy);
 
 			OkHttpObservationInterceptor observationInterceptor = OkHttpObservationInterceptor
-				.builder(this.observationRegistry, OBSERVATION_NAME)
-				.build();
+					.builder(this.observationRegistry, OBSERVATION_NAME)
+					.build();
 			okBuilder.addInterceptor(observationInterceptor);
 
 			for (Interceptor interceptor : this.interceptors) {
@@ -570,16 +539,14 @@ public final class SpringAiOpenAiHttpClient implements HttpClient {
 			if (this.maxIdleConnections != null && this.keepAliveDuration != null) {
 				okBuilder.connectionPool(new ConnectionPool(this.maxIdleConnections, this.keepAliveDuration.toNanos(),
 						TimeUnit.NANOSECONDS));
-			}
-			else if ((this.maxIdleConnections == null) != (this.keepAliveDuration == null)) {
+			} else if ((this.maxIdleConnections == null) != (this.keepAliveDuration == null)) {
 				throw new IllegalStateException(
 						"Both or none of `maxIdleConnections` and `keepAliveDuration` must be set, but only one was set");
 			}
 
 			if (this.sslSocketFactory != null && this.trustManager != null) {
 				okBuilder.sslSocketFactory(this.sslSocketFactory, this.trustManager);
-			}
-			else if ((this.sslSocketFactory == null) != (this.trustManager == null)) {
+			} else if ((this.sslSocketFactory == null) != (this.trustManager == null)) {
 				throw new IllegalStateException(
 						"Both or none of `sslSocketFactory` and `trustManager` must be set, but only one was set");
 			}

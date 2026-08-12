@@ -16,12 +16,6 @@
 
 package org.springframework.ai.openai;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import com.openai.client.OpenAIClient;
 import com.openai.core.http.Headers;
 import com.openai.models.audio.speech.SpeechCreateParams;
@@ -30,18 +24,19 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
-import org.springframework.ai.audio.tts.Speech;
-import org.springframework.ai.audio.tts.TextToSpeechModel;
-import org.springframework.ai.audio.tts.TextToSpeechOptions;
-import org.springframework.ai.audio.tts.TextToSpeechPrompt;
-import org.springframework.ai.audio.tts.TextToSpeechResponse;
+import org.springframework.ai.audio.tts.*;
 import org.springframework.ai.openai.http.okhttp.OpenAiHttpClientBuilderCustomizer;
 import org.springframework.ai.openai.metadata.OpenAiAudioSpeechResponseMetadata;
 import org.springframework.ai.openai.setup.OpenAiSetup;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * OpenAI audio speech client implementation using the OpenAI Java SDK.
@@ -75,6 +70,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 	/**
 	 * Creates a new builder instance with default configuration.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -83,6 +79,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 	/**
 	 * Creates a builder initialized with this model's configuration.
+	 *
 	 * @return A builder for creating a modified copy
 	 */
 	public Builder mutate() {
@@ -102,9 +99,9 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 		// Merge request options with default options
 		OpenAiAudioSpeechOptions mergedOptions = OpenAiAudioSpeechOptions.builder()
-			.from(this.options)
-			.merge(prompt.getOptions())
-			.build();
+				.from(this.options)
+				.merge(prompt.getOptions())
+				.build();
 
 		String inputText = getInputText(prompt, mergedOptions);
 
@@ -117,17 +114,16 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 		String model;
 		if (mergedOptions.getDeploymentName() != null) {
 			model = mergedOptions.getDeploymentName();
-		}
-		else {
+		} else {
 			model = mergedOptions.getModel();
 		}
 
 		Assert.notNull(model, "Model must not be null");
 		Assert.notNull(mergedOptions.getVoice(), "Voice must not be null");
 		SpeechCreateParams.Builder paramsBuilder = SpeechCreateParams.builder()
-			.model(SpeechModel.of(model))
-			.input(inputText)
-			.voice(SpeechCreateParams.Voice.ofString(mergedOptions.getVoice()));
+				.model(SpeechModel.of(model))
+				.input(inputText)
+				.voice(SpeechCreateParams.Voice.ofString(mergedOptions.getVoice()));
 
 		if (mergedOptions.getResponseFormat() != null) {
 			paramsBuilder.responseFormat(SpeechCreateParams.ResponseFormat.of(mergedOptions.getResponseFormat()));
@@ -145,8 +141,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 		byte[] audioBytes;
 		try (InputStream inputStream = httpResponse.body()) {
 			audioBytes = inputStream.readAllBytes();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Failed to read audio speech response", e);
 		}
 
@@ -215,6 +210,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 		/**
 		 * Copy constructor for creating a builder from an existing model.
+		 *
 		 * @param model The model to copy configuration from
 		 */
 		private Builder(OpenAiAudioSpeechModel model) {
@@ -224,6 +220,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 		/**
 		 * Sets the OpenAIClient.
+		 *
 		 * @param openAiClient The OpenAIClient to use
 		 * @return This builder
 		 */
@@ -234,6 +231,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 		/**
 		 * Sets the default options.
+		 *
 		 * @param options The default options to use
 		 * @return This builder
 		 */
@@ -271,6 +269,7 @@ public final class OpenAiAudioSpeechModel implements TextToSpeechModel {
 
 		/**
 		 * Builds the OpenAiAudioSpeechModel instance.
+		 *
 		 * @return A new OpenAiAudioSpeechModel instance
 		 */
 		public OpenAiAudioSpeechModel build() {

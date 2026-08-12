@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.sampling;
 
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
+import org.springframework.ai.mcp.annotation.McpSampling;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpSampling;
-
 /**
  * Class for creating Function callbacks around sampling methods that return Mono.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpSampling} into
  * callback functions that can be used to handle sampling requests in a reactive way. It
  * supports methods with a single CreateMessageRequest parameter.
@@ -46,11 +45,12 @@ public final class AsyncMcpSamplingMethodCallback extends AbstractMcpSamplingMet
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns a Mono that completes with the result.
+	 *
 	 * @param request The sampling request, must not be null
 	 * @return A Mono that completes with the result of the method invocation
 	 * @throws McpSamplingMethodException if there is an error invoking the sampling
-	 * method
-	 * @throws IllegalArgumentException if the request is null
+	 *                                    method
+	 * @throws IllegalArgumentException   if the request is null
 	 */
 	@Override
 	public Mono<CreateMessageResult> apply(CreateMessageRequest request) {
@@ -82,15 +82,15 @@ public final class AsyncMcpSamplingMethodCallback extends AbstractMcpSamplingMet
 						"Method must return Mono<CreateMessageResult> or CreateMessageResult: "
 								+ this.method.getName()));
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return Mono
-				.error(new McpSamplingMethodException("Error invoking sampling method: " + this.method.getName(), e));
+					.error(new McpSamplingMethodException("Error invoking sampling method: " + this.method.getName(), e));
 		}
 	}
 
 	/**
 	 * Validates that the method return type is compatible with the sampling callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -107,6 +107,7 @@ public final class AsyncMcpSamplingMethodCallback extends AbstractMcpSamplingMet
 
 	/**
 	 * Checks if a parameter type is compatible with the exchange type.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -119,6 +120,7 @@ public final class AsyncMcpSamplingMethodCallback extends AbstractMcpSamplingMet
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -135,6 +137,7 @@ public final class AsyncMcpSamplingMethodCallback extends AbstractMcpSamplingMet
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpSamplingMethodCallback instance
 		 */
 		@Override

@@ -16,9 +16,9 @@
 
 package org.springframework.ai.model.chat.memory.repository.mongo.autoconfigure;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

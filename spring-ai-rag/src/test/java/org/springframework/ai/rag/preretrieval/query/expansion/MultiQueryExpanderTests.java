@@ -35,53 +35,53 @@ class MultiQueryExpanderTests {
 	@Test
 	void whenChatClientBuilderIsNullThenThrow() {
 		assertThatThrownBy(() -> MultiQueryExpander.builder().chatClientBuilder(null).build())
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("chatClientBuilder cannot be null");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("chatClientBuilder cannot be null");
 	}
 
 	@Test
 	void whenQueryIsNullThenThrow() {
 		QueryExpander queryExpander = MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.build();
 		assertThatThrownBy(() -> queryExpander.expand(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("query cannot be null");
+				.hasMessageContaining("query cannot be null");
 	}
 
 	@Test
 	void whenPromptHasMissingNumberPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("You are the boss. Original query: {query}");
 		assertThatThrownBy(() -> MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(customPromptTemplate)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("number");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(customPromptTemplate)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("number");
 	}
 
 	@Test
 	void whenPromptHasMissingQueryPlaceholderThenThrow() {
 		PromptTemplate customPromptTemplate = new PromptTemplate("You are the boss. Number of queries: {number}");
 		assertThatThrownBy(() -> MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(customPromptTemplate)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template")
-			.hasMessageContaining("query");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(customPromptTemplate)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template")
+				.hasMessageContaining("query");
 	}
 
 	@Test
 	void whenBuilderIsNullThenThrow() {
 		assertThatThrownBy(() -> MultiQueryExpander.builder().build()).isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("chatClientBuilder cannot be null");
+				.hasMessageContaining("chatClientBuilder cannot be null");
 	}
 
 	@Test
 	void whenPromptTemplateIsNullThenUseDefault() {
 		MultiQueryExpander queryExpander = MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(null)
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(null)
+				.build();
 		assertThat(queryExpander).isNotNull();
 	}
 
@@ -90,9 +90,9 @@ class MultiQueryExpanderTests {
 		PromptTemplate validTemplate = new PromptTemplate("Generate {number} variations of: {query}");
 
 		MultiQueryExpander expander = MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(validTemplate)
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(validTemplate)
+				.build();
 
 		assertThat(expander).isNotNull();
 	}
@@ -103,9 +103,9 @@ class MultiQueryExpanderTests {
 				"Generate {number} variations of: {query}. Context: {context}");
 
 		MultiQueryExpander expander = MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(templateWithExtra)
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(templateWithExtra)
+				.build();
 
 		assertThat(expander).isNotNull();
 	}
@@ -116,9 +116,9 @@ class MultiQueryExpanderTests {
 		ChatClient.Builder secondBuilder = mock(ChatClient.Builder.class);
 
 		MultiQueryExpander expander = MultiQueryExpander.builder()
-			.chatClientBuilder(firstBuilder)
-			.chatClientBuilder(secondBuilder)
-			.build();
+				.chatClientBuilder(firstBuilder)
+				.chatClientBuilder(secondBuilder)
+				.build();
 
 		assertThat(expander).isNotNull();
 	}
@@ -128,10 +128,10 @@ class MultiQueryExpanderTests {
 		PromptTemplate validTemplate = new PromptTemplate("Config: {number} values for {query}");
 
 		MultiQueryExpander expander = MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(validTemplate)
-			.promptTemplate(null)
-			.build();
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(validTemplate)
+				.promptTemplate(null)
+				.build();
 
 		assertThat(expander).isNotNull();
 	}
@@ -141,10 +141,10 @@ class MultiQueryExpanderTests {
 		PromptTemplate templateWithWrongCase = new PromptTemplate("Generate {NUMBER} variations of: {QUERY}");
 
 		assertThatThrownBy(() -> MultiQueryExpander.builder()
-			.chatClientBuilder(mock(ChatClient.Builder.class))
-			.promptTemplate(templateWithWrongCase)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("The following placeholders must be present in the prompt template");
+				.chatClientBuilder(mock(ChatClient.Builder.class))
+				.promptTemplate(templateWithWrongCase)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("The following placeholders must be present in the prompt template");
 	}
 
 }

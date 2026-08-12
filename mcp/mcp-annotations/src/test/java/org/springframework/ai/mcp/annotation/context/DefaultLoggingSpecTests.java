@@ -16,10 +16,10 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -117,9 +117,9 @@ public class DefaultLoggingSpecTests {
 		spec.meta("key1", "value1").meta("key2", "value2").meta("key3", "value3");
 
 		assertThat(spec.meta).hasSize(3)
-			.containsEntry("key1", "value1")
-			.containsEntry("key2", "value2")
-			.containsEntry("key3", "value3");
+				.containsEntry("key1", "value1")
+				.containsEntry("key2", "value2")
+				.containsEntry("key3", "value3");
 	}
 
 	@Test
@@ -127,9 +127,9 @@ public class DefaultLoggingSpecTests {
 		DefaultLoggingSpec spec = new DefaultLoggingSpec();
 
 		McpRequestContextTypes.LoggingSpec result = spec.message("Test message")
-			.logger("test-logger")
-			.level(LoggingLevel.DEBUG)
-			.meta("key", "value");
+				.logger("test-logger")
+				.level(LoggingLevel.DEBUG)
+				.meta("key", "value");
 
 		assertThat(result).isSameAs(spec);
 		assertThat(spec.message).isEqualTo("Test message");

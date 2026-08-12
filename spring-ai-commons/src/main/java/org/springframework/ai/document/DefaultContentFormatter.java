@@ -16,16 +16,10 @@
 
 package org.springframework.ai.document;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link ContentFormatter}.
@@ -86,6 +80,7 @@ public final class DefaultContentFormatter implements ContentFormatter {
 
 	/**
 	 * Start building a new configuration.
+	 *
 	 * @return The entry point for creating a new configuration.
 	 */
 	public static Builder builder() {
@@ -106,18 +101,19 @@ public final class DefaultContentFormatter implements ContentFormatter {
 		var metadata = metadataFilter(document.getMetadata(), metadataMode);
 
 		var metadataText = metadata.entrySet()
-			.stream()
-			.map(metadataEntry -> this.metadataTemplate.replace(TEMPLATE_KEY_PLACEHOLDER, metadataEntry.getKey())
-				.replace(TEMPLATE_VALUE_PLACEHOLDER, metadataEntry.getValue().toString()))
-			.collect(Collectors.joining(this.metadataSeparator));
+				.stream()
+				.map(metadataEntry -> this.metadataTemplate.replace(TEMPLATE_KEY_PLACEHOLDER, metadataEntry.getKey())
+						.replace(TEMPLATE_VALUE_PLACEHOLDER, metadataEntry.getValue().toString()))
+				.collect(Collectors.joining(this.metadataSeparator));
 
 		var text = document.getText() != null ? document.getText() : "";
 		return this.textTemplate.replace(TEMPLATE_METADATA_STRING_PLACEHOLDER, metadataText)
-			.replace(TEMPLATE_CONTENT_PLACEHOLDER, text);
+				.replace(TEMPLATE_CONTENT_PLACEHOLDER, text);
 	}
 
 	/**
 	 * Filters the metadata by the configured MetadataMode.
+	 *
 	 * @param metadata Document metadata.
 	 * @return Returns the filtered by configured mode metadata.
 	 */
@@ -134,15 +130,14 @@ public final class DefaultContentFormatter implements ContentFormatter {
 
 		if (metadataMode == MetadataMode.INFERENCE) {
 			usableMetadataKeys.removeAll(this.excludedInferenceMetadataKeys);
-		}
-		else if (metadataMode == MetadataMode.EMBED) {
+		} else if (metadataMode == MetadataMode.EMBED) {
 			usableMetadataKeys.removeAll(this.excludedEmbedMetadataKeys);
 		}
 
 		return metadata.entrySet()
-			.stream()
-			.filter(e -> usableMetadataKeys.contains(e.getKey()))
-			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+				.stream()
+				.filter(e -> usableMetadataKeys.contains(e.getKey()))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	public String getMetadataTemplate() {
@@ -182,15 +177,16 @@ public final class DefaultContentFormatter implements ContentFormatter {
 
 		public Builder from(DefaultContentFormatter fromFormatter) {
 			this.withExcludedEmbedMetadataKeys(fromFormatter.getExcludedEmbedMetadataKeys())
-				.withExcludedInferenceMetadataKeys(fromFormatter.getExcludedInferenceMetadataKeys())
-				.withMetadataSeparator(fromFormatter.getMetadataSeparator())
-				.withMetadataTemplate(fromFormatter.getMetadataTemplate())
-				.withTextTemplate(fromFormatter.getTextTemplate());
+					.withExcludedInferenceMetadataKeys(fromFormatter.getExcludedInferenceMetadataKeys())
+					.withMetadataSeparator(fromFormatter.getMetadataSeparator())
+					.withMetadataTemplate(fromFormatter.getMetadataTemplate())
+					.withTextTemplate(fromFormatter.getTextTemplate());
 			return this;
 		}
 
 		/**
 		 * Configures the Document metadata template.
+		 *
 		 * @param metadataTemplate Metadata template to use.
 		 * @return this builder
 		 */
@@ -202,6 +198,7 @@ public final class DefaultContentFormatter implements ContentFormatter {
 
 		/**
 		 * Configures the Document metadata separator.
+		 *
 		 * @param metadataSeparator Metadata separator to use.
 		 * @return this builder
 		 */
@@ -213,6 +210,7 @@ public final class DefaultContentFormatter implements ContentFormatter {
 
 		/**
 		 * Configures the Document text template.
+		 *
 		 * @param textTemplate Document's content template.
 		 * @return this builder
 		 */
@@ -225,6 +223,7 @@ public final class DefaultContentFormatter implements ContentFormatter {
 		/**
 		 * Configures the excluded Inference metadata keys to filter out from the
 		 * generative.
+		 *
 		 * @param excludedInferenceMetadataKeys Excluded inference metadata keys to use.
 		 * @return this builder
 		 */
@@ -242,6 +241,7 @@ public final class DefaultContentFormatter implements ContentFormatter {
 
 		/**
 		 * Configures the excluded Embed metadata keys to filter out from the generative.
+		 *
 		 * @param excludedEmbedMetadataKeys Excluded Embed metadata keys to use.
 		 * @return this builder
 		 */

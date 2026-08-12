@@ -16,18 +16,17 @@
 
 package org.springframework.ai.tool.toolsearch.index.lucene;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.tool.toolsearch.ToolReference;
+import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
+import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.tool.toolsearch.ToolReference;
-import org.springframework.ai.tool.toolsearch.ToolSearchRequest;
-import org.springframework.ai.tool.toolsearch.ToolSearchResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

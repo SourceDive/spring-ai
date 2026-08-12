@@ -81,11 +81,11 @@ public class OpenAiEmbeddingProperties extends AbstractOpenAiProperties {
 
 	public OpenAiEmbeddingOptions toOptions() {
 		return OpenAiEmbeddingOptions.builder()
-			.model(this.model)
-			.user(this.user)
-			.encodingFormat(this.encodingFormat)
-			.dimensions(this.dimensions)
-			.build();
+				.model(this.model)
+				.user(this.user)
+				.encodingFormat(this.encodingFormat)
+				.dimensions(this.dimensions)
+				.build();
 	}
 
 	private Options options = new Options();

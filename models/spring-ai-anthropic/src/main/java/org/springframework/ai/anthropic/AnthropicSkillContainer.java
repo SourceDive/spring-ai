@@ -16,12 +16,12 @@
 
 package org.springframework.ai.anthropic;
 
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.util.Assert;
 
 /**
  * Container for Claude Skills in a chat completion request. Maximum of 8 skills per
@@ -49,6 +49,7 @@ public class AnthropicSkillContainer {
 	/**
 	 * Convert to a list of maps suitable for JSON serialization via
 	 * {@code JsonValue.from(Map.of("skills", container.toSkillsList()))}.
+	 *
 	 * @return list of skill maps with type, skill_id, and version keys
 	 */
 	public List<Map<String, Object>> toSkillsList() {
@@ -66,6 +67,7 @@ public class AnthropicSkillContainer {
 		/**
 		 * Add a skill by its ID or name. Automatically detects whether it's a pre-built
 		 * Anthropic skill (xlsx, pptx, docx, pdf) or a custom skill ID.
+		 *
 		 * @param skillIdOrName the skill ID or name
 		 * @return this builder
 		 */
@@ -80,8 +82,9 @@ public class AnthropicSkillContainer {
 
 		/**
 		 * Add a skill by its ID or name with a specific version.
+		 *
 		 * @param skillIdOrName the skill ID or name
-		 * @param version the version (e.g., "latest", "20251013")
+		 * @param version       the version (e.g., "latest", "20251013")
 		 * @return this builder
 		 */
 		public Builder skill(String skillIdOrName, String version) {
@@ -96,6 +99,7 @@ public class AnthropicSkillContainer {
 
 		/**
 		 * Add a pre-built Anthropic skill using the enum.
+		 *
 		 * @param skill the Anthropic skill enum value
 		 * @return this builder
 		 */
@@ -106,7 +110,8 @@ public class AnthropicSkillContainer {
 
 		/**
 		 * Add a pre-built Anthropic skill with a specific version.
-		 * @param skill the Anthropic skill enum value
+		 *
+		 * @param skill   the Anthropic skill enum value
 		 * @param version the version
 		 * @return this builder
 		 */
@@ -118,6 +123,7 @@ public class AnthropicSkillContainer {
 
 		/**
 		 * Add a skill record directly.
+		 *
 		 * @param skill the skill record
 		 * @return this builder
 		 */
@@ -129,6 +135,7 @@ public class AnthropicSkillContainer {
 
 		/**
 		 * Add multiple skills by their IDs or names.
+		 *
 		 * @param skillIds the skill IDs or names
 		 * @return this builder
 		 */
@@ -142,6 +149,7 @@ public class AnthropicSkillContainer {
 
 		/**
 		 * Add multiple skills from a list of IDs or names.
+		 *
 		 * @param skillIds the list of skill IDs or names
 		 * @return this builder
 		 */

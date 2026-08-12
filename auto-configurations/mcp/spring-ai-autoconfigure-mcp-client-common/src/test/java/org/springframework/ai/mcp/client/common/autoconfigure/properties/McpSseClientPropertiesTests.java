@@ -16,13 +16,12 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.properties;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class McpSseClientPropertiesTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestConfiguration.class);
+			.withUserConfiguration(TestConfiguration.class);
 
 	@Test
 	void defaultValues() {
@@ -48,31 +47,31 @@ class McpSseClientPropertiesTests {
 	@Test
 	void singleConnection() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections()).containsKey("server1");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080/events");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections()).containsKey("server1");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080/events");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
+				});
 	}
 
 	@Test
 	void multipleConnections() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events",
-					"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081/events")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(2);
-				assertThat(properties.getConnections()).containsKeys("server1", "server2");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080/events");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
-				assertThat(properties.getConnections().get("server2").url())
-					.isEqualTo("http://otherserver:8081/events");
-				assertThat(properties.getConnections().get("server2").sseEndpoint()).isNull();
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events",
+						"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081/events")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(2);
+					assertThat(properties.getConnections()).containsKeys("server1", "server2");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080/events");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
+					assertThat(properties.getConnections().get("server2").url())
+							.isEqualTo("http://otherserver:8081/events");
+					assertThat(properties.getConnections().get("server2").sseEndpoint()).isNull();
+				});
 	}
 
 	@Test
@@ -128,18 +127,18 @@ class McpSseClientPropertiesTests {
 	@Test
 	void yamlConfigurationBinding() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events",
-					"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081/events")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(2);
-				assertThat(properties.getConnections()).containsKeys("server1", "server2");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080/events");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
-				assertThat(properties.getConnections().get("server2").url())
-					.isEqualTo("http://otherserver:8081/events");
-				assertThat(properties.getConnections().get("server2").sseEndpoint()).isNull();
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events",
+						"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081/events")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(2);
+					assertThat(properties.getConnections()).containsKeys("server1", "server2");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080/events");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
+					assertThat(properties.getConnections().get("server2").url())
+							.isEqualTo("http://otherserver:8081/events");
+					assertThat(properties.getConnections().get("server2").sseEndpoint()).isNull();
+				});
 	}
 
 	@Test
@@ -180,121 +179,121 @@ class McpSseClientPropertiesTests {
 	@Test
 	void specialCharactersInUrl() {
 		this.contextRunner.withPropertyValues(
-				"spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events?param=value&other=123")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections().get("server1").url())
-					.isEqualTo("http://localhost:8080/events?param=value&other=123");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
-			});
+						"spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080/events?param=value&other=123")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections().get("server1").url())
+							.isEqualTo("http://localhost:8080/events?param=value&other=123");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isNull();
+				});
 	}
 
 	@Test
 	void specialCharactersInConnectionName() {
 		this.contextRunner
-			.withPropertyValues(
-					"spring.ai.mcp.client.sse.connections.server-with-dashes.url=http://localhost:8080/events")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections()).containsKey("server-with-dashes");
-				assertThat(properties.getConnections().get("server-with-dashes").url())
-					.isEqualTo("http://localhost:8080/events");
-				assertThat(properties.getConnections().get("server-with-dashes").sseEndpoint()).isNull();
-			});
+				.withPropertyValues(
+						"spring.ai.mcp.client.sse.connections.server-with-dashes.url=http://localhost:8080/events")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections()).containsKey("server-with-dashes");
+					assertThat(properties.getConnections().get("server-with-dashes").url())
+							.isEqualTo("http://localhost:8080/events");
+					assertThat(properties.getConnections().get("server-with-dashes").sseEndpoint()).isNull();
+				});
 	}
 
 	@Test
 	void connectionWithSseEndpoint() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections()).containsKey("server1");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isEqualTo("/events");
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections()).containsKey("server1");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isEqualTo("/events");
+				});
 	}
 
 	@Test
 	void multipleConnectionsWithSseEndpoint() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events",
-					"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081",
-					"spring.ai.mcp.client.sse.connections.server2.sse-endpoint=/sse")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(2);
-				assertThat(properties.getConnections()).containsKeys("server1", "server2");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isEqualTo("/events");
-				assertThat(properties.getConnections().get("server2").url()).isEqualTo("http://otherserver:8081");
-				assertThat(properties.getConnections().get("server2").sseEndpoint()).isEqualTo("/sse");
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events",
+						"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081",
+						"spring.ai.mcp.client.sse.connections.server2.sse-endpoint=/sse")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(2);
+					assertThat(properties.getConnections()).containsKeys("server1", "server2");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isEqualTo("/events");
+					assertThat(properties.getConnections().get("server2").url()).isEqualTo("http://otherserver:8081");
+					assertThat(properties.getConnections().get("server2").sseEndpoint()).isEqualTo("/sse");
+				});
 	}
 
 	@Test
 	void connectionWithEmptySseEndpoint() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections()).containsKey("server1");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isEmpty();
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections()).containsKey("server1");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isEmpty();
+				});
 	}
 
 	@Test
 	void mixedConnectionsWithAndWithoutSseEndpoint() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events",
-					"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(2);
-				assertThat(properties.getConnections()).containsKeys("server1", "server2");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
-				assertThat(properties.getConnections().get("server1").sseEndpoint()).isEqualTo("/events");
-				assertThat(properties.getConnections().get("server2").url()).isEqualTo("http://otherserver:8081");
-				assertThat(properties.getConnections().get("server2").sseEndpoint()).isNull();
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events",
+						"spring.ai.mcp.client.sse.connections.server2.url=http://otherserver:8081")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(2);
+					assertThat(properties.getConnections()).containsKeys("server1", "server2");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
+					assertThat(properties.getConnections().get("server1").sseEndpoint()).isEqualTo("/events");
+					assertThat(properties.getConnections().get("server2").url()).isEqualTo("http://otherserver:8081");
+					assertThat(properties.getConnections().get("server2").sseEndpoint()).isNull();
+				});
 	}
 
 	@Test
 	void specialCharactersInSseEndpoint() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
-					"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events/stream?format=json&timeout=30")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections()).containsKey("server1");
-				assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
-				assertThat(properties.getConnections().get("server1").sseEndpoint())
-					.isEqualTo("/events/stream?format=json&timeout=30");
-			});
+				.withPropertyValues("spring.ai.mcp.client.sse.connections.server1.url=http://localhost:8080",
+						"spring.ai.mcp.client.sse.connections.server1.sse-endpoint=/events/stream?format=json&timeout=30")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections()).containsKey("server1");
+					assertThat(properties.getConnections().get("server1").url()).isEqualTo("http://localhost:8080");
+					assertThat(properties.getConnections().get("server1").sseEndpoint())
+							.isEqualTo("/events/stream?format=json&timeout=30");
+				});
 	}
 
 	@Test
 	void mcpHubStyleUrlWithTokenPath() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.client.sse.connections.mcp-hub.url=http://localhost:3000",
-				"spring.ai.mcp.client.sse.connections.mcp-hub.sse-endpoint=/mcp-hub/sse/cf9ec4527e3c4a2cbb149a85ea45ab01")
-			.run(context -> {
-				McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
-				assertThat(properties.getConnections()).hasSize(1);
-				assertThat(properties.getConnections()).containsKey("mcp-hub");
-				assertThat(properties.getConnections().get("mcp-hub").url()).isEqualTo("http://localhost:3000");
-				assertThat(properties.getConnections().get("mcp-hub").sseEndpoint())
-					.isEqualTo("/mcp-hub/sse/cf9ec4527e3c4a2cbb149a85ea45ab01");
-			});
+						"spring.ai.mcp.client.sse.connections.mcp-hub.sse-endpoint=/mcp-hub/sse/cf9ec4527e3c4a2cbb149a85ea45ab01")
+				.run(context -> {
+					McpSseClientProperties properties = context.getBean(McpSseClientProperties.class);
+					assertThat(properties.getConnections()).hasSize(1);
+					assertThat(properties.getConnections()).containsKey("mcp-hub");
+					assertThat(properties.getConnections().get("mcp-hub").url()).isEqualTo("http://localhost:3000");
+					assertThat(properties.getConnections().get("mcp-hub").sseEndpoint())
+							.isEqualTo("/mcp-hub/sse/cf9ec4527e3c4a2cbb149a85ea45ab01");
+				});
 	}
 
 	@Configuration

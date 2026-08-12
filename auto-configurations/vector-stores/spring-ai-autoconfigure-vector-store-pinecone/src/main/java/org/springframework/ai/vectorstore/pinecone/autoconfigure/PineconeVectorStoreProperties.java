@@ -16,13 +16,12 @@
 
 package org.springframework.ai.vectorstore.pinecone.autoconfigure;
 
-import java.time.Duration;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.vectorstore.pinecone.PineconeVectorStore;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
 
 /**
  * Configuration properties for Pinecone Vector Store.

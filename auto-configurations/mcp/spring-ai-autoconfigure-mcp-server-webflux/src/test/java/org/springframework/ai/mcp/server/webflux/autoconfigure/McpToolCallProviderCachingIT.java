@@ -16,17 +16,9 @@
 
 package org.springframework.ai.mcp.server.webflux.autoconfigure;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.server.McpSyncServer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.ai.mcp.McpToolUtils;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -56,6 +48,13 @@ import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.test.util.TestSocketUtils;
 import org.springframework.web.reactive.function.server.RouterFunctions;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -67,23 +66,23 @@ import static org.awaitility.Awaitility.await;
 public class McpToolCallProviderCachingIT {
 
 	private final ApplicationContextRunner serverContextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mcp.server.protocol=STREAMABLE")
-		.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
-				McpServerJsonMapperAutoConfiguration.class, ToolCallbackConverterAutoConfiguration.class,
-				McpServerStreamableHttpWebFluxAutoConfiguration.class,
-				McpServerAnnotationScannerAutoConfiguration.class,
-				McpServerSpecificationFactoryAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mcp.server.protocol=STREAMABLE")
+			.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
+					McpServerJsonMapperAutoConfiguration.class, ToolCallbackConverterAutoConfiguration.class,
+					McpServerStreamableHttpWebFluxAutoConfiguration.class,
+					McpServerAnnotationScannerAutoConfiguration.class,
+					McpServerSpecificationFactoryAutoConfiguration.class));
 
 	private final ApplicationContextRunner clientApplicationContext = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
-		.withConfiguration(anthropicAutoConfig(McpToolCallbackAutoConfiguration.class, McpClientAutoConfiguration.class,
-				StreamableHttpWebFluxTransportAutoConfiguration.class,
-				McpClientAnnotationScannerAutoConfiguration.class, AnthropicChatAutoConfiguration.class,
-				ChatClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
+			.withConfiguration(anthropicAutoConfig(McpToolCallbackAutoConfiguration.class, McpClientAutoConfiguration.class,
+					StreamableHttpWebFluxTransportAutoConfiguration.class,
+					McpClientAnnotationScannerAutoConfiguration.class, AnthropicChatAutoConfiguration.class,
+					ChatClientAutoConfiguration.class));
 
 	private static AutoConfigurations anthropicAutoConfig(Class<?>... additional) {
-		Class<?>[] dependencies = { ToolCallingAutoConfiguration.class, RestClientAutoConfiguration.class,
-				WebClientAutoConfiguration.class };
+		Class<?>[] dependencies = {ToolCallingAutoConfiguration.class, RestClientAutoConfiguration.class,
+				WebClientAutoConfiguration.class};
 		Class<?>[] all = Stream.concat(Arrays.stream(dependencies), Arrays.stream(additional)).toArray(Class<?>[]::new);
 		return AutoConfigurations.of(all);
 	}
@@ -94,56 +93,56 @@ public class McpToolCallProviderCachingIT {
 		int serverPort = TestSocketUtils.findAvailableTcpPort();
 
 		this.serverContextRunner.withUserConfiguration(TestMcpServerConfiguration.class)
-			.withPropertyValues(// @formatter:off
+				.withPropertyValues(// @formatter:off
 						"spring.ai.mcp.server.name=test-mcp-server",
 						"spring.ai.mcp.server.version=1.0.0",
 						"spring.ai.mcp.server.streamable-http.keep-alive-interval=1s",
 						"spring.ai.mcp.server.streamable-http.mcp-endpoint=/mcp") // @formatter:on
-			.run(serverContext -> {
+				.run(serverContext -> {
 
-				var httpServer = startHttpServer(serverContext, serverPort);
+					var httpServer = startHttpServer(serverContext, serverPort);
 
-				this.clientApplicationContext
-					.withPropertyValues(// @formatter:off
+					this.clientApplicationContext
+							.withPropertyValues(// @formatter:off
 									"spring.ai.mcp.client.streamable-http.connections.server1.url=http://localhost:" + serverPort,
 									"spring.ai.mcp.client.initialized=false") // @formatter:on
-					.run(clientContext -> {
+							.run(clientContext -> {
 
-						ToolCallbackProvider tcp = clientContext.getBean(ToolCallbackProvider.class);
+								ToolCallbackProvider tcp = clientContext.getBean(ToolCallbackProvider.class);
 
-						assertThat(tcp.getToolCallbacks()).hasSize(1);
+								assertThat(tcp.getToolCallbacks()).hasSize(1);
 
-						McpSyncServer mcpSyncServer = serverContext.getBean(McpSyncServer.class);
+								McpSyncServer mcpSyncServer = serverContext.getBean(McpSyncServer.class);
 
-						var toolSpec = McpToolUtils
-							.toSyncToolSpecification(FunctionToolCallback.builder("currentTime", new TimeService())
-								.description("Get the current time by location")
-								.inputType(TimeRequest.class)
-								.build(), null);
+								var toolSpec = McpToolUtils
+										.toSyncToolSpecification(FunctionToolCallback.builder("currentTime", new TimeService())
+												.description("Get the current time by location")
+												.inputType(TimeRequest.class)
+												.build(), null);
 
-						mcpSyncServer.addTool(toolSpec);
+								mcpSyncServer.addTool(toolSpec);
 
-						// Wait for the tool to be added asynchronously
-						await().atMost(Duration.ofSeconds(5))
-							.pollInterval(Duration.ofMillis(100))
-							.untilAsserted(() -> assertThat(tcp.getToolCallbacks()).hasSize(2));
+								// Wait for the tool to be added asynchronously
+								await().atMost(Duration.ofSeconds(5))
+										.pollInterval(Duration.ofMillis(100))
+										.untilAsserted(() -> assertThat(tcp.getToolCallbacks()).hasSize(2));
 
-						mcpSyncServer.removeTool("weather");
+								mcpSyncServer.removeTool("weather");
 
-						// Wait for the tool to be removed asynchronously
-						await().atMost(Duration.ofSeconds(5))
-							.pollInterval(Duration.ofMillis(100))
-							.untilAsserted(() -> assertThat(tcp.getToolCallbacks()).hasSize(1));
-					});
+								// Wait for the tool to be removed asynchronously
+								await().atMost(Duration.ofSeconds(5))
+										.pollInterval(Duration.ofMillis(100))
+										.untilAsserted(() -> assertThat(tcp.getToolCallbacks()).hasSize(1));
+							});
 
-				stopHttpServer(httpServer);
-			});
+					stopHttpServer(httpServer);
+				});
 	}
 
 	// Helper methods to start and stop the HTTP server
 	private static DisposableServer startHttpServer(ApplicationContext serverContext, int port) {
 		WebFluxStreamableServerTransportProvider mcpStreamableServerTransport = serverContext
-			.getBean(WebFluxStreamableServerTransportProvider.class);
+				.getBean(WebFluxStreamableServerTransportProvider.class);
 		HttpHandler httpHandler = RouterFunctions.toHttpHandler(mcpStreamableServerTransport.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);
 		return HttpServer.create().port(port).handle(adapter).bindNow();

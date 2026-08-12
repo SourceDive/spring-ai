@@ -16,10 +16,6 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -32,6 +28,10 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utilities for supporting the {@link DefaultChatClient} implementation.
@@ -61,16 +61,16 @@ final class DefaultChatClientUtils {
 		if (StringUtils.hasText(processedSystemText)) {
 			if (!CollectionUtils.isEmpty(inputRequest.getSystemParams())) {
 				processedSystemText = PromptTemplate.builder()
-					.template(processedSystemText)
-					.variables(inputRequest.getSystemParams())
-					.renderer(inputRequest.getTemplateRenderer())
-					.build()
-					.render();
+						.template(processedSystemText)
+						.variables(inputRequest.getSystemParams())
+						.renderer(inputRequest.getTemplateRenderer())
+						.build()
+						.render();
 			}
 			processedMessages.add(SystemMessage.builder()
-				.text(processedSystemText)
-				.metadata(inputRequest.getSystemMetadata())
-				.build());
+					.text(processedSystemText)
+					.metadata(inputRequest.getSystemMetadata())
+					.build());
 		}
 
 		// Messages => In the middle of the list
@@ -83,17 +83,17 @@ final class DefaultChatClientUtils {
 		if (StringUtils.hasText(processedUserText)) {
 			if (!CollectionUtils.isEmpty(inputRequest.getUserParams())) {
 				processedUserText = PromptTemplate.builder()
-					.template(processedUserText)
-					.variables(inputRequest.getUserParams())
-					.renderer(inputRequest.getTemplateRenderer())
-					.build()
-					.render();
+						.template(processedUserText)
+						.variables(inputRequest.getUserParams())
+						.renderer(inputRequest.getTemplateRenderer())
+						.build()
+						.render();
 			}
 			processedMessages.add(UserMessage.builder()
-				.text(processedUserText)
-				.media(inputRequest.getMedia())
-				.metadata(inputRequest.getUserMetadata())
-				.build());
+					.text(processedUserText)
+					.media(inputRequest.getMedia())
+					.metadata(inputRequest.getUserMetadata())
+					.build());
 		}
 
 		/*
@@ -131,9 +131,9 @@ final class DefaultChatClientUtils {
 
 		Builder promptBuilder = Prompt.builder().messages(processedMessages).chatOptions(processedChatOptions);
 		return ChatClientRequest.builder()
-			.prompt(promptBuilder.build())
-			.context(new ConcurrentHashMap<>(inputRequest.getAdvisorParams()))
-			.build();
+				.prompt(promptBuilder.build())
+				.context(new ConcurrentHashMap<>(inputRequest.getAdvisorParams()))
+				.build();
 	}
 
 }

@@ -16,24 +16,19 @@
 
 package org.springframework.ai.ollama.api;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.ollama.BaseOllamaIT;
-import org.springframework.ai.ollama.api.OllamaApi.ChatRequest;
-import org.springframework.ai.ollama.api.OllamaApi.ChatResponse;
-import org.springframework.ai.ollama.api.OllamaApi.EmbeddingsRequest;
-import org.springframework.ai.ollama.api.OllamaApi.EmbeddingsResponse;
-import org.springframework.ai.ollama.api.OllamaApi.Message;
+import org.springframework.ai.ollama.api.OllamaApi.*;
 import org.springframework.ai.ollama.api.OllamaApi.Message.Role;
 import org.springframework.ai.util.JsonHelper;
 import org.springframework.ai.util.ResourceUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -62,17 +57,17 @@ class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	void chat() {
 		var request = ChatRequest.builder(CHAT_MODEL)
-			.stream(false)
-			.messages(List.of(
-					Message.builder(Role.SYSTEM)
-						.content("You are geography teacher. You are talking to a student.")
-						.build(),
-					Message.builder(Role.USER)
-						.content("What is the capital of Bulgaria and what is the size? "
-								+ "What it the national anthem?")
-						.build()))
-			.options(OllamaChatOptions.builder().temperature(0.9).build())
-			.build();
+				.stream(false)
+				.messages(List.of(
+						Message.builder(Role.SYSTEM)
+								.content("You are geography teacher. You are talking to a student.")
+								.build(),
+						Message.builder(Role.USER)
+								.content("What is the capital of Bulgaria and what is the size? "
+										+ "What it the national anthem?")
+								.build()))
+				.options(OllamaChatOptions.builder().temperature(0.9).build())
+				.build();
 
 		ChatResponse response = getOllamaApi().chat(request);
 
@@ -100,22 +95,22 @@ class OllamaApiIT extends BaseOllamaIT {
 		var messageContent = message.content();
 		assertThat(messageContent).isNotNull();
 		JsonAssertions.assertThatJson(messageContent)
-			.isObject()
-			.containsOnlyKeys("name", "capital", "languages")
-			.containsEntry("name", "Canada")
-			.containsEntry("capital", "Ottawa")
-			.containsEntry("languages", List.of("English", "French"));
+				.isObject()
+				.containsOnlyKeys("name", "capital", "languages")
+				.containsEntry("name", "Canada")
+				.containsEntry("capital", "Ottawa")
+				.containsEntry("languages", List.of("English", "French"));
 	}
 
 	@Test
 	void streamingChat() {
 		var request = ChatRequest.builder(CHAT_MODEL)
-			.stream(true)
-			.messages(List.of(Message.builder(Role.USER)
-				.content("What is the capital of Bulgaria and what is the size? " + "What it the national anthem?")
-				.build()))
-			.options(OllamaChatOptions.builder().temperature(0.9).build().toMap())
-			.build();
+				.stream(true)
+				.messages(List.of(Message.builder(Role.USER)
+						.content("What is the capital of Bulgaria and what is the size? " + "What it the national anthem?")
+						.build()))
+				.options(OllamaChatOptions.builder().temperature(0.9).build().toMap())
+				.build();
 
 		Flux<ChatResponse> response = getOllamaApi().streamingChat(request);
 
@@ -148,18 +143,18 @@ class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	void think() {
 		var request = ChatRequest.builder(THINKING_MODEL)
-			.stream(false)
-			.messages(List.of(
-					Message.builder(Role.SYSTEM)
-						.content("You are geography teacher. You are talking to a student.")
-						.build(),
-					Message.builder(Role.USER)
-						.content("What is the capital of Bulgaria and what is the size? "
-								+ "What it the national anthem?")
-						.build()))
-			.options(OllamaChatOptions.builder().temperature(0.9).build())
-			.enableThinking()
-			.build();
+				.stream(false)
+				.messages(List.of(
+						Message.builder(Role.SYSTEM)
+								.content("You are geography teacher. You are talking to a student.")
+								.build(),
+						Message.builder(Role.USER)
+								.content("What is the capital of Bulgaria and what is the size? "
+										+ "What it the national anthem?")
+								.build()))
+				.options(OllamaChatOptions.builder().temperature(0.9).build())
+				.enableThinking()
+				.build();
 
 		ChatResponse response = getOllamaApi().chat(request);
 
@@ -174,13 +169,13 @@ class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	void chatWithThinking() {
 		var request = ChatRequest.builder(THINKING_MODEL)
-			.stream(true)
-			.messages(List.of(Message.builder(Role.USER)
-				.content("What is the capital of Bulgaria and what is the size? " + "What it the national anthem?")
-				.build()))
-			.options(OllamaChatOptions.builder().temperature(0.9).build())
-			.enableThinking()
-			.build();
+				.stream(true)
+				.messages(List.of(Message.builder(Role.USER)
+						.content("What is the capital of Bulgaria and what is the size? " + "What it the national anthem?")
+						.build()))
+				.options(OllamaChatOptions.builder().temperature(0.9).build())
+				.enableThinking()
+				.build();
 
 		Flux<ChatResponse> response = getOllamaApi().streamingChat(request);
 
@@ -198,11 +193,11 @@ class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	void streamChatWithThinking() {
 		var request = ChatRequest.builder(THINKING_MODEL)
-			.stream(true)
-			.messages(List.of(Message.builder(Role.USER).content("What are the planets in the solar system?").build()))
-			.options(OllamaChatOptions.builder().temperature(0.9).build())
-			.enableThinking()
-			.build();
+				.stream(true)
+				.messages(List.of(Message.builder(Role.USER).content("What are the planets in the solar system?").build()))
+				.options(OllamaChatOptions.builder().temperature(0.9).build())
+				.enableThinking()
+				.build();
 
 		Flux<ChatResponse> response = getOllamaApi().streamingChat(request);
 
@@ -220,11 +215,11 @@ class OllamaApiIT extends BaseOllamaIT {
 	@Test
 	void streamChatWithoutThinking() {
 		var request = ChatRequest.builder(THINKING_MODEL)
-			.stream(true)
-			.messages(List.of(Message.builder(Role.USER).content("What are the planets in the solar system?").build()))
-			.options(OllamaChatOptions.builder().temperature(0.9).build())
-			.disableThinking()
-			.build();
+				.stream(true)
+				.messages(List.of(Message.builder(Role.USER).content("What are the planets in the solar system?").build()))
+				.options(OllamaChatOptions.builder().temperature(0.9).build())
+				.disableThinking()
+				.build();
 
 		Flux<ChatResponse> response = getOllamaApi().streamingChat(request);
 
@@ -250,11 +245,11 @@ class OllamaApiIT extends BaseOllamaIT {
 	}
 
 	private static String extractChatResponsesText(List<ChatResponse> chatResponses,
-			Function<Message, String> messageToStringFunction) {
+	                                               Function<Message, String> messageToStringFunction) {
 		return chatResponses.stream()
-			.map(ChatResponse::message)
-			.map(messageToStringFunction)
-			.collect(Collectors.joining(System.lineSeparator()));
+				.map(ChatResponse::message)
+				.map(messageToStringFunction)
+				.collect(Collectors.joining(System.lineSeparator()));
 	}
 
 }

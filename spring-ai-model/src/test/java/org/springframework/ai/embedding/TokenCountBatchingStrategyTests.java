@@ -16,16 +16,15 @@
 
 package org.springframework.ai.embedding;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import com.knuddels.jtokkit.api.EncodingType;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.Document;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -76,7 +75,7 @@ public class TokenCountBatchingStrategyTests {
 		String contentAsString = resource.getContentAsString(StandardCharsets.UTF_8);
 		TokenCountBatchingStrategy tokenCountBatchingStrategy = new TokenCountBatchingStrategy();
 		assertThatThrownBy(() -> tokenCountBatchingStrategy.batch(List.of(new Document(contentAsString))))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }

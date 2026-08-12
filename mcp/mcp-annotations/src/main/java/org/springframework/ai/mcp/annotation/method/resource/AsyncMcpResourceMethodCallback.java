@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -29,15 +24,19 @@ import io.modelcontextprotocol.spec.McpSchema.ErrorCodes;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceRequest;
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpResource;
 import org.springframework.ai.mcp.annotation.common.ErrorUtils;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * Class for creating BiFunction callbacks around resource methods with asynchronous
  * processing.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpResource} into
  * callback functions that can be used to handle resource requests asynchronously. It
  * supports various method signatures and return types, and handles URI template
@@ -73,18 +72,15 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 		if (McpTransportContext.class.isAssignableFrom(paramType)) {
 			if (exchange instanceof McpTransportContext transportContext) {
 				return transportContext;
-			}
-			else if (exchange instanceof McpSyncServerExchange syncServerExchange) {
+			} else if (exchange instanceof McpSyncServerExchange syncServerExchange) {
 				throw new IllegalArgumentException("Unsupported Async exchange type: "
 						+ syncServerExchange.getClass().getName() + " for Async method: " + method.getName() + " in "
 						+ method.getDeclaringClass().getName());
 
-			}
-			else if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
+			} else if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
 				return asyncServerExchange.transportContext();
 			}
-		}
-		else if (McpAsyncServerExchange.class.isAssignableFrom(paramType)) {
+		} else if (McpAsyncServerExchange.class.isAssignableFrom(paramType)) {
 			if (exchange instanceof McpAsyncServerExchange asyncServerExchange) {
 				return asyncServerExchange;
 			}
@@ -105,12 +101,13 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 	 * This method extracts URI variable values from the request URI, builds the arguments
 	 * for the method call, invokes the method, and converts the result to a
 	 * ReadResourceResult.
+	 *
 	 * @param exchange The server exchange, may be null if the method doesn't require it
-	 * @param request The resource request, must not be null
+	 * @param request  The resource request, must not be null
 	 * @return A Mono that emits the resource result
-	 * @throws McpError if there is an error invoking the resource method
+	 * @throws McpError                 if there is an error invoking the resource method
 	 * @throws IllegalArgumentException if the request is null or if URI variable
-	 * extraction fails
+	 *                                  extraction fails
 	 */
 	@Override
 	public Mono<ReadResourceResult> apply(McpAsyncServerExchange exchange, ReadResourceRequest request) {
@@ -126,9 +123,9 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 				// Verify all URI variables were extracted if URI variables are expected
 				if (!this.uriVariables.isEmpty() && uriVariableValues.size() != this.uriVariables.size()) {
 					return Mono
-						.error(new IllegalArgumentException("Failed to extract all URI variables from request URI: "
-								+ request.uri() + ". Expected variables: " + this.uriVariables + ", but found: "
-								+ uriVariableValues.keySet()));
+							.error(new IllegalArgumentException("Failed to extract all URI variables from request URI: "
+									+ request.uri() + ". Expected variables: " + this.uriVariables + ", but found: "
+									+ uriVariableValues.keySet()));
 				}
 
 				// Build arguments for the method call
@@ -143,31 +140,30 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 					// If the result is already a Mono, use it
 					return ((Mono<?>) result).map(r -> this.resultConverter.convertToReadResourceResult(r,
 							request.uri(), this.mimeType, this.contentType, this.meta));
-				}
-				else {
+				} else {
 					// Otherwise, convert the result to a ReadResourceResult and wrap in a
 					// Mono
 					return Mono.just(this.resultConverter.convertToReadResourceResult(result, request.uri(),
 							this.mimeType, this.contentType, this.meta));
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				if (e instanceof McpError mcpError && mcpError.getJsonRpcError() != null) {
 					return Mono.error(mcpError);
 				}
 
 				return Mono.error(McpError.builder(ErrorCodes.INVALID_PARAMS)
-					.message("Error invoking resource method: " + this.method.getName() + " in "
-							+ this.bean.getClass().getName() + ". /nCause: "
-							+ ErrorUtils.findCauseUsingPlainJava(e).getMessage())
-					.data(ErrorUtils.findCauseUsingPlainJava(e).getMessage())
-					.build());
+						.message("Error invoking resource method: " + this.method.getName() + " in "
+								+ this.bean.getClass().getName() + ". /nCause: "
+								+ ErrorUtils.findCauseUsingPlainJava(e).getMessage())
+						.data(ErrorUtils.findCauseUsingPlainJava(e).getMessage())
+						.build());
 			}
 		});
 	}
 
 	/**
 	 * Validates that the method return type is compatible with the resource callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -189,6 +185,7 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 
 	/**
 	 * Checks if a parameter type is compatible with the exchange type.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -201,6 +198,7 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -224,6 +222,7 @@ public final class AsyncMcpResourceMethodCallback extends AbstractMcpResourceMet
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpResourceMethodCallback instance
 		 */
 		@Override

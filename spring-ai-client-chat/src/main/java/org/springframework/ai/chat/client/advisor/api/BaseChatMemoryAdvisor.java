@@ -16,12 +16,11 @@
 
 package org.springframework.ai.chat.client.advisor.api;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 /**
  * Base interface for chat memory advisors.

@@ -18,8 +18,6 @@ package org.springframework.ai.mcp.server.webmvc.autoconfigure;
 
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.spec.McpSchema;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerStdioDisabledCondition;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
@@ -34,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * @author Christian Tzolov
@@ -43,9 +42,9 @@ import org.springframework.web.servlet.function.ServerResponse;
 // McpServerTransportProviderBase bean and this conf should have priority
 @AutoConfiguration(before = McpServerAutoConfiguration.class)
 @ConditionalOnClass(McpSchema.class)
-@EnableConfigurationProperties({ McpServerProperties.class, McpServerStreamableHttpProperties.class })
-@Conditional({ McpServerStdioDisabledCondition.class,
-		McpServerAutoConfiguration.EnabledStreamableServerCondition.class })
+@EnableConfigurationProperties({McpServerProperties.class, McpServerStreamableHttpProperties.class})
+@Conditional({McpServerStdioDisabledCondition.class,
+		McpServerAutoConfiguration.EnabledStreamableServerCondition.class})
 public class McpServerStreamableHttpWebMvcAutoConfiguration {
 
 	@Bean
@@ -55,11 +54,11 @@ public class McpServerStreamableHttpWebMvcAutoConfiguration {
 			McpServerStreamableHttpProperties serverProperties) {
 
 		return WebMvcStreamableServerTransportProvider.builder()
-			.jsonMapper(new JacksonMcpJsonMapper(jsonMapper))
-			.mcpEndpoint(serverProperties.getMcpEndpoint())
-			.keepAliveInterval(serverProperties.getKeepAliveInterval())
-			.disallowDelete(serverProperties.isDisallowDelete())
-			.build();
+				.jsonMapper(new JacksonMcpJsonMapper(jsonMapper))
+				.mcpEndpoint(serverProperties.getMcpEndpoint())
+				.keepAliveInterval(serverProperties.getKeepAliveInterval())
+				.disallowDelete(serverProperties.isDisallowDelete())
+				.build();
 	}
 
 	// Router function for streamable http transport used by Spring WebFlux to start an

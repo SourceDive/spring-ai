@@ -16,11 +16,8 @@
 
 package org.springframework.ai.chat.client.advisor.toolsearch.autoconfigure;
 
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.toolsearch.ToolSearchToolCallingAdvisor;
 import org.springframework.ai.model.tool.ToolCallingManager;
@@ -46,6 +43,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import java.util.Set;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} for
@@ -108,18 +107,18 @@ public class ToolSearchAdvisorAutoConfiguration implements InitializingBean {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnBean({ ToolCallingManager.class, ToolIndex.class })
+	@ConditionalOnBean({ToolCallingManager.class, ToolIndex.class})
 	ToolCallingAdvisor.Builder<?> toolCallingAdvisorBuilder(ToolSearchAdvisorProperties properties,
-			ToolCallingManager toolCallingManager, ToolIndex toolIndex,
-			ObjectProvider<ToolExecutionEligibilityChecker> toolExecutionEligibilityChecker) {
+	                                                        ToolCallingManager toolCallingManager, ToolIndex toolIndex,
+	                                                        ObjectProvider<ToolExecutionEligibilityChecker> toolExecutionEligibilityChecker) {
 
 		var builder = ToolSearchToolCallingAdvisor.builder()
-			.toolCallingManager(toolCallingManager)
-			.toolIndex(toolIndex)
-			.advisorOrder(properties.getAdvisorOrder())
-			.referenceToolNameAccumulation(properties.isReferenceToolNameAccumulation())
-			.sessionIdKeyName(properties.getSessionIdKeyName())
-			.evictionStrategy(buildEvictionStrategy(properties.getEviction()));
+				.toolCallingManager(toolCallingManager)
+				.toolIndex(toolIndex)
+				.advisorOrder(properties.getAdvisorOrder())
+				.referenceToolNameAccumulation(properties.isReferenceToolNameAccumulation())
+				.sessionIdKeyName(properties.getSessionIdKeyName())
+				.evictionStrategy(buildEvictionStrategy(properties.getEviction()));
 
 		if (properties.getMaxResults() != null) {
 			builder.maxResults(properties.getMaxResults());

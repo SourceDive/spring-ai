@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.chat.memory.repository.cassandra.autoconfigure;
 
-import java.time.Duration;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.memory.repository.cassandra.CassandraChatMemoryRepositoryConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
 
 /**
  * Configuration properties for Cassandra chat memory.

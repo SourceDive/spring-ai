@@ -16,23 +16,18 @@
 
 package org.springframework.ai.aot;
 
-import java.lang.reflect.Executable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
+
+import java.lang.reflect.Executable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utility methods for creating native runtime hints. See other modules for their
@@ -50,6 +45,7 @@ public abstract class AiRuntimeHints {
 	/**
 	 * Finds classes in a package that are annotated with JsonInclude or have Jackson
 	 * annotations.
+	 *
 	 * @param packageName The name of the package to search for annotated classes.
 	 * @return A set of TypeReference objects representing the annotated classes found.
 	 */
@@ -60,8 +56,7 @@ public abstract class AiRuntimeHints {
 				var clazz = Class.forName(metadataReader.getClassMetadata().getClassName());
 				return annotationTypeFilter.match(metadataReader, metadataReaderFactory)
 						|| !discoverJacksonAnnotatedTypesFromRootType(clazz).isEmpty();
-			}
-			catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 		};
@@ -72,6 +67,7 @@ public abstract class AiRuntimeHints {
 	/**
 	 * Finds classes in a package that are annotated with JsonInclude or have Jackson
 	 * annotations.
+	 *
 	 * @param packageClass The class in the package to search for annotated classes.
 	 * @return A set of TypeReference objects representing the annotated classes found.
 	 */
@@ -81,23 +77,24 @@ public abstract class AiRuntimeHints {
 
 	/**
 	 * Finds all classes in the specified package that match the given type filter.
+	 *
 	 * @param packageName The name of the package to scan for classes.
-	 * @param typeFilter The type filter used to filter the scanned classes.
+	 * @param typeFilter  The type filter used to filter the scanned classes.
 	 * @return A set of TypeReference objects representing the found classes.
 	 */
 	public static Set<TypeReference> findClassesInPackage(String packageName, TypeFilter typeFilter) {
 		var classPathScanningCandidateComponentProvider = new ClassPathScanningCandidateComponentProvider(false);
 		classPathScanningCandidateComponentProvider.addIncludeFilter(typeFilter);
 		return classPathScanningCandidateComponentProvider//
-			.findCandidateComponents(packageName)//
-			.stream()//
-			.map(bd -> TypeReference.of(Objects.requireNonNull(bd.getBeanClassName())))//
-			.peek(tr -> {
-				if (log.isDebugEnabled()) {
-					log.debug("registering [" + tr.getName() + "]");
-				}
-			})
-			.collect(Collectors.toUnmodifiableSet());
+				.findCandidateComponents(packageName)//
+				.stream()//
+				.map(bd -> TypeReference.of(Objects.requireNonNull(bd.getBeanClassName())))//
+				.peek(tr -> {
+					if (log.isDebugEnabled()) {
+						log.debug("registering [" + tr.getName() + "]");
+					}
+				})
+				.collect(Collectors.toUnmodifiableSet());
 	}
 
 	private static boolean hasJacksonAnnotations(Class<?> type) {
@@ -161,6 +158,7 @@ public abstract class AiRuntimeHints {
 	 * <p>
 	 * This method recursively finds all nested classes (both declared and inherited) of
 	 * the provided class and converts them to type references.
+	 *
 	 * @param clazz the class to find inner classes for
 	 * @return a set of type references for all discovered inner classes
 	 */
@@ -179,7 +177,8 @@ public abstract class AiRuntimeHints {
 	 * <li>Recursively processes each nested class</li>
 	 * <li>Adds the class names to the provided set</li>
 	 * </ol>
-	 * @param clazz the class to find nested classes for
+	 *
+	 * @param clazz  the class to find nested classes for
 	 * @param indent the set to collect class names in
 	 */
 	private static void findNestedClasses(Class<?> clazz, Set<String> indent) {

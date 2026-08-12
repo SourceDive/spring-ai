@@ -16,13 +16,9 @@
 
 package org.springframework.ai.observation;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -68,7 +64,7 @@ class ObservabilityHelperTests {
 	@Test
 	void shouldHandleEmptyStringsInList() {
 		assertThat(ObservabilityHelper.concatenateStrings(List.of("", "non-empty", "")))
-			.isEqualTo("[\"\", \"non-empty\", \"\"]");
+				.isEqualTo("[\"\", \"non-empty\", \"\"]");
 	}
 
 	@Test
@@ -185,7 +181,7 @@ class ObservabilityHelperTests {
 
 	@Test
 	void shouldHandleComplexObjectsAsValues() {
-		Map<String, Object> complexMap = Map.of("list", List.of("a", "b"), "array", new String[] { "x", "y" }, "object",
+		Map<String, Object> complexMap = Map.of("list", List.of("a", "b"), "array", new String[]{"x", "y"}, "object",
 				new Object());
 
 		String result = ObservabilityHelper.concatenateEntries(complexMap);

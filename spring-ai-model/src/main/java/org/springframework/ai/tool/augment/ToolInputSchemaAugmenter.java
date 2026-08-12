@@ -16,16 +16,15 @@
 
 package org.springframework.ai.tool.augment;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-
-import tools.jackson.databind.node.ArrayNode;
-import tools.jackson.databind.node.ObjectNode;
-
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.ai.util.JacksonUtils;
 import org.springframework.ai.util.json.schema.JsonSchemaUtils;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This utility provides functionality to augment a JSON Schema with additional fields
@@ -44,6 +43,7 @@ public final class ToolInputSchemaAugmenter {
 	 * Extracts the tool argument types from a record class annotated with
 	 * {@link ToolParam}. It retrieves the field names, types, descriptions, and required
 	 * status from the record components.
+	 *
 	 * @param recordClass The record class to extract argument types from.
 	 * @return A list of {@link AugmentedArgumentType} representing the tool input
 	 * argument types.
@@ -58,8 +58,7 @@ public final class ToolInputSchemaAugmenter {
 				try {
 					var field = recordClass.getDeclaredField(c.getName());
 					toolParam = field.getAnnotation(ToolParam.class);
-				}
-				catch (NoSuchFieldException e) {
+				} catch (NoSuchFieldException e) {
 					// Field not found, toolParam remains null
 				}
 
@@ -68,14 +67,13 @@ public final class ToolInputSchemaAugmenter {
 						toolParam != null ? toolParam.required() : false);
 			}).toList();
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to extract record field types", e);
 		}
 	}
 
 	public static String augmentToolInputSchema(String jsonSchemaString, String propertyName, Type propertyType,
-			String description, boolean required) {
+	                                            String description, boolean required) {
 
 		return augmentToolInputSchema(jsonSchemaString,
 				List.of(new AugmentedArgumentType(propertyName, propertyType, description, required)));
@@ -91,8 +89,7 @@ public final class ToolInputSchemaAugmenter {
 			ObjectNode propertiesNode;
 			if (schemaObjectNode.has("properties")) {
 				propertiesNode = (ObjectNode) schemaObjectNode.get("properties");
-			}
-			else {
+			} else {
 				propertiesNode = JacksonUtils.getDefaultJsonMapper().createObjectNode();
 				schemaObjectNode.set("properties", propertiesNode);
 			}
@@ -111,8 +108,7 @@ public final class ToolInputSchemaAugmenter {
 					ArrayNode requiredArray;
 					if (schemaObjectNode.has("required")) {
 						requiredArray = (ArrayNode) schemaObjectNode.get("required");
-					}
-					else {
+					} else {
 						requiredArray = JacksonUtils.getDefaultJsonMapper().createArrayNode();
 						schemaObjectNode.set("required", requiredArray);
 					}
@@ -122,11 +118,10 @@ public final class ToolInputSchemaAugmenter {
 			}
 
 			return JacksonUtils.getDefaultJsonMapper()
-				.writerWithDefaultPrettyPrinter()
-				.writeValueAsString(schemaObjectNode);
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(schemaObjectNode);
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to parse JSON Schema", e);
 		}
 	}

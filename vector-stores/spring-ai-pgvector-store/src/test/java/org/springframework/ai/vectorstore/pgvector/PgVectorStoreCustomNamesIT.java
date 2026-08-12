@@ -16,17 +16,9 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.util.Random;
-
-import javax.sql.DataSource;
-
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
@@ -41,6 +33,12 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import javax.sql.DataSource;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,13 +54,13 @@ public class PgVectorStoreCustomNamesIT {
 	@Container
 	@SuppressWarnings("resource")
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(PgVectorImage.DEFAULT_IMAGE)
-		.withUsername("postgres")
-		.withPassword("postgres");
+			.withUsername("postgres")
+			.withPassword("postgres");
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class)
-		.withPropertyValues("test.spring.ai.vectorstore.pgvector.distanceType=COSINE_DISTANCE",
-				"app.datasource.type=com.zaxxer.hikari.HikariDataSource");
+			.withUserConfiguration(TestApplication.class)
+			.withPropertyValues("test.spring.ai.vectorstore.pgvector.distanceType=COSINE_DISTANCE",
+					"app.datasource.type=com.zaxxer.hikari.HikariDataSource");
 
 	private static void dropTableByName(ApplicationContext context, String name) {
 		JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
@@ -70,7 +68,7 @@ public class PgVectorStoreCustomNamesIT {
 	}
 
 	private static boolean isIndexExists(ApplicationContext context, String schemaName, String tableName,
-			String indexName) {
+	                                     String indexName) {
 		JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
 		String sql = "SELECT EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname = ? AND tablename = ? AND indexname = ?)";
 		return jdbcTemplate.queryForObject(sql, Boolean.class, schemaName, tableName, indexName);
@@ -93,25 +91,25 @@ public class PgVectorStoreCustomNamesIT {
 	@Test
 	public void shouldCreateDefaultTableAndIndexIfNotPresentInConfig() {
 		this.contextRunner.withPropertyValues("test.spring.ai.vectorstore.pgvector.schemaValidation=false")
-			.run(context -> {
-				assertThat(context).hasNotFailed();
-				assertThat(isTableExists(context, "vector_store")).isTrue();
-				assertThat(isSchemaExists(context, "public")).isTrue();
-				dropTableByName(context, "vector_store");
+				.run(context -> {
+					assertThat(context).hasNotFailed();
+					assertThat(isTableExists(context, "vector_store")).isTrue();
+					assertThat(isSchemaExists(context, "public")).isTrue();
+					dropTableByName(context, "vector_store");
 
-			});
+				});
 	}
 
 	@Test
 	public void shouldCreateTableAndIndexIfNotPresentInDatabase() {
 		String tableName = "new_vector_table";
 		this.contextRunner.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName)
-			.run(context -> {
-				assertThat(isTableExists(context, tableName)).isTrue();
-				assertThat(isIndexExists(context, "public", tableName, tableName + "_index")).isTrue();
-				assertThat(isTableExists(context, "vector_store")).isFalse();
-				dropTableByName(context, tableName);
-			});
+				.run(context -> {
+					assertThat(isTableExists(context, tableName)).isTrue();
+					assertThat(isIndexExists(context, "public", tableName, tableName + "_index")).isTrue();
+					assertThat(isTableExists(context, "vector_store")).isFalse();
+					dropTableByName(context, tableName);
+				});
 	}
 
 	@Test
@@ -120,16 +118,16 @@ public class PgVectorStoreCustomNamesIT {
 		String tableName = "customvectortable";
 
 		this.contextRunner
-			.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName,
-					"test.spring.ai.vectorstore.pgvector.schemaValidation=true")
+				.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName,
+						"test.spring.ai.vectorstore.pgvector.schemaValidation=true")
 
-			.run(context -> {
+				.run(context -> {
 
-				assertThat(context).hasFailed();
-				assertThat(context.getStartupFailure()).hasCauseInstanceOf(IllegalStateException.class)
-					.hasMessageContaining(tableName + " does not exist");
+					assertThat(context).hasFailed();
+					assertThat(context.getStartupFailure()).hasCauseInstanceOf(IllegalStateException.class)
+							.hasMessageContaining(tableName + " does not exist");
 
-			});
+				});
 	}
 
 	@Test
@@ -138,16 +136,16 @@ public class PgVectorStoreCustomNamesIT {
 		String tableName = "users; DROP TABLE users;";
 
 		this.contextRunner
-			.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName,
-					"test.spring.ai.vectorstore.pgvector.schemaValidation=true")
+				.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName,
+						"test.spring.ai.vectorstore.pgvector.schemaValidation=true")
 
-			.run(context -> {
+				.run(context -> {
 
-				assertThat(context).hasFailed();
-				assertThat(context.getStartupFailure()).hasCauseInstanceOf(IllegalArgumentException.class)
-					.hasMessageContaining("Table name should only contain alphanumeric characters and underscores");
+					assertThat(context).hasFailed();
+					assertThat(context.getStartupFailure()).hasCauseInstanceOf(IllegalArgumentException.class)
+							.hasMessageContaining("Table name should only contain alphanumeric characters and underscores");
 
-			});
+				});
 
 	}
 
@@ -158,17 +156,17 @@ public class PgVectorStoreCustomNamesIT {
 		String tableName = "customvectortable";
 
 		this.contextRunner
-			.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName,
-					"test.spring.ai.vectorstore.pgvector.schemaName=" + schemaName,
-					"test.spring.ai.vectorstore.pgvector.schemaValidation=true")
+				.withPropertyValues("test.spring.ai.vectorstore.pgvector.vectorTableName=" + tableName,
+						"test.spring.ai.vectorstore.pgvector.schemaName=" + schemaName,
+						"test.spring.ai.vectorstore.pgvector.schemaValidation=true")
 
-			.run(context -> {
+				.run(context -> {
 
-				assertThat(context).hasFailed();
-				assertThat(context.getStartupFailure()).hasCauseInstanceOf(IllegalArgumentException.class)
-					.hasMessageContaining("Schema name should only contain alphanumeric characters and underscores");
+					assertThat(context).hasFailed();
+					assertThat(context.getStartupFailure()).hasCauseInstanceOf(IllegalArgumentException.class)
+							.hasMessageContaining("Schema name should only contain alphanumeric characters and underscores");
 
-			});
+				});
 
 	}
 
@@ -191,15 +189,15 @@ public class PgVectorStoreCustomNamesIT {
 		public VectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
 
 			return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-				.schemaName(this.schemaName)
-				.vectorTableName(this.vectorTableName)
-				.vectorTableValidationsEnabled(this.schemaValidation)
-				.dimensions(this.dimensions)
-				.distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
-				.removeExistingVectorStoreTable(true)
-				.indexType(PgIndexType.HNSW)
-				.initializeSchema(true)
-				.build();
+					.schemaName(this.schemaName)
+					.vectorTableName(this.vectorTableName)
+					.vectorTableValidationsEnabled(this.schemaValidation)
+					.dimensions(this.dimensions)
+					.distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
+					.removeExistingVectorStoreTable(true)
+					.indexType(PgIndexType.HNSW)
+					.initializeSchema(true)
+					.build();
 		}
 
 		public Float[] generateFloatArray(int size, float min, float max) {
@@ -242,9 +240,9 @@ public class PgVectorStoreCustomNamesIT {
 		@Bean
 		public EmbeddingModel embeddingModel() {
 			return new OpenAiEmbeddingModel(OpenAiEmbeddingOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
-				.build());
+					.apiKey(System.getenv("OPENAI_API_KEY"))
+					.model(OpenAiEmbeddingOptions.DEFAULT_EMBEDDING_MODEL)
+					.build());
 		}
 
 	}

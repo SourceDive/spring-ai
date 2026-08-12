@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.logging;
 
+import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
+import org.springframework.ai.mcp.annotation.McpLogging;
+
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
-
-import org.springframework.ai.mcp.annotation.McpLogging;
-
 /**
  * Class for creating Consumer callbacks around logging consumer methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpLogging} into
  * callback functions that can be used to handle logging message notifications. It
  * supports methods with either a single LoggingMessageNotification parameter or three
@@ -44,10 +43,11 @@ public final class SyncMcpLoggingMethodCallback extends AbstractMcpLoggingMethod
 	 * Accept the logging message notification and process it.
 	 * <p>
 	 * This method builds the arguments for the method call and invokes the method.
+	 *
 	 * @param notification The logging message notification, must not be null
 	 * @throws McpLoggingConsumerMethodException if there is an error invoking the logging
-	 * consumer method
-	 * @throws IllegalArgumentException if the notification is null
+	 *                                           consumer method
+	 * @throws IllegalArgumentException          if the notification is null
 	 */
 	@Override
 	public void accept(LoggingMessageNotification notification) {
@@ -62,8 +62,7 @@ public final class SyncMcpLoggingMethodCallback extends AbstractMcpLoggingMethod
 			// Invoke the method
 			this.method.setAccessible(true);
 			this.method.invoke(this.bean, args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new McpLoggingConsumerMethodException(
 					"Error invoking logging consumer method: " + this.method.getName(), e);
 		}
@@ -72,6 +71,7 @@ public final class SyncMcpLoggingMethodCallback extends AbstractMcpLoggingMethod
 	/**
 	 * Validates that the method return type is compatible with the logging consumer
 	 * callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -87,6 +87,7 @@ public final class SyncMcpLoggingMethodCallback extends AbstractMcpLoggingMethod
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -103,6 +104,7 @@ public final class SyncMcpLoggingMethodCallback extends AbstractMcpLoggingMethod
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new SyncMcpLoggingConsumerMethodCallback instance
 		 */
 		@Override

@@ -16,18 +16,10 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.McpTool;
@@ -36,15 +28,22 @@ import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
 import org.springframework.ai.util.JsonHelper;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
 /**
  * Abstract base class for creating Function callbacks around tool methods.
- *
+ * <p>
  * This class provides common functionality for converting methods annotated with
  * {@link McpTool} into callback functions that can be used to handle tool requests. It
  * contains all the shared logic between synchronous and asynchronous implementations.
  *
  * @param <T> The type of the context parameter (e.g., McpTransportContext,
- * McpSyncServerExchange, or McpAsyncServerExchange)
+ *            McpSyncServerExchange, or McpAsyncServerExchange)
  * @author Christian Tzolov
  */
 public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestContextTypes<?>> {
@@ -65,10 +64,11 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 
 	/**
 	 * Invokes the tool method with the provided arguments.
+	 *
 	 * @param methodArguments The arguments to pass to the method
 	 * @return The result of the method invocation
 	 * @throws IllegalStateException if the method cannot be accessed
-	 * @throws RuntimeException if there's an error invoking the method
+	 * @throws RuntimeException      if there's an error invoking the method
 	 */
 	protected Object callMethod(Object[] methodArguments) {
 		this.toolMethod.setAccessible(true);
@@ -76,11 +76,9 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 		Object result;
 		try {
 			result = this.toolMethod.invoke(this.toolObject, methodArguments);
-		}
-		catch (IllegalAccessException ex) {
+		} catch (IllegalAccessException ex) {
 			throw new RuntimeException("Failed to access tool method", ex);
-		}
-		catch (InvocationTargetException ex) {
+		} catch (InvocationTargetException ex) {
 			throw new RuntimeException("Error invoking method: " + this.toolMethod.getName(), ex.getCause());
 		}
 		return result;
@@ -89,14 +87,15 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 	/**
 	 * Builds the method arguments from the context, tool input arguments, and optionally
 	 * the full request.
-	 * @param exchangeOrContext The exchange or context object (e.g.,
-	 * McpSyncServerExchange, McpAsyncServerExchange, or McpTransportContext)
+	 *
+	 * @param exchangeOrContext  The exchange or context object (e.g.,
+	 *                           McpSyncServerExchange, McpAsyncServerExchange, or McpTransportContext)
 	 * @param toolInputArguments The input arguments from the tool request
-	 * @param request The full CallToolRequest (optional, can be null)
+	 * @param request            The full CallToolRequest (optional, can be null)
 	 * @return An array of method arguments
 	 */
 	protected Object[] buildMethodArguments(T exchangeOrContext, Map<String, Object> toolInputArguments,
-			CallToolRequest request) {
+	                                        CallToolRequest request) {
 
 		return Stream.of(this.toolMethod.getParameters()).map(parameter -> {
 
@@ -138,8 +137,9 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 
 	/**
 	 * Builds a typed argument from a raw value and type information.
+	 *
 	 * @param value The raw value
-	 * @param type The target type
+	 * @param type  The target type
 	 * @return The typed argument
 	 */
 	protected Object buildTypedArgument(@Nullable Object value, Type type) {
@@ -160,6 +160,7 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 	 * Converts a method result value to a CallToolResult based on the return mode and
 	 * type. This method contains the common logic for processing results that is shared
 	 * between synchronous and asynchronous implementations.
+	 *
 	 * @param result The result value to convert
 	 * @return A CallToolResult representing the processed result
 	 */
@@ -198,6 +199,7 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 
 	/**
 	 * Creates the base error message for exceptions that occur during method invocation.
+	 *
 	 * @param e The exception that occurred
 	 * @return The error message string
 	 */
@@ -209,6 +211,7 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 	 * Determines if the given parameter type is an exchange or context type that should
 	 * be injected. Subclasses must implement this method to specify which types are
 	 * considered exchange or context types.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is an exchange or context type, false otherwise
 	 */
@@ -229,6 +232,7 @@ public abstract class AbstractMcpToolMethodCallback<T, RC extends McpRequestCont
 	 * Resolves the {@link McpTransportContext} from the exchange or context object.
 	 * Subclasses must implement this method to extract or return the transport context
 	 * appropriately based on the type of the exchange parameter.
+	 *
 	 * @param exchangeOrContext The exchange or context object
 	 * @return The resolved McpTransportContext
 	 */

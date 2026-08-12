@@ -16,13 +16,9 @@
 
 package org.springframework.ai.model.anthropic.autoconfigure.tool;
 
-import java.util.stream.Collectors;
-
 import com.anthropic.models.messages.Model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
@@ -34,6 +30,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Flux;
+
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,75 +50,75 @@ class FunctionCallWithFunctionBeanIT {
 	private static final String WEATHER_TOOL_DESCRIPTION = "Get the weather in location. Return temperature in 36°F or 36°C format.";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
-		.withConfiguration(
-				AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-		.withUserConfiguration(Config.class);
+			.withPropertyValues("spring.ai.anthropic.api-key=" + System.getenv("ANTHROPIC_API_KEY"))
+			.withConfiguration(
+					AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+			.withUserConfiguration(Config.class);
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner.withPropertyValues("spring.ai.anthropic.chat.model=" + Model.CLAUDE_HAIKU_4_5.asString())
-			.run(context -> {
+				.run(context -> {
 
-				AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
-				ToolCallback weatherFunction = context.getBean("weatherFunction", ToolCallback.class);
-				ToolCallback weatherFunction3 = context.getBean("weatherFunction3", ToolCallback.class);
+					AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
+					ToolCallback weatherFunction = context.getBean("weatherFunction", ToolCallback.class);
+					ToolCallback weatherFunction3 = context.getBean("weatherFunction3", ToolCallback.class);
 
-				String content = ChatClient.create(chatModel)
-					.prompt()
-					.advisors(ToolCallingAdvisor.builder().build())
-					.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
-							+ " Return the temperature in Celsius.")
-					.tools(weatherFunction)
-					.call()
-					.content();
-				assertThat(content).contains("30", "10", "15");
+					String content = ChatClient.create(chatModel)
+							.prompt()
+							.advisors(ToolCallingAdvisor.builder().build())
+							.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
+									+ " Return the temperature in Celsius.")
+							.tools(weatherFunction)
+							.call()
+							.content();
+					assertThat(content).contains("30", "10", "15");
 
-				content = ChatClient.create(chatModel)
-					.prompt()
-					.advisors(ToolCallingAdvisor.builder().build())
-					.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
-							+ " Return the temperature in Celsius.")
-					.tools(weatherFunction3)
-					.call()
-					.content();
-				assertThat(content).contains("30", "10", "15");
-			});
+					content = ChatClient.create(chatModel)
+							.prompt()
+							.advisors(ToolCallingAdvisor.builder().build())
+							.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
+									+ " Return the temperature in Celsius.")
+							.tools(weatherFunction3)
+							.call()
+							.content();
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 	@Test
 	void streamFunctionCallTest() {
 		this.contextRunner.withPropertyValues("spring.ai.anthropic.chat.model=" + Model.CLAUDE_HAIKU_4_5.asString())
-			.run(context -> {
+				.run(context -> {
 
-				AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
-				ToolCallback weatherFunction = context.getBean("weatherFunction", ToolCallback.class);
-				ToolCallback weatherFunction3 = context.getBean("weatherFunction3", ToolCallback.class);
+					AnthropicChatModel chatModel = context.getBean(AnthropicChatModel.class);
+					ToolCallback weatherFunction = context.getBean("weatherFunction", ToolCallback.class);
+					ToolCallback weatherFunction3 = context.getBean("weatherFunction3", ToolCallback.class);
 
-				Flux<String> response = ChatClient.create(chatModel)
-					.prompt()
-					.advisors(ToolCallingAdvisor.builder().build())
-					.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
-							+ " Return the temperature in Celsius.")
-					.tools(weatherFunction)
-					.stream()
-					.content();
+					Flux<String> response = ChatClient.create(chatModel)
+							.prompt()
+							.advisors(ToolCallingAdvisor.builder().build())
+							.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
+									+ " Return the temperature in Celsius.")
+							.tools(weatherFunction)
+							.stream()
+							.content();
 
-				String content = response.collectList().block().stream().collect(Collectors.joining());
-				assertThat(content).contains("30", "10", "15");
+					String content = response.collectList().block().stream().collect(Collectors.joining());
+					assertThat(content).contains("30", "10", "15");
 
-				response = ChatClient.create(chatModel)
-					.prompt()
-					.advisors(ToolCallingAdvisor.builder().build())
-					.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
-							+ " Return the temperature in Celsius.")
-					.tools(weatherFunction3)
-					.stream()
-					.content();
+					response = ChatClient.create(chatModel)
+							.prompt()
+							.advisors(ToolCallingAdvisor.builder().build())
+							.user("What's the weather like in San Francisco, in Paris, France and in Tokyo, Japan?"
+									+ " Return the temperature in Celsius.")
+							.tools(weatherFunction3)
+							.stream()
+							.content();
 
-				content = response.collectList().block().stream().collect(Collectors.joining());
-				assertThat(content).contains("30", "10", "15");
-			});
+					content = response.collectList().block().stream().collect(Collectors.joining());
+					assertThat(content).contains("30", "10", "15");
+				});
 	}
 
 	@Configuration
@@ -128,18 +127,18 @@ class FunctionCallWithFunctionBeanIT {
 		@Bean
 		ToolCallback weatherFunction() {
 			return FunctionToolCallback.builder("weatherFunction", new MockWeatherService())
-				.description(WEATHER_TOOL_DESCRIPTION)
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description(WEATHER_TOOL_DESCRIPTION)
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 		@Bean
 		ToolCallback weatherFunction3() {
 			MockWeatherService weatherService = new MockWeatherService();
 			return FunctionToolCallback.builder("weatherFunction3", weatherService::apply)
-				.description(WEATHER_TOOL_DESCRIPTION)
-				.inputType(MockWeatherService.Request.class)
-				.build();
+					.description(WEATHER_TOOL_DESCRIPTION)
+					.inputType(MockWeatherService.Request.class)
+					.build();
 		}
 
 	}

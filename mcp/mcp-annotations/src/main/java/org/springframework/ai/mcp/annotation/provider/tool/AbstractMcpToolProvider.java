@@ -16,14 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.provider.tool;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpTool;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Christian Tzolov

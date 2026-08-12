@@ -49,9 +49,9 @@ class GoogleGenAiToolCallingAdvisorAutoRegistrationIT extends AbstractToolCallin
 		var genAiClient = Client.builder().project(projectId).location(location).vertexAI(true).build();
 
 		return GoogleGenAiChatModel.builder()
-			.genAiClient(genAiClient)
-			.options(GoogleGenAiChatOptions.builder().model(model).build())
-			.build();
+				.genAiClient(genAiClient)
+				.options(GoogleGenAiChatOptions.builder().model(model).build())
+				.build();
 	}
 
 	@SpringBootConfiguration

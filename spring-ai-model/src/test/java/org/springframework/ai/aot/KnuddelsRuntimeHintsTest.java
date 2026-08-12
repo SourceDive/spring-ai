@@ -87,9 +87,9 @@ class KnuddelsRuntimeHintsTest {
 
 		// Verify hints are specific to jtokkit resources
 		boolean hasJtokkitResources = runtimeHints.resources()
-			.resourcePatternHints()
-			.anyMatch(
-					hint -> hint.getIncludes().stream().anyMatch(pattern -> pattern.getPattern().contains("jtokkit")));
+				.resourcePatternHints()
+				.anyMatch(
+						hint -> hint.getIncludes().stream().anyMatch(pattern -> pattern.getPattern().contains("jtokkit")));
 
 		assertThat(hasJtokkitResources).isTrue();
 	}

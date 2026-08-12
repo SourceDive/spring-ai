@@ -16,14 +16,13 @@
 
 package org.springframework.ai.image.observation;
 
-import java.util.StringJoiner;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.util.CollectionUtils;
+
+import java.util.StringJoiner;
 
 /**
  * Handler for emitting image prompt content to logs.
@@ -41,8 +40,8 @@ public class ImageModelPromptContentObservationHandler implements ObservationHan
 		if (!CollectionUtils.isEmpty(context.getRequest().getInstructions())) {
 			StringJoiner promptMessagesJoiner = new StringJoiner(", ", "[", "]");
 			context.getRequest()
-				.getInstructions()
-				.forEach(message -> promptMessagesJoiner.add("\"" + message.getText() + "\""));
+					.getInstructions()
+					.forEach(message -> promptMessagesJoiner.add("\"" + message.getText() + "\""));
 
 			if (logger.isInfoEnabled()) {
 				logger.info("Image Model Prompt Content:\n" + promptMessagesJoiner);

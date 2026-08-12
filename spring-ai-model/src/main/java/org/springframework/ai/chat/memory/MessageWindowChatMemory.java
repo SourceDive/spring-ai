@@ -16,15 +16,15 @@
 
 package org.springframework.ai.chat.memory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A chat memory implementation that maintains a message window of a specified size,
@@ -83,12 +83,12 @@ public final class MessageWindowChatMemory implements ChatMemory {
 
 		Set<Message> memoryMessagesSet = new HashSet<>(memoryMessages);
 		boolean hasNewSystemMessage = newMessages.stream()
-			.filter(SystemMessage.class::isInstance)
-			.anyMatch(message -> !memoryMessagesSet.contains(message));
+				.filter(SystemMessage.class::isInstance)
+				.anyMatch(message -> !memoryMessagesSet.contains(message));
 
 		memoryMessages.stream()
-			.filter(message -> !(hasNewSystemMessage && message instanceof SystemMessage))
-			.forEach(processedMessages::add);
+				.filter(message -> !(hasNewSystemMessage && message instanceof SystemMessage))
+				.forEach(processedMessages::add);
 
 		processedMessages.addAll(newMessages);
 

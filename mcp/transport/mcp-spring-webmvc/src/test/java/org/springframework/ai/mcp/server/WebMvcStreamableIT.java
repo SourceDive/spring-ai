@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.server;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.AbstractMcpClientServerIntegrationTests;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
@@ -34,8 +30,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.provider.Arguments;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebClientStreamableHttpTransport;
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcStreamableServerTransportProvider;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +39,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
+import reactor.core.scheduler.Schedulers;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +55,7 @@ class WebMvcStreamableIT extends AbstractMcpClientServerIntegrationTests {
 	private WebMvcStreamableServerTransportProvider mcpServerTransportProvider;
 
 	static McpTransportContextExtractor<ServerRequest> TEST_CONTEXT_EXTRACTOR = r -> McpTransportContext
-		.create(Map.of("important", "value"));
+			.create(Map.of("important", "value"));
 
 	static Stream<Arguments> clientsForTesting() {
 		return Stream.of(Arguments.of("httpclient"), Arguments.of("webflux"));
@@ -72,28 +71,27 @@ class WebMvcStreamableIT extends AbstractMcpClientServerIntegrationTests {
 		try {
 			this.tomcatServer.tomcat().start();
 			assertThat(this.tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
 		int port = this.tomcatServer.tomcat().getConnector().getLocalPort();
 
 		this.clientBuilders
-			.put("httpclient",
-					McpClient.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
-						.endpoint(MESSAGE_ENDPOINT)
-						.build()).initializationTimeout(Duration.ofHours(10)).requestTimeout(Duration.ofHours(10)));
+				.put("httpclient",
+						McpClient.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
+								.endpoint(MESSAGE_ENDPOINT)
+								.build()).initializationTimeout(Duration.ofHours(10)).requestTimeout(Duration.ofHours(10)));
 
 		this.clientBuilders.put("webflux",
 				McpClient.sync(WebClientStreamableHttpTransport
-					.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
-					.endpoint(MESSAGE_ENDPOINT)
-					.build()));
+						.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
+						.endpoint(MESSAGE_ENDPOINT)
+						.build()));
 
 		// Get the transport from Spring context
 		this.mcpServerTransportProvider = this.tomcatServer.appContext()
-			.getBean(WebMvcStreamableServerTransportProvider.class);
+				.getBean(WebMvcStreamableServerTransportProvider.class);
 
 	}
 
@@ -121,8 +119,7 @@ class WebMvcStreamableIT extends AbstractMcpClientServerIntegrationTests {
 			try {
 				this.tomcatServer.tomcat().stop();
 				this.tomcatServer.tomcat().destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}
@@ -132,16 +129,16 @@ class WebMvcStreamableIT extends AbstractMcpClientServerIntegrationTests {
 	protected void prepareClients(int port, String mcpEndpoint) {
 
 		this.clientBuilders.put("httpclient", McpClient
-			.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port).endpoint(mcpEndpoint).build())
-			.requestTimeout(Duration.ofHours(10)));
+				.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port).endpoint(mcpEndpoint).build())
+				.requestTimeout(Duration.ofHours(10)));
 
 		this.clientBuilders.put("webflux",
 				McpClient
-					.sync(WebClientStreamableHttpTransport
-						.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
-						.endpoint(mcpEndpoint)
-						.build())
-					.requestTimeout(Duration.ofHours(10)));
+						.sync(WebClientStreamableHttpTransport
+								.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
+								.endpoint(mcpEndpoint)
+								.build())
+						.requestTimeout(Duration.ofHours(10)));
 	}
 
 	@Configuration
@@ -151,9 +148,9 @@ class WebMvcStreamableIT extends AbstractMcpClientServerIntegrationTests {
 		@Bean
 		public WebMvcStreamableServerTransportProvider webMvcStreamableServerTransportProvider() {
 			return WebMvcStreamableServerTransportProvider.builder()
-				.contextExtractor(TEST_CONTEXT_EXTRACTOR)
-				.mcpEndpoint(MESSAGE_ENDPOINT)
-				.build();
+					.contextExtractor(TEST_CONTEXT_EXTRACTOR)
+					.mcpEndpoint(MESSAGE_ENDPOINT)
+					.build();
 		}
 
 		@Bean

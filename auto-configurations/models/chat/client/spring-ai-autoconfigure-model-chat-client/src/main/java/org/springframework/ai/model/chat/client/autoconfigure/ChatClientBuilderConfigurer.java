@@ -16,13 +16,12 @@
 
 package org.springframework.ai.model.chat.client.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientBuilderCustomizer;
 import org.springframework.ai.chat.client.ChatClientCustomizer;
+
+import java.util.List;
 
 /**
  * Builder for configuring a {@link ChatClient.Builder}.
@@ -51,6 +50,7 @@ public class ChatClientBuilderConfigurer {
 	/**
 	 * Configure the specified {@link ChatClient.Builder}. The builder can be further
 	 * tuned and default settings can be overridden.
+	 *
 	 * @param builder the {@link ChatClient.Builder} instance to configure
 	 * @return the configured builder
 	 */

@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.method.elicitation;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpElicitation;
 import org.springframework.ai.mcp.annotation.method.elicitation.AbstractMcpElicitationMethodCallback.McpElicitationMethodException;
+
+import java.lang.reflect.Method;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,9 +45,9 @@ public class SyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		SyncMcpElicitationMethodCallback callback = SyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		ElicitResult result = callback.apply(request);
@@ -68,9 +67,9 @@ public class SyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		SyncMcpElicitationMethodCallback callback = SyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		ElicitResult result = callback.apply(request);
@@ -88,9 +87,9 @@ public class SyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		SyncMcpElicitationMethodCallback callback = SyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		ElicitResult result = callback.apply(request);
@@ -107,12 +106,12 @@ public class SyncMcpElicitationMethodCallbackTests {
 		McpElicitation annotation = method.getAnnotation(McpElicitation.class);
 
 		SyncMcpElicitationMethodCallback callback = SyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.build();
 
 		assertThatThrownBy(() -> callback.apply(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Request must not be null");
+				.hasMessageContaining("Request must not be null");
 	}
 
 	@Test
@@ -123,8 +122,8 @@ public class SyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().method(method).bean(this.example).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must return ElicitResult");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must return ElicitResult");
 	}
 
 	@Test
@@ -134,8 +133,8 @@ public class SyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().method(method).bean(this.example).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type ElicitRequest");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type ElicitRequest");
 	}
 
 	@Test
@@ -145,8 +144,8 @@ public class SyncMcpElicitationMethodCallbackTests {
 		assertThat(annotation).isNotNull();
 
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().method(method).bean(this.example).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have at least 1 parameter");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have at least 1 parameter");
 	}
 
 	@Test
@@ -156,15 +155,15 @@ public class SyncMcpElicitationMethodCallbackTests {
 		McpElicitation annotation = method.getAnnotation(McpElicitation.class);
 
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().method(method).bean(this.example).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Currently only methods with a single ElicitRequest parameter are supported");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Currently only methods with a single ElicitRequest parameter are supported");
 	}
 
 	@Test
 	void testNullMethod() {
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().method(null).bean(this.example).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -172,8 +171,8 @@ public class SyncMcpElicitationMethodCallbackTests {
 		Method method = SyncMcpElicitationMethodCallbackExample.class.getMethod("handleElicitationRequest",
 				ElicitRequest.class);
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -184,31 +183,31 @@ public class SyncMcpElicitationMethodCallbackTests {
 		McpElicitation annotation = method.getAnnotation(McpElicitation.class);
 
 		SyncMcpElicitationMethodCallback callback = SyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(new SyncMcpElicitationMethodCallbackExample() {
-				@Override
-				public ElicitResult handleElicitationRequest(ElicitRequest request) {
-					throw new RuntimeException("Test exception");
-				}
-			})
-			.build();
+				.method(method)
+				.bean(new SyncMcpElicitationMethodCallbackExample() {
+					@Override
+					public ElicitResult handleElicitationRequest(ElicitRequest request) {
+						throw new RuntimeException("Test exception");
+					}
+				})
+				.build();
 
 		ElicitRequest request = ElicitationTestHelper.createSampleRequest();
 		assertThatThrownBy(() -> callback.apply(request)).isInstanceOf(McpElicitationMethodException.class)
-			.hasMessageContaining("Error invoking elicitation method")
-			.hasCauseInstanceOf(java.lang.reflect.InvocationTargetException.class)
-			.satisfies(e -> {
-				Throwable cause = e.getCause().getCause();
-				assertThat(cause).isInstanceOf(RuntimeException.class);
-				assertThat(cause.getMessage()).isEqualTo("Test exception");
-			});
+				.hasMessageContaining("Error invoking elicitation method")
+				.hasCauseInstanceOf(java.lang.reflect.InvocationTargetException.class)
+				.satisfies(e -> {
+					Throwable cause = e.getCause().getCause();
+					assertThat(cause).isInstanceOf(RuntimeException.class);
+					assertThat(cause.getMessage()).isEqualTo("Test exception");
+				});
 	}
 
 	@Test
 	void testBuilderValidation() {
 		// Test that builder validates required fields
 		assertThatThrownBy(() -> SyncMcpElicitationMethodCallback.builder().build())
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -217,9 +216,9 @@ public class SyncMcpElicitationMethodCallbackTests {
 				ElicitRequest.class);
 
 		SyncMcpElicitationMethodCallback callback = SyncMcpElicitationMethodCallback.builder()
-			.method(method)
-			.bean(this.example)
-			.build();
+				.method(method)
+				.bean(this.example)
+				.build();
 
 		ElicitRequest customRequest = ElicitationTestHelper.createSampleRequest("Custom prompt",
 				Map.of("customKey", "customValue", "priority", "high"));

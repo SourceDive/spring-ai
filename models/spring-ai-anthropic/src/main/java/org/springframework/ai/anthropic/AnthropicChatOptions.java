@@ -16,29 +16,9 @@
 
 package org.springframework.ai.anthropic;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import com.anthropic.core.JsonValue;
-import com.anthropic.models.messages.JsonOutputFormat;
-import com.anthropic.models.messages.Metadata;
-import com.anthropic.models.messages.Model;
-import com.anthropic.models.messages.OutputConfig;
-import com.anthropic.models.messages.ThinkingConfigAdaptive;
-import com.anthropic.models.messages.ThinkingConfigDisabled;
-import com.anthropic.models.messages.ThinkingConfigEnabled;
-import com.anthropic.models.messages.ThinkingConfigParam;
-import com.anthropic.models.messages.ToolChoice;
+import com.anthropic.models.messages.*;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.tool.DefaultToolCallingChatOptions;
 import org.springframework.ai.model.tool.StructuredOutputChatOptions;
@@ -46,6 +26,12 @@ import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.*;
 
 /**
  * Chat options for {@link AnthropicChatModel}. Supports model selection, sampling
@@ -63,9 +49,9 @@ import org.springframework.util.CollectionUtils;
  * @author Soby Chacko
  * @author Austin Dase
  * @author Sebastien Deleuze
- * @since 1.0.0
  * @see AnthropicChatModel
  * @see <a href="https://docs.anthropic.com/en/api/messages">Anthropic Messages API</a>
+ * @since 1.0.0
  */
 public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredOutputChatOptions {
 
@@ -222,16 +208,16 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 	private final @Nullable AnthropicServiceTier serviceTier;
 
 	protected AnthropicChatOptions(@Nullable String baseUrl, @Nullable String apiKey, @Nullable String model,
-			@Nullable Duration timeout, @Nullable Integer maxRetries, @Nullable Proxy proxy,
-			@Nullable Map<String, String> customHeaders, @Nullable Integer maxTokens, @Nullable Metadata metadata,
-			@Nullable List<String> stopSequences, @Nullable Double temperature, @Nullable Double topP,
-			@Nullable Integer topK, @Nullable ToolChoice toolChoice, @Nullable ThinkingConfigParam thinking,
-			@Nullable Boolean disableParallelToolUse, @Nullable List<ToolCallback> toolCallbacks,
-			@Nullable Map<String, Object> toolContext, @Nullable List<AnthropicCitationDocument> citationDocuments,
-			@Nullable AnthropicCacheOptions cacheOptions, @Nullable OutputConfig outputConfig,
-			@Nullable Map<String, String> httpHeaders, @Nullable AnthropicSkillContainer skillContainer,
-			@Nullable String inferenceGeo, @Nullable AnthropicWebSearchTool webSearchTool,
-			@Nullable AnthropicServiceTier serviceTier) {
+	                               @Nullable Duration timeout, @Nullable Integer maxRetries, @Nullable Proxy proxy,
+	                               @Nullable Map<String, String> customHeaders, @Nullable Integer maxTokens, @Nullable Metadata metadata,
+	                               @Nullable List<String> stopSequences, @Nullable Double temperature, @Nullable Double topP,
+	                               @Nullable Integer topK, @Nullable ToolChoice toolChoice, @Nullable ThinkingConfigParam thinking,
+	                               @Nullable Boolean disableParallelToolUse, @Nullable List<ToolCallback> toolCallbacks,
+	                               @Nullable Map<String, Object> toolContext, @Nullable List<AnthropicCitationDocument> citationDocuments,
+	                               @Nullable AnthropicCacheOptions cacheOptions, @Nullable OutputConfig outputConfig,
+	                               @Nullable Map<String, String> httpHeaders, @Nullable AnthropicSkillContainer skillContainer,
+	                               @Nullable String inferenceGeo, @Nullable AnthropicWebSearchTool webSearchTool,
+	                               @Nullable AnthropicServiceTier serviceTier) {
 		this.baseUrl = baseUrl;
 		this.apiKey = apiKey;
 		this.model = model != null ? model : DEFAULT_MODEL;
@@ -263,6 +249,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 	/**
 	 * Creates a new builder for AnthropicChatOptions.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder() {
@@ -363,7 +350,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 		}
 
 		boolean hasEnabledCitations = this.citationDocuments.stream()
-			.anyMatch(AnthropicCitationDocument::isCitationsEnabled);
+				.anyMatch(AnthropicCitationDocument::isCitationsEnabled);
 		boolean hasDisabledCitations = this.citationDocuments.stream().anyMatch(doc -> !doc.isCitationsEnabled());
 
 		if (hasEnabledCitations && hasDisabledCitations) {
@@ -419,6 +406,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 	/**
 	 * Converts a {@link JsonValue} to a native Java object using the visitor pattern.
 	 * Maps to null, Boolean, Number, String, List, or Map recursively.
+	 *
 	 * @param jsonValue the SDK's JsonValue to convert
 	 * @return the equivalent native Java object, or null for JSON null
 	 */
@@ -478,38 +466,38 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 	@Override
 	public Builder mutate() {
 		return builder()
-			// AbstractAnthropicOptions
-			.model(this.getModel())
-			.baseUrl(this.getBaseUrl())
-			.apiKey(this.getApiKey())
-			.timeout(this.getTimeout())
-			.maxRetries(this.getMaxRetries())
-			.proxy(this.getProxy())
-			.customHeaders(this.getCustomHeaders())
-			// ChatOptions
-			.frequencyPenalty(this.getFrequencyPenalty())
-			.maxTokens(this.maxTokens)
-			.presencePenalty(this.getPresencePenalty())
-			.stopSequences(this.stopSequences)
-			.temperature(this.temperature)
-			.topK(this.topK)
-			.topP(this.topP)
-			// ToolCallingChatOptions
-			.toolCallbacks(this.getToolCallbacks())
-			.toolContext(this.getToolContext())
-			// Anthropic Specific
-			.metadata(this.metadata)
-			.toolChoice(this.toolChoice)
-			.thinking(this.thinking)
-			.disableParallelToolUse(this.disableParallelToolUse)
-			.citationDocuments(this.getCitationDocuments())
-			.cacheOptions(this.getCacheOptions())
-			.outputConfig(this.outputConfig)
-			.httpHeaders(this.getHttpHeaders())
-			.skillContainer(this.getSkillContainer())
-			.inferenceGeo(this.inferenceGeo)
-			.webSearchTool(this.webSearchTool)
-			.serviceTier(this.serviceTier);
+				// AbstractAnthropicOptions
+				.model(this.getModel())
+				.baseUrl(this.getBaseUrl())
+				.apiKey(this.getApiKey())
+				.timeout(this.getTimeout())
+				.maxRetries(this.getMaxRetries())
+				.proxy(this.getProxy())
+				.customHeaders(this.getCustomHeaders())
+				// ChatOptions
+				.frequencyPenalty(this.getFrequencyPenalty())
+				.maxTokens(this.maxTokens)
+				.presencePenalty(this.getPresencePenalty())
+				.stopSequences(this.stopSequences)
+				.temperature(this.temperature)
+				.topK(this.topK)
+				.topP(this.topP)
+				// ToolCallingChatOptions
+				.toolCallbacks(this.getToolCallbacks())
+				.toolContext(this.getToolContext())
+				// Anthropic Specific
+				.metadata(this.metadata)
+				.toolChoice(this.toolChoice)
+				.thinking(this.thinking)
+				.disableParallelToolUse(this.disableParallelToolUse)
+				.citationDocuments(this.getCitationDocuments())
+				.cacheOptions(this.getCacheOptions())
+				.outputConfig(this.outputConfig)
+				.httpHeaders(this.getHttpHeaders())
+				.skillContainer(this.getSkillContainer())
+				.inferenceGeo(this.inferenceGeo)
+				.webSearchTool(this.webSearchTool)
+				.serviceTier(this.serviceTier);
 	}
 
 	@Override
@@ -633,8 +621,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 					this.outputConfig.effort().ifPresent(configBuilder::effort);
 				}
 				this.outputConfig = configBuilder.build();
-			}
-			else {
+			} else {
 				this.outputConfig = null;
 			}
 			return self();
@@ -673,8 +660,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 		public B model(@Nullable Model model) {
 			if (model != null) {
 				this.model(model.asString());
-			}
-			else {
+			} else {
 				this.model((String) null);
 			}
 			return self();
@@ -697,6 +683,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 		/**
 		 * Convenience method to enable thinking with a specific budget in tokens.
+		 *
 		 * @param budgetTokens the thinking budget (must be &gt;= 1024 and &lt; maxTokens)
 		 */
 		public B thinkingEnabled(long budgetTokens) {
@@ -707,13 +694,14 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 		/**
 		 * Convenience method to enable thinking with a specific budget and display
 		 * setting.
+		 *
 		 * @param budgetTokens the thinking budget (must be &gt;= 1024 and &lt; maxTokens)
-		 * @param display controls how thinking content appears in the response
-		 * (SUMMARIZED or OMITTED)
+		 * @param display      controls how thinking content appears in the response
+		 *                     (SUMMARIZED or OMITTED)
 		 */
 		public B thinkingEnabled(long budgetTokens, ThinkingConfigEnabled.Display display) {
 			return thinking(ThinkingConfigParam
-				.ofEnabled(ThinkingConfigEnabled.builder().budgetTokens(budgetTokens).display(display).build()));
+					.ofEnabled(ThinkingConfigEnabled.builder().budgetTokens(budgetTokens).display(display).build()));
 		}
 
 		/**
@@ -726,8 +714,9 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 		/**
 		 * Convenience method to let Claude adaptively decide whether to think, with a
 		 * display setting.
+		 *
 		 * @param display controls how thinking content appears in the response
-		 * (SUMMARIZED or OMITTED)
+		 *                (SUMMARIZED or OMITTED)
 		 */
 		public B thinkingAdaptive(ThinkingConfigAdaptive.Display display) {
 			return thinking(ThinkingConfigParam.ofAdaptive(ThinkingConfigAdaptive.builder().display(display).build()));
@@ -774,6 +763,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 		/**
 		 * Sets the output configuration for controlling response format and effort.
+		 *
 		 * @param outputConfig the output configuration
 		 * @return this builder
 		 */
@@ -784,6 +774,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 		/**
 		 * Convenience method to set the effort level for the model's response.
+		 *
 		 * @param effort the desired effort level (LOW, MEDIUM, HIGH, MAX)
 		 * @return this builder
 		 */
@@ -808,6 +799,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 		/**
 		 * Enables Anthropic's built-in web search tool with the given configuration.
+		 *
 		 * @param webSearchTool the web search configuration
 		 * @return this builder
 		 */
@@ -818,6 +810,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 		/**
 		 * Sets the service tier for capacity routing.
+		 *
 		 * @param serviceTier the service tier (AUTO or STANDARD_ONLY)
 		 * @return this builder
 		 */
@@ -860,8 +853,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 			Assert.notNull(skill, "Skill cannot be null");
 			if (this.skillContainer == null) {
 				this.skillContainer = AnthropicSkillContainer.builder().skill(skill).build();
-			}
-			else {
+			} else {
 				List<AnthropicSkillRecord> existingSkills = new ArrayList<>(this.skillContainer.getSkills());
 				existingSkills.add(skill);
 				this.skillContainer = new AnthropicSkillContainer(existingSkills);
@@ -885,6 +877,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 
 		/**
 		 * Sets the geographic region for inference processing.
+		 *
 		 * @param inferenceGeo the region identifier ("us" or "eu")
 		 * @return this builder
 		 */
@@ -915,8 +908,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 				if (options.customHeaders != null) {
 					if (this.customHeaders == null) {
 						this.customHeaders = new HashMap<>(options.customHeaders);
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.customHeaders);
 						merged.putAll(options.customHeaders);
 						this.customHeaders = merged;
@@ -937,8 +929,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 				if (options.citationDocuments != null) {
 					if (this.citationDocuments == null) {
 						this.citationDocuments = new ArrayList<>(options.citationDocuments);
-					}
-					else {
+					} else {
 						List<AnthropicCitationDocument> merged = new ArrayList<>(this.citationDocuments);
 						merged.addAll(options.citationDocuments);
 						this.citationDocuments = merged;
@@ -953,8 +944,7 @@ public class AnthropicChatOptions implements ToolCallingChatOptions, StructuredO
 				if (options.httpHeaders != null) {
 					if (this.httpHeaders == null) {
 						this.httpHeaders = new HashMap<>(options.httpHeaders);
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.httpHeaders);
 						merged.putAll(options.httpHeaders);
 						this.httpHeaders = merged;

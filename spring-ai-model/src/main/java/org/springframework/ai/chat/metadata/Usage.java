@@ -30,6 +30,7 @@ public interface Usage {
 
 	/**
 	 * Returns the number of tokens used in the {@literal prompt} of the AI request.
+	 *
 	 * @return an {@link Integer} with the number of tokens used in the {@literal prompt}
 	 * of the AI request.
 	 * @see #getCompletionTokens()
@@ -39,6 +40,7 @@ public interface Usage {
 	/**
 	 * Returns the number of tokens returned in the {@literal generation (aka completion)}
 	 * of the AI's response.
+	 *
 	 * @return an {@link Integer} with the number of tokens returned in the
 	 * {@literal generation (aka completion)} of the AI's response.
 	 * @see #getPromptTokens()
@@ -48,6 +50,7 @@ public interface Usage {
 	/**
 	 * Return the total number of tokens from both the {@literal prompt} of an AI request
 	 * and {@literal generation} of the AI's response.
+	 *
 	 * @return the total number of tokens from both the {@literal prompt} of an AI request
 	 * and {@literal generation} of the AI's response.
 	 * @see #getPromptTokens()
@@ -63,14 +66,17 @@ public interface Usage {
 
 	/**
 	 * Return the usage data from the underlying model API response.
+	 *
 	 * @return the object of type inferred by the API response.
 	 */
-	@Nullable Object getNativeUsage();
+	@Nullable
+	Object getNativeUsage();
 
 	/**
 	 * Returns the number of input tokens read from the prompt cache, if the provider
 	 * supports prompt caching. Cached tokens are tokens that were previously processed
 	 * and stored by the provider, reducing cost and latency for repeated prompt prefixes.
+	 *
 	 * @return the number of cached input tokens read, or {@code null} if the provider
 	 * does not support prompt caching or no cache hit occurred.
 	 * @since 2.0.0
@@ -83,6 +89,7 @@ public interface Usage {
 	 * Returns the number of input tokens written to the prompt cache, if the provider
 	 * supports prompt caching. Cache writes occur when new prompt content is cached for
 	 * the first time.
+	 *
 	 * @return the number of input tokens written to cache, or {@code null} if the
 	 * provider does not support prompt caching or no cache write occurred.
 	 * @since 2.0.0

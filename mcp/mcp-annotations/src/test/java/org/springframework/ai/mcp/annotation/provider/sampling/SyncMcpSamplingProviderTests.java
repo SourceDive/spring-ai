@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.provider.sampling;
 
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpSampling;
 import org.springframework.ai.mcp.annotation.method.sampling.SamplingTestHelper;
 import org.springframework.ai.mcp.annotation.method.sampling.SyncSamplingSpecification;
+
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,10 +45,10 @@ public class SyncMcpSamplingProviderTests {
 			@McpSampling(clients = "test-client")
 			public CreateMessageResult handleSamplingRequest(CreateMessageRequest request) {
 				return CreateMessageResult.builder()
-					.role(io.modelcontextprotocol.spec.McpSchema.Role.ASSISTANT)
-					.content(new TextContent("This is a response to the sampling request"))
-					.model("test-model")
-					.build();
+						.role(io.modelcontextprotocol.spec.McpSchema.Role.ASSISTANT)
+						.content(new TextContent("This is a response to the sampling request"))
+						.model("test-model")
+						.build();
 			}
 
 		}
@@ -74,7 +73,7 @@ public class SyncMcpSamplingProviderTests {
 	@Test
 	void testNullSamplingObjects() {
 		assertThatThrownBy(() -> new SyncMcpSamplingProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("samplingObjects cannot be null");
+				.hasMessageContaining("samplingObjects cannot be null");
 	}
 
 }

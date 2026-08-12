@@ -16,28 +16,15 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServer.StatelessAsyncSpecification;
 import io.modelcontextprotocol.server.McpServer.StatelessSyncSpecification;
 import io.modelcontextprotocol.server.McpStatelessAsyncServer;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncCompletionSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncPromptSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncResourceSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncResourceTemplateSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.AsyncToolSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncCompletionSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncPromptSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncResourceSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncResourceTemplateSpecification;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.server.McpStatelessServerFeatures.*;
 import io.modelcontextprotocol.server.McpStatelessSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
 import io.modelcontextprotocol.spec.McpStatelessServerTransport;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -53,14 +40,17 @@ import org.springframework.core.log.LogAccessor;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.StandardServletEnvironment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Christian Tzolov
  */
 @AutoConfiguration
 @ConditionalOnClass(McpSchema.class)
 @EnableConfigurationProperties(McpServerProperties.class)
-@Conditional({ McpServerStdioDisabledCondition.class,
-		McpServerStatelessAutoConfiguration.EnabledStatelessServerCondition.class })
+@Conditional({McpServerStdioDisabledCondition.class,
+		McpServerStatelessAutoConfiguration.EnabledStatelessServerCondition.class})
 public class McpServerStatelessAutoConfiguration {
 
 	private static final LogAccessor logger = new LogAccessor(McpServerStatelessAutoConfiguration.class);
@@ -75,12 +65,12 @@ public class McpServerStatelessAutoConfiguration {
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "type", havingValue = "SYNC",
 			matchIfMissing = true)
 	public McpStatelessSyncServer mcpStatelessSyncServer(McpStatelessServerTransport statelessTransport,
-			McpSchema.ServerCapabilities.Builder capabilitiesBuilder, McpServerProperties serverProperties,
-			ObjectProvider<List<SyncToolSpecification>> tools,
-			ObjectProvider<List<SyncResourceSpecification>> resources,
-			ObjectProvider<List<SyncResourceTemplateSpecification>> resourceTemplates,
-			ObjectProvider<List<SyncPromptSpecification>> prompts,
-			ObjectProvider<List<SyncCompletionSpecification>> completions, Environment environment) {
+	                                                     McpSchema.ServerCapabilities.Builder capabilitiesBuilder, McpServerProperties serverProperties,
+	                                                     ObjectProvider<List<SyncToolSpecification>> tools,
+	                                                     ObjectProvider<List<SyncResourceSpecification>> resources,
+	                                                     ObjectProvider<List<SyncResourceTemplateSpecification>> resourceTemplates,
+	                                                     ObjectProvider<List<SyncPromptSpecification>> prompts,
+	                                                     ObjectProvider<List<SyncCompletionSpecification>> completions, Environment environment) {
 
 		McpSchema.Implementation serverInfo = new Implementation(serverProperties.getName(),
 				serverProperties.getVersion());
@@ -117,8 +107,8 @@ public class McpServerStatelessAutoConfiguration {
 			capabilitiesBuilder.resources(false, false);
 
 			List<SyncResourceTemplateSpecification> resourceSpecifications = resourceTemplates.stream()
-				.flatMap(List::stream)
-				.toList();
+					.flatMap(List::stream)
+					.toList();
 			if (!CollectionUtils.isEmpty(resourceSpecifications)) {
 				serverBuilder.resourceTemplates(resourceSpecifications);
 				logger.info("Registered resource templates: " + resourceSpecifications.size());
@@ -142,8 +132,8 @@ public class McpServerStatelessAutoConfiguration {
 			capabilitiesBuilder.completions();
 
 			List<SyncCompletionSpecification> completionSpecifications = completions.stream()
-				.flatMap(List::stream)
-				.toList();
+					.flatMap(List::stream)
+					.toList();
 			if (!CollectionUtils.isEmpty(completionSpecifications)) {
 				serverBuilder.completions(completionSpecifications);
 				logger.info("Registered completions: " + completionSpecifications.size());
@@ -165,12 +155,12 @@ public class McpServerStatelessAutoConfiguration {
 	@Bean
 	@ConditionalOnProperty(prefix = McpServerProperties.CONFIG_PREFIX, name = "type", havingValue = "ASYNC")
 	public McpStatelessAsyncServer mcpStatelessAsyncServer(McpStatelessServerTransport statelessTransport,
-			McpSchema.ServerCapabilities.Builder capabilitiesBuilder, McpServerProperties serverProperties,
-			ObjectProvider<List<AsyncToolSpecification>> tools,
-			ObjectProvider<List<AsyncResourceSpecification>> resources,
-			ObjectProvider<List<AsyncResourceTemplateSpecification>> resourceTemplates,
-			ObjectProvider<List<AsyncPromptSpecification>> prompts,
-			ObjectProvider<List<AsyncCompletionSpecification>> completions) {
+	                                                       McpSchema.ServerCapabilities.Builder capabilitiesBuilder, McpServerProperties serverProperties,
+	                                                       ObjectProvider<List<AsyncToolSpecification>> tools,
+	                                                       ObjectProvider<List<AsyncResourceSpecification>> resources,
+	                                                       ObjectProvider<List<AsyncResourceTemplateSpecification>> resourceTemplates,
+	                                                       ObjectProvider<List<AsyncPromptSpecification>> prompts,
+	                                                       ObjectProvider<List<AsyncCompletionSpecification>> completions) {
 
 		McpSchema.Implementation serverInfo = new Implementation(serverProperties.getName(),
 				serverProperties.getVersion());
@@ -207,8 +197,8 @@ public class McpServerStatelessAutoConfiguration {
 			capabilitiesBuilder.resources(false, false);
 
 			List<AsyncResourceTemplateSpecification> resourceSpecifications = resourceTemplates.stream()
-				.flatMap(List::stream)
-				.toList();
+					.flatMap(List::stream)
+					.toList();
 			if (!CollectionUtils.isEmpty(resourceSpecifications)) {
 				serverBuilder.resourceTemplates(resourceSpecifications);
 				logger.info("Registered resource templates: " + resourceSpecifications.size());
@@ -231,8 +221,8 @@ public class McpServerStatelessAutoConfiguration {
 			logger.info("Enable completions capabilities");
 			capabilitiesBuilder.completions();
 			List<AsyncCompletionSpecification> completionSpecifications = completions.stream()
-				.flatMap(List::stream)
-				.toList();
+					.flatMap(List::stream)
+					.toList();
 
 			if (!CollectionUtils.isEmpty(completionSpecifications)) {
 				serverBuilder.completions(completionSpecifications);

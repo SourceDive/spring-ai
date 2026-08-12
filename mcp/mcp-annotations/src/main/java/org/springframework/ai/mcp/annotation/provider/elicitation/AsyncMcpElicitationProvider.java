@@ -16,22 +16,21 @@
 
 package org.springframework.ai.mcp.annotation.provider.elicitation;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpElicitation;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.elicitation.AsyncElicitationSpecification;
 import org.springframework.ai.mcp.annotation.method.elicitation.AsyncMcpElicitationMethodCallback;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Provider for asynchronous elicitation callbacks.
@@ -70,8 +69,9 @@ public class AsyncMcpElicitationProvider {
 
 	/**
 	 * Create a new AsyncMcpElicitationProvider.
+	 *
 	 * @param elicitationObjects the objects containing methods annotated with
-	 * {@link McpElicitation}
+	 *                           {@link McpElicitation}
 	 */
 	public AsyncMcpElicitationProvider(List<Object> elicitationObjects) {
 		Assert.notNull(elicitationObjects, "elicitationObjects cannot be null");
@@ -80,33 +80,34 @@ public class AsyncMcpElicitationProvider {
 
 	/**
 	 * Get the elicitation specifications.
+	 *
 	 * @return the elicitation specifications
 	 * @throws IllegalStateException if no elicitation methods are found or if multiple
-	 * elicitation methods are found
+	 *                               elicitation methods are found
 	 */
 	public List<AsyncElicitationSpecification> getElicitationSpecifications() {
 		List<AsyncElicitationSpecification> elicitationHandlers = this.elicitationObjects.stream()
-			.map(elicitationObject -> Stream.of(doGetClassMethods(elicitationObject))
-				.filter(method -> method.isAnnotationPresent(McpElicitation.class))
-				.filter(method -> method.getParameterCount() == 1
-						&& ElicitRequest.class.isAssignableFrom(method.getParameterTypes()[0]))
-				.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpElicitationMethod -> {
-					var elicitationAnnotation = mcpElicitationMethod.getAnnotation(McpElicitation.class);
+				.map(elicitationObject -> Stream.of(doGetClassMethods(elicitationObject))
+						.filter(method -> method.isAnnotationPresent(McpElicitation.class))
+						.filter(method -> method.getParameterCount() == 1
+								&& ElicitRequest.class.isAssignableFrom(method.getParameterTypes()[0]))
+						.filter(McpPredicates.filterNonReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpElicitationMethod -> {
+							var elicitationAnnotation = mcpElicitationMethod.getAnnotation(McpElicitation.class);
 
-					Function<ElicitRequest, Mono<ElicitResult>> methodCallback = AsyncMcpElicitationMethodCallback
-						.builder()
-						.method(mcpElicitationMethod)
-						.bean(elicitationObject)
-						.elicitation(elicitationAnnotation)
-						.build();
+							Function<ElicitRequest, Mono<ElicitResult>> methodCallback = AsyncMcpElicitationMethodCallback
+									.builder()
+									.method(mcpElicitationMethod)
+									.bean(elicitationObject)
+									.elicitation(elicitationAnnotation)
+									.build();
 
-					return new AsyncElicitationSpecification(elicitationAnnotation.clients(), methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new AsyncElicitationSpecification(elicitationAnnotation.clients(), methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (elicitationHandlers.isEmpty()) {
 			logger.warn("No elicitation methods found");
@@ -122,6 +123,7 @@ public class AsyncMcpElicitationProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

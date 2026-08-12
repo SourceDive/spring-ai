@@ -16,15 +16,14 @@
 
 package org.springframework.ai.ollama.api;
 
-import java.io.IOException;
-import java.time.Duration;
-
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.ollama.BaseOllamaIT;
 import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -85,9 +84,9 @@ public class OllamaApiModelsIT extends BaseOllamaIT {
 
 		var pullModelRequest = new OllamaApi.PullModelRequest(MODEL);
 		var progressResponses = ollamaApi.pullModel(pullModelRequest)
-			.timeout(Duration.ofMinutes(5))
-			.collectList()
-			.block();
+				.timeout(Duration.ofMinutes(5))
+				.collectList()
+				.block();
 
 		assertThat(progressResponses).isNotNull();
 		Awaitility.await().until(() -> {
@@ -95,7 +94,7 @@ public class OllamaApiModelsIT extends BaseOllamaIT {
 			return progressResponse.status().equals("success");
 		});
 		assertThat(progressResponses.get(progressResponses.size() - 1))
-			.isEqualTo(new OllamaApi.ProgressResponse("success", null, null, null));
+				.isEqualTo(new OllamaApi.ProgressResponse("success", null, null, null));
 
 		listModelResponse = ollamaApi.listModels();
 		assertThat(listModelResponse.models().stream().anyMatch(model -> model.name().contains(MODEL))).isTrue();

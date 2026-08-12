@@ -16,31 +16,20 @@
 
 package org.springframework.ai.util.json.schema;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.github.victools.jsonschema.generator.Option;
-import com.github.victools.jsonschema.generator.OptionPreset;
-import com.github.victools.jsonschema.generator.SchemaGenerator;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
-import com.github.victools.jsonschema.generator.SchemaVersion;
+import com.github.victools.jsonschema.generator.*;
 import com.github.victools.jsonschema.module.jackson.JacksonOption;
 import com.github.victools.jsonschema.module.jackson.JacksonSchemaModule;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.node.ObjectNode;
-
 import org.springframework.ai.model.KotlinModule;
 import org.springframework.ai.util.JsonHelper;
 import org.springframework.core.KotlinDetector;
 import org.springframework.util.StringUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
+
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Utility methods for working with JSON schemas.
@@ -62,10 +51,10 @@ public final class JsonSchemaUtils {
 
 		SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12,
 				OptionPreset.PLAIN_JSON)
-			.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-			.with(Option.PLAIN_DEFINITION_KEYS)
-			.with(swaggerModule)
-			.with(jacksonModule);
+				.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+				.with(Option.PLAIN_DEFINITION_KEYS)
+				.with(swaggerModule)
+				.with(jacksonModule);
 
 		if (KotlinDetector.isKotlinReflectPresent()) {
 			configBuilder.with(new KotlinModule());
@@ -91,8 +80,9 @@ public final class JsonSchemaUtils {
 	 * Inlining the sub-schema under {@code properties.<paramName>} re-parents existing
 	 * {@code "#/$defs/<Name>"} refs to the outer root, leaving them unresolvable unless
 	 * {@code $defs} is hoisted first.
+	 *
 	 * @param rootSchema the wrapper schema that will receive the hoisted definitions
-	 * @param subSchema the per-parameter sub-schema whose {@code $defs} block is consumed
+	 * @param subSchema  the per-parameter sub-schema whose {@code $defs} block is consumed
 	 */
 	public static void hoistDefsToRoot(ObjectNode rootSchema, ObjectNode subSchema) {
 		JsonNode nestedDefs = subSchema.remove("$defs");
@@ -167,8 +157,7 @@ public final class JsonSchemaUtils {
 				}
 			}
 			object.properties().forEach(e -> rewriteDefsRefs(e.getValue(), renames));
-		}
-		else if (node.isArray()) {
+		} else if (node.isArray()) {
 			node.forEach(child -> rewriteDefsRefs(child, renames));
 		}
 	}
@@ -178,6 +167,7 @@ public final class JsonSchemaUtils {
 	 * that the parameters object must have a "properties" field, even if it's empty. This
 	 * method normalizes schemas from external sources (like MCP tools) that may not
 	 * include this field.
+	 *
 	 * @param inputSchema the input schema as a JSON string
 	 * @return a valid input schema as a JSON string with required fields
 	 */
@@ -211,6 +201,7 @@ public final class JsonSchemaUtils {
 
 	/**
 	 * Generates JSON Schema (version 2020_12) for the given class.
+	 *
 	 * @param inputType the input {@link Type} to generate JSON Schema from.
 	 * @return the generated JSON Schema as a String.
 	 * @since 2.0.0

@@ -56,9 +56,9 @@ public class VertexAiMultimodalEmbeddingProperties {
 
 	public VertexAiMultimodalEmbeddingOptions toOptions() {
 		return VertexAiMultimodalEmbeddingOptions.builder()
-			.model(this.model)
-			.dimensions(this.outputDimensionality)
-			.build();
+				.model(this.model)
+				.dimensions(this.outputDimensionality)
+				.build();
 	}
 
 	private Options options = new Options();

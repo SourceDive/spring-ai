@@ -16,12 +16,11 @@
 
 package org.springframework.ai.stabilityai.api;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.image.ImageOptions;
 import org.springframework.ai.stabilityai.StyleEnum;
+
+import java.util.Objects;
 
 /**
  * StabilityAiImageOptions is an interface that extends ImageOptions. It provides
@@ -33,7 +32,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 
 	/**
 	 * The number of images to be generated.
-	 *
+	 * <p>
 	 * Defaults to 1 if not explicitly set, indicating a single image will be generated.
 	 *
 	 * <p>
@@ -52,7 +51,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	/**
 	 * The engine/model to use in Stability AI The model is passed in the URL as a path
 	 * parameter
-	 *
+	 * <p>
 	 * The default value is stable-diffusion-v1-6
 	 */
 	private final String model;
@@ -158,7 +157,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * detail in clip guidance.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * <p>
 	 * Defaults to {@code NONE} if no specific preset is configured.
 	 *
 	 */
@@ -197,7 +196,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * diffusion quality.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * <p>
 	 * An appropriate sampler is automatically selected if this value is omitted.
 	 *
 	 */
@@ -214,7 +213,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * <p>
 	 * Valid range of values: 0 to 4294967295.
 	 * </p>
-	 *
+	 * <p>
 	 * Default is 0, which indicates that a random seed will be used.
 	 */
 	private final @Nullable Long seed;
@@ -230,7 +229,7 @@ public class StabilityAiImageOptions implements ImageOptions {
 	 * <p>
 	 * Valid range of values: 10 to 50.
 	 * </p>
-	 *
+	 * <p>
 	 * Defaults to 30 if not explicitly set.
 	 */
 	private final @Nullable Integer steps;
@@ -275,9 +274,9 @@ public class StabilityAiImageOptions implements ImageOptions {
 	private final @Nullable String stylePreset;
 
 	protected StabilityAiImageOptions(@Nullable Integer n, @Nullable String model, @Nullable Integer width,
-			@Nullable Integer height, @Nullable String responseFormat, @Nullable Float cfgScale,
-			@Nullable String clipGuidancePreset, @Nullable String sampler, @Nullable Long seed, @Nullable Integer steps,
-			@Nullable String stylePreset) {
+	                                  @Nullable Integer height, @Nullable String responseFormat, @Nullable Float cfgScale,
+	                                  @Nullable String clipGuidancePreset, @Nullable String sampler, @Nullable Long seed, @Nullable Integer steps,
+	                                  @Nullable String stylePreset) {
 		this.n = n;
 		this.model = (model != null ? model : StabilityAiApi.DEFAULT_IMAGE_MODEL);
 		this.width = width;

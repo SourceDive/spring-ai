@@ -16,6 +16,10 @@
 
 package org.springframework.ai.google.genai;
 
+import org.springframework.core.io.Resource;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -23,10 +27,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.core.io.Resource;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
 
 /**
  * Gemini supports the following MIME types:
@@ -44,7 +44,7 @@ import org.springframework.util.MimeTypeUtils;
  * <li>video/mpegps
  * <li>video/flv
  * </ul>
- *
+ * <p>
  * https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini
  *
  * @author Christian Tzolov
@@ -78,8 +78,7 @@ public abstract class MimeTypeDetector {
 	public static MimeType getMimeType(Resource resource) {
 		try {
 			return getMimeType(resource.getURI());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IllegalArgumentException(
 					String.format("Unable to detect the MIME type of '%s'. Please provide it explicitly.",
 							resource.getFilename()),

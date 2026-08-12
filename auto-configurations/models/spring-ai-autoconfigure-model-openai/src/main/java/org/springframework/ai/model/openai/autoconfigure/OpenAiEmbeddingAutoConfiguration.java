@@ -16,12 +16,9 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.List;
-
 import com.openai.client.OpenAIClient;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
-
 import org.springframework.ai.embedding.observation.EmbeddingModelObservationConvention;
 import org.springframework.ai.model.SpringAIModelProperties;
 import org.springframework.ai.model.SpringAIModels;
@@ -34,6 +31,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+
+import java.util.List;
 
 /**
  * Embedding {@link AutoConfiguration Auto-configuration} for OpenAI SDK.
@@ -49,16 +48,16 @@ import org.springframework.context.annotation.Bean;
 @AutoConfiguration
 @ConditionalOnProperty(name = SpringAIModelProperties.EMBEDDING_MODEL, havingValue = SpringAIModels.OPENAI,
 		matchIfMissing = true)
-@EnableConfigurationProperties({ OpenAiCommonProperties.class, OpenAiEmbeddingProperties.class })
+@EnableConfigurationProperties({OpenAiCommonProperties.class, OpenAiEmbeddingProperties.class})
 public class OpenAiEmbeddingAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public OpenAiEmbeddingModel openAiEmbeddingModel(OpenAiCommonProperties commonProperties,
-			OpenAiEmbeddingProperties embeddingProperties, ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<MeterRegistry> meterRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention,
-			ObjectProvider<OpenAiHttpClientBuilderCustomizer> httpClientBuilderCustomizers) {
+	                                                 OpenAiEmbeddingProperties embeddingProperties, ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                 ObjectProvider<MeterRegistry> meterRegistry,
+	                                                 ObjectProvider<EmbeddingModelObservationConvention> observationConvention,
+	                                                 ObjectProvider<OpenAiHttpClientBuilderCustomizer> httpClientBuilderCustomizers) {
 
 		var resolvedProperties = OpenAiAutoConfigurationUtil.resolveCommonProperties(commonProperties,
 				embeddingProperties);
@@ -76,8 +75,8 @@ public class OpenAiEmbeddingAutoConfiguration {
 	}
 
 	private OpenAIClient openAiClient(OpenAiCommonProperties commonProperties,
-			ObjectProvider<ObservationRegistry> observationRegistry, ObjectProvider<MeterRegistry> meterRegistry,
-			List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                  ObjectProvider<ObservationRegistry> observationRegistry, ObjectProvider<MeterRegistry> meterRegistry,
+	                                  List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		MeterRegistry meterRegistryToUse = commonProperties.isConnectionPoolMetricsEnabled()
 				? meterRegistry.getIfAvailable() : null;

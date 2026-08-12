@@ -16,13 +16,8 @@
 
 package org.springframework.ai.openai.transformer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.DefaultContentFormatter;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.transformer.KeywordMetadataEnricher;
@@ -34,6 +29,10 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -116,14 +115,14 @@ public class MetadataTransformerIT {
 	public void testContentFormatEnricher() {
 
 		assertThat(((DefaultContentFormatter) this.document1.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.doesNotContain("NewEmbedKey");
+				.doesNotContain("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) this.document1.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.doesNotContain("NewInferenceKey");
+				.doesNotContain("NewInferenceKey");
 
 		assertThat(((DefaultContentFormatter) this.document2.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.doesNotContain("NewEmbedKey");
+				.doesNotContain("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) this.document2.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.doesNotContain("NewInferenceKey");
+				.doesNotContain("NewInferenceKey");
 
 		List<Document> enrichedDocuments = this.contentFormatTransformer.apply(List.of(this.document1, this.document2));
 
@@ -135,18 +134,18 @@ public class MetadataTransformerIT {
 		assertThat(doc2).isEqualTo(this.document2);
 
 		assertThat(((DefaultContentFormatter) doc1.getContentFormatter()).getTextTemplate())
-			.isSameAs(this.defaultContentFormatter.getTextTemplate());
+				.isSameAs(this.defaultContentFormatter.getTextTemplate());
 		assertThat(((DefaultContentFormatter) doc1.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.contains("NewEmbedKey");
+				.contains("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) doc1.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.contains("NewInferenceKey");
+				.contains("NewInferenceKey");
 
 		assertThat(((DefaultContentFormatter) doc2.getContentFormatter()).getTextTemplate())
-			.isSameAs(this.defaultContentFormatter.getTextTemplate());
+				.isSameAs(this.defaultContentFormatter.getTextTemplate());
 		assertThat(((DefaultContentFormatter) doc2.getContentFormatter()).getExcludedEmbedMetadataKeys())
-			.contains("NewEmbedKey");
+				.contains("NewEmbedKey");
 		assertThat(((DefaultContentFormatter) doc2.getContentFormatter()).getExcludedInferenceMetadataKeys())
-			.contains("NewInferenceKey");
+				.contains("NewInferenceKey");
 
 	}
 
@@ -161,11 +160,11 @@ public class MetadataTransformerIT {
 						"You must provide an API key.  Put it in an environment variable under the name OPENAI_API_KEY");
 			}
 			return OpenAiChatModel.builder()
-				.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
-					.apiKey(apiKey)
-					.model(org.springframework.ai.openai.OpenAiChatOptions.DEFAULT_CHAT_MODEL)
-					.build())
-				.build();
+					.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
+							.apiKey(apiKey)
+							.model(org.springframework.ai.openai.OpenAiChatOptions.DEFAULT_CHAT_MODEL)
+							.build())
+					.build();
 		}
 
 		@Bean
@@ -182,9 +181,9 @@ public class MetadataTransformerIT {
 		@Bean
 		public DefaultContentFormatter defaultContentFormatter() {
 			return DefaultContentFormatter.builder()
-				.withExcludedEmbedMetadataKeys("NewEmbedKey")
-				.withExcludedInferenceMetadataKeys("NewInferenceKey")
-				.build();
+					.withExcludedEmbedMetadataKeys("NewEmbedKey")
+					.withExcludedInferenceMetadataKeys("NewInferenceKey")
+					.build();
 		}
 
 		@Bean

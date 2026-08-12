@@ -16,12 +16,6 @@
 
 package org.springframework.ai.google.genai.text;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.genai.Client;
 import com.google.genai.types.ContentEmbedding;
 import com.google.genai.types.ContentEmbeddingStatistics;
@@ -29,16 +23,10 @@ import com.google.genai.types.EmbedContentConfig;
 import com.google.genai.types.EmbedContentResponse;
 import io.micrometer.observation.ObservationRegistry;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.AbstractEmbeddingModel;
-import org.springframework.ai.embedding.Embedding;
-import org.springframework.ai.embedding.EmbeddingOptions;
-import org.springframework.ai.embedding.EmbeddingRequest;
-import org.springframework.ai.embedding.EmbeddingResponse;
-import org.springframework.ai.embedding.EmbeddingResponseMetadata;
+import org.springframework.ai.embedding.*;
 import org.springframework.ai.embedding.observation.DefaultEmbeddingModelObservationConvention;
 import org.springframework.ai.embedding.observation.EmbeddingModelObservationContext;
 import org.springframework.ai.embedding.observation.EmbeddingModelObservationConvention;
@@ -50,6 +38,12 @@ import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A class representing a Vertex AI Text Embedding Model using the new Google Gen AI SDK.
@@ -67,9 +61,9 @@ public class GoogleGenAiTextEmbeddingModel extends AbstractEmbeddingModel {
 	private static final EmbeddingModelObservationConvention DEFAULT_OBSERVATION_CONVENTION = new DefaultEmbeddingModelObservationConvention();
 
 	private static final Map<String, Integer> KNOWN_EMBEDDING_DIMENSIONS = Stream
-		.of(GoogleGenAiTextEmbeddingModelName.values())
-		.collect(Collectors.toMap(GoogleGenAiTextEmbeddingModelName::getName,
-				GoogleGenAiTextEmbeddingModelName::getDimensions));
+			.of(GoogleGenAiTextEmbeddingModelName.values())
+			.collect(Collectors.toMap(GoogleGenAiTextEmbeddingModelName::getName,
+					GoogleGenAiTextEmbeddingModelName::getDimensions));
 
 	public final GoogleGenAiTextEmbeddingOptions options;
 
@@ -93,18 +87,18 @@ public class GoogleGenAiTextEmbeddingModel extends AbstractEmbeddingModel {
 	private final Client genAiClient;
 
 	public GoogleGenAiTextEmbeddingModel(GoogleGenAiEmbeddingConnectionDetails connectionDetails,
-			GoogleGenAiTextEmbeddingOptions defaultEmbeddingOptions) {
+	                                     GoogleGenAiTextEmbeddingOptions defaultEmbeddingOptions) {
 		this(connectionDetails, defaultEmbeddingOptions, RetryUtils.DEFAULT_RETRY_TEMPLATE);
 	}
 
 	public GoogleGenAiTextEmbeddingModel(GoogleGenAiEmbeddingConnectionDetails connectionDetails,
-			GoogleGenAiTextEmbeddingOptions defaultEmbeddingOptions, RetryTemplate retryTemplate) {
+	                                     GoogleGenAiTextEmbeddingOptions defaultEmbeddingOptions, RetryTemplate retryTemplate) {
 		this(connectionDetails, defaultEmbeddingOptions, retryTemplate, ObservationRegistry.NOOP);
 	}
 
 	public GoogleGenAiTextEmbeddingModel(GoogleGenAiEmbeddingConnectionDetails connectionDetails,
-			GoogleGenAiTextEmbeddingOptions defaultEmbeddingOptions, RetryTemplate retryTemplate,
-			ObservationRegistry observationRegistry) {
+	                                     GoogleGenAiTextEmbeddingOptions defaultEmbeddingOptions, RetryTemplate retryTemplate,
+	                                     ObservationRegistry observationRegistry) {
 		Assert.notNull(connectionDetails, "GoogleGenAiEmbeddingConnectionDetails must not be null");
 		Assert.notNull(defaultEmbeddingOptions, "GoogleGenAiTextEmbeddingOptions must not be null");
 		Assert.notNull(retryTemplate, "retryTemplate must not be null");
@@ -128,106 +122,105 @@ public class GoogleGenAiTextEmbeddingModel extends AbstractEmbeddingModel {
 		EmbeddingRequest embeddingRequest = buildEmbeddingRequest(request);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(AiProvider.GOOGLE_GENAI_AI.value())
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider(AiProvider.GOOGLE_GENAI_AI.value())
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				GoogleGenAiTextEmbeddingOptions options = (GoogleGenAiTextEmbeddingOptions) embeddingRequest
-					.getOptions();
-				Assert.notNull(options, "Options must not be null");
-				String model = options.getModel();
-				Assert.notNull(model, "Model must not be null");
-				String modelName = this.connectionDetails.getModelEndpointName(model);
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					GoogleGenAiTextEmbeddingOptions options = (GoogleGenAiTextEmbeddingOptions) embeddingRequest
+							.getOptions();
+					Assert.notNull(options, "Options must not be null");
+					String model = options.getModel();
+					Assert.notNull(model, "Model must not be null");
+					String modelName = this.connectionDetails.getModelEndpointName(model);
 
-				// Build the EmbedContentConfig
-				EmbedContentConfig.Builder configBuilder = EmbedContentConfig.builder();
+					// Build the EmbedContentConfig
+					EmbedContentConfig.Builder configBuilder = EmbedContentConfig.builder();
 
-				// Set dimensions if specified
-				if (options.getDimensions() != null) {
-					configBuilder.outputDimensionality(options.getDimensions());
-				}
-
-				// Set task type if specified - this might need to be handled differently
-				// as the new SDK might not have a direct taskType field
-				// We'll need to check the SDK documentation for this
-
-				EmbedContentConfig config = configBuilder.build();
-
-				// Convert instructions to Content list for embedding
-				List<String> texts = embeddingRequest.getInstructions();
-
-				// Validate that we have texts to embed
-				if (texts == null || texts.isEmpty()) {
-					throw new IllegalArgumentException("No embedding input is provided - instructions list is empty");
-				}
-
-				// Filter out null or empty strings
-				List<String> validTexts = texts.stream().filter(StringUtils::hasText).toList();
-
-				if (validTexts.isEmpty()) {
-					throw new IllegalArgumentException("No embedding input is provided - all texts are null or empty");
-				}
-
-				// Call the embedding API with retry
-				EmbedContentResponse embeddingResponse = RetryUtils.execute(this.retryTemplate,
-						() -> this.genAiClient.models.embedContent(modelName, validTexts, config));
-
-				// Process the response
-				// Note: We need to handle the case where some texts were filtered out
-				// The response will only contain embeddings for valid texts
-				int totalTokenCount = 0;
-				List<Embedding> embeddingList = new ArrayList<>();
-
-				// Create a map to track original indices
-				int originalIndex = 0;
-				int validIndex = 0;
-
-				if (embeddingResponse.embeddings().isPresent()) {
-					for (String originalText : texts) {
-						if (StringUtils.hasText(originalText)
-								&& validIndex < embeddingResponse.embeddings().get().size()) {
-							ContentEmbedding contentEmbedding = embeddingResponse.embeddings().get().get(validIndex);
-
-							// Extract the embedding values
-							if (contentEmbedding.values().isPresent()) {
-								List<Float> floatList = contentEmbedding.values().get();
-								float[] vectorValues = new float[floatList.size()];
-								for (int i = 0; i < floatList.size(); i++) {
-									vectorValues[i] = floatList.get(i);
-								}
-								embeddingList.add(new Embedding(vectorValues, originalIndex));
-							}
-
-							// Extract token count if available
-							if (contentEmbedding.statistics().isPresent()) {
-								ContentEmbeddingStatistics stats = contentEmbedding.statistics().get();
-								if (stats.tokenCount().isPresent()) {
-									totalTokenCount += stats.tokenCount().get().intValue();
-								}
-							}
-
-							validIndex++;
-						}
-						else if (!StringUtils.hasText(originalText)) {
-							// For empty texts, add a null embedding to maintain index
-							// alignment
-							embeddingList.add(new Embedding(new float[0], originalIndex));
-						}
-						originalIndex++;
+					// Set dimensions if specified
+					if (options.getDimensions() != null) {
+						configBuilder.outputDimensionality(options.getDimensions());
 					}
-				}
 
-				EmbeddingResponse response = new EmbeddingResponse(embeddingList,
-						generateResponseMetadata(model, totalTokenCount));
+					// Set task type if specified - this might need to be handled differently
+					// as the new SDK might not have a direct taskType field
+					// We'll need to check the SDK documentation for this
 
-				observationContext.setResponse(response);
+					EmbedContentConfig config = configBuilder.build();
 
-				return response;
-			});
+					// Convert instructions to Content list for embedding
+					List<String> texts = embeddingRequest.getInstructions();
+
+					// Validate that we have texts to embed
+					if (texts == null || texts.isEmpty()) {
+						throw new IllegalArgumentException("No embedding input is provided - instructions list is empty");
+					}
+
+					// Filter out null or empty strings
+					List<String> validTexts = texts.stream().filter(StringUtils::hasText).toList();
+
+					if (validTexts.isEmpty()) {
+						throw new IllegalArgumentException("No embedding input is provided - all texts are null or empty");
+					}
+
+					// Call the embedding API with retry
+					EmbedContentResponse embeddingResponse = RetryUtils.execute(this.retryTemplate,
+							() -> this.genAiClient.models.embedContent(modelName, validTexts, config));
+
+					// Process the response
+					// Note: We need to handle the case where some texts were filtered out
+					// The response will only contain embeddings for valid texts
+					int totalTokenCount = 0;
+					List<Embedding> embeddingList = new ArrayList<>();
+
+					// Create a map to track original indices
+					int originalIndex = 0;
+					int validIndex = 0;
+
+					if (embeddingResponse.embeddings().isPresent()) {
+						for (String originalText : texts) {
+							if (StringUtils.hasText(originalText)
+									&& validIndex < embeddingResponse.embeddings().get().size()) {
+								ContentEmbedding contentEmbedding = embeddingResponse.embeddings().get().get(validIndex);
+
+								// Extract the embedding values
+								if (contentEmbedding.values().isPresent()) {
+									List<Float> floatList = contentEmbedding.values().get();
+									float[] vectorValues = new float[floatList.size()];
+									for (int i = 0; i < floatList.size(); i++) {
+										vectorValues[i] = floatList.get(i);
+									}
+									embeddingList.add(new Embedding(vectorValues, originalIndex));
+								}
+
+								// Extract token count if available
+								if (contentEmbedding.statistics().isPresent()) {
+									ContentEmbeddingStatistics stats = contentEmbedding.statistics().get();
+									if (stats.tokenCount().isPresent()) {
+										totalTokenCount += stats.tokenCount().get().intValue();
+									}
+								}
+
+								validIndex++;
+							} else if (!StringUtils.hasText(originalText)) {
+								// For empty texts, add a null embedding to maintain index
+								// alignment
+								embeddingList.add(new Embedding(new float[0], originalIndex));
+							}
+							originalIndex++;
+						}
+					}
+
+					EmbeddingResponse response = new EmbeddingResponse(embeddingList,
+							generateResponseMetadata(model, totalTokenCount));
+
+					observationContext.setResponse(response);
+
+					return response;
+				});
 	}
 
 	EmbeddingRequest buildEmbeddingRequest(EmbeddingRequest embeddingRequest) {
@@ -236,20 +229,19 @@ public class GoogleGenAiTextEmbeddingModel extends AbstractEmbeddingModel {
 
 		if (requestOptions != null) {
 			GoogleGenAiTextEmbeddingOptions.Builder builder = GoogleGenAiTextEmbeddingOptions.builder()
-				.model(ModelOptionsUtils.mergeOption(requestOptions.getModel(), this.options.getModel()))
-				.dimensions(
-						ModelOptionsUtils.mergeOption(requestOptions.getDimensions(), this.options.getDimensions()));
+					.model(ModelOptionsUtils.mergeOption(requestOptions.getModel(), this.options.getModel()))
+					.dimensions(
+							ModelOptionsUtils.mergeOption(requestOptions.getDimensions(), this.options.getDimensions()));
 
 			if (requestOptions instanceof GoogleGenAiTextEmbeddingOptions googleOptions) {
 				builder.taskType(ModelOptionsUtils.mergeOption(googleOptions.getTaskType(), this.options.getTaskType()))
-					.title(ModelOptionsUtils.mergeOption(googleOptions.getTitle(), this.options.getTitle()))
-					.autoTruncate(ModelOptionsUtils.mergeOption(googleOptions.getAutoTruncate(),
-							this.options.getAutoTruncate()));
-			}
-			else {
+						.title(ModelOptionsUtils.mergeOption(googleOptions.getTitle(), this.options.getTitle()))
+						.autoTruncate(ModelOptionsUtils.mergeOption(googleOptions.getAutoTruncate(),
+								this.options.getAutoTruncate()));
+			} else {
 				builder.taskType(this.options.getTaskType())
-					.title(this.options.getTitle())
-					.autoTruncate(this.options.getAutoTruncate());
+						.title(this.options.getTitle())
+						.autoTruncate(this.options.getAutoTruncate());
 			}
 			mergedOptions = builder.build();
 		}
@@ -281,6 +273,7 @@ public class GoogleGenAiTextEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(@Nullable EmbeddingModelObservationConvention observationConvention) {

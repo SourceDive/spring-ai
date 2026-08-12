@@ -16,31 +16,9 @@
 
 package org.springframework.ai.vectorstore;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectWriter;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -50,6 +28,18 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
 import org.springframework.ai.vectorstore.observation.VectorStoreObservationContext;
 import org.springframework.core.io.Resource;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * A simple, in-memory implementation of the <a href=
@@ -105,6 +95,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Creates an instance of SimpleVectorStore builder.
+	 *
 	 * @return the SimpleVectorStore builder.
 	 */
 	public static SimpleVectorStoreBuilder builder(EmbeddingModel embeddingModel) {
@@ -139,10 +130,10 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 	@Override
 	public void doDelete(Filter.Expression filterExpression) {
 		List<String> idList = this.store.values()
-			.stream()
-			.filter(document -> doFilterPredicate(filterExpression).test(document))
-			.map(SimpleVectorStoreContent::getId)
-			.toList();
+				.stream()
+				.filter(document -> doFilterPredicate(filterExpression).test(document))
+				.map(SimpleVectorStoreContent::getId)
+				.toList();
 		this.doDelete(idList);
 	}
 
@@ -150,14 +141,14 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 	public List<Document> doSimilaritySearch(SearchRequest request) {
 		float[] userQueryEmbedding = getUserQueryEmbedding(request.getQuery());
 		return this.store.values()
-			.stream()
-			.filter(document -> doFilterPredicate(request.getFilterExpression()).test(document))
-			.map(content -> content
-				.toDocument(EmbeddingMath.cosineSimilarity(userQueryEmbedding, content.getEmbedding())))
-			.filter(document -> document.getScore() != null && document.getScore() >= request.getSimilarityThreshold())
-			.sorted(Comparator.comparing(Document::getScore).reversed())
-			.limit(request.getTopK())
-			.toList();
+				.stream()
+				.filter(document -> doFilterPredicate(request.getFilterExpression()).test(document))
+				.map(content -> content
+						.toDocument(EmbeddingMath.cosineSimilarity(userQueryEmbedding, content.getEmbedding())))
+				.filter(document -> document.getScore() != null && document.getScore() >= request.getSimilarityThreshold())
+				.sorted(Comparator.comparing(Document::getScore).reversed())
+				.limit(request.getTopK())
+				.toList();
 	}
 
 	private Predicate<SimpleVectorStoreContent> doFilterPredicate(Filter.@Nullable Expression filterExpression) {
@@ -169,6 +160,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Serialize the vector store content into a file in JSON format.
+	 *
 	 * @param file the file to save the vector store content
 	 */
 	public void save(File file) {
@@ -180,32 +172,26 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 				}
 				try {
 					Files.createFile(file.toPath());
-				}
-				catch (FileAlreadyExistsException e) {
+				} catch (FileAlreadyExistsException e) {
 					throw new RuntimeException("File already exists: " + file, e);
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					throw new RuntimeException("Failed to create new file: " + file + ". Reason: " + e.getMessage(), e);
 				}
-			}
-			else if (logger.isInfoEnabled()) {
+			} else if (logger.isInfoEnabled()) {
 				logger.info("Overwriting existing vector store file: " + file);
 			}
 			try (OutputStream stream = new FileOutputStream(file);
-					Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
+			     Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
 				writer.write(json);
 				writer.flush();
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			logger.error("IOException occurred while saving vector store file.", ex);
 			throw new RuntimeException(ex);
-		}
-		catch (SecurityException ex) {
+		} catch (SecurityException ex) {
 			logger.error("SecurityException occurred while saving vector store file.", ex);
 			throw new RuntimeException(ex);
-		}
-		catch (NullPointerException ex) {
+		} catch (NullPointerException ex) {
 			logger.error("NullPointerException occurred while saving vector store file.", ex);
 			throw new RuntimeException(ex);
 		}
@@ -213,6 +199,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Deserialize the vector store content from a file in JSON format into memory.
+	 *
 	 * @param file the file to load the vector store content
 	 */
 	public void load(File file) {
@@ -224,6 +211,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 
 	/**
 	 * Deserialize the vector store content from a resource in JSON format into memory.
+	 *
 	 * @param resource the resource to load the vector store content
 	 */
 	public void load(Resource resource) {
@@ -232,8 +220,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 		};
 		try {
 			this.store = this.jsonMapper.readValue(resource.getInputStream(), typeRef);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
@@ -242,8 +229,7 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 		ObjectWriter objectWriter = this.jsonMapper.writerWithDefaultPrettyPrinter();
 		try {
 			return objectWriter.writeValueAsString(this.store);
-		}
-		catch (JacksonException ex) {
+		} catch (JacksonException ex) {
 			throw new RuntimeException("Error serializing documentMap to JSON.", ex);
 		}
 	}
@@ -256,9 +242,9 @@ public class SimpleVectorStore extends AbstractObservationVectorStore {
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 
 		return VectorStoreObservationContext.builder(VectorStoreProvider.SIMPLE.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName("in-memory-map")
-			.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName("in-memory-map")
+				.similarityMetric(VectorStoreSimilarityMetric.COSINE.value());
 	}
 
 	public static final class EmbeddingMath {

@@ -16,14 +16,13 @@
 
 package org.springframework.ai.transformer.splitter;
 
-import java.util.List;
-import java.util.Map;
-
 import com.knuddels.jtokkit.api.EncodingType;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.DefaultContentFormatter;
 import org.springframework.ai.document.Document;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -59,7 +58,7 @@ public class TokenTextSplitterTest {
 
 		// Doc 1
 		assertThat(chunks.get(0).getText())
-			.isEqualTo("In the end, writing arises when man realizes that memory is not enough.");
+				.isEqualTo("In the end, writing arises when man realizes that memory is not enough.");
 		// Doc 2
 		assertThat(chunks.get(1).getText()).isEqualTo(
 				"The most oppressive thing about the labyrinth is that you are constantly being forced to choose. It isn’t the lack of an exit, but the abundance of exits that is so disorienting.");
@@ -86,12 +85,12 @@ public class TokenTextSplitterTest {
 		doc2.setContentFormatter(contentFormatter2);
 
 		var tokenTextSplitter = TokenTextSplitter.builder()
-			.withChunkSize(10)
-			.withMinChunkSizeChars(5)
-			.withMinChunkLengthToEmbed(3)
-			.withMaxNumChunks(50)
-			.withKeepSeparator(true)
-			.build();
+				.withChunkSize(10)
+				.withMinChunkSizeChars(5)
+				.withMinChunkLengthToEmbed(3)
+				.withMaxNumChunks(50)
+				.withKeepSeparator(true)
+				.build();
 
 		var chunks = tokenTextSplitter.apply(List.of(doc1, doc2));
 
@@ -131,10 +130,10 @@ public class TokenTextSplitterTest {
 	@Test
 	public void testSmallTextWithPunctuationShouldNotSplit() {
 		TokenTextSplitter splitter = TokenTextSplitter.builder()
-			.withKeepSeparator(true)
-			.withChunkSize(10000)
-			.withMinChunkSizeChars(10)
-			.build();
+				.withKeepSeparator(true)
+				.withChunkSize(10000)
+				.withMinChunkSizeChars(10)
+				.build();
 
 		Document testDoc = new Document(
 				"Hi. This is a small text without one of the ending chars. It is splitted into multiple chunks but shouldn't");
@@ -151,10 +150,10 @@ public class TokenTextSplitterTest {
 		// Verify that punctuation-based splitting still works when text exceeds chunk
 		// size
 		TokenTextSplitter splitter = TokenTextSplitter.builder()
-			.withKeepSeparator(true)
-			.withChunkSize(15)
-			.withMinChunkSizeChars(10)
-			.build();
+				.withKeepSeparator(true)
+				.withChunkSize(15)
+				.withMinChunkSizeChars(10)
+				.build();
 
 		// This text has multiple sentences and will exceed 15 tokens
 		Document testDoc = new Document(
@@ -183,13 +182,13 @@ public class TokenTextSplitterTest {
 		doc2.setContentFormatter(contentFormatter2);
 
 		var tokenTextSplitter = TokenTextSplitter.builder()
-			.withChunkSize(10)
-			.withMinChunkSizeChars(5)
-			.withMinChunkLengthToEmbed(3)
-			.withMaxNumChunks(50)
-			.withKeepSeparator(true)
-			.withPunctuationMarks(List.of('。', '？', '！'))
-			.build();
+				.withChunkSize(10)
+				.withMinChunkSizeChars(5)
+				.withMinChunkLengthToEmbed(3)
+				.withMaxNumChunks(50)
+				.withKeepSeparator(true)
+				.withPunctuationMarks(List.of('。', '？', '！'))
+				.build();
 
 		var chunks = tokenTextSplitter.apply(List.of(doc1, doc2));
 
@@ -211,8 +210,8 @@ public class TokenTextSplitterTest {
 	@Test
 	public void testTokenTextSplitterWithNullEncodingTypeThrows() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> TokenTextSplitter.builder().withEncodingType(null).build())
-			.withMessage("encodingType must not be null");
+				.isThrownBy(() -> TokenTextSplitter.builder().withEncodingType(null).build())
+				.withMessage("encodingType must not be null");
 	}
 
 	@Test
@@ -232,13 +231,13 @@ public class TokenTextSplitterTest {
 		doc2.setContentFormatter(contentFormatter2);
 
 		var cl100kSplitter = TokenTextSplitter.builder()
-			.withEncodingType(EncodingType.CL100K_BASE)
-			.withChunkSize(10)
-			.withMinChunkSizeChars(5)
-			.withMinChunkLengthToEmbed(3)
-			.withMaxNumChunks(50)
-			.withKeepSeparator(true)
-			.build();
+				.withEncodingType(EncodingType.CL100K_BASE)
+				.withChunkSize(10)
+				.withMinChunkSizeChars(5)
+				.withMinChunkLengthToEmbed(3)
+				.withMaxNumChunks(50)
+				.withKeepSeparator(true)
+				.build();
 
 		var cl100kChunks = cl100kSplitter.apply(List.of(doc1, doc2));
 
@@ -250,20 +249,20 @@ public class TokenTextSplitterTest {
 
 		// Doc 2
 		assertThat(cl100kChunks.get(2).getText())
-			.isEqualTo("The most oppressive thing about the labyrinth is that you");
+				.isEqualTo("The most oppressive thing about the labyrinth is that you");
 		assertThat(cl100kChunks.get(3).getText()).isEqualTo("are constantly being forced to choose.");
 		assertThat(cl100kChunks.get(4).getText()).isEqualTo("It isn't the lack of an exit, but");
 		assertThat(cl100kChunks.get(5).getText()).isEqualTo("the abundance of exits that is so disorienting");
 
 		// P50K_BASE behaves the same as CL100K_BASE for this English input
 		var p50kSplitter = TokenTextSplitter.builder()
-			.withEncodingType(EncodingType.P50K_BASE)
-			.withChunkSize(10)
-			.withMinChunkSizeChars(5)
-			.withMinChunkLengthToEmbed(3)
-			.withMaxNumChunks(50)
-			.withKeepSeparator(true)
-			.build();
+				.withEncodingType(EncodingType.P50K_BASE)
+				.withChunkSize(10)
+				.withMinChunkSizeChars(5)
+				.withMinChunkLengthToEmbed(3)
+				.withMaxNumChunks(50)
+				.withKeepSeparator(true)
+				.build();
 
 		var p50kChunks = p50kSplitter.apply(List.of(doc1, doc2));
 
@@ -280,13 +279,13 @@ public class TokenTextSplitterTest {
 		assertThat(p50kChunks.get(5).getText()).isEqualTo("the abundance of exits that is so disorienting");
 
 		var o200kSplitter = TokenTextSplitter.builder()
-			.withEncodingType(EncodingType.O200K_BASE)
-			.withChunkSize(10)
-			.withMinChunkSizeChars(5)
-			.withMinChunkLengthToEmbed(3)
-			.withMaxNumChunks(50)
-			.withKeepSeparator(true)
-			.build();
+				.withEncodingType(EncodingType.O200K_BASE)
+				.withChunkSize(10)
+				.withMinChunkSizeChars(5)
+				.withMinChunkLengthToEmbed(3)
+				.withMaxNumChunks(50)
+				.withKeepSeparator(true)
+				.build();
 
 		// O200K_BASE has slightly different token boundaries
 		var o200kChunks = o200kSplitter.apply(List.of(doc1, doc2));

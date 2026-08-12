@@ -16,21 +16,20 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import com.openai.azure.AzureOpenAIServiceVersion;
 import com.openai.credential.Credential;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.openai.OpenAiChatModel.ResponseFormat;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.OpenAiChatOptions.AudioParameters;
 import org.springframework.ai.openai.OpenAiChatOptions.StreamOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 /**
  * OpenAI SDK Chat autoconfiguration properties.
@@ -316,34 +315,34 @@ public class OpenAiChatProperties extends AbstractOpenAiProperties {
 
 	public OpenAiChatOptions toOptions() {
 		return OpenAiChatOptions.builder()
-			.model(this.model)
-			.frequencyPenalty(this.frequencyPenalty)
-			.logitBias(this.logitBias)
-			.logprobs(this.logprobs)
-			.topLogprobs(this.topLogprobs)
-			.maxTokens(this.maxTokens)
-			.maxCompletionTokens(this.maxCompletionTokens)
-			.n(this.n)
-			.outputModalities(this.outputModalities)
-			.outputAudio(this.outputAudio)
-			.presencePenalty(this.presencePenalty)
-			.responseFormat(this.responseFormat)
-			.streamOptions(this.streamOptions)
-			.seed(this.seed)
-			.stopSequences(this.stop)
-			.temperature(this.temperature)
-			.topP(this.topP)
-			.toolChoice(this.toolChoice)
-			.user(this.user)
-			.parallelToolCalls(this.parallelToolCalls)
-			.store(this.store)
-			.metadata(this.metadata)
-			.reasoningEffort(this.reasoningEffort)
-			.verbosity(this.verbosity)
-			.serviceTier(this.serviceTier)
-			.promptCacheKey(this.promptCacheKey)
-			.extraBody(this.extraBody)
-			.build();
+				.model(this.model)
+				.frequencyPenalty(this.frequencyPenalty)
+				.logitBias(this.logitBias)
+				.logprobs(this.logprobs)
+				.topLogprobs(this.topLogprobs)
+				.maxTokens(this.maxTokens)
+				.maxCompletionTokens(this.maxCompletionTokens)
+				.n(this.n)
+				.outputModalities(this.outputModalities)
+				.outputAudio(this.outputAudio)
+				.presencePenalty(this.presencePenalty)
+				.responseFormat(this.responseFormat)
+				.streamOptions(this.streamOptions)
+				.seed(this.seed)
+				.stopSequences(this.stop)
+				.temperature(this.temperature)
+				.topP(this.topP)
+				.toolChoice(this.toolChoice)
+				.user(this.user)
+				.parallelToolCalls(this.parallelToolCalls)
+				.store(this.store)
+				.metadata(this.metadata)
+				.reasoningEffort(this.reasoningEffort)
+				.verbosity(this.verbosity)
+				.serviceTier(this.serviceTier)
+				.promptCacheKey(this.promptCacheKey)
+				.extraBody(this.extraBody)
+				.build();
 	}
 
 	private Options options = new Options();

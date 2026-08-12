@@ -16,14 +16,13 @@
 
 package org.springframework.ai.vectorstore.observation;
 
-import java.util.List;
-
 import io.micrometer.observation.Observation;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * Context used to store metadata for vector store operations.

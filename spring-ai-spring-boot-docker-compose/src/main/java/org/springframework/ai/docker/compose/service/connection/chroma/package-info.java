@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.docker.compose.service.connection.chroma;
 
-import org.jspecify.annotations.NullMarked;

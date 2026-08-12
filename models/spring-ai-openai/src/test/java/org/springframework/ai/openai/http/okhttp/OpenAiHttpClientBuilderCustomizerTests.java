@@ -16,9 +16,6 @@
 
 package org.springframework.ai.openai.http.okhttp;
 
-import java.time.Duration;
-import java.util.List;
-
 import com.openai.client.OpenAIClient;
 import com.openai.models.ChatModel;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
@@ -27,8 +24,10 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.openai.setup.OpenAiSetup;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,20 +49,20 @@ class OpenAiHttpClientBuilderCustomizerTests {
 			server.start();
 
 			OpenAiHttpClientBuilderCustomizer customizer = builder -> builder.interceptor(chain -> chain
-				.proceed(chain.request().newBuilder().header("Authorization", "Bearer oauth2-token").build()));
+					.proceed(chain.request().newBuilder().header("Authorization", "Bearer oauth2-token").build()));
 
 			OpenAIClient client = OpenAiSetup.setupSyncClient(server.url("/v1").toString(), "", null, null, null, null,
 					false, false, "gpt-4", Duration.ofSeconds(10), 0, null, null, ObservationRegistry.NOOP, null,
 					List.of(customizer));
 
 			client.chat()
-				.completions()
-				.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
+					.completions()
+					.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("Authorization"))
-				.as("User interceptor sets Authorization after the no-auth stripper, so the bearer token is preserved")
-				.isEqualTo("Bearer oauth2-token");
+					.as("User interceptor sets Authorization after the no-auth stripper, so the bearer token is preserved")
+					.isEqualTo("Bearer oauth2-token");
 		}
 	}
 
@@ -74,27 +73,27 @@ class OpenAiHttpClientBuilderCustomizerTests {
 			server.start();
 
 			OpenAiHttpClientBuilderCustomizer customizer = builder -> builder.interceptor(chain -> chain
-				.proceed(chain.request().newBuilder().header("Authorization", "Bearer user-override").build()));
+					.proceed(chain.request().newBuilder().header("Authorization", "Bearer user-override").build()));
 
 			OpenAIClient client = OpenAiSetup.setupSyncClient(server.url("/v1").toString(), "real-api-key", null, null,
 					null, null, false, false, "gpt-4", Duration.ofSeconds(10), 0, null, null, ObservationRegistry.NOOP,
 					null, List.of(customizer));
 
 			client.chat()
-				.completions()
-				.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
+					.completions()
+					.create(ChatCompletionCreateParams.builder().model(ChatModel.GPT_4).addUserMessage("Hi").build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("Authorization"))
-				.as("User interceptor runs last so it can override the SDK-attached API key header")
-				.isEqualTo("Bearer user-override");
+					.as("User interceptor runs last so it can override the SDK-attached API key header")
+					.isEqualTo("Bearer user-override");
 		}
 	}
 
 	private static MockResponse mockChatCompletion() {
 		return new MockResponse().setResponseCode(200)
-			.setHeader("Content-Type", "application/json")
-			.setBody(CHAT_COMPLETION_RESPONSE);
+				.setHeader("Content-Type", "application/json")
+				.setBody(CHAT_COMPLETION_RESPONSE);
 	}
 
 }

@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chat.messages;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * The AbstractMessage class is an abstract implementation of the Message interface. It
@@ -56,9 +55,10 @@ public abstract class AbstractMessage implements Message {
 	/**
 	 * Create a new AbstractMessage with the given message type, text content, and
 	 * metadata.
+	 *
 	 * @param messageType the message type
 	 * @param textContent the text content
-	 * @param metadata the metadata
+	 * @param metadata    the metadata
 	 */
 	protected AbstractMessage(MessageType messageType, @Nullable String textContent, Map<String, Object> metadata) {
 		Assert.notNull(messageType, "Message type must not be null");
@@ -74,6 +74,7 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Get the content of the message.
+	 *
 	 * @return the content of the message
 	 */
 	@Override
@@ -83,6 +84,7 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Get the metadata of the message.
+	 *
 	 * @return the metadata of the message
 	 */
 	@Override
@@ -92,6 +94,7 @@ public abstract class AbstractMessage implements Message {
 
 	/**
 	 * Get the message type of the message.
+	 *
 	 * @return the message type of the message
 	 */
 	@Override

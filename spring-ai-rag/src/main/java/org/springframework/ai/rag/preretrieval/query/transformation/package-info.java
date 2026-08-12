@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.rag.preretrieval.query.transformation;
 
-import org.jspecify.annotations.NullMarked;

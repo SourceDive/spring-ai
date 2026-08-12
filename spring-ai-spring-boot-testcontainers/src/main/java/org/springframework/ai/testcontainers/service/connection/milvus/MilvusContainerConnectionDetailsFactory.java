@@ -16,11 +16,10 @@
 
 package org.springframework.ai.testcontainers.service.connection.milvus;
 
-import org.testcontainers.milvus.MilvusContainer;
-
 import org.springframework.ai.vectorstore.milvus.autoconfigure.MilvusServiceClientConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.milvus.MilvusContainer;
 
 /**
  * @author Eddú Meléndez

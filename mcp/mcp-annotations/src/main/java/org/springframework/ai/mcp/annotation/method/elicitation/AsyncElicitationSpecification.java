@@ -16,16 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.elicitation;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Function;
+
 public record AsyncElicitationSpecification(String[] clients,
-		Function<ElicitRequest, Mono<ElicitResult>> elicitationHandler) {
+                                            Function<ElicitRequest, Mono<ElicitResult>> elicitationHandler) {
 
 	public AsyncElicitationSpecification {
 		Objects.requireNonNull(clients, "clients must not be null");

@@ -16,9 +16,9 @@
 
 package org.springframework.ai.audio.tts;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Implementation of the {@link TextToSpeechMessage} interface for the text to speech

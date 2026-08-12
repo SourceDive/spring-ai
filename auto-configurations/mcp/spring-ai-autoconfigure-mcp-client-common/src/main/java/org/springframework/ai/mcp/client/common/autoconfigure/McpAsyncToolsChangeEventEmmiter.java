@@ -18,11 +18,10 @@ package org.springframework.ai.mcp.client.common.autoconfigure;
 
 import io.modelcontextprotocol.client.McpClient.AsyncSpec;
 import io.modelcontextprotocol.util.Assert;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.McpToolsChangedEvent;
 import org.springframework.ai.mcp.customizer.McpClientCustomizer;
 import org.springframework.context.ApplicationEventPublisher;
+import reactor.core.publisher.Mono;
 
 /**
  * Emits {@link McpToolsChangedEvent} when the MCP Tools have changed for a given MCP

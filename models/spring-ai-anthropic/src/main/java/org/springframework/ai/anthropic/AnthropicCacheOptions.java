@@ -16,16 +16,15 @@
 
 package org.springframework.ai.anthropic;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.messages.MessageType;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.messages.MessageType;
 
 /**
  * Anthropic cache options for configuring prompt caching behavior with the Anthropic Java
@@ -61,21 +60,21 @@ public class AnthropicCacheOptions {
 	private final boolean cacheToolResults;
 
 	protected AnthropicCacheOptions(@Nullable AnthropicCacheStrategy strategy,
-			@Nullable Function<@Nullable String, Integer> contentLengthFunction,
-			@Nullable Map<MessageType, AnthropicCacheTtl> messageTypeTtl,
-			@Nullable Map<MessageType, Integer> messageTypeMinContentLengths, @Nullable Boolean multiBlockSystemCaching,
-			@Nullable Boolean cacheToolResults) {
+	                                @Nullable Function<@Nullable String, Integer> contentLengthFunction,
+	                                @Nullable Map<MessageType, AnthropicCacheTtl> messageTypeTtl,
+	                                @Nullable Map<MessageType, Integer> messageTypeMinContentLengths, @Nullable Boolean multiBlockSystemCaching,
+	                                @Nullable Boolean cacheToolResults) {
 		this.strategy = (strategy != null ? strategy : AnthropicCacheStrategy.NONE);
 		this.contentLengthFunction = (contentLengthFunction != null ? contentLengthFunction
 				: s -> s != null ? s.length() : 0);
 		this.messageTypeTtl = Stream.of(MessageType.values())
-			.collect(Collectors.toUnmodifiableMap(mt -> mt,
-					mt -> (messageTypeTtl != null && messageTypeTtl.containsKey(mt)) ? messageTypeTtl.get(mt)
-							: AnthropicCacheTtl.FIVE_MINUTES));
+				.collect(Collectors.toUnmodifiableMap(mt -> mt,
+						mt -> (messageTypeTtl != null && messageTypeTtl.containsKey(mt)) ? messageTypeTtl.get(mt)
+								: AnthropicCacheTtl.FIVE_MINUTES));
 		this.messageTypeMinContentLengths = Stream.of(MessageType.values())
-			.collect(Collectors.toUnmodifiableMap(mt -> mt,
-					mt -> (messageTypeMinContentLengths != null && messageTypeMinContentLengths.containsKey(mt))
-							? messageTypeMinContentLengths.get(mt) : DEFAULT_MIN_CONTENT_LENGTH));
+				.collect(Collectors.toUnmodifiableMap(mt -> mt,
+						mt -> (messageTypeMinContentLengths != null && messageTypeMinContentLengths.containsKey(mt))
+								? messageTypeMinContentLengths.get(mt) : DEFAULT_MIN_CONTENT_LENGTH));
 		this.multiBlockSystemCaching = (multiBlockSystemCaching != null ? multiBlockSystemCaching : false);
 		this.cacheToolResults = (cacheToolResults != null ? cacheToolResults : false);
 	}
@@ -111,6 +110,7 @@ public class AnthropicCacheOptions {
 	 * types include tool results, i.e.
 	 * {@link AnthropicCacheStrategy#CONVERSATION_HISTORY}; it is a no-op for strategies
 	 * that only target tool definitions or system messages.
+	 *
 	 * @return {@code true} if tool result caching is enabled
 	 * @since 2.0.0
 	 */
@@ -197,6 +197,7 @@ public class AnthropicCacheOptions {
 		 * Place a {@code cache_control} breakpoint on the last tool result message of the
 		 * request so that tool outputs are cached across tool-calling rounds. Takes
 		 * effect with {@link AnthropicCacheStrategy#CONVERSATION_HISTORY}.
+		 *
 		 * @param cacheToolResults whether to cache tool result messages
 		 * @return this builder
 		 * @since 2.0.0

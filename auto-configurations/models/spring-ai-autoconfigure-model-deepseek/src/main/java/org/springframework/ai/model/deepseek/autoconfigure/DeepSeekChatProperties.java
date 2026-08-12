@@ -16,14 +16,13 @@
 
 package org.springframework.ai.model.deepseek.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.deepseek.DeepSeekChatOptions;
 import org.springframework.ai.deepseek.api.ResponseFormat;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * Configuration properties for DeepSeek chat client.
@@ -175,17 +174,17 @@ public class DeepSeekChatProperties extends DeepSeekParentProperties {
 
 	public DeepSeekChatOptions toOptions() {
 		return DeepSeekChatOptions.builder()
-			.model(this.model)
-			.frequencyPenalty(this.frequencyPenalty)
-			.maxTokens(this.maxTokens)
-			.presencePenalty(this.presencePenalty)
-			.responseFormat(this.responseFormat)
-			.stop(this.stop)
-			.temperature(this.temperature)
-			.topP(this.topP)
-			.logprobs(this.logprobs)
-			.topLogprobs(this.topLogprobs)
-			.build();
+				.model(this.model)
+				.frequencyPenalty(this.frequencyPenalty)
+				.maxTokens(this.maxTokens)
+				.presencePenalty(this.presencePenalty)
+				.responseFormat(this.responseFormat)
+				.stop(this.stop)
+				.temperature(this.temperature)
+				.topP(this.topP)
+				.logprobs(this.logprobs)
+				.topLogprobs(this.topLogprobs)
+				.build();
 	}
 
 	private Options options = new Options();

@@ -16,27 +16,19 @@
 
 package org.springframework.ai.vectorstore.redis;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.redis.RedisVectorStore.MetadataField;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Julien Ruaux
@@ -52,7 +44,7 @@ class RedisFilterExpressionConverterTests {
 	void testEQ() {
 		// country == "BG"
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("country"))
-			.convertExpression(new Expression(EQ, new Key("country"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("@country:{BG}");
 	}
 
@@ -61,8 +53,8 @@ class RedisFilterExpressionConverterTests {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("genre"),
 				RedisVectorStore.MetadataField.numeric("year"))
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("@genre:{drama} @year:[2020 inf]");
 	}
 
@@ -79,9 +71,9 @@ class RedisFilterExpressionConverterTests {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = converter(RedisVectorStore.MetadataField.numeric("year"),
 				RedisVectorStore.MetadataField.tag("country"), RedisVectorStore.MetadataField.tag("city"))
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Group(new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia"))))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Group(new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia"))))));
 		assertThat(vectorExpr).isEqualTo("@year:[2020 inf] | (@country:{BG} -@city:{Sofia})");
 	}
 
@@ -90,10 +82,10 @@ class RedisFilterExpressionConverterTests {
 		// (year >= 2020 OR country == "BG") AND city NIN ["Sofia", "Plovdiv"]
 		String vectorExpr = converter(RedisVectorStore.MetadataField.numeric("year"),
 				RedisVectorStore.MetadataField.tag("country"), RedisVectorStore.MetadataField.tag("city"))
-			.convertExpression(new Expression(AND,
-					new Group(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-							new Expression(EQ, new Key("country"), new Value("BG")))),
-					new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv")))));
+				.convertExpression(new Expression(AND,
+						new Group(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+								new Expression(EQ, new Key("country"), new Value("BG")))),
+						new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv")))));
 		assertThat(vectorExpr).isEqualTo("(@year:[2020 inf] | @country:{BG}) -@city:{Sofia | Plovdiv}");
 	}
 
@@ -102,10 +94,10 @@ class RedisFilterExpressionConverterTests {
 		// isOpen == true AND year >= 2020 AND country IN ["BG", "NL", "US"]
 		String vectorExpr = converter(RedisVectorStore.MetadataField.numeric("year"),
 				RedisVectorStore.MetadataField.tag("country"), RedisVectorStore.MetadataField.tag("isOpen"))
-			.convertExpression(new Expression(AND,
-					new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
-							new Expression(GTE, new Key("year"), new Value(2020))),
-					new Expression(IN, new Key("country"), new Value(List.of("BG", "NL", "US")))));
+				.convertExpression(new Expression(AND,
+						new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
+								new Expression(GTE, new Key("year"), new Value(2020))),
+						new Expression(IN, new Key("country"), new Value(List.of("BG", "NL", "US")))));
 
 		assertThat(vectorExpr).isEqualTo("@isOpen:{true} @year:[2020 inf] @country:{BG | NL | US}");
 	}
@@ -114,8 +106,8 @@ class RedisFilterExpressionConverterTests {
 	void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = converter(RedisVectorStore.MetadataField.numeric("temperature"))
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo("@temperature:[-15.6 inf] @temperature:[-inf 20.13]");
 	}
@@ -123,22 +115,22 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testComplexIdentifiers() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("country 1 2 3"))
-			.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("@country 1 2 3:{BG}");
 
 		vectorExpr = converter(RedisVectorStore.MetadataField.tag("\"country 1 2 3\""))
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("@\"country 1 2 3\":{BG}");
 
 		vectorExpr = converter(RedisVectorStore.MetadataField.tag("'country 1 2 3'"))
-			.convertExpression(new Expression(EQ, new Key("'country 1 2 3'"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("'country 1 2 3'"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("@'country 1 2 3':{BG}");
 	}
 
 	@Test
 	void testSpecialCharactersInValues() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("description"))
-			.convertExpression(new Expression(EQ, new Key("description"), new Value("test@value{with}special|chars")));
+				.convertExpression(new Expression(EQ, new Key("description"), new Value("test@value{with}special|chars")));
 
 		assertThat(vectorExpr).isEqualTo("@description:{test@value\\{with\\}special\\|chars}");
 	}
@@ -164,7 +156,7 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testTagValueWithPipe() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("status"))
-			.convertExpression(new Expression(EQ, new Key("status"), new Value("active|inactive")));
+				.convertExpression(new Expression(EQ, new Key("status"), new Value("active|inactive")));
 
 		assertThat(vectorExpr).isEqualTo("@status:{active\\|inactive}");
 	}
@@ -172,7 +164,7 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testTagValueWithHyphen() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("type"))
-			.convertExpression(new Expression(EQ, new Key("type"), new Value("non-fiction")));
+				.convertExpression(new Expression(EQ, new Key("type"), new Value("non-fiction")));
 
 		assertThat(vectorExpr).isEqualTo("@type:{non\\-fiction}");
 	}
@@ -180,7 +172,7 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testTextValueWithSpecialChars() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.text("description"))
-			.convertExpression(new Expression(EQ, new Key("description"), new Value("hello@world.com")));
+				.convertExpression(new Expression(EQ, new Key("description"), new Value("hello@world.com")));
 
 		assertThat(vectorExpr).isEqualTo("@description:(hello\\@world\\.com)");
 	}
@@ -188,7 +180,7 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testEmptyStringValues() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("status"))
-			.convertExpression(new Expression(EQ, new Key("status"), new Value("")));
+				.convertExpression(new Expression(EQ, new Key("status"), new Value("")));
 
 		assertThat(vectorExpr).isEqualTo("@status:{}");
 	}
@@ -196,7 +188,7 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testSingleItemInList() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("status"))
-			.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
+				.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
 
 		assertThat(vectorExpr).isEqualTo("@status:{active}");
 	}
@@ -204,7 +196,7 @@ class RedisFilterExpressionConverterTests {
 	@Test
 	void testWhitespaceInFieldNames() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("value with spaces"))
-			.convertExpression(new Expression(EQ, new Key("value with spaces"), new Value("test")));
+				.convertExpression(new Expression(EQ, new Key("value with spaces"), new Value("test")));
 
 		assertThat(vectorExpr).isEqualTo("@value with spaces:{test}");
 	}
@@ -215,9 +207,9 @@ class RedisFilterExpressionConverterTests {
 	void unknownKeyIsRejected() {
 		// A key not present in the configured metadata fields must be rejected
 		assertThatThrownBy(() -> converter(RedisVectorStore.MetadataField.tag("country"))
-			.convertExpression(new Expression(EQ, new Key("unknown_field"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name: unknown_field");
+				.convertExpression(new Expression(EQ, new Key("unknown_field"), new Value("v"))))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name: unknown_field");
 	}
 
 	@Test
@@ -225,40 +217,40 @@ class RedisFilterExpressionConverterTests {
 		// Malicious key attempting to inject query syntax is rejected because
 		// it is not in the configured metadata fields
 		assertThatThrownBy(() -> converter(RedisVectorStore.MetadataField.tag("category"))
-			.convertExpression(new Expression(EQ, new Key("category:{evil} @secret"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.convertExpression(new Expression(EQ, new Key("category:{evil} @secret"), new Value("v"))))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
 	void keyWithColonInjectionIsRejected() {
 		assertThatThrownBy(() -> converter(RedisVectorStore.MetadataField.tag("field"))
-			.convertExpression(new Expression(EQ, new Key("field:evil"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.convertExpression(new Expression(EQ, new Key("field:evil"), new Value("v"))))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
 	void quotedKeyValidated() {
 		String vectorExpr = converter(RedisVectorStore.MetadataField.tag("'country'"))
-			.convertExpression(new Expression(EQ, new Key("'country'"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("'country'"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("@'country':{BG}");
 	}
 
 	@Test
 	void quotedKeyNotInWhitelistIsRejected() {
 		assertThatThrownBy(() -> converter(RedisVectorStore.MetadataField.tag("country"))
-			.convertExpression(new Expression(EQ, new Key("'unknown'"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name: 'unknown'");
+				.convertExpression(new Expression(EQ, new Key("'unknown'"), new Value("v"))))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name: 'unknown'");
 	}
 
 	@Test
 	void numericInjectionIsRejected() {
 		assertThatThrownBy(() -> converter(RedisVectorStore.MetadataField.numeric("year"))
-			.convertExpression(new Expression(EQ, new Key("year"), new Value("2020] @admin:{true"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Numeric value must be a Number");
+				.convertExpression(new Expression(EQ, new Key("year"), new Value("2020] @admin:{true"))))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Numeric value must be a Number");
 	}
 
 }

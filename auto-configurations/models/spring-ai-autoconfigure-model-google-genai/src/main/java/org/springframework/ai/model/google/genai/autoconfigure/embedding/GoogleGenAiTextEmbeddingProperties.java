@@ -78,11 +78,11 @@ public class GoogleGenAiTextEmbeddingProperties {
 
 	public GoogleGenAiTextEmbeddingOptions toOptions() {
 		return GoogleGenAiTextEmbeddingOptions.builder()
-			.model(this.model)
-			.taskType(this.taskType)
-			.dimensions(this.dimensions)
-			.title(this.title)
-			.build();
+				.model(this.model)
+				.taskType(this.taskType)
+				.dimensions(this.dimensions)
+				.title(this.title)
+				.build();
 	}
 
 	private Options options = new Options();

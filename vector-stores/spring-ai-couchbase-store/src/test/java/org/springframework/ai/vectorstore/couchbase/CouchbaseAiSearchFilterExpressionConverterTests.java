@@ -16,10 +16,7 @@
 
 package org.springframework.ai.vectorstore.couchbase;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
@@ -27,16 +24,10 @@ import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * Tests for {@link CouchbaseAiSearchFilterExpressionConverter}.
@@ -54,8 +45,8 @@ class CouchbaseAiSearchFilterExpressionConverterTests {
 	@Test
 	void testEqAndGte() {
 		String expr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(expr).isEqualTo("metadata.`genre` == \"drama\" AND metadata.`year` >= 2020");
 	}
 
@@ -69,11 +60,11 @@ class CouchbaseAiSearchFilterExpressionConverterTests {
 	@Test
 	void testNe() {
 		String expr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(expr)
-			.isEqualTo("metadata.`year` >= 2020 OR metadata.`country` == \"BG\" AND metadata.`city` != \"Sofia\"");
+				.isEqualTo("metadata.`year` >= 2020 OR metadata.`country` == \"BG\" AND metadata.`city` != \"Sofia\"");
 	}
 
 	@Test
@@ -89,16 +80,16 @@ class CouchbaseAiSearchFilterExpressionConverterTests {
 	@Test
 	void testBoolean() {
 		String expr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(expr).isEqualTo("metadata.`isOpen` == true AND metadata.`year` >= 2020");
 	}
 
 	@Test
 	void testDecimal() {
 		String expr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 		assertThat(expr).isEqualTo("metadata.`temperature` >= -15.6 AND metadata.`temperature` <= 20.13");
 	}
 
@@ -132,7 +123,7 @@ class CouchbaseAiSearchFilterExpressionConverterTests {
 	@Test
 	void metadataKeyWithInjectionPayloadIsContained() {
 		String expr = this.converter
-			.convertExpression(new Expression(EQ, new Key("country` OR 1=1 --"), new Value("x")));
+				.convertExpression(new Expression(EQ, new Key("country` OR 1=1 --"), new Value("x")));
 		assertThat(expr).isEqualTo("metadata.`country`` OR 1=1 --` == \"x\"");
 		// The backtick in the key is escaped, so the injection payload stays inside
 		// the identifier

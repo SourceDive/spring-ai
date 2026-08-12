@@ -16,14 +16,13 @@
 
 package org.springframework.ai.deepseek;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.messages.AssistantMessage.ToolCall;
+import org.springframework.ai.content.Media;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.messages.AssistantMessage.ToolCall;
-import org.springframework.ai.content.Media;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -50,8 +49,8 @@ class DeepSeekAssistantMessageTests {
 		String content = "Hello, world!";
 		String reasoningContent = "This is my reasoning";
 		DeepSeekAssistantMessage message = new DeepSeekAssistantMessage.Builder().content(content)
-			.reasoningContent(reasoningContent)
-			.build();
+				.reasoningContent(reasoningContent)
+				.build();
 
 		assertThat(message.getText()).isEqualTo(content);
 		assertThat(message.getReasoningContent()).isEqualTo(reasoningContent);
@@ -66,8 +65,8 @@ class DeepSeekAssistantMessageTests {
 		properties.put("key2", 123);
 
 		DeepSeekAssistantMessage message = new DeepSeekAssistantMessage.Builder().content(content)
-			.properties(properties)
-			.build();
+				.properties(properties)
+				.build();
 
 		assertThat(message.getText()).isEqualTo(content);
 		assertThat(message.getMetadata()).containsAllEntriesOf(properties);
@@ -84,9 +83,9 @@ class DeepSeekAssistantMessageTests {
 		List<ToolCall> toolCalls = List.of(new ToolCall("1", "function", "myFunction", "{}"));
 
 		DeepSeekAssistantMessage message = new DeepSeekAssistantMessage.Builder().content(content)
-			.properties(properties)
-			.toolCalls(toolCalls)
-			.build();
+				.properties(properties)
+				.toolCalls(toolCalls)
+				.build();
 
 		assertThat(message.getText()).isEqualTo(content);
 		assertThat(message.getMetadata()).containsAllEntriesOf(properties);
@@ -105,11 +104,11 @@ class DeepSeekAssistantMessageTests {
 		List<ToolCall> toolCalls = List.of(new ToolCall("1", "function", "myFunction", "{}"));
 
 		DeepSeekAssistantMessage message = new DeepSeekAssistantMessage.Builder().content(content)
-			.reasoningContent(reasoningContent)
-			.properties(properties)
-			.toolCalls(toolCalls)
-			.prefix(prefix)
-			.build();
+				.reasoningContent(reasoningContent)
+				.properties(properties)
+				.toolCalls(toolCalls)
+				.prefix(prefix)
+				.build();
 
 		assertThat(message.getText()).isEqualTo(content);
 		assertThat(message.getReasoningContent()).isEqualTo(reasoningContent);
@@ -171,8 +170,8 @@ class DeepSeekAssistantMessageTests {
 	@Test
 	public void testToString() {
 		DeepSeekAssistantMessage message = new DeepSeekAssistantMessage.Builder().content("content")
-			.reasoningContent("reasoning")
-			.build();
+				.reasoningContent("reasoning")
+				.build();
 		message.setPrefix(true);
 
 		assertThatNoException().isThrownBy(message::toString);
@@ -187,12 +186,12 @@ class DeepSeekAssistantMessageTests {
 
 		DeepSeekAssistantMessage.Builder builder = new DeepSeekAssistantMessage.Builder();
 		DeepSeekAssistantMessage message = builder.content("content")
-			.reasoningContent("reasoning")
-			.prefix(true)
-			.properties(properties)
-			.toolCalls(toolCalls)
-			.media(media)
-			.build();
+				.reasoningContent("reasoning")
+				.prefix(true)
+				.properties(properties)
+				.toolCalls(toolCalls)
+				.media(media)
+				.build();
 
 		assertThat(message.getText()).isEqualTo("content");
 		assertThat(message.getReasoningContent()).isEqualTo("reasoning");

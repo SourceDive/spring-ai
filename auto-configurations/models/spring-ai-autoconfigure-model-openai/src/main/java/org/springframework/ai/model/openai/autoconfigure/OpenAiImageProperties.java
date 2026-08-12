@@ -126,16 +126,16 @@ public class OpenAiImageProperties extends AbstractOpenAiProperties {
 
 	public OpenAiImageOptions toOptions() {
 		return OpenAiImageOptions.builder()
-			.model(this.model)
-			.n(this.n)
-			.width(this.width)
-			.height(this.height)
-			.responseFormat(this.responseFormat)
-			.style(this.style)
-			.user(this.user)
-			.quality(this.quality)
-			.size(this.size)
-			.build();
+				.model(this.model)
+				.n(this.n)
+				.width(this.width)
+				.height(this.height)
+				.responseFormat(this.responseFormat)
+				.style(this.style)
+				.user(this.user)
+				.quality(this.quality)
+				.size(this.size)
+				.build();
 	}
 
 	private Options options = new Options();

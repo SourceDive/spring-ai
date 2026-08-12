@@ -31,4 +31,3 @@
 @NullMarked
 package org.springframework.ai.chat.evaluation;
 
-import org.jspecify.annotations.NullMarked;

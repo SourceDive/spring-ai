@@ -16,14 +16,13 @@
 
 package org.springframework.ai.testcontainers.service.connection.docker;
 
-import java.util.Map;
-
-import org.testcontainers.containers.DockerMcpGatewayContainer;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.McpSseClientConnectionDetails;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpSseClientProperties;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.containers.DockerMcpGatewayContainer;
+
+import java.util.Map;
 
 /**
  * @author Eddú Meléndez

@@ -16,17 +16,16 @@
 
 package org.springframework.ai.chat.evaluation;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.evaluation.EvaluationRequest;
 import org.springframework.ai.evaluation.EvaluationResponse;
 import org.springframework.ai.evaluation.Evaluator;
 import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Evaluates the relevancy of a response to a query based on the context provided.
@@ -74,7 +73,7 @@ public class RelevancyEvaluator implements Evaluator {
 		var context = doGetSupportingData(evaluationRequest);
 
 		var userMessage = this.promptTemplate
-			.render(Map.of("query", evaluationRequest.getUserText(), "response", response, "context", context));
+				.render(Map.of("query", evaluationRequest.getUserText(), "response", response, "context", context));
 
 		String evaluationResponse = this.chatClientBuilder.build().prompt().user(userMessage).call().content();
 

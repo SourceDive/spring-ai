@@ -16,9 +16,6 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServer;
@@ -26,8 +23,6 @@ import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpServerTransportProviderBase;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration;
@@ -36,6 +31,10 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.test.util.ReflectionTestUtils;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,9 +44,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class McpToolWithStdioIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
-				McpServerJsonMapperAutoConfiguration.class, McpServerAnnotationScannerAutoConfiguration.class,
-				McpServerSpecificationFactoryAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpServerAutoConfiguration.class,
+					McpServerJsonMapperAutoConfiguration.class, McpServerAnnotationScannerAutoConfiguration.class,
+					McpServerSpecificationFactoryAutoConfiguration.class));
 
 	/**
 	 * Verifies that a configured JsonMapper bean is created for MCP server operations.
@@ -66,7 +65,7 @@ public class McpToolWithStdioIT {
 
 			String nullValueJson = jsonMapper.writeValueAsString(new BeanWithNull());
 			assertThat(nullValueJson).doesNotContain("null"); // Should exclude null
-																// values
+			// values
 		});
 	}
 
@@ -78,7 +77,7 @@ public class McpToolWithStdioIT {
 		this.contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(McpServerTransportProviderBase.class);
 			assertThat(context.getBean(McpServerTransportProviderBase.class))
-				.isInstanceOf(StdioServerTransportProvider.class);
+					.isInstanceOf(StdioServerTransportProvider.class);
 
 			// Verify that the MCP server was created successfully
 			assertThat(context).hasSingleBean(McpSyncServer.class);
@@ -104,7 +103,7 @@ public class McpToolWithStdioIT {
 
 			// Verify that tools were registered
 			CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
-				.getField(asyncServer, "tools");
+					.getField(asyncServer, "tools");
 
 			assertThat(tools).isNotEmpty();
 			assertThat(tools).hasSize(3);
@@ -148,7 +147,7 @@ public class McpToolWithStdioIT {
 			McpAsyncServer asyncServer = (McpAsyncServer) ReflectionTestUtils.getField(syncServer, "asyncServer");
 
 			CopyOnWriteArrayList<AsyncToolSpecification> tools = (CopyOnWriteArrayList<AsyncToolSpecification>) ReflectionTestUtils
-				.getField(asyncServer, "tools");
+					.getField(asyncServer, "tools");
 
 			assertThat(tools).hasSize(1);
 
@@ -169,19 +168,19 @@ public class McpToolWithStdioIT {
 
 		@McpTool(name = "add", description = "Add two numbers")
 		public int add(@McpToolParam(description = "First number", required = true) int a,
-				@McpToolParam(description = "Second number", required = true) int b) {
+		               @McpToolParam(description = "Second number", required = true) int b) {
 			return a + b;
 		}
 
 		@McpTool(name = "subtract", description = "Subtract two numbers")
 		public int subtract(@McpToolParam(description = "First number", required = true) int a,
-				@McpToolParam(description = "Second number", required = true) int b) {
+		                    @McpToolParam(description = "Second number", required = true) int b) {
 			return a - b;
 		}
 
 		@McpTool(name = "multiply", description = "Multiply two numbers")
 		public int multiply(@McpToolParam(description = "First number", required = true) int a,
-				@McpToolParam(description = "Second number", required = true) int b) {
+		                    @McpToolParam(description = "Second number", required = true) int b) {
 			return a * b;
 		}
 
@@ -192,7 +191,7 @@ public class McpToolWithStdioIT {
 
 		@McpTool(name = "processData", description = "Process complex data")
 		public String processData(@McpToolParam(description = "Input data", required = true) String input,
-				@McpToolParam(description = "Options", required = false) String options) {
+		                          @McpToolParam(description = "Options", required = false) String options) {
 			return "Processed: " + input + " with options: " + options;
 		}
 

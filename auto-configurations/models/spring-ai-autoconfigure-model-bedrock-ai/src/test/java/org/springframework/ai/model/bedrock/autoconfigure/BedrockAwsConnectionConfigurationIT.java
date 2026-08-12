@@ -16,11 +16,13 @@
 
 package org.springframework.ai.model.bedrock.autoconfigure;
 
-import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
@@ -28,12 +30,9 @@ import software.amazon.awssdk.profiles.ProfileFile;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigurations;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,67 +47,67 @@ public class BedrockAwsConnectionConfigurationIT {
 	@Test
 	public void autoConfigureAWSCredentialAndRegionProvider() {
 		BedrockTestUtils.getContextRunner()
-			.withConfiguration(AutoConfigurations.of(TestAutoConfiguration.class))
-			.run(context -> {
-				var awsCredentialsProvider = context.getBean(AwsCredentialsProvider.class);
-				var awsRegionProvider = context.getBean(AwsRegionProvider.class);
+				.withConfiguration(AutoConfigurations.of(TestAutoConfiguration.class))
+				.run(context -> {
+					var awsCredentialsProvider = context.getBean(AwsCredentialsProvider.class);
+					var awsRegionProvider = context.getBean(AwsRegionProvider.class);
 
-				assertThat(awsCredentialsProvider).isNotNull();
-				assertThat(awsRegionProvider).isNotNull();
+					assertThat(awsCredentialsProvider).isNotNull();
+					assertThat(awsRegionProvider).isNotNull();
 
-				var credentials = awsCredentialsProvider.resolveCredentials();
-				assertThat(credentials).isNotNull();
-				assertThat(credentials.accessKeyId()).isEqualTo(System.getenv("AWS_ACCESS_KEY_ID"));
-				assertThat(credentials.secretAccessKey()).isEqualTo(System.getenv("AWS_SECRET_ACCESS_KEY"));
+					var credentials = awsCredentialsProvider.resolveCredentials();
+					assertThat(credentials).isNotNull();
+					assertThat(credentials.accessKeyId()).isEqualTo(System.getenv("AWS_ACCESS_KEY_ID"));
+					assertThat(credentials.secretAccessKey()).isEqualTo(System.getenv("AWS_SECRET_ACCESS_KEY"));
 
-				assertThat(awsRegionProvider.getRegion()).isEqualTo(Region.US_EAST_1);
-			});
+					assertThat(awsRegionProvider.getRegion()).isEqualTo(Region.US_EAST_1);
+				});
 	}
 
 	@Test
 	public void autoConfigureWithCustomAWSCredentialAndRegionProvider() {
 		BedrockTestUtils.getContextRunner()
-			.withConfiguration(AutoConfigurations.of(TestAutoConfiguration.class,
-					CustomAwsCredentialsProviderAutoConfiguration.class,
-					CustomAwsRegionProviderAutoConfiguration.class))
-			.run(context -> {
-				var awsCredentialsProvider = context.getBean(AwsCredentialsProvider.class);
-				var awsRegionProvider = context.getBean(AwsRegionProvider.class);
+				.withConfiguration(AutoConfigurations.of(TestAutoConfiguration.class,
+						CustomAwsCredentialsProviderAutoConfiguration.class,
+						CustomAwsRegionProviderAutoConfiguration.class))
+				.run(context -> {
+					var awsCredentialsProvider = context.getBean(AwsCredentialsProvider.class);
+					var awsRegionProvider = context.getBean(AwsRegionProvider.class);
 
-				assertThat(awsCredentialsProvider).isNotNull();
-				assertThat(awsRegionProvider).isNotNull();
+					assertThat(awsCredentialsProvider).isNotNull();
+					assertThat(awsRegionProvider).isNotNull();
 
-				var credentials = awsCredentialsProvider.resolveCredentials();
-				assertThat(credentials).isNotNull();
-				assertThat(credentials.accessKeyId()).isEqualTo("CUSTOM_ACCESS_KEY");
-				assertThat(credentials.secretAccessKey()).isEqualTo("CUSTOM_SECRET_ACCESS_KEY");
+					var credentials = awsCredentialsProvider.resolveCredentials();
+					assertThat(credentials).isNotNull();
+					assertThat(credentials.accessKeyId()).isEqualTo("CUSTOM_ACCESS_KEY");
+					assertThat(credentials.secretAccessKey()).isEqualTo("CUSTOM_SECRET_ACCESS_KEY");
 
-				assertThat(awsRegionProvider.getRegion()).isEqualTo(Region.AWS_GLOBAL);
-			});
+					assertThat(awsRegionProvider.getRegion()).isEqualTo(Region.AWS_GLOBAL);
+				});
 	}
 
 	@Test
 	public void autoConfigureWithCustomAWSProfileCredentialAndRegionProvider() {
 		BedrockTestUtils.getContextRunner()
-			.withConfiguration(AutoConfigurations.of(TestAutoConfiguration.class,
-					CustomAwsProfileCredentialsProviderAutoConfiguration.class,
-					CustomAwsRegionProviderAutoConfiguration.class))
-			.run(context -> {
-				var awsCredentialsProvider = context.getBean(AwsCredentialsProvider.class);
-				var awsRegionProvider = context.getBean(AwsRegionProvider.class);
+				.withConfiguration(AutoConfigurations.of(TestAutoConfiguration.class,
+						CustomAwsProfileCredentialsProviderAutoConfiguration.class,
+						CustomAwsRegionProviderAutoConfiguration.class))
+				.run(context -> {
+					var awsCredentialsProvider = context.getBean(AwsCredentialsProvider.class);
+					var awsRegionProvider = context.getBean(AwsRegionProvider.class);
 
-				assertThat(awsCredentialsProvider).isNotNull();
-				assertThat(awsRegionProvider).isNotNull();
+					assertThat(awsCredentialsProvider).isNotNull();
+					assertThat(awsRegionProvider).isNotNull();
 
-				assertThat(awsCredentialsProvider).isInstanceOf(ProfileCredentialsProvider.class);
-				// aws sdk2.x does not provide method to get profileName, use reflection
-				// to get
-				Field field = ProfileCredentialsProvider.class.getDeclaredField("profileName");
-				field.setAccessible(true);
-				assertThat(field.get(awsCredentialsProvider)).isEqualTo("CUSTOM_PROFILE_NAME");
+					assertThat(awsCredentialsProvider).isInstanceOf(ProfileCredentialsProvider.class);
+					// aws sdk2.x does not provide method to get profileName, use reflection
+					// to get
+					Field field = ProfileCredentialsProvider.class.getDeclaredField("profileName");
+					field.setAccessible(true);
+					assertThat(field.get(awsCredentialsProvider)).isEqualTo("CUSTOM_PROFILE_NAME");
 
-				assertThat(awsRegionProvider.getRegion()).isEqualTo(Region.AWS_GLOBAL);
-			});
+					assertThat(awsRegionProvider.getRegion()).isEqualTo(Region.AWS_GLOBAL);
+				});
 	}
 
 	@EnableConfigurationProperties(BedrockAwsConnectionProperties.class)
@@ -132,16 +131,16 @@ public class BedrockAwsConnectionConfigurationIT {
 				ProfileFile.Aggregator aggregator = ProfileFile.aggregator();
 				if (hasCredentials) {
 					ProfileFile profileFile = ProfileFile.builder()
-						.content(Paths.get(credentialsPath))
-						.type(ProfileFile.Type.CREDENTIALS)
-						.build();
+							.content(Paths.get(credentialsPath))
+							.type(ProfileFile.Type.CREDENTIALS)
+							.build();
 					aggregator.addFile(profileFile);
 				}
 				if (hasConfig) {
 					ProfileFile configFile = ProfileFile.builder()
-						.content(Paths.get(configurationPath))
-						.type(ProfileFile.Type.CONFIGURATION)
-						.build();
+							.content(Paths.get(configurationPath))
+							.type(ProfileFile.Type.CONFIGURATION)
+							.build();
 					aggregator.addFile(configFile);
 				}
 				ProfileFile aggregatedProfileFile = aggregator.build();

@@ -16,10 +16,6 @@
 
 package org.springframework.ai.anthropic.http.okhttp;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.models.messages.MessageCreateParams;
 import com.anthropic.models.messages.Model;
@@ -28,11 +24,14 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.anthropic.AnthropicSetup;
 import org.springframework.ai.chat.prompt.Prompt;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,16 +59,16 @@ class AnthropicHttpClientBuilderCustomizerTests {
 					Duration.ofSeconds(10), 0, null, null, ObservationRegistry.NOOP, null, null, List.of(customizer));
 
 			client.messages()
-				.create(MessageCreateParams.builder()
-					.model(Model.CLAUDE_HAIKU_4_5)
-					.maxTokens(10)
-					.addUserMessage("Hi")
-					.build());
+					.create(MessageCreateParams.builder()
+							.model(Model.CLAUDE_HAIKU_4_5)
+							.maxTokens(10)
+							.addUserMessage("Hi")
+							.build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("x-api-key"))
-				.as("User interceptor runs last so it can override the API key header")
-				.isEqualTo("custom-token");
+					.as("User interceptor runs last so it can override the API key header")
+					.isEqualTo("custom-token");
 		}
 	}
 
@@ -80,24 +79,24 @@ class AnthropicHttpClientBuilderCustomizerTests {
 			server.start();
 
 			AnthropicHttpClientBuilderCustomizer first = builder -> builder
-				.interceptor(chain -> chain.proceed(chain.request().newBuilder().header("x-custom", "first").build()));
+					.interceptor(chain -> chain.proceed(chain.request().newBuilder().header("x-custom", "first").build()));
 			AnthropicHttpClientBuilderCustomizer second = builder -> builder
-				.interceptor(chain -> chain.proceed(chain.request().newBuilder().header("x-custom", "second").build()));
+					.interceptor(chain -> chain.proceed(chain.request().newBuilder().header("x-custom", "second").build()));
 
 			AnthropicClient client = AnthropicSetup.setupSyncClient(server.url("/").toString(), "api-key",
 					Duration.ofSeconds(10), 0, null, null, ObservationRegistry.NOOP, null, null,
 					List.of(first, second));
 
 			client.messages()
-				.create(MessageCreateParams.builder()
-					.model(Model.CLAUDE_HAIKU_4_5)
-					.maxTokens(10)
-					.addUserMessage("Hi")
-					.build());
+					.create(MessageCreateParams.builder()
+							.model(Model.CLAUDE_HAIKU_4_5)
+							.maxTokens(10)
+							.addUserMessage("Hi")
+							.build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("x-custom")).as("Second customizer runs after first, so its value wins")
-				.isEqualTo("second");
+					.isEqualTo("second");
 		}
 	}
 
@@ -109,21 +108,21 @@ class AnthropicHttpClientBuilderCustomizerTests {
 
 			AtomicInteger invocations = new AtomicInteger();
 			AnthropicChatModel chatModel = AnthropicChatModel.builder()
-				.options(AnthropicChatOptions.builder()
-					.baseUrl(server.url("/").toString())
-					.apiKey("test-key")
-					.model(Model.CLAUDE_HAIKU_4_5.asString())
-					.maxTokens(10)
-					.build())
-				.observationRegistry(ObservationRegistry.NOOP)
-				.httpClientBuilderCustomizer(builder -> invocations.incrementAndGet())
-				.build();
+					.options(AnthropicChatOptions.builder()
+							.baseUrl(server.url("/").toString())
+							.apiKey("test-key")
+							.model(Model.CLAUDE_HAIKU_4_5.asString())
+							.maxTokens(10)
+							.build())
+					.observationRegistry(ObservationRegistry.NOOP)
+					.httpClientBuilderCustomizer(builder -> invocations.incrementAndGet())
+					.build();
 
 			chatModel.call(new Prompt("Hi"));
 
 			assertThat(invocations.get())
-				.as("customizer must be invoked twice — once for the sync client and once for the async client")
-				.isEqualTo(2);
+					.as("customizer must be invoked twice — once for the sync client and once for the async client")
+					.isEqualTo(2);
 		}
 	}
 
@@ -140,23 +139,23 @@ class AnthropicHttpClientBuilderCustomizerTests {
 					Duration.ofSeconds(10), 0, null, null, ObservationRegistry.NOOP, null, null, List.of(customizer));
 
 			client.messages()
-				.create(MessageCreateParams.builder()
-					.model(Model.CLAUDE_HAIKU_4_5)
-					.maxTokens(10)
-					.addUserMessage("Hi")
-					.build());
+					.create(MessageCreateParams.builder()
+							.model(Model.CLAUDE_HAIKU_4_5)
+							.maxTokens(10)
+							.addUserMessage("Hi")
+							.build());
 
 			RecordedRequest request = server.takeRequest();
 			assertThat(request.getHeader("x-tenant-id"))
-				.as("customizer-registered interceptor must attach the tenant header")
-				.isEqualTo("acme");
+					.as("customizer-registered interceptor must attach the tenant header")
+					.isEqualTo("acme");
 		}
 	}
 
 	private static MockResponse mockMessagesResponse() {
 		return new MockResponse().setResponseCode(200)
-			.setHeader("Content-Type", "application/json")
-			.setBody(MESSAGES_RESPONSE);
+				.setHeader("Content-Type", "application/json")
+				.setBody(MESSAGES_RESPONSE);
 	}
 
 }

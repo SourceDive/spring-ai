@@ -16,24 +16,14 @@
 
 package org.springframework.ai.mistralai;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.MetadataMode;
-import org.springframework.ai.embedding.AbstractEmbeddingModel;
-import org.springframework.ai.embedding.Embedding;
-import org.springframework.ai.embedding.EmbeddingOptions;
-import org.springframework.ai.embedding.EmbeddingRequest;
-import org.springframework.ai.embedding.EmbeddingResponse;
-import org.springframework.ai.embedding.EmbeddingResponseMetadata;
+import org.springframework.ai.embedding.*;
 import org.springframework.ai.embedding.observation.DefaultEmbeddingModelObservationConvention;
 import org.springframework.ai.embedding.observation.EmbeddingModelObservationContext;
 import org.springframework.ai.embedding.observation.EmbeddingModelObservationConvention;
@@ -44,16 +34,20 @@ import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.util.Assert;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Provides the Mistral AI Embedding Model.
  *
- * @see AbstractEmbeddingModel
  * @author Ricken Bazolo
  * @author Thomas Vitale
  * @author Jason Smith
  * @author Nicolas Krier
  * @author Soby Chacko
  * @author Sebastien Deleuze
+ * @see AbstractEmbeddingModel
  * @since 1.0.0
  */
 public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
@@ -90,7 +84,7 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 	private EmbeddingModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
 	public MistralAiEmbeddingModel(MistralAiApi mistralAiApi, MetadataMode metadataMode,
-			MistralAiEmbeddingOptions options, RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	                               MistralAiEmbeddingOptions options, RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		Assert.notNull(mistralAiApi, "mistralAiApi must not be null");
 		Assert.notNull(metadataMode, "metadataMode must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -113,40 +107,40 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 		var apiRequest = createRequest(embeddingRequest);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(MistralAiApi.PROVIDER_NAME)
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider(MistralAiApi.PROVIDER_NAME)
+				.build();
 
 		return EmbeddingModelObservationDocumentation.EMBEDDING_MODEL_OPERATION
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				var embeddingResponseEntity = RetryUtils.execute(this.retryTemplate,
-						() -> this.mistralAiApi.embeddings(apiRequest));
-				MistralAiApi.EmbeddingList<MistralAiApi.Embedding> apiEmbeddingResponse = embeddingResponseEntity
-					.getBody();
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					var embeddingResponseEntity = RetryUtils.execute(this.retryTemplate,
+							() -> this.mistralAiApi.embeddings(apiRequest));
+					MistralAiApi.EmbeddingList<MistralAiApi.Embedding> apiEmbeddingResponse = embeddingResponseEntity
+							.getBody();
 
-				if (apiEmbeddingResponse == null) {
-					if (logger.isWarnEnabled()) {
-						logger.warn("No embeddings returned for request: " + request);
+					if (apiEmbeddingResponse == null) {
+						if (logger.isWarnEnabled()) {
+							logger.warn("No embeddings returned for request: " + request);
+						}
+						return new EmbeddingResponse(List.of());
 					}
-					return new EmbeddingResponse(List.of());
-				}
 
-				var metadata = new EmbeddingResponseMetadata(apiEmbeddingResponse.model(),
-						getDefaultUsage(apiEmbeddingResponse.usage()));
+					var metadata = new EmbeddingResponseMetadata(apiEmbeddingResponse.model(),
+							getDefaultUsage(apiEmbeddingResponse.usage()));
 
-				var embeddings = apiEmbeddingResponse.data()
-					.stream()
-					.map(e -> new Embedding(e.embedding(), e.index()))
-					.toList();
+					var embeddings = apiEmbeddingResponse.data()
+							.stream()
+							.map(e -> new Embedding(e.embedding(), e.index()))
+							.toList();
 
-				var embeddingResponse = new EmbeddingResponse(embeddings, metadata);
+					var embeddingResponse = new EmbeddingResponse(embeddings, metadata);
 
-				observationContext.setResponse(embeddingResponse);
+					observationContext.setResponse(embeddingResponse);
 
-				return embeddingResponse;
-			});
+					return embeddingResponse;
+				});
 	}
 
 	private EmbeddingRequest buildEmbeddingRequest(EmbeddingRequest embeddingRequest) {
@@ -155,13 +149,12 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 
 		if (requestOptions != null) {
 			MistralAiEmbeddingOptions.Builder builder = MistralAiEmbeddingOptions.builder()
-				.model(ModelOptionsUtils.mergeOption(requestOptions.getModel(), this.options.getModel()));
+					.model(ModelOptionsUtils.mergeOption(requestOptions.getModel(), this.options.getModel()));
 
 			if (requestOptions instanceof MistralAiEmbeddingOptions mistralOptions) {
 				builder.encodingFormat(ModelOptionsUtils.mergeOption(mistralOptions.getEncodingFormat(),
 						this.options.getEncodingFormat()));
-			}
-			else {
+			} else {
 				builder.encodingFormat(this.options.getEncodingFormat());
 			}
 			mergedOptions = builder.build();
@@ -176,7 +169,7 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	private MistralAiApi.EmbeddingRequest<List<String>> createRequest(EmbeddingRequest request) {
 		MistralAiEmbeddingOptions requestOptions = (MistralAiEmbeddingOptions) Objects
-			.requireNonNull(request.getOptions());
+				.requireNonNull(request.getOptions());
 		return new MistralAiApi.EmbeddingRequest<>(request.getInstructions(), requestOptions.getModel(),
 				requestOptions.getEncodingFormat());
 	}
@@ -200,6 +193,7 @@ public class MistralAiEmbeddingModel extends AbstractEmbeddingModel {
 
 	/**
 	 * Use the provided convention for reporting observation data
+	 *
 	 * @param observationConvention The provided convention
 	 */
 	public void setObservationConvention(EmbeddingModelObservationConvention observationConvention) {

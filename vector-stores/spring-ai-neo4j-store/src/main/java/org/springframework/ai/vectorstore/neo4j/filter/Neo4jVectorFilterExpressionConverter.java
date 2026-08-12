@@ -39,8 +39,7 @@ public class Neo4jVectorFilterExpressionConverter extends AbstractFilterExpressi
 			// shift the "<left> not in <right>" into "not <left> in <right>"
 			this.doNot(new Expression(Filter.ExpressionType.NOT,
 					new Expression(Filter.ExpressionType.IN, expression.left(), expression.right())), context);
-		}
-		else {
+		} else {
 			Assert.state(expression.right() != null, "expression.right() must not be null");
 			this.convertOperand(expression.left(), context);
 			context.append(this.getOperationSymbol(expression));
@@ -81,9 +80,9 @@ public class Neo4jVectorFilterExpressionConverter extends AbstractFilterExpressi
 	@Override
 	protected void doKey(Key key, StringBuilder context) {
 		String sanitized = SchemaNames.sanitize("metadata." + key.key(), true)
-			.orElseThrow(() -> new IllegalArgumentException(
-					"Invalid or empty metadata key cannot be used in a Neo4j filter expression: '%s'"
-						.formatted(key.key())));
+				.orElseThrow(() -> new IllegalArgumentException(
+						"Invalid or empty metadata key cannot be used in a Neo4j filter expression: '%s'"
+								.formatted(key.key())));
 		context.append("node.").append(sanitized);
 	}
 
@@ -101,7 +100,8 @@ public class Neo4jVectorFilterExpressionConverter extends AbstractFilterExpressi
 	 * Serialize values using JSON serialization for Neo4j Cypher filter expressions.
 	 * Delegates to {@link #emitJsonValue(Object, StringBuilder)} for Jackson-based JSON
 	 * serialization.
-	 * @param value the value to serialize
+	 *
+	 * @param value   the value to serialize
 	 * @param context the context to append the JSON representation to
 	 */
 	@Override

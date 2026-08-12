@@ -16,18 +16,8 @@
 
 package org.springframework.ai.vectorstore.couchbase.autoconfigure;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.couchbase.CouchbaseContainer;
-import org.testcontainers.couchbase.CouchbaseService;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -37,6 +27,15 @@ import org.springframework.ai.vectorstore.couchbase.CouchbaseSimilarityFunction;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.couchbase.autoconfigure.CouchbaseAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.couchbase.CouchbaseContainer;
+import org.testcontainers.couchbase.CouchbaseService;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,26 +51,26 @@ class CouchbaseSearchVectorStoreAutoConfigurationIT {
 	@Container
 	final static CouchbaseContainer couchbaseContainer = new CouchbaseContainer(
 			CouchbaseContainerMetadata.COUCHBASE_IMAGE_ENTERPRISE)
-		.withCredentials(CouchbaseContainerMetadata.USERNAME, CouchbaseContainerMetadata.PASSWORD)
-		.withEnabledServices(CouchbaseService.KV, CouchbaseService.QUERY, CouchbaseService.INDEX,
-				CouchbaseService.SEARCH)
-		.withBucket(CouchbaseContainerMetadata.bucketDefinition)
-		.withStartupAttempts(4)
-		.withStartupTimeout(Duration.ofSeconds(90))
-		.waitingFor(Wait.forHealthcheck());
+			.withCredentials(CouchbaseContainerMetadata.USERNAME, CouchbaseContainerMetadata.PASSWORD)
+			.withEnabledServices(CouchbaseService.KV, CouchbaseService.QUERY, CouchbaseService.INDEX,
+					CouchbaseService.SEARCH)
+			.withBucket(CouchbaseContainerMetadata.bucketDefinition)
+			.withStartupAttempts(4)
+			.withStartupTimeout(Duration.ofSeconds(90))
+			.waitingFor(Wait.forHealthcheck());
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(CouchbaseAutoConfiguration.class,
-				CouchbaseSearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
-		.withPropertyValues("spring.couchbase.connection-string=" + couchbaseContainer.getConnectionString(),
-				"spring.couchbase.username=" + couchbaseContainer.getUsername(),
-				"spring.couchbase.password=" + couchbaseContainer.getPassword(),
-				"spring.ai.vectorstore.couchbase.initialize-schema=true",
-				"spring.ai.vectorstore.couchbase.index-name=example",
-				"spring.ai.vectorstore.couchbase.collection-name=example",
-				"spring.ai.vectorstore.couchbase.scope-name=example",
-				"spring.ai.vectorstore.couchbase.bucket-name=example",
-				"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+			.withConfiguration(AutoConfigurations.of(CouchbaseAutoConfiguration.class,
+					CouchbaseSearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
+			.withPropertyValues("spring.couchbase.connection-string=" + couchbaseContainer.getConnectionString(),
+					"spring.couchbase.username=" + couchbaseContainer.getUsername(),
+					"spring.couchbase.password=" + couchbaseContainer.getPassword(),
+					"spring.ai.vectorstore.couchbase.initialize-schema=true",
+					"spring.ai.vectorstore.couchbase.index-name=example",
+					"spring.ai.vectorstore.couchbase.collection-name=example",
+					"spring.ai.vectorstore.couchbase.scope-name=example",
+					"spring.ai.vectorstore.couchbase.bucket-name=example",
+					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 
 	@Test
 	public void addAndSearchWithFilters() {
@@ -109,34 +108,34 @@ class CouchbaseSearchVectorStoreAutoConfigurationIT {
 	@Test
 	public void propertiesTest() {
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(CouchbaseAutoConfiguration.class,
-					CouchbaseSearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.couchbase.connection-string=" + couchbaseContainer.getConnectionString(),
-					"spring.couchbase.username=" + couchbaseContainer.getUsername(),
-					"spring.couchbase.password=" + couchbaseContainer.getPassword(),
-					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
-					"spring.ai.vectorstore.couchbase.index-name=example",
-					"spring.ai.vectorstore.couchbase.collection-name=example",
-					"spring.ai.vectorstore.couchbase.scope-name=example",
-					"spring.ai.vectorstore.couchbase.bucket-name=example",
-					"spring.ai.vectorstore.couchbase.dimensions=1024",
-					"spring.ai.vectorstore.couchbase.optimization=latency",
-					"spring.ai.vectorstore.couchbase.similarity=l2_norm")
-			.run(context -> {
-				var properties = context.getBean(CouchbaseSearchVectorStoreProperties.class);
-				var vectorStore = context.getBean(VectorStore.class);
+				.withConfiguration(AutoConfigurations.of(CouchbaseAutoConfiguration.class,
+						CouchbaseSearchVectorStoreAutoConfiguration.class, OpenAiEmbeddingAutoConfiguration.class))
+				.withPropertyValues("spring.couchbase.connection-string=" + couchbaseContainer.getConnectionString(),
+						"spring.couchbase.username=" + couchbaseContainer.getUsername(),
+						"spring.couchbase.password=" + couchbaseContainer.getPassword(),
+						"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"),
+						"spring.ai.vectorstore.couchbase.index-name=example",
+						"spring.ai.vectorstore.couchbase.collection-name=example",
+						"spring.ai.vectorstore.couchbase.scope-name=example",
+						"spring.ai.vectorstore.couchbase.bucket-name=example",
+						"spring.ai.vectorstore.couchbase.dimensions=1024",
+						"spring.ai.vectorstore.couchbase.optimization=latency",
+						"spring.ai.vectorstore.couchbase.similarity=l2_norm")
+				.run(context -> {
+					var properties = context.getBean(CouchbaseSearchVectorStoreProperties.class);
+					var vectorStore = context.getBean(VectorStore.class);
 
-				assertThat(properties).isNotNull();
-				assertThat(properties.getIndexName()).isEqualTo("example");
-				assertThat(properties.getCollectionName()).isEqualTo("example");
-				assertThat(properties.getScopeName()).isEqualTo("example");
-				assertThat(properties.getBucketName()).isEqualTo("example");
-				assertThat(properties.getDimensions()).isEqualTo(1024);
-				assertThat(properties.getOptimization()).isEqualTo(CouchbaseIndexOptimization.latency);
-				assertThat(properties.getSimilarity()).isEqualTo(CouchbaseSimilarityFunction.l2_norm);
+					assertThat(properties).isNotNull();
+					assertThat(properties.getIndexName()).isEqualTo("example");
+					assertThat(properties.getCollectionName()).isEqualTo("example");
+					assertThat(properties.getScopeName()).isEqualTo("example");
+					assertThat(properties.getBucketName()).isEqualTo("example");
+					assertThat(properties.getDimensions()).isEqualTo(1024);
+					assertThat(properties.getOptimization()).isEqualTo(CouchbaseIndexOptimization.latency);
+					assertThat(properties.getSimilarity()).isEqualTo(CouchbaseSimilarityFunction.l2_norm);
 
-				assertThat(vectorStore).isNotNull();
-			});
+					assertThat(vectorStore).isNotNull();
+				});
 	}
 
 }

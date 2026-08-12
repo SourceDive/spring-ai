@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.bedrock.aot;
 
-import org.jspecify.annotations.NullMarked;

@@ -44,8 +44,7 @@ class CommonsLoggingStErrorListener implements STErrorListener {
 	public void runTimeError(STMessage msg) {
 		if (msg.error != ErrorType.NO_SUCH_PROPERTY) { // ignore these
 			logger.error(msg.toString());
-		}
-		else {
+		} else {
 			logger.warn(msg.toString());
 		}
 	}

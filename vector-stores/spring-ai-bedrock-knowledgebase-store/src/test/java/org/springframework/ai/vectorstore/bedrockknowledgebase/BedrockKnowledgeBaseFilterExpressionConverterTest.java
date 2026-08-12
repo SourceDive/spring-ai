@@ -16,18 +16,17 @@
 
 package org.springframework.ai.vectorstore.bedrockknowledgebase;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalFilter;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalFilter;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +53,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.EQ, new Key("department"), new Value("HR"));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result).isNotNull();
 			assertThat(result.equalsValue()).isNotNull();
@@ -67,7 +66,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.EQ, new Key("year"), new Value(2024));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.equalsValue()).isNotNull();
 			assertThat(result.equalsValue().key()).isEqualTo("year");
@@ -79,7 +78,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.EQ, new Key("active"), new Value(true));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.equalsValue()).isNotNull();
 			assertThat(result.equalsValue().value().asBoolean()).isTrue();
@@ -90,7 +89,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.NE, new Key("status"), new Value("archived"));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.notEquals()).isNotNull();
 			assertThat(result.notEquals().key()).isEqualTo("status");
@@ -102,7 +101,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.GT, new Key("price"), new Value(100));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.greaterThan()).isNotNull();
 			assertThat(result.greaterThan().key()).isEqualTo("price");
@@ -114,7 +113,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.GTE, new Key("rating"), new Value(4.5));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.greaterThanOrEquals()).isNotNull();
 			assertThat(result.greaterThanOrEquals().key()).isEqualTo("rating");
@@ -126,7 +125,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.LT, new Key("age"), new Value(30));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.lessThan()).isNotNull();
 			assertThat(result.lessThan().key()).isEqualTo("age");
@@ -138,7 +137,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.LTE, new Key("count"), new Value(10));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.lessThanOrEquals()).isNotNull();
 			assertThat(result.lessThanOrEquals().key()).isEqualTo("count");
@@ -157,7 +156,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 					new Value(List.of("travel", "expense", "policy")));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.in()).isNotNull();
 			assertThat(result.in().key()).isEqualTo("category");
@@ -169,7 +168,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.IN, new Key("year"), new Value(List.of(2022, 2023, 2024)));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.in()).isNotNull();
 			assertThat(result.in().key()).isEqualTo("year");
@@ -182,7 +181,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 					new Value(List.of("deleted", "archived")));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.notIn()).isNotNull();
 			assertThat(result.notIn().key()).isEqualTo("status");
@@ -202,7 +201,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression andExpr = new Expression(ExpressionType.AND, left, right);
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(andExpr);
+					.convertExpression(andExpr);
 
 			assertThat(result.andAll()).isNotNull();
 			assertThat(result.andAll()).hasSize(2);
@@ -215,7 +214,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression orExpr = new Expression(ExpressionType.OR, left, right);
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(orExpr);
+					.convertExpression(orExpr);
 
 			assertThat(result.orAll()).isNotNull();
 			assertThat(result.orAll()).hasSize(2);
@@ -231,7 +230,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression orExpr = new Expression(ExpressionType.OR, andExpr, catExpr);
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(orExpr);
+					.convertExpression(orExpr);
 
 			assertThat(result.orAll()).isNotNull();
 			assertThat(result.orAll()).hasSize(2);
@@ -249,7 +248,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression abc = new Expression(ExpressionType.AND, ab, c);
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(abc);
+					.convertExpression(abc);
 
 			assertThat(result.andAll()).isNotNull();
 			assertThat(result.andAll()).hasSize(2);
@@ -266,7 +265,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.EQ, new Key("score"), new Value(3.14159));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.equalsValue().value().asNumber().doubleValue()).isEqualTo(3.14159);
 		}
@@ -276,7 +275,7 @@ class BedrockKnowledgeBaseFilterExpressionConverterTest {
 			Expression expr = new Expression(ExpressionType.EQ, new Key("timestamp"), new Value(1704067200000L));
 
 			RetrievalFilter result = BedrockKnowledgeBaseFilterExpressionConverterTest.this.converter
-				.convertExpression(expr);
+					.convertExpression(expr);
 
 			assertThat(result.equalsValue().value().asNumber().longValue()).isEqualTo(1704067200000L);
 		}

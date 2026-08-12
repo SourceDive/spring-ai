@@ -16,20 +16,12 @@
 
 package org.springframework.ai.vectorstore.gemfire;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.IntStream;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -46,12 +38,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.ExchangeFilterFunctions;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.reactive.function.client.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 /**
  * A VectorStore implementation backed by GemFire. This store supports creating, updating,
@@ -94,7 +89,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 	public static final String DEFAULT_SIMILARITY_FUNCTION = "COSINE";
 
-	public static final String[] DEFAULT_FIELDS = new String[] {};
+	public static final String[] DEFAULT_FIELDS = new String[]{};
 
 	public static final int DEFAULT_BUCKETS = 0;
 
@@ -123,6 +118,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 	/**
 	 * Protected constructor that accepts a builder instance. This is the preferred way to
 	 * create new GemFireVectorStore instances.
+	 *
 	 * @param builder the configured builder instance
 	 */
 	protected GemFireVectorStore(Builder builder) {
@@ -137,8 +133,8 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 		this.fields = builder.fields;
 
 		String base = UriComponentsBuilder.fromUriString(DEFAULT_URI)
-			.build(builder.sslEnabled ? "s" : "", builder.host, builder.port)
-			.toString();
+				.build(builder.sslEnabled ? "s" : "", builder.host, builder.port)
+				.toString();
 		WebClient.Builder webClientBuilder = WebClient.builder().baseUrl(base);
 
 		ExchangeFilterFunction authenticationFilterFunction = null;
@@ -146,8 +142,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 		if (builder.isUsingTokenAuthentication()) {
 			Assert.state(builder.token != null, "builder.token can't be null");
 			authenticationFilterFunction = new BearerTokenAuthenticationFilterFunction(builder.token);
-		}
-		else if (builder.isUsingBasicAuthentication()) {
+		} else if (builder.isUsingBasicAuthentication()) {
 			Assert.state(builder.username != null && builder.password != null,
 					"builder.username and password can't be null");
 			authenticationFilterFunction = ExchangeFilterFunctions.basicAuthentication(builder.username,
@@ -208,6 +203,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 	/**
 	 * Checks if the index exists in the GemFireVectorStore.
+	 *
 	 * @return {@code true} if the index exists, {@code false} otherwise
 	 */
 	public boolean indexExists() {
@@ -217,11 +213,11 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 	public @Nullable String getIndex() {
 		return this.client.get()
-			.uri("/" + this.indexName)
-			.retrieve()
-			.bodyToMono(String.class)
-			.onErrorReturn("")
-			.block();
+				.uri("/" + this.indexName)
+				.retrieve()
+				.bodyToMono(String.class)
+				.onErrorReturn("")
+				.block();
 	}
 
 	@Override
@@ -238,26 +234,25 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 		String embeddingsJson = embeddingString.substring("{\"embeddings\":".length());
 
 		this.client.post()
-			.uri("/" + this.indexName + EMBEDDINGS)
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(embeddingsJson)
-			.retrieve()
-			.bodyToMono(Void.class)
-			.onErrorMap(WebClientException.class, this::handleHttpClientException)
-			.block();
+				.uri("/" + this.indexName + EMBEDDINGS)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(embeddingsJson)
+				.retrieve()
+				.bodyToMono(Void.class)
+				.onErrorMap(WebClientException.class, this::handleHttpClientException)
+				.block();
 	}
 
 	@Override
 	public void doDelete(List<String> idList) {
 		try {
 			this.client.method(HttpMethod.DELETE)
-				.uri("/" + this.indexName + EMBEDDINGS)
-				.body(BodyInserters.fromValue(idList))
-				.retrieve()
-				.bodyToMono(Void.class)
-				.block();
-		}
-		catch (RuntimeException e) {
+					.uri("/" + this.indexName + EMBEDDINGS)
+					.body(BodyInserters.fromValue(idList))
+					.retrieve()
+					.bodyToMono(Void.class)
+					.block();
+		} catch (RuntimeException e) {
 			if (logger.isWarnEnabled()) {
 				logger.warn("Error removing embedding: " + e.getMessage(), e);
 			}
@@ -273,26 +268,26 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 		}
 		float[] floatVector = this.embeddingModel.embed(request.getQuery());
 		List<Document> result = this.client.post()
-			.uri("/" + this.indexName + QUERY)
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(new QueryRequest(floatVector, request.getTopK(), request.getTopK(), // TopKPerBucket
-					true, filterQuery))
-			.retrieve()
-			.bodyToFlux(QueryResponse.class)
-			.filter(r -> r.score >= request.getSimilarityThreshold())
-			.map(r -> {
-				Map<String, Object> metadata = r.metadata;
-				if (r.metadata == null) {
-					metadata = new HashMap<>();
-					metadata.put(DOCUMENT_FIELD, "--Deleted--");
-				}
-				metadata.put(DocumentMetadata.DISTANCE.value(), 1 - r.score);
-				String content = (String) metadata.remove(DOCUMENT_FIELD);
-				return Document.builder().id(r.key).text(content).metadata(metadata).score((double) r.score).build();
-			})
-			.collectList()
-			.onErrorMap(WebClientException.class, this::handleHttpClientException)
-			.block();
+				.uri("/" + this.indexName + QUERY)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new QueryRequest(floatVector, request.getTopK(), request.getTopK(), // TopKPerBucket
+						true, filterQuery))
+				.retrieve()
+				.bodyToFlux(QueryResponse.class)
+				.filter(r -> r.score >= request.getSimilarityThreshold())
+				.map(r -> {
+					Map<String, Object> metadata = r.metadata;
+					if (r.metadata == null) {
+						metadata = new HashMap<>();
+						metadata.put(DOCUMENT_FIELD, "--Deleted--");
+					}
+					metadata.put(DocumentMetadata.DISTANCE.value(), 1 - r.score);
+					String content = (String) metadata.remove(DOCUMENT_FIELD);
+					return Document.builder().id(r.key).text(content).metadata(metadata).score((double) r.score).build();
+				})
+				.collectList()
+				.onErrorMap(WebClientException.class, this::handleHttpClientException)
+				.block();
 		return Objects.requireNonNullElse(result, List.of());
 	}
 
@@ -307,28 +302,29 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 		String index = this.jsonMapper.writeValueAsString(createRequest);
 
 		this.client.post()
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(index)
-			.retrieve()
-			.bodyToMono(Void.class)
-			.onErrorMap(WebClientException.class, this::handleHttpClientException)
-			.block();
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(index)
+				.retrieve()
+				.bodyToMono(Void.class)
+				.onErrorMap(WebClientException.class, this::handleHttpClientException)
+				.block();
 	}
 
 	public void deleteIndex() {
 		DeleteRequest deleteRequest = new DeleteRequest();
 		this.client.method(HttpMethod.DELETE)
-			.uri("/" + this.indexName)
-			.body(BodyInserters.fromValue(deleteRequest))
-			.retrieve()
-			.bodyToMono(Void.class)
-			.onErrorMap(WebClientException.class, this::handleHttpClientException)
-			.block();
+				.uri("/" + this.indexName)
+				.body(BodyInserters.fromValue(deleteRequest))
+				.retrieve()
+				.bodyToMono(Void.class)
+				.onErrorMap(WebClientException.class, this::handleHttpClientException)
+				.block();
 	}
 
 	/**
 	 * Handles exceptions that occur during HTTP client operations and maps them to
 	 * appropriate runtime exceptions.
+	 *
 	 * @param ex the exception that occurred during HTTP client operation
 	 * @return a mapped runtime exception corresponding to the HTTP client exception
 	 */
@@ -339,11 +335,9 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		if (clientException.getStatusCode().equals(org.springframework.http.HttpStatus.NOT_FOUND)) {
 			throw new RuntimeException(String.format("Index %s not found: %s", this.indexName, ex));
-		}
-		else if (clientException.getStatusCode().equals(org.springframework.http.HttpStatus.BAD_REQUEST)) {
+		} else if (clientException.getStatusCode().equals(org.springframework.http.HttpStatus.BAD_REQUEST)) {
 			throw new RuntimeException(String.format("Bad Request: %s", ex));
-		}
-		else {
+		} else {
 			throw new RuntimeException(String.format("Got an unexpected HTTP error: %s", ex));
 		}
 	}
@@ -351,9 +345,9 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.GEMFIRE.value(), operationName)
-			.collectionName(this.indexName)
-			.dimensions(this.embeddingModel.dimensions())
-			.fieldName(EMBEDDINGS);
+				.collectionName(this.indexName)
+				.dimensions(this.embeddingModel.dimensions())
+				.fieldName(EMBEDDINGS);
 	}
 
 	public static class CreateRequest {
@@ -377,7 +371,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 		private final int buckets;
 
 		public CreateRequest(String indexName, int beamWidth, int maxConnections, String vectorSimilarityFunction,
-				String[] fields, int buckets) {
+		                     String[] fields, int buckets) {
 			this.indexName = indexName;
 			this.beamWidth = beamWidth;
 			this.maxConnections = maxConnections;
@@ -435,7 +429,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 			private Map<String, Object> metadata;
 
 			Embedding(@JsonProperty("key") String key, @JsonProperty("vector") float[] vector, String contentName,
-					String content, @JsonProperty("metadata") Map<String, Object> metadata) {
+			          String content, @JsonProperty("metadata") Map<String, Object> metadata) {
 				this.key = key;
 				this.vector = vector;
 				this.metadata = new HashMap<>(metadata);
@@ -511,8 +505,8 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 	}
 
 	@SuppressWarnings("NullAway.Init") // fields late-initialized by deserialization from
-										// an
-										// http body
+	// an
+	// http body
 	private static final class QueryResponse {
 
 		private String key;
@@ -598,6 +592,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the host for the GemFire connection.
+		 *
 		 * @param host the host to connect to
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if host is null or empty
@@ -610,6 +605,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the port for the GemFire connection.
+		 *
 		 * @param port the port to connect to
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if port is not positive
@@ -622,6 +618,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets whether SSL is enabled for the connection.
+		 *
 		 * @param sslEnabled true to enable SSL, false otherwise
 		 * @return the builder instance
 		 */
@@ -632,6 +629,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the index name.
+		 *
 		 * @param indexName the name of the index
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if indexName is null or empty
@@ -644,6 +642,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the beam width.
+		 *
 		 * @param beamWidth the beam width value
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if beamWidth is not within valid range
@@ -658,6 +657,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the maximum number of connections.
+		 *
 		 * @param maxConnections the maximum connections value
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if maxConnections is not within valid range
@@ -672,6 +672,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the number of buckets.
+		 *
 		 * @param buckets the number of buckets
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if buckets is negative
@@ -684,6 +685,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the vector similarity function.
+		 *
 		 * @param vectorSimilarityFunction the similarity function to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if vectorSimilarityFunction is null or empty
@@ -696,6 +698,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the fields array.
+		 *
 		 * @param fields the fields to use
 		 * @return the builder instance
 		 */
@@ -706,6 +709,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -716,6 +720,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the username to authenticate requests with
+		 *
 		 * @param username the username to authenticate or unauthenticated if not set
 		 * @return the builder instance
 		 */
@@ -726,6 +731,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the password to authenticate requests with
+		 *
 		 * @param password the password to authenticate if username is also provided
 		 * @return the builder instance
 		 */
@@ -736,6 +742,7 @@ public class GemFireVectorStore extends AbstractObservationVectorStore implement
 
 		/**
 		 * Sets the token to authenticate requests with
+		 *
 		 * @param token the token to use for authentication
 		 * @return the builder instance
 		 */

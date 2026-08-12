@@ -16,13 +16,13 @@
 
 package org.springframework.ai.chat.messages;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * Utility class for managing messages.
@@ -43,8 +43,7 @@ final class MessageUtils {
 		Assert.notNull(charset, "charset cannot be null");
 		try (InputStream inputStream = resource.getInputStream()) {
 			return StreamUtils.copyToString(inputStream, charset);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new RuntimeException("Failed to read resource", ex);
 		}
 	}

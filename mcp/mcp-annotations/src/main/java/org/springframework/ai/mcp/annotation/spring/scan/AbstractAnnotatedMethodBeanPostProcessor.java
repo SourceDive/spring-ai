@@ -16,13 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.spring.scan;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.util.Assert;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * @author Christian Tzolov
@@ -34,7 +34,7 @@ public abstract class AbstractAnnotatedMethodBeanPostProcessor extends Annotated
 	private final AbstractMcpAnnotatedBeans registry;
 
 	public AbstractAnnotatedMethodBeanPostProcessor(AbstractMcpAnnotatedBeans registry,
-			Set<Class<? extends Annotation>> targetAnnotations) {
+	                                                Set<Class<? extends Annotation>> targetAnnotations) {
 		super(targetAnnotations);
 		Assert.notNull(registry, "AnnotatedBeanRegistry must not be null");
 		Assert.notEmpty(targetAnnotations, "Target annotations must not be empty");

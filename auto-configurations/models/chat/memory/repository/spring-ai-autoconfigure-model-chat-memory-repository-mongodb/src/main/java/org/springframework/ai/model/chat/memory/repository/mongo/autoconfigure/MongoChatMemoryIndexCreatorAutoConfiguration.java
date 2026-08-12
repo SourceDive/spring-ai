@@ -16,11 +16,8 @@
 
 package org.springframework.ai.model.chat.memory.repository.mongo.autoconfigure;
 
-import java.lang.reflect.Method;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.chat.memory.repository.mongo.Conversation;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,6 +28,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
 import org.springframework.data.mongodb.core.index.IndexOperations;
+
+import java.lang.reflect.Method;
 
 /**
  * Class responsible for creating proper MongoDB indices for the ChatMemory. Creates a
@@ -52,7 +51,7 @@ public class MongoChatMemoryIndexCreatorAutoConfiguration {
 	private final MongoChatMemoryProperties mongoChatMemoryProperties;
 
 	public MongoChatMemoryIndexCreatorAutoConfiguration(final MongoTemplate mongoTemplate,
-			final MongoChatMemoryProperties mongoChatMemoryProperties) {
+	                                                    final MongoChatMemoryProperties mongoChatMemoryProperties) {
 		this.mongoTemplate = mongoTemplate;
 		this.mongoChatMemoryProperties = mongoChatMemoryProperties;
 	}
@@ -103,8 +102,9 @@ public class MongoChatMemoryIndexCreatorAutoConfiguration {
 	 * <li>Spring Data MongoDB 4.5.x+: {@code createIndex(IndexDefinition)} is the new
 	 * API, {@code ensureIndex} is deprecated.</li>
 	 * </ul>
+	 *
 	 * @param indexOps the IndexOperations instance
-	 * @param index the index definition
+	 * @param index    the index definition
 	 * @throws IllegalStateException if neither method is available or invocation fails
 	 */
 	private void createIndexSafely(final IndexOperations indexOps, final IndexDefinition index) {
@@ -113,25 +113,21 @@ public class MongoChatMemoryIndexCreatorAutoConfiguration {
 			Method method = IndexOperations.class.getMethod("createIndex", IndexDefinition.class);
 			method.invoke(indexOps, index);
 			logger.debug("Created index using createIndex() method");
-		}
-		catch (NoSuchMethodException createIndexNotFound) {
+		} catch (NoSuchMethodException createIndexNotFound) {
 			// Fall back to old API (Spring Data MongoDB 4.2.x - 4.4.x)
 			try {
 				Method method = IndexOperations.class.getMethod("ensureIndex", IndexDefinition.class);
 				method.invoke(indexOps, index);
 				logger.debug("Created index using ensureIndex() method");
-			}
-			catch (NoSuchMethodException ensureIndexNotFound) {
+			} catch (NoSuchMethodException ensureIndexNotFound) {
 				throw new IllegalStateException(
 						"Neither createIndex() nor ensureIndex() method found on IndexOperations. "
 								+ "This may indicate an unsupported Spring Data MongoDB version.",
 						ensureIndexNotFound);
-			}
-			catch (ReflectiveOperationException ex) {
+			} catch (ReflectiveOperationException ex) {
 				throw new IllegalStateException("Failed to invoke ensureIndex() method", ex);
 			}
-		}
-		catch (ReflectiveOperationException ex) {
+		} catch (ReflectiveOperationException ex) {
 			throw new IllegalStateException("Failed to invoke createIndex() method", ex);
 		}
 	}

@@ -16,13 +16,12 @@
 
 package org.springframework.ai.transformers;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingResponse;
+
+import java.text.DecimalFormat;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;

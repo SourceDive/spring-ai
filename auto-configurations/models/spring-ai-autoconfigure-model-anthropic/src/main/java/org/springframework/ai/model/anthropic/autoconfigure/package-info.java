@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.anthropic.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

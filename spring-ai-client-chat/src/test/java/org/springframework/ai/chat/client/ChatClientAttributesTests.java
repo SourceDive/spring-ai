@@ -16,10 +16,10 @@
 
 package org.springframework.ai.chat.client;
 
+import org.junit.jupiter.api.Test;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,15 +32,14 @@ class ChatClientAttributesTests {
 		var distinctKeys = nonDeprecated.stream().map(ChatClientAttributes::getKey).distinct().toList();
 
 		assertThat(distinctKeys).as("non-deprecated ChatClientAttributes constants must have unique keys")
-			.hasSameSizeAs(nonDeprecated);
+				.hasSameSizeAs(nonDeprecated);
 	}
 
 	private static boolean isDeprecated(ChatClientAttributes attribute) {
 		try {
 			Field field = ChatClientAttributes.class.getField(attribute.name());
 			return field.isAnnotationPresent(Deprecated.class);
-		}
-		catch (NoSuchFieldException e) {
+		} catch (NoSuchFieldException e) {
 			return false;
 		}
 	}

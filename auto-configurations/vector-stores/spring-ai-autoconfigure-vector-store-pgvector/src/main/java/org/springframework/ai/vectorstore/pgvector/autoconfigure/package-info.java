@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.pgvector.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

@@ -16,16 +16,9 @@
 
 package org.springframework.ai.openai.chat.proxy;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -47,18 +40,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
+import reactor.core.publisher.Flux;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Ilayaperumal Gopinathan
- *
+ * <p>
  * Unlike other proxy implementations (e.g., NVIDIA), Perplexity operates differently:
- *
+ * <p>
  * - Perplexity includes integrated real-time web search results as part of its response
  * rather than through explicit function calls. Consequently, no `toolCalls` or function
  * call mechanisms are exposed in the API responses
- *
+ * <p>
  * For more information on Perplexity's behavior, refer to its API documentation:
  * <a href="https://docs.perplexity.ai/api-reference/chat-completions">perplexity-api</a>
  */
@@ -106,11 +105,11 @@ class PerplexityWithOpenAiChatModelIT {
 		assertThat(responses.size()).isGreaterThan(1);
 
 		String stitchedResponseContent = responses.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.collect(Collectors.joining());
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.collect(Collectors.joining());
 
 		assertThat(stitchedResponseContent).contains("Blackbeard");
 	}
@@ -118,9 +117,9 @@ class PerplexityWithOpenAiChatModelIT {
 	@Test
 	void streamingWithTokenUsage() {
 		var promptOptions = OpenAiChatOptions.builder()
-			.streamOptions(OpenAiChatOptions.StreamOptions.builder().includeUsage(true).build())
-			.seed(1)
-			.build();
+				.streamOptions(OpenAiChatOptions.StreamOptions.builder().includeUsage(true).build())
+				.seed(1)
+				.build();
 
 		var prompt = new Prompt("List two colors of the Polish flag. Be brief.", promptOptions);
 
@@ -133,7 +132,7 @@ class PerplexityWithOpenAiChatModelIT {
 
 		assertThat(streamingTokenUsage.getPromptTokens()).isEqualTo(referenceTokenUsage.getPromptTokens());
 		assertThat(streamingTokenUsage.getCompletionTokens())
-			.isGreaterThanOrEqualTo(referenceTokenUsage.getCompletionTokens());
+				.isGreaterThanOrEqualTo(referenceTokenUsage.getCompletionTokens());
 		assertThat(streamingTokenUsage.getTotalTokens()).isGreaterThanOrEqualTo(referenceTokenUsage.getTotalTokens());
 	}
 
@@ -148,9 +147,9 @@ class PerplexityWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "ice cream flavors", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "ice cream flavors", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -168,9 +167,9 @@ class PerplexityWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("subject", "numbers from 1 to 9 under the key name 'numbers'", "format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("subject", "numbers from 1 to 9 under the key name 'numbers'", "format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -188,9 +187,9 @@ class PerplexityWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 		Generation generation = this.chatModel.call(prompt).getResult();
 
@@ -209,21 +208,21 @@ class PerplexityWithOpenAiChatModelIT {
 				{format}
 				""";
 		PromptTemplate promptTemplate = PromptTemplate.builder()
-			.template(template)
-			.variables(Map.of("format", format))
-			.build();
+				.template(template)
+				.variables(Map.of("format", format))
+				.build();
 		Prompt prompt = new Prompt(promptTemplate.createMessage());
 
 		String generationTextFromStream = this.chatModel.stream(prompt)
-			.collectList()
-			.block()
-			.stream()
-			.map(ChatResponse::getResults)
-			.flatMap(List::stream)
-			.map(Generation::getOutput)
-			.map(AssistantMessage::getText)
-			.filter(c -> c != null)
-			.collect(Collectors.joining());
+				.collectList()
+				.block()
+				.stream()
+				.map(ChatResponse::getResults)
+				.flatMap(List::stream)
+				.map(Generation::getOutput)
+				.map(AssistantMessage::getText)
+				.filter(c -> c != null)
+				.collect(Collectors.joining());
 
 		ActorsFilmsRecord actorsFilms = outputConverter.convert(generationTextFromStream);
 		assertThat(actorsFilms.actor()).isEqualTo("Tom Hanks");
@@ -233,11 +232,11 @@ class PerplexityWithOpenAiChatModelIT {
 	@Test
 	void validateCallResponseMetadata() {
 		ChatResponse response = ChatClient.create(this.chatModel)
-			.prompt()
-			.options(OpenAiChatOptions.builder().model(DEFAULT_PERPLEXITY_MODEL))
-			.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
-			.call()
-			.chatResponse();
+				.prompt()
+				.options(OpenAiChatOptions.builder().model(DEFAULT_PERPLEXITY_MODEL))
+				.user("Tell me about 3 famous pirates from the Golden Age of Piracy and what they did")
+				.call()
+				.chatResponse();
 		assertThat(response.getMetadata().getId()).isNotEmpty();
 		assertThat(response.getMetadata().getModel()).containsIgnoringCase(DEFAULT_PERPLEXITY_MODEL);
 		assertThat(response.getMetadata().getUsage().getPromptTokens()).isPositive();
@@ -253,9 +252,9 @@ class PerplexityWithOpenAiChatModelIT {
 		Map<String, Object> extraBody = Map.of("max_tokens", 2);
 
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model(DEFAULT_PERPLEXITY_MODEL)
-			.extraBody(extraBody)
-			.build();
+				.model(DEFAULT_PERPLEXITY_MODEL)
+				.extraBody(extraBody)
+				.build();
 
 		Prompt prompt = new Prompt("Tell me a short joke.", options);
 
@@ -277,12 +276,12 @@ class PerplexityWithOpenAiChatModelIT {
 		@Bean
 		public OpenAiChatModel openAiSdkChatModel() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(PERPLEXITY_BASE_URL)
-					.apiKey(System.getenv("PERPLEXITY_API_KEY"))
-					.model(DEFAULT_PERPLEXITY_MODEL)
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(PERPLEXITY_BASE_URL)
+							.apiKey(System.getenv("PERPLEXITY_API_KEY"))
+							.model(DEFAULT_PERPLEXITY_MODEL)
+							.build())
+					.build();
 		}
 
 	}

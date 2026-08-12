@@ -16,22 +16,11 @@
 
 package org.springframework.ai.chat.memory.repository.mongo;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -43,6 +32,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,7 +64,7 @@ public class MongoChatMemoryRepositoryIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM"})
 	void saveMessagesSingleMessage(String content, MessageType messageType) {
 		var conversationId = UUID.randomUUID().toString();
 		var message = switch (messageType) {
@@ -83,8 +77,8 @@ public class MongoChatMemoryRepositoryIT {
 		this.chatMemoryRepository.saveAll(conversationId, List.of(message));
 
 		var result = this.mongoTemplate.query(Conversation.class)
-			.matching(Query.query(Criteria.where("conversationId").is(conversationId)))
-			.first();
+				.matching(Query.query(Criteria.where("conversationId").is(conversationId)))
+				.first();
 
 		assertThat(result.isPresent()).isTrue();
 
@@ -105,8 +99,8 @@ public class MongoChatMemoryRepositoryIT {
 		this.chatMemoryRepository.saveAll(conversationId, messages);
 
 		var result = this.mongoTemplate.query(Conversation.class)
-			.matching(Query.query(Criteria.where("conversationId").is(conversationId)))
-			.all();
+				.matching(Query.query(Criteria.where("conversationId").is(conversationId)))
+				.all();
 
 		assertThat(result.size()).isEqualTo(messages.size());
 
@@ -143,8 +137,8 @@ public class MongoChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 		var user = new UserMessage("Hello");
 		var toolResponse = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "myTool", "result")))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse("id1", "myTool", "result")))
+				.build();
 
 		this.chatMemoryRepository.saveAll(conversationId, List.of(user, toolResponse));
 
@@ -158,8 +152,8 @@ public class MongoChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 		var user = new UserMessage("What is the weather?");
 		var toolCallAssistant = AssistantMessage.builder()
-			.toolCalls(List.of(new AssistantMessage.ToolCall("call1", "function", "getWeather", "{}")))
-			.build();
+				.toolCalls(List.of(new AssistantMessage.ToolCall("call1", "function", "getWeather", "{}")))
+				.build();
 		var plainAssistant = new AssistantMessage("It is sunny.");
 
 		this.chatMemoryRepository.saveAll(conversationId, List.of(user, toolCallAssistant, plainAssistant));
@@ -181,14 +175,14 @@ public class MongoChatMemoryRepositoryIT {
 		this.chatMemoryRepository.deleteByConversationId(conversationId);
 
 		var results = this.mongoTemplate.query(Conversation.class)
-			.matching(Query.query(Criteria.where("conversationId").is(conversationId)))
-			.all();
+				.matching(Query.query(Criteria.where("conversationId").is(conversationId)))
+				.all();
 
 		assertThat(results.size()).isZero();
 	}
 
 	@SpringBootConfiguration
-	@ImportAutoConfiguration({ MongoAutoConfiguration.class, DataMongoAutoConfiguration.class })
+	@ImportAutoConfiguration({MongoAutoConfiguration.class, DataMongoAutoConfiguration.class})
 	static class TestConfiguration {
 
 		@Bean

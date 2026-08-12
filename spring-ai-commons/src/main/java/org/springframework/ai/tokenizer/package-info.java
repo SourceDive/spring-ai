@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.tokenizer;
 
-import org.jspecify.annotations.NullMarked;

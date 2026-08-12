@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.chat.client.advisor.vectorstore;
 
-import org.jspecify.annotations.NullMarked;

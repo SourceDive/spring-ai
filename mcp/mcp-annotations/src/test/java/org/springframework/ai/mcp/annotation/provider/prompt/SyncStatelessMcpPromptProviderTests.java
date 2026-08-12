@@ -16,22 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.provider.prompt;
 
+import io.modelcontextprotocol.common.McpTransportContext;
+import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncPromptSpecification;
+import io.modelcontextprotocol.spec.McpSchema.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpArg;
+import org.springframework.ai.mcp.annotation.McpPrompt;
+import reactor.core.publisher.Mono;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.modelcontextprotocol.common.McpTransportContext;
-import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncPromptSpecification;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
-import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
-import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpArg;
-import org.springframework.ai.mcp.annotation.McpPrompt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,7 +42,7 @@ public class SyncStatelessMcpPromptProviderTests {
 	@Test
 	void testConstructorWithNullPromptObjects() {
 		assertThatThrownBy(() -> new SyncStatelessMcpPromptProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("promptObjects cannot be null");
+				.hasMessageContaining("promptObjects cannot be null");
 	}
 
 	@Test
@@ -422,7 +417,7 @@ public class SyncStatelessMcpPromptProviderTests {
 		PromptMessage message = result.messages().get(0);
 		assertThat(message.role()).isEqualTo(Role.ASSISTANT);
 		assertThat(((TextContent) message.content()).text())
-			.isEqualTo("Prompt with context: present, name: context-prompt");
+				.isEqualTo("Prompt with context: present, name: context-prompt");
 	}
 
 	@Test
@@ -432,7 +427,7 @@ public class SyncStatelessMcpPromptProviderTests {
 			@McpPrompt(name = "request-prompt", description = "Prompt with request parameter")
 			public GetPromptResult requestPrompt(GetPromptRequest request) {
 				return new GetPromptResult("Request prompt result", List
-					.of(new PromptMessage(Role.ASSISTANT, new TextContent("Prompt for name: " + request.name()))));
+						.of(new PromptMessage(Role.ASSISTANT, new TextContent("Prompt for name: " + request.name()))));
 			}
 
 		}

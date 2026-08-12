@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.model.bedrock.titan.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

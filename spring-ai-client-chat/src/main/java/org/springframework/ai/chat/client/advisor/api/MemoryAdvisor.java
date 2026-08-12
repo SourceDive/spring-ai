@@ -27,8 +27,8 @@ package org.springframework.ai.chat.client.advisor.api;
  * a duplicate when memory management is configured on the {@code ChatClient}.
  *
  * @author Christian Tzolov
- * @since 2.0.0
  * @see org.springframework.ai.chat.client.advisor.api.BaseChatMemoryAdvisor
+ * @since 2.0.0
  */
 public interface MemoryAdvisor extends Advisor {
 

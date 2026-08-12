@@ -16,12 +16,12 @@
 
 package org.springframework.ai.tool.toolsearch.eviction;
 
+import org.springframework.util.Assert;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.springframework.util.Assert;
 
 /**
  * A {@link ToolIndexEvictionStrategy} that evicts the least-recently-used session when
@@ -47,8 +47,9 @@ public final class LruEvictionStrategy implements ToolIndexEvictionStrategy {
 
 	/**
 	 * Creates a new LruEvictionStrategy.
+	 *
 	 * @param maxSessions maximum number of sessions whose indexes are retained; must be
-	 * positive
+	 *                    positive
 	 */
 	public LruEvictionStrategy(int maxSessions) {
 		Assert.isTrue(maxSessions > 0, "maxSessions must be positive");

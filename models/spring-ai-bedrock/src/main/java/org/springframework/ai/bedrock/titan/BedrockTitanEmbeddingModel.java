@@ -16,34 +16,28 @@
 
 package org.springframework.ai.bedrock.titan;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi;
 import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi.TitanEmbeddingRequest;
 import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi.TitanEmbeddingResponse;
 import org.springframework.ai.chat.metadata.DefaultUsage;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.AbstractEmbeddingModel;
-import org.springframework.ai.embedding.Embedding;
-import org.springframework.ai.embedding.EmbeddingOptions;
-import org.springframework.ai.embedding.EmbeddingRequest;
-import org.springframework.ai.embedding.EmbeddingResponse;
-import org.springframework.ai.embedding.EmbeddingResponseMetadata;
+import org.springframework.ai.embedding.*;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * {@link org.springframework.ai.embedding.EmbeddingModel} implementation that uses the
  * Bedrock Titan Embedding API. Titan Embedding supports text and image (encoded in
  * base64) inputs.
- *
+ * <p>
  * Note: Titan Embedding does not support batch embedding.
  *
  * @author Christian Tzolov
@@ -64,13 +58,14 @@ public class BedrockTitanEmbeddingModel extends AbstractEmbeddingModel {
 	private InputType inputType = InputType.TEXT;
 
 	public BedrockTitanEmbeddingModel(TitanEmbeddingBedrockApi titanEmbeddingBedrockApi,
-			ObservationRegistry observationRegistry) {
+	                                  ObservationRegistry observationRegistry) {
 		this.embeddingApi = titanEmbeddingBedrockApi;
 		this.observationRegistry = observationRegistry;
 	}
 
 	/**
 	 * Titan Embedding API input types. Could be either text or image (encoded in base64).
+	 *
 	 * @param inputType the input type to use.
 	 */
 	public BedrockTitanEmbeddingModel withInputType(InputType inputType) {
@@ -101,15 +96,15 @@ public class BedrockTitanEmbeddingModel extends AbstractEmbeddingModel {
 
 			try {
 				TitanEmbeddingResponse response = Observation
-					.createNotStarted("bedrock.embedding", this.observationRegistry)
-					.lowCardinalityKeyValue("model", "titan")
-					.lowCardinalityKeyValue("input_type", this.inputType.name().toLowerCase())
-					.highCardinalityKeyValue("input_length", String.valueOf(inputContent.length()))
-					.observe(() -> {
-						TitanEmbeddingResponse r = this.embeddingApi.embedding(apiRequest);
-						Assert.notNull(r, "Embedding API returned null response");
-						return r;
-					});
+						.createNotStarted("bedrock.embedding", this.observationRegistry)
+						.lowCardinalityKeyValue("model", "titan")
+						.lowCardinalityKeyValue("input_type", this.inputType.name().toLowerCase())
+						.highCardinalityKeyValue("input_length", String.valueOf(inputContent.length()))
+						.observe(() -> {
+							TitanEmbeddingResponse r = this.embeddingApi.embedding(apiRequest);
+							Assert.notNull(r, "Embedding API returned null response");
+							return r;
+						});
 
 				if (response.embedding() == null || response.embedding().length == 0) {
 					if (logger.isWarnEnabled()) {
@@ -124,14 +119,13 @@ public class BedrockTitanEmbeddingModel extends AbstractEmbeddingModel {
 				if (response.inputTextTokenCount() != null) {
 					tokenUsage += response.inputTextTokenCount();
 				}
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				if (logger.isErrorEnabled()) {
 					logger.error("Titan API embedding failed for input at index " + indexCounter.get() + ": "
 							+ summarizeInput(inputContent), ex);
 				}
 				throw ex; // Optional: Continue instead of throwing if you want partial
-							// success
+				// success
 			}
 		}
 
@@ -142,7 +136,7 @@ public class BedrockTitanEmbeddingModel extends AbstractEmbeddingModel {
 	}
 
 	private TitanEmbeddingRequest createTitanEmbeddingRequest(String inputContent,
-			@Nullable EmbeddingOptions requestOptions) {
+	                                                          @Nullable EmbeddingOptions requestOptions) {
 		InputType inputType = this.inputType;
 
 		if (requestOptions instanceof BedrockTitanEmbeddingOptions bedrockTitanEmbeddingOptions) {

@@ -16,31 +16,21 @@
 
 package org.springframework.ai.vectorstore.filter.converter;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Christian Tzolov
@@ -62,10 +52,10 @@ public class PineconeFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr)
-			.isEqualTo("{\"$and\": [{\"genre\": {\"$eq\": \"drama\"}},{\"year\": {\"$gte\": 2020}}]}");
+				.isEqualTo("{\"$and\": [{\"genre\": {\"$eq\": \"drama\"}},{\"year\": {\"$gte\": 2020}}]}");
 	}
 
 	@Test
@@ -80,9 +70,9 @@ public class PineconeFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo(
 				"{\"$or\": [{\"year\": {\"$gte\": 2020}},{\"$and\": [{\"country\": {\"$eq\": \"BG\"}},{\"city\": {\"$ne\": \"Sofia\"}}]}]}");
 	}
@@ -114,22 +104,22 @@ public class PineconeFilterExpressionConverterTests {
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("{\"$and\": [{\"temperature\": {\"$gte\": -15.6}},{\"temperature\": {\"$lte\": 20.13}}]}");
+				.isEqualTo("{\"$and\": [{\"temperature\": {\"$gte\": -15.6}},{\"temperature\": {\"$lte\": 20.13}}]}");
 	}
 
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("""
 				{"country 1 2 3": {"$eq": "BG"}}""");
 
 		vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("""
 				{"\\"country 1 2 3\\"": {"$eq": "BG"}}""");
 
@@ -156,7 +146,7 @@ public class PineconeFilterExpressionConverterTests {
 	public void testNotInWithNumbers() {
 		// status NIN [100, 200, 404]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("status"), new Value(List.of(100, 200, 404))));
+				.convertExpression(new Expression(NIN, new Key("status"), new Value(List.of(100, 200, 404))));
 		assertThat(vectorExpr).isEqualTo("{\"status\": {\"$nin\": [100,200,404]}}");
 	}
 
@@ -207,7 +197,7 @@ public class PineconeFilterExpressionConverterTests {
 	public void testInWithMixedTypes() {
 		// tag IN ["A", "B", "C"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("tag"), new Value(List.of("A", "B", "C"))));
+				.convertExpression(new Expression(IN, new Key("tag"), new Value(List.of("A", "B", "C"))));
 		assertThat(vectorExpr).isEqualTo("{\"tag\": {\"$in\": [\"A\",\"B\",\"C\"]}}");
 	}
 
@@ -215,18 +205,18 @@ public class PineconeFilterExpressionConverterTests {
 	public void testNegativeNumbers() {
 		// balance >= -100.0 AND balance <= -10.0
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("balance"), new Value(-100.0)),
-					new Expression(LTE, new Key("balance"), new Value(-10.0))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("balance"), new Value(-100.0)),
+						new Expression(LTE, new Key("balance"), new Value(-10.0))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("{\"$and\": [{\"balance\": {\"$gte\": -100.0}},{\"balance\": {\"$lte\": -10.0}}]}");
+				.isEqualTo("{\"$and\": [{\"balance\": {\"$gte\": -100.0}},{\"balance\": {\"$lte\": -10.0}}]}");
 	}
 
 	@Test
 	public void testSpecialCharactersInValues() {
 		// description == "Item with spaces & symbols!"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("description"), new Value("Item with spaces & symbols!")));
+				.convertExpression(new Expression(EQ, new Key("description"), new Value("Item with spaces & symbols!")));
 		assertThat(vectorExpr).isEqualTo("{\"description\": {\"$eq\": \"Item with spaces & symbols!\"}}");
 	}
 
@@ -246,7 +236,7 @@ public class PineconeFilterExpressionConverterTests {
 	public void testSingleElementList() {
 		// category IN ["single"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("category"), new Value(List.of("single"))));
+				.convertExpression(new Expression(IN, new Key("category"), new Value(List.of("single"))));
 		assertThat(vectorExpr).isEqualTo("{\"category\": {\"$in\": [\"single\"]}}");
 	}
 
@@ -254,8 +244,8 @@ public class PineconeFilterExpressionConverterTests {
 	public void testZeroValues() {
 		// quantity == 0 AND price > 0
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("quantity"), new Value(0)),
-					new Expression(GT, new Key("price"), new Value(0))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("quantity"), new Value(0)),
+						new Expression(GT, new Key("price"), new Value(0))));
 
 		assertThat(vectorExpr).isEqualTo("{\"$and\": [{\"quantity\": {\"$eq\": 0}},{\"price\": {\"$gt\": 0}}]}");
 	}

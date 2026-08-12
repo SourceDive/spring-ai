@@ -16,16 +16,9 @@
 
 package org.springframework.ai.openai.azure;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -41,6 +34,12 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
+import reactor.core.publisher.Flux;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,8 +47,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Soby Chacko
  */
 @SpringBootTest(classes = AzureOpenAiChatClientIT.TestConfiguration.class)
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+")})
 public class AzureOpenAiChatClientIT {
 
 	@Autowired
@@ -125,12 +124,12 @@ public class AzureOpenAiChatClientIT {
 
 		// Streaming call
 		String stitchedResponseFromStream = this.chatClient.prompt(prompt)
-			.stream()
-			.content()
-			.collectList()
-			.block()
-			.stream()
-			.collect(Collectors.joining());
+				.stream()
+				.content()
+				.collectList()
+				.block()
+				.stream()
+				.collect(Collectors.joining());
 		String streamingStatesData = extractStatesData(stitchedResponseFromStream);
 		String formattedStreamingResponse = formatResponse(streamingStatesData);
 
@@ -162,14 +161,14 @@ public class AzureOpenAiChatClientIT {
 		@Bean
 		public OpenAiChatModel azureOpenAiChatModel() {
 			return OpenAiChatModel.builder()
-				.options(OpenAiChatOptions.builder()
-					.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
-					.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
-					.deploymentName("gpt-4o")
-					.azureOpenAIServiceVersion(com.openai.azure.AzureOpenAIServiceVersion.latestStableVersion())
-					.maxTokens(1000)
-					.build())
-				.build();
+					.options(OpenAiChatOptions.builder()
+							.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
+							.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
+							.deploymentName("gpt-4o")
+							.azureOpenAIServiceVersion(com.openai.azure.AzureOpenAIServiceVersion.latestStableVersion())
+							.maxTokens(1000)
+							.build())
+					.build();
 		}
 
 		@Bean

@@ -16,13 +16,12 @@
 
 package org.springframework.ai.tool.execution;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Default implementation of {@link ToolExecutionExceptionProcessor}. Can be configured
@@ -49,7 +48,7 @@ public class DefaultToolExecutionExceptionProcessor implements ToolExecutionExce
 	}
 
 	public DefaultToolExecutionExceptionProcessor(boolean alwaysThrow,
-			List<Class<? extends RuntimeException>> rethrownExceptions) {
+	                                              List<Class<? extends RuntimeException>> rethrownExceptions) {
 		this.alwaysThrow = alwaysThrow;
 		this.rethrownExceptions = Collections.unmodifiableList(rethrownExceptions);
 	}
@@ -62,8 +61,7 @@ public class DefaultToolExecutionExceptionProcessor implements ToolExecutionExce
 			if (this.rethrownExceptions.stream().anyMatch(rethrown -> rethrown.isAssignableFrom(cause.getClass()))) {
 				throw runtimeException;
 			}
-		}
-		else {
+		} else {
 			// If the cause is not a RuntimeException (e.g., IOException,
 			// OutOfMemoryError), rethrow the tool exception.
 			throw exception;
@@ -96,6 +94,7 @@ public class DefaultToolExecutionExceptionProcessor implements ToolExecutionExce
 
 		/**
 		 * Rethrow the {@link ToolExecutionException}
+		 *
 		 * @param alwaysThrow when true, throws; when false, returns the exception message
 		 * @return the builder instance
 		 */
@@ -107,6 +106,7 @@ public class DefaultToolExecutionExceptionProcessor implements ToolExecutionExce
 		/**
 		 * An allowlist of exceptions thrown by tools, which will be unwrapped and
 		 * re-thrown without further processing.
+		 *
 		 * @param exceptions the list of exceptions
 		 * @return the builder instance
 		 */

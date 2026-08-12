@@ -16,22 +16,12 @@
 
 package org.springframework.ai.google.genai;
 
-import java.util.List;
-
 import com.google.genai.Client;
-import com.google.genai.types.Candidate;
-import com.google.genai.types.Content;
-import com.google.genai.types.GenerateContentResponse;
-import com.google.genai.types.GenerateContentResponseUsageMetadata;
-import com.google.genai.types.MediaModality;
-import com.google.genai.types.ModalityTokenCount;
-import com.google.genai.types.Part;
-import com.google.genai.types.TrafficType;
+import com.google.genai.types.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.Usage;
@@ -42,6 +32,8 @@ import org.springframework.ai.google.genai.metadata.GoogleGenAiTrafficType;
 import org.springframework.ai.google.genai.metadata.GoogleGenAiUsage;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,9 +60,9 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 
 		// Initialize chat model with default options
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("gemini-2.0-flash-thinking-exp")
-			.temperature(0.7)
-			.build();
+				.model("gemini-2.0-flash-thinking-exp")
+				.temperature(0.7)
+				.build();
 
 		this.chatModel = new TestGoogleGenAiGeminiChatModel(this.mockClient, options, this.retryTemplate);
 	}
@@ -79,23 +71,23 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 	void testExtendedUsageWithThinkingTokens() {
 		// Create mock response with thinking tokens
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(175)
-			.thoughtsTokenCount(25) // Thinking tokens for thinking models
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(175)
+				.thoughtsTokenCount(25) // Thinking tokens for thinking models
+				.build();
 
 		Content responseContent = Content.builder()
-			.parts(Part.builder().text("This is a thoughtful response").build())
-			.build();
+				.parts(Part.builder().text("This is a thoughtful response").build())
+				.build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash-thinking-exp")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash-thinking-exp")
+				.build();
 
 		// Set the mock response
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
@@ -118,30 +110,30 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 		assertThat(genAiUsage.getCompletionTokens()).isEqualTo(50);
 		assertThat(genAiUsage.getTotalTokens()).isEqualTo(175);
 		assertThat(genAiUsage.getThoughtsTokenCount()).isEqualTo(25); // Verify thinking
-																		// tokens
+		// tokens
 	}
 
 	@Test
 	void testExtendedUsageWithCachedContent() {
 		// Create mock response with cached content tokens
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(200)
-			.candidatesTokenCount(50)
-			.totalTokenCount(250)
-			.cachedContentTokenCount(80) // Cached content tokens
-			.build();
+				.promptTokenCount(200)
+				.candidatesTokenCount(50)
+				.totalTokenCount(250)
+				.cachedContentTokenCount(80) // Cached content tokens
+				.build();
 
 		Content responseContent = Content.builder()
-			.parts(Part.builder().text("Response using cached context").build())
-			.build();
+				.parts(Part.builder().text("Response using cached context").build())
+				.build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
@@ -154,30 +146,30 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 		GoogleGenAiUsage genAiUsage = (GoogleGenAiUsage) response.getMetadata().getUsage();
 		assertThat(genAiUsage.getCachedContentTokenCount()).isEqualTo(80);
 		assertThat(genAiUsage.getPromptTokens()).isEqualTo(200); // Includes cached
-																	// content
+		// content
 	}
 
 	@Test
 	void testExtendedUsageWithToolUseTokens() {
 		// Create mock response with tool-use tokens
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(150)
-			.candidatesTokenCount(75)
-			.totalTokenCount(255)
-			.toolUsePromptTokenCount(30) // Tool-use tokens
-			.build();
+				.promptTokenCount(150)
+				.candidatesTokenCount(75)
+				.totalTokenCount(255)
+				.toolUsePromptTokenCount(30) // Tool-use tokens
+				.build();
 
 		Content responseContent = Content.builder()
-			.parts(Part.builder().text("Executed tool and got result").build())
-			.build();
+				.parts(Part.builder().text("Executed tool and got result").build())
+				.build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
@@ -195,38 +187,38 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 	void testExtendedUsageWithModalityBreakdown() {
 		// Create modality token counts
 		ModalityTokenCount textPromptModality = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(80)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(80)
+				.build();
 
 		ModalityTokenCount imagePromptModality = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.IMAGE))
-			.tokenCount(120)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.IMAGE))
+				.tokenCount(120)
+				.build();
 
 		ModalityTokenCount textResponseModality = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(50)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(50)
+				.build();
 
 		// Create mock response with modality breakdowns
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(200)
-			.candidatesTokenCount(50)
-			.totalTokenCount(250)
-			.promptTokensDetails(List.of(textPromptModality, imagePromptModality))
-			.candidatesTokensDetails(List.of(textResponseModality))
-			.build();
+				.promptTokenCount(200)
+				.candidatesTokenCount(50)
+				.totalTokenCount(250)
+				.promptTokensDetails(List.of(textPromptModality, imagePromptModality))
+				.candidatesTokensDetails(List.of(textResponseModality))
+				.build();
 
 		Content responseContent = Content.builder().parts(Part.builder().text("Analyzed your image").build()).build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
@@ -255,21 +247,21 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 	void testExtendedUsageWithTrafficType() {
 		// Test ON_DEMAND traffic type
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(150)
-			.trafficType(new TrafficType(TrafficType.Known.ON_DEMAND))
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(150)
+				.trafficType(new TrafficType(TrafficType.Known.ON_DEMAND))
+				.build();
 
 		Content responseContent = Content.builder().parts(Part.builder().text("Response").build()).build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
@@ -285,30 +277,30 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 	void testExtendedUsageDisabled() {
 		// Configure to disable extended metadata
 		GoogleGenAiChatOptions options = GoogleGenAiChatOptions.builder()
-			.model("gemini-2.0-flash")
-			.includeExtendedUsageMetadata(false) // Disable extended metadata
-			.build();
+				.model("gemini-2.0-flash")
+				.includeExtendedUsageMetadata(false) // Disable extended metadata
+				.build();
 
 		TestGoogleGenAiGeminiChatModel modelWithBasicUsage = new TestGoogleGenAiGeminiChatModel(this.mockClient,
 				options, this.retryTemplate);
 
 		// Create mock response
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(150)
-			.thoughtsTokenCount(25) // This should be ignored
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(150)
+				.thoughtsTokenCount(25) // This should be ignored
+				.build();
 
 		Content responseContent = Content.builder().parts(Part.builder().text("Response").build()).build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash")
+				.build();
 
 		modelWithBasicUsage.setMockGenerateContentResponse(mockResponse);
 
@@ -328,55 +320,55 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 	void testCompleteExtendedUsageScenario() {
 		// Create comprehensive mock response with all metadata
 		ModalityTokenCount textPrompt = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(70)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(70)
+				.build();
 
 		ModalityTokenCount imagePrompt = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.IMAGE))
-			.tokenCount(30)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.IMAGE))
+				.tokenCount(30)
+				.build();
 
 		ModalityTokenCount textCandidate = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(50)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(50)
+				.build();
 
 		ModalityTokenCount cachedText = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(40)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(40)
+				.build();
 
 		ModalityTokenCount toolUseText = ModalityTokenCount.builder()
-			.modality(new MediaModality(MediaModality.Known.TEXT))
-			.tokenCount(20)
-			.build();
+				.modality(new MediaModality(MediaModality.Known.TEXT))
+				.tokenCount(20)
+				.build();
 
 		GenerateContentResponseUsageMetadata usageMetadata = GenerateContentResponseUsageMetadata.builder()
-			.promptTokenCount(100)
-			.candidatesTokenCount(50)
-			.totalTokenCount(195)
-			.thoughtsTokenCount(25)
-			.cachedContentTokenCount(40)
-			.toolUsePromptTokenCount(20)
-			.promptTokensDetails(List.of(textPrompt, imagePrompt))
-			.candidatesTokensDetails(List.of(textCandidate))
-			.cacheTokensDetails(List.of(cachedText))
-			.toolUsePromptTokensDetails(List.of(toolUseText))
-			.trafficType(new TrafficType(TrafficType.Known.PROVISIONED_THROUGHPUT))
-			.build();
+				.promptTokenCount(100)
+				.candidatesTokenCount(50)
+				.totalTokenCount(195)
+				.thoughtsTokenCount(25)
+				.cachedContentTokenCount(40)
+				.toolUsePromptTokenCount(20)
+				.promptTokensDetails(List.of(textPrompt, imagePrompt))
+				.candidatesTokensDetails(List.of(textCandidate))
+				.cacheTokensDetails(List.of(cachedText))
+				.toolUsePromptTokensDetails(List.of(toolUseText))
+				.trafficType(new TrafficType(TrafficType.Known.PROVISIONED_THROUGHPUT))
+				.build();
 
 		Content responseContent = Content.builder()
-			.parts(Part.builder().text("Comprehensive response").build())
-			.build();
+				.parts(Part.builder().text("Comprehensive response").build())
+				.build();
 
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.usageMetadata(usageMetadata)
-			.modelVersion("gemini-2.0-flash-thinking-exp")
-			.build();
+				.candidates(List.of(candidate))
+				.usageMetadata(usageMetadata)
+				.modelVersion("gemini-2.0-flash-thinking-exp")
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 
@@ -419,10 +411,10 @@ public class GoogleGenAiChatModelExtendedUsageTests {
 		Candidate candidate = Candidate.builder().content(responseContent).index(0).build();
 
 		GenerateContentResponse mockResponse = GenerateContentResponse.builder()
-			.candidates(List.of(candidate))
-			.modelVersion("gemini-2.0-flash")
-			// No usage metadata
-			.build();
+				.candidates(List.of(candidate))
+				.modelVersion("gemini-2.0-flash")
+				// No usage metadata
+				.build();
 
 		this.chatModel.setMockGenerateContentResponse(mockResponse);
 

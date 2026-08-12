@@ -16,15 +16,14 @@
 
 package org.springframework.ai.aot;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.util.Assert;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,9 +33,9 @@ class AiRuntimeHintsTests {
 	void discoverRelevantClasses() {
 		var classes = AiRuntimeHints.findJsonAnnotatedClassesInPackage(TestApi.class);
 		var included = Set.of(TestApi.Bar.class, TestApi.Foo.class)
-			.stream()
-			.map(t -> TypeReference.of(t.getName()))
-			.collect(Collectors.toSet());
+				.stream()
+				.map(t -> TypeReference.of(t.getName()))
+				.collect(Collectors.toSet());
 		Assert.state(classes.containsAll(included), "there should be all of the enumerated classes. ");
 	}
 

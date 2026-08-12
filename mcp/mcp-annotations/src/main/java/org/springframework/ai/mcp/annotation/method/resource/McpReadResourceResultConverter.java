@@ -16,11 +16,10 @@
 
 package org.springframework.ai.mcp.annotation.method.resource;
 
-import java.util.Map;
-
 import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
-
 import org.springframework.ai.mcp.annotation.method.resource.AbstractMcpResourceMethodCallback.ContentType;
+
+import java.util.Map;
 
 /**
  * Interface for converting method return values to {@link ReadResourceResult}.
@@ -40,15 +39,16 @@ public interface McpReadResourceResultConverter {
 	 * <p>
 	 * This method handles various return types and converts them to a standardized
 	 * {@link ReadResourceResult} format.
-	 * @param result The method's return value
-	 * @param requestUri The original request URI
-	 * @param mimeType The MIME type of the resource
+	 *
+	 * @param result      The method's return value
+	 * @param requestUri  The original request URI
+	 * @param mimeType    The MIME type of the resource
 	 * @param contentType The content type of the resource
 	 * @return A {@link ReadResourceResult} containing the appropriate resource contents
 	 * @throws IllegalArgumentException if the return type is not supported
 	 */
 	ReadResourceResult convertToReadResourceResult(Object result, String requestUri, String mimeType,
-			ContentType contentType);
+	                                               ContentType contentType);
 
 	/**
 	 * Converts the method's return value to a {@link ReadResourceResult}, propagating
@@ -57,16 +57,17 @@ public interface McpReadResourceResultConverter {
 	 * This default method delegates to the original
 	 * {@link #convertToReadResourceResult(Object, String, String, ContentType)} to ensure
 	 * backwards compatibility with existing custom implementations.
-	 * @param result The method's return value
-	 * @param requestUri The original request URI
-	 * @param mimeType The MIME type of the resource
+	 *
+	 * @param result      The method's return value
+	 * @param requestUri  The original request URI
+	 * @param mimeType    The MIME type of the resource
 	 * @param contentType The content type of the resource
-	 * @param meta The resource-level metadata to propagate to content items
+	 * @param meta        The resource-level metadata to propagate to content items
 	 * @return A {@link ReadResourceResult} containing the appropriate resource contents
 	 * @throws IllegalArgumentException if the return type is not supported
 	 */
 	default ReadResourceResult convertToReadResourceResult(Object result, String requestUri, String mimeType,
-			ContentType contentType, Map<String, Object> meta) {
+	                                                       ContentType contentType, Map<String, Object> meta) {
 		return convertToReadResourceResult(result, requestUri, mimeType, contentType);
 	}
 

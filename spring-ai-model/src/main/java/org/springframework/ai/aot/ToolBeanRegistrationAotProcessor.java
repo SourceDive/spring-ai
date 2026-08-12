@@ -16,10 +16,7 @@
 
 package org.springframework.ai.aot;
 
-import java.util.stream.Stream;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.aot.generate.GenerationContext;
 import org.springframework.aot.hint.MemberCategory;
@@ -30,6 +27,8 @@ import org.springframework.beans.factory.aot.BeanRegistrationCode;
 import org.springframework.beans.factory.support.RegisteredBean;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.util.ReflectionUtils;
+
+import java.util.stream.Stream;
 
 /**
  * AOT {@code BeanRegistrationAotProcessor} that detects the presence of the {@link Tool}
@@ -44,10 +43,10 @@ class ToolBeanRegistrationAotProcessor implements BeanRegistrationAotProcessor {
 	public @Nullable BeanRegistrationAotContribution processAheadOfTime(RegisteredBean registeredBean) {
 		Class<?> beanClass = registeredBean.getBeanClass();
 		MergedAnnotations.Search search = MergedAnnotations
-			.search(org.springframework.core.annotation.MergedAnnotations.SearchStrategy.TYPE_HIERARCHY);
+				.search(org.springframework.core.annotation.MergedAnnotations.SearchStrategy.TYPE_HIERARCHY);
 
 		boolean hasAnyToolAnnotatedMethods = Stream.of(ReflectionUtils.getDeclaredMethods(beanClass))
-			.anyMatch(method -> search.from(method).isPresent(Tool.class));
+				.anyMatch(method -> search.from(method).isPresent(Tool.class));
 
 		if (hasAnyToolAnnotatedMethods) {
 			return new AotContribution(beanClass);
@@ -58,8 +57,8 @@ class ToolBeanRegistrationAotProcessor implements BeanRegistrationAotProcessor {
 
 	private static class AotContribution implements BeanRegistrationAotContribution {
 
-		private final MemberCategory[] memberCategories = new MemberCategory[] { MemberCategory.INVOKE_DECLARED_METHODS,
-				MemberCategory.INVOKE_PUBLIC_METHODS };
+		private final MemberCategory[] memberCategories = new MemberCategory[]{MemberCategory.INVOKE_DECLARED_METHODS,
+				MemberCategory.INVOKE_PUBLIC_METHODS};
 
 		private final Class<?> toolClass;
 

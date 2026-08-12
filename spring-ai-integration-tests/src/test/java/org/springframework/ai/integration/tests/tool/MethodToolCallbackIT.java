@@ -16,11 +16,8 @@
 
 package org.springframework.ai.integration.tests.tool;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.integration.tests.TestApplication;
 import org.springframework.ai.integration.tests.tool.domain.Author;
@@ -33,6 +30,8 @@ import org.springframework.ai.tool.method.MethodToolCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,77 +53,77 @@ public class MethodToolCallbackIT {
 	@Test
 	void chatMethodNoArgs() {
 		var content = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user("Welcome the user to the library")
-			.tools(this.tools)
-			.call()
-			.content();
+				.build()
+				.prompt()
+				.user("Welcome the user to the library")
+				.tools(this.tools)
+				.call()
+				.content();
 		assertThat(content).isNotEmpty();
 	}
 
 	@Test
 	void chatMethodVoid() {
 		var content = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user("Welcome %s to the library".formatted("James Bond"))
-			.tools(this.tools)
-			.call()
-			.content();
+				.build()
+				.prompt()
+				.user("Welcome %s to the library".formatted("James Bond"))
+				.tools(this.tools)
+				.call()
+				.content();
 		assertThat(content).isNotEmpty();
 	}
 
 	@Test
 	void chatMethodSingle() {
 		var content = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user("What books written by %s are available in the library?".formatted("J.R.R. Tolkien"))
-			.tools(this.tools)
-			.call()
-			.content();
+				.build()
+				.prompt()
+				.user("What books written by %s are available in the library?".formatted("J.R.R. Tolkien"))
+				.tools(this.tools)
+				.call()
+				.content();
 		assertThat(content).isNotEmpty()
-			.containsIgnoringCase("The Hobbit")
-			.containsIgnoringCase("The Lord of The Rings")
-			.containsIgnoringCase("The Silmarillion");
+				.containsIgnoringCase("The Hobbit")
+				.containsIgnoringCase("The Lord of The Rings")
+				.containsIgnoringCase("The Silmarillion");
 	}
 
 	@Test
 	void chatMethodList() {
 		var content = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user("What authors wrote the books %s and %s available in the library?".formatted("The Hobbit",
-					"The Lion, the Witch and the Wardrobe"))
-			.tools(this.tools)
-			.call()
-			.content();
+				.build()
+				.prompt()
+				.user("What authors wrote the books %s and %s available in the library?".formatted("The Hobbit",
+						"The Lion, the Witch and the Wardrobe"))
+				.tools(this.tools)
+				.call()
+				.content();
 		assertThat(content).isNotEmpty().contains("J.R.R. Tolkien").contains("C.S. Lewis");
 	}
 
 	@Test
 	void chatMethodCallback() {
 		var content = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt()
-			.user("What authors wrote the books %s and %s available in the library?".formatted("The Hobbit",
-					"The Lion, the Witch and the Wardrobe"))
-			.tools(ToolCallbacks.from(this.tools))
-			.call()
-			.content();
+				.build()
+				.prompt()
+				.user("What authors wrote the books %s and %s available in the library?".formatted("The Hobbit",
+						"The Lion, the Witch and the Wardrobe"))
+				.tools(ToolCallbacks.from(this.tools))
+				.call()
+				.content();
 		assertThat(content).isNotEmpty().contains("J.R.R. Tolkien").contains("C.S. Lewis");
 	}
 
 	@Test
 	void chatMethodCallbackDefault() {
 		var content = ChatClient.builder(this.openAiChatModel)
-			.defaultTools(this.tools)
-			.build()
-			.prompt()
-			.user("How many books written by %s are available in the library?".formatted("J.R.R. Tolkien"))
-			.call()
-			.content();
+				.defaultTools(this.tools)
+				.build()
+				.prompt()
+				.user("How many books written by %s are available in the library?".formatted("J.R.R. Tolkien"))
+				.call()
+				.content();
 		assertThat(content).isNotEmpty().containsAnyOf("three", "3");
 	}
 

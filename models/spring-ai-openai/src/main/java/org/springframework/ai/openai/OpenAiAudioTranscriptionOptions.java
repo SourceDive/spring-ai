@@ -16,22 +16,17 @@
 
 package org.springframework.ai.openai;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import com.openai.azure.AzureOpenAIServiceVersion;
 import com.openai.credential.Credential;
 import com.openai.models.audio.AudioModel;
 import com.openai.models.audio.AudioResponseFormat;
 import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.audio.transcription.AudioTranscriptionOptions;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.*;
 
 /**
  * OpenAI SDK Audio Transcription Options.
@@ -64,13 +59,13 @@ public class OpenAiAudioTranscriptionOptions extends AbstractOpenAiOptions imple
 	private final @Nullable List<TranscriptionCreateParams.TimestampGranularity> timestampGranularities;
 
 	protected OpenAiAudioTranscriptionOptions(@Nullable String baseUrl, @Nullable String apiKey,
-			@Nullable Credential credential, @Nullable String model, @Nullable String microsoftDeploymentName,
-			@Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
-			@Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
-			@Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
-			@Nullable AudioResponseFormat responseFormat, @Nullable String prompt, @Nullable String language,
-			@Nullable Float temperature,
-			@Nullable List<TranscriptionCreateParams.TimestampGranularity> timestampGranularities) {
+	                                          @Nullable Credential credential, @Nullable String model, @Nullable String microsoftDeploymentName,
+	                                          @Nullable AzureOpenAIServiceVersion microsoftFoundryServiceVersion, @Nullable String organizationId,
+	                                          @Nullable Boolean isMicrosoftFoundry, @Nullable Boolean isGitHubModels, @Nullable Duration timeout,
+	                                          @Nullable Integer maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
+	                                          @Nullable AudioResponseFormat responseFormat, @Nullable String prompt, @Nullable String language,
+	                                          @Nullable Float temperature,
+	                                          @Nullable List<TranscriptionCreateParams.TimestampGranularity> timestampGranularities) {
 		super(baseUrl, apiKey, credential, model != null ? model : DEFAULT_TRANSCRIPTION_MODEL, microsoftDeploymentName,
 				microsoftFoundryServiceVersion, organizationId, isMicrosoftFoundry, isGitHubModels, timeout, maxRetries,
 				proxy, customHeaders);
@@ -203,8 +198,7 @@ public class OpenAiAudioTranscriptionOptions extends AbstractOpenAiOptions imple
 				if (castFrom.getCustomHeaders() != null) {
 					if (this.customHeaders == null) {
 						this.customHeaders = new HashMap<>(castFrom.getCustomHeaders());
-					}
-					else {
+					} else {
 						Map<String, String> merged = new HashMap<>(this.customHeaders);
 						merged.putAll(castFrom.getCustomHeaders());
 						this.customHeaders = merged;
@@ -225,8 +219,7 @@ public class OpenAiAudioTranscriptionOptions extends AbstractOpenAiOptions imple
 				if (castFrom.getTimestampGranularities() != null) {
 					if (this.timestampGranularities == null) {
 						this.timestampGranularities = new ArrayList<>(castFrom.getTimestampGranularities());
-					}
-					else {
+					} else {
 						List<TranscriptionCreateParams.TimestampGranularity> merged = new ArrayList<>(
 								this.timestampGranularities);
 						merged.addAll(castFrom.getTimestampGranularities());

@@ -25,8 +25,8 @@ import org.springframework.util.Assert;
  * MCP connection info record containing the client and server related metadata.
  *
  * @param clientCapabilities the MCP client capabilities
- * @param clientInfo the MCP client information
- * @param initializeResult the MCP server initialization result
+ * @param clientInfo         the MCP client information
+ * @param initializeResult   the MCP server initialization result
  * @author Ilayaperumal Gopinathan
  * @author Christian Tzolov
  */
@@ -39,7 +39,7 @@ public record McpConnectionInfo(// @formatter:off
 	 * Creates a new Builder instance for constructing McpConnectionInfo.
 	 * @return a new Builder instance
 	 */
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 
@@ -62,6 +62,7 @@ public record McpConnectionInfo(// @formatter:off
 
 		/**
 		 * Sets the client capabilities.
+		 *
 		 * @param clientCapabilities the MCP client capabilities
 		 * @return this builder instance for method chaining
 		 */
@@ -72,6 +73,7 @@ public record McpConnectionInfo(// @formatter:off
 
 		/**
 		 * Sets the client information.
+		 *
 		 * @param clientInfo the MCP client information
 		 * @return this builder instance for method chaining
 		 */
@@ -82,6 +84,7 @@ public record McpConnectionInfo(// @formatter:off
 
 		/**
 		 * Sets the initialize result.
+		 *
 		 * @param initializeResult the MCP server initialization result
 		 * @return this builder instance for method chaining
 		 */
@@ -92,6 +95,7 @@ public record McpConnectionInfo(// @formatter:off
 
 		/**
 		 * Builds and returns a new McpConnectionInfo instance with the configured values.
+		 *
 		 * @return a new McpConnectionInfo instance
 		 */
 		public McpConnectionInfo build() {

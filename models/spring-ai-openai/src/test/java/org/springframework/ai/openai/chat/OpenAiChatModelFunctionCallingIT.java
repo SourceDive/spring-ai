@@ -16,16 +16,8 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -46,6 +38,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,12 +74,12 @@ class OpenAiChatModelFunctionCallingIT {
 	@Test
 	void functionCallTest() {
 		functionCallTest(OpenAiChatOptions.builder()
-			.model("gpt-4o")
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build());
+				.model("gpt-4o")
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build());
 	}
 
 	@Test
@@ -96,11 +95,9 @@ class OpenAiChatModelFunctionCallingIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -110,13 +107,13 @@ class OpenAiChatModelFunctionCallingIT {
 		};
 
 		functionCallTest(OpenAiChatOptions.builder()
-			.model("gpt-4o")
-			.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", biFunction)
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.toolContext(Map.of("sessionId", "123"))
-			.build());
+				.model("gpt-4o")
+				.toolCallbacks(List.of(FunctionToolCallback.builder("getCurrentWeather", biFunction)
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.toolContext(Map.of("sessionId", "123"))
+				.build());
 	}
 
 	void functionCallTest(OpenAiChatOptions options) {
@@ -145,12 +142,12 @@ class OpenAiChatModelFunctionCallingIT {
 	void streamFunctionCallTest() {
 
 		streamFunctionCallTest(OpenAiChatOptions.builder()
-			.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				// .responseConverter(response -> "" + response.temp() + response.unit())
-				.build())))
-			.build());
+				.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", new MockWeatherService())
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						// .responseConverter(response -> "" + response.temp() + response.unit())
+						.build())))
+				.build());
 	}
 
 	@Test
@@ -166,11 +163,9 @@ class OpenAiChatModelFunctionCallingIT {
 				double temperature = 0;
 				if (request.location().contains("Paris")) {
 					temperature = 15;
-				}
-				else if (request.location().contains("Tokyo")) {
+				} else if (request.location().contains("Tokyo")) {
 					temperature = 10;
-				}
-				else if (request.location().contains("San Francisco")) {
+				} else if (request.location().contains("San Francisco")) {
 					temperature = 30;
 				}
 
@@ -180,12 +175,12 @@ class OpenAiChatModelFunctionCallingIT {
 		};
 
 		OpenAiChatOptions promptOptions = OpenAiChatOptions.builder()
-			.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", biFunction)
-				.description("Get the weather in location")
-				.inputType(MockWeatherService.Request.class)
-				.build())))
-			.toolContext(Map.of("sessionId", "123"))
-			.build();
+				.toolCallbacks(List.of((FunctionToolCallback.builder("getCurrentWeather", biFunction)
+						.description("Get the weather in location")
+						.inputType(MockWeatherService.Request.class)
+						.build())))
+				.toolContext(Map.of("sessionId", "123"))
+				.build();
 
 		streamFunctionCallTest(promptOptions);
 	}
@@ -222,11 +217,11 @@ class OpenAiChatModelFunctionCallingIT {
 		@Bean
 		public OpenAiChatModel openAiClient() {
 			return OpenAiChatModel.builder()
-				.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
-					.apiKey(System.getenv("OPENAI_API_KEY"))
-					.model(org.springframework.ai.openai.OpenAiChatOptions.DEFAULT_CHAT_MODEL)
-					.build())
-				.build();
+					.options(org.springframework.ai.openai.OpenAiChatOptions.builder()
+							.apiKey(System.getenv("OPENAI_API_KEY"))
+							.model(org.springframework.ai.openai.OpenAiChatOptions.DEFAULT_CHAT_MODEL)
+							.build())
+					.build();
 		}
 
 	}

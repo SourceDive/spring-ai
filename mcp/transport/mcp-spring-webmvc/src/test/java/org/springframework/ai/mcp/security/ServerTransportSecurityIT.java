@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.security;
 
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.time.Duration;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
@@ -35,17 +30,12 @@ import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityVa
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Named;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.BeforeParameterizedClassInvocation;
 import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import org.springframework.ai.mcp.server.TomcatTestUtil;
 import org.springframework.ai.mcp.server.TomcatTestUtil.TomcatServer;
 import org.springframework.ai.mcp.server.webmvc.transport.WebMvcSseServerTransportProvider;
@@ -58,6 +48,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.time.Duration;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -174,8 +169,7 @@ public class ServerTransportSecurityIT {
 		try {
 			tomcatServer.tomcat().start();
 			assertThat(tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 		baseUrl = "http://localhost:" + tomcatServer.tomcat().getConnector().getLocalPort();
@@ -190,8 +184,7 @@ public class ServerTransportSecurityIT {
 				try {
 					tomcatServer.tomcat().stop();
 					tomcatServer.tomcat().destroy();
-				}
-				catch (LifecycleException e) {
+				} catch (LifecycleException e) {
 					throw new RuntimeException("Failed to stop Tomcat", e);
 				}
 			}
@@ -231,9 +224,9 @@ public class ServerTransportSecurityIT {
 		@Bean
 		DefaultServerTransportSecurityValidator validator() {
 			return DefaultServerTransportSecurityValidator.builder()
-				.allowedOrigin("http://localhost:*")
-				.allowedHost("localhost:*")
-				.build();
+					.allowedOrigin("http://localhost:*")
+					.allowedHost("localhost:*")
+					.build();
 		}
 
 	}
@@ -247,9 +240,9 @@ public class ServerTransportSecurityIT {
 		@Scope("prototype")
 		McpSyncClient createMcpClient(McpSyncHttpClientRequestCustomizer requestCustomizer) {
 			var transport = HttpClientSseClientTransport.builder(baseUrl)
-				.httpRequestCustomizer(requestCustomizer)
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.build();
+					.httpRequestCustomizer(requestCustomizer)
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.build();
 			return McpClient.sync(transport).initializationTimeout(Duration.ofMillis(500)).build();
 		}
 
@@ -257,9 +250,9 @@ public class ServerTransportSecurityIT {
 		public WebMvcSseServerTransportProvider webMvcSseServerTransport(
 				DefaultServerTransportSecurityValidator validator) {
 			return WebMvcSseServerTransportProvider.builder()
-				.messageEndpoint("/mcp/message")
-				.securityValidator(validator)
-				.build();
+					.messageEndpoint("/mcp/message")
+					.securityValidator(validator)
+					.build();
 		}
 
 		@Bean
@@ -270,9 +263,9 @@ public class ServerTransportSecurityIT {
 		@Bean
 		public McpSyncServer mcpServer(WebMvcSseServerTransportProvider transportProvider) {
 			return McpServer.sync(transportProvider)
-				.serverInfo("test-server", "1.0.0")
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.build();
+					.serverInfo("test-server", "1.0.0")
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.build();
 		}
 
 	}
@@ -286,10 +279,10 @@ public class ServerTransportSecurityIT {
 		@Scope("prototype")
 		McpSyncClient createMcpClient(McpSyncHttpClientRequestCustomizer requestCustomizer) {
 			var transport = HttpClientStreamableHttpTransport.builder(baseUrl)
-				.httpRequestCustomizer(requestCustomizer)
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.openConnectionOnStartup(true)
-				.build();
+					.httpRequestCustomizer(requestCustomizer)
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.openConnectionOnStartup(true)
+					.build();
 			return McpClient.sync(transport).initializationTimeout(Duration.ofMillis(500)).build();
 		}
 
@@ -308,9 +301,9 @@ public class ServerTransportSecurityIT {
 		@Bean
 		public McpSyncServer mcpServer(WebMvcStreamableServerTransportProvider transportProvider) {
 			return McpServer.sync(transportProvider)
-				.serverInfo("test-server", "1.0.0")
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.build();
+					.serverInfo("test-server", "1.0.0")
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.build();
 		}
 
 	}
@@ -324,10 +317,10 @@ public class ServerTransportSecurityIT {
 		@Scope("prototype")
 		McpSyncClient createMcpClient(McpSyncHttpClientRequestCustomizer requestCustomizer) {
 			var transport = HttpClientStreamableHttpTransport.builder(baseUrl)
-				.httpRequestCustomizer(requestCustomizer)
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.openConnectionOnStartup(true)
-				.build();
+					.httpRequestCustomizer(requestCustomizer)
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.openConnectionOnStartup(true)
+					.build();
 			return McpClient.sync(transport).initializationTimeout(Duration.ofMillis(500)).build();
 		}
 
@@ -345,9 +338,9 @@ public class ServerTransportSecurityIT {
 		@Bean
 		public McpStatelessSyncServer mcpStatelessServer(WebMvcStatelessServerTransport transportProvider) {
 			return McpServer.sync(transportProvider)
-				.serverInfo("test-server", "1.0.0")
-				.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-				.build();
+					.serverInfo("test-server", "1.0.0")
+					.capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
+					.build();
 		}
 
 	}
@@ -360,7 +353,7 @@ public class ServerTransportSecurityIT {
 
 		@Override
 		public void customize(HttpRequest.Builder builder, String method, URI endpoint, String body,
-				McpTransportContext context) {
+		                      McpTransportContext context) {
 			if (this.originHeader != null) {
 				builder.header("Origin", this.originHeader);
 			}

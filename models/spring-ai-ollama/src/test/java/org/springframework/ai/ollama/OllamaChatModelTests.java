@@ -16,10 +16,6 @@
 
 package org.springframework.ai.ollama;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +23,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
@@ -43,11 +38,13 @@ import org.springframework.ai.ollama.api.OllamaModel;
 import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.retry.RetryUtils;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -83,11 +80,11 @@ class OllamaChatModelTests {
 	void buildOllamaChatModel() {
 		Exception exception = assertThrows(IllegalArgumentException.class,
 				() -> OllamaChatModel.builder()
-					.ollamaApi(this.ollamaApi)
-					.options(OllamaChatOptions.builder().model(OllamaModel.LLAMA2).build())
-					.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-					.modelManagementOptions(null)
-					.build());
+						.ollamaApi(this.ollamaApi)
+						.options(OllamaChatOptions.builder().model(OllamaModel.LLAMA2).build())
+						.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+						.modelManagementOptions(null)
+						.build());
 		assertEquals("modelManagementOptions must not be null", exception.getMessage());
 	}
 
@@ -130,13 +127,13 @@ class OllamaChatModelTests {
 				totalDuration, loadDuration, promptEvalCount, promptEvalDuration, evalCount, evalDuration);
 
 		ChatResponse previousChatResponse = ChatResponse.builder()
-			.generations(List.of())
-			.metadata(ChatResponseMetadata.builder()
-				.usage(new DefaultUsage(66, 99))
-				.keyValue("eval-duration", Duration.ofSeconds(2))
-				.keyValue("prompt-eval-duration", Duration.ofSeconds(2))
-				.build())
-			.build();
+				.generations(List.of())
+				.metadata(ChatResponseMetadata.builder()
+						.usage(new DefaultUsage(66, 99))
+						.keyValue("eval-duration", Duration.ofSeconds(2))
+						.keyValue("prompt-eval-duration", Duration.ofSeconds(2))
+						.build())
+				.build();
 
 		ChatResponseMetadata metadata = OllamaChatModel.from(response, previousChatResponse);
 
@@ -156,13 +153,13 @@ class OllamaChatModelTests {
 				null, null, null, null, null);
 
 		ChatResponse previousChatResponse = ChatResponse.builder()
-			.generations(List.of())
-			.metadata(ChatResponseMetadata.builder()
-				.usage(new DefaultUsage(66, 99))
-				.keyValue("eval-duration", Duration.ofSeconds(2))
-				.keyValue("prompt-eval-duration", Duration.ofSeconds(2))
-				.build())
-			.build();
+				.generations(List.of())
+				.metadata(ChatResponseMetadata.builder()
+						.usage(new DefaultUsage(66, 99))
+						.keyValue("eval-duration", Duration.ofSeconds(2))
+						.keyValue("prompt-eval-duration", Duration.ofSeconds(2))
+						.build())
+				.build();
 
 		ChatResponseMetadata metadata = OllamaChatModel.from(response, previousChatResponse);
 
@@ -176,29 +173,29 @@ class OllamaChatModelTests {
 	@Test
 	void buildOllamaChatModelWithNullOllamaApi() {
 		assertThatThrownBy(() -> OllamaChatModel.builder().ollamaApi(null).build())
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("OllamaApi must not be null");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("OllamaApi must not be null");
 	}
 
 	@Test
 	void buildOllamaChatModelWithAllBuilderOptions() {
 		OllamaChatOptions options = OllamaChatOptions.builder()
-			.model(OllamaModel.CODELLAMA)
-			.temperature(0.7)
-			.topK(50)
-			.build();
+				.model(OllamaModel.CODELLAMA)
+				.temperature(0.7)
+				.topK(50)
+				.build();
 
 		ToolCallingManager toolManager = ToolCallingManager.builder().build();
 		ModelManagementOptions managementOptions = ModelManagementOptions.builder().build();
 
 		ChatModel chatModel = OllamaChatModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.options(options)
-			.toolCallingManager(toolManager)
-			.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
-			.observationRegistry(ObservationRegistry.NOOP)
-			.modelManagementOptions(managementOptions)
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.options(options)
+				.toolCallingManager(toolManager)
+				.retryTemplate(RetryUtils.DEFAULT_RETRY_TEMPLATE)
+				.observationRegistry(ObservationRegistry.NOOP)
+				.modelManagementOptions(managementOptions)
+				.build();
 
 		assertThat(chatModel).isNotNull();
 		assertThat(chatModel).isInstanceOf(OllamaChatModel.class);
@@ -242,7 +239,7 @@ class OllamaChatModelTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "LLAMA2", "MISTRAL", "CODELLAMA", "LLAMA3", "GEMMA" })
+	@ValueSource(strings = {"LLAMA2", "MISTRAL", "CODELLAMA", "LLAMA3", "GEMMA"})
 	void buildOllamaChatModelWithDifferentModels(String modelName) {
 		OllamaModel model = OllamaModel.valueOf(modelName);
 		OllamaChatOptions options = OllamaChatOptions.builder().model(model).build();
@@ -258,9 +255,9 @@ class OllamaChatModelTests {
 		ObservationRegistry customRegistry = ObservationRegistry.create();
 
 		ChatModel chatModel = OllamaChatModel.builder()
-			.ollamaApi(this.ollamaApi)
-			.observationRegistry(customRegistry)
-			.build();
+				.ollamaApi(this.ollamaApi)
+				.observationRegistry(customRegistry)
+				.build();
 
 		assertThat(chatModel).isNotNull();
 	}
@@ -298,13 +295,13 @@ class OllamaChatModelTests {
 				100L, Integer.MAX_VALUE, Long.MAX_VALUE, Integer.MAX_VALUE, Long.MAX_VALUE);
 
 		ChatResponse previousChatResponse = ChatResponse.builder()
-			.generations(List.of())
-			.metadata(ChatResponseMetadata.builder()
-				.usage(new DefaultUsage(1, 1))
-				.keyValue("eval-duration", Duration.ofNanos(1L))
-				.keyValue("prompt-eval-duration", Duration.ofNanos(1L))
-				.build())
-			.build();
+				.generations(List.of())
+				.metadata(ChatResponseMetadata.builder()
+						.usage(new DefaultUsage(1, 1))
+						.keyValue("eval-duration", Duration.ofNanos(1L))
+						.keyValue("prompt-eval-duration", Duration.ofNanos(1L))
+						.build())
+				.build();
 
 		// This should not throw an exception, even with potential overflow
 		ChatResponseMetadata metadata = OllamaChatModel.from(response, previousChatResponse);
@@ -354,9 +351,9 @@ class OllamaChatModelTests {
 	void thinkingFieldIsStoredInAssistantMessageProperties() {
 		String thinkingText = "Let me reason step by step...";
 		OllamaApi.Message assistantApiMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.content("The answer is 42.")
-			.thinking(thinkingText)
-			.build();
+				.content("The answer is 42.")
+				.thinking(thinkingText)
+				.build();
 		OllamaApi.ChatResponse apiResponse = new OllamaApi.ChatResponse("model", Instant.now(), assistantApiMessage,
 				"stop", true, null, null, 10, 1000L, 20, 2000L);
 		when(this.ollamaApi.chat(any())).thenReturn(apiResponse);
@@ -374,15 +371,15 @@ class OllamaChatModelTests {
 	void thinkingFieldRoundTripsThroughConversationHistory() {
 		String thinkingText = "Step 1: understand the question...";
 		OllamaApi.Message firstApiMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.content("First answer.")
-			.thinking(thinkingText)
-			.build();
+				.content("First answer.")
+				.thinking(thinkingText)
+				.build();
 		OllamaApi.ChatResponse firstApiResponse = new OllamaApi.ChatResponse("model", Instant.now(), firstApiMessage,
 				"stop", true, null, null, 10, 1000L, 20, 2000L);
 
 		OllamaApi.Message secondApiMessage = OllamaApi.Message.builder(OllamaApi.Message.Role.ASSISTANT)
-			.content("Second answer.")
-			.build();
+				.content("Second answer.")
+				.build();
 		OllamaApi.ChatResponse secondApiResponse = new OllamaApi.ChatResponse("model", Instant.now(), secondApiMessage,
 				"stop", true, null, null, 10, 1000L, 20, 2000L);
 		when(this.ollamaApi.chat(any())).thenReturn(firstApiResponse).thenReturn(secondApiResponse);

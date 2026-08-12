@@ -16,19 +16,12 @@
 
 package org.springframework.ai.google.genai;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import com.google.genai.Client;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -43,6 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -100,13 +99,13 @@ class GoogleGenAiThoughtSignatureLifecycleIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
-			.includeThoughts(false) // Explicitly disable thought signatures
-			.toolCallbacks(List.of(FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-				.description("Get the current weather in a given location.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
+				.includeThoughts(false) // Explicitly disable thought signatures
+				.toolCallbacks(List.of(FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
+						.description("Get the current weather in a given location.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		var prompt = new Prompt(messages, promptOptions);
 		ChatResponse response = this.chatModel.call(prompt);
@@ -135,13 +134,13 @@ class GoogleGenAiThoughtSignatureLifecycleIT {
 		List<Message> messages = new ArrayList<>(List.of(userMessage));
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
-			.includeThoughts(true)
-			.toolCallbacks(List.of(FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
-				.description("Get the current weather in a given location.")
-				.inputType(MockWeatherService.Request.class)
-				.build()))
-			.build();
+				.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
+				.includeThoughts(true)
+				.toolCallbacks(List.of(FunctionToolCallback.builder("get_current_weather", new MockWeatherService())
+						.description("Get the current weather in a given location.")
+						.inputType(MockWeatherService.Request.class)
+						.build()))
+				.build();
 
 		// Execute streaming call
 		var prompt = new Prompt(messages, promptOptions);
@@ -197,7 +196,8 @@ class GoogleGenAiThoughtSignatureLifecycleIT {
 	 *
 	 * <p>
 	 * Based on: https://ai.google.dev/gemini-api/docs/thought-signatures
-	 * @param model the Google GenAI model to test
+	 *
+	 * @param model     the Google GenAI model to test
 	 * @param modelName the display name of the model for logging
 	 */
 	@ParameterizedTest(name = "Sequential function calls with {1}")
@@ -211,18 +211,18 @@ class GoogleGenAiThoughtSignatureLifecycleIT {
 				"Check the flight status for flight AA100 and book a taxi 2 hours before the departure time if the flight is delayed.");
 
 		var promptOptions = GoogleGenAiChatOptions.builder()
-			.model(model)
-			.includeThoughts(true) // Enable thought signatures
-			.toolCallbacks(List.of(
-					FunctionToolCallback.builder("check_flight", new MockFlightService())
-						.description("Gets the current status of a flight including departure time and delay status.")
-						.inputType(MockFlightService.Request.class)
-						.build(),
-					FunctionToolCallback.builder("book_taxi", new MockTaxiService())
-						.description("Books a taxi for a specified pickup time.")
-						.inputType(MockTaxiService.Request.class)
-						.build()))
-			.build();
+				.model(model)
+				.includeThoughts(true) // Enable thought signatures
+				.toolCallbacks(List.of(
+						FunctionToolCallback.builder("check_flight", new MockFlightService())
+								.description("Gets the current status of a flight including departure time and delay status.")
+								.inputType(MockFlightService.Request.class)
+								.build(),
+						FunctionToolCallback.builder("book_taxi", new MockTaxiService())
+								.description("Books a taxi for a specified pickup time.")
+								.inputType(MockTaxiService.Request.class)
+								.build()))
+				.build();
 		var prompt = new Prompt(userMessage, promptOptions);
 		ChatResponse response = this.chatModel.call(prompt);
 
@@ -301,12 +301,12 @@ class GoogleGenAiThoughtSignatureLifecycleIT {
 		@Bean
 		public GoogleGenAiChatModel googleGenAiChatModel(Client genAiClient) {
 			return GoogleGenAiChatModel.builder()
-				.genAiClient(genAiClient)
-				.options(GoogleGenAiChatOptions.builder()
-					.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
-					.temperature(0.9)
-					.build())
-				.build();
+					.genAiClient(genAiClient)
+					.options(GoogleGenAiChatOptions.builder()
+							.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
+							.temperature(0.9)
+							.build())
+					.build();
 		}
 
 	}

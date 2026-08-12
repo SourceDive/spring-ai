@@ -16,12 +16,11 @@
 
 package org.springframework.ai.vectorstore;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.document.Document;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.document.Document;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,7 +35,7 @@ public class SimpleVectorStoreSimilarityTests {
 	public void testSimilarity() {
 		Map<String, Object> metadata = new HashMap<>();
 		metadata.put("foo", "bar");
-		float[] testEmbedding = new float[] { 1.0f, 2.0f, 3.0f };
+		float[] testEmbedding = new float[]{1.0f, 2.0f, 3.0f};
 
 		SimpleVectorStoreContent storeContent = new SimpleVectorStoreContent("1", "hello, how are you?", metadata,
 				testEmbedding);
@@ -50,11 +49,11 @@ public class SimpleVectorStoreSimilarityTests {
 	@Test
 	public void testEmptyId() {
 		Map<String, Object> metadata = new HashMap<>();
-		float[] embedding = new float[] { 1.0f };
+		float[] embedding = new float[]{1.0f};
 
 		assertThatThrownBy(() -> new SimpleVectorStoreContent("", "text content", metadata, embedding))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("id must not be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("id must not be null or empty");
 	}
 
 	@Test
@@ -63,14 +62,14 @@ public class SimpleVectorStoreSimilarityTests {
 		float[] emptyEmbedding = new float[0];
 
 		assertThatThrownBy(() -> new SimpleVectorStoreContent("valid-id", "text content", metadata, emptyEmbedding))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("embedding vector must not be empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("embedding vector must not be empty");
 	}
 
 	@Test
 	public void testSingleElementEmbedding() {
 		Map<String, Object> metadata = new HashMap<>();
-		float[] singleEmbedding = new float[] { 0.1f };
+		float[] singleEmbedding = new float[]{0.1f};
 
 		SimpleVectorStoreContent storeContent = new SimpleVectorStoreContent("id-1", "text", metadata, singleEmbedding);
 		Document document = storeContent.toDocument(0.1);
@@ -81,18 +80,18 @@ public class SimpleVectorStoreSimilarityTests {
 
 	@Test
 	public void testNullMetadata() {
-		float[] embedding = new float[] { 1.0f };
+		float[] embedding = new float[]{1.0f};
 
 		assertThatThrownBy(() -> new SimpleVectorStoreContent("id-1", "text", null, embedding))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("metadata must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("metadata must not be null");
 	}
 
 	@Test
 	public void testMetadataImmutability() {
 		Map<String, Object> originalMetadata = new HashMap<>();
 		originalMetadata.put("key", "original");
-		float[] embedding = new float[] { 1.0f };
+		float[] embedding = new float[]{1.0f};
 
 		SimpleVectorStoreContent storeContent = new SimpleVectorStoreContent("id-1", "text", originalMetadata,
 				embedding);
@@ -109,8 +108,8 @@ public class SimpleVectorStoreSimilarityTests {
 	@Test
 	public void testWhitespaceOnlyText() {
 		Map<String, Object> metadata = new HashMap<>();
-		float[] embedding = new float[] { 1.0f };
-		String[] whitespaceTexts = { "   ", "\t\t", "\n\n", "\r\n", "   \t\n\r   " };
+		float[] embedding = new float[]{1.0f};
+		String[] whitespaceTexts = {"   ", "\t\t", "\n\n", "\r\n", "   \t\n\r   "};
 
 		for (String whitespace : whitespaceTexts) {
 			SimpleVectorStoreContent storeContent = new SimpleVectorStoreContent("ws-id", whitespace, metadata,
@@ -123,7 +122,7 @@ public class SimpleVectorStoreSimilarityTests {
 	@Test
 	public void testEmptyStringText() {
 		Map<String, Object> metadata = new HashMap<>();
-		float[] embedding = new float[] { 1.0f };
+		float[] embedding = new float[]{1.0f};
 
 		SimpleVectorStoreContent storeContent = new SimpleVectorStoreContent("empty-id", "", metadata, embedding);
 		Document document = storeContent.toDocument(0.1);

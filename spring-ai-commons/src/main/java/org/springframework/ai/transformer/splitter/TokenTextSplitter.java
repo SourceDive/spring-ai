@@ -16,16 +16,15 @@
 
 package org.springframework.ai.transformer.splitter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.EncodingType;
 import com.knuddels.jtokkit.api.IntArrayList;
-
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link TextSplitter} that splits text into chunks of a target size in tokens.
@@ -113,13 +112,13 @@ public class TokenTextSplitter extends TextSplitter {
 	 */
 	@Deprecated(since = "2.0.0-M3", forRemoval = true)
 	public TokenTextSplitter(int chunkSize, int minChunkSizeChars, int minChunkLengthToEmbed, int maxNumChunks,
-			boolean keepSeparator, List<Character> punctuationMarks) {
+	                         boolean keepSeparator, List<Character> punctuationMarks) {
 		this(DEFAULT_ENCODING_TYPE, chunkSize, minChunkSizeChars, minChunkLengthToEmbed, maxNumChunks, keepSeparator,
 				punctuationMarks);
 	}
 
 	private TokenTextSplitter(EncodingType encodingType, int chunkSize, int minChunkSizeChars,
-			int minChunkLengthToEmbed, int maxNumChunks, boolean keepSeparator, List<Character> punctuationMarks) {
+	                          int minChunkLengthToEmbed, int maxNumChunks, boolean keepSeparator, List<Character> punctuationMarks) {
 		Assert.notNull(encodingType, "encodingType must not be null");
 		this.encoding = this.registry.getEncoding(encodingType);
 		this.chunkSize = chunkSize;
@@ -147,7 +146,8 @@ public class TokenTextSplitter extends TextSplitter {
 	 * size ({@code tokens.size() > chunkSize}). Text that exactly matches or is smaller
 	 * than the chunk size is returned as a single chunk without punctuation-based
 	 * truncation.
-	 * @param text the text to split
+	 *
+	 * @param text      the text to split
 	 * @param chunkSize the target chunk size in tokens
 	 * @return list of text chunks
 	 */

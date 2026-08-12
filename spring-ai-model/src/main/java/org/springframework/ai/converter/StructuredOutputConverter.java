@@ -37,6 +37,7 @@ public interface StructuredOutputConverter<T> extends Converter<String, T>, Form
 
 	/**
 	 * Returns the JSON schema for the structured output of an LLM call.
+	 *
 	 * @return the JSON schema or {@link StructuredOutputConverter#NO_JSON_SCHEMA} if not
 	 * available
 	 * @since 2.0.0

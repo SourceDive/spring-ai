@@ -16,11 +16,8 @@
 
 package org.springframework.ai.integration.tests.rag.generation.augmentation;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.integration.tests.TestApplication;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -29,6 +26,8 @@ import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugment
 import org.springframework.ai.rag.generation.augmentation.QueryAugmenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,8 +48,8 @@ class ContextualQueryAugmenterIT {
 		QueryAugmenter queryAugmenter = ContextualQueryAugmenter.builder().build();
 		Query query = new Query("What is Iorek's dream?");
 		List<Document> documents = List
-			.of(new Document("Iorek was a little polar bear who lived in the Arctic circle."), new Document(
-					"Iorek loved to explore the snowy landscape and dreamt of one day going on an adventure around the North Pole."));
+				.of(new Document("Iorek was a little polar bear who lived in the Arctic circle."), new Document(
+						"Iorek loved to explore the snowy landscape and dreamt of one day going on an adventure around the North Pole."));
 
 		Query augmentedQuery = queryAugmenter.augment(query, documents);
 		String response = this.openAiChatModel.call(augmentedQuery.text());

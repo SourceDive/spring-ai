@@ -36,11 +36,11 @@ class OpenAiToolSearchToolCallingAdvisorIT extends AbstractToolSearchToolCalling
 	@Override
 	protected ChatModel getChatModel() {
 		return OpenAiChatModel.builder()
-			.options(OpenAiChatOptions.builder()
-				.apiKey(System.getenv("OPENAI_API_KEY"))
-				.model(OpenAiChatOptions.DEFAULT_CHAT_MODEL)
-				.build())
-			.build();
+				.options(OpenAiChatOptions.builder()
+						.apiKey(System.getenv("OPENAI_API_KEY"))
+						.model(OpenAiChatOptions.DEFAULT_CHAT_MODEL)
+						.build())
+				.build();
 	}
 
 }

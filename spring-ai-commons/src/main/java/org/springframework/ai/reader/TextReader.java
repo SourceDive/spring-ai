@@ -16,6 +16,12 @@
 
 package org.springframework.ai.reader;
 
+import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentReader;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -25,12 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.document.DocumentReader;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.util.StreamUtils;
 
 /**
  * A {@link DocumentReader} that reads text from a {@link Resource}.
@@ -76,6 +76,7 @@ public class TextReader implements DocumentReader {
 
 	/**
 	 * Metadata associated with all documents created by the loader.
+	 *
 	 * @return Metadata to be assigned to the output Documents.
 	 */
 	public Map<String, Object> getCustomMetadata() {
@@ -94,8 +95,7 @@ public class TextReader implements DocumentReader {
 
 			return List.of(new Document(document, this.customMetadata));
 
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -111,8 +111,7 @@ public class TextReader implements DocumentReader {
 		try {
 			URI uri = resource.getURI();
 			return uri.toString();
-		}
-		catch (IOException ignored) {
+		} catch (IOException ignored) {
 			// If getURI() throws an exception, we'll try the next method
 		}
 
@@ -120,8 +119,7 @@ public class TextReader implements DocumentReader {
 		try {
 			URL url = resource.getURL();
 			return url.toString();
-		}
-		catch (IOException ignored) {
+		} catch (IOException ignored) {
 			// If getURL() throws an exception, we'll fall back to getDescription()
 		}
 

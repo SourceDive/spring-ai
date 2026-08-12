@@ -16,17 +16,16 @@
 
 package org.springframework.ai.transformers;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.core.io.DefaultResourceLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import org.springframework.core.io.DefaultResourceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -96,8 +95,8 @@ public class ResourceCacheServiceTests {
 		assertThat(cachedResource2).isNotEqualTo(cachedResource1);
 
 		assertThat(this.tempDir.listFiles()).hasSize(1)
-			.describedAs(
-					"As both resources come from the same parent segments they should be cached in a single common parent.");
+				.describedAs(
+						"As both resources come from the same parent segments they should be cached in a single common parent.");
 		assertThat(this.tempDir.listFiles()[0].listFiles()).hasSize(2);
 	}
 
@@ -118,7 +117,7 @@ public class ResourceCacheServiceTests {
 		var cache = new ResourceCacheService(this.tempDir);
 
 		assertThatThrownBy(() -> cache.getCachedResource((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Location must not be null");
+				.hasMessageContaining("Location must not be null");
 	}
 
 }

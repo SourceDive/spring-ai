@@ -6,32 +6,27 @@
  * You may obtain a copy of the License at
  *
  *      https://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.springframework.ai.tool.augment;
 
-import java.util.List;
-
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.ai.tool.augment.ToolInputSchemaAugmenter.AugmentedArgumentType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Comprehensive test suite for {@link ToolInputSchemaAugmenter} class. Tests schema
@@ -43,11 +38,11 @@ class ToolInputSchemaAugmenterTest {
 
 	// Test record classes
 	public record SimpleRecord(@ToolParam(description = "A simple string field", required = true) String name,
-			@ToolParam(description = "A simple integer field", required = false) int age) {
+	                           @ToolParam(description = "A simple integer field", required = false) int age) {
 	}
 
 	public record ComplexRecord(@ToolParam(description = "List of strings", required = true) List<String> items,
-			@ToolParam(description = "Nested object", required = false) NestedRecord nested) {
+	                            @ToolParam(description = "Nested object", required = false) NestedRecord nested) {
 	}
 
 	public record NestedRecord(@ToolParam(description = "Nested field", required = true) String value) {
@@ -57,7 +52,7 @@ class ToolInputSchemaAugmenterTest {
 	}
 
 	public record MixedAnnotationsRecord(@ToolParam(description = "Annotated field", required = true) String annotated,
-			String notAnnotated) {
+	                                     String notAnnotated) {
 	}
 
 	@Nested
@@ -97,22 +92,22 @@ class ToolInputSchemaAugmenterTest {
 		@DisplayName("Should extract argument types from simple record")
 		void shouldExtractArgumentTypesFromSimpleRecord() {
 			List<AugmentedArgumentType> argumentTypes = ToolInputSchemaAugmenter
-				.toAugmentedArgumentTypes(SimpleRecord.class);
+					.toAugmentedArgumentTypes(SimpleRecord.class);
 
 			assertEquals(2, argumentTypes.size());
 
 			AugmentedArgumentType nameArg = argumentTypes.stream()
-				.filter(arg -> "name".equals(arg.name()))
-				.findFirst()
-				.orElseThrow();
+					.filter(arg -> "name".equals(arg.name()))
+					.findFirst()
+					.orElseThrow();
 			assertEquals("A simple string field", nameArg.description());
 			assertTrue(nameArg.required());
 			assertEquals(String.class, nameArg.type());
 
 			AugmentedArgumentType ageArg = argumentTypes.stream()
-				.filter(arg -> "age".equals(arg.name()))
-				.findFirst()
-				.orElseThrow();
+					.filter(arg -> "age".equals(arg.name()))
+					.findFirst()
+					.orElseThrow();
 			assertEquals("A simple integer field", ageArg.description());
 			assertFalse(ageArg.required());
 			assertEquals(int.class, ageArg.type());
@@ -122,21 +117,21 @@ class ToolInputSchemaAugmenterTest {
 		@DisplayName("Should extract argument types from complex record")
 		void shouldExtractArgumentTypesFromComplexRecord() {
 			List<AugmentedArgumentType> argumentTypes = ToolInputSchemaAugmenter
-				.toAugmentedArgumentTypes(ComplexRecord.class);
+					.toAugmentedArgumentTypes(ComplexRecord.class);
 
 			assertEquals(2, argumentTypes.size());
 
 			AugmentedArgumentType itemsArg = argumentTypes.stream()
-				.filter(arg -> "items".equals(arg.name()))
-				.findFirst()
-				.orElseThrow();
+					.filter(arg -> "items".equals(arg.name()))
+					.findFirst()
+					.orElseThrow();
 			assertEquals("List of strings", itemsArg.description());
 			assertTrue(itemsArg.required());
 
 			AugmentedArgumentType nestedArg = argumentTypes.stream()
-				.filter(arg -> "nested".equals(arg.name()))
-				.findFirst()
-				.orElseThrow();
+					.filter(arg -> "nested".equals(arg.name()))
+					.findFirst()
+					.orElseThrow();
 			assertEquals("Nested object", nestedArg.description());
 			assertFalse(nestedArg.required());
 		}
@@ -145,7 +140,7 @@ class ToolInputSchemaAugmenterTest {
 		@DisplayName("Should handle record without annotations")
 		void shouldHandleRecordWithoutAnnotations() {
 			List<AugmentedArgumentType> argumentTypes = ToolInputSchemaAugmenter
-				.toAugmentedArgumentTypes(RecordWithoutAnnotations.class);
+					.toAugmentedArgumentTypes(RecordWithoutAnnotations.class);
 
 			assertEquals(2, argumentTypes.size());
 
@@ -159,21 +154,21 @@ class ToolInputSchemaAugmenterTest {
 		@DisplayName("Should handle mixed annotations record")
 		void shouldHandleMixedAnnotationsRecord() {
 			List<AugmentedArgumentType> argumentTypes = ToolInputSchemaAugmenter
-				.toAugmentedArgumentTypes(MixedAnnotationsRecord.class);
+					.toAugmentedArgumentTypes(MixedAnnotationsRecord.class);
 
 			assertEquals(2, argumentTypes.size());
 
 			AugmentedArgumentType annotatedArg = argumentTypes.stream()
-				.filter(arg -> "annotated".equals(arg.name()))
-				.findFirst()
-				.orElseThrow();
+					.filter(arg -> "annotated".equals(arg.name()))
+					.findFirst()
+					.orElseThrow();
 			assertEquals("Annotated field", annotatedArg.description());
 			assertTrue(annotatedArg.required());
 
 			AugmentedArgumentType notAnnotatedArg = argumentTypes.stream()
-				.filter(arg -> "notAnnotated".equals(arg.name()))
-				.findFirst()
-				.orElseThrow();
+					.filter(arg -> "notAnnotated".equals(arg.name()))
+					.findFirst()
+					.orElseThrow();
 			assertEquals("no description", notAnnotatedArg.description());
 			assertFalse(notAnnotatedArg.required());
 		}
@@ -186,16 +181,14 @@ class ToolInputSchemaAugmenterTest {
 			assertThrows(RuntimeException.class, () -> {
 				try {
 					java.lang.reflect.Method method = ToolInputSchemaAugmenter.class
-						.getMethod("toAugmentedArgumentTypes", Class.class);
+							.getMethod("toAugmentedArgumentTypes", Class.class);
 					method.invoke(null, String.class);
-				}
-				catch (java.lang.reflect.InvocationTargetException e) {
+				} catch (java.lang.reflect.InvocationTargetException e) {
 					if (e.getCause() instanceof RuntimeException) {
 						throw (RuntimeException) e.getCause();
 					}
 					throw new RuntimeException(e.getCause());
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			});
@@ -277,8 +270,7 @@ class ToolInputSchemaAugmenterTest {
 			for (JsonNode requiredField : requiredArray) {
 				if ("field1".equals(requiredField.asText())) {
 					foundField1 = true;
-				}
-				else if ("field2".equals(requiredField.asText())) {
+				} else if ("field2".equals(requiredField.asText())) {
 					foundField2 = true;
 				}
 			}
@@ -380,7 +372,7 @@ class ToolInputSchemaAugmenterTest {
 		@DisplayName("Should augment schema using record class")
 		void shouldAugmentSchemaUsingRecordClass() throws Exception {
 			List<AugmentedArgumentType> argumentTypes = ToolInputSchemaAugmenter
-				.toAugmentedArgumentTypes(SimpleRecord.class);
+					.toAugmentedArgumentTypes(SimpleRecord.class);
 			String augmentedSchema = ToolInputSchemaAugmenter.augmentToolInputSchema(this.baseSchema, argumentTypes);
 
 			JsonNode schemaNode = JsonMapper.shared().readTree(augmentedSchema);
@@ -400,8 +392,7 @@ class ToolInputSchemaAugmenterTest {
 			for (JsonNode requiredField : requiredArray) {
 				if ("name".equals(requiredField.asText())) {
 					foundName = true;
-				}
-				else if ("age".equals(requiredField.asText())) {
+				} else if ("age".equals(requiredField.asText())) {
 					foundAge = true;
 				}
 			}
@@ -434,7 +425,7 @@ class ToolInputSchemaAugmenterTest {
 
 			// Extract argument types from record
 			List<AugmentedArgumentType> argumentTypes = ToolInputSchemaAugmenter
-				.toAugmentedArgumentTypes(SimpleRecord.class);
+					.toAugmentedArgumentTypes(SimpleRecord.class);
 
 			// Augment the schema
 			String augmentedSchema = ToolInputSchemaAugmenter.augmentToolInputSchema(originalSchema, argumentTypes);
@@ -457,8 +448,7 @@ class ToolInputSchemaAugmenterTest {
 				String fieldName = requiredField.asText();
 				if ("productId".equals(fieldName)) {
 					foundProductId = true;
-				}
-				else if ("name".equals(fieldName)) {
+				} else if ("name".equals(fieldName)) {
 					foundName = true;
 				}
 			}

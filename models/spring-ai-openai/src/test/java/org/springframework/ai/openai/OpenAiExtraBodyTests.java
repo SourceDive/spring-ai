@@ -16,12 +16,11 @@
 
 package org.springframework.ai.openai;
 
-import java.util.Map;
-
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.prompt.Prompt;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,9 +42,9 @@ class OpenAiExtraBodyTests {
 
 		Prompt prompt = new Prompt("Test prompt", options);
 		OpenAiChatModel chatModel = OpenAiChatModel.builder()
-			.openAiClient(org.mockito.Mockito.mock(com.openai.client.OpenAIClient.class))
-			.openAiClientAsync(org.mockito.Mockito.mock(com.openai.client.OpenAIClientAsync.class))
-			.build();
+				.openAiClient(org.mockito.Mockito.mock(com.openai.client.OpenAIClient.class))
+				.openAiClientAsync(org.mockito.Mockito.mock(com.openai.client.OpenAIClientAsync.class))
+				.build();
 
 		// Act
 		ChatCompletionCreateParams createParams = chatModel.createRequest(prompt, false);
@@ -67,9 +66,9 @@ class OpenAiExtraBodyTests {
 
 		Prompt promptNull = new Prompt("Test prompt", optionsNull);
 		OpenAiChatModel chatModel = OpenAiChatModel.builder()
-			.openAiClient(org.mockito.Mockito.mock(com.openai.client.OpenAIClient.class))
-			.openAiClientAsync(org.mockito.Mockito.mock(com.openai.client.OpenAIClientAsync.class))
-			.build();
+				.openAiClient(org.mockito.Mockito.mock(com.openai.client.OpenAIClient.class))
+				.openAiClientAsync(org.mockito.Mockito.mock(com.openai.client.OpenAIClientAsync.class))
+				.build();
 
 		ChatCompletionCreateParams createParamsNull = chatModel.createRequest(promptNull, false);
 		assertThat(createParamsNull._additionalBodyProperties()).isEmpty();

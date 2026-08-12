@@ -16,19 +16,19 @@
 
 package org.springframework.ai.mcp.annotation.provider.complete;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.server.McpServerFeatures.SyncCompletionSpecification;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.adapter.CompleteAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.complete.SyncMcpCompleteMethodCallback;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Stream;
+
 /**
+ *
  */
 public class SyncMcpCompleteProvider {
 
@@ -42,31 +42,32 @@ public class SyncMcpCompleteProvider {
 	public List<SyncCompletionSpecification> getCompleteSpecifications() {
 
 		List<SyncCompletionSpecification> syncCompleteSpecification = this.completeObjects.stream()
-			.map(completeObject -> Stream.of(doGetClassMethods(completeObject))
-				.filter(method -> method.isAnnotationPresent(McpComplete.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpCompleteMethod -> {
-					var completeAnnotation = mcpCompleteMethod.getAnnotation(McpComplete.class);
-					var completeRef = CompleteAdapter.asCompleteReference(completeAnnotation, mcpCompleteMethod);
+				.map(completeObject -> Stream.of(doGetClassMethods(completeObject))
+						.filter(method -> method.isAnnotationPresent(McpComplete.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpCompleteMethod -> {
+							var completeAnnotation = mcpCompleteMethod.getAnnotation(McpComplete.class);
+							var completeRef = CompleteAdapter.asCompleteReference(completeAnnotation, mcpCompleteMethod);
 
-					var methodCallback = SyncMcpCompleteMethodCallback.builder()
-						.method(mcpCompleteMethod)
-						.bean(completeObject)
-						.reference(completeRef)
-						.build();
+							var methodCallback = SyncMcpCompleteMethodCallback.builder()
+									.method(mcpCompleteMethod)
+									.bean(completeObject)
+									.reference(completeRef)
+									.build();
 
-					return new SyncCompletionSpecification(completeRef, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncCompletionSpecification(completeRef, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return syncCompleteSpecification;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

@@ -16,20 +16,19 @@
 
 package org.springframework.ai.mistralai;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mistralai.MistralAiChatOptions.Builder;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ReasoningEffort;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ResponseFormat;
 import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.ai.test.options.AbstractChatOptionsTests;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,31 +45,31 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testBuilderWithAllFields() {
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.topP(0.9)
-			.maxTokens(100)
-			.safePrompt(true)
-			.randomSeed(123)
-			.stop(List.of("stop1", "stop2"))
-			.responseFormat(new ResponseFormat("json_object"))
-			.toolChoice(MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO)
-			.toolContext(Map.of("key1", "value1"))
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.topP(0.9)
+				.maxTokens(100)
+				.safePrompt(true)
+				.randomSeed(123)
+				.stop(List.of("stop1", "stop2"))
+				.responseFormat(new ResponseFormat("json_object"))
+				.toolChoice(MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO)
+				.toolContext(Map.of("key1", "value1"))
+				.build();
 
 		assertThat(options)
-			.extracting("model", "temperature", "topP", "maxTokens", "safePrompt", "randomSeed", "stop",
-					"responseFormat", "toolChoice", "toolContext")
-			.containsExactly("test-model", 0.7, 0.9, 100, true, 123, List.of("stop1", "stop2"),
-					new ResponseFormat("json_object"), MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO,
-					Map.of("key1", "value1"));
+				.extracting("model", "temperature", "topP", "maxTokens", "safePrompt", "randomSeed", "stop",
+						"responseFormat", "toolChoice", "toolContext")
+				.containsExactly("test-model", 0.7, 0.9, 100, true, 123, List.of("stop1", "stop2"),
+						new ResponseFormat("json_object"), MistralAiApi.ChatCompletionRequest.ToolChoice.AUTO,
+						Map.of("key1", "value1"));
 	}
 
 	@Test
 	void testBuilderWithEnum() {
 		MistralAiChatOptions optionsWithEnum = MistralAiChatOptions.builder()
-			.model(MistralAiApi.ChatModel.MINISTRAL_8B)
-			.build();
+				.model(MistralAiApi.ChatModel.MINISTRAL_8B)
+				.build();
 		assertThat(optionsWithEnum.getModel()).isEqualTo(MistralAiApi.ChatModel.MINISTRAL_8B.getValue());
 	}
 
@@ -78,16 +77,16 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	void testSetters() {
 		ResponseFormat responseFormat = new ResponseFormat("json_object");
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.topP(0.9)
-			.maxTokens(100)
-			.safePrompt(true)
-			.randomSeed(123)
-			.responseFormat(responseFormat)
-			.stop(List.of("stop1", "stop2"))
-			.reasoningEffort(ReasoningEffort.HIGH)
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.topP(0.9)
+				.maxTokens(100)
+				.safePrompt(true)
+				.randomSeed(123)
+				.responseFormat(responseFormat)
+				.stop(List.of("stop1", "stop2"))
+				.reasoningEffort(ReasoningEffort.HIGH)
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getTemperature()).isEqualTo(0.7);
@@ -118,9 +117,9 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testBuilderWithEmptyCollections() {
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.stop(Collections.emptyList())
-			.toolContext(Collections.emptyMap())
-			.build();
+				.stop(Collections.emptyList())
+				.toolContext(Collections.emptyMap())
+				.build();
 
 		assertThat(options.getStop()).isEmpty();
 		assertThat(options.getToolContext()).isEmpty();
@@ -129,11 +128,11 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testBuilderWithBoundaryValues() {
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.temperature(0.0)
-			.topP(1.0)
-			.maxTokens(1)
-			.randomSeed(Integer.MAX_VALUE)
-			.build();
+				.temperature(0.0)
+				.topP(1.0)
+				.maxTokens(1)
+				.randomSeed(Integer.MAX_VALUE)
+				.build();
 
 		assertThat(options.getTemperature()).isEqualTo(0.0);
 		assertThat(options.getTopP()).isEqualTo(1.0);
@@ -144,9 +143,9 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testBuilderWithSingleElementCollections() {
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.stop(List.of("single-stop"))
-			.toolContext(Map.of("single-key", "single-value"))
-			.build();
+				.stop(List.of("single-stop"))
+				.toolContext(Map.of("single-key", "single-value"))
+				.build();
 
 		assertThat(options.getStop()).hasSize(1).containsExactly("single-stop");
 		assertThat(options.getToolContext()).hasSize(1).containsEntry("single-key", "single-value");
@@ -155,18 +154,18 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testCopyMutationDoesNotAffectOriginal() {
 		MistralAiChatOptions original = MistralAiChatOptions.builder()
-			.model("original-model")
-			.temperature(0.5)
-			.stop(List.of("original-stop"))
-			.toolContext(Map.of("original", "value"))
-			.build();
+				.model("original-model")
+				.temperature(0.5)
+				.stop(List.of("original-stop"))
+				.toolContext(Map.of("original", "value"))
+				.build();
 
 		MistralAiChatOptions copy = MistralAiChatOptions.builder()
-			.model("modified-model")
-			.temperature(0.8)
-			.stop(original.getStop())
-			.toolContext(original.getToolContext())
-			.build();
+				.model("modified-model")
+				.temperature(0.8)
+				.stop(original.getStop())
+				.toolContext(original.getToolContext())
+				.build();
 
 		// Original should remain unchanged
 		assertThat(original.getModel()).isEqualTo("original-model");
@@ -184,9 +183,9 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 		MistralAiChatOptions options2 = MistralAiChatOptions.builder().model("test-model").temperature(0.7).build();
 
 		MistralAiChatOptions options3 = MistralAiChatOptions.builder()
-			.model("different-model")
-			.temperature(0.7)
-			.build();
+				.model("different-model")
+				.temperature(0.7)
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -198,7 +197,7 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testAllToolChoiceEnumValues() {
 		for (MistralAiApi.ChatCompletionRequest.ToolChoice toolChoice : MistralAiApi.ChatCompletionRequest.ToolChoice
-			.values()) {
+				.values()) {
 
 			MistralAiChatOptions options = MistralAiChatOptions.builder().toolChoice(toolChoice).build();
 
@@ -223,13 +222,13 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testChainedBuilderMethods() {
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.topP(0.9)
-			.maxTokens(100)
-			.safePrompt(true)
-			.randomSeed(123)
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.topP(0.9)
+				.maxTokens(100)
+				.safePrompt(true)
+				.randomSeed(123)
+				.build();
 
 		// Verify all chained methods worked
 		assertThat(options.getModel()).isEqualTo("test-model");
@@ -244,19 +243,19 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	void testBuilderAndSetterConsistency() {
 		// Build an object using builder
 		MistralAiChatOptions builderOptions = MistralAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.topP(0.9)
-			.maxTokens(100)
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.topP(0.9)
+				.maxTokens(100)
+				.build();
 
 		// Create equivalent object using builder (formerly setters)
 		MistralAiChatOptions setterOptions = MistralAiChatOptions.builder()
-			.model("test-model")
-			.temperature(0.7)
-			.topP(0.9)
-			.maxTokens(100)
-			.build();
+				.model("test-model")
+				.temperature(0.7)
+				.topP(0.9)
+				.maxTokens(100)
+				.build();
 
 		assertThat(builderOptions).isEqualTo(setterOptions);
 	}
@@ -319,15 +318,15 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testResponseFormatBuilder() {
 		ResponseFormat.JsonSchema jsonSchema = ResponseFormat.JsonSchema.builder()
-			.name("my_schema")
-			.schema(Map.of("type", "object"))
-			.strict(false)
-			.build();
+				.name("my_schema")
+				.schema(Map.of("type", "object"))
+				.strict(false)
+				.build();
 
 		ResponseFormat format = ResponseFormat.builder()
-			.type(ResponseFormat.Type.JSON_SCHEMA)
-			.jsonSchema(jsonSchema)
-			.build();
+				.type(ResponseFormat.Type.JSON_SCHEMA)
+				.jsonSchema(jsonSchema)
+				.build();
 
 		assertThat(format.getType()).isEqualTo(ResponseFormat.Type.JSON_SCHEMA);
 		assertThat(format.getJsonSchema().getName()).isEqualTo("my_schema");
@@ -338,9 +337,9 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	void testResponseFormatBuilderWithStringSchema() {
 		String schema = "{\"type\":\"object\",\"properties\":{}}";
 		ResponseFormat format = ResponseFormat.builder()
-			.type(ResponseFormat.Type.JSON_SCHEMA)
-			.jsonSchema(schema)
-			.build();
+				.type(ResponseFormat.Type.JSON_SCHEMA)
+				.jsonSchema(schema)
+				.build();
 
 		assertThat(format.getType()).isEqualTo(ResponseFormat.Type.JSON_SCHEMA);
 		assertThat(format.getJsonSchema()).isNotNull();
@@ -372,7 +371,7 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testResponseFormatTypeFromValueInvalid() {
 		assertThatThrownBy(() -> ResponseFormat.Type.fromValue("invalid")).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Unknown ResponseFormat type");
+				.hasMessageContaining("Unknown ResponseFormat type");
 	}
 
 	@Test
@@ -398,8 +397,8 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	void testGetOutputSchemaReturnsSchemaAsString() {
 		Map<String, Object> schema = Map.of("type", "object", "properties", Map.of("name", Map.of("type", "string")));
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.responseFormat(ResponseFormat.jsonSchema(schema))
-			.build();
+				.responseFormat(ResponseFormat.jsonSchema(schema))
+				.build();
 
 		String outputSchema = options.getOutputSchema();
 		assertThat(outputSchema).isNotNull();
@@ -461,22 +460,22 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testJsonSchemaEqualsAndHashCode() {
 		ResponseFormat.JsonSchema schema1 = ResponseFormat.JsonSchema.builder()
-			.name("test")
-			.schema(Map.of("type", "object"))
-			.strict(true)
-			.build();
+				.name("test")
+				.schema(Map.of("type", "object"))
+				.strict(true)
+				.build();
 
 		ResponseFormat.JsonSchema schema2 = ResponseFormat.JsonSchema.builder()
-			.name("test")
-			.schema(Map.of("type", "object"))
-			.strict(true)
-			.build();
+				.name("test")
+				.schema(Map.of("type", "object"))
+				.strict(true)
+				.build();
 
 		ResponseFormat.JsonSchema schema3 = ResponseFormat.JsonSchema.builder()
-			.name("different")
-			.schema(Map.of("type", "object"))
-			.strict(true)
-			.build();
+				.name("different")
+				.schema(Map.of("type", "object"))
+				.strict(true)
+				.build();
 
 		assertThat(schema1).isEqualTo(schema2);
 		assertThat(schema1.hashCode()).isEqualTo(schema2.hashCode());
@@ -496,10 +495,10 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testJsonSchemaToString() {
 		ResponseFormat.JsonSchema schema = ResponseFormat.JsonSchema.builder()
-			.name("test_schema")
-			.schema(Map.of("type", "object"))
-			.strict(true)
-			.build();
+				.name("test_schema")
+				.schema(Map.of("type", "object"))
+				.strict(true)
+				.build();
 
 		String toString = schema.toString();
 
@@ -511,10 +510,10 @@ class MistralAiChatOptionsTests extends AbstractChatOptionsTests<MistralAiChatOp
 	@Test
 	void testResponseFormatWithOptionsIntegration() {
 		MistralAiChatOptions options = MistralAiChatOptions.builder()
-			.model("mistral-small-latest")
-			.temperature(0.7)
-			.responseFormat(ResponseFormat.jsonSchema(TestRecord.class))
-			.build();
+				.model("mistral-small-latest")
+				.temperature(0.7)
+				.responseFormat(ResponseFormat.jsonSchema(TestRecord.class))
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("mistral-small-latest");
 		assertThat(options.getTemperature()).isEqualTo(0.7);

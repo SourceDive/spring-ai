@@ -16,11 +16,7 @@
 
 package org.springframework.ai.mcp.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotation for methods that handle elicitation requests from MCP servers. This
@@ -59,7 +55,7 @@ import java.lang.annotation.Target;
  * @see io.modelcontextprotocol.spec.McpSchema.ElicitRequest
  * @see io.modelcontextprotocol.spec.McpSchema.ElicitResult
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface McpElicitation {

@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp.aot;
 
-import java.util.Set;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.aot.AiRuntimeHints;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
+
+import java.util.Set;
 
 /**
  * Runtime hints registrar for Model Context Protocol (MCP) schema classes.
@@ -39,9 +38,9 @@ import org.springframework.aot.hint.TypeReference;
  * </ul>
  *
  * @author Josh Long
- * @since 1.0.0
  * @see RuntimeHintsRegistrar
  * @see McpSchema
+ * @since 1.0.0
  */
 @SuppressWarnings("unused")
 public class McpHints implements RuntimeHintsRegistrar {
@@ -55,7 +54,8 @@ public class McpHints implements RuntimeHintsRegistrar {
 	 * <li>Registers each discovered class for reflection access</li>
 	 * <li>Enables all member categories for complete reflection support</li>
 	 * </ol>
-	 * @param hints the hints instance to register hints with
+	 *
+	 * @param hints       the hints instance to register hints with
 	 * @param classLoader the classloader to use (may be null)
 	 */
 	@Override

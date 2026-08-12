@@ -16,16 +16,15 @@
 
 package org.springframework.ai.chat.client;
 
-import java.nio.charset.Charset;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,7 +47,7 @@ class DefaultChatClientBuilderTests {
 
 		assertThat(clonedBuilder).isNotSameAs(originalBuilder);
 		var clonedBuilderRequestSpec = (DefaultChatClient.DefaultChatClientRequestSpec) ReflectionTestUtils
-			.getField(clonedBuilder, "defaultRequest");
+				.getField(clonedBuilder, "defaultRequest");
 		assertThat(clonedBuilderRequestSpec).isNotNull();
 		assertThat(clonedBuilderRequestSpec.getSystemText()).isEqualTo("first instructions");
 	}
@@ -56,14 +55,14 @@ class DefaultChatClientBuilderTests {
 	@Test
 	void whenChatModelIsNullThenThrows() {
 		assertThatThrownBy(() -> new DefaultChatClientBuilder(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the org.springframework.ai.chat.model.ChatModel must be non-null");
+				.hasMessage("the org.springframework.ai.chat.model.ChatModel must be non-null");
 	}
 
 	@Test
 	void whenObservationRegistryIsNullThenThrows() {
 		assertThatThrownBy(() -> new DefaultChatClientBuilder(mock(ChatModel.class), null, null, null, null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("the io.micrometer.observation.ObservationRegistry must be non-null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("the io.micrometer.observation.ObservationRegistry must be non-null");
 	}
 
 	@Test
@@ -90,39 +89,39 @@ class DefaultChatClientBuilderTests {
 	void whenUserResourceIsNullThenThrows() {
 		DefaultChatClientBuilder builder = new DefaultChatClientBuilder(mock(ChatModel.class));
 		assertThatThrownBy(() -> builder.defaultUser(null, Charset.defaultCharset()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
 	void whenUserCharsetIsNullThenThrows() {
 		DefaultChatClientBuilder builder = new DefaultChatClientBuilder(mock(ChatModel.class));
 		assertThatThrownBy(() -> builder.defaultUser(new ClassPathResource("user-prompt.txt"), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("charset cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("charset cannot be null");
 	}
 
 	@Test
 	void whenSystemResourceIsNullThenThrows() {
 		DefaultChatClientBuilder builder = new DefaultChatClientBuilder(mock(ChatModel.class));
 		assertThatThrownBy(() -> builder.defaultSystem(null, Charset.defaultCharset()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("text cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("text cannot be null");
 	}
 
 	@Test
 	void whenSystemCharsetIsNullThenThrows() {
 		DefaultChatClientBuilder builder = new DefaultChatClientBuilder(mock(ChatModel.class));
 		assertThatThrownBy(() -> builder.defaultSystem(new ClassPathResource("system-prompt.txt"), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("charset cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("charset cannot be null");
 	}
 
 	@Test
 	void whenTemplateRendererIsNullThenThrows() {
 		DefaultChatClientBuilder builder = new DefaultChatClientBuilder(mock(ChatModel.class));
 		assertThatThrownBy(() -> builder.defaultTemplateRenderer(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("templateRenderer cannot be null");
+				.hasMessage("templateRenderer cannot be null");
 	}
 
 	@Test
@@ -224,7 +223,7 @@ class DefaultChatClientBuilderTests {
 		var chatModel = mock(ChatModel.class);
 
 		var originalBuilder = new DefaultChatClientBuilder(chatModel).defaultSystem("system prompt")
-			.defaultUser("user prompt");
+				.defaultUser("user prompt");
 
 		var clonedBuilder = (DefaultChatClientBuilder) originalBuilder.clone();
 		var clonedRequest = (DefaultChatClient.DefaultChatClientRequestSpec) ReflectionTestUtils.getField(clonedBuilder,

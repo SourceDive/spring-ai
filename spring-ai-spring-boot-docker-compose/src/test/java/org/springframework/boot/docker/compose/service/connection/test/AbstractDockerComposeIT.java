@@ -16,18 +16,8 @@
 
 package org.springframework.boot.docker.compose.service.connection.test;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.io.TempDir;
-import org.testcontainers.utility.DockerImageName;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationShutdownHandlers;
 import org.springframework.boot.WebApplicationType;
@@ -38,6 +28,15 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.function.ThrowingSupplier;
+import org.testcontainers.utility.DockerImageName;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.fail;
 
@@ -48,8 +47,8 @@ import static org.assertj.core.api.Assertions.fail;
  * @author Andy Wilkinson
  * @author Scott Frederick
  */
-@DisabledIfProcessUnavailable({ "docker", "version" })
-@DisabledIfProcessUnavailable({ "docker", "compose" })
+@DisabledIfProcessUnavailable({"docker", "version"})
+@DisabledIfProcessUnavailable({"docker", "compose"})
 public abstract class AbstractDockerComposeIT {
 
 	@TempDir
@@ -88,8 +87,7 @@ public abstract class AbstractDockerComposeIT {
 			String composeFileContent = FileCopyUtils.copyToString(new FileReader(composeFile));
 			composeFileContent = composeFileContent.replace("{imageName}", imageName.asCanonicalNameString());
 			FileCopyUtils.copy(composeFileContent, new FileWriter(tempComposeFile));
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			fail("Error transforming Docker compose file '" + composeFile + "' to '" + tempComposeFile + "': "
 					+ ex.getMessage());
 		}

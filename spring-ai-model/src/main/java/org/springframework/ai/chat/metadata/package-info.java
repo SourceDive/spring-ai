@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chat.metadata;
 
-import org.jspecify.annotations.NullMarked;

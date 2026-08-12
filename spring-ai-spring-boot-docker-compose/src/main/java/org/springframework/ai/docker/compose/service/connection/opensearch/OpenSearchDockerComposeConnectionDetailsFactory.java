@@ -16,14 +16,13 @@
 
 package org.springframework.ai.docker.compose.service.connection.opensearch;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.vectorstore.opensearch.autoconfigure.OpenSearchConnectionDetails;
 import org.springframework.boot.docker.compose.core.RunningService;
 import org.springframework.boot.docker.compose.service.connection.DockerComposeConnectionDetailsFactory;
 import org.springframework.boot.docker.compose.service.connection.DockerComposeConnectionSource;
+
+import java.util.List;
 
 /**
  * @author Eddú Meléndez

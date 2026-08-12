@@ -33,9 +33,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AnthropicModelConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.anthropic.api-key=some-key")
-		.withConfiguration(
-				AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class));
+			.withPropertyValues("spring.ai.anthropic.api-key=some-key")
+			.withConfiguration(
+					AutoConfigurations.of(AnthropicChatAutoConfiguration.class, ToolCallingAutoConfiguration.class));
 
 	@Test
 	void chatModelActivation() {

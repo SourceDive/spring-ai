@@ -16,11 +16,6 @@
 
 package org.springframework.ai.anthropic;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.models.messages.Model;
 import com.anthropic.models.messages.ToolChoice;
@@ -28,7 +23,6 @@ import com.anthropic.models.messages.ToolChoiceAny;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.io.TempDir;
-
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -37,6 +31,11 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,11 +62,11 @@ class AnthropicSkillsIT {
 						+ "Add 5 sample rows of data. Generate the actual file using the xlsx skill.");
 
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.model(Model.CLAUDE_SONNET_4_5)
-			.maxTokens(4096)
-			.skill(AnthropicSkill.XLSX)
-			.toolChoice(ToolChoice.ofAny(ToolChoiceAny.builder().build()))
-			.build();
+				.model(Model.CLAUDE_SONNET_4_5)
+				.maxTokens(4096)
+				.skill(AnthropicSkill.XLSX)
+				.toolChoice(ToolChoice.ofAny(ToolChoiceAny.builder().build()))
+				.build();
 
 		Prompt prompt = new Prompt(List.of(userMessage), options);
 		ChatResponse response = this.chatModel.call(prompt);
@@ -77,7 +76,7 @@ class AnthropicSkillsIT {
 		String responseText = response.getResult().getOutput().getText();
 		assertThat(responseText).as("Response text should not be blank").isNotBlank();
 		assertThat(responseText.toLowerCase()).as("Response should mention spreadsheet or Excel")
-			.containsAnyOf("spreadsheet", "excel", "xlsx", "created", "file");
+				.containsAnyOf("spreadsheet", "excel", "xlsx", "created", "file");
 
 		List<String> fileIds = AnthropicSkillsResponseHelper.extractFileIds(response);
 		assertThat(fileIds).as("Skills response should contain at least one file ID").isNotEmpty();
@@ -91,7 +90,7 @@ class AnthropicSkillsIT {
 		}
 
 		boolean hasXlsxFile = downloadedFiles.stream()
-			.anyMatch(path -> path.toString().toLowerCase().endsWith(".xlsx"));
+				.anyMatch(path -> path.toString().toLowerCase().endsWith(".xlsx"));
 		assertThat(hasXlsxFile).as("At least one .xlsx file should be downloaded").isTrue();
 	}
 

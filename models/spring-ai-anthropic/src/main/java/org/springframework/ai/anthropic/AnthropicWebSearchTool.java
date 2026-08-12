@@ -16,10 +16,10 @@
 
 package org.springframework.ai.anthropic;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for Anthropic's built-in web search tool. When enabled, Claude can search
@@ -38,10 +38,10 @@ import org.jspecify.annotations.Nullable;
  * }</pre>
  *
  * @author Soby Chacko
- * @since 1.0.0
  * @see <a href=
  * "https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-search">Anthropic Web
  * Search</a>
+ * @since 1.0.0
  */
 public class AnthropicWebSearchTool {
 
@@ -92,13 +92,13 @@ public class AnthropicWebSearchTool {
 	/**
 	 * Approximate user location for localizing web search results.
 	 *
-	 * @param city the city name
-	 * @param country the ISO 3166-1 alpha-2 country code
-	 * @param region the region or state
+	 * @param city     the city name
+	 * @param country  the ISO 3166-1 alpha-2 country code
+	 * @param region   the region or state
 	 * @param timezone the IANA timezone identifier
 	 */
 	public record UserLocation(@Nullable String city, @Nullable String country, @Nullable String region,
-			@Nullable String timezone) {
+	                           @Nullable String timezone) {
 	}
 
 	public static class Builder {
@@ -127,7 +127,7 @@ public class AnthropicWebSearchTool {
 		}
 
 		public Builder userLocation(@Nullable String city, @Nullable String country, @Nullable String region,
-				@Nullable String timezone) {
+		                            @Nullable String timezone) {
 			this.userLocation = new UserLocation(city, country, region, timezone);
 			return this;
 		}

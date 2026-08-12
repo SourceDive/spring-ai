@@ -18,8 +18,6 @@ package org.springframework.ai.mcp.server.webmvc.autoconfigure;
 
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
 import io.modelcontextprotocol.spec.McpServerTransportProvider;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerStdioDisabledCondition;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerSseProperties;
@@ -33,6 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * {@link AutoConfiguration Auto-configuration} for MCP WebMvc Server Transport.
@@ -62,9 +61,9 @@ import org.springframework.web.servlet.function.ServerResponse;
  *
  * @author Christian Tzolov
  * @author Yanming Zhou
- * @since 1.0.0
  * @see McpServerSseProperties
  * @see WebMvcSseServerTransportProvider
+ * @since 1.0.0
  */
 // before: McpServerAutoConfiguration defines a low priority
 // McpServerTransportProviderBase bean and this conf should have priority
@@ -72,7 +71,7 @@ import org.springframework.web.servlet.function.ServerResponse;
 @EnableConfigurationProperties(McpServerSseProperties.class)
 @ConditionalOnClass(WebMvcSseServerTransportProvider.class)
 @ConditionalOnMissingBean(McpServerTransportProvider.class)
-@Conditional({ McpServerStdioDisabledCondition.class, McpServerAutoConfiguration.EnabledSseServerCondition.class })
+@Conditional({McpServerStdioDisabledCondition.class, McpServerAutoConfiguration.EnabledSseServerCondition.class})
 @Deprecated(since = "2.0.0", forRemoval = true)
 public class McpServerSseWebMvcAutoConfiguration {
 
@@ -82,12 +81,12 @@ public class McpServerSseWebMvcAutoConfiguration {
 			@Qualifier("mcpServerJsonMapper") JsonMapper jsonMapper, McpServerSseProperties serverProperties) {
 
 		return WebMvcSseServerTransportProvider.builder()
-			.jsonMapper(new JacksonMcpJsonMapper(jsonMapper))
-			.baseUrl(serverProperties.getBaseUrl())
-			.sseEndpoint(serverProperties.getSseEndpoint())
-			.messageEndpoint(serverProperties.getSseMessageEndpoint())
-			.keepAliveInterval(serverProperties.getKeepAliveInterval())
-			.build();
+				.jsonMapper(new JacksonMcpJsonMapper(jsonMapper))
+				.baseUrl(serverProperties.getBaseUrl())
+				.sseEndpoint(serverProperties.getSseEndpoint())
+				.messageEndpoint(serverProperties.getSseMessageEndpoint())
+				.keepAliveInterval(serverProperties.getKeepAliveInterval())
+				.build();
 	}
 
 	@Bean

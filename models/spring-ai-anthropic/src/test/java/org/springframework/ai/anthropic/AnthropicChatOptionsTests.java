@@ -16,26 +16,17 @@
 
 package org.springframework.ai.anthropic;
 
+import com.anthropic.core.JsonValue;
+import com.anthropic.models.messages.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.anthropic.AnthropicChatOptions.Builder;
+import org.springframework.ai.model.tool.StructuredOutputChatOptions;
+import org.springframework.ai.test.options.AbstractChatOptionsTests;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.anthropic.core.JsonValue;
-import com.anthropic.models.messages.JsonOutputFormat;
-import com.anthropic.models.messages.Metadata;
-import com.anthropic.models.messages.Model;
-import com.anthropic.models.messages.OutputConfig;
-import com.anthropic.models.messages.ThinkingConfigAdaptive;
-import com.anthropic.models.messages.ThinkingConfigEnabled;
-import com.anthropic.models.messages.ThinkingConfigParam;
-import com.anthropic.models.messages.ToolChoice;
-import com.anthropic.models.messages.ToolChoiceAuto;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.anthropic.AnthropicChatOptions.Builder;
-import org.springframework.ai.model.tool.StructuredOutputChatOptions;
-import org.springframework.ai.test.options.AbstractChatOptionsTests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -63,20 +54,20 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	void testBuilderWithAllFields() {
 		Metadata metadata = Metadata.builder().userId("userId_123").build();
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.model("test-model")
-			.maxTokens(100)
-			.stopSequences(List.of("stop1", "stop2"))
-			.temperature(0.7)
-			.topP(0.8)
-			.topK(50)
-			.metadata(metadata)
-			.baseUrl("https://custom.api.com")
-			.timeout(Duration.ofSeconds(120))
-			.maxRetries(5)
-			.toolChoice(ToolChoice.ofAuto(ToolChoiceAuto.builder().build()))
-			.disableParallelToolUse(true)
-			.toolContext(Map.of("key", "value"))
-			.build();
+				.model("test-model")
+				.maxTokens(100)
+				.stopSequences(List.of("stop1", "stop2"))
+				.temperature(0.7)
+				.topP(0.8)
+				.topK(50)
+				.metadata(metadata)
+				.baseUrl("https://custom.api.com")
+				.timeout(Duration.ofSeconds(120))
+				.maxRetries(5)
+				.toolChoice(ToolChoice.ofAuto(ToolChoiceAuto.builder().build()))
+				.disableParallelToolUse(true)
+				.toolContext(Map.of("key", "value"))
+				.build();
 
 		assertThat(options.getModel()).isEqualTo("test-model");
 		assertThat(options.getMaxTokens()).isEqualTo(100);
@@ -103,19 +94,19 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testCombineWithOverridesOnlyNonNullValues() {
 		AnthropicChatOptions base = AnthropicChatOptions.builder()
-			.model("base-model")
-			.maxTokens(100)
-			.temperature(0.5)
-			.topP(0.8)
-			.baseUrl("https://base.api.com")
-			.timeout(Duration.ofSeconds(60))
-			.build();
+				.model("base-model")
+				.maxTokens(100)
+				.temperature(0.5)
+				.topP(0.8)
+				.baseUrl("https://base.api.com")
+				.timeout(Duration.ofSeconds(60))
+				.build();
 
 		AnthropicChatOptions override = AnthropicChatOptions.builder()
-			.model("override-model")
-			.topK(40)
-			// maxTokens, temperature, topP, baseUrl, timeout are null
-			.build();
+				.model("override-model")
+				.topK(40)
+				// maxTokens, temperature, topP, baseUrl, timeout are null
+				.build();
 
 		AnthropicChatOptions merged = base.mutate().combineWith(override.mutate()).build();
 
@@ -135,21 +126,21 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	void testCombineWithCollections() {
 		AnthropicCitationDocument baseDoc = AnthropicCitationDocument.builder().plainText("base-doc").build();
 		AnthropicChatOptions base = AnthropicChatOptions.builder()
-			.stopSequences(List.of("base-stop"))
-			.toolContext(Map.of("base-key", "base-value"))
-			.customHeaders(Map.of("base-header", "base-header-value"))
-			.httpHeaders(Map.of("base-http-header", "base-http-header-value"))
-			.citationDocuments(List.of(baseDoc))
-			.build();
+				.stopSequences(List.of("base-stop"))
+				.toolContext(Map.of("base-key", "base-value"))
+				.customHeaders(Map.of("base-header", "base-header-value"))
+				.httpHeaders(Map.of("base-http-header", "base-http-header-value"))
+				.citationDocuments(List.of(baseDoc))
+				.build();
 
 		AnthropicCitationDocument combineDoc = AnthropicCitationDocument.builder().plainText("combine-doc").build();
 		AnthropicChatOptions combine = AnthropicChatOptions.builder()
-			.stopSequences(List.of("combine-stop1", "combine-stop2"))
-			.toolContext(Map.of("combine-key1", "combine-value1", "combine-key2", "combine-value2"))
-			.customHeaders(Map.of("combine-header", "combine-header-value"))
-			.httpHeaders(Map.of("combine-http-header", "combine-http-header-value"))
-			.citationDocuments(List.of(combineDoc))
-			.build();
+				.stopSequences(List.of("combine-stop1", "combine-stop2"))
+				.toolContext(Map.of("combine-key1", "combine-value1", "combine-key2", "combine-value2"))
+				.customHeaders(Map.of("combine-header", "combine-header-value"))
+				.httpHeaders(Map.of("combine-http-header", "combine-http-header-value"))
+				.citationDocuments(List.of(combineDoc))
+				.build();
 
 		AnthropicChatOptions merged = base.mutate().combineWith(combine.mutate()).build();
 
@@ -172,22 +163,22 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testEqualsAndHashCode() {
 		AnthropicChatOptions options1 = AnthropicChatOptions.builder()
-			.model("test-model")
-			.maxTokens(100)
-			.temperature(0.7)
-			.build();
+				.model("test-model")
+				.maxTokens(100)
+				.temperature(0.7)
+				.build();
 
 		AnthropicChatOptions options2 = AnthropicChatOptions.builder()
-			.model("test-model")
-			.maxTokens(100)
-			.temperature(0.7)
-			.build();
+				.model("test-model")
+				.maxTokens(100)
+				.temperature(0.7)
+				.build();
 
 		AnthropicChatOptions options3 = AnthropicChatOptions.builder()
-			.model("different-model")
-			.maxTokens(100)
-			.temperature(0.7)
-			.build();
+				.model("different-model")
+				.maxTokens(100)
+				.temperature(0.7)
+				.build();
 
 		// Equal objects
 		assertThat(options1).isEqualTo(options2);
@@ -205,8 +196,8 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	void testToolCallbacksValidationRejectsNull() {
 		assertThatThrownBy(
 				() -> AnthropicChatOptions.builder().toolCallbacks((org.springframework.ai.tool.ToolCallback[]) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("toolCallbacks cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("toolCallbacks cannot be null");
 	}
 
 	@Test
@@ -264,9 +255,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 		String schema = "{\"type\":\"object\",\"properties\":{\"result\":{\"type\":\"string\"}}}";
 
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.effort(OutputConfig.Effort.HIGH)
-			.outputSchema(schema)
-			.build();
+				.effort(OutputConfig.Effort.HIGH)
+				.outputSchema(schema)
+				.build();
 
 		assertThat(options.getOutputConfig()).isNotNull();
 		assertThat(options.getOutputConfig().effort()).isPresent();
@@ -278,13 +269,13 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testOutputConfigDirectBuilder() {
 		OutputConfig outputConfig = OutputConfig.builder()
-			.effort(OutputConfig.Effort.MEDIUM)
-			.format(JsonOutputFormat.builder()
-				.schema(JsonOutputFormat.Schema.builder()
-					.putAdditionalProperty("type", JsonValue.from("object"))
-					.build())
-				.build())
-			.build();
+				.effort(OutputConfig.Effort.MEDIUM)
+				.format(JsonOutputFormat.builder()
+						.schema(JsonOutputFormat.Schema.builder()
+								.putAdditionalProperty("type", JsonValue.from("object"))
+								.build())
+						.build())
+				.build();
 
 		AnthropicChatOptions options = AnthropicChatOptions.builder().outputConfig(outputConfig).build();
 
@@ -348,7 +339,7 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 
 		// Verify collections are immutable
 		assertThatThrownBy(() -> original.getHttpHeaders().put("X-New", "new-value"))
-			.isInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -356,8 +347,8 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 		AnthropicChatOptions base = AnthropicChatOptions.builder().httpHeaders(Map.of("X-Base", "base-value")).build();
 
 		AnthropicChatOptions override = AnthropicChatOptions.builder()
-			.httpHeaders(Map.of("X-Override", "override-value"))
-			.build();
+				.httpHeaders(Map.of("X-Override", "override-value"))
+				.build();
 
 		AnthropicChatOptions merged = base.mutate().combineWith(override.mutate()).build();
 
@@ -385,8 +376,8 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 		AnthropicChatOptions options2 = AnthropicChatOptions.builder().httpHeaders(Map.of("X-Header", "value")).build();
 
 		AnthropicChatOptions options3 = AnthropicChatOptions.builder()
-			.httpHeaders(Map.of("X-Header", "different"))
-			.build();
+				.httpHeaders(Map.of("X-Header", "different"))
+				.build();
 
 		assertThat(options1).isEqualTo(options2);
 		assertThat(options1.hashCode()).isEqualTo(options2.hashCode());
@@ -396,15 +387,15 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testCitationConsistencyValidationPasses() {
 		AnthropicCitationDocument doc1 = AnthropicCitationDocument.builder()
-			.plainText("Text 1")
-			.title("Doc 1")
-			.citationsEnabled(true)
-			.build();
+				.plainText("Text 1")
+				.title("Doc 1")
+				.citationsEnabled(true)
+				.build();
 		AnthropicCitationDocument doc2 = AnthropicCitationDocument.builder()
-			.plainText("Text 2")
-			.title("Doc 2")
-			.citationsEnabled(true)
-			.build();
+				.plainText("Text 2")
+				.title("Doc 2")
+				.citationsEnabled(true)
+				.build();
 
 		// Should not throw — all documents have consistent citation settings
 		AnthropicChatOptions options = AnthropicChatOptions.builder().citationDocuments(doc1, doc2).build();
@@ -415,19 +406,19 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testCitationConsistencyValidationFailsOnMixed() {
 		AnthropicCitationDocument enabled = AnthropicCitationDocument.builder()
-			.plainText("Text 1")
-			.title("Doc 1")
-			.citationsEnabled(true)
-			.build();
+				.plainText("Text 1")
+				.title("Doc 1")
+				.citationsEnabled(true)
+				.build();
 		AnthropicCitationDocument disabled = AnthropicCitationDocument.builder()
-			.plainText("Text 2")
-			.title("Doc 2")
-			.citationsEnabled(false)
-			.build();
+				.plainText("Text 2")
+				.title("Doc 2")
+				.citationsEnabled(false)
+				.build();
 
 		assertThatThrownBy(() -> AnthropicChatOptions.builder().citationDocuments(enabled, disabled).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("consistent citation settings");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("consistent citation settings");
 	}
 
 	@Test
@@ -460,9 +451,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testMultipleSkills() {
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.skill(AnthropicSkill.XLSX)
-			.skill(AnthropicSkill.PPTX)
-			.build();
+				.skill(AnthropicSkill.XLSX)
+				.skill(AnthropicSkill.PPTX)
+				.build();
 
 		assertThat(options.getSkillContainer()).isNotNull();
 		assertThat(options.getSkillContainer().getSkills()).hasSize(2);
@@ -473,9 +464,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testSkillContainerCopiedInMutate() {
 		AnthropicChatOptions original = AnthropicChatOptions.builder()
-			.skill(AnthropicSkill.XLSX)
-			.skill(AnthropicSkill.PDF)
-			.build();
+				.skill(AnthropicSkill.XLSX)
+				.skill(AnthropicSkill.PDF)
+				.build();
 
 		AnthropicChatOptions copied = original.mutate().build();
 
@@ -535,11 +526,11 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testWebSearchToolBuilder() {
 		AnthropicWebSearchTool webSearch = AnthropicWebSearchTool.builder()
-			.allowedDomains(List.of("docs.spring.io"))
-			.blockedDomains(List.of("example.com"))
-			.maxUses(5)
-			.userLocation("San Francisco", "US", "California", "America/Los_Angeles")
-			.build();
+				.allowedDomains(List.of("docs.spring.io"))
+				.blockedDomains(List.of("example.com"))
+				.maxUses(5)
+				.userLocation("San Francisco", "US", "California", "America/Los_Angeles")
+				.build();
 
 		AnthropicChatOptions options = AnthropicChatOptions.builder().webSearchTool(webSearch).build();
 
@@ -588,8 +579,8 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testServiceTierPreservedInMutate() {
 		AnthropicChatOptions original = AnthropicChatOptions.builder()
-			.serviceTier(AnthropicServiceTier.STANDARD_ONLY)
-			.build();
+				.serviceTier(AnthropicServiceTier.STANDARD_ONLY)
+				.build();
 		AnthropicChatOptions copied = original.mutate().build();
 		assertThat(copied.getServiceTier()).isEqualTo(AnthropicServiceTier.STANDARD_ONLY);
 	}
@@ -597,8 +588,8 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testServiceTierCombineWith() {
 		AnthropicChatOptions base = AnthropicChatOptions.builder()
-			.serviceTier(AnthropicServiceTier.STANDARD_ONLY)
-			.build();
+				.serviceTier(AnthropicServiceTier.STANDARD_ONLY)
+				.build();
 		AnthropicChatOptions override = AnthropicChatOptions.builder().serviceTier(AnthropicServiceTier.AUTO).build();
 
 		AnthropicChatOptions merged = base.mutate().combineWith(override.mutate()).build();
@@ -613,9 +604,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testThinkingEnabledWithDisplay() {
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.thinkingEnabled(2048, ThinkingConfigEnabled.Display.SUMMARIZED)
-			.maxTokens(16384)
-			.build();
+				.thinkingEnabled(2048, ThinkingConfigEnabled.Display.SUMMARIZED)
+				.maxTokens(16384)
+				.build();
 
 		assertThat(options.getThinking()).isNotNull();
 		ThinkingConfigParam thinking = options.getThinking();
@@ -628,9 +619,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testThinkingEnabledWithOmittedDisplay() {
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.thinkingEnabled(4096, ThinkingConfigEnabled.Display.OMITTED)
-			.maxTokens(16384)
-			.build();
+				.thinkingEnabled(4096, ThinkingConfigEnabled.Display.OMITTED)
+				.maxTokens(16384)
+				.build();
 
 		ThinkingConfigEnabled enabled = options.getThinking().enabled().get();
 		assertThat(enabled.display()).isPresent();
@@ -648,9 +639,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testThinkingAdaptiveWithDisplay() {
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.thinkingAdaptive(ThinkingConfigAdaptive.Display.SUMMARIZED)
-			.maxTokens(16384)
-			.build();
+				.thinkingAdaptive(ThinkingConfigAdaptive.Display.SUMMARIZED)
+				.maxTokens(16384)
+				.build();
 
 		assertThat(options.getThinking()).isNotNull();
 		ThinkingConfigAdaptive adaptive = options.getThinking().adaptive().get();
@@ -661,9 +652,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testThinkingAdaptiveWithOmittedDisplay() {
 		AnthropicChatOptions options = AnthropicChatOptions.builder()
-			.thinkingAdaptive(ThinkingConfigAdaptive.Display.OMITTED)
-			.maxTokens(16384)
-			.build();
+				.thinkingAdaptive(ThinkingConfigAdaptive.Display.OMITTED)
+				.maxTokens(16384)
+				.build();
 
 		ThinkingConfigAdaptive adaptive = options.getThinking().adaptive().get();
 		assertThat(adaptive.display()).isPresent();
@@ -681,9 +672,9 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 	@Test
 	void testThinkingDisplayPreservedInMutate() {
 		AnthropicChatOptions original = AnthropicChatOptions.builder()
-			.thinkingEnabled(2048, ThinkingConfigEnabled.Display.SUMMARIZED)
-			.maxTokens(16384)
-			.build();
+				.thinkingEnabled(2048, ThinkingConfigEnabled.Display.SUMMARIZED)
+				.maxTokens(16384)
+				.build();
 
 		AnthropicChatOptions copied = original.mutate().build();
 
@@ -698,8 +689,8 @@ class AnthropicChatOptionsTests extends AbstractChatOptionsTests<AnthropicChatOp
 		AnthropicChatOptions base = AnthropicChatOptions.builder().model("base-model").maxTokens(16384).build();
 
 		AnthropicChatOptions override = AnthropicChatOptions.builder()
-			.thinkingAdaptive(ThinkingConfigAdaptive.Display.OMITTED)
-			.build();
+				.thinkingAdaptive(ThinkingConfigAdaptive.Display.OMITTED)
+				.build();
 
 		AnthropicChatOptions merged = base.mutate().combineWith(override.mutate()).build();
 

@@ -21,9 +21,9 @@ package org.springframework.ai.observation.conventions;
  * by the OpenTelemetry Semantic Conventions for Generative AI.
  *
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai">OpenTelemetry
  * Semantic Conventions for Generative AI</a>.
+ * @since 1.0.0
  */
 public enum AiObservationAttributes {
 

@@ -16,16 +16,15 @@
 
 package org.springframework.ai.ollama.api;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.ollama.api.OllamaChatOptions.Builder;
 import org.springframework.ai.test.options.AbstractChatOptionsTests;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.ai.util.ResourceUtils;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -64,27 +63,27 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 	@Test
 	void testAllNumericOptions() {
 		var options = OllamaChatOptions.builder()
-			.numCtx(2048)
-			.numBatch(512)
-			.numGPU(1)
-			.mainGPU(0)
-			.numThread(8)
-			.numKeep(5)
-			.seed(42)
-			.numPredict(100)
-			.topK(40)
-			.topP(0.9)
-			.tfsZ(1.0f)
-			.typicalP(1.0f)
-			.repeatLastN(64)
-			.temperature(0.7)
-			.repeatPenalty(1.1)
-			.presencePenalty(0.0)
-			.frequencyPenalty(0.0)
-			.mirostat(2)
-			.mirostatTau(5.0f)
-			.mirostatEta(0.1f)
-			.build();
+				.numCtx(2048)
+				.numBatch(512)
+				.numGPU(1)
+				.mainGPU(0)
+				.numThread(8)
+				.numKeep(5)
+				.seed(42)
+				.numPredict(100)
+				.topK(40)
+				.topP(0.9)
+				.tfsZ(1.0f)
+				.typicalP(1.0f)
+				.repeatLastN(64)
+				.temperature(0.7)
+				.repeatPenalty(1.1)
+				.presencePenalty(0.0)
+				.frequencyPenalty(0.0)
+				.mirostat(2)
+				.mirostatTau(5.0f)
+				.mirostatEta(0.1f)
+				.build();
 
 		var optionsMap = options.toMap();
 		assertThat(optionsMap).containsEntry("num_ctx", 2048);
@@ -112,16 +111,16 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 	@Test
 	void testBooleanOptions() {
 		var options = OllamaChatOptions.builder()
-			.truncate(true)
-			.useNUMA(true)
-			.lowVRAM(false)
-			.f16KV(true)
-			.logitsAll(false)
-			.vocabOnly(false)
-			.useMMap(true)
-			.useMLock(false)
-			.penalizeNewline(true)
-			.build();
+				.truncate(true)
+				.useNUMA(true)
+				.lowVRAM(false)
+				.f16KV(true)
+				.logitsAll(false)
+				.vocabOnly(false)
+				.useMMap(true)
+				.useMLock(false)
+				.penalizeNewline(true)
+				.build();
 
 		var optionsMap = options.toMap();
 		assertThat(optionsMap).containsEntry("truncate", true);
@@ -155,25 +154,25 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 	@Test
 	void testOutputSchemaOptionWithJsonAsString() {
 		assertThatThrownBy(() -> OllamaChatOptions.builder().outputSchema("json"))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("Conversion from JSON to java.util.Map<java.lang.String, java.lang.Object> failed");
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Conversion from JSON to java.util.Map<java.lang.String, java.lang.Object> failed");
 	}
 
 	@Test
 	void testFunctionAndToolOptions() {
 		ToolCallback callback1 = FunctionToolCallback.builder("function1", (String s) -> s)
-			.description("Function 1")
-			.inputType(String.class)
-			.build();
+				.description("Function 1")
+				.inputType(String.class)
+				.build();
 		ToolCallback callback2 = FunctionToolCallback.builder("function2", (String s) -> s)
-			.description("Function 2")
-			.inputType(String.class)
-			.build();
+				.description("Function 2")
+				.inputType(String.class)
+				.build();
 
 		var options = OllamaChatOptions.builder()
-			.toolCallbacks(callback1, callback2)
-			.toolContext(Map.of("key1", "value1", "key2", "value2"))
-			.build();
+				.toolCallbacks(callback1, callback2)
+				.toolContext(Map.of("key1", "value1", "key2", "value2"))
+				.build();
 
 		// Tool-related fields are not included in the map due to @JsonIgnore
 		var optionsMap = options.toMap();
@@ -183,22 +182,22 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 		// But they are accessible through getters
 		assertThat(options.getToolCallbacks()).containsExactlyInAnyOrder(callback1, callback2);
 		assertThat(options.getToolContext())
-			.containsExactlyInAnyOrderEntriesOf(Map.of("key1", "value1", "key2", "value2"));
+				.containsExactlyInAnyOrderEntriesOf(Map.of("key1", "value1", "key2", "value2"));
 	}
 
 	@Test
 	void testFromOptions() {
 		ToolCallback callback = FunctionToolCallback.builder("function1", (String s) -> s)
-			.description("Function 1")
-			.inputType(String.class)
-			.build();
+				.description("Function 1")
+				.inputType(String.class)
+				.build();
 
 		var originalOptions = OllamaChatOptions.builder()
-			.model("llama2")
-			.temperature(0.7)
-			.topK(40)
-			.toolCallbacks(callback)
-			.build();
+				.model("llama2")
+				.temperature(0.7)
+				.topK(40)
+				.toolCallbacks(callback)
+				.build();
 
 		var copiedOptions = originalOptions.mutate().build();
 
@@ -212,9 +211,9 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 	@Test
 	void testFunctionOptionsNotInMap() {
 		ToolCallback callback = FunctionToolCallback.builder("function1", (String s) -> s)
-			.description("Function 1")
-			.inputType(String.class)
-			.build();
+				.description("Function 1")
+				.inputType(String.class)
+				.build();
 
 		var options = OllamaChatOptions.builder().model("llama2").toolCallbacks(callback).build();
 
@@ -272,7 +271,7 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 
 	/**
 	 * Demonstrates the difference between simple "json" format and JSON Schema format.
-	 *
+	 * <p>
 	 * Simple "json" format: Tells Ollama to return any valid JSON structure. JSON Schema
 	 * format: Tells Ollama to return JSON matching a specific schema.
 	 */
@@ -370,27 +369,27 @@ class OllamaChatOptionsTests extends AbstractChatOptionsTests<OllamaChatOptions,
 	@Test
 	void testCombineWithCollections() {
 		ToolCallback baseTool = FunctionToolCallback.builder("base-tool", (String s) -> s)
-			.description("Base tool")
-			.inputType(String.class)
-			.build();
+				.description("Base tool")
+				.inputType(String.class)
+				.build();
 		ToolCallback combineTool1 = FunctionToolCallback.builder("combine-tool1", (String s) -> s)
-			.description("Combine tool 1")
-			.inputType(String.class)
-			.build();
+				.description("Combine tool 1")
+				.inputType(String.class)
+				.build();
 		ToolCallback combineTool2 = FunctionToolCallback.builder("combine-tool2", (String s) -> s)
-			.description("Combine tool 2")
-			.inputType(String.class)
-			.build();
+				.description("Combine tool 2")
+				.inputType(String.class)
+				.build();
 
 		var base = OllamaChatOptions.builder()
-			.stop(List.of("base-stop"))
-			.toolCallbacks(baseTool)
-			.toolContext(Map.of("base-key", "base-value"));
+				.stop(List.of("base-stop"))
+				.toolCallbacks(baseTool)
+				.toolContext(Map.of("base-key", "base-value"));
 
 		var combine = OllamaChatOptions.builder()
-			.stop(List.of("combine-stop1", "combine-stop2"))
-			.toolCallbacks(combineTool1, combineTool2)
-			.toolContext(Map.of("combine-key1", "combine-value1", "combine-key2", "combine-value2"));
+				.stop(List.of("combine-stop1", "combine-stop2"))
+				.toolCallbacks(combineTool1, combineTool2)
+				.toolContext(Map.of("combine-key1", "combine-value1", "combine-key2", "combine-value2"));
 
 		var merged = base.combineWith(combine).build();
 

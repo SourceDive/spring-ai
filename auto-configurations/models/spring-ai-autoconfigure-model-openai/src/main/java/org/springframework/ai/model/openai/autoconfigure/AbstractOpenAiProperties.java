@@ -16,14 +16,14 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
+import com.openai.azure.AzureOpenAIServiceVersion;
+import com.openai.credential.Credential;
+import org.jspecify.annotations.Nullable;
+
 import java.net.Proxy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.openai.azure.AzureOpenAIServiceVersion;
-import com.openai.credential.Credential;
-import org.jspecify.annotations.Nullable;
 
 /**
  * @author Sebastien Deleuze

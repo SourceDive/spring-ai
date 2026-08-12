@@ -16,15 +16,14 @@
 
 package org.springframework.ai.openai.audio;
 
-import java.time.Duration;
-import java.util.List;
-
 import com.openai.core.http.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.openai.metadata.OpenAiAudioSpeechResponseMetadata;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -49,13 +48,13 @@ class OpenAiAudioSpeechModelWithResponseMetadataTests {
 		when(mockHeaders.values("x-ratelimit-limit-requests")).thenReturn(List.of("4000"));
 		when(mockHeaders.values("x-ratelimit-remaining-requests")).thenReturn(List.of("999"));
 		when(mockHeaders.values("x-ratelimit-reset-requests")).thenReturn(List.of("231329")); // 2d16h15m29s
-																								// in
-																								// seconds
+		// in
+		// seconds
 		when(mockHeaders.values("x-ratelimit-limit-tokens")).thenReturn(List.of("725000"));
 		when(mockHeaders.values("x-ratelimit-remaining-tokens")).thenReturn(List.of("112358"));
 		when(mockHeaders.values("x-ratelimit-reset-tokens")).thenReturn(List.of("100855")); // 27h55s451ms
-																							// in
-																							// seconds
+		// in
+		// seconds
 
 		// Create metadata from headers
 		OpenAiAudioSpeechResponseMetadata speechResponseMetadata = OpenAiAudioSpeechResponseMetadata.from(mockHeaders);

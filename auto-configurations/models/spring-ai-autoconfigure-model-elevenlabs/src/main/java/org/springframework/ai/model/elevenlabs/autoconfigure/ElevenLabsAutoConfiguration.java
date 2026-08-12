@@ -42,7 +42,7 @@ import org.springframework.web.reactive.function.client.WebClient;
  */
 @AutoConfiguration
 @ConditionalOnClass(ElevenLabsApi.class)
-@EnableConfigurationProperties({ ElevenLabsSpeechProperties.class, ElevenLabsConnectionProperties.class })
+@EnableConfigurationProperties({ElevenLabsSpeechProperties.class, ElevenLabsConnectionProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.AUDIO_SPEECH_MODEL, havingValue = SpringAIModels.ELEVEN_LABS,
 		matchIfMissing = true)
 public class ElevenLabsAutoConfiguration {
@@ -50,29 +50,29 @@ public class ElevenLabsAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ElevenLabsApi elevenLabsApi(ElevenLabsConnectionProperties connectionProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider,
-			ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
+	                                   ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                   ObjectProvider<WebClient.Builder> webClientBuilderProvider,
+	                                   ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
 
 		return ElevenLabsApi.builder()
-			.baseUrl(connectionProperties.getBaseUrl())
-			.apiKey(connectionProperties.getApiKey())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
-			.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
-			.build();
+				.baseUrl(connectionProperties.getBaseUrl())
+				.apiKey(connectionProperties.getApiKey())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
+				.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
+				.build();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	public ElevenLabsTextToSpeechModel elevenLabsSpeechModel(ElevenLabsApi elevenLabsApi,
-			ElevenLabsSpeechProperties speechProperties, ObjectProvider<RetryTemplate> retryTemplate) {
+	                                                         ElevenLabsSpeechProperties speechProperties, ObjectProvider<RetryTemplate> retryTemplate) {
 
 		return ElevenLabsTextToSpeechModel.builder()
-			.elevenLabsApi(elevenLabsApi)
-			.options(speechProperties.toOptions())
-			.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
-			.build();
+				.elevenLabsApi(elevenLabsApi)
+				.options(speechProperties.toOptions())
+				.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
+				.build();
 	}
 
 }

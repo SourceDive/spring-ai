@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chat.cache.semantic;
 
-import org.jspecify.annotations.NullMarked;

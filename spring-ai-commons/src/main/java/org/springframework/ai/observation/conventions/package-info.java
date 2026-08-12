@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.observation.conventions;
 
-import org.jspecify.annotations.NullMarked;

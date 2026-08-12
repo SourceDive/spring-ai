@@ -16,15 +16,10 @@
 
 package org.springframework.ai.integration.tests.client.advisor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.document.Document;
@@ -39,6 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,12 +82,12 @@ public class QuestionAnswerAdvisorStreamIT {
 		// Test streaming with the QuestionAnswerAdvisor
 		// This verifies the fix works in the streaming context too
 		Flux<String> responseFlux = ChatClient.builder(this.openAiChatModel)
-			.build()
-			.prompt(question)
-			.advisors(qaAdvisor)
-			.options(OpenAiChatOptions.builder().streamUsage(true))
-			.stream()
-			.content();
+				.build()
+				.prompt(question)
+				.advisors(qaAdvisor)
+				.options(OpenAiChatOptions.builder().streamUsage(true))
+				.stream()
+				.content();
 
 		// Collect the streamed responses
 		String response = responseFlux.collectList().block().stream().collect(Collectors.joining());

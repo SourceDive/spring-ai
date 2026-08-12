@@ -16,12 +16,6 @@
 
 package org.springframework.ai.chat.memory.repository.cassandra;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.BoundStatementBuilder;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
@@ -35,15 +29,15 @@ import com.datastax.oss.driver.shaded.guava.common.base.Preconditions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.messages.*;
 import org.springframework.util.Assert;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * An implementation of {@link ChatMemoryRepository} for Apache Cassandra.
@@ -134,9 +128,9 @@ public final class CassandraChatMemoryRepository implements ChatMemoryRepository
 		Assert.noNullElements(messages, "messages cannot contain null elements");
 
 		List<Message> persistableMessages = messages.stream()
-			.filter(m -> !(m instanceof ToolResponseMessage)
-					&& !(m instanceof AssistantMessage am && am.hasToolCalls()))
-			.toList();
+				.filter(m -> !(m instanceof ToolResponseMessage)
+						&& !(m instanceof AssistantMessage am && am.hasToolCalls()))
+				.toList();
 		if (logger.isWarnEnabled() && persistableMessages.size() < messages.size()) {
 			logger.warn(
 					"CassandraChatMemoryRepository does not support tool call messages. Some messages were filtered out for conversation: "
@@ -163,19 +157,19 @@ public final class CassandraChatMemoryRepository implements ChatMemoryRepository
 			msg.getMetadata().putIfAbsent(CONVERSATION_TS, instant);
 
 			UdtValue udt = this.conf.session.getMetadata()
-				.getKeyspace(this.conf.schema.keyspace())
-				.get()
-				.getUserDefinedType(this.conf.messageUDT)
-				.get()
-				.newValue()
-				.setInstant(this.conf.messageUdtTimestampColumn, (Instant) msg.getMetadata().get(CONVERSATION_TS))
-				.setString(this.conf.messageUdtTypeColumn, msg.getMessageType().name())
-				.setString(this.conf.messageUdtContentColumn, msg.getText());
+					.getKeyspace(this.conf.schema.keyspace())
+					.get()
+					.getUserDefinedType(this.conf.messageUDT)
+					.get()
+					.newValue()
+					.setInstant(this.conf.messageUdtTimestampColumn, (Instant) msg.getMetadata().get(CONVERSATION_TS))
+					.setString(this.conf.messageUdtTypeColumn, msg.getMessageType().name())
+					.setString(this.conf.messageUdtContentColumn, msg.getText());
 
 			msgs.add(udt);
 		}
 		builder = builder.setInstant(CassandraChatMemoryRepositoryConfig.DEFAULT_EXCHANGE_ID_NAME, instant)
-			.setList("msgs", msgs, UdtValue.class);
+				.setList("msgs", msgs, UdtValue.class);
 
 		this.conf.session.execute(builder.build());
 	}
@@ -201,13 +195,13 @@ public final class CassandraChatMemoryRepository implements ChatMemoryRepository
 
 	private PreparedStatement prepareAllStatement() {
 		Select stmt = QueryBuilder.selectFrom(this.conf.schema.keyspace(), this.conf.schema.table())
-			.distinct()
-			.raw(String.format("token(%s)", CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME))
-			.as("t")
-			.column(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
-			.whereToken(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
-			.isGreaterThan(QueryBuilder.bindMarker("after_token"))
-			.limit(10000);
+				.distinct()
+				.raw(String.format("token(%s)", CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME))
+				.as("t")
+				.column(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
+				.whereToken(CassandraChatMemoryRepositoryConfig.DEFAULT_SESSION_ID_NAME)
+				.isGreaterThan(QueryBuilder.bindMarker("after_token"))
+				.limit(10000);
 
 		return this.conf.session.prepare(stmt.build());
 	}

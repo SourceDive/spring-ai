@@ -22,10 +22,10 @@ package org.springframework.ai.observation.conventions;
  * Based on OpenTelemetry's Semantic Conventions for AI systems.
  *
  * @author Thomas Vitale
- * @since 1.0.0
  * @see <a href=
  * "https://github.com/open-telemetry/semantic-conventions/tree/main/docs/gen-ai">OTel
  * Semantic Conventions</a>.
+ * @since 1.0.0
  */
 public enum AiObservationMetricNames {
 
@@ -46,6 +46,7 @@ public enum AiObservationMetricNames {
 
 	/**
 	 * Return the value of the metric name.
+	 *
 	 * @return the value of the metric name
 	 */
 	public String value() {

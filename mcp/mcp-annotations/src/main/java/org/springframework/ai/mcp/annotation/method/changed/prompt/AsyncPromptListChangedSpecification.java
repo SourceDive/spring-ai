@@ -16,15 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.prompt;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema;
-import reactor.core.publisher.Mono;
-
 public record AsyncPromptListChangedSpecification(String[] clients,
-		Function<List<McpSchema.Prompt>, Mono<Void>> promptListChangeHandler) {
+                                                  Function<List<McpSchema.Prompt>, Mono<Void>> promptListChangeHandler) {
 
 	public AsyncPromptListChangedSpecification {
 		Objects.requireNonNull(clients, "clients must not be null");

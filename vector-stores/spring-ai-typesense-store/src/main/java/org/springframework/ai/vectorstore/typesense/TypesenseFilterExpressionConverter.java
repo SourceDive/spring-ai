@@ -78,7 +78,8 @@ public class TypesenseFilterExpressionConverter extends AbstractFilterExpression
 	 * Serialize values using JSON serialization for Typesense filter expressions.
 	 * Delegates to {@link #emitJsonValue(Object, StringBuilder)} for Jackson-based JSON
 	 * serialization.
-	 * @param value the value to serialize
+	 *
+	 * @param value   the value to serialize
 	 * @param context the context to append the JSON representation to
 	 */
 	@Override

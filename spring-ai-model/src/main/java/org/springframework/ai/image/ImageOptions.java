@@ -26,16 +26,22 @@ import org.springframework.ai.model.ModelOptions;
  */
 public interface ImageOptions extends ModelOptions {
 
-	@Nullable Integer getN();
+	@Nullable
+	Integer getN();
 
-	@Nullable String getModel();
+	@Nullable
+	String getModel();
 
-	@Nullable Integer getWidth();
+	@Nullable
+	Integer getWidth();
 
-	@Nullable Integer getHeight();
+	@Nullable
+	Integer getHeight();
 
-	@Nullable String getResponseFormat();
+	@Nullable
+	String getResponseFormat();
 
-	@Nullable String getStyle();
+	@Nullable
+	String getStyle();
 
 }

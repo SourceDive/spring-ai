@@ -33,7 +33,8 @@ public interface ToolIndex {
 
 	/**
 	 * Registers a tool in the search index for the specified session.
-	 * @param sessionId the session identifier for tool isolation
+	 *
+	 * @param sessionId     the session identifier for tool isolation
 	 * @param toolReference the reference to the tool being indexed
 	 */
 	void indexTool(String sessionId, ToolReference toolReference);
@@ -46,7 +47,8 @@ public interface ToolIndex {
 	 * efficient than repeated {@link #indexTool} calls (e.g. a single embedding API call
 	 * or a single write transaction). The default implementation simply iterates and
 	 * delegates to {@link #indexTool}.
-	 * @param sessionId the session identifier for tool isolation
+	 *
+	 * @param sessionId      the session identifier for tool isolation
 	 * @param toolReferences the tools to register
 	 */
 	@SuppressWarnings("null")
@@ -58,6 +60,7 @@ public interface ToolIndex {
 
 	/**
 	 * Searches for tools matching the given request criteria.
+	 *
 	 * @param toolSearchRequest the search request containing query and parameters
 	 * @return a response containing matching tool references
 	 */
@@ -65,6 +68,7 @@ public interface ToolIndex {
 
 	/**
 	 * Clears all indexed tools for the specified session.
+	 *
 	 * @param sessionId the session identifier
 	 */
 	void clearIndex(String sessionId);

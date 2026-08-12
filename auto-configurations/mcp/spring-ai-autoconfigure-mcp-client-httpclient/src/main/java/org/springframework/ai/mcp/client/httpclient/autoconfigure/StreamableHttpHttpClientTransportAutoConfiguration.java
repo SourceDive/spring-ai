@@ -16,15 +16,8 @@
 
 package org.springframework.ai.mcp.client.httpclient.autoconfigure;
 
-import java.net.http.HttpClient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.NamedClientMcpTransport;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpClientCommonProperties;
 import org.springframework.ai.mcp.client.common.autoconfigure.properties.McpStreamableHttpClientProperties;
@@ -35,6 +28,12 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.net.http.HttpClient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Auto-configuration for Streamable HTTP client transport in the Model Context Protocol
@@ -60,7 +59,7 @@ import org.springframework.context.annotation.Bean;
  * @see McpStreamableHttpClientProperties
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ McpStreamableHttpClientProperties.class, McpClientCommonProperties.class })
+@EnableConfigurationProperties({McpStreamableHttpClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 public class StreamableHttpHttpClientTransportAutoConfiguration {
@@ -79,12 +78,13 @@ public class StreamableHttpHttpClientTransportAutoConfiguration {
 	 * {@link McpClientCustomizer<HttpClientStreamableHttpTransport.Builder>} beans
 	 * applied with the connection name and transport builder
 	 * </ul>
+	 *
 	 * @param streamableProperties the Streamable HTTP client properties containing server
-	 * configurations
-	 * @param jsonMapperProvider the provider for JsonMapper or a new instance if not
-	 * available
+	 *                             configurations
+	 * @param jsonMapperProvider   the provider for JsonMapper or a new instance if not
+	 *                             available
 	 * @param transportCustomizers provider for
-	 * {@link McpClientCustomizer<HttpClientStreamableHttpTransport.Builder>} beans
+	 *                             {@link McpClientCustomizer<HttpClientStreamableHttpTransport.Builder>} beans
 	 * @return list of named MCP transports
 	 */
 	@Bean
@@ -97,7 +97,7 @@ public class StreamableHttpHttpClientTransportAutoConfiguration {
 		List<NamedClientMcpTransport> streamableHttpTransports = new ArrayList<>();
 
 		for (Map.Entry<String, ConnectionParameters> serverParameters : streamableProperties.getConnections()
-			.entrySet()) {
+				.entrySet()) {
 
 			String name = serverParameters.getKey();
 			String baseUrl = serverParameters.getValue().url();
@@ -105,10 +105,10 @@ public class StreamableHttpHttpClientTransportAutoConfiguration {
 					? serverParameters.getValue().endpoint() : "/mcp";
 
 			HttpClientStreamableHttpTransport.Builder transportBuilder = HttpClientStreamableHttpTransport
-				.builder(baseUrl)
-				.endpoint(streamableHttpEndpoint)
-				.clientBuilder(HttpClient.newBuilder())
-				.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
+					.builder(baseUrl)
+					.endpoint(streamableHttpEndpoint)
+					.clientBuilder(HttpClient.newBuilder())
+					.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
 
 			for (McpClientCustomizer<HttpClientStreamableHttpTransport.Builder> customizer : transportCustomizers) {
 				customizer.customize(name, transportBuilder);

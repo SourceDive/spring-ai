@@ -16,17 +16,11 @@
 
 package org.springframework.ai.google.genai.tool;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.google.genai.Client;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
@@ -41,6 +35,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -87,14 +86,14 @@ public class GoogleGenAiPaymentTransactionIT {
 		ToolCallback paymentStatus = findToolCallback("paymentStatus");
 
 		Flux<String> streamContent = this.chatClient.prompt()
-			.advisors(new SimpleLoggerAdvisor())
-			.tools(paymentStatus)
-			.user("""
-					What is the status of my payment transactions 001, 002 and 003?
-					If required invoke the function per transaction.
-					""")
-			.stream()
-			.content();
+				.advisors(new SimpleLoggerAdvisor())
+				.tools(paymentStatus)
+				.user("""
+						What is the status of my payment transactions 001, 002 and 003?
+						If required invoke the function per transaction.
+						""")
+				.stream()
+				.content();
 
 		String content = streamContent.collectList().block().stream().collect(Collectors.joining());
 
@@ -104,16 +103,15 @@ public class GoogleGenAiPaymentTransactionIT {
 		// Quota rate
 		try {
 			Thread.sleep(1000);
-		}
-		catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 		}
 	}
 
 	private ToolCallback findToolCallback(String name) {
 		return this.toolCallbacks.stream()
-			.filter(tc -> tc.getToolDefinition().name().equals(name))
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("No ToolCallback found for name: " + name));
+				.filter(tc -> tc.getToolDefinition().name().equals(name))
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException("No ToolCallback found for name: " + name));
 	}
 
 	record TransactionStatusResponse(String id, String status) {
@@ -138,28 +136,28 @@ public class GoogleGenAiPaymentTransactionIT {
 		@Bean
 		ToolCallback paymentStatus() {
 			return FunctionToolCallback.builder("paymentStatus", (Transaction transaction) -> DATASET.get(transaction))
-				.description("Get the status of a single payment transaction")
-				.inputType(Transaction.class)
-				.build();
+					.description("Get the status of a single payment transaction")
+					.inputType(Transaction.class)
+					.build();
 		}
 
 		@Bean
 		ToolCallback paymentStatuses() {
 			return FunctionToolCallback
-				.builder("paymentStatuses",
-						(Transactions transactions) -> new Statuses(
-								transactions.transactions().stream().map(t -> DATASET.get(t)).toList()))
-				.description("Get the list statuses of a list of payment transactions")
-				.inputType(Transactions.class)
-				.build();
+					.builder("paymentStatuses",
+							(Transactions transactions) -> new Statuses(
+									transactions.transactions().stream().map(t -> DATASET.get(t)).toList()))
+					.description("Get the list statuses of a list of payment transactions")
+					.inputType(Transactions.class)
+					.build();
 		}
 
 		@Bean
 		public ChatClient chatClient(GoogleGenAiChatModel chatModel, ToolCallingManager toolCallingManager) {
 			return ChatClient
-				.builder(chatModel, ObservationRegistry.NOOP, null, null,
-						ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-				.build();
+					.builder(chatModel, ObservationRegistry.NOOP, null, null,
+							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+					.build();
 		}
 
 		@Bean
@@ -172,20 +170,20 @@ public class GoogleGenAiPaymentTransactionIT {
 		@Bean
 		public GoogleGenAiChatModel vertexAiChatModel(Client genAiClient) {
 			return GoogleGenAiChatModel.builder()
-				.genAiClient(genAiClient)
-				.options(GoogleGenAiChatOptions.builder()
-					.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
-					.temperature(0.1)
-					.build())
-				.build();
+					.genAiClient(genAiClient)
+					.options(GoogleGenAiChatOptions.builder()
+							.model(GoogleGenAiChatModel.ChatModel.GEMINI_2_5_FLASH)
+							.temperature(0.1)
+							.build())
+					.build();
 		}
 
 		@Bean
 		ToolCallingManager toolCallingManager(ObjectProvider<ObservationRegistry> observationRegistry) {
 			return ToolCallingManager.builder()
-				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-				.toolExecutionExceptionProcessor(new DefaultToolExecutionExceptionProcessor(false))
-				.build();
+					.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+					.toolExecutionExceptionProcessor(new DefaultToolExecutionExceptionProcessor(false))
+					.build();
 		}
 
 	}

@@ -16,15 +16,14 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.List;
-
 import com.openai.models.audio.AudioResponseFormat;
 import com.openai.models.audio.transcriptions.TranscriptionCreateParams.TimestampGranularity;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.openai.OpenAiAudioTranscriptionOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * Configuration properties for OpenAI SDK audio transcription.
@@ -101,13 +100,13 @@ public class OpenAiAudioTranscriptionProperties extends AbstractOpenAiProperties
 
 	public OpenAiAudioTranscriptionOptions toOptions() {
 		return OpenAiAudioTranscriptionOptions.builder()
-			.model(this.model)
-			.responseFormat(this.responseFormat)
-			.prompt(this.prompt)
-			.language(this.language)
-			.temperature(this.temperature)
-			.timestampGranularities(this.timestampGranularities)
-			.build();
+				.model(this.model)
+				.responseFormat(this.responseFormat)
+				.prompt(this.prompt)
+				.language(this.language)
+				.temperature(this.temperature)
+				.timestampGranularities(this.timestampGranularities)
+				.build();
 	}
 
 	private Options options = new Options();

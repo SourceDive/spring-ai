@@ -16,15 +16,10 @@
 
 package org.springframework.ai.mistralai.ocr;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -32,6 +27,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Java Client library for the Mistral AI OCR API. Provides access to the OCR
@@ -51,6 +50,7 @@ public class MistralOcrApi {
 
 	/**
 	 * Create a new MistralOcrApi instance.
+	 *
 	 * @param mistralAiApiKey Mistral AI API key.
 	 */
 	public MistralOcrApi(String mistralAiApiKey) {
@@ -59,7 +59,8 @@ public class MistralOcrApi {
 
 	/**
 	 * Create a new MistralOcrApi instance.
-	 * @param baseUrl API base URL.
+	 *
+	 * @param baseUrl         API base URL.
 	 * @param mistralAiApiKey Mistral AI API key.
 	 */
 	public MistralOcrApi(String baseUrl, String mistralAiApiKey) {
@@ -68,8 +69,9 @@ public class MistralOcrApi {
 
 	/**
 	 * Create a new MistralOcrApi instance.
-	 * @param baseUrl API base URL.
-	 * @param mistralAiApiKey Mistral AI API key.
+	 *
+	 * @param baseUrl           API base URL.
+	 * @param mistralAiApiKey   Mistral AI API key.
 	 * @param restClientBuilder RestClient builder.
 	 */
 	public MistralOcrApi(String baseUrl, String mistralAiApiKey, RestClient.Builder restClientBuilder) {
@@ -78,13 +80,14 @@ public class MistralOcrApi {
 
 	/**
 	 * Create a new MistralOcrApi instance.
-	 * @param baseUrl API base URL.
-	 * @param mistralAiApiKey Mistral AI API key.
-	 * @param restClientBuilder RestClient builder.
+	 *
+	 * @param baseUrl              API base URL.
+	 * @param mistralAiApiKey      Mistral AI API key.
+	 * @param restClientBuilder    RestClient builder.
 	 * @param responseErrorHandler Response error handler.
 	 */
 	public MistralOcrApi(String baseUrl, String mistralAiApiKey, RestClient.Builder restClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	                     ResponseErrorHandler responseErrorHandler) {
 
 		Consumer<HttpHeaders> jsonContentHeaders = headers -> {
 			headers.setBearerAuth(mistralAiApiKey);
@@ -92,16 +95,17 @@ public class MistralOcrApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(responseErrorHandler)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(responseErrorHandler)
+				.build();
 	}
 
 	/**
 	 * Performs OCR on a document and returns the extracted information.
+	 *
 	 * @param ocrRequest The OCR request containing document details and processing
-	 * options.
+	 *                   options.
 	 * @return ResponseEntity containing the OCR response with markdown text and image
 	 * data.
 	 */
@@ -136,21 +140,21 @@ public class MistralOcrApi {
 	/**
 	 * Represents the request for the OCR API.
 	 *
-	 * @param model Model to use for OCR. Can be 'mistral-ocr-latest'
-	 * @param id An optional string identifier.
-	 * @param document Document to run OCR on. Can be either a {@link DocumentURLChunk} or
-	 * an {@link ImageURLChunk}.
-	 * @param pages Specific pages to process in various formats: single number, range, or
-	 * list of both. Starts from 0.
+	 * @param model              Model to use for OCR. Can be 'mistral-ocr-latest'
+	 * @param id                 An optional string identifier.
+	 * @param document           Document to run OCR on. Can be either a {@link DocumentURLChunk} or
+	 *                           an {@link ImageURLChunk}.
+	 * @param pages              Specific pages to process in various formats: single number, range, or
+	 *                           list of both. Starts from 0.
 	 * @param includeImageBase64 Whether to include image URLs in the response.
-	 * @param imageLimit Maximum number of images to extract.
-	 * @param imageMinSize Minimum height and width of image to extract.
+	 * @param imageLimit         Maximum number of images to extract.
+	 * @param imageMinSize       Minimum height and width of image to extract.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record OCRRequest(@JsonProperty("model") String model, @JsonProperty("id") String id,
-			@JsonProperty("document") Document document, @JsonProperty("pages") List<Integer> pages,
-			@JsonProperty("include_image_base64") Boolean includeImageBase64,
-			@JsonProperty("image_limit") Integer imageLimit, @JsonProperty("image_min_size") Integer imageMinSize) {
+	                         @JsonProperty("document") Document document, @JsonProperty("pages") List<Integer> pages,
+	                         @JsonProperty("include_image_base64") Boolean includeImageBase64,
+	                         @JsonProperty("image_limit") Integer imageLimit, @JsonProperty("image_min_size") Integer imageMinSize) {
 
 		/**
 		 * Represents the document to be processed, which can be either a document URL or
@@ -169,7 +173,7 @@ public class MistralOcrApi {
 		 * @param documentName Optional name of the document.
 		 */
 		@JsonInclude(Include.NON_NULL)
-		public record DocumentURLChunk(
+		public record DocumentURLChunk (
 
 				@JsonProperty("type") String type, @JsonProperty("document_url") String documentUrl,
 				@JsonProperty("document_name") @Nullable String documentName) implements Document {
@@ -191,7 +195,7 @@ public class MistralOcrApi {
 		 * @param imageName Optional name of the image.
 		 */
 		@JsonInclude(Include.NON_NULL)
-		public record ImageURLChunk(
+		public record ImageURLChunk (
 
 				@JsonProperty("type") String type, @JsonProperty("image_url") String imageUrl,
 				@JsonProperty("image_name") @Nullable String imageName) implements Document {
@@ -209,50 +213,50 @@ public class MistralOcrApi {
 	/**
 	 * Represents the response from the OCR API.
 	 *
-	 * @param pages List of OCR info for pages.
-	 * @param model The model used to generate the OCR.
-	 * @param usageInfo Usage info for the OCR request.
+	 * @param pages          List of OCR info for pages.
+	 * @param model          The model used to generate the OCR.
+	 * @param usageInfo      Usage info for the OCR request.
 	 * @param pagesProcessed Number of pages processed.
-	 * @param docSizeBytes Document size in bytes.
+	 * @param docSizeBytes   Document size in bytes.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record OCRResponse(@JsonProperty("pages") List<OCRPage> pages, @JsonProperty("model") String model,
-			@JsonProperty("usage_info") OCRUsageInfo usageInfo, @JsonProperty("pages_processed") Integer pagesProcessed,
-			@JsonProperty("doc_size_bytes") Integer docSizeBytes) {
+	                          @JsonProperty("usage_info") OCRUsageInfo usageInfo, @JsonProperty("pages_processed") Integer pagesProcessed,
+	                          @JsonProperty("doc_size_bytes") Integer docSizeBytes) {
 
 	}
 
 	/**
 	 * Represents OCR information for a single page.
 	 *
-	 * @param index The page index in a PDF document starting from 0.
-	 * @param markdown The markdown string response of the page.
-	 * @param images List of all extracted images in the page.
+	 * @param index      The page index in a PDF document starting from 0.
+	 * @param markdown   The markdown string response of the page.
+	 * @param images     List of all extracted images in the page.
 	 * @param dimensions The dimensions of the PDF Page's screenshot image.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record OCRPage(@JsonProperty("index") Integer index, @JsonProperty("markdown") String markdown,
-			@JsonProperty("images") List<ExtractedImage> images,
-			@JsonProperty("dimensions") OCRPageDimensions dimensions) {
+	                      @JsonProperty("images") List<ExtractedImage> images,
+	                      @JsonProperty("dimensions") OCRPageDimensions dimensions) {
 	}
 
 	/**
 	 * Represents an extracted image from a page.
 	 *
-	 * @param id Image ID for the extracted image in a page.
-	 * @param topLeftX X coordinate of the top-left corner of the extracted image.
-	 * @param topLeftY Y coordinate of the top-left corner of the extracted image.
+	 * @param id           Image ID for the extracted image in a page.
+	 * @param topLeftX     X coordinate of the top-left corner of the extracted image.
+	 * @param topLeftY     Y coordinate of the top-left corner of the extracted image.
 	 * @param bottomRightX X coordinate of the bottom-right corner of the extracted image.
 	 * @param bottomRightY Y coordinate of the bottom-right corner of the extracted image.
-	 * @param imageBase64 Base64 string of the extracted image.
+	 * @param imageBase64  Base64 string of the extracted image.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record ExtractedImage(@JsonProperty("id") String id, @JsonProperty("top_left_x") Integer topLeftX,
-			@JsonProperty("top_left_y") Integer topLeftY, @JsonProperty("bottom_right_x") Integer bottomRightX,
-			@JsonProperty("bottom_right_y") Integer bottomRightY, @JsonProperty("image_base64") String imageBase64) {
+	                             @JsonProperty("top_left_y") Integer topLeftY, @JsonProperty("bottom_right_x") Integer bottomRightX,
+	                             @JsonProperty("bottom_right_y") Integer bottomRightY, @JsonProperty("image_base64") String imageBase64) {
 
 		@Override
-		public boolean equals(@Nullable Object o) {
+		public boolean equals (@Nullable Object o){
 			if (this == o) {
 				return true;
 			}
@@ -267,7 +271,7 @@ public class MistralOcrApi {
 		}
 
 		@Override
-		public int hashCode() {
+		public int hashCode () {
 			return Objects.hash(this.id, this.topLeftX, this.topLeftY, this.bottomRightX, this.bottomRightY,
 					this.imageBase64);
 		}
@@ -276,24 +280,24 @@ public class MistralOcrApi {
 	/**
 	 * Represents the dimensions of a PDF page's screenshot image.
 	 *
-	 * @param dpi Dots per inch of the page-image.
+	 * @param dpi    Dots per inch of the page-image.
 	 * @param height Height of the image in pixels.
-	 * @param width Width of the image in pixels.
+	 * @param width  Width of the image in pixels.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record OCRPageDimensions(@JsonProperty("dpi") Integer dpi, @JsonProperty("height") Integer height,
-			@JsonProperty("width") Integer width) {
+	                                @JsonProperty("width") Integer width) {
 	}
 
 	/**
 	 * Represents usage information for the OCR request.
 	 *
 	 * @param pagesProcessed Number of pages processed.
-	 * @param docSizeBytes Document size in bytes.
+	 * @param docSizeBytes   Document size in bytes.
 	 */
 	@JsonInclude(Include.NON_NULL)
 	public record OCRUsageInfo(@JsonProperty("pages_processed") Integer pagesProcessed,
-			@JsonProperty("doc_size_bytes") Integer docSizeBytes) {
+	                           @JsonProperty("doc_size_bytes") Integer docSizeBytes) {
 	}
 
 }

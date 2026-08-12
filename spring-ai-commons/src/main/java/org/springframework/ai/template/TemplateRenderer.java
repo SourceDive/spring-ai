@@ -16,10 +16,10 @@
 
 package org.springframework.ai.template;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 import java.util.function.BiFunction;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Renders a template using a given strategy.

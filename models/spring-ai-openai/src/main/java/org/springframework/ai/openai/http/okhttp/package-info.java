@@ -23,10 +23,9 @@
  * <a href="https://github.com/openai/openai-java#custom-http-client">Custom HTTP
  * client</a> guide for the integration pattern.
  *
- * @since 2.0.0
  * @see org.springframework.ai.openai.http.okhttp.SpringAiOpenAiHttpClient
+ * @since 2.0.0
  */
 @NullMarked
 package org.springframework.ai.openai.http.okhttp;
 
-import org.jspecify.annotations.NullMarked;

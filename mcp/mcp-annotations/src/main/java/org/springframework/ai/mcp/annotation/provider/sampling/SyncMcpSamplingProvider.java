@@ -16,21 +16,20 @@
 
 package org.springframework.ai.mcp.annotation.provider.sampling;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.McpSampling;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.sampling.SyncMcpSamplingMethodCallback;
 import org.springframework.ai.mcp.annotation.method.sampling.SyncSamplingSpecification;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Provider for synchronous sampling callbacks.
@@ -69,8 +68,9 @@ public class SyncMcpSamplingProvider {
 
 	/**
 	 * Create a new SyncMcpSamplingProvider.
+	 *
 	 * @param samplingObjects the objects containing methods annotated with
-	 * {@link McpSampling}
+	 *                        {@link McpSampling}
 	 */
 	public SyncMcpSamplingProvider(List<Object> samplingObjects) {
 		Assert.notNull(samplingObjects, "samplingObjects cannot be null");
@@ -79,34 +79,35 @@ public class SyncMcpSamplingProvider {
 
 	/**
 	 * Get the sampling handler.
+	 *
 	 * @return the sampling handler
 	 * @throws IllegalStateException if no sampling methods are found or if multiple
-	 * sampling methods are found
+	 *                               sampling methods are found
 	 */
 	public List<SyncSamplingSpecification> getSamplingSpecifications() {
 		List<SyncSamplingSpecification> samplingHandlers = this.samplingObjects.stream()
-			.map(samplingObject -> Stream.of(doGetClassMethods(samplingObject))
-				.filter(method -> method.isAnnotationPresent(McpSampling.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.filter(method -> CreateMessageResult.class.isAssignableFrom(method.getReturnType()))
-				.filter(method -> method.getParameterCount() == 1
-						&& CreateMessageRequest.class.isAssignableFrom(method.getParameterTypes()[0]))
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpSamplingMethod -> {
-					var samplingAnnotation = mcpSamplingMethod.getAnnotation(McpSampling.class);
+				.map(samplingObject -> Stream.of(doGetClassMethods(samplingObject))
+						.filter(method -> method.isAnnotationPresent(McpSampling.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.filter(method -> CreateMessageResult.class.isAssignableFrom(method.getReturnType()))
+						.filter(method -> method.getParameterCount() == 1
+								&& CreateMessageRequest.class.isAssignableFrom(method.getParameterTypes()[0]))
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpSamplingMethod -> {
+							var samplingAnnotation = mcpSamplingMethod.getAnnotation(McpSampling.class);
 
-					Function<CreateMessageRequest, CreateMessageResult> methodCallback = SyncMcpSamplingMethodCallback
-						.builder()
-						.method(mcpSamplingMethod)
-						.bean(samplingObject)
-						.sampling(samplingAnnotation)
-						.build();
+							Function<CreateMessageRequest, CreateMessageResult> methodCallback = SyncMcpSamplingMethodCallback
+									.builder()
+									.method(mcpSamplingMethod)
+									.bean(samplingObject)
+									.sampling(samplingAnnotation)
+									.build();
 
-					return new SyncSamplingSpecification(samplingAnnotation.clients(), methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncSamplingSpecification(samplingAnnotation.clients(), methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (samplingHandlers.isEmpty()) {
 			logger.warn("No sampling methods found");
@@ -122,6 +123,7 @@ public class SyncMcpSamplingProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

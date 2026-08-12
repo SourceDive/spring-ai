@@ -16,24 +16,23 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.springframework.ai.mcp.annotation.McpMeta;
+import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpMeta;
-import org.springframework.ai.mcp.annotation.McpTool;
-import org.springframework.ai.mcp.annotation.McpToolParam;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -317,7 +316,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Primitives: true, 1, 2, 3, 4, 5.5, 6.6");
+					.isEqualTo("Primitives: true, 1, 2, 3, 4, 5.5, 6.6");
 		}).verifyComplete();
 	}
 
@@ -499,7 +498,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.contains("Expected reactive return type but got: java.lang.String");
+					.contains("Expected reactive return type but got: java.lang.String");
 		}).verifyComplete();
 	}
 
@@ -528,7 +527,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 	public void testConstructorParameters() {
 		TestAsyncStatelessToolProvider provider = new TestAsyncStatelessToolProvider();
 		Method method = TestAsyncStatelessToolProvider.class.getMethods()[0]; // Any
-																				// method
+		// method
 
 		AsyncStatelessMcpToolMethodCallback callback = new AsyncStatelessMcpToolMethodCallback(ReturnMode.TEXT, method,
 				provider);
@@ -571,7 +570,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Required: test, Optional: optional-value");
+					.isEqualTo("Required: test, Optional: optional-value");
 		}).verifyComplete();
 	}
 
@@ -654,7 +653,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Received tool: call-tool-request-mono-tool with 2 arguments");
+					.isEqualTo("Received tool: call-tool-request-mono-tool with 2 arguments");
 		}).verifyComplete();
 	}
 
@@ -675,7 +674,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Action: process, Tool: mixed-params-mono-tool");
+					.isEqualTo("Action: process, Tool: mixed-params-mono-tool");
 		}).verifyComplete();
 	}
 
@@ -696,7 +695,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text())
-				.isEqualTo("Context present, Tool: context-and-request-mono-tool");
+					.isEqualTo("Context present, Tool: context-and-request-mono-tool");
 		}).verifyComplete();
 	}
 
@@ -713,10 +712,10 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 
 		// Create request with meta data
 		CallToolRequest request = CallToolRequest.builder()
-			.name("meta-mono-tool")
-			.arguments(Map.of("input", "test-input"))
-			.meta(Map.of("userId", "user123", "sessionId", "session456"))
-			.build();
+				.name("meta-mono-tool")
+				.arguments(Map.of("input", "test-input"))
+				.meta(Map.of("userId", "user123", "sessionId", "session456"))
+				.build();
 
 		StepVerifier.create(callback.apply(context, request)).assertNext(result -> {
 			assertThat(result).isNotNull();
@@ -724,7 +723,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 			assertThat(result.content()).hasSize(1);
 			assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content().get(0)).text()).contains("Input: test-input")
-				.contains("Meta: {userId=user123, sessionId=session456}");
+					.contains("Meta: {userId=user123, sessionId=session456}");
 		}).verifyComplete();
 	}
 
@@ -775,15 +774,15 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 		@McpTool(name = "complex-mono-tool", description = "A complex mono tool")
 		public Mono<CallToolResult> complexMonoTool(String name, int age, boolean active) {
 			return Mono.just(CallToolResult.builder()
-				.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
-				.build());
+					.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
+					.build());
 		}
 
 		@McpTool(name = "complex-flux-tool", description = "A complex flux tool")
 		public Flux<CallToolResult> complexFluxTool(String name, int age, boolean active) {
 			return Flux.just(CallToolResult.builder()
-				.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
-				.build());
+					.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
+					.build());
 		}
 
 		@McpTool(name = "context-mono-tool", description = "Mono tool with context parameter")
@@ -803,7 +802,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 
 		@McpTool(name = "optional-params-mono-tool", description = "Mono tool with optional parameters")
 		public Mono<String> monoToolWithOptionalParams(@McpToolParam(required = true) String required,
-				@McpToolParam(required = false) String optional) {
+		                                               @McpToolParam(required = false) String optional) {
 			return Mono.just("Required: " + required + ", Optional: " + (optional != null ? optional : "null"));
 		}
 
@@ -840,7 +839,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 		@McpTool(name = "primitive-types-mono-tool", description = "Mono tool with primitive types")
 		public Mono<String> primitiveTypesMonoTool(boolean flag, byte b, short s, int i, long l, float f, double d) {
 			return Mono
-				.just(String.format(Locale.US, "Primitives: %b, %d, %d, %d, %d, %.1f, %.1f", flag, b, s, i, l, f, d));
+					.just(String.format(Locale.US, "Primitives: %b, %d, %d, %d, %d, %.1f, %.1f", flag, b, s, i, l, f, d));
 		}
 
 		@McpTool(name = "return-object-mono-tool", description = "Mono tool that returns a complex object")
@@ -894,7 +893,7 @@ public class AsyncStatelessMcpToolMethodCallbackTests {
 		 */
 		@McpTool(name = "meta-mono-tool", description = "Mono tool with meta parameter")
 		public Mono<String> metaMonoTool(@McpToolParam(description = "Input parameter", required = true) String input,
-				McpMeta meta) {
+		                                 McpMeta meta) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return Mono.just("Input: " + input + ", Meta: " + metaInfo);
 		}

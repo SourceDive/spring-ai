@@ -16,18 +16,10 @@
 
 package org.springframework.ai.vectorstore.mongodb.autoconfigure;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.mongodb.ConnectionString;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mongodb.MongoDBAtlasLocalContainer;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConfiguration;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -46,6 +38,13 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mongodb.MongoDBAtlasLocalContainer;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,13 +64,13 @@ class MongoDBAtlasVectorStoreAutoConfigurationIT {
 
 	private ApplicationContextRunner getContextRunner() {
 		return new ApplicationContextRunner().withUserConfiguration(Config.class)
-			.withConfiguration(AutoConfigurations.of(MongoAutoConfiguration.class, DataMongoAutoConfiguration.class,
-					MongoDBAtlasVectorStoreAutoConfiguration.class, RestClientAutoConfiguration.class,
-					OpenAiEmbeddingAutoConfiguration.class))
-			.withPropertyValues("spring.ai.vectorstore.mongodb.initialize-schema=true",
-					"spring.ai.vectorstore.mongodb.collection-name=test_collection",
-					"spring.ai.vectorstore.mongodb.index-name=text_index",
-					"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+				.withConfiguration(AutoConfigurations.of(MongoAutoConfiguration.class, DataMongoAutoConfiguration.class,
+						MongoDBAtlasVectorStoreAutoConfiguration.class, RestClientAutoConfiguration.class,
+						OpenAiEmbeddingAutoConfiguration.class))
+				.withPropertyValues("spring.ai.vectorstore.mongodb.initialize-schema=true",
+						"spring.ai.vectorstore.mongodb.collection-name=test_collection",
+						"spring.ai.vectorstore.mongodb.index-name=text_index",
+						"spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 	}
 
 	List<Document> documents = List.of(
@@ -103,7 +102,7 @@ class MongoDBAtlasVectorStoreAutoConfigurationIT {
 			Thread.sleep(5000); // Await a second for the document to be indexed
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);
@@ -124,7 +123,7 @@ class MongoDBAtlasVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results2 = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Great").topK(1).build());
 			assertThat(results2).isEmpty();
 
 			context.getBean(MongoTemplate.class).dropCollection("test_collection");
@@ -134,33 +133,33 @@ class MongoDBAtlasVectorStoreAutoConfigurationIT {
 	@Test
 	public void addAndSearchWithFilters() {
 		getContextRunner().withPropertyValues("spring.ai.vectorstore.mongodb.metadata-fields-to-filter=foo")
-			.run(context -> {
+				.run(context -> {
 
-				VectorStore vectorStore = context.getBean(VectorStore.class);
-				vectorStore.add(this.documents);
+					VectorStore vectorStore = context.getBean(VectorStore.class);
+					vectorStore.add(this.documents);
 
-				Thread.sleep(5000); // Await a second for the document to be indexed
+					Thread.sleep(5000); // Await a second for the document to be indexed
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Testcontainers").topK(2).build());
-				assertThat(results).hasSize(2);
-				results.forEach(doc -> assertThat(doc.getText().contains("Testcontainers")).isTrue());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Testcontainers").topK(2).build());
+					assertThat(results).hasSize(2);
+					results.forEach(doc -> assertThat(doc.getText().contains("Testcontainers")).isTrue());
 
-				FilterExpressionBuilder b = new FilterExpressionBuilder();
-				results = vectorStore.similaritySearch(SearchRequest.builder()
-					.query("Testcontainers")
-					.topK(2)
-					.filterExpression(b.eq("foo", "bar").build())
-					.build());
+					FilterExpressionBuilder b = new FilterExpressionBuilder();
+					results = vectorStore.similaritySearch(SearchRequest.builder()
+							.query("Testcontainers")
+							.topK(2)
+							.filterExpression(b.eq("foo", "bar").build())
+							.build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(3).getId());
-				assertThat(resultDoc.getText().contains("Testcontainers")).isTrue();
-				assertThat(resultDoc.getMetadata()).containsEntry("foo", "bar");
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(3).getId());
+					assertThat(resultDoc.getText().contains("Testcontainers")).isTrue();
+					assertThat(resultDoc.getMetadata()).containsEntry("foo", "bar");
 
-				context.getBean(MongoTemplate.class).dropCollection("test_collection");
-			});
+					context.getBean(MongoTemplate.class).dropCollection("test_collection");
+				});
 	}
 
 	@Test

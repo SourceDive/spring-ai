@@ -16,11 +16,7 @@
 
 package org.springframework.ai.deepseek.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionChunk;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionChunk.ChunkChoice;
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionFinishReason;
@@ -30,6 +26,9 @@ import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.Rol
 import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.ToolCall;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper class to support Streaming function calling. It can merge the streamed
@@ -108,12 +107,10 @@ public class DeepSeekStreamFunctionCallingHelper {
 					toolCalls.add(lastPreviousTooCall);
 				}
 				toolCalls.add(currentToolCall);
-			}
-			else {
+			} else {
 				toolCalls.add(merge(lastPreviousTooCall, currentToolCall));
 			}
-		}
-		else {
+		} else {
 			if (lastPreviousTooCall != null) {
 				toolCalls.add(lastPreviousTooCall);
 			}

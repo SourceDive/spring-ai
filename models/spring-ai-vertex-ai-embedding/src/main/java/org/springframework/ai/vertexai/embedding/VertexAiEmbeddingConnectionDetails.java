@@ -16,14 +16,13 @@
 
 package org.springframework.ai.vertexai.embedding;
 
-import java.io.IOException;
-
 import com.google.cloud.aiplatform.v1.EndpointName;
 import com.google.cloud.aiplatform.v1.PredictionServiceSettings;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
 
 /**
  * VertexAiEmbeddingConnectionDetails represents the details of a connection to the Vertex
@@ -64,7 +63,7 @@ public class VertexAiEmbeddingConnectionDetails {
 	private final PredictionServiceSettings predictionServiceSettings;
 
 	public VertexAiEmbeddingConnectionDetails(String projectId, String location, String publisher,
-			PredictionServiceSettings predictionServiceSettings) {
+	                                          PredictionServiceSettings predictionServiceSettings) {
 		this.projectId = projectId;
 		this.location = location;
 		this.publisher = publisher;
@@ -159,8 +158,7 @@ public class VertexAiEmbeddingConnectionDetails {
 				if (!StringUtils.hasText(this.location)) {
 					this.endpoint = DEFAULT_ENDPOINT;
 					this.location = DEFAULT_LOCATION;
-				}
-				else {
+				} else {
 					this.endpoint = this.location + DEFAULT_ENDPOINT_SUFFIX;
 				}
 			}
@@ -172,10 +170,9 @@ public class VertexAiEmbeddingConnectionDetails {
 			if (this.predictionServiceSettings == null) {
 				try {
 					this.predictionServiceSettings = PredictionServiceSettings.newBuilder()
-						.setEndpoint(this.endpoint)
-						.build();
-				}
-				catch (IOException e) {
+							.setEndpoint(this.endpoint)
+							.build();
+				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			}

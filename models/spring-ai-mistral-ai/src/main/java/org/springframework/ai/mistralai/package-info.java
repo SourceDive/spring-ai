@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.mistralai;
 
-import org.jspecify.annotations.NullMarked;

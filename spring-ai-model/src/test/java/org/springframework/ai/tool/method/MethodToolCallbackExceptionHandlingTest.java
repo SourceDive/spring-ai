@@ -16,12 +16,11 @@
 
 package org.springframework.ai.tool.method;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.execution.ToolExecutionException;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -60,17 +59,17 @@ public class MethodToolCallbackExceptionHandlingTest {
 
 		// Call the tool
 		assertThatThrownBy(() -> callback.call(ivalidToolInput)).isInstanceOf(ToolExecutionException.class)
-			.hasMessageContaining("Cannot deserialize value");
+				.hasMessageContaining("Cannot deserialize value");
 
 		// Verify extractToolArguments
 
 		String ivalidToolInput2 = """
 				nill
-					""";
+				""";
 
 		// Call the tool
 		assertThatThrownBy(() -> callback.call(ivalidToolInput2)).isInstanceOf(ToolExecutionException.class)
-			.hasMessageContaining("Unrecognized token");
+				.hasMessageContaining("Unrecognized token");
 	}
 
 	public static class TestTools {

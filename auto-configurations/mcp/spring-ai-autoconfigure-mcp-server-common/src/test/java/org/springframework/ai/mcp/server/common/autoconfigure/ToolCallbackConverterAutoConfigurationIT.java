@@ -16,16 +16,12 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
 import org.springframework.ai.mcp.SyncMcpToolCallback;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.ai.tool.ToolCallback;
@@ -35,6 +31,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -48,8 +47,8 @@ import static org.mockito.Mockito.when;
 public class ToolCallbackConverterAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ToolCallbackConverterAutoConfiguration.class))
-		.withPropertyValues("spring.ai.mcp.server.enabled=true", "spring.ai.mcp.server.expose-mcp-client-tools=true");
+			.withConfiguration(AutoConfigurations.of(ToolCallbackConverterAutoConfiguration.class))
+			.withPropertyValues("spring.ai.mcp.server.enabled=true", "spring.ai.mcp.server.expose-mcp-client-tools=true");
 
 	@Test
 	void defaultSyncToolsConfiguration() {
@@ -67,17 +66,17 @@ public class ToolCallbackConverterAutoConfigurationIT {
 	@Test
 	void asyncToolsConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.type=ASYNC")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).hasBean("asyncTools");
-				assertThat(context).doesNotHaveBean("syncTools");
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).hasBean("asyncTools");
+					assertThat(context).doesNotHaveBean("syncTools");
 
-				@SuppressWarnings("unchecked")
-				List<AsyncToolSpecification> asyncTools = (List<AsyncToolSpecification>) context.getBean("asyncTools");
-				assertThat(asyncTools).hasSize(1);
-				assertThat(asyncTools.get(0)).isNotNull();
-			});
+					@SuppressWarnings("unchecked")
+					List<AsyncToolSpecification> asyncTools = (List<AsyncToolSpecification>) context.getBean("asyncTools");
+					assertThat(asyncTools).hasSize(1);
+					assertThat(asyncTools.get(0)).isNotNull();
+				});
 	}
 
 	@Test
@@ -107,18 +106,18 @@ public class ToolCallbackConverterAutoConfigurationIT {
 	@Test
 	void toolResponseMimeTypeConfiguration() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.tool-response-mime-type.test-tool=application/json")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).hasBean("syncTools");
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).hasBean("syncTools");
 
-				@SuppressWarnings("unchecked")
-				List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
-				assertThat(syncTools).hasSize(1);
+					@SuppressWarnings("unchecked")
+					List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
+					assertThat(syncTools).hasSize(1);
 
-				McpServerProperties properties = context.getBean(McpServerProperties.class);
-				assertThat(properties.getToolResponseMimeType()).containsEntry("test-tool", "application/json");
-			});
+					McpServerProperties properties = context.getBean(McpServerProperties.class);
+					assertThat(properties.getToolResponseMimeType()).containsEntry("test-tool", "application/json");
+				});
 	}
 
 	@Test
@@ -138,23 +137,23 @@ public class ToolCallbackConverterAutoConfigurationIT {
 	@Test
 	void conditionDisabledWhenServerDisabled() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.enabled=false")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).doesNotHaveBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).doesNotHaveBean("syncTools");
-				assertThat(context).doesNotHaveBean("asyncTools");
-			});
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).doesNotHaveBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).doesNotHaveBean("syncTools");
+					assertThat(context).doesNotHaveBean("asyncTools");
+				});
 	}
 
 	@Test
 	void conditionDisabledWhenToolCallbackConvertDisabled() {
 		this.contextRunner.withPropertyValues("spring.ai.mcp.server.tool-callback-converter=false")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).doesNotHaveBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).doesNotHaveBean("syncTools");
-				assertThat(context).doesNotHaveBean("asyncTools");
-			});
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).doesNotHaveBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).doesNotHaveBean("syncTools");
+					assertThat(context).doesNotHaveBean("asyncTools");
+				});
 	}
 
 	@Test
@@ -168,13 +167,13 @@ public class ToolCallbackConverterAutoConfigurationIT {
 	@Test
 	void conditionEnabledExplicitly() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mcp.server.enabled=true",
-					"spring.ai.mcp.server.tool-callback-converter=true")
-			.withUserConfiguration(TestToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).hasBean("syncTools");
-			});
+				.withPropertyValues("spring.ai.mcp.server.enabled=true",
+						"spring.ai.mcp.server.tool-callback-converter=true")
+				.withUserConfiguration(TestToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).hasBean("syncTools");
+				});
 	}
 
 	@Test
@@ -192,48 +191,48 @@ public class ToolCallbackConverterAutoConfigurationIT {
 	@Test
 	void mixedToolCallbacksAndProvidersConfiguration() {
 		this.contextRunner
-			.withUserConfiguration(TestToolConfiguration.class, TestMcpToolCallbackProviderConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).hasBean("syncTools");
+				.withUserConfiguration(TestToolConfiguration.class, TestMcpToolCallbackProviderConfiguration.class)
+				.run(context -> {
+					assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).hasBean("syncTools");
 
-				@SuppressWarnings("unchecked")
-				List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
-				assertThat(syncTools).hasSize(2); // One from direct callback, one from
-				// provider
-			});
+					@SuppressWarnings("unchecked")
+					List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
+					assertThat(syncTools).hasSize(2); // One from direct callback, one from
+					// provider
+				});
 	}
 
 	@Test
 	void mcpClientToolsNotExposedByDefault() {
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(ToolCallbackConverterAutoConfiguration.class))
-			.withPropertyValues("spring.ai.mcp.server.enabled=true")
-			.withUserConfiguration(TestMcpToolCallbackProviderConfiguration.class, TestMcpToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).hasBean("syncTools");
+				.withConfiguration(AutoConfigurations.of(ToolCallbackConverterAutoConfiguration.class))
+				.withPropertyValues("spring.ai.mcp.server.enabled=true")
+				.withUserConfiguration(TestMcpToolCallbackProviderConfiguration.class, TestMcpToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).hasBean("syncTools");
 
-				@SuppressWarnings("unchecked")
-				List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
-				assertThat(syncTools).isEmpty();
-			});
+					@SuppressWarnings("unchecked")
+					List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
+					assertThat(syncTools).isEmpty();
+				});
 	}
 
 	@Test
 	void regularToolsExportedByDefault() {
 		new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(ToolCallbackConverterAutoConfiguration.class))
-			.withPropertyValues("spring.ai.mcp.server.enabled=true")
-			.withUserConfiguration(TestRegularToolConfiguration.class)
-			.run(context -> {
-				assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
-				assertThat(context).hasBean("syncTools");
+				.withConfiguration(AutoConfigurations.of(ToolCallbackConverterAutoConfiguration.class))
+				.withPropertyValues("spring.ai.mcp.server.enabled=true")
+				.withUserConfiguration(TestRegularToolConfiguration.class)
+				.run(context -> {
+					assertThat(context).hasSingleBean(ToolCallbackConverterAutoConfiguration.class);
+					assertThat(context).hasBean("syncTools");
 
-				@SuppressWarnings("unchecked")
-				List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
-				assertThat(syncTools).hasSize(1);
-			});
+					@SuppressWarnings("unchecked")
+					List<SyncToolSpecification> syncTools = (List<SyncToolSpecification>) context.getBean("syncTools");
+					assertThat(syncTools).hasSize(1);
+				});
 	}
 
 	@Configuration
@@ -261,9 +260,9 @@ public class ToolCallbackConverterAutoConfigurationIT {
 		@Bean
 		List<ToolCallback> testRegularToolCallbacks() {
 			var regularToolCallback = FunctionToolCallback.builder("regular-tool", Function.identity())
-				.description("Regular Tool")
-				.inputType(String.class)
-				.build();
+					.description("Regular Tool")
+					.inputType(String.class)
+					.build();
 			return List.of(regularToolCallback);
 		}
 
@@ -365,8 +364,8 @@ public class ToolCallbackConverterAutoConfigurationIT {
 			Mockito.when(mockClient.listTools()).thenReturn(listToolsResult);
 
 			return org.springframework.ai.mcp.SyncMcpToolCallbackProvider.builder()
-				.mcpClients(List.of(mockClient))
-				.build();
+					.mcpClients(List.of(mockClient))
+					.build();
 		}
 
 	}

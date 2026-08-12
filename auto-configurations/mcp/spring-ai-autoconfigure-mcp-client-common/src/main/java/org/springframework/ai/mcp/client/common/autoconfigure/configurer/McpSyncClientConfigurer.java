@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.configurer;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpClient;
-
 import org.springframework.ai.mcp.customizer.McpClientCustomizer;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * Configurer class for customizing MCP synchronous clients.
@@ -49,6 +48,7 @@ public class McpSyncClientConfigurer {
 
 	/**
 	 * Configures an MCP sync client specification by applying all registered customizers.
+	 *
 	 * @param name the name of the client being configured
 	 * @param spec the specification to customize
 	 * @return the customized specification
@@ -64,6 +64,7 @@ public class McpSyncClientConfigurer {
 	 * <p>
 	 * Customizers are applied in the order they were registered. If no customizers are
 	 * registered, this method has no effect.
+	 *
 	 * @param name the name of the client being customized
 	 * @param spec the specification to customize
 	 */

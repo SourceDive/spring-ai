@@ -16,8 +16,6 @@
 
 package org.springframework.ai.model.chat.memory.repository.jdbc.autoconfigure;
 
-import javax.sql.DataSource;
-
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect;
 import org.springframework.ai.model.chat.memory.autoconfigure.ChatMemoryAutoConfiguration;
@@ -30,6 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
+
 /**
  * @author Jonathan Leijendekker
  * @author Thomas Vitale
@@ -38,7 +38,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 // Ordering is to make sure ChatMemoryRepository bean is jdbc one
 @AutoConfiguration(before = ChatMemoryAutoConfiguration.class)
-@ConditionalOnClass({ JdbcChatMemoryRepository.class, DataSource.class, JdbcTemplate.class })
+@ConditionalOnClass({JdbcChatMemoryRepository.class, DataSource.class, JdbcTemplate.class})
 @EnableConfigurationProperties(JdbcChatMemoryRepositoryProperties.class)
 public class JdbcChatMemoryRepositoryAutoConfiguration {
 
@@ -53,7 +53,7 @@ public class JdbcChatMemoryRepositoryAutoConfiguration {
 	@ConditionalOnMissingBean
 	@Conditional(OnJdbcChatMemoryRepositoryDatasourceInitializationCondition.class)
 	JdbcChatMemoryRepositorySchemaInitializer jdbcChatMemoryScriptDatabaseInitializer(DataSource dataSource,
-			JdbcChatMemoryRepositoryProperties properties) {
+	                                                                                  JdbcChatMemoryRepositoryProperties properties) {
 		return new JdbcChatMemoryRepositorySchemaInitializer(dataSource, properties);
 	}
 

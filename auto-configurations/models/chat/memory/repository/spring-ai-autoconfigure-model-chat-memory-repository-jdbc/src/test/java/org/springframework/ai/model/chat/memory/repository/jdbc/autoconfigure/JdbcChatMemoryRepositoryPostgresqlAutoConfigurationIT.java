@@ -16,11 +16,7 @@
 
 package org.springframework.ai.model.chat.memory.repository.jdbc.autoconfigure;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -31,6 +27,9 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,102 +42,102 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcChatMemoryRepositoryPostgresqlAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(JdbcChatMemoryRepositoryAutoConfiguration.class,
-				JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
-		.withPropertyValues("spring.datasource.url=jdbc:tc:postgresql:17:///");
+			.withConfiguration(AutoConfigurations.of(JdbcChatMemoryRepositoryAutoConfiguration.class,
+					JdbcTemplateAutoConfiguration.class, DataSourceAutoConfiguration.class))
+			.withPropertyValues("spring.datasource.url=jdbc:tc:postgresql:17:///");
 
 	@Test
 	void jdbcChatMemoryScriptDatabaseInitializer_shouldBeLoaded() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.memory.repository.jdbc.initialize-schema=always")
-			.run(context -> assertThat(context).hasBean("jdbcChatMemoryScriptDatabaseInitializer"));
+				.run(context -> assertThat(context).hasBean("jdbcChatMemoryScriptDatabaseInitializer"));
 	}
 
 	@Test
 	void jdbcChatMemoryScriptDatabaseInitializer_shouldNotRunSchemaInit() {
 		// CHECKSTYLE:OFF
 		this.contextRunner.withPropertyValues("spring.ai.chat.memory.repository.jdbc.initialize-schema=never")
-			.run(context -> {
-				assertThat(context).doesNotHaveBean("jdbcChatMemoryScriptDatabaseInitializer");
-				// Optionally, check that the schema is not initialized (could check table
-				// absence if needed)
-			});
+				.run(context -> {
+					assertThat(context).doesNotHaveBean("jdbcChatMemoryScriptDatabaseInitializer");
+					// Optionally, check that the schema is not initialized (could check table
+					// absence if needed)
+				});
 		// CHECKSTYLE:ON
 	}
 
 	@Test
 	void initializeSchemaEmbeddedDefault() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.memory.repository.jdbc.initialize-schema=embedded")
-			.run(context -> assertThat(context).hasBean("jdbcChatMemoryScriptDatabaseInitializer"));
+				.run(context -> assertThat(context).hasBean("jdbcChatMemoryScriptDatabaseInitializer"));
 	}
 
 	@Test
 	void useAutoConfiguredJdbcChatMemoryRepository() {
 		this.contextRunner.withPropertyValues("spring.ai.chat.memory.repository.jdbc.initialize-schema=always")
-			.run(context -> {
-				var chatMemoryRepository = context.getBean(JdbcChatMemoryRepository.class);
-				var conversationId = UUID.randomUUID().toString();
-				var userMessage = new UserMessage("Message from the user");
+				.run(context -> {
+					var chatMemoryRepository = context.getBean(JdbcChatMemoryRepository.class);
+					var conversationId = UUID.randomUUID().toString();
+					var userMessage = new UserMessage("Message from the user");
 
-				chatMemoryRepository.saveAll(conversationId, List.of(userMessage));
+					chatMemoryRepository.saveAll(conversationId, List.of(userMessage));
 
-				assertThat(chatMemoryRepository.findByConversationId(conversationId)).hasSize(1);
-				assertThat(chatMemoryRepository.findByConversationId(conversationId)).extracting(Message::getText)
-					.containsExactly(userMessage.getText());
+					assertThat(chatMemoryRepository.findByConversationId(conversationId)).hasSize(1);
+					assertThat(chatMemoryRepository.findByConversationId(conversationId)).extracting(Message::getText)
+							.containsExactly(userMessage.getText());
 
-				chatMemoryRepository.deleteByConversationId(conversationId);
+					chatMemoryRepository.deleteByConversationId(conversationId);
 
-				assertThat(chatMemoryRepository.findByConversationId(conversationId)).isEmpty();
+					assertThat(chatMemoryRepository.findByConversationId(conversationId)).isEmpty();
 
-				var multipleMessages = List.<Message>of(new UserMessage("Message from the user 1"),
-						new AssistantMessage("Message from the assistant 1"));
+					var multipleMessages = List.<Message>of(new UserMessage("Message from the user 1"),
+							new AssistantMessage("Message from the assistant 1"));
 
-				chatMemoryRepository.saveAll(conversationId, multipleMessages);
+					chatMemoryRepository.saveAll(conversationId, multipleMessages);
 
-				assertThat(chatMemoryRepository.findByConversationId(conversationId)).hasSize(multipleMessages.size());
-				assertThat(chatMemoryRepository.findByConversationId(conversationId)).extracting(Message::getText)
-					.containsExactlyElementsOf(multipleMessages.stream().map(Message::getText).toList());
-			});
+					assertThat(chatMemoryRepository.findByConversationId(conversationId)).hasSize(multipleMessages.size());
+					assertThat(chatMemoryRepository.findByConversationId(conversationId)).extracting(Message::getText)
+							.containsExactlyElementsOf(multipleMessages.stream().map(Message::getText).toList());
+				});
 	}
 
 	@Test
 	void useAutoConfiguredChatMemoryWithJdbc() {
 		this.contextRunner.withConfiguration(AutoConfigurations.of(ChatMemoryAutoConfiguration.class))
-			.withPropertyValues("spring.ai.chat.memory.repository.jdbc.initialize-schema=always")
-			.run(context -> {
-				assertThat(context).hasSingleBean(ChatMemory.class);
-				assertThat(context).hasSingleBean(JdbcChatMemoryRepository.class);
+				.withPropertyValues("spring.ai.chat.memory.repository.jdbc.initialize-schema=always")
+				.run(context -> {
+					assertThat(context).hasSingleBean(ChatMemory.class);
+					assertThat(context).hasSingleBean(JdbcChatMemoryRepository.class);
 
-				var chatMemory = context.getBean(ChatMemory.class);
-				var conversationId = UUID.randomUUID().toString();
-				var userMessage = new UserMessage("Message from the user");
+					var chatMemory = context.getBean(ChatMemory.class);
+					var conversationId = UUID.randomUUID().toString();
+					var userMessage = new UserMessage("Message from the user");
 
-				chatMemory.add(conversationId, userMessage);
+					chatMemory.add(conversationId, userMessage);
 
-				assertThat(chatMemory.get(conversationId)).hasSize(1);
-				assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
-					.containsExactly(userMessage.getText());
+					assertThat(chatMemory.get(conversationId)).hasSize(1);
+					assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
+							.containsExactly(userMessage.getText());
 
-				var assistantMessage = new AssistantMessage("Message from the assistant");
+					var assistantMessage = new AssistantMessage("Message from the assistant");
 
-				chatMemory.add(conversationId, List.of(assistantMessage));
+					chatMemory.add(conversationId, List.of(assistantMessage));
 
-				assertThat(chatMemory.get(conversationId)).hasSize(2);
-				assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
-					.containsExactly(userMessage.getText(), assistantMessage.getText());
+					assertThat(chatMemory.get(conversationId)).hasSize(2);
+					assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
+							.containsExactly(userMessage.getText(), assistantMessage.getText());
 
-				chatMemory.clear(conversationId);
+					chatMemory.clear(conversationId);
 
-				assertThat(chatMemory.get(conversationId)).isEmpty();
+					assertThat(chatMemory.get(conversationId)).isEmpty();
 
-				var multipleMessages = List.<Message>of(new UserMessage("Message from the user 1"),
-						new AssistantMessage("Message from the assistant 1"));
+					var multipleMessages = List.<Message>of(new UserMessage("Message from the user 1"),
+							new AssistantMessage("Message from the assistant 1"));
 
-				chatMemory.add(conversationId, multipleMessages);
+					chatMemory.add(conversationId, multipleMessages);
 
-				assertThat(chatMemory.get(conversationId)).hasSize(multipleMessages.size());
-				assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
-					.containsExactlyElementsOf(multipleMessages.stream().map(Message::getText).toList());
-			});
+					assertThat(chatMemory.get(conversationId)).hasSize(multipleMessages.size());
+					assertThat(chatMemory.get(conversationId)).extracting(Message::getText)
+							.containsExactlyElementsOf(multipleMessages.stream().map(Message::getText).toList());
+				});
 	}
 
 }

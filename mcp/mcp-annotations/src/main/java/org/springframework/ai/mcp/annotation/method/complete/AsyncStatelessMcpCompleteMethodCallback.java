@@ -16,24 +16,23 @@
 
 package org.springframework.ai.mcp.annotation.method.complete;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
 import io.modelcontextprotocol.spec.McpSchema.CompleteResult;
 import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
 import io.modelcontextprotocol.util.DefaultMcpUriTemplateManagerFactory;
+import org.springframework.ai.mcp.annotation.McpComplete;
 import reactor.core.publisher.Mono;
 
-import org.springframework.ai.mcp.annotation.McpComplete;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * Class for creating BiFunction callbacks around complete methods with asynchronous
  * processing for stateless contexts.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpComplete} into
  * callback functions that can be used to handle completion requests asynchronously in
  * stateless environments. It supports various method signatures and return types, and
@@ -54,12 +53,13 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * converts the result to a CompleteResult.
+	 *
 	 * @param context The transport context, may be null if the method doesn't require it
 	 * @param request The complete request, must not be null
 	 * @return A Mono that emits the complete result
 	 * @throws McpCompleteMethodException if there is an error invoking the complete
-	 * method
-	 * @throws IllegalArgumentException if the request is null
+	 *                                    method
+	 * @throws IllegalArgumentException   if the request is null
 	 */
 	@Override
 	public Mono<CompleteResult> apply(McpTransportContext context, CompleteRequest request) {
@@ -80,14 +80,12 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 				if (result instanceof Mono<?>) {
 					// If the result is already a Mono, map it to a CompleteResult
 					return ((Mono<?>) result).map(r -> convertToCompleteResult(r));
-				}
-				else {
+				} else {
 					// Otherwise, convert the result to a CompleteResult and wrap in a
 					// Mono
 					return Mono.just(convertToCompleteResult(result));
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				return Mono.error(
 						new McpCompleteMethodException("Error invoking complete method: " + this.method.getName(), e));
 			}
@@ -96,6 +94,7 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 
 	/**
 	 * Converts a result object to a CompleteResult.
+	 *
 	 * @param result The result object
 	 * @return The CompleteResult
 	 */
@@ -119,8 +118,7 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 			for (Object item : list) {
 				if (item instanceof String) {
 					values.add((String) item);
-				}
-				else {
+				} else {
 					throw new IllegalArgumentException("List items must be of type String");
 				}
 			}
@@ -137,6 +135,7 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 
 	/**
 	 * Validates that the method return type is compatible with the complete callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -166,6 +165,7 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 
 	/**
 	 * Checks if a parameter type is compatible with the exchange type.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -177,6 +177,7 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -200,6 +201,7 @@ public final class AsyncStatelessMcpCompleteMethodCallback extends AbstractMcpCo
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncStatelessMcpCompleteMethodCallback instance
 		 */
 		@Override

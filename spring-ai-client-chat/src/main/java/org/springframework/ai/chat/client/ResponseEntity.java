@@ -30,14 +30,18 @@ import org.jspecify.annotations.Nullable;
  * @author Thomas Vitale
  * @since 1.0.0
  */
-public record ResponseEntity<R, E>(@Nullable R response, @Nullable E entity) {
+public record ResponseEntity<R, E>(
+@Nullable
+R response,
+@Nullable
+E entity){
 
-	public @Nullable R getResponse() {
-		return this.response;
-	}
+public @Nullable R getResponse() {
+	return this.response;
+}
 
-	public @Nullable E getEntity() {
-		return this.entity;
-	}
+public @Nullable E getEntity() {
+	return this.entity;
+}
 
 }

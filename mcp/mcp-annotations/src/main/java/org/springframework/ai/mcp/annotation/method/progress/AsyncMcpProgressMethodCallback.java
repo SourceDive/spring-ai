@@ -16,17 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.progress;
 
+import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.function.Function;
 
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import reactor.core.publisher.Mono;
-
 /**
  * Asynchronous implementation of a progress method callback.
- *
+ * <p>
  * This class creates a Function that invokes a method annotated with @McpProgress
  * asynchronously when a progress notification is received, returning a Mono<Void>.
  *
@@ -57,8 +57,7 @@ public final class AsyncMcpProgressMethodCallback extends AbstractMcpProgressMet
 				if (typeArguments.length == 1 && typeArguments[0] == Void.class) {
 					// Mono<Void> is acceptable
 					return;
-				}
-				else {
+				} else {
 					throw new IllegalArgumentException("Mono return type must be Mono<Void>: " + method.getName()
 							+ " in " + method.getDeclaringClass().getName() + " returns " + returnType.getName());
 				}
@@ -75,11 +74,12 @@ public final class AsyncMcpProgressMethodCallback extends AbstractMcpProgressMet
 	 * <p>
 	 * This method builds the arguments for the method call and invokes the method,
 	 * returning a Mono<Void>.
+	 *
 	 * @param notification The progress notification, must not be null
 	 * @return A Mono<Void> representing the asynchronous operation
 	 * @throws McpProgressMethodException if there is an error invoking the progress
-	 * method
-	 * @throws IllegalArgumentException if the notification is null
+	 *                                    method
+	 * @throws IllegalArgumentException   if the notification is null
 	 */
 	@Override
 	public Mono<Void> apply(ProgressNotification notification) {
@@ -99,13 +99,11 @@ public final class AsyncMcpProgressMethodCallback extends AbstractMcpProgressMet
 				// Handle return type
 				if (result instanceof Mono) {
 					return (Mono<?>) result;
-				}
-				else {
+				} else {
 					// void return type
 					return Mono.empty();
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new McpProgressMethodException("Error invoking progress method: " + this.method.getName(), e);
 			}
 		}).flatMap(mono -> mono.then());
@@ -113,6 +111,7 @@ public final class AsyncMcpProgressMethodCallback extends AbstractMcpProgressMet
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -129,6 +128,7 @@ public final class AsyncMcpProgressMethodCallback extends AbstractMcpProgressMet
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpProgressMethodCallback instance
 		 */
 		@Override

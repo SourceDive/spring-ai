@@ -16,12 +16,9 @@
 
 package org.springframework.ai.openai.azure;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
-
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
@@ -31,11 +28,13 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+")})
 class AzureOpenAiEmbeddingModelIT {
 
 	@Autowired
@@ -54,7 +53,7 @@ class AzureOpenAiEmbeddingModelIT {
 	void batchEmbedding() {
 		assertThat(this.embeddingModel).isNotNull();
 		EmbeddingResponse embeddingResponse = this.embeddingModel
-			.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+				.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 		assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
@@ -71,10 +70,10 @@ class AzureOpenAiEmbeddingModelIT {
 		public OpenAiEmbeddingModel azureEmbeddingModel() {
 			return new OpenAiEmbeddingModel(MetadataMode.EMBED,
 					OpenAiEmbeddingOptions.builder()
-						.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
-						.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
-						.deploymentName("text-embedding-ada-002")
-						.build());
+							.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
+							.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
+							.deploymentName("text-embedding-ada-002")
+							.build());
 		}
 
 	}

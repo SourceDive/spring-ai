@@ -16,14 +16,6 @@
 
 package org.springframework.ai.chat.memory.repository.neo4j;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,21 +24,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.ai.chat.messages.ToolResponseMessage.ToolResponse;
+import org.springframework.ai.content.Media;
+import org.springframework.util.MimeType;
 import org.testcontainers.containers.Neo4jContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage.ToolResponse;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.content.Media;
-import org.springframework.util.MimeType;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,11 +51,11 @@ class Neo4jChatMemoryRepositoryIT {
 
 	static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("neo4j");
 
-	@SuppressWarnings({ "rawtypes", "resource" })
+	@SuppressWarnings({"rawtypes", "resource"})
 	@Container
 	static Neo4jContainer neo4jContainer = (Neo4jContainer) new Neo4jContainer(DEFAULT_IMAGE_NAME.withTag("5"))
-		.withoutAuthentication()
-		.withExposedPorts(7474, 7687);
+			.withoutAuthentication()
+			.withExposedPorts(7474, 7687);
 
 	private ChatMemoryRepository chatMemoryRepository;
 
@@ -96,8 +86,8 @@ class Neo4jChatMemoryRepositoryIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM",
-			"Message from tool,TOOL" })
+	@CsvSource({"Message from assistant,ASSISTANT", "Message from user,USER", "Message from system,SYSTEM",
+			"Message from tool,TOOL"})
 	void saveAndFindSingleMessage(String content, MessageType messageType) {
 		var conversationId = UUID.randomUUID().toString();
 		Message message = createMessageByType(content + " - " + conversationId, messageType);
@@ -118,7 +108,7 @@ class Neo4jChatMemoryRepositoryIT {
 		try (Session session = this.driver.session()) {
 			var result = session.run(
 					"MATCH (s:%s {id:$conversationId})-[:HAS_MESSAGE]->(m:%s) RETURN count(m) as count"
-						.formatted(this.config.getSessionLabel(), this.config.getMessageLabel()),
+							.formatted(this.config.getSessionLabel(), this.config.getMessageLabel()),
 					Map.of("conversationId", conversationId));
 			assertThat(result.single().get("count").asLong()).isEqualTo(1);
 		}
@@ -131,8 +121,8 @@ class Neo4jChatMemoryRepositoryIT {
 				new UserMessage("Message from user - " + conversationId),
 				new SystemMessage("Message from system - " + conversationId),
 				ToolResponseMessage.builder()
-					.responses(List.of(new ToolResponse("id", "name", "responseData")))
-					.build());
+						.responses(List.of(new ToolResponse("id", "name", "responseData")))
+						.build());
 
 		this.chatMemoryRepository.saveAll(conversationId, messages);
 		List<Message> retrievedMessages = this.chatMemoryRepository.findByConversationId(conversationId);
@@ -209,7 +199,7 @@ class Neo4jChatMemoryRepositoryIT {
 		// Verify directly in the database
 		try (Session session = this.driver.session()) {
 			var result = session.run("MATCH (s:%s {id:$conversationId}) RETURN count(s) as count"
-				.formatted(this.config.getSessionLabel()), Map.of("conversationId", conversationId));
+					.formatted(this.config.getSessionLabel()), Map.of("conversationId", conversationId));
 			assertThat(result.single().get("count").asLong()).isZero();
 		}
 	}
@@ -243,11 +233,11 @@ class Neo4jChatMemoryRepositoryIT {
 
 		MimeType textPlain = MimeType.valueOf("text/plain");
 		List<Media> media = List.of(Media.builder()
-			.name("some media")
-			.id(UUID.randomUUID().toString())
-			.mimeType(textPlain)
-			.data("hello".getBytes(StandardCharsets.UTF_8))
-			.build(), Media.builder().data(URI.create("http://www.example.com")).mimeType(textPlain).build());
+				.name("some media")
+				.id(UUID.randomUUID().toString())
+				.mimeType(textPlain)
+				.data("hello".getBytes(StandardCharsets.UTF_8))
+				.build(), Media.builder().data(URI.create("http://www.example.com")).mimeType(textPlain).build());
 
 		UserMessage userMessageWithMedia = UserMessage.builder().text("Message with media").media(media).build();
 
@@ -266,11 +256,11 @@ class Neo4jChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 
 		AssistantMessage assistantMessage = AssistantMessage.builder()
-			.content("Message with tool calls")
-			.properties(Map.of())
-			.toolCalls(List.of(new AssistantMessage.ToolCall("id1", "type1", "name1", "arguments1"),
-					new AssistantMessage.ToolCall("id2", "type2", "name2", "arguments2")))
-			.build();
+				.content("Message with tool calls")
+				.properties(Map.of())
+				.toolCalls(List.of(new AssistantMessage.ToolCall("id1", "type1", "name1", "arguments1"),
+						new AssistantMessage.ToolCall("id2", "type2", "name2", "arguments2")))
+				.build();
 
 		this.chatMemoryRepository.saveAll(conversationId, List.<Message>of(assistantMessage));
 
@@ -288,10 +278,10 @@ class Neo4jChatMemoryRepositoryIT {
 		var conversationId = UUID.randomUUID().toString();
 
 		ToolResponseMessage toolResponseMessage = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponse("id1", "name1", "responseData1"),
-					new ToolResponse("id2", "name2", "responseData2")))
-			.metadata(Map.of("metadataKey", "metadataValue"))
-			.build();
+				.responses(List.of(new ToolResponse("id1", "name1", "responseData1"),
+						new ToolResponse("id2", "name2", "responseData2")))
+				.metadata(Map.of("metadataKey", "metadataValue"))
+				.build();
 
 		this.chatMemoryRepository.saveAll(conversationId, List.<Message>of(toolResponseMessage));
 
@@ -312,9 +302,9 @@ class Neo4jChatMemoryRepositoryIT {
 		Map<String, Object> customMetadata = Map.of("priority", "high", "source", "test");
 
 		SystemMessage systemMessage = SystemMessage.builder()
-			.text("System message with custom metadata - " + conversationId)
-			.metadata(customMetadata)
-			.build();
+				.text("System message with custom metadata - " + conversationId)
+				.metadata(customMetadata)
+				.build();
 
 		this.chatMemoryRepository.saveAll(conversationId, List.of(systemMessage));
 		List<Message> retrievedMessages = this.chatMemoryRepository.findByConversationId(conversationId);
@@ -330,11 +320,11 @@ class Neo4jChatMemoryRepositoryIT {
 		assertThat(retrievedMessage.getMetadata()).containsEntry("messageType", MessageType.SYSTEM);
 		// Verify no extra unwanted metadata keys beyond what's expected
 		assertThat(retrievedMessage.getMetadata().keySet())
-			.containsExactlyInAnyOrderElementsOf(new ArrayList<>(customMetadata.keySet()) {
-				{
-					add("messageType");
-				}
-			});
+				.containsExactlyInAnyOrderElementsOf(new ArrayList<>(customMetadata.keySet()) {
+					{
+						add("messageType");
+					}
+				});
 	}
 
 	@Test
@@ -378,9 +368,9 @@ class Neo4jChatMemoryRepositoryIT {
 
 		UserMessage messageWithEmptyContent = new UserMessage("");
 		UserMessage messageWithEmptyMetadata = UserMessage.builder()
-			.text("Content with empty metadata")
-			.metadata(Collections.emptyMap())
-			.build();
+				.text("Content with empty metadata")
+				.metadata(Collections.emptyMap())
+				.build();
 
 		List<Message> messagesToSave = List.of(messageWithEmptyContent, messageWithEmptyMetadata);
 		this.chatMemoryRepository.saveAll(conversationId, messagesToSave);
@@ -393,9 +383,9 @@ class Neo4jChatMemoryRepositoryIT {
 		assertThat(retrievedEmptyContentMsg).isInstanceOf(UserMessage.class);
 		assertThat(retrievedEmptyContentMsg.getText()).isEqualTo("");
 		assertThat(retrievedEmptyContentMsg.getMetadata()).containsEntry("messageType", MessageType.USER); // Default
-																											// metadata
+		// metadata
 		assertThat(retrievedEmptyContentMsg.getMetadata().keySet()).hasSize(1); // Only
-																				// messageType
+		// messageType
 
 		// Verify second message (empty metadata from input, should only have
 		// messageType
@@ -405,7 +395,7 @@ class Neo4jChatMemoryRepositoryIT {
 		assertThat(retrievedEmptyMetadataMsg.getText()).isEqualTo("Content with empty metadata");
 		assertThat(retrievedEmptyMetadataMsg.getMetadata()).containsEntry("messageType", MessageType.USER);
 		assertThat(retrievedEmptyMetadataMsg.getMetadata().keySet()).hasSize(1); // Only
-																					// messageType
+		// messageType
 	}
 
 	private Message createMessageByType(String content, MessageType messageType) {
@@ -414,8 +404,8 @@ class Neo4jChatMemoryRepositoryIT {
 			case USER -> new UserMessage(content);
 			case SYSTEM -> new SystemMessage(content);
 			case TOOL -> ToolResponseMessage.builder()
-				.responses(List.of(new ToolResponse("id", "name", "responseData")))
-				.build();
+					.responses(List.of(new ToolResponse("id", "name", "responseData")))
+					.build();
 		};
 	}
 

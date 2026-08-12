@@ -16,20 +16,15 @@
 
 package org.springframework.ai.util.json.schema;
 
-import java.util.stream.Stream;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.victools.jsonschema.generator.FieldScope;
-import com.github.victools.jsonschema.generator.MemberScope;
-import com.github.victools.jsonschema.generator.MethodScope;
+import com.github.victools.jsonschema.generator.*;
 import com.github.victools.jsonschema.generator.Module;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigPart;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.core.KotlinDetector;
 import org.springframework.core.Nullness;
+
+import java.util.stream.Stream;
 
 /**
  * Abstract base for JSON Schema Generator Modules in Spring AI.
@@ -48,7 +43,7 @@ public abstract class AbstractSpringAiSchemaModule implements Module {
 
 	protected AbstractSpringAiSchemaModule(Option... options) {
 		this.requiredByDefault = Stream.of(options)
-			.noneMatch(option -> option == Option.PROPERTY_REQUIRED_FALSE_BY_DEFAULT);
+				.noneMatch(option -> option == Option.PROPERTY_REQUIRED_FALSE_BY_DEFAULT);
 	}
 
 	@Override
@@ -93,7 +88,7 @@ public abstract class AbstractSpringAiSchemaModule implements Module {
 	 * option is set.
 	 */
 	@SuppressWarnings("deprecation") // Schema.required() kept for backwards compatibility
-										// with pre-requiredMode usages
+	// with pre-requiredMode usages
 	private boolean checkRequired(MemberScope<?, ?> member) {
 		Boolean toolParamRequired = resolveToolParamRequired(member);
 		if (toolParamRequired != null) {
@@ -114,11 +109,9 @@ public abstract class AbstractSpringAiSchemaModule implements Module {
 		Nullness nullness;
 		if (member instanceof FieldScope fs) {
 			nullness = Nullness.forField(fs.getRawMember());
-		}
-		else if (member instanceof MethodScope ms) {
+		} else if (member instanceof MethodScope ms) {
 			nullness = Nullness.forMethodReturnType(ms.getRawMember());
-		}
-		else {
+		} else {
 			throw new IllegalStateException("Unsupported member type: " + member);
 		}
 		if (nullness == Nullness.NULLABLE) {

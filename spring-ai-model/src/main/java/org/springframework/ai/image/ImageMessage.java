@@ -16,9 +16,9 @@
 
 package org.springframework.ai.image;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 public class ImageMessage {
 

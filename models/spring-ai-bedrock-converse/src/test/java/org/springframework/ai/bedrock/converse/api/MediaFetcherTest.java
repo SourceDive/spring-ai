@@ -16,17 +16,16 @@
 
 package org.springframework.ai.bedrock.converse.api;
 
-import java.net.URI;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
+
+import java.net.URI;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,8 +57,8 @@ class MediaFetcherTest {
 	void fetchHostNotInAllowlistThrowsSecurityException() {
 		MediaFetcher fetcher = new MediaFetcher(Set.of("trusted.com"));
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://evil.com/image.png")))
-			.isInstanceOf(SecurityException.class)
-			.hasMessageContaining("evil.com");
+				.isInstanceOf(SecurityException.class)
+				.hasMessageContaining("evil.com");
 	}
 
 	@Test
@@ -67,14 +66,14 @@ class MediaFetcherTest {
 		// *.example.com must NOT match example.com itself
 		MediaFetcher fetcher = new MediaFetcher(Set.of("*.example.com"));
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://example.com/image.png")))
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	@Test
 	void fetchWildcardDoesNotMatchUnrelatedDomainThrowsSecurityException() {
 		MediaFetcher fetcher = new MediaFetcher(Set.of("*.example.com"));
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://evil.notexample.com/image.png")))
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	// -------------------------------------------------------------------------
@@ -85,7 +84,7 @@ class MediaFetcherTest {
 	void fetchExactHostInAllowlistFetchSucceeds() {
 		MediaFetcher fetcher = new MediaFetcher(Set.of("example.com"), this.restClientBuilder.build());
 		this.mockServer.expect(requestTo("http://example.com/image.png"))
-			.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
+				.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
 
 		byte[] result = fetcher.fetch(URI.create("http://example.com/image.png"));
 
@@ -98,7 +97,7 @@ class MediaFetcherTest {
 		// Allowlist entry is uppercase; URI host is lowercase
 		MediaFetcher fetcher = new MediaFetcher(Set.of("EXAMPLE.COM"), this.restClientBuilder.build());
 		this.mockServer.expect(requestTo("http://example.com/image.png"))
-			.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
+				.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
 
 		byte[] result = fetcher.fetch(URI.create("http://example.com/image.png"));
 
@@ -110,7 +109,7 @@ class MediaFetcherTest {
 	void fetchWildcardMatchesSubdomainFetchSucceeds() {
 		MediaFetcher fetcher = new MediaFetcher(Set.of("*.example.com"), this.restClientBuilder.build());
 		this.mockServer.expect(requestTo("http://cdn.example.com/image.png"))
-			.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
+				.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
 
 		byte[] result = fetcher.fetch(URI.create("http://cdn.example.com/image.png"));
 
@@ -123,7 +122,7 @@ class MediaFetcherTest {
 		// Empty allowlist → no allowlist check; only the SSRF blocklist applies
 		MediaFetcher fetcher = new MediaFetcher(Set.of(), this.restClientBuilder.build());
 		this.mockServer.expect(requestTo("http://any-host.com/image.png"))
-			.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
+				.andRespond(withSuccess("imagedata", MediaType.IMAGE_PNG));
 
 		byte[] result = fetcher.fetch(URI.create("http://any-host.com/image.png"));
 
@@ -144,7 +143,7 @@ class MediaFetcherTest {
 	void fetchLoopbackAddressBlockedAtConnectTime() {
 		MediaFetcher fetcher = new MediaFetcher();
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://127.0.0.1/image.png")))
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	@Test
@@ -152,14 +151,14 @@ class MediaFetcherTest {
 		// 169.254.169.254 must never be reached
 		MediaFetcher fetcher = new MediaFetcher();
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://169.254.169.254/latest/meta-data/iam/")))
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	@Test
 	void fetchSiteLocalAddressBlockedAtConnectTime() {
 		MediaFetcher fetcher = new MediaFetcher();
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://10.0.0.1/image.png")))
-			.isInstanceOf(SecurityException.class);
+				.isInstanceOf(SecurityException.class);
 	}
 
 	// -------------------------------------------------------------------------
@@ -172,11 +171,11 @@ class MediaFetcherTest {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentLength((long) MediaFetcher.DEFAULT_MAX_FETCH_SIZE_BYTES + 1);
 		this.mockServer.expect(requestTo("http://cdn.example.com/big.png"))
-			.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).headers(headers));
+				.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).headers(headers));
 
 		assertThatThrownBy(() -> fetcher.fetch(URI.create("http://cdn.example.com/big.png")))
-			.isInstanceOf(SecurityException.class)
-			.hasMessageContaining("exceeds maximum allowed size");
+				.isInstanceOf(SecurityException.class)
+				.hasMessageContaining("exceeds maximum allowed size");
 	}
 
 }

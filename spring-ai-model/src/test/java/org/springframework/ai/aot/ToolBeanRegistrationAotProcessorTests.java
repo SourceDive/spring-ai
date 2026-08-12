@@ -16,15 +16,7 @@
 
 package org.springframework.ai.aot;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.execution.DefaultToolCallResultConverter;
 import org.springframework.ai.tool.execution.ToolCallResultConverter;
@@ -35,6 +27,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RegisteredBean;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.annotation.AliasFor;
+
+import java.lang.annotation.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -82,7 +76,7 @@ class ToolBeanRegistrationAotProcessorTests {
 		DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 		beanFactory.registerBeanDefinition(beanClass.getName(), new RootBeanDefinition(beanClass));
 		return new ToolBeanRegistrationAotProcessor()
-			.processAheadOfTime(RegisteredBean.of(beanFactory, beanClass.getName()));
+				.processAheadOfTime(RegisteredBean.of(beanFactory, beanClass.getName()));
 	}
 
 	static class TestTools {
@@ -102,7 +96,7 @@ class ToolBeanRegistrationAotProcessorTests {
 
 	}
 
-	@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+	@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Tool

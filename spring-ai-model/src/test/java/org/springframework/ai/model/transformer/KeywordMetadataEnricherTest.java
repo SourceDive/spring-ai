@@ -16,16 +16,12 @@
 
 package org.springframework.ai.model.transformer;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -34,18 +30,15 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.ai.model.transformer.KeywordMetadataEnricher.Builder;
-import static org.springframework.ai.model.transformer.KeywordMetadataEnricher.CONTEXT_STR_PLACEHOLDER;
-import static org.springframework.ai.model.transformer.KeywordMetadataEnricher.EXCERPT_KEYWORDS_METADATA_KEY;
-import static org.springframework.ai.model.transformer.KeywordMetadataEnricher.KEYWORDS_TEMPLATE;
-import static org.springframework.ai.model.transformer.KeywordMetadataEnricher.builder;
+import static org.mockito.Mockito.*;
+import static org.springframework.ai.model.transformer.KeywordMetadataEnricher.*;
 
 /**
  * @author YunKui Lu
@@ -87,11 +80,11 @@ class KeywordMetadataEnricherTest {
 		verify(this.chatModel, times(3)).call(this.promptCaptor.capture());
 
 		assertThat(this.promptCaptor.getAllValues().get(0).getUserMessage().getText())
-			.isEqualTo(getDefaultTemplatePromptText(keywordCount, "content1"));
+				.isEqualTo(getDefaultTemplatePromptText(keywordCount, "content1"));
 		assertThat(this.promptCaptor.getAllValues().get(1).getUserMessage().getText())
-			.isEqualTo(getDefaultTemplatePromptText(keywordCount, "content2"));
+				.isEqualTo(getDefaultTemplatePromptText(keywordCount, "content2"));
 		assertThat(this.promptCaptor.getAllValues().get(2).getUserMessage().getText())
-			.isEqualTo(getDefaultTemplatePromptText(keywordCount, "content3"));
+				.isEqualTo(getDefaultTemplatePromptText(keywordCount, "content3"));
 
 		assertThat(documents.get(0).getMetadata()).containsEntry(EXCERPT_KEYWORDS_METADATA_KEY,
 				"keyword1-1, keyword1-2, keyword1-3");
@@ -127,11 +120,11 @@ class KeywordMetadataEnricherTest {
 		verify(this.chatModel, times(documents.size())).call(this.promptCaptor.capture());
 
 		assertThat(this.promptCaptor.getAllValues().get(0).getUserMessage().getText())
-			.isEqualTo("Custom template: content1");
+				.isEqualTo("Custom template: content1");
 		assertThat(this.promptCaptor.getAllValues().get(1).getUserMessage().getText())
-			.isEqualTo("Custom template: content2");
+				.isEqualTo("Custom template: content2");
 		assertThat(this.promptCaptor.getAllValues().get(2).getUserMessage().getText())
-			.isEqualTo("Custom template: content3");
+				.isEqualTo("Custom template: content3");
 
 		assertThat(documents.get(0).getMetadata()).containsEntry(EXCERPT_KEYWORDS_METADATA_KEY,
 				"keyword1-1, keyword1-2, keyword1-3");
@@ -170,7 +163,7 @@ class KeywordMetadataEnricherTest {
 		KeywordMetadataEnricher enricher = builder(this.chatModel).keywordCount(keywordCount).build();
 
 		assertThat(enricher.getKeywordsTemplate().getTemplate())
-			.isEqualTo(String.format(KEYWORDS_TEMPLATE, keywordCount));
+				.isEqualTo(String.format(KEYWORDS_TEMPLATE, keywordCount));
 	}
 
 	@Test
@@ -217,7 +210,7 @@ class KeywordMetadataEnricherTest {
 		document.getMetadata().put("existing_key", "existing_value");
 		List<Document> documents = List.of(document);
 		given(this.chatModel.call(any(Prompt.class)))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("new, keywords")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("new, keywords")))));
 
 		KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(this.chatModel, 2);
 		keywordMetadataEnricher.apply(documents);
@@ -230,7 +223,7 @@ class KeywordMetadataEnricherTest {
 	void testApplyWithEmptyStringResponse() {
 		List<Document> documents = List.of(new Document("content"));
 		given(this.chatModel.call(any(Prompt.class)))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("")))));
 
 		KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(this.chatModel, 3);
 		keywordMetadataEnricher.apply(documents);
@@ -242,7 +235,7 @@ class KeywordMetadataEnricherTest {
 	void testApplyWithWhitespaceOnlyResponse() {
 		List<Document> documents = List.of(new Document("content"));
 		given(this.chatModel.call(any(Prompt.class)))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("   \n\t   ")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("   \n\t   ")))));
 
 		KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(this.chatModel, 3);
 		keywordMetadataEnricher.apply(documents);
@@ -256,7 +249,7 @@ class KeywordMetadataEnricherTest {
 		document.getMetadata().put(EXCERPT_KEYWORDS_METADATA_KEY, "old, keywords");
 		List<Document> documents = List.of(document);
 		given(this.chatModel.call(any(Prompt.class)))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("new, keywords")))));
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("new, keywords")))));
 
 		KeywordMetadataEnricher keywordMetadataEnricher = new KeywordMetadataEnricher(this.chatModel, 2);
 		keywordMetadataEnricher.apply(documents);
@@ -269,8 +262,8 @@ class KeywordMetadataEnricherTest {
 		PromptTemplate customTemplate = new PromptTemplate(this.CUSTOM_TEMPLATE);
 
 		KeywordMetadataEnricher enricher = builder(this.chatModel).keywordCount(5)
-			.keywordsTemplate(customTemplate)
-			.build();
+				.keywordsTemplate(customTemplate)
+				.build();
 
 		assertThat(enricher.getKeywordsTemplate()).isEqualTo(customTemplate);
 	}
@@ -286,7 +279,7 @@ class KeywordMetadataEnricherTest {
 
 		verify(this.chatModel, times(1)).call(this.promptCaptor.capture());
 		assertThat(this.promptCaptor.getValue().getUserMessage().getText())
-			.contains("Content with special chars: @#$%^&*()");
+				.contains("Content with special chars: @#$%^&*()");
 		assertThat(documents.get(0).getMetadata()).containsEntry(EXCERPT_KEYWORDS_METADATA_KEY,
 				"special, characters, content");
 	}

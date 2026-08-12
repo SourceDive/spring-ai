@@ -46,8 +46,7 @@ class CacheBreakpointTracker {
 	public void use() {
 		if (this.count < 4) {
 			this.count++;
-		}
-		else if (!this.hasWarned) {
+		} else if (!this.hasWarned) {
 			logger.warn(
 					"Anthropic cache breakpoint limit (4) reached. Additional cache_control directives will be ignored. "
 							+ "Consider using fewer cache strategies or simpler content structure.");

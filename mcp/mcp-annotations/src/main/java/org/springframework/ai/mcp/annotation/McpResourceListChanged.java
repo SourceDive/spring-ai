@@ -16,11 +16,7 @@
 
 package org.springframework.ai.mcp.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Annotation for methods that handle resource list change notifications from MCP servers.
@@ -59,7 +55,7 @@ import java.lang.annotation.Target;
  * "https://modelcontextprotocol.io/specification/2025-06-18/server/resources#list-changed-notification">MCP
  * Resource List Changed Notification</a>
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface McpResourceListChanged {
@@ -67,6 +63,7 @@ public @interface McpResourceListChanged {
 	/**
 	 * Used as connection or client identifier to select the MCP clients that the resource
 	 * change listener is associated with.
+	 *
 	 * @return the client identifier, or empty string to listen to all clients
 	 */
 	String[] clients();

@@ -16,12 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.tool;
 
+import io.modelcontextprotocol.spec.McpSchema;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import io.modelcontextprotocol.spec.McpSchema;
 
 public record SyncToolListChangedSpecification(String[] clients, Consumer<List<McpSchema.Tool>> toolListChangeHandler) {
 

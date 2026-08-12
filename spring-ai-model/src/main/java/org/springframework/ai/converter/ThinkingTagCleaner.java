@@ -16,14 +16,13 @@
 
 package org.springframework.ai.converter;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.util.Assert;
 
 /**
  * A {@link ResponseTextCleaner} that removes thinking tags from LLM responses. This
@@ -70,6 +69,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 
 	/**
 	 * Creates a cleaner with custom patterns.
+	 *
 	 * @param patterns the list of regex patterns to match thinking tags
 	 */
 	public ThinkingTagCleaner(List<Pattern> patterns) {
@@ -80,6 +80,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 
 	/**
 	 * Creates a cleaner with custom pattern strings.
+	 *
 	 * @param patternStrings the list of regex pattern strings to match thinking tags
 	 */
 	public ThinkingTagCleaner(String... patternStrings) {
@@ -116,6 +117,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 
 	/**
 	 * Creates a builder for constructing a thinking tag cleaner.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder() {
@@ -137,6 +139,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 		/**
 		 * Disable default patterns. Only custom patterns added via
 		 * {@link #addPattern(String)} or {@link #addPattern(Pattern)} will be used.
+		 *
 		 * @return this builder
 		 */
 		public Builder withoutDefaultPatterns() {
@@ -146,6 +149,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 
 		/**
 		 * Add a custom pattern string.
+		 *
 		 * @param patternString the regex pattern string
 		 * @return this builder
 		 */
@@ -161,6 +165,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 
 		/**
 		 * Add a custom pattern.
+		 *
 		 * @param pattern the regex pattern
 		 * @return this builder
 		 */
@@ -176,6 +181,7 @@ public class ThinkingTagCleaner implements ResponseTextCleaner {
 
 		/**
 		 * Build the thinking tag cleaner.
+		 *
 		 * @return a new thinking tag cleaner instance
 		 */
 		public ThinkingTagCleaner build() {

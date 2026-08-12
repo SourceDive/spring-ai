@@ -16,6 +16,12 @@
 
 package org.springframework.ai.google.genai;
 
+import com.google.genai.Client;
+import org.springframework.ai.google.genai.cache.CachedContentRequest;
+import org.springframework.ai.google.genai.cache.CachedContentUpdateRequest;
+import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContent;
+import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContentService;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,18 +29,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import com.google.genai.Client;
-
-import org.springframework.ai.google.genai.cache.CachedContentRequest;
-import org.springframework.ai.google.genai.cache.CachedContentUpdateRequest;
-import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContent;
-import org.springframework.ai.google.genai.cache.GoogleGenAiCachedContentService;
-
 /**
  * Test implementation that mimics GoogleGenAiCachedContentService but uses in-memory
  * storage instead of actual API calls. Used for testing chat model integration with
  * cached content.
- *
+ * <p>
  * Note: This class does NOT extend GoogleGenAiCachedContentService to avoid dependencies
  * on the Client's internal structure.
  *
@@ -58,15 +57,15 @@ public class TestGoogleGenAiCachedContentService {
 	public GoogleGenAiCachedContent create(CachedContentRequest request) {
 		String name = "cachedContent/" + (this.nextId++);
 		GoogleGenAiCachedContent cached = GoogleGenAiCachedContent.builder()
-			.name(name)
-			.model(request.getModel())
-			.displayName(request.getDisplayName())
-			.ttl(request.getTtl())
-			.expireTime(request.getExpireTime())
-			.contents(request.getContents())
-			.systemInstruction(request.getSystemInstruction())
-			.createTime(java.time.Instant.now())
-			.build();
+				.name(name)
+				.model(request.getModel())
+				.displayName(request.getDisplayName())
+				.ttl(request.getTtl())
+				.expireTime(request.getExpireTime())
+				.contents(request.getContents())
+				.systemInstruction(request.getSystemInstruction())
+				.createTime(java.time.Instant.now())
+				.build();
 
 		this.cache.put(name, cached);
 		return cached;
@@ -83,16 +82,16 @@ public class TestGoogleGenAiCachedContentService {
 		}
 
 		GoogleGenAiCachedContent updated = GoogleGenAiCachedContent.builder()
-			.name(name)
-			.model(existing.getModel())
-			.displayName(existing.getDisplayName())
-			.ttl(request.getTtl() != null ? request.getTtl() : existing.getTtl())
-			.expireTime(request.getExpireTime() != null ? request.getExpireTime() : existing.getExpireTime())
-			.contents(existing.getContents())
-			.systemInstruction(existing.getSystemInstruction())
-			.createTime(existing.getCreateTime())
-			.updateTime(java.time.Instant.now())
-			.build();
+				.name(name)
+				.model(existing.getModel())
+				.displayName(existing.getDisplayName())
+				.ttl(request.getTtl() != null ? request.getTtl() : existing.getTtl())
+				.expireTime(request.getExpireTime() != null ? request.getExpireTime() : existing.getExpireTime())
+				.contents(existing.getContents())
+				.systemInstruction(existing.getSystemInstruction())
+				.createTime(existing.getCreateTime())
+				.updateTime(java.time.Instant.now())
+				.build();
 
 		this.cache.put(name, updated);
 		return updated;
@@ -137,8 +136,8 @@ public class TestGoogleGenAiCachedContentService {
 				? existing.getExpireTime().plus(additionalTtl) : java.time.Instant.now().plus(additionalTtl);
 
 		CachedContentUpdateRequest updateRequest = CachedContentUpdateRequest.builder()
-			.expireTime(newExpireTime)
-			.build();
+				.expireTime(newExpireTime)
+				.build();
 
 		return update(name, updateRequest);
 	}
@@ -168,6 +167,7 @@ public class TestGoogleGenAiCachedContentService {
 
 	/**
 	 * Test method to check if cache contains a specific item.
+	 *
 	 * @param name the cached content name
 	 * @return true if the cache contains the item
 	 */
@@ -177,6 +177,7 @@ public class TestGoogleGenAiCachedContentService {
 
 	/**
 	 * Test method to get the current cache size.
+	 *
 	 * @return the number of cached items
 	 */
 	public int size() {

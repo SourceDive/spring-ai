@@ -16,17 +16,6 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.net.URI;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -34,15 +23,16 @@ import com.google.gson.JsonObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.*;
+import org.springframework.ai.content.Media;
+import org.springframework.ai.content.MediaContent;
+import org.springframework.util.Assert;
+import org.springframework.util.MimeType;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.RedisClient;
 import redis.clients.jedis.json.Path2;
-import redis.clients.jedis.search.Document;
-import redis.clients.jedis.search.FTCreateParams;
-import redis.clients.jedis.search.IndexDataType;
-import redis.clients.jedis.search.Query;
-import redis.clients.jedis.search.RediSearchUtil;
-import redis.clients.jedis.search.SearchResult;
+import redis.clients.jedis.search.*;
 import redis.clients.jedis.search.aggr.AggregationBuilder;
 import redis.clients.jedis.search.aggr.AggregationResult;
 import redis.clients.jedis.search.aggr.Reducers;
@@ -54,17 +44,11 @@ import redis.clients.jedis.search.schemafields.SchemaField;
 import redis.clients.jedis.search.schemafields.TagField;
 import redis.clients.jedis.search.schemafields.TextField;
 
-import org.springframework.ai.chat.memory.ChatMemoryRepository;
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.content.Media;
-import org.springframework.ai.content.MediaContent;
-import org.springframework.util.Assert;
-import org.springframework.util.MimeType;
+import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Redis implementation of {@link ChatMemoryRepository} using Redis (JSON + Query Engine).
@@ -179,6 +163,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 	 * Gets the next available timestamp for a conversation to ensure proper ordering.
 	 * Uses Redis Lua script for atomic operations to ensure thread safety when multiple
 	 * threads access the same conversation.
+	 *
 	 * @param conversationId the conversation ID
 	 * @return the next timestamp to use
 	 */
@@ -211,9 +196,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 			}
 
 			return nextTimestamp;
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			// Log error and fall back to current timestamp with nanoTime for uniqueness
 			if (logger.isWarnEnabled()) {
 				logger.warn("Error getting atomic timestamp for conversation " + conversationId + ", using fallback: "
@@ -266,7 +249,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 				if (json.has("metadata") && json.get("metadata").isJsonObject()) {
 					JsonObject metadataJson = json.getAsJsonObject("metadata");
 					metadataJson.entrySet()
-						.forEach(entry -> metadata.put(entry.getKey(), gson.fromJson(entry.getValue(), Object.class)));
+							.forEach(entry -> metadata.put(entry.getKey(), gson.fromJson(entry.getValue(), Object.class)));
 				}
 
 				if (MessageType.ASSISTANT.toString().equals(type)) {
@@ -289,15 +272,13 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 					List<Media> media = parseMedia(json);
 
 					AssistantMessage assistantMessage = AssistantMessage.builder()
-						.content(content)
-						.properties(metadata)
-						.toolCalls(toolCalls)
-						.media(media)
-						.build();
+							.content(content)
+							.properties(metadata)
+							.toolCalls(toolCalls)
+							.media(media)
+							.build();
 					messages.add(assistantMessage);
-				}
-
-				else if (MessageType.USER.toString().equals(type)) {
+				} else if (MessageType.USER.toString().equals(type)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Creating UserMessage with content: " + content);
 					}
@@ -305,17 +286,13 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 					// Create a UserMessage with the builder to properly set metadata
 					List<Media> userMedia = parseMedia(json);
 					messages.add(UserMessage.builder().text(content).metadata(metadata).media(userMedia).build());
-				}
-
-				else if (MessageType.SYSTEM.toString().equals(type)) {
+				} else if (MessageType.SYSTEM.toString().equals(type)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Creating SystemMessage with content: " + content);
 					}
 
 					messages.add(SystemMessage.builder().text(content).metadata(metadata).build());
-				}
-
-				else if (MessageType.TOOL.toString().equals(type)) {
+				} else if (MessageType.TOOL.toString().equals(type)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Creating ToolResponseMessage with content: " + content);
 					}
@@ -406,17 +383,15 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 					}
 					// When specific metadata fields are defined, we don't add a wildcard
 					// metadata field to avoid indexing errors with non-string values
-				}
-
-				else {
+				} else {
 					// No schema provided - fallback to indexing all metadata as text
 					schemaFields.add(new TextField("$.metadata.*").as("metadata"));
 				}
 
 				// Create the index with the defined schema
 				FTCreateParams indexParams = FTCreateParams.createParams()
-					.on(IndexDataType.JSON)
-					.prefix(this.config.getKeyPrefix());
+						.on(IndexDataType.JSON)
+						.prefix(this.config.getKeyPrefix());
 
 				String response = this.jedisClient.ftCreate(this.config.getIndexName(), indexParams,
 						schemaFields.toArray(new SchemaField[0]));
@@ -429,14 +404,10 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 					logger.debug("Created Redis search index '" + this.config.getIndexName() + "' with "
 							+ schemaFields.size() + " schema fields");
 				}
-			}
-
-			else if (logger.isDebugEnabled()) {
+			} else if (logger.isDebugEnabled()) {
 				logger.debug("Redis search index '" + this.config.getIndexName() + "' already exists");
 			}
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to initialize Redis schema: " + e.getMessage());
 			}
@@ -498,16 +469,12 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 					if (data instanceof URI || data instanceof String) {
 						// Store URI/URL as string
 						mediaMap.put("data", data.toString());
-					}
-
-					else if (data instanceof byte[]) {
+					} else if (data instanceof byte[]) {
 						// Encode byte array as Base64 string
 						mediaMap.put("data", Base64.getEncoder().encodeToString((byte[]) data));
 						// Add a marker to indicate this is Base64-encoded
 						mediaMap.put("dataType", "base64");
-					}
-
-					else {
+					} else {
 						// For other types, store as string
 						mediaMap.put("data", data.toString());
 					}
@@ -531,14 +498,15 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 	/**
 	 * Finds all unique conversation IDs using Redis aggregation. This method is optimized
 	 * to perform the deduplication on the Redis server side.
+	 *
 	 * @return a list of unique conversation IDs
 	 */
 	@Override
 	public List<String> findConversationIds() {
 		// Use Redis aggregation to get distinct conversation_ids
 		AggregationBuilder aggregation = new AggregationBuilder("*")
-			.groupBy("@conversation_id", Reducers.count().as("count"))
-			.limit(0, this.config.getMaxConversationIds()); // Use configured limit
+				.groupBy("@conversation_id", Reducers.count().as("count"))
+				.limit(0, this.config.getMaxConversationIds()); // Use configured limit
 
 		AggregationResult result = this.jedisClient.ftAggregate(this.config.getIndexName(), aggregation);
 
@@ -561,6 +529,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 	/**
 	 * Finds all messages for a given conversation ID. Uses the configured maximum
 	 * messages per conversation limit to avoid exceeding Redis limits.
+	 *
 	 * @param conversationId the conversation ID to find messages for
 	 * @return a list of messages for the conversation
 	 */
@@ -589,6 +558,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 	/**
 	 * Gets the index name used by this RedisChatMemory instance.
+	 *
 	 * @return the index name
 	 */
 	public String getIndexName() {
@@ -633,7 +603,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 	@Override
 	public List<MessageWithConversation> findByTimeRange(String conversationId, Instant fromTime, Instant toTime,
-			int limit) {
+	                                                     int limit) {
 		Assert.notNull(fromTime, "From time must not be null");
 		Assert.notNull(toTime, "To time must not be null");
 		Assert.isTrue(limit > 0, "Limit must be greater than 0");
@@ -652,9 +622,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 			QueryNode conversationNode = QueryBuilders.intersect("conversation_id",
 					Values.tags(RediSearchUtil.escape(conversationId)));
 			finalQuery = QueryBuilders.intersect(rangeNode, conversationNode);
-		}
-
-		else {
+		} else {
 			finalQuery = rangeNode;
 		}
 
@@ -699,16 +667,12 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 					if (metadataValue instanceof Number) {
 						queryNode = QueryBuilders.intersect(indexedFieldName,
 								Values.eq(((Number) metadataValue).doubleValue()));
-					}
-
-					else {
+					} else {
 						// Try to parse as number
 						try {
 							double numValue = Double.parseDouble(metadataValue.toString());
 							queryNode = QueryBuilders.intersect(indexedFieldName, Values.eq(numValue));
-						}
-
-						catch (NumberFormatException e) {
+						} catch (NumberFormatException e) {
 							// Fall back to text search in general metadata
 							String searchPattern = metadataKey + " " + metadataValue;
 							queryNode = QueryBuilders.intersect("metadata", Values.value(searchPattern));
@@ -725,9 +689,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 							Values.value(RediSearchUtil.escape(metadataValue.toString())));
 					break;
 			}
-		}
-
-		else {
+		} else {
 			// Field not explicitly indexed - search in general metadata field
 			String searchPattern = metadataKey + " " + metadataValue;
 			queryNode = QueryBuilders.intersect("metadata", Values.value(searchPattern));
@@ -756,10 +718,10 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 		// Create a Query object from the query string
 		// The client provides the full Redis Search query syntax
 		Query redisQuery = new Query(query).limit(0, limit).setSortBy("timestamp", true); // Default
-																							// sorting
-																							// by
-																							// timestamp
-																							// ascending
+		// sorting
+		// by
+		// timestamp
+		// ascending
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Executing custom query '" + query + "' with limit " + limit);
@@ -771,6 +733,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 	/**
 	 * Processes a search result and converts it to a list of MessageWithConversation
 	 * objects.
+	 *
 	 * @param result the search result to process
 	 * @return a list of MessageWithConversation objects
 	 */
@@ -805,6 +768,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 	 * Executes a search query and converts the results to a list of
 	 * MessageWithConversation objects. Centralizes the common search execution logic used
 	 * by multiple finder methods.
+	 *
 	 * @param query The query to execute
 	 * @return A list of MessageWithConversation objects
 	 */
@@ -813,9 +777,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 			// Execute the search
 			SearchResult result = this.jedisClient.ftSearch(this.config.getIndexName(), query);
 			return processSearchResult(result);
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error executing query '" + query + "': " + e.getMessage());
 			}
@@ -827,6 +789,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 	/**
 	 * Converts a JSON object to a Message instance. This is a helper method for the
 	 * advanced query operations to convert Redis JSON documents back to Message objects.
+	 *
 	 * @param json The JSON object representing a message
 	 * @return A Message object of the appropriate type
 	 */
@@ -839,7 +802,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 		if (json.has("metadata") && json.get("metadata").isJsonObject()) {
 			JsonObject metadataJson = json.getAsJsonObject("metadata");
 			metadataJson.entrySet()
-				.forEach(entry -> metadata.put(entry.getKey(), gson.fromJson(entry.getValue(), Object.class)));
+					.forEach(entry -> metadata.put(entry.getKey(), gson.fromJson(entry.getValue(), Object.class)));
 		}
 
 		if (MessageType.ASSISTANT.toString().equals(type)) {
@@ -858,24 +821,18 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 			List<Media> media = parseMedia(json);
 
 			return AssistantMessage.builder()
-				.content(content)
-				.properties(metadata)
-				.toolCalls(toolCalls)
-				.media(media)
-				.build();
-		}
-
-		else if (MessageType.USER.toString().equals(type)) {
+					.content(content)
+					.properties(metadata)
+					.toolCalls(toolCalls)
+					.media(media)
+					.build();
+		} else if (MessageType.USER.toString().equals(type)) {
 			// Create a UserMessage with the builder to properly set metadata
 			List<Media> userMedia = parseMedia(json);
 			return UserMessage.builder().text(content).metadata(metadata).media(userMedia).build();
-		}
-
-		else if (MessageType.SYSTEM.toString().equals(type)) {
+		} else if (MessageType.SYSTEM.toString().equals(type)) {
 			return SystemMessage.builder().text(content).metadata(metadata).build();
-		}
-
-		else if (MessageType.TOOL.toString().equals(type)) {
+		} else if (MessageType.TOOL.toString().equals(type)) {
 			// Extract tool responses
 			List<ToolResponseMessage.ToolResponse> toolResponses = new ArrayList<>();
 			if (json.has("toolResponses") && json.get("toolResponses").isJsonArray()) {
@@ -942,22 +899,18 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 				try {
 					byte[] decodedBytes = Base64.getDecoder().decode(dataString);
 					mediaBuilder.data(decodedBytes);
-				}
-				catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException e) {
 					logger.warn("Failed to decode Base64 data, storing as string", e);
 					mediaBuilder.data(dataString);
 				}
-			}
-			else {
+			} else {
 				try {
 					mediaBuilder.data(URI.create(dataString));
-				}
-				catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException e) {
 					mediaBuilder.data(dataString);
 				}
 			}
-		}
-		else if (dataElement.isJsonArray()) {
+		} else if (dataElement.isJsonArray()) {
 			JsonArray dataArray = dataElement.getAsJsonArray();
 			byte[] byteArray = new byte[dataArray.size()];
 			for (int i = 0; i < dataArray.size(); i++) {
@@ -991,6 +944,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the RedisClient client.
+		 *
 		 * @param jedisClient the RedisClient client to use
 		 * @return this builder
 		 */
@@ -1001,6 +955,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the index name.
+		 *
 		 * @param indexName the index name to use
 		 * @return this builder
 		 */
@@ -1011,6 +966,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the key prefix.
+		 *
 		 * @param keyPrefix the key prefix to use
 		 * @return this builder
 		 */
@@ -1021,6 +977,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema whether to initialize the schema
 		 * @return this builder
 		 */
@@ -1031,6 +988,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the time to live in seconds for messages stored in Redis.
+		 *
 		 * @param timeToLiveSeconds the time to live in seconds (use -1 for no expiration)
 		 * @return this builder
 		 */
@@ -1041,15 +999,14 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the time to live duration for messages stored in Redis.
+		 *
 		 * @param timeToLive the time to live duration (null for no expiration)
 		 * @return this builder
 		 */
 		public Builder timeToLive(final Duration timeToLive) {
 			if (timeToLive != null) {
 				this.timeToLiveSeconds = timeToLive.getSeconds();
-			}
-
-			else {
+			} else {
 				this.timeToLiveSeconds = -1;
 			}
 			return this;
@@ -1057,6 +1014,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the maximum number of conversation IDs to return.
+		 *
 		 * @param maxConversationIds the maximum number of conversation IDs
 		 * @return this builder
 		 */
@@ -1067,8 +1025,9 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Sets the maximum number of messages per conversation to return.
+		 *
 		 * @param maxMessagesPerConversation the maximum number of messages per
-		 * conversation
+		 *                                   conversation
 		 * @return this builder
 		 */
 		public Builder maxMessagesPerConversation(final int maxMessagesPerConversation) {
@@ -1079,6 +1038,7 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 		/**
 		 * Sets the metadata field definitions for proper indexing. Format is compatible
 		 * with RedisVL schema format.
+		 *
 		 * @param metadataFields list of field definitions
 		 * @return this builder
 		 */
@@ -1089,20 +1049,21 @@ public final class RedisChatMemoryRepository implements ChatMemoryRepository, Ad
 
 		/**
 		 * Builds and returns an instance of {@link RedisChatMemoryRepository}.
+		 *
 		 * @return a new {@link RedisChatMemoryRepository} instance
 		 */
 		public RedisChatMemoryRepository build() {
 			Assert.notNull(this.jedisClient, "JedisClient must not be null");
 
 			RedisChatMemoryConfig config = new RedisChatMemoryConfig.Builder().jedisClient(this.jedisClient)
-				.indexName(this.indexName)
-				.keyPrefix(this.keyPrefix)
-				.initializeSchema(this.initializeSchema)
-				.timeToLive(Duration.ofSeconds(this.timeToLiveSeconds))
-				.maxConversationIds(this.maxConversationIds)
-				.maxMessagesPerConversation(this.maxMessagesPerConversation)
-				.metadataFields(this.metadataFields)
-				.build();
+					.indexName(this.indexName)
+					.keyPrefix(this.keyPrefix)
+					.initializeSchema(this.initializeSchema)
+					.timeToLive(Duration.ofSeconds(this.timeToLiveSeconds))
+					.maxConversationIds(this.maxConversationIds)
+					.maxMessagesPerConversation(this.maxMessagesPerConversation)
+					.metadataFields(this.metadataFields)
+					.build();
 
 			return new RedisChatMemoryRepository(config);
 		}

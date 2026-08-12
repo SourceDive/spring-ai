@@ -16,10 +16,10 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
+import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.ProgressSpec;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.ai.mcp.annotation.context.McpRequestContextTypes.ProgressSpec;
 
 /**
  * @author Christian Tzolov

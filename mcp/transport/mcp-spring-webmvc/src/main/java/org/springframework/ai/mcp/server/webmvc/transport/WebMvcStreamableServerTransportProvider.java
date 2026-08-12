@@ -16,12 +16,6 @@
 
 package org.springframework.ai.mcp.server.webmvc.transport;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
@@ -29,21 +23,12 @@ import io.modelcontextprotocol.json.TypeRef;
 import io.modelcontextprotocol.server.McpTransportContextExtractor;
 import io.modelcontextprotocol.server.transport.ServerTransportSecurityException;
 import io.modelcontextprotocol.server.transport.ServerTransportSecurityValidator;
-import io.modelcontextprotocol.spec.HttpHeaders;
-import io.modelcontextprotocol.spec.McpError;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpStreamableServerSession;
-import io.modelcontextprotocol.spec.McpStreamableServerTransport;
-import io.modelcontextprotocol.spec.McpStreamableServerTransportProvider;
-import io.modelcontextprotocol.spec.ProtocolVersions;
+import io.modelcontextprotocol.spec.*;
 import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.KeepAliveScheduler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.function.RouterFunction;
@@ -51,6 +36,14 @@ import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 import org.springframework.web.servlet.function.ServerResponse.SseBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Server-side implementation of the Model Context Protocol (MCP) streamable transport
@@ -124,21 +117,22 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 	/**
 	 * Constructs a new WebMvcStreamableServerTransportProvider instance.
-	 * @param jsonMapper The McpJsonMapper to use for JSON serialization/deserialization
-	 * of messages.
-	 * @param mcpEndpoint The endpoint URI where clients should send their JSON-RPC
-	 * messages via HTTP. This endpoint will handle GET, POST, and DELETE requests.
-	 * @param disallowDelete Whether to disallow DELETE requests on the endpoint.
-	 * @param contextExtractor The context extractor for transport context from the
-	 * request.
+	 *
+	 * @param jsonMapper        The McpJsonMapper to use for JSON serialization/deserialization
+	 *                          of messages.
+	 * @param mcpEndpoint       The endpoint URI where clients should send their JSON-RPC
+	 *                          messages via HTTP. This endpoint will handle GET, POST, and DELETE requests.
+	 * @param disallowDelete    Whether to disallow DELETE requests on the endpoint.
+	 * @param contextExtractor  The context extractor for transport context from the
+	 *                          request.
 	 * @param keepAliveInterval The interval for keep-alive pings. If null, no keep-alive
-	 * will be scheduled.
+	 *                          will be scheduled.
 	 * @param securityValidator The security validator for validating HTTP requests.
 	 * @throws IllegalArgumentException if any parameter is null
 	 */
 	private WebMvcStreamableServerTransportProvider(McpJsonMapper jsonMapper, String mcpEndpoint,
-			boolean disallowDelete, McpTransportContextExtractor<ServerRequest> contextExtractor,
-			@Nullable Duration keepAliveInterval, ServerTransportSecurityValidator securityValidator) {
+	                                                boolean disallowDelete, McpTransportContextExtractor<ServerRequest> contextExtractor,
+	                                                @Nullable Duration keepAliveInterval, ServerTransportSecurityValidator securityValidator) {
 		Assert.notNull(jsonMapper, "McpJsonMapper must not be null");
 		Assert.notNull(mcpEndpoint, "MCP endpoint must not be null");
 		Assert.notNull(contextExtractor, "McpTransportContextExtractor must not be null");
@@ -150,17 +144,17 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		this.contextExtractor = contextExtractor;
 		this.securityValidator = securityValidator;
 		this.routerFunction = RouterFunctions.route()
-			.GET(this.mcpEndpoint, this::handleGet)
-			.POST(this.mcpEndpoint, this::handlePost)
-			.DELETE(this.mcpEndpoint, this::handleDelete)
-			.build();
+				.GET(this.mcpEndpoint, this::handleGet)
+				.POST(this.mcpEndpoint, this::handlePost)
+				.DELETE(this.mcpEndpoint, this::handleDelete)
+				.build();
 
 		if (keepAliveInterval != null) {
 			this.keepAliveScheduler = KeepAliveScheduler
-				.builder(() -> (this.isClosing) ? Flux.empty() : Flux.fromIterable(this.sessions.values()))
-				.initialDelay(keepAliveInterval)
-				.interval(keepAliveInterval)
-				.build();
+					.builder(() -> (this.isClosing) ? Flux.empty() : Flux.fromIterable(this.sessions.values()))
+					.initialDelay(keepAliveInterval)
+					.interval(keepAliveInterval)
+					.build();
 
 			this.keepAliveScheduler.start();
 		}
@@ -181,6 +175,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 	 * Broadcasts a notification to all connected clients through their SSE connections.
 	 * If any errors occur during sending to a particular client, they are logged but
 	 * don't prevent sending to other clients.
+	 *
 	 * @param method The method name for the notification
 	 * @param params The parameters for the notification
 	 * @return A Mono that completes when the broadcast attempt is finished
@@ -200,8 +195,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 			this.sessions.values().parallelStream().forEach(session -> {
 				try {
 					session.sendNotification(method, params).block();
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					if (logger.isErrorEnabled()) {
 						logger.error("Failed to send message to session " + session.getId() + ": " + e.getMessage());
 					}
@@ -226,6 +220,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 	/**
 	 * Initiates a graceful shutdown of the transport.
+	 *
 	 * @return A Mono that completes when all cleanup operations are finished
 	 */
 	@Override
@@ -239,8 +234,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 			this.sessions.values().parallelStream().forEach(session -> {
 				try {
 					session.closeGracefully().block();
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					if (logger.isErrorEnabled()) {
 						logger.error("Failed to close session " + session.getId() + ": " + e.getMessage());
 					}
@@ -264,6 +258,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 	 * <li>POST [mcpEndpoint] - For receiving JSON-RPC messages from clients</li>
 	 * <li>DELETE [mcpEndpoint] - For session deletion (if enabled)</li>
 	 * </ul>
+	 *
 	 * @return The configured RouterFunction for handling HTTP requests
 	 */
 	public RouterFunction<ServerResponse> getRouterFunction() {
@@ -272,6 +267,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 	/**
 	 * Setup the listening SSE connections and message replay.
+	 *
 	 * @param request The incoming server request
 	 * @return A ServerResponse configured for SSE communication, or an error response
 	 */
@@ -283,8 +279,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		try {
 			var headers = HeaderUtils.collectHeaders(request);
 			this.securityValidator.validateHeaders(headers);
-		}
-		catch (ServerTransportSecurityException e) {
+		} catch (ServerTransportSecurityException e) {
 			var message = e.getMessage() != null ? e.getMessage() : "";
 			return ServerResponse.status(e.getStatusCode()).body(message);
 		}
@@ -328,33 +323,30 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 					try {
 						session.replay(lastId)
-							.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
-							.toIterable()
-							.forEach(message -> {
-								try {
-									sessionTransport.sendMessage(message)
-										.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
-										.block();
-								}
-								catch (Exception e) {
-									if (logger.isErrorEnabled()) {
-										logger.error("Failed to replay message: " + e.getMessage());
+								.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
+								.toIterable()
+								.forEach(message -> {
+									try {
+										sessionTransport.sendMessage(message)
+												.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
+												.block();
+									} catch (Exception e) {
+										if (logger.isErrorEnabled()) {
+											logger.error("Failed to replay message: " + e.getMessage());
+										}
+										sseBuilder.error(e);
 									}
-									sseBuilder.error(e);
-								}
-							});
-					}
-					catch (Exception e) {
+								});
+					} catch (Exception e) {
 						if (logger.isErrorEnabled()) {
 							logger.error("Failed to replay messages: " + e.getMessage());
 						}
 						sseBuilder.error(e);
 					}
-				}
-				else {
+				} else {
 					// Establish new listening stream
 					McpStreamableServerSession.McpStreamableServerSessionStream listeningStream = session
-						.listeningStream(sessionTransport);
+							.listeningStream(sessionTransport);
 
 					sseBuilder.onComplete(() -> {
 						if (logger.isDebugEnabled()) {
@@ -364,8 +356,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 					});
 				}
 			}, Duration.ZERO);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to handle GET request for session " + sessionId + ": " + e.getMessage());
 			}
@@ -375,6 +366,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 	/**
 	 * Handles POST requests for incoming JSON-RPC messages from clients.
+	 *
 	 * @param request The incoming server request containing the JSON-RPC message
 	 * @return A ServerResponse indicating success or appropriate error status
 	 */
@@ -386,8 +378,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		try {
 			var headers = HeaderUtils.collectHeaders(request);
 			this.securityValidator.validateHeaders(headers);
-		}
-		catch (ServerTransportSecurityException e) {
+		} catch (ServerTransportSecurityException e) {
 			var message = e.getMessage() != null ? e.getMessage() : "";
 			return ServerResponse.status(e.getStatusCode()).body(message);
 		}
@@ -396,9 +387,9 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		if (!acceptHeaders.contains(MediaType.TEXT_EVENT_STREAM)
 				|| !acceptHeaders.contains(MediaType.APPLICATION_JSON)) {
 			return ServerResponse.badRequest()
-				.body(McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
-					.message("Invalid Accept headers. Expected TEXT_EVENT_STREAM and APPLICATION_JSON")
-					.build());
+					.body(McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
+							.message("Invalid Accept headers. Expected TEXT_EVENT_STREAM and APPLICATION_JSON")
+							.build());
 		}
 
 		McpTransportContext transportContext = this.contextExtractor.extract(request);
@@ -416,9 +407,9 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 				var sf = this.sessionFactory;
 				if (sf == null) {
 					return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-							.message("SessionFactory not configured")
-							.build());
+							.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+									.message("SessionFactory not configured")
+									.build());
 				}
 				McpStreamableServerSession.McpStreamableServerSessionInit init = sf.startSession(initializeRequest);
 				this.sessions.put(init.session().getId(), init.session());
@@ -427,26 +418,25 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 					McpSchema.InitializeResult initResult = init.initResult().block();
 
 					return ServerResponse.ok()
-						.contentType(MediaType.APPLICATION_JSON)
-						.header(HttpHeaders.MCP_SESSION_ID, init.session().getId())
-						.body(new McpSchema.JSONRPCResponse(McpSchema.JSONRPC_VERSION, jsonrpcRequest.id(), initResult,
-								null));
-				}
-				catch (Exception e) {
+							.contentType(MediaType.APPLICATION_JSON)
+							.header(HttpHeaders.MCP_SESSION_ID, init.session().getId())
+							.body(new McpSchema.JSONRPCResponse(McpSchema.JSONRPC_VERSION, jsonrpcRequest.id(), initResult,
+									null));
+				} catch (Exception e) {
 					if (logger.isErrorEnabled()) {
 						logger.error("Failed to initialize session: " + e.getMessage());
 					}
 					return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR).message(e.getMessage()).build());
+							.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR).message(e.getMessage()).build());
 				}
 			}
 
 			// Handle other messages that require a session
 			if (request.headers().header(HttpHeaders.MCP_SESSION_ID).isEmpty()) {
 				return ServerResponse.badRequest()
-					.body(McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
-						.message("Session ID missing")
-						.build());
+						.body(McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
+								.message("Session ID missing")
+								.build());
 			}
 
 			String sessionId = request.headers().header(HttpHeaders.MCP_SESSION_ID).get(0);
@@ -454,24 +444,22 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 			if (session == null) {
 				return ServerResponse.status(HttpStatus.NOT_FOUND)
-					.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-						.message("Session not found: " + sessionId)
-						.build());
+						.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+								.message("Session not found: " + sessionId)
+								.build());
 			}
 
 			if (message instanceof McpSchema.JSONRPCResponse jsonrpcResponse) {
 				session.accept(jsonrpcResponse)
-					.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
-					.block();
+						.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
+						.block();
 				return ServerResponse.accepted().build();
-			}
-			else if (message instanceof McpSchema.JSONRPCNotification jsonrpcNotification) {
+			} else if (message instanceof McpSchema.JSONRPCNotification jsonrpcNotification) {
 				session.accept(jsonrpcNotification)
-					.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
-					.block();
+						.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
+						.block();
 				return ServerResponse.accepted().build();
-			}
-			else if (message instanceof McpSchema.JSONRPCRequest jsonrpcRequest) {
+			} else if (message instanceof McpSchema.JSONRPCRequest jsonrpcRequest) {
 				// For streaming responses, we need to return SSE
 				return ServerResponse.sse(sseBuilder -> {
 					sseBuilder.onComplete(() -> {
@@ -490,42 +478,39 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 					try {
 						session.responseStream(jsonrpcRequest, sessionTransport)
-							.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
-							.block();
-					}
-					catch (Exception e) {
+								.contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext))
+								.block();
+					} catch (Exception e) {
 						if (logger.isErrorEnabled()) {
 							logger.error("Failed to handle request stream: " + e.getMessage());
 						}
 						sseBuilder.error(e);
 					}
 				}, Duration.ZERO);
-			}
-			else {
+			} else {
 				return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
-						.message("Unknown message type")
-						.build());
+						.body(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
+								.message("Unknown message type")
+								.build());
 			}
-		}
-		catch (IllegalArgumentException | IOException e) {
+		} catch (IllegalArgumentException | IOException e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to deserialize message: " + e.getMessage());
 			}
 			return ServerResponse.badRequest()
-				.body(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST).message("Invalid message format").build());
-		}
-		catch (Exception e) {
+					.body(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST).message("Invalid message format").build());
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error handling message: " + e.getMessage());
 			}
 			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR).message(e.getMessage()).build());
+					.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR).message(e.getMessage()).build());
 		}
 	}
 
 	/**
 	 * Handles DELETE requests for session deletion.
+	 *
 	 * @param request The incoming server request
 	 * @return A ServerResponse indicating success or appropriate error status
 	 */
@@ -537,8 +522,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		try {
 			var headers = HeaderUtils.collectHeaders(request);
 			this.securityValidator.validateHeaders(headers);
-		}
-		catch (ServerTransportSecurityException e) {
+		} catch (ServerTransportSecurityException e) {
 			var message = e.getMessage() != null ? e.getMessage() : "";
 			return ServerResponse.status(e.getStatusCode()).body(message);
 		}
@@ -564,13 +548,12 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 			session.delete().contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext)).block();
 			this.sessions.remove(sessionId);
 			return ServerResponse.ok().build();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete session " + sessionId + ": " + e.getMessage());
 			}
 			return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR).message(e.getMessage()).build());
+					.body(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR).message(e.getMessage()).build());
 		}
 	}
 
@@ -599,7 +582,8 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Creates a new session transport with the specified ID and SSE builder.
-		 * @param sessionId The unique identifier for this session
+		 *
+		 * @param sessionId  The unique identifier for this session
 		 * @param sseBuilder The SSE builder for sending server events to the client
 		 */
 		WebMvcStreamableMcpSessionTransport(String sessionId, SseBuilder sseBuilder) {
@@ -612,6 +596,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Sends a JSON-RPC message to the client through the SSE connection.
+		 *
 		 * @param message The JSON-RPC message to send
 		 * @return A Mono that completes when the message has been sent
 		 */
@@ -623,7 +608,8 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		/**
 		 * Sends a JSON-RPC message to the client through the SSE connection with a
 		 * specific message ID.
-		 * @param message The JSON-RPC message to send
+		 *
+		 * @param message   The JSON-RPC message to send
 		 * @param messageId The message ID for SSE event identification
 		 * @return A Mono that completes when the message has been sent
 		 */
@@ -648,27 +634,24 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 					String jsonText = jsonMapper.writeValueAsString(message);
 					this.sseBuilder.id(messageId != null ? messageId : this.sessionId)
-						.event(MESSAGE_EVENT_TYPE)
-						.data(jsonText);
+							.event(MESSAGE_EVENT_TYPE)
+							.data(jsonText);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Message sent to session " + this.sessionId + " with ID " + messageId);
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					if (logger.isErrorEnabled()) {
 						logger.error("Failed to send message to session " + this.sessionId + ": " + e.getMessage());
 					}
 					try {
 						this.sseBuilder.error(e);
-					}
-					catch (Exception errorException) {
+					} catch (Exception errorException) {
 						if (logger.isErrorEnabled()) {
 							logger.error("Failed to send error to SSE builder for session " + this.sessionId + ": "
 									+ errorException.getMessage());
 						}
 					}
-				}
-				finally {
+				} finally {
 					this.lock.unlock();
 				}
 			});
@@ -676,10 +659,11 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Converts data from one type to another using the configured McpJsonMapper.
-		 * @param data The source data object to convert
+		 *
+		 * @param data    The source data object to convert
 		 * @param typeRef The target type reference
+		 * @param <T>     The target type
 		 * @return The converted object of type T
-		 * @param <T> The target type
 		 */
 		@Override
 		public <T> T unmarshalFrom(Object data, TypeRef<T> typeRef) {
@@ -688,6 +672,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Initiates a graceful shutdown of the transport.
+		 *
 		 * @return A Mono that completes when the shutdown is complete
 		 */
 		@Override
@@ -715,13 +700,11 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 				if (logger.isDebugEnabled()) {
 					logger.debug("Successfully completed SSE builder for session " + this.sessionId);
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				if (logger.isWarnEnabled()) {
 					logger.warn("Failed to complete SSE builder for session " + this.sessionId + ": " + e.getMessage());
 				}
-			}
-			finally {
+			} finally {
 				this.lock.unlock();
 			}
 		}
@@ -748,6 +731,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		/**
 		 * Sets the McpJsonMapper to use for JSON serialization/deserialization of MCP
 		 * messages.
+		 *
 		 * @param jsonMapper The McpJsonMapper instance. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if jsonMapper is null
@@ -760,6 +744,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Sets the endpoint URI where clients should send their JSON-RPC messages.
+		 *
 		 * @param mcpEndpoint The MCP endpoint URI. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if mcpEndpoint is null
@@ -772,6 +757,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Sets whether to disallow DELETE requests on the endpoint.
+		 *
 		 * @param disallowDelete true to disallow DELETE requests, false otherwise
 		 * @return this builder instance
 		 */
@@ -785,8 +771,9 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		 * implementations to inspect HTTP transport level metadata that was present at
 		 * HTTP request processing time. This allows extracting custom headers and other
 		 * useful data for use during execution later on in the process.
+		 *
 		 * @param contextExtractor The contextExtractor to fill in a
-		 * {@link McpTransportContext}.
+		 *                         {@link McpTransportContext}.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if contextExtractor is null
 		 */
@@ -799,8 +786,9 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		/**
 		 * Sets the keep-alive interval for the transport. If set, a keep-alive scheduler
 		 * will be created to periodically check and send keep-alive messages to clients.
+		 *
 		 * @param keepAliveInterval The interval duration for keep-alive messages, or null
-		 * to disable keep-alive
+		 *                          to disable keep-alive
 		 * @return this builder instance
 		 */
 		public Builder keepAliveInterval(@Nullable Duration keepAliveInterval) {
@@ -810,6 +798,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 
 		/**
 		 * Sets the security validator for validating HTTP requests.
+		 *
 		 * @param securityValidator The security validator to use. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if securityValidator is null
@@ -823,6 +812,7 @@ public final class WebMvcStreamableServerTransportProvider implements McpStreama
 		/**
 		 * Builds a new instance of {@link WebMvcStreamableServerTransportProvider} with
 		 * the configured settings.
+		 *
 		 * @return A new WebMvcStreamableServerTransportProvider instance
 		 * @throws IllegalStateException if required parameters are not set
 		 */

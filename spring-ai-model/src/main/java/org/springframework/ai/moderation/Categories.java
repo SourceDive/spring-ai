@@ -16,9 +16,9 @@
 
 package org.springframework.ai.moderation;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * The Categories class represents a set of categories used to classify content. Each

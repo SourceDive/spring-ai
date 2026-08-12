@@ -16,15 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.mcp.annotation.method.changed.prompt.AsyncPromptListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.resource.AsyncResourceListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.tool.AsyncToolListChangedSpecification;
@@ -32,6 +28,9 @@ import org.springframework.ai.mcp.annotation.method.elicitation.AsyncElicitation
 import org.springframework.ai.mcp.annotation.method.logging.AsyncLoggingSpecification;
 import org.springframework.ai.mcp.annotation.method.progress.AsyncProgressSpecification;
 import org.springframework.ai.mcp.annotation.method.sampling.AsyncSamplingSpecification;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -80,7 +79,7 @@ class AsyncMcpAnnotationProvidersTests {
 		elicitationObjects.add(new Object());
 
 		List<AsyncElicitationSpecification> result = AsyncMcpAnnotationProviders
-			.elicitationSpecifications(elicitationObjects);
+				.elicitationSpecifications(elicitationObjects);
 
 		assertNotNull(result);
 	}
@@ -101,7 +100,7 @@ class AsyncMcpAnnotationProvidersTests {
 		toolObjects.add(new Object());
 
 		List<McpServerFeatures.AsyncToolSpecification> result = AsyncMcpAnnotationProviders
-			.toolSpecifications(toolObjects);
+				.toolSpecifications(toolObjects);
 
 		assertNotNull(result);
 	}
@@ -113,7 +112,7 @@ class AsyncMcpAnnotationProvidersTests {
 		toolObjects.add(new Object());
 
 		List<McpStatelessServerFeatures.AsyncToolSpecification> result = AsyncMcpAnnotationProviders
-			.statelessToolSpecifications(toolObjects);
+				.statelessToolSpecifications(toolObjects);
 
 		assertNotNull(result);
 	}
@@ -124,7 +123,7 @@ class AsyncMcpAnnotationProvidersTests {
 		completeObjects.add(new Object());
 
 		List<McpServerFeatures.AsyncCompletionSpecification> result = AsyncMcpAnnotationProviders
-			.completeSpecifications(completeObjects);
+				.completeSpecifications(completeObjects);
 
 		assertNotNull(result);
 	}
@@ -135,7 +134,7 @@ class AsyncMcpAnnotationProvidersTests {
 		completeObjects.add(new Object());
 
 		List<McpStatelessServerFeatures.AsyncCompletionSpecification> result = AsyncMcpAnnotationProviders
-			.statelessCompleteSpecifications(completeObjects);
+				.statelessCompleteSpecifications(completeObjects);
 
 		assertNotNull(result);
 	}
@@ -146,7 +145,7 @@ class AsyncMcpAnnotationProvidersTests {
 		promptObjects.add(new Object());
 
 		List<McpServerFeatures.AsyncPromptSpecification> result = AsyncMcpAnnotationProviders
-			.promptSpecifications(promptObjects);
+				.promptSpecifications(promptObjects);
 
 		assertNotNull(result);
 	}
@@ -157,7 +156,7 @@ class AsyncMcpAnnotationProvidersTests {
 		promptObjects.add(new Object());
 
 		List<McpStatelessServerFeatures.AsyncPromptSpecification> result = AsyncMcpAnnotationProviders
-			.statelessPromptSpecifications(promptObjects);
+				.statelessPromptSpecifications(promptObjects);
 
 		assertNotNull(result);
 	}
@@ -168,7 +167,7 @@ class AsyncMcpAnnotationProvidersTests {
 		resourceObjects.add(new Object());
 
 		List<McpServerFeatures.AsyncResourceSpecification> result = AsyncMcpAnnotationProviders
-			.resourceSpecifications(resourceObjects);
+				.resourceSpecifications(resourceObjects);
 
 		assertNotNull(result);
 	}
@@ -179,7 +178,7 @@ class AsyncMcpAnnotationProvidersTests {
 		resourceObjects.add(new Object());
 
 		List<McpStatelessServerFeatures.AsyncResourceSpecification> result = AsyncMcpAnnotationProviders
-			.statelessResourceSpecifications(resourceObjects);
+				.statelessResourceSpecifications(resourceObjects);
 
 		assertNotNull(result);
 	}
@@ -190,7 +189,7 @@ class AsyncMcpAnnotationProvidersTests {
 		resourceListChangedObjects.add(new Object());
 
 		List<AsyncResourceListChangedSpecification> result = AsyncMcpAnnotationProviders
-			.resourceListChangedSpecifications(resourceListChangedObjects);
+				.resourceListChangedSpecifications(resourceListChangedObjects);
 
 		assertNotNull(result);
 	}
@@ -201,7 +200,7 @@ class AsyncMcpAnnotationProvidersTests {
 		toolListChangedObjects.add(new Object());
 
 		List<AsyncToolListChangedSpecification> result = AsyncMcpAnnotationProviders
-			.toolListChangedSpecifications(toolListChangedObjects);
+				.toolListChangedSpecifications(toolListChangedObjects);
 
 		assertNotNull(result);
 	}
@@ -212,7 +211,7 @@ class AsyncMcpAnnotationProvidersTests {
 		promptListChangedObjects.add(new Object());
 
 		List<AsyncPromptListChangedSpecification> result = AsyncMcpAnnotationProviders
-			.promptListChangedSpecifications(promptListChangedObjects);
+				.promptListChangedSpecifications(promptListChangedObjects);
 
 		assertNotNull(result);
 	}

@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.provider.logging;
 
-import java.util.List;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
 import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpLogging;
 import org.springframework.ai.mcp.annotation.method.logging.AsyncLoggingSpecification;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,8 +44,8 @@ public class AsyncMcpLoggingProviderTests {
 
 		List<AsyncLoggingSpecification> specifications = provider.getLoggingSpecifications();
 		List<Function<LoggingMessageNotification, Mono<Void>>> consumers = specifications.stream()
-			.map(AsyncLoggingSpecification::loggingHandler)
-			.toList();
+				.map(AsyncLoggingSpecification::loggingHandler)
+				.toList();
 
 		// Should find 3 annotated methods
 		assertThat(consumers).hasSize(3);
@@ -85,8 +84,8 @@ public class AsyncMcpLoggingProviderTests {
 		List<AsyncLoggingSpecification> specifications = provider.getLoggingSpecifications();
 
 		List<Function<LoggingMessageNotification, Mono<Void>>> consumers = specifications.stream()
-			.map(AsyncLoggingSpecification::loggingHandler)
-			.toList();
+				.map(AsyncLoggingSpecification::loggingHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -100,8 +99,8 @@ public class AsyncMcpLoggingProviderTests {
 		List<AsyncLoggingSpecification> specifications = provider.getLoggingSpecifications();
 
 		List<Function<LoggingMessageNotification, Mono<Void>>> consumers = specifications.stream()
-			.map(AsyncLoggingSpecification::loggingHandler)
-			.toList();
+				.map(AsyncLoggingSpecification::loggingHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler)
 		assertThat(consumers).hasSize(4);

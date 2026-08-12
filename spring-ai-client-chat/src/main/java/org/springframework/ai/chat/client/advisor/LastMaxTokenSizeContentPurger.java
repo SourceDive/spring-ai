@@ -16,12 +16,12 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.ai.content.Content;
 import org.springframework.ai.content.MediaContent;
 import org.springframework.ai.tokenizer.TokenCountEstimator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Returns a new list of content (e.g list of messages of list of documents) that is a

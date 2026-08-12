@@ -16,17 +16,16 @@
 
 package org.springframework.ai.vectorstore;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.vectorstore.filter.Filter;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
+
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.vectorstore.filter.Filter;
-import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 
 /**
  * Internal helper used by {@link SimpleVectorStore} to evaluate a
@@ -65,12 +64,13 @@ final class SimpleVectorStoreFilterExpressionEvaluator {
 	// withZone(UTC) this always produces the fixed form "yyyy-MM-dd'T'HH:mm:ss'Z'",
 	// matching the format used to store Date values in document metadata.
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
-		.withZone(ZoneOffset.UTC);
+			.withZone(ZoneOffset.UTC);
 
 	/**
 	 * Evaluates the given filter expression against the provided metadata map.
+	 *
 	 * @param expression the filter expression to evaluate; must not be {@code null}
-	 * @param metadata the document metadata to match against; must not be {@code null}
+	 * @param metadata   the document metadata to match against; must not be {@code null}
 	 * @return {@code true} if the metadata satisfies the expression
 	 */
 	public boolean evaluate(Filter.Expression expression, Map<String, Object> metadata) {
@@ -200,14 +200,13 @@ final class SimpleVectorStoreFilterExpressionEvaluator {
 		if (metaVal instanceof Comparable comparable && filterVal instanceof Comparable) {
 			try {
 				return comparable.compareTo(filterVal);
-			}
-			catch (ClassCastException ex) {
+			} catch (ClassCastException ex) {
 				throw new IllegalArgumentException("Cannot compare values of incompatible types %s and %s"
-					.formatted(metaVal.getClass().getName(), filterVal.getClass().getName()), ex);
+						.formatted(metaVal.getClass().getName(), filterVal.getClass().getName()), ex);
 			}
 		}
 		throw new IllegalArgumentException("Cannot compare values of types %s and %s"
-			.formatted(metaVal.getClass().getName(), filterVal.getClass().getName()));
+				.formatted(metaVal.getClass().getName(), filterVal.getClass().getName()));
 	}
 
 	private List<?> asList(Object value, Filter.Expression expression) {

@@ -16,17 +16,12 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
@@ -40,6 +35,10 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -72,26 +71,26 @@ public class ChatClientAdvisorTests {
 		ChatResponseMetadata chatResponseMetadata = ChatResponseMetadata.builder().build();
 
 		given(this.chatModel.call(this.promptCaptor.capture()))
-			.willReturn(
-					new ChatResponse(List.of(new Generation(new AssistantMessage("Hello John"))), chatResponseMetadata))
-			.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("Your name is John"))),
-					chatResponseMetadata));
+				.willReturn(
+						new ChatResponse(List.of(new Generation(new AssistantMessage("Hello John"))), chatResponseMetadata))
+				.willReturn(new ChatResponse(List.of(new Generation(new AssistantMessage("Your name is John"))),
+						chatResponseMetadata));
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		var chatClient = ChatClient.builder(this.chatModel)
-			.defaultSystem("Default system text.")
-			.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
-			.build();
+				.defaultSystem("Default system text.")
+				.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+				.build();
 
 		ChatResponse chatResponse = chatClient.prompt()
-			.user("my name is John")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
-			.call()
-			.chatResponse();
+				.user("my name is John")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
+				.call()
+				.chatResponse();
 
 		String content = chatResponse.getResult().getOutput().getText();
 		assertThat(content).isEqualTo("Hello John");
@@ -106,10 +105,10 @@ public class ChatClientAdvisorTests {
 		assertThat(userMessage.getMessageType()).isEqualTo(MessageType.USER);
 
 		content = chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
-			.call()
-			.content();
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
+				.call()
+				.content();
 
 		assertThat(content).isEqualTo("Your name is John");
 
@@ -134,34 +133,34 @@ public class ChatClientAdvisorTests {
 	@Test
 	public void streamingMessageChatMemory() {
 		given(this.chatModel.stream(this.promptCaptor.capture())).willReturn(Flux.generate(
-				() -> new ChatResponse(List.of(new Generation(new AssistantMessage("Hello John")))), (state, sink) -> {
-					sink.next(state);
-					sink.complete();
-					return state;
-				}))
-			.willReturn(Flux.generate(
-					() -> new ChatResponse(List.of(new Generation(new AssistantMessage("Your name is John")))),
-					(state, sink) -> {
-						sink.next(state);
-						sink.complete();
-						return state;
-					}));
+						() -> new ChatResponse(List.of(new Generation(new AssistantMessage("Hello John")))), (state, sink) -> {
+							sink.next(state);
+							sink.complete();
+							return state;
+						}))
+				.willReturn(Flux.generate(
+						() -> new ChatResponse(List.of(new Generation(new AssistantMessage("Your name is John")))),
+						(state, sink) -> {
+							sink.next(state);
+							sink.complete();
+							return state;
+						}));
 		when(this.chatModel.getOptions()).thenReturn(ChatOptions.builder().build());
 
 		ChatMemory chatMemory = MessageWindowChatMemory.builder()
-			.chatMemoryRepository(new InMemoryChatMemoryRepository())
-			.build();
+				.chatMemoryRepository(new InMemoryChatMemoryRepository())
+				.build();
 
 		var chatClient = ChatClient.builder(this.chatModel)
-			.defaultSystem("Default system text.")
-			.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
-			.build();
+				.defaultSystem("Default system text.")
+				.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+				.build();
 
 		var content = join(chatClient.prompt()
-			.user("my name is John")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
-			.stream()
-			.content());
+				.user("my name is John")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
+				.stream()
+				.content());
 
 		assertThat(content).isEqualTo("Hello John");
 
@@ -175,10 +174,10 @@ public class ChatClientAdvisorTests {
 		assertThat(userMessage.getMessageType()).isEqualTo(MessageType.USER);
 
 		content = join(chatClient.prompt()
-			.user("What is my name?")
-			.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
-			.stream()
-			.content());
+				.user("What is my name?")
+				.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "test-session"))
+				.stream()
+				.content());
 
 		assertThat(content).isEqualTo("Your name is John");
 

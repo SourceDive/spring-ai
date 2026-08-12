@@ -16,15 +16,9 @@
 
 package org.springframework.ai.vectorstore.redis.autoconfigure;
 
-import java.util.List;
-import java.util.Map;
-
 import com.redis.testcontainers.RedisStackContainer;
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -40,6 +34,11 @@ import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfigurat
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,15 +59,15 @@ class RedisVectorStoreAutoConfigurationIT {
 
 	// Use host and port explicitly since getRedisURI() might not be consistent
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(
-				AutoConfigurations.of(DataRedisAutoConfiguration.class, RedisVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
-				"spring.data.redis.port=" + redisContainer.getFirstMappedPort())
-		.withPropertyValues("spring.ai.vectorstore.redis.initialize-schema=true")
-		.withPropertyValues("spring.ai.vectorstore.redis.index=myIdx")
-		.withPropertyValues("spring.ai.vectorstore.redis.prefix=doc:")
-		.withPropertyValues("spring.data.redis.client-type=jedis");
+			.withConfiguration(
+					AutoConfigurations.of(DataRedisAutoConfiguration.class, RedisVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.data.redis.host=" + redisContainer.getHost(),
+					"spring.data.redis.port=" + redisContainer.getFirstMappedPort())
+			.withPropertyValues("spring.ai.vectorstore.redis.initialize-schema=true")
+			.withPropertyValues("spring.ai.vectorstore.redis.index=myIdx")
+			.withPropertyValues("spring.ai.vectorstore.redis.prefix=doc:")
+			.withPropertyValues("spring.data.redis.client-type=jedis");
 
 	List<Document> documents = List.of(
 			new Document(ResourceUtils.getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -88,7 +87,7 @@ class RedisVectorStoreAutoConfigurationIT {
 			observationRegistry.clear();
 
 			List<Document> results = vectorStore
-				.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 			assertThat(results).hasSize(1);
 			Document resultDoc = results.get(0);

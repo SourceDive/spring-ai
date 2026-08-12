@@ -16,16 +16,15 @@
 
 package org.springframework.ai.vectorstore.observation;
 
-import java.util.List;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.observation.ObservabilityHelper;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * Handler for emitting the query response content to logs.

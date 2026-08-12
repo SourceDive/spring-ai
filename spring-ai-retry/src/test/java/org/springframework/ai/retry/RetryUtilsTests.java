@@ -16,23 +16,20 @@
 
 package org.springframework.ai.retry;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.retry.RetryException;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +42,7 @@ class RetryUtilsTests {
 
 	/**
 	 * valid http 4xx
+	 *
 	 * @throws IOException ex
 	 */
 	@Test
@@ -55,7 +53,7 @@ class RetryUtilsTests {
 
 			when(response.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
 			when(response.getBody())
-				.thenReturn(new ByteArrayInputStream("Bad request".getBytes(StandardCharsets.UTF_8)));
+					.thenReturn(new ByteArrayInputStream("Bad request".getBytes(StandardCharsets.UTF_8)));
 
 			assertThrows(NonTransientAiException.class,
 					() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER.handleError(url, method, response));
@@ -64,6 +62,7 @@ class RetryUtilsTests {
 
 	/**
 	 * valid http 5xx
+	 *
 	 * @throws IOException ex
 	 */
 	@Test
@@ -73,7 +72,7 @@ class RetryUtilsTests {
 			HttpMethod method = HttpMethod.POST;
 			when(response.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
 			when(response.getBody())
-				.thenReturn(new ByteArrayInputStream("Server error".getBytes(StandardCharsets.UTF_8)));
+					.thenReturn(new ByteArrayInputStream("Server error".getBytes(StandardCharsets.UTF_8)));
 
 			assertThrows(TransientAiException.class,
 					() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER.handleError(url, method, response));
@@ -82,6 +81,7 @@ class RetryUtilsTests {
 
 	/**
 	 * valid not error
+	 *
 	 * @throws IOException ex
 	 */
 	@Test

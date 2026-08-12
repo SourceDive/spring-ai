@@ -16,17 +16,6 @@
 
 package org.springframework.ai.vectorstore.cassandra;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.servererrors.InvalidQueryException;
@@ -34,10 +23,6 @@ import com.datastax.oss.driver.api.core.servererrors.SyntaxError;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.cassandra.CassandraContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -53,6 +38,15 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.testcontainers.cassandra.CassandraContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +65,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 	static CassandraContainer cassandraContainer = new CassandraContainer(CassandraImage.DEFAULT_IMAGE);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	private static List<Document> documents() {
 		return List.of(new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("meta1", "meta1")),
@@ -84,28 +78,27 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private static CassandraVectorStore.Builder storeBuilder(CqlSession cqlSession, EmbeddingModel embeddingModel) {
 		return CassandraVectorStore.builder(embeddingModel)
-			.session(cqlSession)
-			.keyspace("test_" + CassandraVectorStore.DEFAULT_KEYSPACE_NAME);
+				.session(cqlSession)
+				.keyspace("test_" + CassandraVectorStore.DEFAULT_KEYSPACE_NAME);
 	}
 
 	private static CassandraVectorStore createTestStore(ApplicationContext context, SchemaColumn... metadataFields) {
 		CassandraVectorStore.Builder builder = storeBuilder(context.getBean(CqlSession.class),
 				context.getBean(EmbeddingModel.class))
-			.addMetadataColumns(metadataFields);
+				.addMetadataColumns(metadataFields);
 
 		return createTestStore(context, builder);
 	}
 
 	private static CassandraVectorStore createTestStore(ApplicationContext context,
-			CassandraVectorStore.Builder builder) {
+	                                                    CassandraVectorStore.Builder builder) {
 		CassandraVectorStore.dropKeyspace(builder);
 		CassandraVectorStore store = builder.build();
 		return store;
@@ -149,7 +142,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				store.add(documents);
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+						.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
 				assertThat(results).hasSize(1);
 				Document resultDoc = results.get(0);
@@ -187,36 +180,36 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				store.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression(java.lang.String.format("%s == 'NL'", CassandraVectorStore.DEFAULT_ID_NAME))
-					.build());
+						.query("The World")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression(java.lang.String.format("%s == 'NL'", CassandraVectorStore.DEFAULT_ID_NAME))
+						.build());
 
 				assertThat(results).hasSize(1);
 				assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression(java.lang.String.format("%s == 'BG2'", CassandraVectorStore.DEFAULT_ID_NAME))
-					.build());
+						.query("The World")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression(java.lang.String.format("%s == 'BG2'", CassandraVectorStore.DEFAULT_ID_NAME))
+						.build());
 
 				assertThat(results).hasSize(1);
 				assertThat(results.get(0).getId()).isEqualTo(bgDocument2.getId());
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression(
-							java.lang.String.format("%s == 'BG' && year == 2020", CassandraVectorStore.DEFAULT_ID_NAME))
-					.build());
+						.query("The World")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression(
+								java.lang.String.format("%s == 'BG' && year == 2020", CassandraVectorStore.DEFAULT_ID_NAME))
+						.build());
 
 				assertThat(results).hasSize(1);
 				assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
@@ -224,12 +217,12 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				// cassandra server will throw an error
 				Assertions.assertThrows(SyntaxError.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("The World")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression(java.lang.String.format("NOT(%s == 'BG' && year == 2020)",
-									CassandraVectorStore.DEFAULT_ID_NAME))
-							.build()));
+								.query("The World")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression(java.lang.String.format("NOT(%s == 'BG' && year == 2020)",
+										CassandraVectorStore.DEFAULT_ID_NAME))
+								.build()));
 			}
 		});
 	}
@@ -249,16 +242,16 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				store.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				Assertions.assertThrows(InvalidQueryException.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("The World")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("country == 'NL'")
-							.build()));
+								.query("The World")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("country == 'NL'")
+								.build()));
 			}
 		});
 	}
@@ -281,35 +274,35 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				store.add(List.of(bgDocument, nlDocument, bgDocument2));
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("country == 'NL'")
-					.build());
+						.query("The World")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("country == 'NL'")
+						.build());
 				assertThat(results).hasSize(1);
 				assertThat(results.get(0).getId()).isEqualTo(nlDocument.getId());
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("country == 'BG'")
-					.build());
+						.query("The World")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("country == 'BG'")
+						.build());
 
 				assertThat(results).hasSize(2);
 				assertThat(results.get(0).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 				assertThat(results.get(1).getId()).isIn(bgDocument.getId(), bgDocument2.getId());
 
 				results = store.similaritySearch(SearchRequest.builder()
-					.query("The World")
-					.topK(5)
-					.similarityThresholdAll()
-					.filterExpression("country == 'BG' && year == 2020")
-					.build());
+						.query("The World")
+						.topK(5)
+						.similarityThresholdAll()
+						.filterExpression("country == 'BG' && year == 2020")
+						.build());
 
 				assertThat(results).hasSize(1);
 				assertThat(results.get(0).getId()).isEqualTo(bgDocument.getId());
@@ -317,20 +310,20 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				// cassandra server will throw an error
 				Assertions.assertThrows(SyntaxError.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("The World")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("country == 'BG' || year == 2020")
-							.build()));
+								.query("The World")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("country == 'BG' || year == 2020")
+								.build()));
 
 				// cassandra server will throw an error
 				Assertions.assertThrows(SyntaxError.class,
 						() -> store.similaritySearch(SearchRequest.builder()
-							.query("The World")
-							.topK(5)
-							.similarityThresholdAll()
-							.filterExpression("NOT(country == 'BG' && year == 2020)")
-							.build()));
+								.query("The World")
+								.topK(5)
+								.similarityThresholdAll()
+								.filterExpression("NOT(country == 'BG' && year == 2020)")
+								.build()));
 			}
 		});
 	}
@@ -346,7 +339,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				store.add(List.of(document));
 
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
 
 				assertThat(results).hasSize(1);
 				Document resultDoc = results.get(0);
@@ -380,7 +373,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				store.add(documents());
 
 				List<Document> fullResult = store
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(5).similarityThresholdAll().build());
+						.similaritySearch(SearchRequest.builder().query("Spring").topK(5).similarityThresholdAll().build());
 
 				List<Double> scores = fullResult.stream().map(Document::getScore).toList();
 
@@ -389,10 +382,10 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 				double similarityThreshold = (scores.get(0) + scores.get(1)) / 2;
 
 				List<Document> results = store.similaritySearch(SearchRequest.builder()
-					.query("Spring")
-					.topK(5)
-					.similarityThreshold(similarityThreshold)
-					.build());
+						.query("Spring")
+						.topK(5)
+						.similarityThreshold(similarityThreshold)
+						.build());
 
 				assertThat(results).hasSize(1);
 				Document resultDoc = results.get(0);
@@ -425,7 +418,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 
 				// Verify initial state
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				// Delete documents with country = BG
@@ -461,7 +454,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 
 				// Verify initial state
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("The World").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				store.delete("country == 'BG'");
@@ -503,10 +496,10 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 
 				assertThat(results).hasSize(2);
 				assertThat(results.stream().map(doc -> doc.getMetadata().get("type")).collect(Collectors.toList()))
-					.containsExactlyInAnyOrder("A", "B");
+						.containsExactlyInAnyOrder("A", "B");
 				assertThat(results.stream()
-					.map(doc -> ((Short) doc.getMetadata().get("priority")).intValue())
-					.collect(Collectors.toList())).containsExactlyInAnyOrder(1, 1);
+						.map(doc -> ((Short) doc.getMetadata().get("priority")).intValue())
+						.collect(Collectors.toList())).containsExactlyInAnyOrder(1, 1);
 			}
 		});
 	}
@@ -536,7 +529,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 
 				// Verify initial state
 				List<Document> results = store
-					.similaritySearch(SearchRequest.builder().query("document").topK(5).build());
+						.similaritySearch(SearchRequest.builder().query("document").topK(5).build());
 				assertThat(results).hasSize(3);
 
 				try {
@@ -546,11 +539,11 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 
 					// Search using programmatic filter
 					store.similaritySearch(SearchRequest.builder()
-						.query("document")
-						.topK(5)
-						.similarityThresholdAll()
-						.filterExpression(filterExpression)
-						.build());
+							.query("document")
+							.topK(5)
+							.similarityThresholdAll()
+							.filterExpression(filterExpression)
+							.build());
 
 					// If we get here without an exception, it means Cassandra
 					// unexpectedly accepted the query,
@@ -558,8 +551,7 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 					// on collection columns.
 					// This would indicate a potential change in Cassandra's behavior.
 					Assertions.fail("Expected InvalidQueryException from Cassandra");
-				}
-				catch (InvalidQueryException e) {
+				} catch (InvalidQueryException e) {
 					// This is the expected outcome: Cassandra rejects the query with a
 					// specific error
 					// indicating that collection columns cannot be used with IN
@@ -587,10 +579,10 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 			// Now try with invalid index name but don't reinitialize schema
 			CassandraVectorStore.Builder invalidBuilder = storeBuilder(context.getBean(CqlSession.class),
 					context.getBean(EmbeddingModel.class))
-				.addMetadataColumns(new SchemaColumn("meta1", DataTypes.TEXT),
-						new SchemaColumn("meta2", DataTypes.TEXT))
-				.indexName("non_existent_index_name")
-				.initializeSchema(false);
+					.addMetadataColumns(new SchemaColumn("meta1", DataTypes.TEXT),
+							new SchemaColumn("meta2", DataTypes.TEXT))
+					.indexName("non_existent_index_name")
+					.initializeSchema(false);
 
 			IllegalStateException exception = Assertions.assertThrows(IllegalStateException.class,
 					invalidBuilder::build);
@@ -624,10 +616,10 @@ class CassandraVectorStoreIT extends BaseVectorStoreTests {
 		@Bean
 		public CqlSession cqlSession() {
 			return new CqlSessionBuilder()
-				// comment next two lines out to connect to a local C* cluster
-				.addContactPoint(cassandraContainer.getContactPoint())
-				.withLocalDatacenter(cassandraContainer.getLocalDatacenter())
-				.build();
+					// comment next two lines out to connect to a local C* cluster
+					.addContactPoint(cassandraContainer.getContactPoint())
+					.withLocalDatacenter(cassandraContainer.getLocalDatacenter())
+					.build();
 		}
 
 	}

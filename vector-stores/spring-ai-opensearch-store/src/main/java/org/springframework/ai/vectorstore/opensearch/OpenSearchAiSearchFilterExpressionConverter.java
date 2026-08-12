@@ -16,16 +16,16 @@
 
 package org.springframework.ai.vectorstore.opensearch;
 
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.converter.AbstractFilterExpressionConverter;
 import org.springframework.util.Assert;
+
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A FilterExpressionConverter implementation for OpenSearch AI search filter expressions.
@@ -50,8 +50,7 @@ public class OpenSearchAiSearchFilterExpressionConverter extends AbstractFilterE
 			context.append("(");
 			this.convertOperand(expression.right(), context);
 			context.append(")");
-		}
-		else {
+		} else {
 			this.convertOperand(expression.left(), context);
 			context.append(getOperationSymbol(expression));
 			this.convertOperand(expression.right(), context);
@@ -107,8 +106,7 @@ public class OpenSearchAiSearchFilterExpressionConverter extends AbstractFilterE
 					this.doAddValueRangeSpitter(filterValue, context);
 				}
 			}
-		}
-		else {
+		} else {
 			this.doSingleValue(normalizeDateString(filterValue.value()), context);
 		}
 	}
@@ -117,11 +115,9 @@ public class OpenSearchAiSearchFilterExpressionConverter extends AbstractFilterE
 	protected void doSingleValue(Object value, StringBuilder context) {
 		if (value instanceof Date date) {
 			context.append(this.dateFormat.format(date.toInstant()));
-		}
-		else if (value instanceof String text) {
+		} else if (value instanceof String text) {
 			emitLuceneString(text, context);
-		}
-		else {
+		} else {
 			context.append(value);
 		}
 	}

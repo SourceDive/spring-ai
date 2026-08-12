@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.adapter;
 
-import java.lang.reflect.Method;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
+
+import java.lang.reflect.Method;
 
 /**
  * Utility class for adapting between McpComplete annotations and
@@ -36,10 +35,11 @@ public final class CompleteAdapter {
 
 	/**
 	 * Convert a McpComplete annotation to a McpSchema.CompleteReference object.
+	 *
 	 * @param mcpComplete The McpComplete annotation
 	 * @return The corresponding McpSchema.CompleteReference object
 	 * @throws IllegalArgumentException if neither prompt nor uri is provided, or if both
-	 * are provided
+	 *                                  are provided
 	 */
 	public static McpSchema.CompleteReference asCompleteReference(McpComplete mcpComplete) {
 		Assert.notNull(mcpComplete, "mcpComplete cannot be null");
@@ -58,8 +58,7 @@ public final class CompleteAdapter {
 		// Create the appropriate reference type based on what's provided
 		if (prompt != null && !prompt.isEmpty()) {
 			return new McpSchema.PromptReference(prompt);
-		}
-		else {
+		} else {
 			return new McpSchema.ResourceReference(uri);
 		}
 	}
@@ -67,11 +66,12 @@ public final class CompleteAdapter {
 	/**
 	 * Convert a McpComplete annotation and Method to a McpSchema.CompleteReference
 	 * object.
+	 *
 	 * @param mcpComplete The McpComplete annotation
-	 * @param method The method annotated with McpComplete
+	 * @param method      The method annotated with McpComplete
 	 * @return The corresponding McpSchema.CompleteReference object
 	 * @throws IllegalArgumentException if neither prompt nor uri is provided, or if both
-	 * are provided
+	 *                                  are provided
 	 */
 	public static McpSchema.CompleteReference asCompleteReference(McpComplete mcpComplete, Method method) {
 		Assert.notNull(method, "method cannot be null");

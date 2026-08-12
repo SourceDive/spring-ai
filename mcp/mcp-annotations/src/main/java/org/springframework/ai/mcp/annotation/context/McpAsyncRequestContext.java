@@ -16,18 +16,12 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
-import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
-import io.modelcontextprotocol.spec.McpSchema.ListRootsResult;
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
+import io.modelcontextprotocol.spec.McpSchema.*;
+import org.springframework.core.ParameterizedTypeReference;
 import reactor.core.publisher.Mono;
 
-import org.springframework.core.ParameterizedTypeReference;
+import java.util.function.Consumer;
 
 /**
  * Async (Reactor) version of McpSyncRequestContext that returns Mono of value types.
@@ -54,7 +48,7 @@ public interface McpAsyncRequestContext extends McpRequestContextTypes<McpAsyncS
 	<T> Mono<StructuredElicitResult<T>> elicit(ParameterizedTypeReference<T> type);
 
 	<T> Mono<StructuredElicitResult<T>> elicit(Consumer<ElicitationSpec> spec,
-			ParameterizedTypeReference<T> returnType);
+	                                           ParameterizedTypeReference<T> returnType);
 
 	<T> Mono<StructuredElicitResult<T>> elicit(Consumer<ElicitationSpec> spec, Class<T> returnType);
 

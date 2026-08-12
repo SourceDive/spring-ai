@@ -21,15 +21,9 @@ import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit Tests for {@link TextToSpeechModel}.
@@ -42,7 +36,7 @@ class TextToSpeechModelTests {
 	@Test
 	void callWithStringCallsCallWithPromptAndReturnsAudioCorrectly() {
 		String inputText = "Hello, world!";
-		byte[] expectedAudio = new byte[] { 1, 2, 3, 4, 5 };
+		byte[] expectedAudio = new byte[]{1, 2, 3, 4, 5};
 
 		TextToSpeechModel mockModel = Mockito.mock(TextToSpeechModel.class);
 
@@ -176,14 +170,14 @@ class TextToSpeechModelTests {
 		doCallRealMethod().when(mockModel).call(anyString());
 
 		// First call
-		setupMockResponse(mockModel, new byte[] { 1, 2, 3 });
+		setupMockResponse(mockModel, new byte[]{1, 2, 3});
 		byte[] result1 = mockModel.call("Message 1");
-		assertThat(result1).isEqualTo(new byte[] { 1, 2, 3 });
+		assertThat(result1).isEqualTo(new byte[]{1, 2, 3});
 
 		// Second call
-		setupMockResponse(mockModel, new byte[] { 4, 5, 6 });
+		setupMockResponse(mockModel, new byte[]{4, 5, 6});
 		byte[] result2 = mockModel.call("Message 2");
-		assertThat(result2).isEqualTo(new byte[] { 4, 5, 6 });
+		assertThat(result2).isEqualTo(new byte[]{4, 5, 6});
 
 		verify(mockModel, times(2)).call(anyString());
 		verify(mockModel, times(2)).call(any(TextToSpeechPrompt.class));

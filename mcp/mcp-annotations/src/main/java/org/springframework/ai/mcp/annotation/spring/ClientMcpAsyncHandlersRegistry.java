@@ -16,27 +16,20 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
+import io.modelcontextprotocol.spec.McpError;
+import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.ai.mcp.annotation.*;
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import io.modelcontextprotocol.spec.McpError;
-import io.modelcontextprotocol.spec.McpSchema;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import org.springframework.ai.mcp.annotation.McpElicitation;
-import org.springframework.ai.mcp.annotation.McpLogging;
-import org.springframework.ai.mcp.annotation.McpProgress;
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
-import org.springframework.ai.mcp.annotation.McpSampling;
-import org.springframework.ai.mcp.annotation.McpToolListChanged;
-import org.springframework.beans.factory.SmartInitializingSingleton;
 
 /**
  * Registry of methods annotated with MCP Client annotations (sampling, logging, etc.).
@@ -53,6 +46,7 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  * Second, after all singleton beans have been instantiated, all annotated beans are
  * scanned again, MCP handlers are created to match the annotations, and stored by client.
  *
+ * @author Daniel Garnier-Moiroux
  * @see McpSampling
  * @see McpElicitation
  * @see McpLogging
@@ -60,7 +54,6 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  * @see McpToolListChanged
  * @see McpPromptListChanged
  * @see McpResourceListChanged
- * @author Daniel Garnier-Moiroux
  * @since 1.1.0
  */
 public class ClientMcpAsyncHandlersRegistry extends AbstractClientMcpHandlerRegistry
@@ -96,7 +89,7 @@ public class ClientMcpAsyncHandlersRegistry extends AbstractClientMcpHandlerRegi
 	 * @see McpSampling
 	 */
 	public Mono<McpSchema.CreateMessageResult> handleSampling(String name,
-			McpSchema.CreateMessageRequest samplingRequest) {
+	                                                          McpSchema.CreateMessageRequest samplingRequest) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Handling sampling request for client " + name);
 		}
@@ -210,7 +203,7 @@ public class ClientMcpAsyncHandlersRegistry extends AbstractClientMcpHandlerRegi
 		var beansByAnnotation = this.getBeansByAnnotationType();
 
 		var samplingSpecs = AsyncMcpAnnotationProviders
-			.samplingSpecifications(new ArrayList<>(beansByAnnotation.get(McpSampling.class)));
+				.samplingSpecifications(new ArrayList<>(beansByAnnotation.get(McpSampling.class)));
 		for (var samplingSpec : samplingSpecs) {
 			for (var client : samplingSpec.clients()) {
 				if (logger.isDebugEnabled()) {
@@ -221,7 +214,7 @@ public class ClientMcpAsyncHandlersRegistry extends AbstractClientMcpHandlerRegi
 		}
 
 		var elicitationSpecs = AsyncMcpAnnotationProviders
-			.elicitationSpecifications(new ArrayList<>(beansByAnnotation.get(McpElicitation.class)));
+				.elicitationSpecifications(new ArrayList<>(beansByAnnotation.get(McpElicitation.class)));
 		for (var elicitationSpec : elicitationSpecs) {
 			for (var client : elicitationSpec.clients()) {
 				if (logger.isDebugEnabled()) {
@@ -232,7 +225,7 @@ public class ClientMcpAsyncHandlersRegistry extends AbstractClientMcpHandlerRegi
 		}
 
 		var loggingSpecs = AsyncMcpAnnotationProviders
-			.loggingSpecifications(new ArrayList<>(beansByAnnotation.get(McpLogging.class)));
+				.loggingSpecifications(new ArrayList<>(beansByAnnotation.get(McpLogging.class)));
 		for (var loggingSpec : loggingSpecs) {
 			for (var client : loggingSpec.clients()) {
 				if (logger.isDebugEnabled()) {
@@ -243,50 +236,50 @@ public class ClientMcpAsyncHandlersRegistry extends AbstractClientMcpHandlerRegi
 		}
 
 		var progressSpecs = AsyncMcpAnnotationProviders
-			.progressSpecifications(new ArrayList<>(beansByAnnotation.get(McpProgress.class)));
+				.progressSpecifications(new ArrayList<>(beansByAnnotation.get(McpProgress.class)));
 		for (var progressSpec : progressSpecs) {
 			for (var client : progressSpec.clients()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Registering progress handler for " + client);
 				}
 				this.progressHandlers.computeIfAbsent(client, k -> new ArrayList<>())
-					.add(progressSpec.progressHandler());
+						.add(progressSpec.progressHandler());
 			}
 		}
 
 		var toolsListChangedSpecs = AsyncMcpAnnotationProviders
-			.toolListChangedSpecifications(new ArrayList<>(beansByAnnotation.get(McpToolListChanged.class)));
+				.toolListChangedSpecifications(new ArrayList<>(beansByAnnotation.get(McpToolListChanged.class)));
 		for (var toolsListChangedSpec : toolsListChangedSpecs) {
 			for (var client : toolsListChangedSpec.clients()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Registering tool list changed handler for " + client);
 				}
 				this.toolListChangedHandlers.computeIfAbsent(client, k -> new ArrayList<>())
-					.add(toolsListChangedSpec.toolListChangeHandler());
+						.add(toolsListChangedSpec.toolListChangeHandler());
 			}
 		}
 
 		var promptListChangedSpecs = AsyncMcpAnnotationProviders
-			.promptListChangedSpecifications(new ArrayList<>(beansByAnnotation.get(McpPromptListChanged.class)));
+				.promptListChangedSpecifications(new ArrayList<>(beansByAnnotation.get(McpPromptListChanged.class)));
 		for (var promptListChangedSpec : promptListChangedSpecs) {
 			for (var client : promptListChangedSpec.clients()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Registering prompt list changed handler for " + client);
 				}
 				this.promptListChangedHandlers.computeIfAbsent(client, k -> new ArrayList<>())
-					.add(promptListChangedSpec.promptListChangeHandler());
+						.add(promptListChangedSpec.promptListChangeHandler());
 			}
 		}
 
 		var resourceListChangedSpecs = AsyncMcpAnnotationProviders
-			.resourceListChangedSpecifications(new ArrayList<>(beansByAnnotation.get(McpResourceListChanged.class)));
+				.resourceListChangedSpecifications(new ArrayList<>(beansByAnnotation.get(McpResourceListChanged.class)));
 		for (var resourceListChangedSpec : resourceListChangedSpecs) {
 			for (var client : resourceListChangedSpec.clients()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Registering resource list changed handler for " + client);
 				}
 				this.resourceListChangedHandlers.computeIfAbsent(client, k -> new ArrayList<>())
-					.add(resourceListChangedSpec.resourceListChangeHandler());
+						.add(resourceListChangedSpec.resourceListChangeHandler());
 			}
 		}
 

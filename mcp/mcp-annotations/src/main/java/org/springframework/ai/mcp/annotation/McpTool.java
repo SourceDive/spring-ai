@@ -16,14 +16,10 @@
 
 package org.springframework.ai.mcp.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.springframework.ai.mcp.annotation.context.DefaultMetaProvider;
 import org.springframework.ai.mcp.annotation.context.MetaProvider;
+
+import java.lang.annotation.*;
 
 /**
  * @author Christian Tzolov
@@ -31,7 +27,7 @@ import org.springframework.ai.mcp.annotation.context.MetaProvider;
  * @author Vadzim Shurmialiou
  * @author Craig Walls
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface McpTool {
@@ -73,11 +69,11 @@ public @interface McpTool {
 
 	/**
 	 * Additional properties describing a Tool to clients.
-	 *
+	 * <p>
 	 * all properties in ToolAnnotations are hints. They are not guaranteed to provide a
 	 * faithful description of tool behavior (including descriptive properties like
 	 * title).
-	 *
+	 * <p>
 	 * Clients should never make tool use decisions based on ToolAnnotations received from
 	 * untrusted servers.
 	 */
@@ -98,7 +94,7 @@ public @interface McpTool {
 		/**
 		 * If true, the tool may perform destructive updates to its environment. If false,
 		 * the tool performs only additive updates.
-		 *
+		 * <p>
 		 * (This property is meaningful only when readOnlyHint == false)
 		 */
 		boolean destructiveHint() default true;
@@ -106,7 +102,7 @@ public @interface McpTool {
 		/**
 		 * If true, calling the tool repeatedly with the same arguments will have no
 		 * additional effect on the its environment.
-		 *
+		 * <p>
 		 * (This property is meaningful only when readOnlyHint == false)
 		 */
 		boolean idempotentHint() default false;

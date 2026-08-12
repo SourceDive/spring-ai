@@ -16,14 +16,10 @@
 
 package org.springframework.ai.model.tool.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.tool.ToolCallback;
@@ -45,6 +41,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ClassUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Auto-configuration for common tool calling features of {@link ChatModel}.
@@ -87,9 +86,9 @@ public class ToolCallingAutoConfiguration {
 		totalToolCallbackProviders = totalToolCallbackProviders.stream().distinct().toList();
 
 		totalToolCallbackProviders.stream()
-			.filter(pr -> !isMcpToolCallbackProvider(ResolvableType.forInstance(pr)))
-			.map(pr -> List.of(pr.getToolCallbacks()))
-			.forEach(allFunctionAndToolCallbacks::addAll);
+				.filter(pr -> !isMcpToolCallbackProvider(ResolvableType.forInstance(pr)))
+				.map(pr -> List.of(pr.getToolCallbacks()))
+				.forEach(allFunctionAndToolCallbacks::addAll);
 
 		var staticToolCallbackResolver = new StaticToolCallbackResolver(allFunctionAndToolCallbacks);
 
@@ -120,22 +119,22 @@ public class ToolCallingAutoConfiguration {
 		}
 
 		return DefaultToolExecutionExceptionProcessor.builder()
-			.alwaysThrow(properties.isThrowExceptionOnError())
-			.rethrowExceptions(rethrownExceptions)
-			.build();
+				.alwaysThrow(properties.isThrowExceptionOnError())
+				.rethrowExceptions(rethrownExceptions)
+				.build();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
 	ToolCallingManager toolCallingManager(ToolCallbackResolver toolCallbackResolver,
-			ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ToolCallingObservationConvention> observationConvention) {
+	                                      ToolExecutionExceptionProcessor toolExecutionExceptionProcessor,
+	                                      ObjectProvider<ObservationRegistry> observationRegistry,
+	                                      ObjectProvider<ToolCallingObservationConvention> observationConvention) {
 		var toolCallingManager = ToolCallingManager.builder()
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.toolCallbackResolver(toolCallbackResolver)
-			.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
-			.build();
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.toolCallbackResolver(toolCallbackResolver)
+				.toolExecutionExceptionProcessor(toolExecutionExceptionProcessor)
+				.build();
 
 		observationConvention.ifAvailable(toolCallingManager::setObservationConvention);
 
@@ -157,19 +156,16 @@ public class ToolCallingAutoConfiguration {
 			Class<?> clazz = ClassUtils.forName(className, null);
 			if (RuntimeException.class.isAssignableFrom(clazz)) {
 				return (Class<? extends RuntimeException>) clazz;
-			}
-			else {
+			} else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Class " + className + " is not a subclass of RuntimeException");
 				}
 			}
-		}
-		catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Cannot load class: " + className);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Error loading class: " + className, e);
 			}

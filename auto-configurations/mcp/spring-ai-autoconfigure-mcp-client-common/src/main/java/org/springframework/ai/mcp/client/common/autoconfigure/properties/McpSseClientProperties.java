@@ -16,12 +16,11 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.properties;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Configuration properties for Server-Sent Events (SSE) based MCP client connections.
@@ -55,8 +54,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * </pre>
  *
  * @author Christian Tzolov
- * @since 1.0.0
  * @see SseParameters
+ * @since 1.0.0
  */
 @ConfigurationProperties(McpSseClientProperties.CONFIG_PREFIX)
 @Deprecated(since = "2.0.0", forRemoval = true)
@@ -74,6 +73,7 @@ public class McpSseClientProperties {
 
 	/**
 	 * Returns the map of configured SSE connections.
+	 *
 	 * @return map of connection names to their SSE parameters
 	 */
 	public Map<String, SseParameters> getConnections() {
@@ -83,7 +83,7 @@ public class McpSseClientProperties {
 	/**
 	 * Parameters for configuring an SSE connection to an MCP server.
 	 *
-	 * @param url the URL endpoint for SSE communication with the MCP server
+	 * @param url         the URL endpoint for SSE communication with the MCP server
 	 * @param sseEndpoint the SSE endpoint for the MCP server
 	 */
 	public record SseParameters(@Nullable String url, @Nullable String sseEndpoint) {

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.transformer;
 
-import org.jspecify.annotations.NullMarked;

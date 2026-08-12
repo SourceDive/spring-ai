@@ -16,13 +16,12 @@
 
 package org.springframework.ai.vectorstore.opensearch.autoconfigure;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.vectorstore.properties.CommonVectorStoreProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
+import java.util.List;
 
 @ConfigurationProperties(prefix = OpenSearchVectorStoreProperties.CONFIG_PREFIX)
 public class OpenSearchVectorStoreProperties extends CommonVectorStoreProperties {

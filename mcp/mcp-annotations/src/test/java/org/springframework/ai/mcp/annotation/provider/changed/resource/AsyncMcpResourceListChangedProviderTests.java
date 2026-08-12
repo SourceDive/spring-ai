@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.resource;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpResourceListChanged;
+import org.springframework.ai.mcp.annotation.method.changed.resource.AsyncResourceListChangedSpecification;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpResourceListChanged;
-import org.springframework.ai.mcp.annotation.method.changed.resource.AsyncResourceListChangedSpecification;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,13 +38,13 @@ public class AsyncMcpResourceListChangedProviderTests {
 
 	private static final List<McpSchema.Resource> TEST_RESOURCES = List.of(
 			McpSchema.Resource.builder("file:///test1.txt", "test-resource-1")
-				.description("Test Resource 1")
-				.mimeType("text/plain")
-				.build(),
+					.description("Test Resource 1")
+					.mimeType("text/plain")
+					.build(),
 			McpSchema.Resource.builder("file:///test2.txt", "test-resource-2")
-				.description("Test Resource 2")
-				.mimeType("text/plain")
-				.build());
+					.description("Test Resource 2")
+					.mimeType("text/plain")
+					.build());
 
 	@Test
 	void testGetResourceListChangedSpecifications() {
@@ -54,8 +53,8 @@ public class AsyncMcpResourceListChangedProviderTests {
 
 		List<AsyncResourceListChangedSpecification> specifications = provider.getResourceListChangedSpecifications();
 		List<Function<List<McpSchema.Resource>, Mono<Void>>> consumers = specifications.stream()
-			.map(AsyncResourceListChangedSpecification::resourceListChangeHandler)
-			.toList();
+				.map(AsyncResourceListChangedSpecification::resourceListChangeHandler)
+				.toList();
 
 		// Should find 2 annotated methods (2 Mono<Void>. Ignores the void method)
 		assertThat(consumers).hasSize(2);
@@ -104,9 +103,9 @@ public class AsyncMcpResourceListChangedProviderTests {
 		AsyncMcpResourceListChangedProvider provider = new AsyncMcpResourceListChangedProvider(List.of());
 
 		List<Function<List<McpSchema.Resource>, Mono<Void>>> consumers = provider.getResourceListChangedSpecifications()
-			.stream()
-			.map(AsyncResourceListChangedSpecification::resourceListChangeHandler)
-			.toList();
+				.stream()
+				.map(AsyncResourceListChangedSpecification::resourceListChangeHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -119,9 +118,9 @@ public class AsyncMcpResourceListChangedProviderTests {
 				List.of(handler1, handler2));
 
 		List<Function<List<McpSchema.Resource>, Mono<Void>>> consumers = provider.getResourceListChangedSpecifications()
-			.stream()
-			.map(AsyncResourceListChangedSpecification::resourceListChangeHandler)
-			.toList();
+				.stream()
+				.map(AsyncResourceListChangedSpecification::resourceListChangeHandler)
+				.toList();
 
 		// Should find 4 annotated methods (2 from each handler) drops the non-reactive
 		// ones

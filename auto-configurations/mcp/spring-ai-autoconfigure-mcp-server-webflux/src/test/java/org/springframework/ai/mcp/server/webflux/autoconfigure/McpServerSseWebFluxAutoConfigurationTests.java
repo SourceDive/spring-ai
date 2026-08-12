@@ -17,8 +17,6 @@
 package org.springframework.ai.mcp.server.webflux.autoconfigure;
 
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.server.common.autoconfigure.McpServerJsonMapperAutoConfiguration;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.ai.mcp.server.webflux.transport.WebFluxSseServerTransportProvider;
@@ -27,14 +25,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class McpServerSseWebFluxAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(McpServerSseWebFluxAutoConfiguration.class,
-				McpServerJsonMapperAutoConfiguration.class, TestConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(McpServerSseWebFluxAutoConfiguration.class,
+					McpServerJsonMapperAutoConfiguration.class, TestConfiguration.class));
 
 	@Test
 	void shouldConfigureWebFluxTransportWithCustomJsonMapper() {
@@ -48,7 +47,7 @@ class McpServerSseWebFluxAutoConfigurationTests {
 			// Verify that the JsonMapper is configured to ignore unknown properties
 
 			assertThat(jsonMapper.isEnabled(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES))
-				.isFalse();
+					.isFalse();
 
 			// Test with a JSON payload containing unknown fields
 			// CHECKSTYLE:OFF

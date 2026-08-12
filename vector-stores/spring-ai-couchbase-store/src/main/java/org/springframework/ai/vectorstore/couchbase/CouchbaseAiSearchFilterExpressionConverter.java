@@ -36,8 +36,7 @@ public class CouchbaseAiSearchFilterExpressionConverter extends AbstractFilterEx
 		context.append(getOperationSymbol(expression));
 		if (expression.right() != null) {
 			this.convertOperand(expression.right(), context);
-		}
-		else {
+		} else {
 			context.append("NULL");
 		}
 	}
@@ -70,8 +69,7 @@ public class CouchbaseAiSearchFilterExpressionConverter extends AbstractFilterEx
 			char c = identifier.charAt(i);
 			if (c == '`') {
 				context.append("``");
-			}
-			else {
+			} else {
 				context.append(c);
 			}
 		}

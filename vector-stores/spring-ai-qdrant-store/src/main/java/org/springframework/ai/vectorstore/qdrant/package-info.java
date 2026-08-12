@@ -20,4 +20,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.qdrant;
 
-import org.jspecify.annotations.NullMarked;

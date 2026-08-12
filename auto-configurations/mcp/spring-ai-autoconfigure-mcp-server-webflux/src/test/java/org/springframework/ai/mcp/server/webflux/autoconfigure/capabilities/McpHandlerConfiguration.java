@@ -51,7 +51,7 @@ public class McpHandlerConfiguration {
 	record ElicitationHandler() {
 
 		@McpElicitation(clients = "server1")
-		public StructuredElicitResult<ElicitInput> elicitationHandler(McpSchema.ElicitRequest request) {
+		public StructuredElicitResult<ElicitInput> elicitationHandler (McpSchema.ElicitRequest request){
 			ElicitInput elicitData = new ElicitInput(request.message());
 			return StructuredElicitResult.builder().structuredContent(elicitData).build();
 		}

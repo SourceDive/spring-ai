@@ -16,16 +16,15 @@
 
 package org.springframework.ai.vectorstore.qdrant;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import io.qdrant.client.grpc.JsonWithInt.ListValue;
 import io.qdrant.client.grpc.JsonWithInt.Value;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility methods for building Java objects from io.qdrant.client.grpc.JsonWithInt.Value.

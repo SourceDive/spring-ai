@@ -16,20 +16,19 @@
 
 package org.springframework.ai.mcp.annotation.method.elicitation;
 
-import java.lang.reflect.Method;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpElicitation;
 import org.springframework.ai.mcp.annotation.context.StructuredElicitResult;
 import org.springframework.ai.util.JsonHelper;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
 /**
  * Class for creating Function callbacks around elicitation methods that return Mono.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpElicitation} into
  * callback functions that can be used to handle elicitation requests in a reactive way.
  * It supports methods with a single ElicitRequest parameter.
@@ -50,11 +49,12 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 	 * <p>
 	 * This method builds the arguments for the method call, invokes the method, and
 	 * returns a Mono that completes with the result.
+	 *
 	 * @param request The elicitation request, must not be null
 	 * @return A Mono that completes with the result of the method invocation
 	 * @throws McpElicitationMethodException if there is an error invoking the elicitation
-	 * method
-	 * @throws IllegalArgumentException if the request is null
+	 *                                       method
+	 * @throws IllegalArgumentException      if the request is null
 	 */
 	@Override
 	public Mono<ElicitResult> apply(ElicitRequest request) {
@@ -81,13 +81,12 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 								? jsonHelper.convertToMap(structuredElicitResult.structuredContent()) : null;
 
 						return Mono.just(ElicitResult.builder()
-							.message(structuredElicitResult.action())
-							.content(content)
-							.meta(structuredElicitResult.meta())
-							.build());
+								.message(structuredElicitResult.action())
+								.content(content)
+								.meta(structuredElicitResult.meta())
+								.build());
 
-					}
-					else if (value instanceof ElicitResult) {
+					} else if (value instanceof ElicitResult) {
 						return Mono.just((ElicitResult) value);
 					}
 
@@ -100,8 +99,7 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 			// Otherwise, throw an exception
 			return Mono.error(new McpElicitationMethodException(
 					"Method must return Mono<ElicitResult> or Mono<StructuredElicitResult>: " + this.method.getName()));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return Mono.error(new McpElicitationMethodException(
 					"Error invoking elicitation method: " + this.method.getName(), e));
 		}
@@ -109,6 +107,7 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 
 	/**
 	 * Validates that the method return type is compatible with the elicitation callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -125,6 +124,7 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 
 	/**
 	 * Checks if a parameter type is compatible with the exchange type.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -137,6 +137,7 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -153,6 +154,7 @@ public final class AsyncMcpElicitationMethodCallback extends AbstractMcpElicitat
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new AsyncMcpElicitationMethodCallback instance
 		 */
 		@Override

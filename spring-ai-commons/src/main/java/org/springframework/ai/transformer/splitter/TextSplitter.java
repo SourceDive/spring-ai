@@ -16,19 +16,18 @@
 
 package org.springframework.ai.transformer.splitter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.document.ContentFormatter;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentTransformer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.document.ContentFormatter;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.document.DocumentTransformer;
 
 public abstract class TextSplitter implements DocumentTransformer {
 
@@ -80,7 +79,7 @@ public abstract class TextSplitter implements DocumentTransformer {
 	}
 
 	private List<Document> createDocuments(List<String> texts, List<ContentFormatter> formatters,
-			List<Map<String, Object>> metadataList, List<@Nullable Double> scores, List<String> originalIds) {
+	                                       List<Map<String, Object>> metadataList, List<@Nullable Double> scores, List<String> originalIds) {
 
 		// Process the data in a column oriented way and recreate the Document
 		List<Document> documents = new ArrayList<>();
@@ -102,21 +101,21 @@ public abstract class TextSplitter implements DocumentTransformer {
 				String chunk = chunks.get(chunkIndex);
 
 				Map<String, Object> enhancedMetadata = metadata.entrySet()
-					.stream()
-					// filter left here despite explicit JSpecify disallowing nulls for
-					// now.
-					.filter(e -> e.getKey() != null && e.getValue() != null)
-					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+						.stream()
+						// filter left here despite explicit JSpecify disallowing nulls for
+						// now.
+						.filter(e -> e.getKey() != null && e.getValue() != null)
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 				enhancedMetadata.put("parent_document_id", originalId);
 				enhancedMetadata.put("chunk_index", chunkIndex);
 				enhancedMetadata.put("total_chunks", chunks.size());
 
 				Document newDoc = Document.builder()
-					.text(chunk)
-					.metadata(enhancedMetadata)
-					.score(originalScore)
-					.build();
+						.text(chunk)
+						.metadata(enhancedMetadata)
+						.score(originalScore)
+						.build();
 
 				if (this.copyContentFormatter) {
 					// Transfer the content-formatter of the parent to the chunked

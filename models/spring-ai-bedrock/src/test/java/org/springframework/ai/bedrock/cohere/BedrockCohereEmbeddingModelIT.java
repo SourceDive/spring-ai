@@ -16,15 +16,8 @@
 
 package org.springframework.ai.bedrock.cohere;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.bedrock.RequiresAwsCredentials;
 import org.springframework.ai.bedrock.cohere.api.CohereEmbeddingBedrockApi;
 import org.springframework.ai.bedrock.cohere.api.CohereEmbeddingBedrockApi.CohereEmbeddingModel;
@@ -37,6 +30,12 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -94,7 +93,7 @@ class BedrockCohereEmbeddingModelIT {
 		String longText = "x".repeat(3000);
 
 		ArgumentCaptor<CohereEmbeddingBedrockApi.CohereEmbeddingRequest> requestCaptor = ArgumentCaptor
-			.forClass(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.class);
+				.forClass(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.class);
 
 		EmbeddingResponse embeddingResponse = this.embeddingModel.embedForResponse(List.of(longText));
 
@@ -118,7 +117,7 @@ class BedrockCohereEmbeddingModelIT {
 		assertThat(longText.length()).isGreaterThan(2048);
 
 		ArgumentCaptor<CohereEmbeddingBedrockApi.CohereEmbeddingRequest> requestCaptor = ArgumentCaptor
-			.forClass(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.class);
+				.forClass(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.class);
 
 		EmbeddingResponse embeddingResponse = this.embeddingModelStartTruncate.embedForResponse(List.of(longText));
 
@@ -139,7 +138,7 @@ class BedrockCohereEmbeddingModelIT {
 	void batchEmbedding() {
 		assertThat(this.embeddingModel).isNotNull();
 		EmbeddingResponse embeddingResponse = this.embeddingModel
-			.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
+				.embedForResponse(List.of("Hello World", "World is big and salvation is near"));
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 		assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
@@ -153,8 +152,8 @@ class BedrockCohereEmbeddingModelIT {
 	void embeddingWthOptions() {
 		assertThat(this.embeddingModel).isNotNull();
 		EmbeddingResponse embeddingResponse = this.embeddingModel
-			.call(new EmbeddingRequest(List.of("Hello World", "World is big and salvation is near"),
-					BedrockCohereEmbeddingOptions.builder().inputType(InputType.SEARCH_DOCUMENT).build()));
+				.call(new EmbeddingRequest(List.of("Hello World", "World is big and salvation is near"),
+						BedrockCohereEmbeddingOptions.builder().inputType(InputType.SEARCH_DOCUMENT).build()));
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 		assertThat(embeddingResponse.getResults().get(0).getOutput()).isNotEmpty();
 		assertThat(embeddingResponse.getResults().get(0).getIndex()).isEqualTo(0);
@@ -180,9 +179,9 @@ class BedrockCohereEmbeddingModelIT {
 			// NONE.
 			return new BedrockCohereEmbeddingModel(cohereEmbeddingApi,
 					BedrockCohereEmbeddingOptions.builder()
-						.inputType(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.InputType.SEARCH_DOCUMENT)
-						.truncate(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.Truncate.END)
-						.build());
+							.inputType(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.InputType.SEARCH_DOCUMENT)
+							.truncate(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.Truncate.END)
+							.build());
 		}
 
 		@Bean("embeddingModelStartTruncate")
@@ -192,9 +191,9 @@ class BedrockCohereEmbeddingModelIT {
 			// default NONE.
 			return new BedrockCohereEmbeddingModel(cohereEmbeddingApi,
 					BedrockCohereEmbeddingOptions.builder()
-						.inputType(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.InputType.SEARCH_DOCUMENT)
-						.truncate(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.Truncate.START)
-						.build());
+							.inputType(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.InputType.SEARCH_DOCUMENT)
+							.truncate(CohereEmbeddingBedrockApi.CohereEmbeddingRequest.Truncate.START)
+							.build());
 		}
 
 	}

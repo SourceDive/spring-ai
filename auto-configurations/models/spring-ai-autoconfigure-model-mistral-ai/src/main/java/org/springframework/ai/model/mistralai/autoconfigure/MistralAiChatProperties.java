@@ -16,10 +16,7 @@
 
 package org.springframework.ai.model.mistralai.autoconfigure;
 
-import java.util.List;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.mistralai.MistralAiChatOptions;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ReasoningEffort;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.ResponseFormat;
@@ -27,6 +24,8 @@ import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.T
 import org.springframework.ai.mistralai.api.MistralAiApi.FunctionTool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.List;
 
 /**
  * Configuration properties for Mistral AI chat.
@@ -185,21 +184,21 @@ public class MistralAiChatProperties extends MistralAiParentProperties {
 
 	public MistralAiChatOptions toOptions() {
 		return MistralAiChatOptions.builder()
-			.model(this.model)
-			.temperature(this.temperature)
-			.topP(this.topP)
-			.maxTokens(this.maxTokens)
-			.safePrompt(this.safePrompt)
-			.randomSeed(this.randomSeed)
-			.responseFormat(this.responseFormat)
-			.stop(this.stop)
-			.frequencyPenalty(this.frequencyPenalty)
-			.presencePenalty(this.presencePenalty)
-			.n(this.n)
-			.tools(this.tools)
-			.toolChoice(this.toolChoice)
-			.reasoningEffort(this.reasoningEffort)
-			.build();
+				.model(this.model)
+				.temperature(this.temperature)
+				.topP(this.topP)
+				.maxTokens(this.maxTokens)
+				.safePrompt(this.safePrompt)
+				.randomSeed(this.randomSeed)
+				.responseFormat(this.responseFormat)
+				.stop(this.stop)
+				.frequencyPenalty(this.frequencyPenalty)
+				.presencePenalty(this.presencePenalty)
+				.n(this.n)
+				.tools(this.tools)
+				.toolChoice(this.toolChoice)
+				.reasoningEffort(this.reasoningEffort)
+				.build();
 	}
 
 	public MistralAiChatProperties() {

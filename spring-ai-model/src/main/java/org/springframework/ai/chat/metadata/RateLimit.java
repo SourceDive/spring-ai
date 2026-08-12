@@ -30,6 +30,7 @@ public interface RateLimit {
 	/**
 	 * Returns the maximum number of requests that are permitted before exhausting the
 	 * rate limit.
+	 *
 	 * @return an {@link Long} with the maximum number of requests that are permitted
 	 * before exhausting the rate limit.
 	 * @see #getRequestsRemaining()
@@ -39,6 +40,7 @@ public interface RateLimit {
 	/**
 	 * Returns the remaining number of requests that are permitted before exhausting the
 	 * {@link #getRequestsLimit() rate limit}.
+	 *
 	 * @return an {@link Long} with the remaining number of requests that are permitted
 	 * before exhausting the {@link #getRequestsLimit() rate limit}.
 	 * @see #getRequestsLimit()
@@ -48,6 +50,7 @@ public interface RateLimit {
 	/**
 	 * Returns the {@link Duration time} until the rate limit (based on requests) resets
 	 * to its {@link #getRequestsLimit() initial state}.
+	 *
 	 * @return a {@link Duration} representing the time until the rate limit (based on
 	 * requests) resets to its {@link #getRequestsLimit() initial state}.
 	 * @see #getRequestsLimit()
@@ -57,6 +60,7 @@ public interface RateLimit {
 	/**
 	 * Returns the maximum number of tokens that are permitted before exhausting the rate
 	 * limit.
+	 *
 	 * @return an {@link Long} with the maximum number of tokens that are permitted before
 	 * exhausting the rate limit.
 	 * @see #getTokensRemaining()
@@ -66,6 +70,7 @@ public interface RateLimit {
 	/**
 	 * Returns the remaining number of tokens that are permitted before exhausting the
 	 * {@link #getTokensLimit() rate limit}.
+	 *
 	 * @return an {@link Long} with the remaining number of tokens that are permitted
 	 * before exhausting the {@link #getTokensLimit() rate limit}.
 	 * @see #getTokensLimit()
@@ -75,6 +80,7 @@ public interface RateLimit {
 	/**
 	 * Returns the {@link Duration time} until the rate limit (based on tokens) resets to
 	 * its {@link #getTokensLimit() initial state}.
+	 *
 	 * @return a {@link Duration} with the time until the rate limit (based on tokens)
 	 * resets to its {@link #getTokensLimit() initial state}.
 	 * @see #getTokensLimit()

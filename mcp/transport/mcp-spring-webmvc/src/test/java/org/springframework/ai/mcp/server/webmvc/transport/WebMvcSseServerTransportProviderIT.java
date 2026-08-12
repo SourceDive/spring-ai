@@ -61,26 +61,25 @@ class WebMvcSseServerTransportProviderIT {
 		try {
 			this.tomcatServer.tomcat().start();
 			assertThat(this.tomcatServer.tomcat().getServer().getState()).isEqualTo(LifecycleState.STARTED);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
 		int port = this.tomcatServer.tomcat().getConnector().getLocalPort();
 		HttpClientSseClientTransport transport = HttpClientSseClientTransport.builder("http://127.0.0.1:" + port)
-			.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
-			.build();
+				.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
+				.build();
 
 		this.clientBuilder = McpClient.sync(transport);
 		this.mcpServerTransportProvider = this.tomcatServer.appContext()
-			.getBean(WebMvcSseServerTransportProvider.class);
+				.getBean(WebMvcSseServerTransportProvider.class);
 	}
 
 	@Test
 	void validBaseUrl() {
 		McpServer.async(this.mcpServerTransportProvider).serverInfo("test-server", "1.0.0").build();
 		try (var client = this.clientBuilder.clientInfo(new McpSchema.Implementation("Sample " + "client", "0.0.0"))
-			.build()) {
+				.build()) {
 			assertThat(client.initialize()).isNotNull();
 		}
 	}
@@ -97,8 +96,7 @@ class WebMvcSseServerTransportProviderIT {
 			try {
 				this.tomcatServer.tomcat().stop();
 				this.tomcatServer.tomcat().destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}
@@ -112,11 +110,11 @@ class WebMvcSseServerTransportProviderIT {
 		public WebMvcSseServerTransportProvider webMvcSseServerTransportProvider() {
 
 			return WebMvcSseServerTransportProvider.builder()
-				.messageEndpoint(MESSAGE_ENDPOINT)
-				.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
-				.jsonMapper(McpJsonDefaults.getMapper())
-				.contextExtractor(req -> McpTransportContext.EMPTY)
-				.build();
+					.messageEndpoint(MESSAGE_ENDPOINT)
+					.sseEndpoint(WebMvcSseServerTransportProvider.DEFAULT_SSE_ENDPOINT)
+					.jsonMapper(McpJsonDefaults.getMapper())
+					.contextExtractor(req -> McpTransportContext.EMPTY)
+					.build();
 		}
 
 		@Bean

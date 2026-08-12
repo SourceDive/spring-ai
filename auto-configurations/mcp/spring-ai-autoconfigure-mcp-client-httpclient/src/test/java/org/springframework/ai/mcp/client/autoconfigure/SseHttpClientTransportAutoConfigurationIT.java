@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp.client.autoconfigure;
 
-import java.util.List;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.client.transport.customizer.McpSyncHttpClientRequestCustomizer;
@@ -26,9 +24,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.McpClientAutoConfiguration;
 import org.springframework.ai.mcp.client.common.autoconfigure.annotations.McpClientAnnotationScannerAutoConfiguration;
 import org.springframework.ai.mcp.client.httpclient.autoconfigure.SseHttpClientTransportAutoConfiguration;
@@ -38,30 +33,32 @@ import org.springframework.boot.context.annotation.UserConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @Timeout(15)
 public class SseHttpClientTransportAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mcp.client.initialized=false",
-				"spring.ai.mcp.client.sse.connections.server1.url=" + host)
-		.withConfiguration(AutoConfigurations.of(McpClientAutoConfiguration.class,
-				McpClientAnnotationScannerAutoConfiguration.class, SseHttpClientTransportAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mcp.client.initialized=false",
+					"spring.ai.mcp.client.sse.connections.server1.url=" + host)
+			.withConfiguration(AutoConfigurations.of(McpClientAutoConfiguration.class,
+					McpClientAnnotationScannerAutoConfiguration.class, SseHttpClientTransportAutoConfiguration.class));
 
 	static String host = "http://localhost:3001";
 
 	// Uses the https://github.com/tzolov/mcp-everything-server-docker-image
 	@SuppressWarnings("resource")
 	static GenericContainer<?> container = new GenericContainer<>("docker.io/tzolov/mcp-everything-server:v2")
-		.withCommand("node dist/index.js sse")
-		.withExposedPorts(3001)
-		.waitingFor(Wait.forHttp("/").forStatusCode(404));
+			.withCommand("node dist/index.js sse")
+			.withExposedPorts(3001)
+			.waitingFor(Wait.forHttp("/").forStatusCode(404));
 
 	@BeforeAll
 	static void setUp() {
@@ -98,19 +95,19 @@ public class SseHttpClientTransportAutoConfigurationIT {
 	@Test
 	void usesRequestCustomizer() {
 		this.contextRunner.withConfiguration(UserConfigurations.of(RequestCustomizerConfiguration.class))
-			.run(context -> {
-				List<McpSyncClient> mcpClients = (List<McpSyncClient>) context.getBean("mcpSyncClients");
+				.run(context -> {
+					List<McpSyncClient> mcpClients = (List<McpSyncClient>) context.getBean("mcpSyncClients");
 
-				assertThat(mcpClients).isNotNull();
-				assertThat(mcpClients).hasSize(1);
+					assertThat(mcpClients).isNotNull();
+					assertThat(mcpClients).hasSize(1);
 
-				McpSyncClient mcpClient = mcpClients.get(0);
+					McpSyncClient mcpClient = mcpClients.get(0);
 
-				mcpClient.ping();
+					mcpClient.ping();
 
-				verify(context.getBean(McpSyncHttpClientRequestCustomizer.class), atLeastOnce()).customize(any(), any(),
-						any(), any(), any());
-			});
+					verify(context.getBean(McpSyncHttpClientRequestCustomizer.class), atLeastOnce()).customize(any(), any(),
+							any(), any(), any());
+				});
 	}
 
 	@Configuration

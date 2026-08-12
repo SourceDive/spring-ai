@@ -16,11 +16,7 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
-
 import org.springframework.ai.mcp.McpToolUtils;
 import org.springframework.ai.mcp.server.common.autoconfigure.properties.McpServerProperties;
 import org.springframework.ai.tool.ToolCallback;
@@ -34,14 +30,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.util.MimeType;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Christian Tzolov
  */
 @AutoConfiguration
 @EnableConfigurationProperties(McpServerProperties.class)
-@Conditional({ McpServerStdioDisabledCondition.class,
+@Conditional({McpServerStdioDisabledCondition.class,
 		McpServerStatelessAutoConfiguration.EnabledStatelessServerCondition.class,
-		StatelessToolCallbackConverterAutoConfiguration.ToolCallbackConverterCondition.class })
+		StatelessToolCallbackConverterAutoConfiguration.ToolCallbackConverterCondition.class})
 public class StatelessToolCallbackConverterAutoConfiguration {
 
 	@Bean
@@ -58,22 +57,22 @@ public class StatelessToolCallbackConverterAutoConfiguration {
 	}
 
 	private List<McpStatelessServerFeatures.SyncToolSpecification> toSyncToolSpecifications(List<ToolCallback> tools,
-			McpServerProperties serverProperties) {
+	                                                                                        McpServerProperties serverProperties) {
 
 		// De-duplicate tools by their name, keeping the first occurrence of each tool
 		// name
 		return tools.stream() // Key: tool name
-			.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
-					(existing, replacement) -> existing))
-			.values()
-			.stream()
-			.map(tool -> {
-				String toolName = tool.getToolDefinition().name();
-				MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
-						? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
-				return McpToolUtils.toStatelessSyncToolSpecification(tool, mimeType);
-			})
-			.toList();
+				.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
+						(existing, replacement) -> existing))
+				.values()
+				.stream()
+				.map(tool -> {
+					String toolName = tool.getToolDefinition().name();
+					MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
+							? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
+					return McpToolUtils.toStatelessSyncToolSpecification(tool, mimeType);
+				})
+				.toList();
 	}
 
 	@Bean
@@ -89,21 +88,21 @@ public class StatelessToolCallbackConverterAutoConfiguration {
 	}
 
 	private List<McpStatelessServerFeatures.AsyncToolSpecification> toAsyncToolSpecification(List<ToolCallback> tools,
-			McpServerProperties serverProperties) {
+	                                                                                         McpServerProperties serverProperties) {
 		// De-duplicate tools by their name, keeping the first occurrence of each tool
 		// name
 		return tools.stream() // Key: tool name
-			.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
-					(existing, replacement) -> existing))
-			.values()
-			.stream()
-			.map(tool -> {
-				String toolName = tool.getToolDefinition().name();
-				MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
-						? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
-				return McpToolUtils.toStatelessAsyncToolSpecification(tool, mimeType);
-			})
-			.toList();
+				.collect(Collectors.toMap(tool -> tool.getToolDefinition().name(), tool -> tool,
+						(existing, replacement) -> existing))
+				.values()
+				.stream()
+				.map(tool -> {
+					String toolName = tool.getToolDefinition().name();
+					MimeType mimeType = (serverProperties.getToolResponseMimeType().containsKey(toolName))
+							? MimeType.valueOf(serverProperties.getToolResponseMimeType().get(toolName)) : null;
+					return McpToolUtils.toStatelessAsyncToolSpecification(tool, mimeType);
+				})
+				.toList();
 	}
 
 	public static class ToolCallbackConverterCondition extends AllNestedConditions {

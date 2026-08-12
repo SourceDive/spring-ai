@@ -21,16 +21,11 @@ package org.springframework.ai.vectorstore.filter.antlr4;
 // # NOTE: This is ANTLR4 auto-generated code. Do not modify! #
 // ############################################################
 
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.*;
 
-@SuppressWarnings({ "all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape" })
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class FiltersLexer extends Lexer {
 
 	static {
@@ -47,31 +42,31 @@ public class FiltersLexer extends Lexer {
 			NULL = 23, BOOLEAN_VALUE = 24, QUOTED_STRING = 25, INTEGER_VALUE = 26, DECIMAL_VALUE = 27, IDENTIFIER = 28,
 			WS = 29;
 
-	public static String[] channelNames = { "DEFAULT_TOKEN_CHANNEL", "HIDDEN" };
+	public static String[] channelNames = {"DEFAULT_TOKEN_CHANNEL", "HIDDEN"};
 
-	public static String[] modeNames = { "DEFAULT_MODE" };
+	public static String[] modeNames = {"DEFAULT_MODE"};
 
 	private static String[] makeRuleNames() {
-		return new String[] { "LONG_SUFFIX", "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
+		return new String[]{"LONG_SUFFIX", "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS", "RIGHT_SQUARE_BRACKETS",
 				"LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "EQUALS", "MINUS", "PLUS", "GT", "GE", "LT", "LE", "NE", "AND",
 				"OR", "IN", "NIN", "NOT", "IS", "NULL", "BOOLEAN_VALUE", "QUOTED_STRING", "INTEGER_VALUE",
-				"DECIMAL_VALUE", "IDENTIFIER", "DECIMAL_DIGITS", "DIGIT", "LETTER", "WS" };
+				"DECIMAL_VALUE", "IDENTIFIER", "DECIMAL_DIGITS", "DIGIT", "LETTER", "WS"};
 	}
 
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
-		return new String[] { null, null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'",
-				"'>='", "'<'", "'<='", "'!='" };
+		return new String[]{null, null, null, "'.'", "','", "'['", "']'", "'('", "')'", "'=='", "'-'", "'+'", "'>'",
+				"'>='", "'<'", "'<='", "'!='"};
 	}
 
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 
 	private static String[] makeSymbolicNames() {
-		return new String[] { null, "LONG_SUFFIX", "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS",
+		return new String[]{null, "LONG_SUFFIX", "WHERE", "DOT", "COMMA", "LEFT_SQUARE_BRACKETS",
 				"RIGHT_SQUARE_BRACKETS", "LEFT_PARENTHESIS", "RIGHT_PARENTHESIS", "EQUALS", "MINUS", "PLUS", "GT", "GE",
 				"LT", "LE", "NE", "AND", "OR", "IN", "NIN", "NOT", "IS", "NULL", "BOOLEAN_VALUE", "QUOTED_STRING",
-				"INTEGER_VALUE", "DECIMAL_VALUE", "IDENTIFIER", "WS" };
+				"INTEGER_VALUE", "DECIMAL_VALUE", "IDENTIFIER", "WS"};
 	}
 
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -83,6 +78,7 @@ public class FiltersLexer extends Lexer {
 	 */
 	@Deprecated
 	public static final String[] tokenNames;
+
 	static {
 		tokenNames = new String[_SYMBOLIC_NAMES.length];
 		for (int i = 0; i < tokenNames.length; i++) {
@@ -318,6 +314,7 @@ public class FiltersLexer extends Lexer {
 			+ "\u00ed\u00f4\u00f6\u00ff\u0001\u0000\u0001\u0000";
 
 	public static final ATN _ATN = new ATNDeserializer().deserialize(_serializedATN.toCharArray());
+
 	static {
 		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
 		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {

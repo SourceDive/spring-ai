@@ -16,6 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.method.complete;
 
+import io.modelcontextprotocol.server.McpSyncServerExchange;
+import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
+import io.modelcontextprotocol.spec.McpSchema.CompleteResult;
+import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
+import io.modelcontextprotocol.spec.McpSchema.PromptReference;
+import io.modelcontextprotocol.spec.McpSchema.ResourceReference;
+import org.mockito.Mockito;
+import org.springframework.ai.mcp.annotation.McpComplete;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,16 +33,6 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import io.modelcontextprotocol.server.McpSyncServerExchange;
-import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
-import io.modelcontextprotocol.spec.McpSchema.CompleteResult;
-import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
-import io.modelcontextprotocol.spec.McpSchema.PromptReference;
-import io.modelcontextprotocol.spec.McpSchema.ResourceReference;
-import org.mockito.Mockito;
-
-import org.springframework.ai.mcp.annotation.McpComplete;
 
 /**
  * Example demonstrating how to use the {@link SyncMcpCompleteMethodCallback} with
@@ -67,27 +66,25 @@ public final class SyncMcpCompleteMethodCallbackExample {
 				try {
 					// Create a callback for the method using the Builder pattern
 					BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-						.builder()
-						.method(method)
-						.bean(autocompleteProvider)
-						.complete(completeAnnotation)
-						.build();
+							.builder()
+							.method(method)
+							.bean(autocompleteProvider)
+							.complete(completeAnnotation)
+							.build();
 
 					// Register the callback with the prompt or URI pattern from the
 					// annotation
 					if (!completeAnnotation.prompt().isEmpty()) {
 						String promptName = completeAnnotation.prompt();
 						promptCompletionHandlers.put(promptName + "#" + method.getName(), callback);
-					}
-					else if (!completeAnnotation.uri().isEmpty()) {
+					} else if (!completeAnnotation.uri().isEmpty()) {
 						String uriPattern = completeAnnotation.uri();
 						uriCompletionHandlers.put(uriPattern + "#" + method.getName(), callback);
 
 					}
-				}
-				catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException e) {
 					System.err
-						.println("Failed to create callback for method " + method.getName() + ": " + e.getMessage());
+							.println("Failed to create callback for method " + method.getName() + ": " + e.getMessage());
 				}
 			}
 		}
@@ -140,8 +137,7 @@ public final class SyncMcpCompleteMethodCallbackExample {
 
 				// Execute the handler
 				CompleteResult result = handler.apply(exchange, request);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -170,8 +166,7 @@ public final class SyncMcpCompleteMethodCallbackExample {
 
 				// Execute the handler
 				CompleteResult result = handler.apply(exchange, request);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -273,8 +268,8 @@ public final class SyncMcpCompleteMethodCallbackExample {
 			List<String> countries = this.countryDatabase.getOrDefault(firstLetter, List.of());
 
 			List<String> matches = countries.stream()
-				.filter(country -> country.toLowerCase().startsWith(prefix))
-				.toList();
+					.filter(country -> country.toLowerCase().startsWith(prefix))
+					.toList();
 
 			return new CompleteResult(new CompleteCompletion(matches, matches.size(), false));
 		}
@@ -293,8 +288,8 @@ public final class SyncMcpCompleteMethodCallbackExample {
 			List<String> languages = this.languageDatabase.getOrDefault(firstLetter, List.of());
 
 			List<String> matches = languages.stream()
-				.filter(language -> language.toLowerCase().startsWith(prefix))
-				.toList();
+					.filter(language -> language.toLowerCase().startsWith(prefix))
+					.toList();
 
 			return new CompleteCompletion(matches, matches.size(), false);
 		}

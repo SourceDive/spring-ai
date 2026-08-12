@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.neo4j.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

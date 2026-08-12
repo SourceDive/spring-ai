@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chroma.vectorstore;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

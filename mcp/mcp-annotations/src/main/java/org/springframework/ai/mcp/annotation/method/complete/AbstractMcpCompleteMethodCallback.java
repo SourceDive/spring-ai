@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.complete;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
@@ -31,7 +26,6 @@ import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.DefaultMcpUriTemplateManagerFactory;
 import io.modelcontextprotocol.util.McpUriTemplateManager;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
@@ -42,9 +36,14 @@ import org.springframework.ai.mcp.annotation.context.DefaultMcpSyncRequestContex
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Abstract base class for creating callbacks around complete methods.
- *
+ * <p>
  * This class provides common functionality for both synchronous and asynchronous complete
  * method callbacks. It contains shared logic for method validation, argument building,
  * and other common operations.
@@ -69,14 +68,15 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 	/**
 	 * Constructor for AbstractMcpCompleteMethodCallback.
-	 * @param method The method to create a callback for
-	 * @param bean The bean instance that contains the method
-	 * @param prompt The prompt reference
-	 * @param uri The URI reference
+	 *
+	 * @param method                    The method to create a callback for
+	 * @param bean                      The bean instance that contains the method
+	 * @param prompt                    The prompt reference
+	 * @param uri                       The URI reference
 	 * @param uriTemplateManagerFactory The URI template manager factory
 	 */
 	protected AbstractMcpCompleteMethodCallback(Method method, Object bean, String prompt, String uri,
-			McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+	                                            McpUriTemplateManagerFactory uriTemplateManagerFactory) {
 
 		Assert.notNull(method, "Method can't be null!");
 		Assert.notNull(bean, "Bean can't be null!");
@@ -98,16 +98,14 @@ public abstract class AbstractMcpCompleteMethodCallback {
 		// Create the CompleteReference based on prompt or uri
 		if (prompt != null && !prompt.isEmpty()) {
 			this.completeReference = new McpSchema.PromptReference(prompt);
-		}
-		else {
+		} else {
 			this.completeReference = new McpSchema.ResourceReference(uri);
 		}
 
 		if (uri != null && !uri.isEmpty()) {
 			this.uriTemplateManager = uriTemplateManagerFactory.create(this.uri);
 			this.uriVariables = this.uriTemplateManager.getVariableNames();
-		}
-		else {
+		} else {
 			this.uriTemplateManager = null;
 			this.uriVariables = new ArrayList<>();
 		}
@@ -118,6 +116,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 	 * <p>
 	 * This method checks that the return type is valid and that the parameters match the
 	 * expected pattern.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the method signature is not compatible
 	 */
@@ -134,6 +133,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 	 * Validates that the method return type is compatible with the complete callback.
 	 * This method should be implemented by subclasses to handle specific return type
 	 * validation.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -142,6 +142,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 	/**
 	 * Validates method parameters. This method provides common validation logic and
 	 * delegates exchange type checking to subclasses.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the parameters are not compatible
 	 */
@@ -209,8 +210,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 				}
 
 				hasRequestContextParam = true;
-			}
-			else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
+			} else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
 				if (hasRequestContextParam) {
 					throw new IllegalArgumentException("Method cannot have more than one request context parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
@@ -221,36 +221,31 @@ public abstract class AbstractMcpCompleteMethodCallback {
 									+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasRequestContextParam = true;
-			}
-			else if (McpTransportContext.class.isAssignableFrom(paramType)) {
+			} else if (McpTransportContext.class.isAssignableFrom(paramType)) {
 				if (hasTransportContext) {
 					throw new IllegalArgumentException("Method cannot have more than one transport context parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasTransportContext = true;
-			}
-			else if (isExchangeType(paramType)) {
+			} else if (isExchangeType(paramType)) {
 				if (hasExchangeParam) {
 					throw new IllegalArgumentException("Method cannot have more than one exchange parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasExchangeParam = true;
-			}
-			else if (CompleteRequest.class.isAssignableFrom(paramType)) {
+			} else if (CompleteRequest.class.isAssignableFrom(paramType)) {
 				if (hasRequestParam) {
 					throw new IllegalArgumentException("Method cannot have more than one CompleteRequest parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasRequestParam = true;
-			}
-			else if (CompleteRequest.CompleteArgument.class.isAssignableFrom(paramType)) {
+			} else if (CompleteRequest.CompleteArgument.class.isAssignableFrom(paramType)) {
 				if (hasArgumentParam) {
 					throw new IllegalArgumentException("Method cannot have more than one CompleteArgument parameter: "
 							+ method.getName() + " in " + method.getDeclaringClass().getName());
 				}
 				hasArgumentParam = true;
-			}
-			else if (!String.class.isAssignableFrom(paramType)) {
+			} else if (!String.class.isAssignableFrom(paramType)) {
 				throw new IllegalArgumentException(
 						"Method parameters must be exchange, CompleteRequest, CompleteArgument, or String: "
 								+ method.getName() + " in " + method.getDeclaringClass().getName()
@@ -264,9 +259,10 @@ public abstract class AbstractMcpCompleteMethodCallback {
 	 * <p>
 	 * This method constructs an array of arguments based on the method's parameter types
 	 * and the available values (exchange, request, argument).
-	 * @param method The method to build arguments for
+	 *
+	 * @param method            The method to build arguments for
 	 * @param exchangeOrContext The server exchange or transport context
-	 * @param request The complete request
+	 * @param request           The complete request
 	 * @return An array of arguments for the method invocation
 	 */
 	protected Object[] buildArgs(Method method, Object exchangeOrContext, CompleteRequest request) {
@@ -284,35 +280,27 @@ public abstract class AbstractMcpCompleteMethodCallback {
 			// Handle McpMeta parameters
 			else if (McpMeta.class.isAssignableFrom(paramType)) {
 				args[i] = request != null ? new McpMeta(request.meta()) : new McpMeta(null);
-			}
-			else if (McpTransportContext.class.isAssignableFrom(paramType)) {
+			} else if (McpTransportContext.class.isAssignableFrom(paramType)) {
 				args[i] = resolveTransportContext(exchangeOrContext);
-			}
-			else if (isExchangeType(paramType)) {
+			} else if (isExchangeType(paramType)) {
 				args[i] = exchangeOrContext;
-			}
-			else if (McpSyncRequestContext.class.isAssignableFrom(paramType)) {
+			} else if (McpSyncRequestContext.class.isAssignableFrom(paramType)) {
 				args[i] = DefaultMcpSyncRequestContext.builder()
-					.exchange((McpSyncServerExchange) exchangeOrContext)
-					.request(request)
-					.build();
-			}
-			else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
+						.exchange((McpSyncServerExchange) exchangeOrContext)
+						.request(request)
+						.build();
+			} else if (McpAsyncRequestContext.class.isAssignableFrom(paramType)) {
 				args[i] = DefaultMcpAsyncRequestContext.builder()
-					.exchange((McpAsyncServerExchange) exchangeOrContext)
-					.request(request)
-					.build();
-			}
-			else if (CompleteRequest.class.isAssignableFrom(paramType)) {
+						.exchange((McpAsyncServerExchange) exchangeOrContext)
+						.request(request)
+						.build();
+			} else if (CompleteRequest.class.isAssignableFrom(paramType)) {
 				args[i] = request;
-			}
-			else if (CompleteRequest.CompleteArgument.class.isAssignableFrom(paramType)) {
+			} else if (CompleteRequest.CompleteArgument.class.isAssignableFrom(paramType)) {
 				args[i] = request.argument();
-			}
-			else if (String.class.isAssignableFrom(paramType)) {
+			} else if (String.class.isAssignableFrom(paramType)) {
 				args[i] = request.argument().value();
-			}
-			else {
+			} else {
 				args[i] = null; // For any other parameter types
 			}
 		}
@@ -324,6 +312,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 	 * Resolves the transport context from the exchange or context object. This method
 	 * should be implemented by subclasses to extract the transport context from the
 	 * appropriate exchange type.
+	 *
 	 * @param exchangeOrContext The server exchange or transport context
 	 * @return The resolved transport context
 	 */
@@ -332,6 +321,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 	/**
 	 * Checks if a parameter type is compatible with the exchange type. This method should
 	 * be implemented by subclasses to handle specific exchange type checking.
+	 *
 	 * @param paramType The parameter type to check
 	 * @return true if the parameter type is compatible with the exchange type, false
 	 * otherwise
@@ -347,8 +337,9 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message and cause.
+		 *
 		 * @param message The detail message
-		 * @param cause The cause
+		 * @param cause   The cause
 		 */
 		public McpCompleteMethodException(String message, Throwable cause) {
 			super(message, cause);
@@ -356,6 +347,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Constructs a new exception with the specified detail message.
+		 *
 		 * @param message The detail message
 		 */
 		public McpCompleteMethodException(String message) {
@@ -387,6 +379,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the method to create a callback for.
+		 *
 		 * @param method The method to create a callback for
 		 * @return This builder
 		 */
@@ -398,6 +391,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the bean instance that contains the method.
+		 *
 		 * @param bean The bean instance
 		 * @return This builder
 		 */
@@ -409,6 +403,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the prompt reference.
+		 *
 		 * @param prompt The prompt reference
 		 * @return This builder
 		 */
@@ -420,6 +415,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the URI reference.
+		 *
 		 * @param uri The URI reference
 		 * @return This builder
 		 */
@@ -431,6 +427,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the complete reference.
+		 *
 		 * @param completeReference The complete reference
 		 * @return This builder
 		 */
@@ -438,8 +435,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 			if (completeReference instanceof McpSchema.PromptReference promptRef) {
 				this.prompt = promptRef.name();
 				this.uri = "";
-			}
-			else if (completeReference instanceof McpSchema.ResourceReference resourceRef) {
+			} else if (completeReference instanceof McpSchema.ResourceReference resourceRef) {
 				this.prompt = "";
 				this.uri = resourceRef.uri();
 			}
@@ -448,6 +444,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the complete annotation.
+		 *
 		 * @param complete The complete annotation
 		 * @return This builder
 		 */
@@ -457,8 +454,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 			if (completeRef instanceof McpSchema.PromptReference promptRef) {
 				this.prompt = promptRef.name();
 				this.uri = "";
-			}
-			else if (completeRef instanceof McpSchema.ResourceReference resourceRef) {
+			} else if (completeRef instanceof McpSchema.ResourceReference resourceRef) {
 				this.prompt = "";
 				this.uri = resourceRef.uri();
 			}
@@ -467,6 +463,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Set the URI template manager factory.
+		 *
 		 * @param uriTemplateManagerFactory The URI template manager factory
 		 * @return This builder
 		 */
@@ -478,6 +475,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Validate the builder state.
+		 *
 		 * @throws IllegalArgumentException if the builder state is invalid
 		 */
 		protected void validate() {
@@ -500,6 +498,7 @@ public abstract class AbstractMcpCompleteMethodCallback {
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new callback instance
 		 */
 		public abstract R build();

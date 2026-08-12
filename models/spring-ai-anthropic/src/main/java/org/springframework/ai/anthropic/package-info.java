@@ -44,11 +44,10 @@
  * ChatResponse response = chatModel.call(new Prompt("Hello, Claude!"));
  * }</pre>
  *
- * @since 2.0.0
  * @see org.springframework.ai.anthropic.AnthropicChatModel
  * @see org.springframework.ai.anthropic.AnthropicChatOptions
+ * @since 2.0.0
  */
 @NullMarked
 package org.springframework.ai.anthropic;
 
-import org.jspecify.annotations.NullMarked;

@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.tool;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -30,11 +26,14 @@ import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpTool;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpTool;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,7 +49,7 @@ public class AsyncMcpToolProviderTests {
 	@Test
 	void testConstructorWithNullToolObjects() {
 		assertThatThrownBy(() -> new AsyncMcpToolProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("toolObjects cannot be null");
+				.hasMessageContaining("toolObjects cannot be null");
 	}
 
 	@Test
@@ -332,7 +331,7 @@ public class AsyncMcpToolProviderTests {
 			assertThat(callToolResult.content()).hasSize(1);
 			assertThat(callToolResult.content().get(0)).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) callToolResult.content().get(0)).text())
-				.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
+					.isEqualTo("Name: John, Age: 30, Active: true, Tags: tag1,tag2");
 		}).verifyComplete();
 	}
 
@@ -872,7 +871,7 @@ public class AsyncMcpToolProviderTests {
 	@Test
 	void testToolWithListReturnType() {
 
-		record CustomResult(String message) {
+		record CustomResult (String message){
 		}
 
 		class ListResponseTool {
@@ -896,7 +895,7 @@ public class AsyncMcpToolProviderTests {
 		assertThat(toolSpec.tool().outputSchema()).isNull();
 
 		BiFunction<McpAsyncServerExchange, McpSchema.CallToolRequest, Mono<McpSchema.CallToolResult>> callHandler = toolSpec
-			.callHandler();
+				.callHandler();
 
 		Mono<McpSchema.CallToolResult> result1 = callHandler.apply(mock(McpAsyncServerExchange.class),
 				new CallToolRequest("list-response", Map.of("input", "test")));
@@ -917,7 +916,7 @@ public class AsyncMcpToolProviderTests {
 	@Test
 	void testToolWithFluxReturnType() {
 
-		record CustomResult(String message) {
+		record CustomResult (String message){
 		}
 
 		class ListResponseTool {
@@ -943,7 +942,7 @@ public class AsyncMcpToolProviderTests {
 		assertThat(toolSpec.tool().outputSchema()).isNull();
 
 		BiFunction<McpAsyncServerExchange, McpSchema.CallToolRequest, Mono<McpSchema.CallToolResult>> callHandler = toolSpec
-			.callHandler();
+				.callHandler();
 
 		Mono<McpSchema.CallToolResult> result1 = callHandler.apply(mock(McpAsyncServerExchange.class),
 				new CallToolRequest("flux-list-response", Map.of("input", "test")));

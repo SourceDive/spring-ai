@@ -16,19 +16,11 @@
 
 package org.springframework.ai.vectorstore.azure.autoconfigure;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import io.micrometer.observation.tck.TestObservationRegistry;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.observation.conventions.VectorStoreProvider;
@@ -42,6 +34,13 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -57,11 +56,11 @@ import static org.springframework.ai.test.vectorstore.ObservationTestUtil.assert
 public class AzureVectorStoreAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(AzureVectorStoreAutoConfiguration.class))
-		.withUserConfiguration(Config.class)
-		.withPropertyValues("spring.ai.vectorstore.azure.api-key=" + System.getenv("AZURE_AI_SEARCH_API_KEY"),
-				"spring.ai.vectorstore.azure.url=" + System.getenv("AZURE_AI_SEARCH_ENDPOINT"))
-		.withPropertyValues("spring.ai.vectorstore.azure.initialize-schema=true");
+			.withConfiguration(AutoConfigurations.of(AzureVectorStoreAutoConfiguration.class))
+			.withUserConfiguration(Config.class)
+			.withPropertyValues("spring.ai.vectorstore.azure.api-key=" + System.getenv("AZURE_AI_SEARCH_API_KEY"),
+					"spring.ai.vectorstore.azure.url=" + System.getenv("AZURE_AI_SEARCH_ENDPOINT"))
+			.withPropertyValues("spring.ai.vectorstore.azure.initialize-schema=true");
 
 	List<Document> documents = List.of(
 			new Document("1", getText("classpath:/test/data/spring.ai.txt"), Map.of("spring", "great")),
@@ -72,8 +71,7 @@ public class AzureVectorStoreAutoConfigurationIT {
 		var resource = new DefaultResourceLoader().getResource(uri);
 		try {
 			return resource.getContentAsString(StandardCharsets.UTF_8);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -89,60 +87,60 @@ public class AzureVectorStoreAutoConfigurationIT {
 	public void addAndSearchTest() {
 
 		this.contextRunner.withPropertyValues("spring.ai.vectorstore.azure.initialize-schema=true",
-				"spring.ai.vectorstore.azure.index-name=my_test_index", "spring.ai.vectorstore.azure.default-top-k=6",
-				"spring.ai.vectorstore.azure.default-similarity-threshold=0.75")
-			.run(context -> {
+						"spring.ai.vectorstore.azure.index-name=my_test_index", "spring.ai.vectorstore.azure.default-top-k=6",
+						"spring.ai.vectorstore.azure.default-similarity-threshold=0.75")
+				.run(context -> {
 
-				var properties = context.getBean(AzureVectorStoreProperties.class);
+					var properties = context.getBean(AzureVectorStoreProperties.class);
 
-				assertThat(properties.getUrl()).isEqualTo(System.getenv("AZURE_AI_SEARCH_ENDPOINT"));
-				assertThat(properties.getApiKey()).isEqualTo(System.getenv("AZURE_AI_SEARCH_API_KEY"));
-				assertThat(properties.getDefaultTopK()).isEqualTo(6);
-				assertThat(properties.getDefaultSimilarityThreshold()).isEqualTo(0.75);
-				assertThat(properties.getIndexName()).isEqualTo("my_test_index");
+					assertThat(properties.getUrl()).isEqualTo(System.getenv("AZURE_AI_SEARCH_ENDPOINT"));
+					assertThat(properties.getApiKey()).isEqualTo(System.getenv("AZURE_AI_SEARCH_API_KEY"));
+					assertThat(properties.getDefaultTopK()).isEqualTo(6);
+					assertThat(properties.getDefaultSimilarityThreshold()).isEqualTo(0.75);
+					assertThat(properties.getIndexName()).isEqualTo("my_test_index");
 
-				VectorStore vectorStore = context.getBean(VectorStore.class);
-				TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
+					VectorStore vectorStore = context.getBean(VectorStore.class);
+					TestObservationRegistry observationRegistry = context.getBean(TestObservationRegistry.class);
 
-				assertThat(vectorStore).isInstanceOf(AzureVectorStore.class);
+					assertThat(vectorStore).isInstanceOf(AzureVectorStore.class);
 
-				vectorStore.add(this.documents);
+					vectorStore.add(this.documents);
 
-				Awaitility.await()
-					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-							hasSize(1));
+					Awaitility.await()
+							.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+									hasSize(1));
 
-				assertObservationRegistry(observationRegistry, VectorStoreProvider.AZURE,
-						VectorStoreObservationContext.Operation.ADD);
-				observationRegistry.clear();
+					assertObservationRegistry(observationRegistry, VectorStoreProvider.AZURE,
+							VectorStoreObservationContext.Operation.ADD);
+					observationRegistry.clear();
 
-				List<Document> results = vectorStore
-					.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
+					List<Document> results = vectorStore
+							.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build());
 
-				assertThat(results).hasSize(1);
-				Document resultDoc = results.get(0);
-				assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
-				assertThat(resultDoc.getText()).contains(
-						"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
-				assertThat(resultDoc.getMetadata()).hasSize(2);
-				assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
+					assertThat(results).hasSize(1);
+					Document resultDoc = results.get(0);
+					assertThat(resultDoc.getId()).isEqualTo(this.documents.get(0).getId());
+					assertThat(resultDoc.getText()).contains(
+							"Spring AI provides abstractions that serve as the foundation for developing AI applications.");
+					assertThat(resultDoc.getMetadata()).hasSize(2);
+					assertThat(resultDoc.getMetadata()).containsKeys("spring", "distance");
 
-				assertObservationRegistry(observationRegistry, VectorStoreProvider.AZURE,
-						VectorStoreObservationContext.Operation.QUERY);
-				observationRegistry.clear();
+					assertObservationRegistry(observationRegistry, VectorStoreProvider.AZURE,
+							VectorStoreObservationContext.Operation.QUERY);
+					observationRegistry.clear();
 
-				// Remove all documents from the store
-				vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
+					// Remove all documents from the store
+					vectorStore.delete(this.documents.stream().map(doc -> doc.getId()).toList());
 
-				Awaitility.await()
-					.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
-							hasSize(0));
+					Awaitility.await()
+							.until(() -> vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(1).build()),
+									hasSize(0));
 
-				assertObservationRegistry(observationRegistry, VectorStoreProvider.AZURE,
-						VectorStoreObservationContext.Operation.DELETE);
-				observationRegistry.clear();
+					assertObservationRegistry(observationRegistry, VectorStoreProvider.AZURE,
+							VectorStoreObservationContext.Operation.DELETE);
+					observationRegistry.clear();
 
-			});
+				});
 	}
 
 	@Test

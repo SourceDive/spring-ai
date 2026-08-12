@@ -16,18 +16,11 @@
 
 package org.springframework.ai.mcp.annotation.adapter;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpArg;
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
@@ -35,6 +28,12 @@ import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.common.MetaUtils;
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for adapting between McpPrompt annotations and McpSchema.Prompt objects.
@@ -50,6 +49,7 @@ public final class PromptAdapter {
 
 	/**
 	 * Convert a McpPrompt annotation to a McpSchema.Prompt object.
+	 *
 	 * @param mcpPrompt The McpPrompt annotation
 	 * @return The corresponding McpSchema.Prompt object
 	 */
@@ -61,8 +61,9 @@ public final class PromptAdapter {
 	/**
 	 * Convert a McpPrompt annotation to a McpSchema.Prompt object, including argument
 	 * information from the method parameters.
+	 *
 	 * @param mcpPrompt The McpPrompt annotation
-	 * @param method The method annotated with McpPrompt
+	 * @param method    The method annotated with McpPrompt
 	 * @return The corresponding McpSchema.Prompt object with argument information
 	 */
 	public static McpSchema.Prompt asPrompt(McpPrompt mcpPrompt, Method method) {
@@ -82,6 +83,7 @@ public final class PromptAdapter {
 
 	/**
 	 * Extract prompt arguments from a method's parameters.
+	 *
 	 * @param method The method to extract arguments from
 	 * @return A list of PromptArgument objects
 	 */
@@ -108,8 +110,7 @@ public final class PromptAdapter {
 			if (mcpArg != null) {
 				String name = !mcpArg.name().isEmpty() ? mcpArg.name() : parameter.getName();
 				arguments.add(new McpSchema.PromptArgument(name, mcpArg.description(), mcpArg.required()));
-			}
-			else {
+			} else {
 				// Use parameter name and default values if no annotation
 				arguments.add(new McpSchema.PromptArgument(parameter.getName(),
 						"Parameter of type " + parameter.getType().getSimpleName(), false));

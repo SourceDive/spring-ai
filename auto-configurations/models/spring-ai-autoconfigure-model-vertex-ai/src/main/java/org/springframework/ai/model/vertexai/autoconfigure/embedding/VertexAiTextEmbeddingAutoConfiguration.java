@@ -53,9 +53,9 @@ public class VertexAiTextEmbeddingAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public VertexAiTextEmbeddingModel textEmbedding(VertexAiEmbeddingConnectionDetails connectionDetails,
-			VertexAiTextEmbeddingProperties textEmbeddingProperties, ObjectProvider<RetryTemplate> retryTemplate,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
+	                                                VertexAiTextEmbeddingProperties textEmbeddingProperties, ObjectProvider<RetryTemplate> retryTemplate,
+	                                                ObjectProvider<ObservationRegistry> observationRegistry,
+	                                                ObjectProvider<EmbeddingModelObservationConvention> observationConvention) {
 
 		var embeddingModel = new VertexAiTextEmbeddingModel(connectionDetails, textEmbeddingProperties.toOptions(),
 				retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE),

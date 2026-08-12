@@ -16,25 +16,24 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.ai.mcp.annotation.method.tool.utils.McpJsonSchemaGenerator;
 import org.springframework.ai.mcp.annotation.provider.tool.SyncMcpToolProvider;
+import reactor.core.publisher.Mono;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -64,7 +63,7 @@ public class CallToolRequestSupportTests {
 		assertThat(result.content()).hasSize(1);
 		assertThat(result.content().get(0)).isInstanceOf(TextContent.class);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Processed action: analyze for tool: dynamic-tool");
+				.isEqualTo("Processed action: analyze for tool: dynamic-tool");
 	}
 
 	@Test
@@ -75,8 +74,8 @@ public class CallToolRequestSupportTests {
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CallToolRequest request = new CallToolRequest("dynamic-tool", Map.of("data", "test-data")); // Missing
-																									// 'action'
-																									// parameter
+		// 'action'
+		// parameter
 
 		CallToolResult result = callback.apply(exchange, request);
 
@@ -122,7 +121,7 @@ public class CallToolRequestSupportTests {
 		assertThat(result.isError()).isFalse();
 		assertThat(result.content()).hasSize(1);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Required: test-value, Optional: 42, Total args: 3, Tool: mixed-params-tool");
+				.isEqualTo("Required: test-value, Optional: 42, Total args: 3, Tool: mixed-params-tool");
 	}
 
 	@Test
@@ -141,7 +140,7 @@ public class CallToolRequestSupportTests {
 		assertThat(result.isError()).isFalse();
 		assertThat(result.content()).hasSize(1);
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Required: test-value, Optional: 0, Total args: 1, Tool: mixed-params-tool");
+				.isEqualTo("Required: test-value, Optional: 0, Total args: 1, Tool: mixed-params-tool");
 	}
 
 	@Test
@@ -159,11 +158,11 @@ public class CallToolRequestSupportTests {
 		CallToolResult validResult = callback.apply(exchange, validRequest);
 		assertThat(validResult.isError()).isFalse();
 		assertThat(((TextContent) validResult.content().get(0)).text())
-			.isEqualTo("Schema validation successful for: schema-validator");
+				.isEqualTo("Schema validation successful for: schema-validator");
 
 		// Test with invalid schema
 		CallToolRequest invalidRequest = new CallToolRequest("schema-validator", Map.of("data", "test-data")); // Missing
-																												// 'format'
+		// 'format'
 
 		CallToolResult invalidResult = callback.apply(exchange, invalidRequest);
 		assertThat(invalidResult.isError()).isTrue();
@@ -256,9 +255,9 @@ public class CallToolRequestSupportTests {
 
 		// Find the dynamic tool
 		var dynamicToolSpec = toolSpecs.stream()
-			.filter(spec -> spec.tool().name().equals("dynamic-tool"))
-			.findFirst()
-			.orElse(null);
+				.filter(spec -> spec.tool().name().equals("dynamic-tool"))
+				.findFirst()
+				.orElse(null);
 
 		assertThat(dynamicToolSpec).isNotNull();
 		assertThat(dynamicToolSpec.tool().description()).isEqualTo("Fully dynamic tool");
@@ -272,9 +271,9 @@ public class CallToolRequestSupportTests {
 
 		// Find the mixed params tool
 		var mixedToolSpec = toolSpecs.stream()
-			.filter(spec -> spec.tool().name().equals("mixed-params-tool"))
-			.findFirst()
-			.orElse(null);
+				.filter(spec -> spec.tool().name().equals("mixed-params-tool"))
+				.findFirst()
+				.orElse(null);
 
 		assertThat(mixedToolSpec).isNotNull();
 		// The input schema should contain only the regular parameters
@@ -334,17 +333,17 @@ public class CallToolRequestSupportTests {
 
 		// Create request with progress token
 		CallToolRequest request = CallToolRequest.builder()
-			.name("progress-token-tool")
-			.arguments(Map.of("input", "test-input"))
-			.progressToken("test-progress-token-123")
-			.build();
+				.name("progress-token-tool")
+				.arguments(Map.of("input", "test-input"))
+				.progressToken("test-progress-token-123")
+				.build();
 
 		CallToolResult result = callback.apply(exchange, request);
 
 		assertThat(result).isNotNull();
 		assertThat(result.isError()).isFalse();
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Input: test-input, Progress Token: test-progress-token-123");
+				.isEqualTo("Input: test-input, Progress Token: test-progress-token-123");
 	}
 
 	@Test
@@ -377,17 +376,17 @@ public class CallToolRequestSupportTests {
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 
 		CallToolRequest request = CallToolRequest.builder()
-			.name("mixed-special-params-tool")
-			.arguments(Map.of("regularParam", "test-value"))
-			.progressToken("progress-123")
-			.build();
+				.name("mixed-special-params-tool")
+				.arguments(Map.of("regularParam", "test-value"))
+				.progressToken("progress-123")
+				.build();
 
 		CallToolResult result = callback.apply(exchange, request);
 
 		assertThat(result).isNotNull();
 		assertThat(result.isError()).isFalse();
 		assertThat(((TextContent) result.content().get(0)).text())
-			.isEqualTo("Exchange: present, Request: mixed-special-params-tool, Token: progress-123, Param: test-value");
+				.isEqualTo("Exchange: present, Request: mixed-special-params-tool, Token: progress-123, Param: test-value");
 	}
 
 	@Test
@@ -448,9 +447,9 @@ public class CallToolRequestSupportTests {
 
 		// Find the progress token tool
 		var progressTokenToolSpec = toolSpecs.stream()
-			.filter(spec -> spec.tool().name().equals("progress-token-tool"))
-			.findFirst()
-			.orElse(null);
+				.filter(spec -> spec.tool().name().equals("progress-token-tool"))
+				.findFirst()
+				.orElse(null);
 
 		assertThat(progressTokenToolSpec).isNotNull();
 		assertThat(progressTokenToolSpec.tool().description()).isEqualTo("Tool with progress token");
@@ -474,17 +473,17 @@ public class CallToolRequestSupportTests {
 
 		// Create request with meta data
 		CallToolRequest request = CallToolRequest.builder()
-			.name("meta-tool")
-			.arguments(Map.of("input", "test-input"))
-			.meta(Map.of("userId", "user123", "sessionId", "session456"))
-			.build();
+				.name("meta-tool")
+				.arguments(Map.of("input", "test-input"))
+				.meta(Map.of("userId", "user123", "sessionId", "session456"))
+				.build();
 
 		CallToolResult result = callback.apply(exchange, request);
 
 		assertThat(result).isNotNull();
 		assertThat(result.isError()).isFalse();
 		assertThat(((TextContent) result.content().get(0)).text()).contains("Input: test-input")
-			.contains("Meta: {userId=user123, sessionId=session456}");
+				.contains("Meta: {userId=user123, sessionId=session456}");
 	}
 
 	@Test
@@ -543,15 +542,15 @@ public class CallToolRequestSupportTests {
 			// Custom validation
 			if (!arguments.containsKey("action")) {
 				return CallToolResult.builder()
-					.isError(true)
-					.addTextContent("Missing required 'action' parameter")
-					.build();
+						.isError(true)
+						.addTextContent("Missing required 'action' parameter")
+						.build();
 			}
 
 			String action = (String) arguments.get("action");
 			return CallToolResult.builder()
-				.addTextContent("Processed action: " + action + " for tool: " + toolName)
-				.build();
+					.addTextContent("Processed action: " + action + " for tool: " + toolName)
+					.build();
 		}
 
 		/**
@@ -563,8 +562,8 @@ public class CallToolRequestSupportTests {
 			Map<String, Object> arguments = request.arguments();
 
 			return CallToolResult.builder()
-				.addTextContent("Exchange available: " + (exchange != null) + ", Args: " + arguments.size())
-				.build();
+					.addTextContent("Exchange available: " + (exchange != null) + ", Args: " + arguments.size())
+					.build();
 		}
 
 		/**
@@ -572,15 +571,15 @@ public class CallToolRequestSupportTests {
 		 */
 		@McpTool(name = "mixed-params-tool", description = "Tool with mixed parameters")
 		public CallToolResult mixedParamsTool(CallToolRequest request,
-				@McpToolParam(description = "Required string parameter", required = true) String requiredParam,
-				@McpToolParam(description = "Optional integer parameter", required = false) Integer optionalParam) {
+		                                      @McpToolParam(description = "Required string parameter", required = true) String requiredParam,
+		                                      @McpToolParam(description = "Optional integer parameter", required = false) Integer optionalParam) {
 
 			Map<String, Object> allArguments = request.arguments();
 
 			return CallToolResult.builder()
-				.addTextContent(String.format("Required: %s, Optional: %d, Total args: %d, Tool: %s", requiredParam,
-						optionalParam != null ? optionalParam : 0, allArguments.size(), request.name()))
-				.build();
+					.addTextContent(String.format("Required: %s, Optional: %d, Total args: %d, Tool: %s", requiredParam,
+							optionalParam != null ? optionalParam : 0, allArguments.size(), request.name()))
+					.build();
 		}
 
 		/**
@@ -595,14 +594,14 @@ public class CallToolRequestSupportTests {
 
 			if (!hasRequiredFields) {
 				return CallToolResult.builder()
-					.isError(true)
-					.addTextContent("Schema validation failed: missing required fields 'data' and 'format'")
-					.build();
+						.isError(true)
+						.addTextContent("Schema validation failed: missing required fields 'data' and 'format'")
+						.build();
 			}
 
 			return CallToolResult.builder()
-				.addTextContent("Schema validation successful for: " + request.name())
-				.build();
+					.addTextContent("Schema validation successful for: " + request.name())
+					.build();
 		}
 
 		/**
@@ -613,8 +612,8 @@ public class CallToolRequestSupportTests {
 				@McpToolParam(description = "Input parameter", required = true) String input,
 				@McpProgressToken String progressToken) {
 			return CallToolResult.builder()
-				.addTextContent("Input: " + input + ", Progress Token: " + progressToken)
-				.build();
+					.addTextContent("Input: " + input + ", Progress Token: " + progressToken)
+					.build();
 		}
 
 		/**
@@ -622,14 +621,14 @@ public class CallToolRequestSupportTests {
 		 */
 		@McpTool(name = "mixed-special-params-tool", description = "Tool with all special parameters")
 		public CallToolResult mixedSpecialParamsTool(McpSyncServerExchange exchange, CallToolRequest request,
-				@McpProgressToken String progressToken,
-				@McpToolParam(description = "Regular parameter", required = true) String regularParam) {
+		                                             @McpProgressToken String progressToken,
+		                                             @McpToolParam(description = "Regular parameter", required = true) String regularParam) {
 
 			return CallToolResult.builder()
-				.addTextContent(String.format("Exchange: %s, Request: %s, Token: %s, Param: %s",
-						exchange != null ? "present" : "null", request != null ? request.name() : "null",
-						progressToken != null ? progressToken : "null", regularParam))
-				.build();
+					.addTextContent(String.format("Exchange: %s, Request: %s, Token: %s, Param: %s",
+							exchange != null ? "present" : "null", request != null ? request.name() : "null",
+							progressToken != null ? progressToken : "null", regularParam))
+					.build();
 		}
 
 		/**
@@ -637,7 +636,7 @@ public class CallToolRequestSupportTests {
 		 */
 		@McpTool(name = "meta-tool", description = "Tool with meta parameter")
 		public CallToolResult metaTool(@McpToolParam(description = "Input parameter", required = true) String input,
-				McpMeta meta) {
+		                               McpMeta meta) {
 			String metaInfo = meta != null && meta.meta() != null ? meta.meta().toString() : "null";
 			return CallToolResult.builder().addTextContent("Input: " + input + ", Meta: " + metaInfo).build();
 		}

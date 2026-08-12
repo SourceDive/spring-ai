@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.tool.resolution;
 
-import org.jspecify.annotations.NullMarked;

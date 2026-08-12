@@ -16,11 +16,10 @@
 
 package org.springframework.ai.chat.messages;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,7 +40,7 @@ class MessageUtilsTests {
 	@Test
 	void readResourceWhenNull() {
 		assertThatThrownBy(() -> MessageUtils.readResource(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.hasMessageContaining("resource cannot be null");
 	}
 
 	@Test
@@ -53,15 +52,15 @@ class MessageUtilsTests {
 	@Test
 	void readResourceWithCharsetWhenNull() {
 		assertThatThrownBy(() -> MessageUtils.readResource(new ClassPathResource("prompt-user.txt"), null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("charset cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("charset cannot be null");
 	}
 
 	@Test
 	void readResourceWithCharsetWhenResourceNull() {
 		assertThatThrownBy(() -> MessageUtils.readResource(null, StandardCharsets.UTF_8))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resource cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("resource cannot be null");
 	}
 
 }

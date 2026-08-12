@@ -16,17 +16,16 @@
 
 package org.springframework.ai.model.mistralai.autoconfigure;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.mistralai.ocr.MistralOcrApi;
 import org.springframework.ai.retry.autoconfigure.SpringAiRetryAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,9 +48,9 @@ class MistralAiOcrAutoConfigurationIT {
 	static final String ENV_VAR_NAME = "MISTRAL_AI_API_KEY";
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mistralai.api-key=" + System.getenv(ENV_VAR_NAME))
-		.withConfiguration(AutoConfigurations.of(MistralAiOcrAutoConfiguration.class, RestClientAutoConfiguration.class,
-				SpringAiRetryAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mistralai.api-key=" + System.getenv(ENV_VAR_NAME))
+			.withConfiguration(AutoConfigurations.of(MistralAiOcrAutoConfiguration.class, RestClientAutoConfiguration.class,
+					SpringAiRetryAutoConfiguration.class));
 
 	@Test
 	void ocrExtractionWithPublicUrl() {

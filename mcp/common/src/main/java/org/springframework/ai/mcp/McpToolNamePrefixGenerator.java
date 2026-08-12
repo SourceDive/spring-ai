@@ -42,6 +42,7 @@ public interface McpToolNamePrefixGenerator {
 
 	/**
 	 * Static factory method to create a no-op prefix generator that returns the tool name
+	 *
 	 * @return a prefix generator that returns the tool name as-is
 	 */
 	static McpToolNamePrefixGenerator noPrefix() {

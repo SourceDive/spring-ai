@@ -16,14 +16,10 @@
 
 package org.springframework.ai.model.mistralai.autoconfigure.tool;
 
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -42,6 +38,9 @@ import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfigura
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledIfEnvironmentVariable(named = "MISTRAL_AI_API_KEY", matches = ".+")
@@ -54,43 +53,43 @@ public class PaymentStatusPromptIT {
 			new StatusDate("Paid", "2021-10-05"), new Transaction("T1005"), new StatusDate("Pending", "2021-10-08"));
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mistralai.api-key=" + System.getenv("MISTRAL_AI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class,
-				RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-				ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mistralai.api-key=" + System.getenv("MISTRAL_AI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class,
+					RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+					ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class));
 
 	@Test
 	void functionCallTest() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mistralai.chat.model=" + MistralAiApi.ChatModel.MISTRAL_SMALL.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.mistralai.chat.model=" + MistralAiApi.ChatModel.MISTRAL_SMALL.getValue())
+				.run(context -> {
 
-				MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
-				ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
+					MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
+					ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 
-				var chatClient = ChatClient
-					.builder(chatModel, ObservationRegistry.NOOP, null, null,
-							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-					.build();
+					var chatClient = ChatClient
+							.builder(chatModel, ObservationRegistry.NOOP, null, null,
+									ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+							.build();
 
-				UserMessage userMessage = new UserMessage("What's the status of my transaction with id T1001?");
+					UserMessage userMessage = new UserMessage("What's the status of my transaction with id T1001?");
 
-				var promptOptions = MistralAiChatOptions.builder()
-					.toolCallbacks(List.of(FunctionToolCallback
-						.builder("retrievePaymentStatus",
-								(Transaction transaction) -> new Status(DATA.get(transaction).status()))
-						.description("Get payment status of a transaction")
-						.inputType(Transaction.class)
-						.build()))
-					.build();
+					var promptOptions = MistralAiChatOptions.builder()
+							.toolCallbacks(List.of(FunctionToolCallback
+									.builder("retrievePaymentStatus",
+											(Transaction transaction) -> new Status(DATA.get(transaction).status()))
+									.description("Get payment status of a transaction")
+									.inputType(Transaction.class)
+									.build()))
+							.build();
 
-				ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
-					.call()
-					.chatResponse();
+					ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
+							.call()
+							.chatResponse();
 
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
-				assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
-			});
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("T1001");
+					assertThat(response.getResult().getOutput().getText()).containsIgnoringCase("paid");
+				});
 	}
 
 	public record Transaction(@JsonProperty(required = true, value = "transaction_id") String id) {

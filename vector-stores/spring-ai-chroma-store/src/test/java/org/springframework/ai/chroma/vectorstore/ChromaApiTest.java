@@ -16,17 +16,16 @@
 
 package org.springframework.ai.chroma.vectorstore;
 
-import java.io.IOException;
-
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -57,8 +56,8 @@ class ChromaApiTest {
 	@Test
 	void getCollectionReturnsNullOn404() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"NotFoundError\",\"message\":\"Collection [test-collection] does not exists\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"NotFoundError\",\"message\":\"Collection [test-collection] does not exists\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		ChromaApi.Collection result = this.chromaApi.getCollection("tenant", "database", "test-collection");
@@ -69,20 +68,20 @@ class ChromaApiTest {
 	@Test
 	void getCollectionThrowsOnOtherClientError() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.BAD_REQUEST.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"BadRequest\",\"message\":\"Invalid request\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"BadRequest\",\"message\":\"Invalid request\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		assertThatThrownBy(() -> this.chromaApi.getCollection("tenant", "database", "test-collection"))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Invalid request");
+				.isInstanceOf(RuntimeException.class)
+				.hasMessageContaining("Invalid request");
 	}
 
 	@Test
 	void getTenantReturnsNullOn404() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"NotFoundError\",\"message\":\"Tenant [test-tenant] not found\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"NotFoundError\",\"message\":\"Tenant [test-tenant] not found\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		ChromaApi.Tenant result = this.chromaApi.getTenant("test-tenant");
@@ -93,19 +92,19 @@ class ChromaApiTest {
 	@Test
 	void getTenantThrowsOnOtherClientError() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.FORBIDDEN.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"Forbidden\",\"message\":\"Access denied\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"Forbidden\",\"message\":\"Access denied\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		assertThatThrownBy(() -> this.chromaApi.getTenant("test-tenant")).isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Access denied");
+				.hasMessageContaining("Access denied");
 	}
 
 	@Test
 	void getDatabaseReturnsNullOn404() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.NOT_FOUND.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"NotFoundError\",\"message\":\"Database [test-database] not found.\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"NotFoundError\",\"message\":\"Database [test-database] not found.\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		ChromaApi.Database result = this.chromaApi.getDatabase("tenant", "test-database");
@@ -116,25 +115,25 @@ class ChromaApiTest {
 	@Test
 	void getDatabaseThrowsOnOtherClientError() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.UNAUTHORIZED.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"Unauthorized\",\"message\":\"Authentication required\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"Unauthorized\",\"message\":\"Authentication required\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		assertThatThrownBy(() -> this.chromaApi.getDatabase("tenant", "test-database"))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Authentication required");
+				.isInstanceOf(RuntimeException.class)
+				.hasMessageContaining("Authentication required");
 	}
 
 	@Test
 	void getCollectionThrowsOnServerError() {
 		MockResponse mockResponse = new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
-			.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.setBody("{\"error\":\"InternalServerError\",\"message\":\"Internal server error occurred\"}");
+				.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.setBody("{\"error\":\"InternalServerError\",\"message\":\"Internal server error occurred\"}");
 		this.mockWebServer.enqueue(mockResponse);
 
 		assertThatThrownBy(() -> this.chromaApi.getCollection("tenant", "database", "test-collection"))
-			.isInstanceOf(RuntimeException.class)
-			.hasMessageContaining("Internal server error occurred");
+				.isInstanceOf(RuntimeException.class)
+				.hasMessageContaining("Internal server error occurred");
 	}
 
 }

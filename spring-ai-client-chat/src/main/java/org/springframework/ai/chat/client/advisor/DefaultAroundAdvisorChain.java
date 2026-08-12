@@ -16,28 +16,15 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.contextpropagation.ObservationThreadLocalAccessor;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.ChatClientMessageAggregator;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
-import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.chat.client.advisor.api.BaseAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
+import org.springframework.ai.chat.client.advisor.api.*;
 import org.springframework.ai.chat.client.advisor.observation.AdvisorObservationContext;
 import org.springframework.ai.chat.client.advisor.observation.AdvisorObservationConvention;
 import org.springframework.ai.chat.client.advisor.observation.AdvisorObservationDocumentation;
@@ -45,6 +32,13 @@ import org.springframework.ai.chat.client.advisor.observation.DefaultAdvisorObse
 import org.springframework.core.OrderComparator;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Default implementation for the {@link BaseAdvisorChain}. Used by the {@link ChatClient}
@@ -75,7 +69,7 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 	private final AdvisorObservationConvention observationConvention;
 
 	DefaultAroundAdvisorChain(ObservationRegistry observationRegistry, Deque<CallAdvisor> callAdvisors,
-			Deque<StreamAdvisor> streamAdvisors, @Nullable AdvisorObservationConvention observationConvention) {
+	                          Deque<StreamAdvisor> streamAdvisors, @Nullable AdvisorObservationConvention observationConvention) {
 
 		Assert.notNull(observationRegistry, "the observationRegistry must be non-null");
 		Assert.notNull(callAdvisors, "the callAdvisors must be non-null");
@@ -105,19 +99,19 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 		var advisor = this.callAdvisors.pop();
 
 		var observationContext = AdvisorObservationContext.builder()
-			.advisorName(advisor.getName())
-			.chatClientRequest(chatClientRequest)
-			.order(advisor.getOrder())
-			.build();
+				.advisorName(advisor.getName())
+				.chatClientRequest(chatClientRequest)
+				.order(advisor.getOrder())
+				.build();
 
 		return AdvisorObservationDocumentation.AI_ADVISOR
-			.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
-					this.observationRegistry)
-			.observe(() -> {
-				var chatClientResponse = advisor.adviseCall(chatClientRequest, this);
-				observationContext.setChatClientResponse(chatClientResponse);
-				return chatClientResponse;
-			});
+				.observation(this.observationConvention, DEFAULT_OBSERVATION_CONVENTION, () -> observationContext,
+						this.observationRegistry)
+				.observe(() -> {
+					var chatClientResponse = advisor.adviseCall(chatClientRequest, this);
+					observationContext.setChatClientResponse(chatClientResponse);
+					return chatClientResponse;
+				});
 	}
 
 	@Override
@@ -132,10 +126,10 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 			var advisor = this.streamAdvisors.pop();
 
 			AdvisorObservationContext observationContext = AdvisorObservationContext.builder()
-				.advisorName(advisor.getName())
-				.chatClientRequest(chatClientRequest)
-				.order(advisor.getOrder())
-				.build();
+					.advisorName(advisor.getName())
+					.chatClientRequest(chatClientRequest)
+					.order(advisor.getOrder())
+					.build();
 
 			var observation = AdvisorObservationDocumentation.AI_ADVISOR.observation(this.observationConvention,
 					DEFAULT_OBSERVATION_CONVENTION, () -> observationContext, this.observationRegistry);
@@ -189,9 +183,9 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 		var remainingStreamAdvisors = advisors.subList(afterAdvisorIndex + 1, advisors.size());
 
 		return DefaultAroundAdvisorChain.builder(this.getObservationRegistry())
-			.observationConvention(this.observationConvention)
-			.pushAll(remainingStreamAdvisors)
-			.build();
+				.observationConvention(this.observationConvention)
+				.pushAll(remainingStreamAdvisors)
+				.build();
 	}
 
 	@Override
@@ -214,8 +208,8 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 		LinkedHashSet<Advisor> all = new LinkedHashSet<>(this.originalCallAdvisors);
 		all.addAll(this.originalStreamAdvisors);
 		return DefaultAroundAdvisorChain.builder(this.observationRegistry)
-			.observationConvention(this.observationConvention)
-			.pushAll(new ArrayList<>(all));
+				.observationConvention(this.observationConvention)
+				.pushAll(new ArrayList<>(all));
 	}
 
 	public static final class Builder implements BaseAdvisorChain.Builder<Builder> {
@@ -249,18 +243,18 @@ public class DefaultAroundAdvisorChain implements BaseAdvisorChain {
 			Assert.noNullElements(advisors, "the advisors must not contain null elements");
 			if (!CollectionUtils.isEmpty(advisors)) {
 				List<CallAdvisor> callAroundAdvisorList = advisors.stream()
-					.filter(a -> a instanceof CallAdvisor)
-					.map(a -> (CallAdvisor) a)
-					.toList();
+						.filter(a -> a instanceof CallAdvisor)
+						.map(a -> (CallAdvisor) a)
+						.toList();
 
 				if (!CollectionUtils.isEmpty(callAroundAdvisorList)) {
 					callAroundAdvisorList.forEach(this.callAdvisors::push);
 				}
 
 				List<StreamAdvisor> streamAroundAdvisorList = advisors.stream()
-					.filter(a -> a instanceof StreamAdvisor)
-					.map(a -> (StreamAdvisor) a)
-					.toList();
+						.filter(a -> a instanceof StreamAdvisor)
+						.map(a -> (StreamAdvisor) a)
+						.toList();
 
 				if (!CollectionUtils.isEmpty(streamAroundAdvisorList)) {
 					streamAroundAdvisorList.forEach(this.streamAdvisors::push);

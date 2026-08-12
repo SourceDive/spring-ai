@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.prompt;
 
+import io.modelcontextprotocol.spec.McpSchema;
+import org.springframework.ai.mcp.annotation.McpPromptListChanged;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Consumer;
 
-import io.modelcontextprotocol.spec.McpSchema;
-
-import org.springframework.ai.mcp.annotation.McpPromptListChanged;
-
 /**
  * Class for creating Consumer callbacks around prompt list changed consumer methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with
  * {@link McpPromptListChanged} into callback functions that can be used to handle prompt
  * list change notifications. It supports methods with a single
@@ -45,10 +44,11 @@ public final class SyncMcpPromptListChangedMethodCallback extends AbstractMcpPro
 	 * Accept the prompt list change notification and process it.
 	 * <p>
 	 * This method builds the arguments for the method call and invokes the method.
+	 *
 	 * @param updatedPrompts The updated list of prompts, must not be null
 	 * @throws McpPromptListChangedConsumerMethodException if there is an error invoking
-	 * the prompt list changed consumer method
-	 * @throws IllegalArgumentException if the updatedPrompts is null
+	 *                                                     the prompt list changed consumer method
+	 * @throws IllegalArgumentException                    if the updatedPrompts is null
 	 */
 	@Override
 	public void accept(List<McpSchema.Prompt> updatedPrompts) {
@@ -63,8 +63,7 @@ public final class SyncMcpPromptListChangedMethodCallback extends AbstractMcpPro
 			// Invoke the method
 			this.method.setAccessible(true);
 			this.method.invoke(this.bean, args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new McpPromptListChangedConsumerMethodException(
 					"Error invoking prompt list changed consumer method: " + this.method.getName(), e);
 		}
@@ -73,6 +72,7 @@ public final class SyncMcpPromptListChangedMethodCallback extends AbstractMcpPro
 	/**
 	 * Validates that the method return type is compatible with the prompt list changed
 	 * consumer callback.
+	 *
 	 * @param method The method to validate
 	 * @throws IllegalArgumentException if the return type is not compatible
 	 */
@@ -88,6 +88,7 @@ public final class SyncMcpPromptListChangedMethodCallback extends AbstractMcpPro
 
 	/**
 	 * Create a new builder.
+	 *
 	 * @return A new builder instance
 	 */
 	public static Builder builder() {
@@ -104,6 +105,7 @@ public final class SyncMcpPromptListChangedMethodCallback extends AbstractMcpPro
 
 		/**
 		 * Build the callback.
+		 *
 		 * @return A new SyncMcpPromptListChangedMethodCallback instance
 		 */
 		@Override

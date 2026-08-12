@@ -16,20 +16,19 @@
 
 package org.springframework.ai.stabilityai.api;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Represents the StabilityAI API.
@@ -48,6 +47,7 @@ public class StabilityAiApi {
 
 	/**
 	 * Create a new StabilityAI API.
+	 *
 	 * @param apiKey StabilityAI apiKey.
 	 */
 	public StabilityAiApi(String apiKey) {
@@ -64,9 +64,10 @@ public class StabilityAiApi {
 
 	/**
 	 * Create a new StabilityAI API.
-	 * @param apiKey StabilityAI apiKey.
-	 * @param model StabilityAI model.
-	 * @param baseUrl api base URL.
+	 *
+	 * @param apiKey            StabilityAI apiKey.
+	 * @param model             StabilityAI model.
+	 * @param baseUrl           api base URL.
 	 * @param restClientBuilder RestClient builder.
 	 */
 	public StabilityAiApi(String apiKey, String model, String baseUrl, RestClient.Builder restClientBuilder) {
@@ -86,19 +87,19 @@ public class StabilityAiApi {
 		};
 
 		this.restClient = restClientBuilder.clone()
-			.baseUrl(baseUrl)
-			.defaultHeaders(jsonContentHeaders)
-			.defaultStatusHandler(RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER)
-			.build();
+				.baseUrl(baseUrl)
+				.defaultHeaders(jsonContentHeaders)
+				.defaultStatusHandler(RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER)
+				.build();
 	}
 
 	public GenerateImageResponse generateImage(GenerateImageRequest request) {
 		Assert.notNull(request, "The request body can not be null.");
 		return Objects.requireNonNull(this.restClient.post()
-			.uri("/generation/{model}/text-to-image", this.model)
-			.body(request)
-			.retrieve()
-			.body(GenerateImageResponse.class), "received a response without a body");
+				.uri("/generation/{model}/text-to-image", this.model)
+				.body(request)
+				.retrieve()
+				.body(GenerateImageResponse.class), "received a response without a body");
 	}
 
 	// See
@@ -114,13 +115,13 @@ public class StabilityAiApi {
 			@JsonProperty("seed") @Nullable Long seed, @JsonProperty("steps") @Nullable Integer steps,
 			@JsonProperty("style_preset") @Nullable String stylePreset) {
 
-		public static Builder builder() {
+		public static Builder builder () {
 			return new Builder();
 		}
 
 		@JsonInclude(JsonInclude.Include.NON_NULL)
-		public record TextPrompts(@JsonProperty(value = "text", required = true) String text,
-				@JsonProperty("weight") @Nullable Float weight) {
+		public record TextPrompts (@JsonProperty(value = "text", required = true) String text,
+				@JsonProperty("weight") @Nullable Float weight){
 
 		}
 
@@ -213,13 +214,13 @@ public class StabilityAiApi {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record GenerateImageResponse(@JsonProperty("result") String result,
-			@JsonProperty(value = "artifacts", required = true) List<Artifacts> artifacts) {
+	                                    @JsonProperty(value = "artifacts", required = true) List<Artifacts> artifacts) {
 
 		@JsonInclude(JsonInclude.Include.NON_NULL)
 		@JsonIgnoreProperties(ignoreUnknown = true)
-		public record Artifacts(@JsonProperty(value = "seed", required = true) long seed,
-				@JsonProperty(value = "base64", required = true) String base64,
-				@JsonProperty(value = "finishReason", required = true) String finishReason) {
+		public record Artifacts ( @JsonProperty(value = "seed", required = true) long seed,
+		@JsonProperty(value = "base64", required = true) String base64,
+		@JsonProperty(value = "finishReason", required = true) String finishReason){
 
 		}
 

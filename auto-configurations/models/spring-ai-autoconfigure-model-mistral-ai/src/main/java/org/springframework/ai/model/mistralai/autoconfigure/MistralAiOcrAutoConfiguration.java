@@ -40,14 +40,14 @@ import org.springframework.web.client.RestClient;
 @AutoConfiguration
 @ConditionalOnClass(MistralOcrApi.class)
 @ConditionalOnProperty(name = "spring.ai.model.ocr", havingValue = SpringAIModels.MISTRAL, matchIfMissing = true)
-@EnableConfigurationProperties({ MistralAiCommonProperties.class, MistralAiOcrProperties.class })
+@EnableConfigurationProperties({MistralAiCommonProperties.class, MistralAiOcrProperties.class})
 public class MistralAiOcrAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
 	public MistralOcrApi mistralOcrApi(MistralAiCommonProperties commonProperties, MistralAiOcrProperties ocrProperties,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
+	                                   ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                   ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
 
 		var apiKey = ocrProperties.getApiKey();
 		var baseUrl = ocrProperties.getBaseUrl();

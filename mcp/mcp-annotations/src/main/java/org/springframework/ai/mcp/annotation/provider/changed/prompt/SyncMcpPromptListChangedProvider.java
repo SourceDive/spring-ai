@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.provider.changed.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.util.Assert;
-
 import org.springframework.ai.mcp.annotation.McpPromptListChanged;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.changed.prompt.SyncMcpPromptListChangedMethodCallback;
 import org.springframework.ai.mcp.annotation.method.changed.prompt.SyncPromptListChangedSpecification;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Provider for synchronous prompt list changed consumer callbacks.
@@ -63,8 +62,9 @@ public class SyncMcpPromptListChangedProvider {
 
 	/**
 	 * Create a new SyncMcpPromptListChangedProvider.
+	 *
 	 * @param promptListChangedConsumerObjects the objects containing methods annotated
-	 * with {@link McpPromptListChanged}
+	 *                                         with {@link McpPromptListChanged}
 	 */
 	public SyncMcpPromptListChangedProvider(List<Object> promptListChangedConsumerObjects) {
 		Assert.notNull(promptListChangedConsumerObjects, "promptListChangedConsumerObjects cannot be null");
@@ -73,38 +73,40 @@ public class SyncMcpPromptListChangedProvider {
 
 	/**
 	 * Get the list of prompt list changed consumer specifications.
+	 *
 	 * @return the list of prompt list changed consumer specifications
 	 */
 	public List<SyncPromptListChangedSpecification> getPromptListChangedSpecifications() {
 
 		List<SyncPromptListChangedSpecification> promptListChangedConsumers = this.promptListChangedConsumerObjects
-			.stream()
-			.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
-				.filter(method -> method.isAnnotationPresent(McpPromptListChanged.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpPromptListChangedConsumerMethod -> {
-					var promptListChangedAnnotation = mcpPromptListChangedConsumerMethod
-						.getAnnotation(McpPromptListChanged.class);
+				.stream()
+				.map(consumerObject -> Stream.of(doGetClassMethods(consumerObject))
+						.filter(method -> method.isAnnotationPresent(McpPromptListChanged.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpPromptListChangedConsumerMethod -> {
+							var promptListChangedAnnotation = mcpPromptListChangedConsumerMethod
+									.getAnnotation(McpPromptListChanged.class);
 
-					Consumer<List<McpSchema.Prompt>> methodCallback = SyncMcpPromptListChangedMethodCallback.builder()
-						.method(mcpPromptListChangedConsumerMethod)
-						.bean(consumerObject)
-						.promptListChanged(promptListChangedAnnotation)
-						.build();
+							Consumer<List<McpSchema.Prompt>> methodCallback = SyncMcpPromptListChangedMethodCallback.builder()
+									.method(mcpPromptListChangedConsumerMethod)
+									.bean(consumerObject)
+									.promptListChanged(promptListChangedAnnotation)
+									.build();
 
-					return new SyncPromptListChangedSpecification(promptListChangedAnnotation.clients(),
-							methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncPromptListChangedSpecification(promptListChangedAnnotation.clients(),
+									methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		return promptListChangedConsumers;
 	}
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

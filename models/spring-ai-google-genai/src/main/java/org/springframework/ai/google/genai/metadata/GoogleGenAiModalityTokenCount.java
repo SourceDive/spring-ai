@@ -35,7 +35,8 @@ public class GoogleGenAiModalityTokenCount {
 
 	/**
 	 * Creates a new modality token count instance.
-	 * @param modality the modality type (e.g., "TEXT", "IMAGE", "AUDIO", "VIDEO")
+	 *
+	 * @param modality   the modality type (e.g., "TEXT", "IMAGE", "AUDIO", "VIDEO")
 	 * @param tokenCount the number of tokens for this modality
 	 */
 	public GoogleGenAiModalityTokenCount(String modality, Integer tokenCount) {
@@ -45,6 +46,7 @@ public class GoogleGenAiModalityTokenCount {
 
 	/**
 	 * Creates a GoogleGenAiModalityTokenCount from the SDK's ModalityTokenCount.
+	 *
 	 * @param modalityTokenCount the SDK modality token count
 	 * @return a new GoogleGenAiModalityTokenCount instance
 	 */
@@ -54,8 +56,8 @@ public class GoogleGenAiModalityTokenCount {
 		}
 
 		String modalityStr = modalityTokenCount.modality()
-			.map(GoogleGenAiModalityTokenCount::convertModality)
-			.orElse("UNKNOWN");
+				.map(GoogleGenAiModalityTokenCount::convertModality)
+				.orElse("UNKNOWN");
 
 		Integer tokens = modalityTokenCount.tokenCount().orElse(0);
 
@@ -80,6 +82,7 @@ public class GoogleGenAiModalityTokenCount {
 
 	/**
 	 * Returns the modality type.
+	 *
 	 * @return the modality type as a string
 	 */
 	@JsonProperty("modality")
@@ -89,6 +92,7 @@ public class GoogleGenAiModalityTokenCount {
 
 	/**
 	 * Returns the token count for this modality.
+	 *
 	 * @return the token count
 	 */
 	@JsonProperty("tokenCount")

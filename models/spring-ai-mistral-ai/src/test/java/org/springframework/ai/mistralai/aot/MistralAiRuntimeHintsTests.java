@@ -16,14 +16,13 @@
 
 package org.springframework.ai.mistralai.aot;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
@@ -125,14 +124,14 @@ class MistralAiRuntimeHintsTests {
 		runtimeHints.reflection().typeHints().forEach(typeHint -> registeredTypes.add(typeHint.getType()));
 
 		// Ensure critical API classes are registered for GraalVM native image reflection
-		String[] criticalClasses = { "MistralAiApi$ChatCompletionRequest", "MistralAiApi$ChatCompletionMessage",
-				"MistralAiApi$EmbeddingRequest", "MistralAiApi$EmbeddingList", "MistralAiApi$Usage" };
+		String[] criticalClasses = {"MistralAiApi$ChatCompletionRequest", "MistralAiApi$ChatCompletionMessage",
+				"MistralAiApi$EmbeddingRequest", "MistralAiApi$EmbeddingList", "MistralAiApi$Usage"};
 
 		for (String className : criticalClasses) {
 			assertThat(registeredTypes.stream()
-				.anyMatch(tr -> tr.getName().contains(className.replace("$", ".")) || tr.getName().contains(className)))
-				.as("Critical class %s should be registered", className)
-				.isTrue();
+					.anyMatch(tr -> tr.getName().contains(className.replace("$", ".")) || tr.getName().contains(className)))
+					.as("Critical class %s should be registered", className)
+					.isTrue();
 		}
 	}
 
@@ -147,12 +146,12 @@ class MistralAiRuntimeHintsTests {
 
 		// Enums are critical for JSON deserialization in native images
 		assertThat(registeredTypes.contains(TypeReference.of(MistralAiApi.ChatModel.class)))
-			.as("ChatModel enum should be registered")
-			.isTrue();
+				.as("ChatModel enum should be registered")
+				.isTrue();
 
 		assertThat(registeredTypes.contains(TypeReference.of(MistralAiApi.EmbeddingModel.class)))
-			.as("EmbeddingModel enum should be registered")
-			.isTrue();
+				.as("EmbeddingModel enum should be registered")
+				.isTrue();
 	}
 
 	@Test
@@ -163,9 +162,9 @@ class MistralAiRuntimeHintsTests {
 
 		// Verify that reflection hints include constructor access
 		boolean hasConstructorHints = runtimeHints.reflection()
-			.typeHints()
-			.anyMatch(typeHint -> typeHint.constructors().findAny().isPresent() || typeHint.getMemberCategories()
-				.contains(org.springframework.aot.hint.MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
+				.typeHints()
+				.anyMatch(typeHint -> typeHint.constructors().findAny().isPresent() || typeHint.getMemberCategories()
+						.contains(org.springframework.aot.hint.MemberCategory.INVOKE_DECLARED_CONSTRUCTORS));
 
 		assertThat(hasConstructorHints).as("Should register constructor hints for JSON deserialization").isTrue();
 	}
@@ -212,12 +211,12 @@ class MistralAiRuntimeHintsTests {
 
 		// Verify response wrapper types are registered
 		assertThat(registeredTypes.stream().anyMatch(tr -> tr.getName().contains("EmbeddingList")))
-			.as("EmbeddingList response type should be registered")
-			.isTrue();
+				.as("EmbeddingList response type should be registered")
+				.isTrue();
 
 		assertThat(registeredTypes.stream().anyMatch(tr -> tr.getName().contains("ChatCompletion")))
-			.as("ChatCompletion response type should be registered")
-			.isTrue();
+				.as("ChatCompletion response type should be registered")
+				.isTrue();
 	}
 
 	@Test

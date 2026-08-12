@@ -16,14 +16,13 @@
 
 package org.springframework.ai.mcp.annotation.provider.progress;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpProgress;
 import org.springframework.ai.mcp.annotation.method.progress.SyncProgressSpecification;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,8 +40,8 @@ public class SyncMcpProgressProviderTests {
 
 		List<SyncProgressSpecification> specifications = provider.getProgressSpecifications();
 		List<Consumer<ProgressNotification>> consumers = specifications.stream()
-			.map(SyncProgressSpecification::progressHandler)
-			.toList();
+				.map(SyncProgressSpecification::progressHandler)
+				.toList();
 
 		// Should find 3 valid annotated methods (invalid return type method is filtered
 		// out)
@@ -71,9 +70,9 @@ public class SyncMcpProgressProviderTests {
 		SyncMcpProgressProvider provider = new SyncMcpProgressProvider(List.of());
 
 		List<Consumer<ProgressNotification>> consumers = provider.getProgressSpecifications()
-			.stream()
-			.map(SyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(SyncProgressSpecification::progressHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}
@@ -85,9 +84,9 @@ public class SyncMcpProgressProviderTests {
 		SyncMcpProgressProvider provider = new SyncMcpProgressProvider(List.of(handler1, handler2));
 
 		List<Consumer<ProgressNotification>> consumers = provider.getProgressSpecifications()
-			.stream()
-			.map(SyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(SyncProgressSpecification::progressHandler)
+				.toList();
 
 		// Should find 6 valid annotated methods (3 from each handler)
 		assertThat(consumers).hasSize(6);
@@ -98,9 +97,9 @@ public class SyncMcpProgressProviderTests {
 		SyncMcpProgressProvider provider = new SyncMcpProgressProvider(null);
 
 		List<Consumer<ProgressNotification>> consumers = provider.getProgressSpecifications()
-			.stream()
-			.map(SyncProgressSpecification::progressHandler)
-			.toList();
+				.stream()
+				.map(SyncProgressSpecification::progressHandler)
+				.toList();
 
 		assertThat(consumers).isEmpty();
 	}

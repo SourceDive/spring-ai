@@ -16,38 +16,21 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
-import java.util.Map;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
-import io.modelcontextprotocol.spec.McpSchema.ElicitFormRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
-import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
-import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.ListRootsResult;
-import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
-import io.modelcontextprotocol.spec.McpSchema.LoggingMessageNotification;
-import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
-import io.modelcontextprotocol.spec.McpSchema.Role;
-import io.modelcontextprotocol.spec.McpSchema.SamplingMessage;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
+import io.modelcontextprotocol.spec.McpSchema.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.core.ParameterizedTypeReference;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.core.ParameterizedTypeReference;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link DefaultMcpAsyncRequestContext}.
@@ -76,9 +59,9 @@ public class DefaultMcpAsyncRequestContextTests {
 	public void testBuilderWithValidParameters() {
 		CallToolRequest testRequest = new CallToolRequest("test-tool", Map.of());
 		McpAsyncRequestContext ctx = DefaultMcpAsyncRequestContext.builder()
-			.request(testRequest)
-			.exchange(this.exchange)
-			.build();
+				.request(testRequest)
+				.exchange(this.exchange)
+				.build();
 
 		assertThat(ctx).isNotNull();
 		assertThat(ctx.request()).isEqualTo(testRequest);
@@ -88,22 +71,22 @@ public class DefaultMcpAsyncRequestContextTests {
 	@Test
 	public void testBuilderWithNullRequest() {
 		StepVerifier
-			.create(Mono.fromCallable(
-					() -> DefaultMcpAsyncRequestContext.builder().request(null).exchange(this.exchange).build()))
-			.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
-					&& throwable.getMessage().contains("Request must not be null"))
-			.verify();
+				.create(Mono.fromCallable(
+						() -> DefaultMcpAsyncRequestContext.builder().request(null).exchange(this.exchange).build()))
+				.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
+						&& throwable.getMessage().contains("Request must not be null"))
+				.verify();
 	}
 
 	@Test
 	public void testBuilderWithNullExchange() {
 		CallToolRequest testRequest = new CallToolRequest("test-tool", Map.of());
 		StepVerifier
-			.create(Mono.fromCallable(
-					() -> DefaultMcpAsyncRequestContext.builder().request(testRequest).exchange(null).build()))
-			.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
-					&& throwable.getMessage().contains("Exchange must not be null"))
-			.verify();
+				.create(Mono.fromCallable(
+						() -> DefaultMcpAsyncRequestContext.builder().request(testRequest).exchange(null).build()))
+				.expectErrorMatches(throwable -> throwable instanceof IllegalArgumentException
+						&& throwable.getMessage().contains("Exchange must not be null"))
+				.verify();
 	}
 
 	// Roots Tests
@@ -128,8 +111,8 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		StepVerifier.create(this.context.roots())
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Roots not supported by the client"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Roots not supported by the client"));
 	}
 
 	@Test
@@ -139,8 +122,8 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
 		StepVerifier.create(this.context.roots())
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Roots not supported by the client"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Roots not supported by the client"));
 
 	}
 
@@ -186,7 +169,7 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(capabilities.elicitation()).thenReturn(elicitation);
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
-		record Person(String name, int age) {
+		record Person (String name,int age){
 		}
 
 		Map<String, Object> contentMap = Map.of("name", "Jane", "age", 25);
@@ -219,14 +202,14 @@ public class DefaultMcpAsyncRequestContextTests {
 	public void testElicitationWithNullTypeReference() {
 		assertThat(org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
 				() -> this.context.elicit((ParameterizedTypeReference<?>) null)))
-			.hasMessageContaining("Elicitation response type must not be null");
+				.hasMessageContaining("Elicitation response type must not be null");
 	}
 
 	@Test
 	public void testElicitationWithNullClassType() {
 		assertThat(org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
 				() -> this.context.elicit((Class<?>) null)))
-			.hasMessageContaining("Elicitation response type must not be null");
+				.hasMessageContaining("Elicitation response type must not be null");
 	}
 
 	@Test
@@ -250,10 +233,10 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		StepVerifier.create(this.context.elicit(e -> e.message("Test message"),
-				new ParameterizedTypeReference<Map<String, Object>>() {
-				}))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Elicitation not supported by the client"));
+						new ParameterizedTypeReference<Map<String, Object>>() {
+						}))
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Elicitation not supported by the client"));
 	}
 
 	@Test
@@ -287,9 +270,9 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(capabilities.elicitation()).thenReturn(elicitation);
 		when(this.exchange.getClientCapabilities()).thenReturn(capabilities);
 
-		record Address(String street, String city) {
+		record Address (String street, String city){
 		}
-		record PersonWithAddress(String name, int age, Address address) {
+		record PersonWithAddress (String name,int age, Address address){
 		}
 
 		Map<String, Object> addressMap = Map.of("street", "123 Main St", "city", "Springfield");
@@ -335,8 +318,8 @@ public class DefaultMcpAsyncRequestContextTests {
 				});
 
 		StepVerifier.create(result)
-			.assertNext(structuredResult -> assertThat(structuredResult.structuredContent()).containsKey("items"))
-			.verifyComplete();
+				.assertNext(structuredResult -> assertThat(structuredResult.structuredContent()).containsKey("items"))
+				.verifyComplete();
 	}
 
 	@Test
@@ -353,8 +336,8 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(this.exchange.createElicitation(any(ElicitRequest.class))).thenReturn(Mono.just(expectedResult));
 
 		Mono<StructuredElicitResult<Map<String, Object>>> result = this.context
-			.elicit(new ParameterizedTypeReference<Map<String, Object>>() {
-			});
+				.elicit(new ParameterizedTypeReference<Map<String, Object>>() {
+				});
 
 		StepVerifier.create(result).assertNext(map -> {
 			assertThat(map.structuredContent()).containsEntry("result", "success");
@@ -371,9 +354,9 @@ public class DefaultMcpAsyncRequestContextTests {
 
 		ElicitResult expectedResult = mock(ElicitResult.class);
 		ElicitRequest elicitRequest = ElicitRequest.builder()
-			.message("Test message")
-			.requestedSchema(Map.of("type", "string"))
-			.build();
+				.message("Test message")
+				.requestedSchema(Map.of("type", "string"))
+				.build();
 
 		when(this.exchange.createElicitation(elicitRequest)).thenReturn(Mono.just(expectedResult));
 
@@ -387,13 +370,13 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		ElicitRequest elicitRequest = ElicitRequest.builder()
-			.message("Test message")
-			.requestedSchema(Map.of("type", "string"))
-			.build();
+				.message("Test message")
+				.requestedSchema(Map.of("type", "string"))
+				.build();
 
 		StepVerifier.create(this.context.elicit(elicitRequest))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Elicitation not supported by the client"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Elicitation not supported by the client"));
 	}
 
 	// Sampling Tests
@@ -450,9 +433,9 @@ public class DefaultMcpAsyncRequestContextTests {
 
 		CreateMessageResult expectedResult = mock(CreateMessageResult.class);
 		CreateMessageRequest createRequest = CreateMessageRequest.builder()
-			.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
-			.maxTokens(500)
-			.build();
+				.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
+				.maxTokens(500)
+				.build();
 
 		when(this.exchange.createMessage(createRequest)).thenReturn(Mono.just(expectedResult));
 
@@ -466,13 +449,13 @@ public class DefaultMcpAsyncRequestContextTests {
 		when(this.exchange.getClientCapabilities()).thenReturn(null);
 
 		CreateMessageRequest createRequest = CreateMessageRequest.builder()
-			.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
-			.maxTokens(500)
-			.build();
+				.messages(java.util.List.of(new SamplingMessage(Role.USER, new TextContent("Test"))))
+				.maxTokens(500)
+				.build();
 
 		StepVerifier.create(this.context.sample(createRequest))
-			.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
-				.hasMessageContaining("Sampling not supported by the client"));
+				.verifyErrorSatisfies(e -> assertThat(e).isInstanceOf(IllegalStateException.class)
+						.hasMessageContaining("Sampling not supported by the client"));
 	}
 
 	// Progress Tests
@@ -480,14 +463,14 @@ public class DefaultMcpAsyncRequestContextTests {
 	@Test
 	public void testProgressWithPercentage() {
 		CallToolRequest requestWithToken = CallToolRequest.builder()
-			.name("test-tool")
-			.arguments(Map.of())
-			.progressToken("token-123")
-			.build();
+				.name("test-tool")
+				.arguments(Map.of())
+				.progressToken("token-123")
+				.build();
 		McpAsyncRequestContext contextWithToken = DefaultMcpAsyncRequestContext.builder()
-			.request(requestWithToken)
-			.exchange(this.exchange)
-			.build();
+				.request(requestWithToken)
+				.exchange(this.exchange)
+				.build();
 
 		when(this.exchange.progressNotification(any(ProgressNotification.class))).thenReturn(Mono.empty());
 
@@ -506,24 +489,24 @@ public class DefaultMcpAsyncRequestContextTests {
 	public void testProgressWithInvalidPercentage() {
 		assertThat(org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
 				() -> this.context.progress(-1)))
-			.hasMessageContaining("Percentage must be between 0 and 100");
+				.hasMessageContaining("Percentage must be between 0 and 100");
 
 		assertThat(org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
 				() -> this.context.progress(101)))
-			.hasMessageContaining("Percentage must be between 0 and 100");
+				.hasMessageContaining("Percentage must be between 0 and 100");
 	}
 
 	@Test
 	public void testProgressWithConsumer() {
 		CallToolRequest requestWithToken = CallToolRequest.builder()
-			.name("test-tool")
-			.arguments(Map.of())
-			.progressToken("token-123")
-			.build();
+				.name("test-tool")
+				.arguments(Map.of())
+				.progressToken("token-123")
+				.build();
 		McpAsyncRequestContext contextWithToken = DefaultMcpAsyncRequestContext.builder()
-			.request(requestWithToken)
-			.exchange(this.exchange)
-			.build();
+				.request(requestWithToken)
+				.exchange(this.exchange)
+				.build();
 
 		when(this.exchange.progressNotification(any(ProgressNotification.class))).thenReturn(Mono.empty());
 
@@ -652,7 +635,7 @@ public class DefaultMcpAsyncRequestContextTests {
 	public void testLogWithEmptyMessage() {
 		assertThat(org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
 				() -> this.context.debug("")))
-			.hasMessageContaining("Log message must not be empty");
+				.hasMessageContaining("Log message must not be empty");
 	}
 
 	// Getter Tests
@@ -694,14 +677,14 @@ public class DefaultMcpAsyncRequestContextTests {
 	public void testGetRequestMeta() {
 		Map<String, Object> meta = Map.of("key", "value");
 		CallToolRequest requestWithMeta = CallToolRequest.builder()
-			.name("test-tool")
-			.arguments(Map.of())
-			.meta(meta)
-			.build();
+				.name("test-tool")
+				.arguments(Map.of())
+				.meta(meta)
+				.build();
 		McpAsyncRequestContext contextWithMeta = DefaultMcpAsyncRequestContext.builder()
-			.request(requestWithMeta)
-			.exchange(this.exchange)
-			.build();
+				.request(requestWithMeta)
+				.exchange(this.exchange)
+				.build();
 
 		assertThat(contextWithMeta.requestMeta()).isEqualTo(meta);
 	}

@@ -16,13 +16,8 @@
 
 package org.springframework.ai.openai.chat;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.metadata.Usage;
@@ -36,6 +31,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,8 +64,7 @@ class OpenAiPromptCachingIT {
 				sb.append(basePrompt).append("\n\n");
 			}
 			return sb.toString();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Failed to load prompt", e);
 		}
 	}
@@ -102,8 +100,8 @@ class OpenAiPromptCachingIT {
 		// >1024 tokens
 		Long cacheRead = springUsage2.getCacheReadInputTokens();
 		assertThat(cacheRead).withFailMessage("Expected cache read tokens to be greater than 0, but got %s", cacheRead)
-			.isNotNull()
-			.isGreaterThan(0L);
+				.isNotNull()
+				.isGreaterThan(0L);
 	}
 
 	@Test
@@ -113,10 +111,10 @@ class OpenAiPromptCachingIT {
 
 		// Use promptCacheKey to explicitly key the cached prefix
 		OpenAiChatOptions options = OpenAiChatOptions.builder()
-			.model("gpt-4o-mini")
-			.temperature(0.1)
-			.promptCacheKey(cacheKey)
-			.build();
+				.model("gpt-4o-mini")
+				.temperature(0.1)
+				.promptCacheKey(cacheKey)
+				.build();
 
 		// First call - populates the cache under the given key
 		ChatResponse response1 = this.chatModel.call(new Prompt(
@@ -139,8 +137,8 @@ class OpenAiPromptCachingIT {
 
 		Long cacheRead = springUsage2.getCacheReadInputTokens();
 		assertThat(cacheRead).withFailMessage("Expected cache read tokens to be greater than 0, but got %s", cacheRead)
-			.isNotNull()
-			.isGreaterThan(0L);
+				.isNotNull()
+				.isGreaterThan(0L);
 	}
 
 }

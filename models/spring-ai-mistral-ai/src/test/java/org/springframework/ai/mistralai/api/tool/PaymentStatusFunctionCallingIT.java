@@ -16,16 +16,9 @@
 
 package org.springframework.ai.mistralai.api.tool;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletion;
 import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionMessage;
@@ -36,6 +29,12 @@ import org.springframework.ai.mistralai.api.MistralAiApi.ChatCompletionRequest.T
 import org.springframework.ai.mistralai.api.MistralAiApi.FunctionTool;
 import org.springframework.ai.mistralai.api.MistralAiApi.FunctionTool.Type;
 import org.springframework.http.ResponseEntity;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -100,8 +99,8 @@ class PaymentStatusFunctionCallingIT {
 		MistralAiApi mistralApi = MistralAiApi.builder().apiKey(System.getenv("MISTRAL_AI_API_KEY")).build();
 
 		ResponseEntity<ChatCompletion> response = mistralApi
-			.chatCompletionEntity(new ChatCompletionRequest(messages, MistralAiApi.ChatModel.MISTRAL_LARGE.getValue(),
-					List.of(paymentStatusTool, paymentDateTool), ToolChoice.AUTO));
+				.chatCompletionEntity(new ChatCompletionRequest(messages, MistralAiApi.ChatModel.MISTRAL_LARGE.getValue(),
+						List.of(paymentStatusTool, paymentDateTool), ToolChoice.AUTO));
 
 		ChatCompletionMessage responseMessage = response.getBody().choices().get(0).message();
 
@@ -126,7 +125,7 @@ class PaymentStatusFunctionCallingIT {
 		}
 
 		response = mistralApi
-			.chatCompletionEntity(new ChatCompletionRequest(messages, MistralAiApi.ChatModel.MISTRAL_LARGE.getValue()));
+				.chatCompletionEntity(new ChatCompletionRequest(messages, MistralAiApi.ChatModel.MISTRAL_LARGE.getValue()));
 
 		var responseContent = response.getBody().choices().get(0).message().extractTextContent();
 

@@ -42,8 +42,8 @@ public class CachedContentServiceCondition extends SpringBootCondition {
 			// Check if GoogleGenAiChatModel bean exists
 			if (!context.getBeanFactory().containsBean("googleGenAiChatModel")) {
 				return ConditionOutcome.noMatch(ConditionMessage.forCondition("CachedContentService")
-					.didNotFind("GoogleGenAiChatModel bean")
-					.atAll());
+						.didNotFind("GoogleGenAiChatModel bean")
+						.atAll());
 			}
 
 			// Get the chat model bean
@@ -52,15 +52,14 @@ public class CachedContentServiceCondition extends SpringBootCondition {
 			// Check if cached content service is available
 			if (chatModel.getCachedContentService() == null) {
 				return ConditionOutcome.noMatch(ConditionMessage.forCondition("CachedContentService")
-					.because("chat model's cached content service is null"));
+						.because("chat model's cached content service is null"));
 			}
 
 			return ConditionOutcome
-				.match(ConditionMessage.forCondition("CachedContentService").found("cached content service").atAll());
-		}
-		catch (Exception e) {
+					.match(ConditionMessage.forCondition("CachedContentService").found("cached content service").atAll());
+		} catch (Exception e) {
 			return ConditionOutcome.noMatch(ConditionMessage.forCondition("CachedContentService")
-				.because("error checking condition: " + e.getMessage()));
+					.because("error checking condition: " + e.getMessage()));
 		}
 	}
 

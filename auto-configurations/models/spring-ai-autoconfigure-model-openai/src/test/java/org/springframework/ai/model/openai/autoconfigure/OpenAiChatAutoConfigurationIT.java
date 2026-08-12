@@ -16,12 +16,8 @@
 
 package org.springframework.ai.model.openai.autoconfigure;
 
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -30,6 +26,9 @@ import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfigurat
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import reactor.core.publisher.Flux;
+
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,93 +36,93 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OpenAiChatAutoConfigurationIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
+			.withPropertyValues("spring.ai.openai.api-key=" + System.getenv("OPENAI_API_KEY"));
 
 	@Test
 	void chatCall() {
 		this.contextRunner
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
-				String response = chatModel.call("Hello");
-				assertThat(response).isNotEmpty();
-			});
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					String response = chatModel.call("Hello");
+					assertThat(response).isNotEmpty();
+				});
 	}
 
 	@Test
 	void generateStreaming() {
 		this.contextRunner
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
-				Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
-				String response = responseFlux.collectList()
-					.block()
-					.stream()
-					.map(chatResponse -> chatResponse.getResult() != null
-							? chatResponse.getResult().getOutput().getText() : "")
-					.collect(Collectors.joining());
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+					Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
+					String response = responseFlux.collectList()
+							.block()
+							.stream()
+							.map(chatResponse -> chatResponse.getResult() != null
+									? chatResponse.getResult().getOutput().getText() : "")
+							.collect(Collectors.joining());
 
-				assertThat(response).isNotEmpty();
-			});
+					assertThat(response).isNotEmpty();
+				});
 	}
 
 	@Test
 	void streamingWithTokenUsage() {
 		this.contextRunner.withPropertyValues("spring.ai.openai.chat.stream-usage=true")
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					OpenAiChatModel chatModel = context.getBean(OpenAiChatModel.class);
 
-				Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
+					Flux<ChatResponse> responseFlux = chatModel.stream(new Prompt(new UserMessage("Hello")));
 
-				Usage[] streamingTokenUsage = new Usage[1];
-				String response = responseFlux.collectList().block().stream().map(chatResponse -> {
-					streamingTokenUsage[0] = chatResponse.getMetadata().getUsage();
-					return (chatResponse.getResult() != null) ? chatResponse.getResult().getOutput().getText() : "";
-				}).collect(Collectors.joining());
+					Usage[] streamingTokenUsage = new Usage[1];
+					String response = responseFlux.collectList().block().stream().map(chatResponse -> {
+						streamingTokenUsage[0] = chatResponse.getMetadata().getUsage();
+						return (chatResponse.getResult() != null) ? chatResponse.getResult().getOutput().getText() : "";
+					}).collect(Collectors.joining());
 
-				assertThat(streamingTokenUsage[0].getPromptTokens()).isGreaterThan(0);
-				assertThat(streamingTokenUsage[0].getCompletionTokens()).isGreaterThan(0);
-				assertThat(streamingTokenUsage[0].getTotalTokens()).isGreaterThan(0);
+					assertThat(streamingTokenUsage[0].getPromptTokens()).isGreaterThan(0);
+					assertThat(streamingTokenUsage[0].getCompletionTokens()).isGreaterThan(0);
+					assertThat(streamingTokenUsage[0].getTotalTokens()).isGreaterThan(0);
 
-				assertThat(response).isNotEmpty();
-			});
+					assertThat(response).isNotEmpty();
+				});
 	}
 
 	@Test
 	void chatActivation() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=TEST_BASE_URL",
-					"spring.ai.model.chat=none")
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OpenAiChatProperties.class)).isEmpty();
-				assertThat(context.getBeansOfType(OpenAiChatModel.class)).isEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=TEST_BASE_URL",
+						"spring.ai.model.chat=none")
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(OpenAiChatProperties.class)).isEmpty();
+					assertThat(context.getBeansOfType(OpenAiChatModel.class)).isEmpty();
+				});
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://test.base.url")
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OpenAiChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAiChatModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://test.base.url")
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(OpenAiChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAiChatModel.class)).isNotEmpty();
+				});
 
 		this.contextRunner
-			.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://test.base.url",
-					"spring.ai.model.chat=openai")
-			.withConfiguration(
-					AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
-			.run(context -> {
-				assertThat(context.getBeansOfType(OpenAiChatProperties.class)).isNotEmpty();
-				assertThat(context.getBeansOfType(OpenAiChatModel.class)).isNotEmpty();
-			});
+				.withPropertyValues("spring.ai.openai.api-key=API_KEY", "spring.ai.openai.base-url=http://test.base.url",
+						"spring.ai.model.chat=openai")
+				.withConfiguration(
+						AutoConfigurations.of(OpenAiChatAutoConfiguration.class, ToolCallingAutoConfiguration.class))
+				.run(context -> {
+					assertThat(context.getBeansOfType(OpenAiChatProperties.class)).isNotEmpty();
+					assertThat(context.getBeansOfType(OpenAiChatModel.class)).isNotEmpty();
+				});
 
 	}
 

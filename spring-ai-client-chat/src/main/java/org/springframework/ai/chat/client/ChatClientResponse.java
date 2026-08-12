@@ -16,19 +16,18 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.util.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a response returned by a {@link ChatClient}.
  *
  * @param chatResponse The response returned by the AI model
- * @param context The contextual data propagated through the execution chain
+ * @param context      The contextual data propagated through the execution chain
  * @author Thomas Vitale
  * @since 1.0.0
  */
@@ -39,15 +38,15 @@ public record ChatClientResponse(@Nullable ChatResponse chatResponse, Map<String
 		Assert.noNullElements(context.keySet(), "context keys cannot be null");
 	}
 
-	public ChatClientResponse copy() {
+	public ChatClientResponse copy () {
 		return new ChatClientResponse(this.chatResponse, new HashMap<>(this.context));
 	}
 
-	public Builder mutate() {
+	public Builder mutate () {
 		return new Builder().chatResponse(this.chatResponse).context(new HashMap<>(this.context));
 	}
 
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

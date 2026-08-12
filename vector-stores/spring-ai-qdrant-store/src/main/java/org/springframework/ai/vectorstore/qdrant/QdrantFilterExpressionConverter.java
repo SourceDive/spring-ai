@@ -16,20 +16,14 @@
 
 package org.springframework.ai.vectorstore.qdrant;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.qdrant.client.grpc.Common.Condition;
 import io.qdrant.client.grpc.Common.Filter;
 import io.qdrant.client.grpc.Common.Range;
-
-import org.springframework.ai.vectorstore.filter.Filter.Expression;
-import org.springframework.ai.vectorstore.filter.Filter.ExpressionType;
-import org.springframework.ai.vectorstore.filter.Filter.Group;
-import org.springframework.ai.vectorstore.filter.Filter.Key;
-import org.springframework.ai.vectorstore.filter.Filter.Operand;
-import org.springframework.ai.vectorstore.filter.Filter.Value;
+import org.springframework.ai.vectorstore.filter.Filter.*;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Anush Shetty
@@ -50,18 +44,15 @@ class QdrantFilterExpressionConverter {
 		if (operand instanceof Expression expression) {
 			if (expression.type() == ExpressionType.NOT && expression.left() instanceof Group group) {
 				mustNotClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(group.content())));
-			}
-			else if (expression.type() == ExpressionType.AND) {
+			} else if (expression.type() == ExpressionType.AND) {
 				Assert.state(expression.right() != null, "expected an expression with a right operand");
 				mustClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.left())));
 				mustClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.right())));
-			}
-			else if (expression.type() == ExpressionType.OR) {
+			} else if (expression.type() == ExpressionType.OR) {
 				Assert.state(expression.right() != null, "expected an expression with a right operand");
 				shouldClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.left())));
 				shouldClauses.add(io.qdrant.client.ConditionFactory.filter(convertOperand(expression.right())));
-			}
-			else {
+			} else {
 				if (!(expression.right() instanceof Value)) {
 					throw new RuntimeException("Non AND/OR/NOT expression must have Value right argument!");
 				}
@@ -93,8 +84,7 @@ class QdrantFilterExpressionConverter {
 		String identifier = doKey(key);
 		if (value.value() instanceof String valueStr) {
 			return io.qdrant.client.ConditionFactory.matchKeyword(identifier, valueStr);
-		}
-		else if (value.value() instanceof Number valueNum) {
+		} else if (value.value() instanceof Number valueNum) {
 			long lValue = Long.parseLong(valueNum.toString());
 			return io.qdrant.client.ConditionFactory.match(identifier, lValue);
 		}
@@ -107,10 +97,9 @@ class QdrantFilterExpressionConverter {
 		String identifier = doKey(key);
 		if (value.value() instanceof String valueStr) {
 			return io.qdrant.client.ConditionFactory.filter(Filter.newBuilder()
-				.addMustNot(io.qdrant.client.ConditionFactory.matchKeyword(identifier, valueStr))
-				.build());
-		}
-		else if (value.value() instanceof Number valueNum) {
+					.addMustNot(io.qdrant.client.ConditionFactory.matchKeyword(identifier, valueStr))
+					.build());
+		} else if (value.value() instanceof Number valueNum) {
 			long lValue = Long.parseLong(valueNum.toString());
 			Condition condition = io.qdrant.client.ConditionFactory.match(identifier, lValue);
 			return io.qdrant.client.ConditionFactory.filter(Filter.newBuilder().addMustNot(condition).build());
@@ -172,8 +161,7 @@ class QdrantFilterExpressionConverter {
 					stringValues.add(valueObj.toString());
 				}
 				return io.qdrant.client.ConditionFactory.matchKeywords(identifier, stringValues);
-			}
-			else if (firstValue instanceof Number) {
+			} else if (firstValue instanceof Number) {
 				// If the first value is a number, then all values should be numbers
 				List<Long> longValues = new ArrayList<>();
 				for (Object valueObj : valueList) {
@@ -181,8 +169,7 @@ class QdrantFilterExpressionConverter {
 					longValues.add(longValue);
 				}
 				return io.qdrant.client.ConditionFactory.matchValues(identifier, longValues);
-			}
-			else {
+			} else {
 				throw new RuntimeException("Unsupported value in IN value list. Only supports String or Number");
 			}
 		}
@@ -203,8 +190,7 @@ class QdrantFilterExpressionConverter {
 					stringValues.add(valueObj.toString());
 				}
 				return io.qdrant.client.ConditionFactory.matchExceptKeywords(identifier, stringValues);
-			}
-			else if (firstValue instanceof Number) {
+			} else if (firstValue instanceof Number) {
 				// If the first value is a number, then all values should be numbers
 				List<Long> longValues = new ArrayList<>();
 				for (Object valueObj : valueList) {
@@ -212,8 +198,7 @@ class QdrantFilterExpressionConverter {
 					longValues.add(longValue);
 				}
 				return io.qdrant.client.ConditionFactory.matchExceptValues(identifier, longValues);
-			}
-			else {
+			} else {
 				throw new RuntimeException("Unsupported value in NIN value list. Only supports String or Number");
 			}
 		}

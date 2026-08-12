@@ -16,11 +16,6 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import com.networknt.schema.Error;
 import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaRegistry;
@@ -28,25 +23,25 @@ import com.networknt.schema.SpecificationVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Flux;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
-import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
-import org.springframework.ai.chat.client.advisor.api.CallAdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
-import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
+import org.springframework.ai.chat.client.advisor.api.*;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.util.JacksonUtils;
 import org.springframework.ai.util.json.schema.JsonSchemaGenerator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Advisor that validates the structured JSON output of a chat client response against a
@@ -72,7 +67,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 	private final int maxRepeatAttempts;
 
 	private StructuredOutputValidationAdvisor(int advisorOrder, String outputJsonSchema, int maxRepeatAttempts,
-			JsonMapper jsonMapper) {
+	                                          JsonMapper jsonMapper) {
 		Assert.notNull(advisorOrder, "advisorOrder must not be null");
 		Assert.notNull(outputJsonSchema, "outputJsonSchema must not be null");
 		Assert.isTrue(advisorOrder > BaseAdvisor.HIGHEST_PRECEDENCE && advisorOrder < BaseAdvisor.LOWEST_PRECEDENCE,
@@ -90,8 +85,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		JsonNode schemaNode;
 		try {
 			schemaNode = jsonMapper.readTree(outputJsonSchema);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to parse JSON schema", e);
 		}
 
@@ -159,9 +153,9 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 							+ validationResponse.errorMessage();
 
 					Prompt augmentedPrompt = chatClientRequest.prompt()
-						.augmentUserMessage(userMessage -> userMessage.mutate()
-							.text(userMessage.getText() + System.lineSeparator() + validationErrorMessage)
-							.build());
+							.augmentUserMessage(userMessage -> userMessage.mutate()
+									.text(userMessage.getText() + System.lineSeparator() + validationErrorMessage)
+									.build());
 
 					processedChatClientRequest = chatClientRequest.mutate().prompt(augmentedPrompt).build();
 				}
@@ -205,8 +199,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 			}
 			String message = errors.stream().map(Error::getMessage).collect(Collectors.joining("; "));
 			return SchemaValidation.failed(message);
-		}
-		catch (JacksonException e) {
+		} catch (JacksonException e) {
 			return SchemaValidation.failed("Invalid JSON: " + e.getOriginalMessage());
 		}
 	}
@@ -214,7 +207,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 	@SuppressWarnings("null")
 	@Override
 	public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest,
-			StreamAdvisorChain streamAdvisorChain) {
+	                                             StreamAdvisorChain streamAdvisorChain) {
 
 		return Flux.error(new UnsupportedOperationException(
 				"The Structured Output Validation Advisor does not support streaming."));
@@ -222,6 +215,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 
 	/**
 	 * Returns a new {@link Builder}.
+	 *
 	 * @return a new builder instance
 	 */
 	public static Builder builder() {
@@ -251,6 +245,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		 * {@link BaseAdvisor#HIGHEST_PRECEDENCE} and
 		 * {@link BaseAdvisor#LOWEST_PRECEDENCE}. Defaults to
 		 * {@code LOWEST_PRECEDENCE - 2000}.
+		 *
 		 * @param advisorOrder the advisor order
 		 * @return this builder
 		 */
@@ -262,6 +257,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		/**
 		 * Sets the expected output type; the JSON schema is derived automatically.
 		 * Mutually exclusive with {@link #outputJsonSchema(String)}.
+		 *
 		 * @param outputType the expected output type
 		 * @return this builder
 		 */
@@ -273,7 +269,8 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		/**
 		 * Sets the expected output type; the JSON schema is derived automatically.
 		 * Mutually exclusive with {@link #outputJsonSchema(String)}.
-		 * @param <T> the type parameter
+		 *
+		 * @param <T>        the type parameter
 		 * @param outputType the expected output type
 		 * @return this builder
 		 */
@@ -285,7 +282,8 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		/**
 		 * Sets the expected output type; the JSON schema is derived automatically.
 		 * Mutually exclusive with {@link #outputJsonSchema(String)}.
-		 * @param <T> the type parameter
+		 *
+		 * @param <T>        the type parameter
 		 * @param outputType the expected output type
 		 * @return this builder
 		 */
@@ -297,6 +295,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		/**
 		 * Sets a pre-generated JSON schema string to validate against. Mutually exclusive
 		 * with the {@code outputType} methods.
+		 *
 		 * @param outputJsonSchema the JSON schema as a string
 		 * @return this builder
 		 */
@@ -308,6 +307,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		/**
 		 * Sets the maximum number of retry attempts after a validation failure. Zero
 		 * means no retries; the model is called exactly once. Defaults to 3.
+		 *
 		 * @param repeatAttempts the number of retry attempts, must be &gt;= 0
 		 * @return this builder
 		 */
@@ -319,6 +319,7 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 		/**
 		 * Sets the {@link JsonMapper} used for JSON parsing and validation. Defaults to
 		 * {@link JacksonUtils#getDefaultJsonMapper()}.
+		 *
 		 * @param jsonMapper the JSON mapper
 		 * @return this builder
 		 */
@@ -329,9 +330,10 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 
 		/**
 		 * Builds the StructuredOutputValidationAdvisor.
+		 *
 		 * @return a new StructuredOutputValidationAdvisor instance
 		 * @throws IllegalArgumentException if neither outputType nor outputJsonSchema is
-		 * set, or if both are set
+		 *                                  set, or if both are set
 		 */
 		public StructuredOutputValidationAdvisor build() {
 
@@ -355,11 +357,11 @@ public final class StructuredOutputValidationAdvisor implements CallAdvisor, Str
 
 	private record SchemaValidation(boolean success, String errorMessage) {
 
-		private static SchemaValidation passed() {
+		private static SchemaValidation passed () {
 			return new SchemaValidation(true, "");
 		}
 
-		private static SchemaValidation failed(String errorMessage) {
+		private static SchemaValidation failed (String errorMessage){
 			return new SchemaValidation(false, errorMessage);
 		}
 

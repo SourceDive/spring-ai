@@ -39,30 +39,30 @@ class PromptAssertTests {
 	void whenPlaceholderIsPresentThenThrow() {
 		PromptTemplate promptTemplate = new PromptTemplate("Hello, {name}!");
 		assertThatThrownBy(() -> PromptAssert.templateHasRequiredPlaceholders(promptTemplate, "{name}", "{age}"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("age");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("age");
 	}
 
 	@Test
 	void whenPromptTemplateIsNullThenThrow() {
 		assertThatThrownBy(() -> PromptAssert.templateHasRequiredPlaceholders(null, "{name}"))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("promptTemplate cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("promptTemplate cannot be null");
 	}
 
 	@Test
 	void whenPlaceholdersIsNullThenThrow() {
 		assertThatThrownBy(
 				() -> PromptAssert.templateHasRequiredPlaceholders(new PromptTemplate("{query}"), (String[]) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("placeholders cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("placeholders cannot be null or empty");
 	}
 
 	@Test
 	void whenPlaceholdersIsEmptyThenThrow() {
 		assertThatThrownBy(() -> PromptAssert.templateHasRequiredPlaceholders(new PromptTemplate("{query}")))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("placeholders cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("placeholders cannot be null or empty");
 	}
 
 }

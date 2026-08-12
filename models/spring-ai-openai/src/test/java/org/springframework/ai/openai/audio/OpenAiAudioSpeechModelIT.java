@@ -16,20 +16,19 @@
 
 package org.springframework.ai.openai.audio;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.audio.tts.Speech;
 import org.springframework.ai.audio.tts.TextToSpeechPrompt;
 import org.springframework.ai.audio.tts.TextToSpeechResponse;
 import org.springframework.ai.openai.OpenAiAudioSpeechModel;
 import org.springframework.ai.openai.OpenAiAudioSpeechOptions;
 import org.springframework.ai.openai.metadata.OpenAiAudioSpeechResponseMetadata;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,11 +61,11 @@ class OpenAiAudioSpeechModelIT {
 	@Test
 	void testCustomOptions() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1-hd")
-			.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
-			.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.OPUS)
-			.speed(1.5)
-			.build();
+				.model("tts-1-hd")
+				.voice(OpenAiAudioSpeechOptions.Voice.NOVA)
+				.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.OPUS)
+				.speed(1.5)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().options(options).build();
 
@@ -89,9 +88,9 @@ class OpenAiAudioSpeechModelIT {
 	@Test
 	void testNewVoiceOptions() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("gpt-4o-mini-tts")
-			.voice(OpenAiAudioSpeechOptions.Voice.BALLAD)
-			.build();
+				.model("gpt-4o-mini-tts")
+				.voice(OpenAiAudioSpeechOptions.Voice.BALLAD)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().options(options).build();
 		TextToSpeechPrompt prompt = new TextToSpeechPrompt("Testing new voice");
@@ -105,10 +104,10 @@ class OpenAiAudioSpeechModelIT {
 	@Test
 	void testNewFormatOptions() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("gpt-4o-mini-tts")
-			.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
-			.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.WAV)
-			.build();
+				.model("gpt-4o-mini-tts")
+				.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
+				.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.WAV)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().options(options).build();
 		TextToSpeechPrompt prompt = new TextToSpeechPrompt("Testing WAV format");
@@ -144,12 +143,12 @@ class OpenAiAudioSpeechModelIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "alloy", "echo", "fable", "onyx", "nova", "shimmer", "sage", "coral", "ash" })
+	@ValueSource(strings = {"alloy", "echo", "fable", "onyx", "nova", "shimmer", "sage", "coral", "ash"})
 	void testAllVoices(String voice) {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("gpt-4o-mini-tts")
-			.voice(voice)
-			.build();
+				.model("gpt-4o-mini-tts")
+				.voice(voice)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().options(options).build();
 		TextToSpeechPrompt prompt = new TextToSpeechPrompt("Today is a wonderful day to build something people love!");
@@ -183,11 +182,11 @@ class OpenAiAudioSpeechModelIT {
 	@Test
 	void testTts1Model() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1")
-			.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
-			.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.WAV)
-			.speed(1.0)
-			.build();
+				.model("tts-1")
+				.voice(OpenAiAudioSpeechOptions.Voice.ALLOY)
+				.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.WAV)
+				.speed(1.0)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().options(options).build();
 		TextToSpeechPrompt prompt = new TextToSpeechPrompt("Today is a wonderful day to build something people love!");
@@ -202,11 +201,11 @@ class OpenAiAudioSpeechModelIT {
 	@Test
 	void testTts1HdModel() {
 		OpenAiAudioSpeechOptions options = OpenAiAudioSpeechOptions.builder()
-			.model("tts-1-hd")
-			.voice(OpenAiAudioSpeechOptions.Voice.SHIMMER)
-			.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.OPUS)
-			.speed(1.0)
-			.build();
+				.model("tts-1-hd")
+				.voice(OpenAiAudioSpeechOptions.Voice.SHIMMER)
+				.responseFormat(OpenAiAudioSpeechOptions.AudioResponseFormat.OPUS)
+				.speed(1.0)
+				.build();
 
 		OpenAiAudioSpeechModel model = OpenAiAudioSpeechModel.builder().options(options).build();
 		TextToSpeechPrompt prompt = new TextToSpeechPrompt("Testing high definition audio model");

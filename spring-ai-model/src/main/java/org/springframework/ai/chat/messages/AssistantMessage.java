@@ -16,16 +16,15 @@
 
 package org.springframework.ai.chat.messages;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.content.Media;
 import org.springframework.ai.content.MediaContent;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Lets the generative know the content was generated as a response to the user. This role
@@ -49,7 +48,7 @@ public class AssistantMessage extends AbstractMessage implements MediaContent {
 	}
 
 	protected AssistantMessage(@Nullable String content, Map<String, Object> properties, List<ToolCall> toolCalls,
-			List<Media> media) {
+	                           List<Media> media) {
 		super(MessageType.ASSISTANT, content, properties);
 		Assert.notNull(toolCalls, "Tool calls must not be null");
 		Assert.notNull(media, "Media must not be null");

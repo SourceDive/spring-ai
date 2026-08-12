@@ -50,7 +50,7 @@ import org.springframework.web.reactive.function.client.WebClient;
  */
 @AutoConfiguration
 @ConditionalOnClass(DeepSeekApi.class)
-@EnableConfigurationProperties({ DeepSeekConnectionProperties.class, DeepSeekChatProperties.class })
+@EnableConfigurationProperties({DeepSeekConnectionProperties.class, DeepSeekChatProperties.class})
 @ConditionalOnProperty(name = SpringAIModelProperties.CHAT_MODEL, havingValue = SpringAIModels.DEEPSEEK,
 		matchIfMissing = true)
 public class DeepSeekChatAutoConfiguration {
@@ -58,23 +58,23 @@ public class DeepSeekChatAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public DeepSeekChatModel deepSeekChatModel(DeepSeekConnectionProperties commonProperties,
-			DeepSeekChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
-			ObjectProvider<RetryTemplate> retryTemplate, ObjectProvider<ResponseErrorHandler> responseErrorHandler,
-			ObjectProvider<ObservationRegistry> observationRegistry,
-			ObjectProvider<ChatModelObservationConvention> observationConvention) {
+	                                           DeepSeekChatProperties chatProperties, ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                                           ObjectProvider<WebClient.Builder> webClientBuilderProvider, ToolCallingManager toolCallingManager,
+	                                           ObjectProvider<RetryTemplate> retryTemplate, ObjectProvider<ResponseErrorHandler> responseErrorHandler,
+	                                           ObjectProvider<ObservationRegistry> observationRegistry,
+	                                           ObjectProvider<ChatModelObservationConvention> observationConvention) {
 
 		var deepSeekApi = deepSeekApi(chatProperties, commonProperties,
 				restClientBuilderProvider.getIfAvailable(RestClient::builder),
 				webClientBuilderProvider.getIfAvailable(WebClient::builder), responseErrorHandler);
 
 		var chatModel = DeepSeekChatModel.builder()
-			.deepSeekApi(deepSeekApi)
-			.options(chatProperties.toOptions())
-			.toolCallingManager(toolCallingManager)
-			.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
-			.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
-			.build();
+				.deepSeekApi(deepSeekApi)
+				.options(chatProperties.toOptions())
+				.toolCallingManager(toolCallingManager)
+				.retryTemplate(retryTemplate.getIfUnique(() -> RetryUtils.DEFAULT_RETRY_TEMPLATE))
+				.observationRegistry(observationRegistry.getIfUnique(() -> ObservationRegistry.NOOP))
+				.build();
 
 		observationConvention.ifAvailable(chatModel::setObservationConvention);
 
@@ -82,8 +82,8 @@ public class DeepSeekChatAutoConfiguration {
 	}
 
 	private DeepSeekApi deepSeekApi(DeepSeekChatProperties chatProperties,
-			DeepSeekConnectionProperties commonProperties, RestClient.Builder restClientBuilder,
-			WebClient.Builder webClientBuilder, ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
+	                                DeepSeekConnectionProperties commonProperties, RestClient.Builder restClientBuilder,
+	                                WebClient.Builder webClientBuilder, ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
 
 		String resolvedBaseUrl = StringUtils.hasText(chatProperties.getBaseUrl()) ? chatProperties.getBaseUrl()
 				: commonProperties.getBaseUrl();
@@ -94,14 +94,14 @@ public class DeepSeekChatAutoConfiguration {
 		Assert.hasText(resolvedApiKey, "DeepSeek API key must be set");
 
 		return DeepSeekApi.builder()
-			.baseUrl(resolvedBaseUrl)
-			.apiKey(new SimpleApiKey(resolvedApiKey))
-			.completionsPath(chatProperties.getCompletionsPath())
-			.betaPrefixPath(chatProperties.getBetaPrefixPath())
-			.restClientBuilder(restClientBuilder)
-			.webClientBuilder(webClientBuilder)
-			.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
-			.build();
+				.baseUrl(resolvedBaseUrl)
+				.apiKey(new SimpleApiKey(resolvedApiKey))
+				.completionsPath(chatProperties.getCompletionsPath())
+				.betaPrefixPath(chatProperties.getBetaPrefixPath())
+				.restClientBuilder(restClientBuilder)
+				.webClientBuilder(webClientBuilder)
+				.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
+				.build();
 	}
 
 }

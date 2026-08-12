@@ -16,11 +16,7 @@
 
 package org.springframework.ai.mcp.server.common.autoconfigure.annotations;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.McpResource;
@@ -38,6 +34,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportRuntimeHints;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * @author Christian Tzolov
@@ -89,7 +88,7 @@ public class McpServerAnnotationScannerAutoConfiguration {
 	public static class ServerAnnotatedMethodBeanPostProcessor extends AbstractAnnotatedMethodBeanPostProcessor {
 
 		public ServerAnnotatedMethodBeanPostProcessor(ServerMcpAnnotatedBeans serverMcpAnnotatedBeans,
-				Set<Class<? extends Annotation>> targetAnnotations) {
+		                                              Set<Class<? extends Annotation>> targetAnnotations) {
 			super(serverMcpAnnotatedBeans, targetAnnotations);
 		}
 

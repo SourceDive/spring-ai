@@ -16,19 +16,10 @@
 
 package org.springframework.ai.chat.memory.repository.redis;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import com.redis.testcontainers.RedisStackContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import redis.clients.jedis.RedisClient;
-
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -38,6 +29,14 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.util.MimeType;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import redis.clients.jedis.RedisClient;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,10 +53,10 @@ class RedisChatMemoryMediaIT {
 	@Container
 	static RedisStackContainer redisContainer = new RedisStackContainer(
 			RedisStackContainer.DEFAULT_IMAGE_NAME.withTag(RedisStackContainer.DEFAULT_TAG))
-		.withExposedPorts(6379);
+			.withExposedPorts(6379);
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withUserConfiguration(TestApplication.class);
+			.withUserConfiguration(TestApplication.class);
 
 	private RedisChatMemoryRepository chatMemory;
 
@@ -67,12 +66,12 @@ class RedisChatMemoryMediaIT {
 	void setUp() {
 		// Create RedisClient directly with container properties for reliable connection
 		this.jedisClient = RedisClient.builder()
-			.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-			.build();
+				.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+				.build();
 		this.chatMemory = RedisChatMemoryRepository.builder()
-			.jedisClient(this.jedisClient)
-			.indexName("test-media-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
-			.build();
+				.jedisClient(this.jedisClient)
+				.indexName("test-media-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
+				.build();
 
 		// Clear any existing data
 		for (String conversationId : this.chatMemory.findConversationIds()) {
@@ -93,18 +92,18 @@ class RedisChatMemoryMediaIT {
 			// Create a URI media object
 			URI mediaUri = URI.create("https://example.com/image.png");
 			Media imageMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_PNG)
-				.data(mediaUri)
-				.id("test-image-id")
-				.name("test-image")
-				.build();
+					.mimeType(Media.Format.IMAGE_PNG)
+					.data(mediaUri)
+					.id("test-image-id")
+					.name("test-image")
+					.build();
 
 			// Create a user message with the media
 			UserMessage userMessage = UserMessage.builder()
-				.text("Message with image")
-				.media(imageMedia)
-				.metadata(Map.of("test-key", "test-value"))
-				.build();
+					.text("Message with image")
+					.media(imageMedia)
+					.metadata(Map.of("test-key", "test-value"))
+					.build();
 
 			// Store the message
 			this.chatMemory.add("test-conversation", userMessage);
@@ -133,25 +132,25 @@ class RedisChatMemoryMediaIT {
 	void shouldStoreAndRetrieveAssistantMessageWithByteArrayMedia() {
 		this.contextRunner.run(context -> {
 			// Create a byte array media object
-			byte[] imageData = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04 };
+			byte[] imageData = new byte[]{0x00, 0x01, 0x02, 0x03, 0x04};
 			Media byteArrayMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_JPEG)
-				.data(imageData)
-				.id("test-jpeg-id")
-				.name("test-jpeg")
-				.build();
+					.mimeType(Media.Format.IMAGE_JPEG)
+					.data(imageData)
+					.id("test-jpeg-id")
+					.name("test-jpeg")
+					.build();
 
 			// Create a list of tool calls
 			List<AssistantMessage.ToolCall> toolCalls = List
-				.of(new AssistantMessage.ToolCall("tool1", "function", "testFunction", "{\"param\":\"value\"}"));
+					.of(new AssistantMessage.ToolCall("tool1", "function", "testFunction", "{\"param\":\"value\"}"));
 
 			// Create an assistant message with media and tool calls
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("Response with image")
-				.properties(Map.of("assistant-key", "assistant-value"))
-				.toolCalls(toolCalls)
-				.media(List.of(byteArrayMedia))
-				.build();
+					.content("Response with image")
+					.properties(Map.of("assistant-key", "assistant-value"))
+					.toolCalls(toolCalls)
+					.media(List.of(byteArrayMedia))
+					.build();
 
 			// Store the message
 			this.chatMemory.add("test-conversation", assistantMessage);
@@ -189,32 +188,32 @@ class RedisChatMemoryMediaIT {
 		this.contextRunner.run(context -> {
 			// Create media objects with different types
 			Media pngMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_PNG)
-				.data(URI.create("https://example.com/image.png"))
-				.id("png-id")
-				.build();
+					.mimeType(Media.Format.IMAGE_PNG)
+					.data(URI.create("https://example.com/image.png"))
+					.id("png-id")
+					.build();
 
 			Media jpegMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_JPEG)
-				.data(new byte[] { 0x10, 0x20, 0x30, 0x40 })
-				.id("jpeg-id")
-				.build();
+					.mimeType(Media.Format.IMAGE_JPEG)
+					.data(new byte[]{0x10, 0x20, 0x30, 0x40})
+					.id("jpeg-id")
+					.build();
 
 			Media pdfMedia = Media.builder()
-				.mimeType(Media.Format.DOC_PDF)
-				.data(new ByteArrayResource("PDF content".getBytes()))
-				.id("pdf-id")
-				.build();
+					.mimeType(Media.Format.DOC_PDF)
+					.data(new ByteArrayResource("PDF content".getBytes()))
+					.id("pdf-id")
+					.build();
 
 			// Create messages
 			UserMessage userMessage1 = UserMessage.builder().text("Message with PNG").media(pngMedia).build();
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("Response with JPEG")
-				.properties(Map.of())
-				.toolCalls(List.of())
-				.media(List.of(jpegMedia))
-				.build();
+					.content("Response with JPEG")
+					.properties(Map.of())
+					.toolCalls(List.of())
+					.media(List.of(jpegMedia))
+					.build();
 
 			UserMessage userMessage2 = UserMessage.builder().text("Message with PDF").media(pdfMedia).build();
 
@@ -241,7 +240,7 @@ class RedisChatMemoryMediaIT {
 			assertThat(retrievedAssistant.getMedia().get(0).getMimeType()).isEqualTo(Media.Format.IMAGE_JPEG);
 			assertThat(retrievedAssistant.getMedia().get(0).getId()).isEqualTo("jpeg-id");
 			assertThat(retrievedAssistant.getMedia().get(0).getDataAsByteArray())
-				.isEqualTo(new byte[] { 0x10, 0x20, 0x30, 0x40 });
+					.isEqualTo(new byte[]{0x10, 0x20, 0x30, 0x40});
 
 			// Verify second user message with PDF
 			UserMessage retrievedUser2 = (UserMessage) messages.get(2);
@@ -259,24 +258,24 @@ class RedisChatMemoryMediaIT {
 		this.contextRunner.run(context -> {
 			// Create multiple media objects
 			Media textMedia = Media.builder()
-				.mimeType(Media.Format.DOC_TXT)
-				.data("This is text content".getBytes())
-				.id("text-id")
-				.name("text-file")
-				.build();
+					.mimeType(Media.Format.DOC_TXT)
+					.data("This is text content".getBytes())
+					.id("text-id")
+					.name("text-file")
+					.build();
 
 			Media imageMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_PNG)
-				.data(URI.create("https://example.com/image.png"))
-				.id("image-id")
-				.name("image-file")
-				.build();
+					.mimeType(Media.Format.IMAGE_PNG)
+					.data(URI.create("https://example.com/image.png"))
+					.id("image-id")
+					.name("image-file")
+					.build();
 
 			// Create a message with multiple media attachments
 			UserMessage userMessage = UserMessage.builder()
-				.text("Message with multiple attachments")
-				.media(textMedia, imageMedia)
-				.build();
+					.text("Message with multiple attachments")
+					.media(textMedia, imageMedia)
+					.build();
 
 			// Store the message
 			this.chatMemory.add("multi-media-conversation", userMessage);
@@ -312,10 +311,10 @@ class RedisChatMemoryMediaIT {
 		this.contextRunner.run(context -> {
 			// Create a message with media
 			Media imageMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_PNG)
-				.data(new byte[] { 0x01, 0x02, 0x03 })
-				.id("test-clear-id")
-				.build();
+					.mimeType(Media.Format.IMAGE_PNG)
+					.data(new byte[]{0x01, 0x02, 0x03})
+					.id("test-clear-id")
+					.build();
 
 			UserMessage userMessage = UserMessage.builder().text("Message to be cleared").media(imageMedia).build();
 
@@ -347,17 +346,17 @@ class RedisChatMemoryMediaIT {
 
 			// Create media with the large data
 			Media largeMedia = Media.builder()
-				.mimeType(Media.Format.IMAGE_PNG)
-				.data(largeImageData)
-				.id("large-image-id")
-				.name("large-image.png")
-				.build();
+					.mimeType(Media.Format.IMAGE_PNG)
+					.data(largeImageData)
+					.id("large-image-id")
+					.name("large-image.png")
+					.build();
 
 			// Create a message with large media
 			UserMessage userMessage = UserMessage.builder()
-				.text("Message with large image attachment")
-				.media(largeMedia)
-				.build();
+					.text("Message with large image attachment")
+					.media(largeMedia)
+					.build();
 
 			// Store the message
 			String conversationId = "large-media-conversation";
@@ -385,23 +384,23 @@ class RedisChatMemoryMediaIT {
 		this.contextRunner.run(context -> {
 			// Create media with null or empty values where allowed
 			Media edgeCaseMedia1 = Media.builder()
-				.mimeType(Media.Format.IMAGE_PNG) // MimeType is required
-				.data(new byte[0]) // Empty byte array
-				.id(null) // No ID
-				.name("") // Empty name
-				.build();
+					.mimeType(Media.Format.IMAGE_PNG) // MimeType is required
+					.data(new byte[0]) // Empty byte array
+					.id(null) // No ID
+					.name("") // Empty name
+					.build();
 
 			// Second media with only required fields
 			Media edgeCaseMedia2 = Media.builder()
-				.mimeType(Media.Format.DOC_TXT) // Only required field
-				.data(new byte[0]) // Empty byte array instead of null
-				.build();
+					.mimeType(Media.Format.DOC_TXT) // Only required field
+					.data(new byte[0]) // Empty byte array instead of null
+					.build();
 
 			// Create message with these edge case media objects
 			UserMessage userMessage = UserMessage.builder()
-				.text("Edge case media test")
-				.media(edgeCaseMedia1, edgeCaseMedia2)
-				.build();
+					.text("Edge case media test")
+					.media(edgeCaseMedia1, edgeCaseMedia2)
+					.build();
 
 			// Store the message
 			String conversationId = "edge-case-media";
@@ -449,31 +448,31 @@ class RedisChatMemoryMediaIT {
 
 			// Create media objects with the complex binary data
 			Media audioMedia = Media.builder()
-				.mimeType(customAudioType)
-				.data(audioData)
-				.id("audio-sample-id")
-				.name("audio-sample.wav")
-				.build();
+					.mimeType(customAudioType)
+					.data(audioData)
+					.id("audio-sample-id")
+					.name("audio-sample.wav")
+					.build();
 
 			Media videoMedia = Media.builder()
-				.mimeType(customVideoType)
-				.data(videoData)
-				.id("video-sample-id")
-				.name("video-sample.mp4")
-				.build();
+					.mimeType(customVideoType)
+					.data(videoData)
+					.id("video-sample-id")
+					.name("video-sample.mp4")
+					.build();
 
 			// Create messages with the complex media
 			UserMessage userMessage = UserMessage.builder()
-				.text("Message with audio attachment")
-				.media(audioMedia)
-				.build();
+					.text("Message with audio attachment")
+					.media(audioMedia)
+					.build();
 
 			AssistantMessage assistantMessage = AssistantMessage.builder()
-				.content("Response with video attachment")
-				.properties(Map.of())
-				.toolCalls(List.of())
-				.media(List.of(videoMedia))
-				.build();
+					.content("Response with video attachment")
+					.properties(Map.of())
+					.toolCalls(List.of())
+					.media(List.of(videoMedia))
+					.build();
 
 			// Store the messages
 			String conversationId = "complex-media-conversation";
@@ -499,7 +498,7 @@ class RedisChatMemoryMediaIT {
 			// Verify binary pattern data integrity
 			byte[] retrievedAudioData = retrievedAudioMedia.getDataAsByteArray();
 			// Check RIFF header (first 4 bytes of WAV)
-			assertThat(Arrays.copyOfRange(retrievedAudioData, 0, 4)).isEqualTo(new byte[] { 'R', 'I', 'F', 'F' });
+			assertThat(Arrays.copyOfRange(retrievedAudioData, 0, 4)).isEqualTo(new byte[]{'R', 'I', 'F', 'F'});
 
 			// Verify video data in assistant message
 			AssistantMessage retrievedAssistantMessage = (AssistantMessage) messages.get(1);
@@ -515,13 +514,14 @@ class RedisChatMemoryMediaIT {
 			// Verify the MP4 header pattern
 			byte[] retrievedVideoData = retrievedVideoMedia.getDataAsByteArray();
 			// Check mock MP4 signature (first 4 bytes should be ftyp)
-			assertThat(Arrays.copyOfRange(retrievedVideoData, 4, 8)).isEqualTo(new byte[] { 'f', 't', 'y', 'p' });
+			assertThat(Arrays.copyOfRange(retrievedVideoData, 4, 8)).isEqualTo(new byte[]{'f', 't', 'y', 'p'});
 		});
 	}
 
 	/**
 	 * Creates a sample audio data byte array with WAV format.
-	 * @param sampleRate Sample rate of the audio in Hz
+	 *
+	 * @param sampleRate      Sample rate of the audio in Hz
 	 * @param durationSeconds Duration of the audio in seconds
 	 * @return Byte array containing a simple WAV file
 	 */
@@ -616,6 +616,7 @@ class RedisChatMemoryMediaIT {
 
 	/**
 	 * Creates sample video data with a mock MP4 structure.
+	 *
 	 * @param sizeBytes Size of the video data in bytes
 	 * @return Byte array containing mock MP4 data
 	 */
@@ -673,11 +674,11 @@ class RedisChatMemoryMediaIT {
 		@Bean
 		RedisChatMemoryRepository chatMemory() {
 			return RedisChatMemoryRepository.builder()
-				.jedisClient(RedisClient.builder()
-					.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
-					.build())
-				.indexName("test-media-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
-				.build();
+					.jedisClient(RedisClient.builder()
+							.hostAndPort(redisContainer.getHost(), redisContainer.getFirstMappedPort())
+							.build())
+					.indexName("test-media-" + RedisChatMemoryConfig.DEFAULT_INDEX_NAME)
+					.build();
 		}
 
 	}

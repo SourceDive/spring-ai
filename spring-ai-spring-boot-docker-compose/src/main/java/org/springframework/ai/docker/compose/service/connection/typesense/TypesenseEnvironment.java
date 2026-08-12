@@ -16,9 +16,9 @@
 
 package org.springframework.ai.docker.compose.service.connection.typesense;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Map;
 
 class TypesenseEnvironment {
 

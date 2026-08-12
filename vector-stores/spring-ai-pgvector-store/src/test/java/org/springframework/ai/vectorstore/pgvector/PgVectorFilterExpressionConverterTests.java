@@ -16,12 +16,7 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
@@ -29,17 +24,12 @@ import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Muthukumaran Navaneethakrishnan
@@ -60,7 +50,7 @@ public class PgVectorFilterExpressionConverterTests {
 		FilterExpressionConverter maliciousConverter = new PgVectorFilterExpressionConverter(
 				"meta\"); DROP TABLE users; --");
 		String vectorExpr = maliciousConverter
-			.convertExpression(new Expression(EQ, new Key("country"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country"), new Value("BG")));
 		// The identifier contains special characters, so it's quoted with escaped double
 		// quotes
 		assertThat(vectorExpr).startsWith("\"meta\"\"); DROP TABLE users; --\"::jsonb @@ '");
@@ -87,8 +77,8 @@ public class PgVectorFilterExpressionConverterTests {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"genre\" == \"drama\" && $.\"year\" >= 2020"));
 	}
 
@@ -105,11 +95,11 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr)
-			.isEqualTo(sqlPredicate("$.\"year\" >= 2020 || $.\"country\" == \"BG\" && $.\"city\" != \"Sofia\""));
+				.isEqualTo(sqlPredicate("$.\"year\" >= 2020 || $.\"country\" == \"BG\" && $.\"city\" != \"Sofia\""));
 	}
 
 	@Test
@@ -139,8 +129,8 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"temperature\" >= -15.6 && $.\"temperature\" <= 20.13"));
 	}
@@ -148,7 +138,7 @@ public class PgVectorFilterExpressionConverterTests {
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"country 1 2 3\" == \"BG\""));
 	}
 
@@ -177,7 +167,7 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testNIN() {
 		// category NOT IN ["typeA", "typeB"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("category"), new Value(List.of("typeA", "typeB"))));
+				.convertExpression(new Expression(NIN, new Key("category"), new Value(List.of("typeA", "typeB"))));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("!($.\"category\" == \"typeA\" || $.\"category\" == \"typeB\")"));
 	}
 
@@ -185,7 +175,7 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testSingleValueIN() {
 		// status IN ["active"] - single value in list
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
+				.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("($.\"status\" == \"active\")"));
 	}
 
@@ -193,7 +183,7 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testSingleValueNIN() {
 		// status NOT IN ["inactive"] - single value in list
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("status"), new Value(List.of("inactive"))));
+				.convertExpression(new Expression(NIN, new Key("status"), new Value(List.of("inactive"))));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("!($.\"status\" == \"inactive\")"));
 	}
 
@@ -201,16 +191,16 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testNumericIN() {
 		// priority IN [1, 2, 3]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("priority"), new Value(List.of(1, 2, 3))));
+				.convertExpression(new Expression(IN, new Key("priority"), new Value(List.of(1, 2, 3))));
 		assertThat(vectorExpr)
-			.isEqualTo(sqlPredicate("($.\"priority\" == 1 || $.\"priority\" == 2 || $.\"priority\" == 3)"));
+				.isEqualTo(sqlPredicate("($.\"priority\" == 1 || $.\"priority\" == 2 || $.\"priority\" == 3)"));
 	}
 
 	@Test
 	public void testNumericNIN() {
 		// level NOT IN [0, 10]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("level"), new Value(List.of(0, 10))));
+				.convertExpression(new Expression(NIN, new Key("level"), new Value(List.of(0, 10))));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("!($.\"level\" == 0 || $.\"level\" == 10)"));
 	}
 
@@ -247,7 +237,7 @@ public class PgVectorFilterExpressionConverterTests {
 	public void testKeyWithDots() {
 		// config.setting == "value1"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("config.setting"), new Value("value1")));
+				.convertExpression(new Expression(EQ, new Key("config.setting"), new Value("value1")));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"config.setting\" == \"value1\""));
 	}
 
@@ -284,7 +274,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Malicious value: " || $.department == "Finance
 		String maliciousValue = "\" || $.department == \"Finance";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("department"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("department"), new Value(maliciousValue)));
 
 		// Key is always quoted; value double-quotes are JSON-escaped
 		String expected = sqlPredicate("$.\"department\" == \"\\\" || $.department == \\\"Finance\"");
@@ -299,7 +289,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Attempt to inject using backslash escape: value\"
 		String maliciousValue = "value\\\"";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// Should escape both backslash and quote
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"field\" == \"value\\\\\\\"\""));
@@ -311,7 +301,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Attempt to inject using single quotes: value' || $.other == 'admin
 		String maliciousValue = "value' || $.other == 'admin";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// Single quotes in JSON string values are SQL-escaped (doubled) so they cannot
 		// terminate the surrounding SQL single-quoted literal
@@ -324,7 +314,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Attempt to inject using newline: value\n|| $.field == "admin"
 		String maliciousValue = "value\n|| $.field == \"admin\"";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// Should escape newline and quotes; key is always quoted
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"field\" == \"value\\n|| $.field == \\\"admin\\\"\""));
@@ -336,7 +326,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Complex injection with multiple special characters
 		String maliciousValue = "test\"\\'\n\r\t";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(maliciousValue)));
 
 		// JSON escaping handles double-quotes and backslashes; single quote is
 		// SQL-escaped (doubled) when embedded in the SQL string literal
@@ -364,8 +354,8 @@ public class PgVectorFilterExpressionConverterTests {
 		// Attempt injection in a complex AND/OR expression
 		String maliciousValue = "\" || $.role == \"admin\" || $.dept == \"";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("department"), new Value(maliciousValue)),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("department"), new Value(maliciousValue)),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 
 		// Should not allow injection to break out of the expression
 		assertThat(vectorExpr).contains("\\\" || $.role == \\\"admin\\\" || $.dept == \\\"");
@@ -378,7 +368,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Verify normal strings work correctly after escaping fix
 		String normalValue = "HR Department";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("department"), new Value(normalValue)));
+				.convertExpression(new Expression(EQ, new Key("department"), new Value(normalValue)));
 
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"department\" == \"HR Department\""));
 	}
@@ -388,7 +378,7 @@ public class PgVectorFilterExpressionConverterTests {
 		// Test Unicode control characters are escaped
 		String valueWithControlChar = "test\u0000value"; // null character
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field"), new Value(valueWithControlChar)));
+				.convertExpression(new Expression(EQ, new Key("field"), new Value(valueWithControlChar)));
 
 		assertThat(vectorExpr).contains("\\u0000");
 	}
@@ -396,7 +386,7 @@ public class PgVectorFilterExpressionConverterTests {
 	@Test
 	public void testKeyWithSingleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
+				.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"x' OR 1=1--\" == \"dummy\""));
 		assertThat(vectorExpr).doesNotContain("$.x' OR 1=1--'");
 	}
@@ -417,7 +407,7 @@ public class PgVectorFilterExpressionConverterTests {
 	@Test
 	public void testKeyWithDoubleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\"inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\"inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"key\\\"inject\" == \"v\""));
 		assertThat(vectorExpr).doesNotContain("$.\"key\"inject");
 	}
@@ -425,7 +415,7 @@ public class PgVectorFilterExpressionConverterTests {
 	@Test
 	public void testKeyWithBackslash() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo(sqlPredicate("$.\"key\\\\inject\" == \"v\""));
 	}
 
@@ -460,7 +450,7 @@ public class PgVectorFilterExpressionConverterTests {
 		Date date2 = Date.from(Instant.parse("2024-02-20T14:45:00Z"));
 
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("activationDate"), new Value(List.of(date1, date2))));
+				.convertExpression(new Expression(IN, new Key("activationDate"), new Value(List.of(date1, date2))));
 
 		assertThat(vectorExpr).contains("$.\"activationDate\"");
 		assertThat(vectorExpr).contains("2024-01-15T10:30:00.000Z");

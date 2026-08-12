@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.filter.converter;
 
-import org.jspecify.annotations.NullMarked;

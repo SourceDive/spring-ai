@@ -16,16 +16,12 @@
 
 package org.springframework.ai.model.mistralai.autoconfigure.tool;
 
-import java.util.List;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -48,6 +44,9 @@ import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfigura
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
 
+import java.util.List;
+import java.util.function.Function;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -60,73 +59,73 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WeatherServicePromptIT {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withPropertyValues("spring.ai.mistralai.api-key=" + System.getenv("MISTRAL_AI_API_KEY"))
-		.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class,
-				RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
-				ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class));
+			.withPropertyValues("spring.ai.mistralai.api-key=" + System.getenv("MISTRAL_AI_API_KEY"))
+			.withConfiguration(AutoConfigurations.of(MistralAiChatAutoConfiguration.class,
+					RestClientAutoConfiguration.class, SpringAiRetryAutoConfiguration.class,
+					ToolCallingAutoConfiguration.class, WebClientAutoConfiguration.class));
 
 	@Test
 	void promptFunctionCall() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mistralai.chat.model=" + MistralAiApi.ChatModel.MISTRAL_LARGE.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.mistralai.chat.model=" + MistralAiApi.ChatModel.MISTRAL_LARGE.getValue())
+				.run(context -> {
 
-				MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
-				ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
+					MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
+					ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 
-				var chatClient = ChatClient
-					.builder(chatModel, ObservationRegistry.NOOP, null, null,
-							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-					.build();
+					var chatClient = ChatClient
+							.builder(chatModel, ObservationRegistry.NOOP, null, null,
+									ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+							.build();
 
-				UserMessage userMessage = new UserMessage("What's the weather like in Paris? Use Celsius.");
+					UserMessage userMessage = new UserMessage("What's the weather like in Paris? Use Celsius.");
 
-				var promptOptions = MistralAiChatOptions.builder()
-					.toolChoice(ToolChoice.AUTO)
-					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MyWeatherService())
-						.description("Get the current weather in requested location")
-						.inputType(MyWeatherService.Request.class)
-						.build()))
-					.build();
+					var promptOptions = MistralAiChatOptions.builder()
+							.toolChoice(ToolChoice.AUTO)
+							.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MyWeatherService())
+									.description("Get the current weather in requested location")
+									.inputType(MyWeatherService.Request.class)
+									.build()))
+							.build();
 
-				ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
-					.call()
-					.chatResponse();
+					ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
+							.call()
+							.chatResponse();
 
-				assertThat(response.getResult().getOutput().getText()).containsAnyOf("15", "15.0");
-			});
+					assertThat(response.getResult().getOutput().getText()).containsAnyOf("15", "15.0");
+				});
 	}
 
 	@Test
 	void functionCallWithPortableFunctionCallingOptions() {
 		this.contextRunner
-			.withPropertyValues("spring.ai.mistralai.chat.model=" + MistralAiApi.ChatModel.MISTRAL_LARGE.getValue())
-			.run(context -> {
+				.withPropertyValues("spring.ai.mistralai.chat.model=" + MistralAiApi.ChatModel.MISTRAL_LARGE.getValue())
+				.run(context -> {
 
-				MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
-				ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
+					MistralAiChatModel chatModel = context.getBean(MistralAiChatModel.class);
+					ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 
-				var chatClient = ChatClient
-					.builder(chatModel, ObservationRegistry.NOOP, null, null,
-							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-					.build();
+					var chatClient = ChatClient
+							.builder(chatModel, ObservationRegistry.NOOP, null, null,
+									ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+							.build();
 
-				UserMessage userMessage = new UserMessage("What's the weather like in Paris? Use Celsius.");
+					UserMessage userMessage = new UserMessage("What's the weather like in Paris? Use Celsius.");
 
-				ToolCallingChatOptions functionOptions = ToolCallingChatOptions.builder()
-					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MyWeatherService())
-						.description("Get the current weather in requested location")
-						.inputType(MyWeatherService.Request.class)
-						.build()))
+					ToolCallingChatOptions functionOptions = ToolCallingChatOptions.builder()
+							.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MyWeatherService())
+									.description("Get the current weather in requested location")
+									.inputType(MyWeatherService.Request.class)
+									.build()))
 
-					.build();
+							.build();
 
-				ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), functionOptions))
-					.call()
-					.chatResponse();
+					ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), functionOptions))
+							.call()
+							.chatResponse();
 
-				assertThat(response.getResult().getOutput().getText()).containsAnyOf("15", "15.0");
-			});
+					assertThat(response.getResult().getOutput().getText()).containsAnyOf("15", "15.0");
+				});
 	}
 
 	public static class MyWeatherService implements Function<Request, Response> {
@@ -135,11 +134,9 @@ public class WeatherServicePromptIT {
 		public Response apply(Request request) {
 			if (request.location().contains("Paris")) {
 				return new Response(15, request.unit());
-			}
-			else if (request.location().contains("Tokyo")) {
+			} else if (request.location().contains("Tokyo")) {
 				return new Response(10, request.unit());
-			}
-			else if (request.location().contains("San Francisco")) {
+			} else if (request.location().contains("San Francisco")) {
 				return new Response(30, request.unit());
 			}
 			throw new IllegalArgumentException("Invalid request: " + request);

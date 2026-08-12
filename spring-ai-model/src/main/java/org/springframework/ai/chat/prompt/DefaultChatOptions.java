@@ -16,10 +16,10 @@
 
 package org.springframework.ai.chat.prompt;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
 
 /**
  * Default implementation for the {@link ChatOptions}.
@@ -43,8 +43,8 @@ public class DefaultChatOptions implements ChatOptions {
 	private final @Nullable Double topP;
 
 	protected DefaultChatOptions(@Nullable String model, @Nullable Double frequencyPenalty, @Nullable Integer maxTokens,
-			@Nullable Double presencePenalty, @Nullable List<String> stopSequences, @Nullable Double temperature,
-			@Nullable Integer topK, @Nullable Double topP) {
+	                             @Nullable Double presencePenalty, @Nullable List<String> stopSequences, @Nullable Double temperature,
+	                             @Nullable Integer topK, @Nullable Double topP) {
 		this.model = model;
 		this.frequencyPenalty = frequencyPenalty;
 		this.maxTokens = maxTokens;
@@ -98,14 +98,14 @@ public class DefaultChatOptions implements ChatOptions {
 	@Override
 	public ChatOptions.Builder<?> mutate() {
 		return ChatOptions.builder()
-			.model(this.model)
-			.frequencyPenalty(this.frequencyPenalty)
-			.maxTokens(this.maxTokens)
-			.presencePenalty(this.presencePenalty)
-			.stopSequences(this.stopSequences)
-			.temperature(this.temperature)
-			.topK(this.topK)
-			.topP(this.topP);
+				.model(this.model)
+				.frequencyPenalty(this.frequencyPenalty)
+				.maxTokens(this.maxTokens)
+				.presencePenalty(this.presencePenalty)
+				.stopSequences(this.stopSequences)
+				.temperature(this.temperature)
+				.topK(this.topK)
+				.topP(this.topP);
 	}
 
 	@Override

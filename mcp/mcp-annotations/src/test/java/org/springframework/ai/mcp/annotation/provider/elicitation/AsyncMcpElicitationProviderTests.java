@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.annotation.provider.elicitation;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitFormRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpElicitation;
+import org.springframework.ai.mcp.annotation.method.elicitation.AsyncElicitationSpecification;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpElicitation;
-import org.springframework.ai.mcp.annotation.method.elicitation.AsyncElicitationSpecification;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,9 +50,9 @@ public class AsyncMcpElicitationProviderTests {
 		assertNotNull(handler);
 
 		ElicitRequest request = ElicitFormRequest
-			.builder("Please provide your name",
-					Map.of("type", "object", "properties", Map.of("name", Map.of("type", "string"))))
-			.build();
+				.builder("Please provide your name",
+						Map.of("type", "object", "properties", Map.of("name", Map.of("type", "string"))))
+				.build();
 		Mono<ElicitResult> result = handler.apply(request);
 
 		StepVerifier.create(result).assertNext(elicitResult -> {

@@ -16,15 +16,14 @@
 
 package org.springframework.ai.model.postgresml.autoconfigure;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.postgresml.PostgresMlEmbeddingModel.VectorType;
 import org.springframework.ai.postgresml.PostgresMlEmbeddingOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
+
+import java.util.Map;
 
 /**
  * Configuration properties for Postgres ML.
@@ -93,11 +92,11 @@ public class PostgresMlEmbeddingProperties {
 
 	public PostgresMlEmbeddingOptions toOptions() {
 		return PostgresMlEmbeddingOptions.builder()
-			.transformer(this.transformer)
-			.vectorType(this.vectorType)
-			.kwargs(this.kwargs)
-			.metadataMode(this.metadataMode)
-			.build();
+				.transformer(this.transformer)
+				.vectorType(this.vectorType)
+				.kwargs(this.kwargs)
+				.metadataMode(this.metadataMode)
+				.build();
 	}
 
 	private Options options = new Options();

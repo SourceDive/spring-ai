@@ -37,10 +37,10 @@ import java.util.Set;
  * aggressive strategy wins).
  *
  * @author Christian Tzolov
- * @since 2.0.0
  * @see NeverEvictStrategy
  * @see LruEvictionStrategy
  * @see TtlEvictionStrategy
+ * @since 2.0.0
  */
 public final class AlwaysEvictStrategy implements ToolIndexEvictionStrategy {
 
@@ -57,6 +57,7 @@ public final class AlwaysEvictStrategy implements ToolIndexEvictionStrategy {
 	 * session's index and remove its cached fingerprint before the fingerprint-comparison
 	 * step. The comparison then always sees a missing fingerprint and re-indexes the full
 	 * tool set.
+	 *
 	 * @param sessionId the session being accessed
 	 * @return a singleton set containing {@code sessionId}
 	 */

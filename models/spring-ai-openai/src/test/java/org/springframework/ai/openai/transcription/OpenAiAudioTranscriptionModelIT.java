@@ -65,10 +65,10 @@ public class OpenAiAudioTranscriptionModelIT {
 	@Test
 	void transcribeWithOptionsTest() {
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.language("en")
-			.temperature(0f)
-			.responseFormat(AudioResponseFormat.TEXT)
-			.build();
+				.language("en")
+				.temperature(0f)
+				.responseFormat(AudioResponseFormat.TEXT)
+				.build();
 
 		AudioTranscriptionPrompt prompt = new AudioTranscriptionPrompt(new ClassPathResource("/speech.flac"), options);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(prompt);
@@ -80,8 +80,8 @@ public class OpenAiAudioTranscriptionModelIT {
 	@Test
 	void transcribeWithVerboseFormatTest() {
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.responseFormat(AudioResponseFormat.VERBOSE_JSON)
-			.build();
+				.responseFormat(AudioResponseFormat.VERBOSE_JSON)
+				.build();
 
 		String text = this.transcriptionModel.transcribe(new ClassPathResource("/speech.flac"), options);
 
@@ -91,11 +91,11 @@ public class OpenAiAudioTranscriptionModelIT {
 	@Test
 	void transcribeTestWithOptions() {
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.language("en")
-			.prompt("Ask not this, but ask that")
-			.temperature(0f)
-			.responseFormat(AudioResponseFormat.TEXT)
-			.build();
+				.language("en")
+				.prompt("Ask not this, but ask that")
+				.temperature(0f)
+				.responseFormat(AudioResponseFormat.TEXT)
+				.build();
 
 		String text = this.transcriptionModel.transcribe(new ClassPathResource("/speech.flac"), options);
 
@@ -105,11 +105,11 @@ public class OpenAiAudioTranscriptionModelIT {
 	@Test
 	void callTestWithVttFormat() {
 		OpenAiAudioTranscriptionOptions options = OpenAiAudioTranscriptionOptions.builder()
-			.language("en")
-			.prompt("Ask not this, but ask that")
-			.temperature(0f)
-			.responseFormat(AudioResponseFormat.VTT)
-			.build();
+				.language("en")
+				.prompt("Ask not this, but ask that")
+				.temperature(0f)
+				.responseFormat(AudioResponseFormat.VTT)
+				.build();
 
 		AudioTranscriptionPrompt prompt = new AudioTranscriptionPrompt(new ClassPathResource("/speech.flac"), options);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(prompt);

@@ -16,12 +16,6 @@
 
 package org.springframework.ai.mcp.server.webflux.transport;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
@@ -29,22 +23,12 @@ import io.modelcontextprotocol.json.TypeRef;
 import io.modelcontextprotocol.server.McpTransportContextExtractor;
 import io.modelcontextprotocol.server.transport.ServerTransportSecurityException;
 import io.modelcontextprotocol.server.transport.ServerTransportSecurityValidator;
-import io.modelcontextprotocol.spec.McpError;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpServerSession;
-import io.modelcontextprotocol.spec.McpServerTransport;
-import io.modelcontextprotocol.spec.McpServerTransportProvider;
-import io.modelcontextprotocol.spec.ProtocolVersions;
+import io.modelcontextprotocol.spec.*;
 import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.KeepAliveScheduler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.Exceptions;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
@@ -53,6 +37,16 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.Exceptions;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Server-side implementation of the MCP (Model Context Protocol) HTTP transport using
@@ -89,11 +83,11 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author Dariusz Jędrzejczyk
  * @see McpServerTransport
  * @see ServerSentEvent
- * @deprecated The SSE transport has been deprecated in the 2025-03-26 version of the
- * spec, and should not be used anymore. We keep it for backwards compatibility.
  * @see <a href=
  * "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#backwards-compatibility">Transports
  * backwards compatibility</a>
+ * @deprecated The SSE transport has been deprecated in the 2025-03-26 version of the
+ * spec, and should not be used anymore. We keep it for backwards compatibility.
  */
 @Deprecated(since = "2.0.0", forRemoval = true)
 public final class WebFluxSseServerTransportProvider implements McpServerTransportProvider {
@@ -162,23 +156,24 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 
 	/**
 	 * Constructs a new WebFlux SSE server transport provider instance.
-	 * @param jsonMapper The ObjectMapper to use for JSON serialization/deserialization of
-	 * MCP messages. Must not be null.
-	 * @param baseUrl webflux message base path
-	 * @param messageEndpoint The endpoint URI where clients should send their JSON-RPC
-	 * messages. This endpoint will be communicated to clients during SSE connection
-	 * setup. Must not be null.
-	 * @param sseEndpoint The SSE endpoint path. Must not be null.
+	 *
+	 * @param jsonMapper        The ObjectMapper to use for JSON serialization/deserialization of
+	 *                          MCP messages. Must not be null.
+	 * @param baseUrl           webflux message base path
+	 * @param messageEndpoint   The endpoint URI where clients should send their JSON-RPC
+	 *                          messages. This endpoint will be communicated to clients during SSE connection
+	 *                          setup. Must not be null.
+	 * @param sseEndpoint       The SSE endpoint path. Must not be null.
 	 * @param keepAliveInterval The interval for sending keep-alive pings to clients.
-	 * @param contextExtractor The context extractor to use for extracting MCP transport
-	 * context from HTTP requests. Must not be null.
+	 * @param contextExtractor  The context extractor to use for extracting MCP transport
+	 *                          context from HTTP requests. Must not be null.
 	 * @param securityValidator The security validator for validating HTTP requests.
 	 * @throws IllegalArgumentException if either parameter is null
 	 */
 	private WebFluxSseServerTransportProvider(McpJsonMapper jsonMapper, String baseUrl, String messageEndpoint,
-			String sseEndpoint, @Nullable Duration keepAliveInterval,
-			McpTransportContextExtractor<ServerRequest> contextExtractor,
-			ServerTransportSecurityValidator securityValidator) {
+	                                          String sseEndpoint, @Nullable Duration keepAliveInterval,
+	                                          McpTransportContextExtractor<ServerRequest> contextExtractor,
+	                                          ServerTransportSecurityValidator securityValidator) {
 		Assert.notNull(jsonMapper, "ObjectMapper must not be null");
 		Assert.notNull(baseUrl, "Message base path must not be null");
 		Assert.notNull(messageEndpoint, "Message endpoint must not be null");
@@ -193,17 +188,17 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		this.contextExtractor = contextExtractor;
 		this.securityValidator = securityValidator;
 		this.routerFunction = RouterFunctions.route()
-			.GET(this.sseEndpoint, this::handleSseConnection)
-			.POST(this.messageEndpoint, this::handleMessage)
-			.build();
+				.GET(this.sseEndpoint, this::handleSseConnection)
+				.POST(this.messageEndpoint, this::handleMessage)
+				.build();
 
 		if (keepAliveInterval != null) {
 
 			this.keepAliveScheduler = KeepAliveScheduler
-				.builder(() -> (this.isClosing) ? Flux.empty() : Flux.fromIterable(this.sessions.values()))
-				.initialDelay(keepAliveInterval)
-				.interval(keepAliveInterval)
-				.build();
+					.builder(() -> (this.isClosing) ? Flux.empty() : Flux.fromIterable(this.sessions.values()))
+					.initialDelay(keepAliveInterval)
+					.interval(keepAliveInterval)
+					.build();
 
 			this.keepAliveScheduler.start();
 		}
@@ -232,6 +227,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 	 * <li>Attempts to send the event to all active sessions</li>
 	 * <li>Tracks and reports any delivery failures</li>
 	 * </ul>
+	 *
 	 * @param method The JSON-RPC method to send to clients
 	 * @param params The method parameters to send to clients
 	 * @return A Mono that completes when the message has been sent to all sessions, or
@@ -249,12 +245,12 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		}
 
 		return Flux.fromIterable(this.sessions.values())
-			.flatMap(session -> session.sendNotification(method, params).doOnError(e -> {
-				if (logger.isErrorEnabled()) {
-					logger.error("Failed to send message to session " + session.getId() + ": " + e.getMessage());
-				}
-			}).onErrorComplete())
-			.then();
+				.flatMap(session -> session.sendNotification(method, params).doOnError(e -> {
+					if (logger.isErrorEnabled()) {
+						logger.error("Failed to send message to session " + session.getId() + ": " + e.getMessage());
+					}
+				}).onErrorComplete())
+				.then();
 	}
 
 	/**
@@ -268,9 +264,10 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 	 * <li>Returns an empty Mono if the session is not found</li>
 	 * <li>Sends the notification to the specific session if found</li>
 	 * </ul>
+	 *
 	 * @param sessionId The ID of the target client session
-	 * @param method The JSON-RPC method to send to the client
-	 * @param params The method parameters to send to the client
+	 * @param method    The JSON-RPC method to send to the client
+	 * @param params    The method parameters to send to the client
 	 * @return A Mono that completes when the notification has been sent, or empty if the
 	 * session is not found
 	 */
@@ -292,6 +289,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 	/**
 	 * Initiates a graceful shutdown of all the sessions. This method ensures all active
 	 * sessions are properly closed and cleaned up.
+	 *
 	 * @return A Mono that completes when all sessions have been closed
 	 */
 	@Override
@@ -319,6 +317,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 	 * <li>GET {sseEndpoint} - For establishing SSE connections</li>
 	 * <li>POST {messageEndpoint} - For receiving client messages</li>
 	 * </ul>
+	 *
 	 * @return The configured {@link RouterFunction} for handling HTTP requests
 	 */
 	public RouterFunction<?> getRouterFunction() {
@@ -328,6 +327,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 	/**
 	 * Handles new SSE connection requests from clients. Creates a new session for each
 	 * connection and sets up the SSE event stream.
+	 *
 	 * @param request The incoming server request
 	 * @return A Mono which emits a response with the SSE event stream
 	 */
@@ -339,8 +339,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		try {
 			var headers = HeaderUtils.collectHeaders(request);
 			this.securityValidator.validateHeaders(headers);
-		}
-		catch (ServerTransportSecurityException e) {
+		} catch (ServerTransportSecurityException e) {
 			String errorMessage = e.getMessage();
 			return ServerResponse.status(e.getStatusCode()).bodyValue(errorMessage != null ? errorMessage : "");
 		}
@@ -348,50 +347,51 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		McpTransportContext transportContext = this.contextExtractor.extract(request);
 
 		return ServerResponse.ok()
-			.contentType(MediaType.TEXT_EVENT_STREAM)
-			.body(Flux.<ServerSentEvent<?>>create(sink -> {
-				WebFluxMcpSessionTransport sessionTransport = new WebFluxMcpSessionTransport(sink);
+				.contentType(MediaType.TEXT_EVENT_STREAM)
+				.body(Flux.<ServerSentEvent<?>>create(sink -> {
+					WebFluxMcpSessionTransport sessionTransport = new WebFluxMcpSessionTransport(sink);
 
-				McpServerSession session = Objects
-					.requireNonNull(this.sessionFactory, "sessionFactory must be set before handling connections")
-					.create(sessionTransport);
-				String sessionId = session.getId();
+					McpServerSession session = Objects
+							.requireNonNull(this.sessionFactory, "sessionFactory must be set before handling connections")
+							.create(sessionTransport);
+					String sessionId = session.getId();
 
-				sessionTransport.setSessionId(sessionId);
+					sessionTransport.setSessionId(sessionId);
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Created new SSE connection for session: " + sessionId);
-				}
-				this.sessions.put(sessionId, session);
-
-				// Send initial endpoint event
-				if (logger.isDebugEnabled()) {
-					logger.debug("Sending initial endpoint event to session: " + sessionId);
-				}
-				sink.next(
-						ServerSentEvent.builder().event(ENDPOINT_EVENT_TYPE).data(buildEndpointUrl(sessionId)).build());
-				sink.onCancel(() -> {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Session " + sessionId + " cancelled");
+						logger.debug("Created new SSE connection for session: " + sessionId);
 					}
-					this.sessions.remove(sessionId);
-				});
-			}).contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext)), ServerSentEvent.class);
+					this.sessions.put(sessionId, session);
+
+					// Send initial endpoint event
+					if (logger.isDebugEnabled()) {
+						logger.debug("Sending initial endpoint event to session: " + sessionId);
+					}
+					sink.next(
+							ServerSentEvent.builder().event(ENDPOINT_EVENT_TYPE).data(buildEndpointUrl(sessionId)).build());
+					sink.onCancel(() -> {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Session " + sessionId + " cancelled");
+						}
+						this.sessions.remove(sessionId);
+					});
+				}).contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext)), ServerSentEvent.class);
 	}
 
 	/**
 	 * Constructs the full message endpoint URL by combining the base URL, message path,
 	 * and the required session_id query parameter.
+	 *
 	 * @param sessionId the unique session identifier
 	 * @return the fully qualified endpoint URL as a string
 	 */
 	private String buildEndpointUrl(String sessionId) {
 		// for WebMVC compatibility
 		return UriComponentsBuilder.fromUriString(this.baseUrl)
-			.path(this.messageEndpoint)
-			.queryParam(SESSION_ID, sessionId)
-			.build()
-			.toUriString();
+				.path(this.messageEndpoint)
+				.queryParam(SESSION_ID, sessionId)
+				.build()
+				.toUriString();
 	}
 
 	/**
@@ -406,6 +406,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 	 * <li>Returns appropriate HTTP responses based on processing results</li>
 	 * <li>Handles various error conditions with appropriate error responses</li>
 	 * </ul>
+	 *
 	 * @param request The incoming server request containing the JSON-RPC message
 	 * @return A Mono emitting the response indicating the message processing result
 	 */
@@ -417,26 +418,25 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		try {
 			var headers = HeaderUtils.collectHeaders(request);
 			this.securityValidator.validateHeaders(headers);
-		}
-		catch (ServerTransportSecurityException e) {
+		} catch (ServerTransportSecurityException e) {
 			String errorMessage = e.getMessage();
 			return ServerResponse.status(e.getStatusCode()).bodyValue(errorMessage != null ? errorMessage : "");
 		}
 
 		if (request.queryParam("sessionId").isEmpty()) {
 			return ServerResponse.badRequest()
-				.bodyValue(McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
-					.message("Session ID missing in message endpoint")
-					.build());
+					.bodyValue(McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
+							.message("Session ID missing in message endpoint")
+							.build());
 		}
 
 		McpServerSession session = this.sessions.get(request.queryParam("sessionId").get());
 
 		if (session == null) {
 			return ServerResponse.status(HttpStatus.NOT_FOUND)
-				.bodyValue(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-					.message("Session not found: " + request.queryParam("sessionId").get())
-					.build());
+					.bodyValue(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+							.message("Session not found: " + request.queryParam("sessionId").get())
+							.build());
 		}
 
 		McpTransportContext transportContext = this.contextExtractor.extract(request);
@@ -452,19 +452,18 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 					// - the error is signalled on the SSE connection
 					// return ServerResponse.ok().build();
 					return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.bodyValue(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-							.message(error.getMessage())
-							.build());
+							.bodyValue(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+									.message(error.getMessage())
+									.build());
 				});
-			}
-			catch (IllegalArgumentException | IOException e) {
+			} catch (IllegalArgumentException | IOException e) {
 				if (logger.isErrorEnabled()) {
 					logger.error("Failed to deserialize message: " + e.getMessage());
 				}
 				return ServerResponse.badRequest()
-					.bodyValue(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
-						.message("Invalid message format")
-						.build());
+						.bodyValue(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
+								.message("Invalid message format")
+								.build());
 			}
 		}).contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext));
 	}
@@ -477,7 +476,8 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 
 		private final FluxSink<ServerSentEvent<?>> sink;
 
-		@Nullable private volatile String sessionId;
+		@Nullable
+		private volatile String sessionId;
 
 		WebFluxMcpSessionTransport(FluxSink<ServerSentEvent<?>> sink) {
 			this.sink = sink;
@@ -492,15 +492,14 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 			return Mono.fromSupplier(() -> {
 				try {
 					return jsonMapper.writeValueAsString(message);
-				}
-				catch (IOException e) {
+				} catch (IOException e) {
 					throw Exceptions.propagate(e);
 				}
 			}).doOnNext(jsonText -> {
 				ServerSentEvent<Object> event = ServerSentEvent.builder()
-					.event(MESSAGE_EVENT_TYPE)
-					.data(jsonText)
-					.build();
+						.event(MESSAGE_EVENT_TYPE)
+						.data(jsonText)
+						.build();
 				this.sink.next(event);
 			}).doOnError(e -> {
 				if (logger.isErrorEnabled()) {
@@ -553,6 +552,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		/**
 		 * Sets the McpJsonMapper to use for JSON serialization/deserialization of MCP
 		 * messages.
+		 *
 		 * @param jsonMapper The McpJsonMapper instance. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if jsonMapper is null
@@ -566,6 +566,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		/**
 		 * Sets the project basePath as endpoint prefix where clients should send their
 		 * JSON-RPC messages
+		 *
 		 * @param baseUrl the message basePath . Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if basePath is null
@@ -578,6 +579,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 
 		/**
 		 * Sets the endpoint URI where clients should send their JSON-RPC messages.
+		 *
 		 * @param messageEndpoint The message endpoint URI. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if messageEndpoint is null
@@ -590,6 +592,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 
 		/**
 		 * Sets the SSE endpoint path.
+		 *
 		 * @param sseEndpoint The SSE endpoint path. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if sseEndpoint is null
@@ -602,8 +605,9 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 
 		/**
 		 * Sets the interval for sending keep-alive pings to clients.
+		 *
 		 * @param keepAliveInterval The keep-alive interval duration. If null, keep-alive
-		 * is disabled.
+		 *                          is disabled.
 		 * @return this builder instance
 		 */
 		public Builder keepAliveInterval(@Nullable Duration keepAliveInterval) {
@@ -616,8 +620,9 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		 * implementations to inspect HTTP transport level metadata that was present at
 		 * HTTP request processing time. This allows extracting custom headers and other
 		 * useful data for use during execution later on in the process.
+		 *
 		 * @param contextExtractor The contextExtractor to fill in a
-		 * {@link McpTransportContext}.
+		 *                         {@link McpTransportContext}.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if contextExtractor is null
 		 */
@@ -629,6 +634,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 
 		/**
 		 * Sets the security validator for validating HTTP requests.
+		 *
 		 * @param securityValidator The security validator to use. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if securityValidator is null
@@ -642,6 +648,7 @@ public final class WebFluxSseServerTransportProvider implements McpServerTranspo
 		/**
 		 * Builds a new instance of {@link WebFluxSseServerTransportProvider} with the
 		 * configured settings.
+		 *
 		 * @return A new WebFluxSseServerTransportProvider instance
 		 * @throws IllegalStateException if required parameters are not set
 		 */

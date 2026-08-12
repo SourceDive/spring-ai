@@ -22,8 +22,8 @@ import io.modelcontextprotocol.server.McpServer;
  * Interface for customizing synchronous MCP server configurations.
  *
  * @author Daniel Garnier-Moiroux
- * @since 1.1.3
  * @see io.modelcontextprotocol.server.McpServer.SyncSpecification
+ * @since 1.1.3
  */
 public interface McpSyncServerCustomizer {
 

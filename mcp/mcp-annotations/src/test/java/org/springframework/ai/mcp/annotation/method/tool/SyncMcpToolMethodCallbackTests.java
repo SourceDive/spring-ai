@@ -16,12 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
@@ -30,10 +24,15 @@ import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import net.javacrumbs.jsonunit.assertj.JsonAssertions;
 import net.javacrumbs.jsonunit.core.Option;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
+
+import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -313,7 +312,7 @@ public class SyncMcpToolMethodCallbackTests {
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 
 		assertThatThrownBy(() -> callback.apply(exchange, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Request must not be null");
+				.hasMessage("Request must not be null");
 	}
 
 	@Test
@@ -569,8 +568,8 @@ public class SyncMcpToolMethodCallbackTests {
 		@McpTool(name = "complex-tool", description = "A complex tool")
 		public CallToolResult complexTool(String name, int age, boolean active) {
 			return CallToolResult.builder()
-				.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
-				.build();
+					.addTextContent("Name: " + name + ", Age: " + age + ", Active: " + active)
+					.build();
 		}
 
 		@McpTool(name = "exchange-tool", description = "Tool with exchange parameter")
@@ -600,7 +599,7 @@ public class SyncMcpToolMethodCallbackTests {
 
 		@McpTool(name = "optional-params-tool", description = "Tool with optional parameters")
 		public String toolWithOptionalParams(@McpToolParam(required = true) String required,
-				@McpToolParam(required = false) String optional) {
+		                                     @McpToolParam(required = false) String optional) {
 			return "Required: " + required + ", Optional: " + (optional != null ? optional : "null");
 		}
 

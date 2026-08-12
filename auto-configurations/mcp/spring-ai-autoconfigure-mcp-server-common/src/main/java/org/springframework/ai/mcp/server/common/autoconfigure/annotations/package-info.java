@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.mcp.server.common.autoconfigure.annotations;
 
-import org.jspecify.annotations.NullMarked;

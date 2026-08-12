@@ -22,8 +22,8 @@ import com.anthropic.models.messages.MessageCreateParams;
  * Service tier for controlling capacity routing on Anthropic API requests.
  *
  * @author Soby Chacko
- * @since 1.0.0
  * @see <a href="https://docs.claude.com/en/api/service-tiers">Anthropic Service Tiers</a>
+ * @since 1.0.0
  */
 public enum AnthropicServiceTier {
 
@@ -40,6 +40,7 @@ public enum AnthropicServiceTier {
 	/**
 	 * Converts this enum to the corresponding SDK {@link MessageCreateParams.ServiceTier}
 	 * value.
+	 *
 	 * @return the SDK service tier
 	 */
 	public MessageCreateParams.ServiceTier toSdkServiceTier() {

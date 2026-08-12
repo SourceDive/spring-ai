@@ -16,23 +16,15 @@
 
 package org.springframework.ai.mcp.annotation.context;
 
+import io.modelcontextprotocol.common.McpTransportContext;
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.*;
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest.ContextInclusionStrategy;
+import io.modelcontextprotocol.util.Assert;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import io.modelcontextprotocol.common.McpTransportContext;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.AudioContent;
-import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
-import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest.ContextInclusionStrategy;
-import io.modelcontextprotocol.spec.McpSchema.EmbeddedResource;
-import io.modelcontextprotocol.spec.McpSchema.ImageContent;
-import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.LoggingLevel;
-import io.modelcontextprotocol.spec.McpSchema.ResourceLink;
-import io.modelcontextprotocol.spec.McpSchema.SamplingMessage;
-import io.modelcontextprotocol.spec.McpSchema.TextContent;
-import io.modelcontextprotocol.util.Assert;
 
 /**
  * @author Christian Tzolov

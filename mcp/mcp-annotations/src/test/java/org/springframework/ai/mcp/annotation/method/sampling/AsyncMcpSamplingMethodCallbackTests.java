@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.sampling;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageRequest;
 import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
 import io.modelcontextprotocol.spec.McpSchema.TextContent;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpSampling;
+import org.springframework.ai.mcp.annotation.method.sampling.AbstractMcpSamplingMethodCallback.McpSamplingMethodException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpSampling;
-import org.springframework.ai.mcp.annotation.method.sampling.AbstractMcpSamplingMethodCallback.McpSamplingMethodException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,10 +47,10 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		AsyncMcpSamplingMethodCallback callback = AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build();
 
 		CreateMessageRequest request = SamplingTestHelper.createSampleRequest();
 		Mono<CreateMessageResult> resultMono = callback.apply(request);
@@ -60,7 +59,7 @@ public class AsyncMcpSamplingMethodCallbackTests {
 			assertThat(result).isNotNull();
 			assertThat(result.content()).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content()).text())
-				.isEqualTo("This is an async response to the sampling request");
+					.isEqualTo("This is an async response to the sampling request");
 		}).verifyComplete();
 	}
 
@@ -71,10 +70,10 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		AsyncMcpSamplingMethodCallback callback = AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build();
 
 		CreateMessageRequest request = SamplingTestHelper.createSampleRequest();
 		Mono<CreateMessageResult> resultMono = callback.apply(request);
@@ -83,7 +82,7 @@ public class AsyncMcpSamplingMethodCallbackTests {
 			assertThat(result).isNotNull();
 			assertThat(result.content()).isInstanceOf(TextContent.class);
 			assertThat(((TextContent) result.content()).text())
-				.isEqualTo("This is a direct response to the sampling request");
+					.isEqualTo("This is a direct response to the sampling request");
 		}).verifyComplete();
 	}
 
@@ -94,17 +93,17 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		AsyncMcpSamplingMethodCallback callback = AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build();
 
 		Mono<CreateMessageResult> resultMono = callback.apply(null);
 
 		StepVerifier.create(resultMono)
-			.expectErrorSatisfies(error -> assertThat(error).isInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Request must not be null"))
-			.verify();
+				.expectErrorSatisfies(error -> assertThat(error).isInstanceOf(IllegalArgumentException.class)
+						.hasMessageContaining("Request must not be null"))
+				.verify();
 	}
 
 	@Test
@@ -114,10 +113,10 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		AsyncMcpSamplingMethodCallback callback = AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build();
 
 		CreateMessageRequest request = SamplingTestHelper.createSampleRequest();
 		Mono<CreateMessageResult> resultMono = callback.apply(request);
@@ -131,11 +130,11 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Single parameter must be of type CreateMessageRequest");
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Single parameter must be of type CreateMessageRequest");
 	}
 
 	@Test
@@ -144,11 +143,11 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have at least 1 parameter");
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have at least 1 parameter");
 	}
 
 	@Test
@@ -158,18 +157,18 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		assertThatThrownBy(() -> AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(this.asyncExample)
-			.sampling(annotation)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Currently only methods with a single CreateMessageRequest parameter are supported");
+				.method(method)
+				.bean(this.asyncExample)
+				.sampling(annotation)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Currently only methods with a single CreateMessageRequest parameter are supported");
 	}
 
 	@Test
 	void testNullMethod() {
 		assertThatThrownBy(() -> AsyncMcpSamplingMethodCallback.builder().method(null).bean(this.asyncExample).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -177,8 +176,8 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		Method method = AsyncMcpSamplingMethodCallbackExample.class.getMethod("handleAsyncSamplingRequest",
 				CreateMessageRequest.class);
 		assertThatThrownBy(() -> AsyncMcpSamplingMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -189,28 +188,28 @@ public class AsyncMcpSamplingMethodCallbackTests {
 		McpSampling annotation = method.getAnnotation(McpSampling.class);
 
 		AsyncMcpSamplingMethodCallback callback = AsyncMcpSamplingMethodCallback.builder()
-			.method(method)
-			.bean(new AsyncMcpSamplingMethodCallbackExample() {
-				@Override
-				public Mono<CreateMessageResult> handleAsyncSamplingRequest(CreateMessageRequest request) {
-					throw new RuntimeException("Test exception");
-				}
-			})
-			.sampling(annotation)
-			.build();
+				.method(method)
+				.bean(new AsyncMcpSamplingMethodCallbackExample() {
+					@Override
+					public Mono<CreateMessageResult> handleAsyncSamplingRequest(CreateMessageRequest request) {
+						throw new RuntimeException("Test exception");
+					}
+				})
+				.sampling(annotation)
+				.build();
 
 		CreateMessageRequest request = SamplingTestHelper.createSampleRequest();
 		Mono<CreateMessageResult> resultMono = callback.apply(request);
 
 		StepVerifier.create(resultMono).expectErrorSatisfies(error -> {
 			assertThat(error).isInstanceOf(McpSamplingMethodException.class)
-				.hasMessageContaining("Error invoking sampling method")
-				.hasCauseInstanceOf(InvocationTargetException.class)
-				.satisfies(e -> {
-					Throwable cause = e.getCause().getCause();
-					assertThat(cause).isInstanceOf(RuntimeException.class);
-					assertThat(cause.getMessage()).isEqualTo("Test exception");
-				});
+					.hasMessageContaining("Error invoking sampling method")
+					.hasCauseInstanceOf(InvocationTargetException.class)
+					.satisfies(e -> {
+						Throwable cause = e.getCause().getCause();
+						assertThat(cause).isInstanceOf(RuntimeException.class);
+						assertThat(cause.getMessage()).isEqualTo("Test exception");
+					});
 		}).verify();
 	}
 

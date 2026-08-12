@@ -32,16 +32,16 @@ class PdfReaderRuntimeHintsTests {
 		pdfReaderRuntimeHints.registerHints(runtimeHints, null);
 
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/glyphlist.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/glyphlist.txt"));
 		// Assertions.assertThat(runtimeHints).matches(resource().forResource("/org/apache/pdfbox/resources/afm/**"));
 		// Assertions.assertThat(runtimeHints).matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/**"));
 		// Assertions.assertThat(runtimeHints).matches(resource().forResource("/org/apache/pdfbox/resources/icc/**"));
 		// Assertions.assertThat(runtimeHints).matches(resource().forResource("/org/apache/pdfbox/resources/text/**"));
 		// Assertions.assertThat(runtimeHints).matches(resource().forResource("/org/apache/pdfbox/resources/ttf/**"));
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/version.properties"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/version.properties"));
 	}
 
 	@Test
@@ -50,7 +50,7 @@ class PdfReaderRuntimeHintsTests {
 		PdfReaderRuntimeHints pdfReaderRuntimeHints = new PdfReaderRuntimeHints();
 
 		Assertions.assertThatThrownBy(() -> pdfReaderRuntimeHints.registerHints(null, null))
-			.isInstanceOf(NullPointerException.class);
+				.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test
@@ -65,11 +65,11 @@ class PdfReaderRuntimeHintsTests {
 
 		// Should still work correctly
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/glyphlist.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/glyphlist.txt"));
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/version.properties"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/version.properties"));
 	}
 
 	@Test
@@ -81,13 +81,13 @@ class PdfReaderRuntimeHintsTests {
 
 		// Core glyph list resources
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/glyphlist.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/glyphlist.txt"));
 
 		// Version properties
 		Assertions.assertThat(runtimeHints)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/version.properties"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/version.properties"));
 
 		// Test that uncommented resource patterns are NOT registered (if they shouldn't
 		// be)
@@ -109,9 +109,9 @@ class PdfReaderRuntimeHintsTests {
 
 		// Both should have the same resources registered
 		Assertions.assertThat(runtimeHints1)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
 		Assertions.assertThat(runtimeHints2)
-			.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
+				.matches(resource().forResource("/org/apache/pdfbox/resources/glyphlist/zapfdingbats.txt"));
 	}
 
 	@Test
@@ -121,7 +121,7 @@ class PdfReaderRuntimeHintsTests {
 
 		// Verify it's a RuntimeHintsRegistrar
 		Assertions.assertThat(pdfReaderRuntimeHints)
-			.isInstanceOf(org.springframework.aot.hint.RuntimeHintsRegistrar.class);
+				.isInstanceOf(org.springframework.aot.hint.RuntimeHintsRegistrar.class);
 	}
 
 }

@@ -16,15 +16,14 @@
 
 package org.springframework.ai.reader.jsoup;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.jsoup.config.JsoupDocumentReaderConfig;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.DefaultResourceLoader;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -168,8 +167,8 @@ class JsoupDocumentReaderTests {
 
 		JsoupDocumentReader reader = new JsoupDocumentReader(byteArrayResource,
 				JsoupDocumentReaderConfig.builder()
-					.selector("div") // Select the div
-					.build());
+						.selector("div") // Select the div
+						.build());
 
 		List<Document> documents = reader.get();
 		assertThat(documents).hasSize(1);

@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.vectorstore.mariadb.autoconfigure;
 
-import org.jspecify.annotations.NullMarked;

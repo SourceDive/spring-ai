@@ -16,12 +16,11 @@
 
 package org.springframework.ai.embedding.observation;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.embedding.EmbeddingOptions;
 import org.springframework.ai.embedding.EmbeddingRequest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,9 +35,9 @@ class EmbeddingModelObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(generateEmbeddingRequest(EmbeddingOptions.builder().model("supermodel").build()))
-			.provider("superprovider")
-			.build();
+				.embeddingRequest(generateEmbeddingRequest(EmbeddingOptions.builder().model("supermodel").build()))
+				.provider("superprovider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -46,9 +45,9 @@ class EmbeddingModelObservationContextTests {
 	@Test
 	void whenBuilderWithNullRequestThenThrowsException() {
 		assertThatThrownBy(() -> EmbeddingModelObservationContext.builder()
-			.embeddingRequest(null)
-			.provider("test-provider")
-			.build()).isInstanceOf(IllegalStateException.class).hasMessage("request cannot be null");
+				.embeddingRequest(null)
+				.provider("test-provider")
+				.build()).isInstanceOf(IllegalStateException.class).hasMessage("request cannot be null");
 	}
 
 	@Test
@@ -56,9 +55,9 @@ class EmbeddingModelObservationContextTests {
 		var embeddingRequest = generateEmbeddingRequest(EmbeddingOptions.builder().model("test-model").build());
 
 		assertThatThrownBy(() -> EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider(null)
-			.build()).isInstanceOf(IllegalStateException.class).hasMessage("provider cannot be null or empty");
+				.embeddingRequest(embeddingRequest)
+				.provider(null)
+				.build()).isInstanceOf(IllegalStateException.class).hasMessage("provider cannot be null or empty");
 	}
 
 	@Test
@@ -66,9 +65,9 @@ class EmbeddingModelObservationContextTests {
 		var embeddingRequest = generateEmbeddingRequest(EmbeddingOptions.builder().model("test-model").build());
 
 		assertThatThrownBy(() -> EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider("")
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("provider cannot be null or empty");
+				.embeddingRequest(embeddingRequest)
+				.provider("")
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("provider cannot be null or empty");
 	}
 
 	@Test
@@ -76,9 +75,9 @@ class EmbeddingModelObservationContextTests {
 		var embeddingRequest = generateEmbeddingRequest(EmbeddingOptions.builder().model("test-model").build());
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider("valid-provider")
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider("valid-provider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -88,9 +87,9 @@ class EmbeddingModelObservationContextTests {
 		var embeddingRequest = generateEmbeddingRequest(EmbeddingOptions.builder().model("test-model").build());
 
 		assertThatThrownBy(() -> EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider("   ")
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("provider cannot be null or empty");
+				.embeddingRequest(embeddingRequest)
+				.provider("   ")
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessage("provider cannot be null or empty");
 	}
 
 	@Test
@@ -98,9 +97,9 @@ class EmbeddingModelObservationContextTests {
 		var embeddingRequest = generateEmbeddingRequest(null);
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider("test-provider")
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider("test-provider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -110,9 +109,9 @@ class EmbeddingModelObservationContextTests {
 		var embeddingRequest = new EmbeddingRequest(List.of(), EmbeddingOptions.builder().model("test-model").build());
 
 		var observationContext = EmbeddingModelObservationContext.builder()
-			.embeddingRequest(embeddingRequest)
-			.provider("test-provider")
-			.build();
+				.embeddingRequest(embeddingRequest)
+				.provider("test-provider")
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}

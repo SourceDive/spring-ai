@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.server.webflux.transport;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
@@ -34,14 +30,17 @@ import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of a WebFlux based {@link McpStatelessServerTransport}.
@@ -70,8 +69,8 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 	private final ServerTransportSecurityValidator securityValidator;
 
 	private WebFluxStatelessServerTransport(McpJsonMapper jsonMapper, String mcpEndpoint,
-			McpTransportContextExtractor<ServerRequest> contextExtractor,
-			ServerTransportSecurityValidator securityValidator) {
+	                                        McpTransportContextExtractor<ServerRequest> contextExtractor,
+	                                        ServerTransportSecurityValidator securityValidator) {
 		Assert.notNull(jsonMapper, "jsonMapper must not be null");
 		Assert.notNull(mcpEndpoint, "mcpEndpoint must not be null");
 		Assert.notNull(contextExtractor, "contextExtractor must not be null");
@@ -82,9 +81,9 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 		this.contextExtractor = contextExtractor;
 		this.securityValidator = securityValidator;
 		this.routerFunction = RouterFunctions.route()
-			.GET(this.mcpEndpoint, this::handleGet)
-			.POST(this.mcpEndpoint, this::handlePost)
-			.build();
+				.GET(this.mcpEndpoint, this::handleGet)
+				.POST(this.mcpEndpoint, this::handlePost)
+				.build();
 	}
 
 	@Override
@@ -107,6 +106,7 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 	 * <li>GET {messageEndpoint} - Unsupported, returns 405 METHOD NOT ALLOWED</li>
 	 * <li>POST {messageEndpoint} - For handling client requests and notifications</li>
 	 * </ul>
+	 *
 	 * @return The configured {@link RouterFunction} for handling HTTP requests
 	 */
 	public RouterFunction<?> getRouterFunction() {
@@ -125,8 +125,7 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 		try {
 			var headers = HeaderUtils.collectHeaders(request);
 			this.securityValidator.validateHeaders(headers);
-		}
-		catch (ServerTransportSecurityException e) {
+		} catch (ServerTransportSecurityException e) {
 			String errorMessage = e.getMessage();
 			return ServerResponse.status(e.getStatusCode()).bodyValue(errorMessage != null ? errorMessage : "");
 		}
@@ -145,49 +144,46 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 
 				if (message instanceof McpSchema.JSONRPCRequest jsonrpcRequest) {
 					return Objects.requireNonNull(this.mcpHandler, "mcpHandler must be set before use")
-						.handleRequest(transportContext, jsonrpcRequest)
-						.flatMap(jsonrpcResponse -> {
-							try {
-								String json = this.jsonMapper.writeValueAsString(jsonrpcResponse);
-								return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(json);
-							}
-							catch (IOException e) {
-								if (logger.isErrorEnabled()) {
-									logger.error("Failed to serialize response: " + e.getMessage());
+							.handleRequest(transportContext, jsonrpcRequest)
+							.flatMap(jsonrpcResponse -> {
+								try {
+									String json = this.jsonMapper.writeValueAsString(jsonrpcResponse);
+									return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(json);
+								} catch (IOException e) {
+									if (logger.isErrorEnabled()) {
+										logger.error("Failed to serialize response: " + e.getMessage());
+									}
+									return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+											.bodyValue(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
+													.message("Failed to serialize response")
+													.build());
 								}
-								return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-									.bodyValue(McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-										.message("Failed to serialize response")
-										.build());
-							}
-						});
-				}
-				else if (message instanceof McpSchema.JSONRPCNotification jsonrpcNotification) {
+							});
+				} else if (message instanceof McpSchema.JSONRPCNotification jsonrpcNotification) {
 					return Objects.requireNonNull(this.mcpHandler, "mcpHandler must be set before use")
-						.handleNotification(transportContext, jsonrpcNotification)
-						.then(ServerResponse.accepted().build());
-				}
-				else {
+							.handleNotification(transportContext, jsonrpcNotification)
+							.then(ServerResponse.accepted().build());
+				} else {
 					return ServerResponse.badRequest()
-						.bodyValue(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
-							.message("The server accepts either requests or notifications")
-							.build());
+							.bodyValue(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
+									.message("The server accepts either requests or notifications")
+									.build());
 				}
-			}
-			catch (IllegalArgumentException | IOException e) {
+			} catch (IllegalArgumentException | IOException e) {
 				if (logger.isErrorEnabled()) {
 					logger.error("Failed to deserialize message: " + e.getMessage());
 				}
 				return ServerResponse.badRequest()
-					.bodyValue(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
-						.message("Invalid message format")
-						.build());
+						.bodyValue(McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
+								.message("Invalid message format")
+								.build());
 			}
 		}).contextWrite(ctx -> ctx.put(McpTransportContext.KEY, transportContext));
 	}
 
 	/**
 	 * Create a builder for the server.
+	 *
 	 * @return a fresh {@link Builder} instance.
 	 */
 	public static Builder builder() {
@@ -217,6 +213,7 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 		/**
 		 * Sets the JsonMapper to use for JSON serialization/deserialization of MCP
 		 * messages.
+		 *
 		 * @param jsonMapper The JsonMapper instance. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if jsonMapper is null
@@ -229,6 +226,7 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 
 		/**
 		 * Sets the endpoint URI where clients should send their JSON-RPC messages.
+		 *
 		 * @param messageEndpoint The message endpoint URI. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if messageEndpoint is null
@@ -244,8 +242,9 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 		 * implementations to inspect HTTP transport level metadata that was present at
 		 * HTTP request processing time. This allows extracting custom headers and other
 		 * useful data for use during execution later on in the process.
+		 *
 		 * @param contextExtractor The contextExtractor to fill in a
-		 * {@link McpTransportContext}.
+		 *                         {@link McpTransportContext}.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if contextExtractor is null
 		 */
@@ -257,6 +256,7 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 
 		/**
 		 * Sets the security validator for validating HTTP requests.
+		 *
 		 * @param securityValidator The security validator to use. Must not be null.
 		 * @return this builder instance
 		 * @throws IllegalArgumentException if securityValidator is null
@@ -270,6 +270,7 @@ public final class WebFluxStatelessServerTransport implements McpStatelessServer
 		/**
 		 * Builds a new instance of {@link WebFluxStatelessServerTransport} with the
 		 * configured settings.
+		 *
 		 * @return A new WebFluxSseServerTransportProvider instance
 		 * @throws IllegalStateException if required parameters are not set
 		 */

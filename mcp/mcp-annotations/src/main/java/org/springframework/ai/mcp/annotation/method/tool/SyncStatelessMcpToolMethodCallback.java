@@ -16,18 +16,17 @@
 
 package org.springframework.ai.mcp.annotation.method.tool;
 
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
-
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
 
+import java.util.function.BiFunction;
+
 /**
  * Class for creating Function callbacks around tool methods.
- *
+ * <p>
  * This class provides a way to convert methods annotated with {@link McpTool} into
  * callback functions that can be used to handle tool requests.
  *
@@ -39,12 +38,12 @@ public final class SyncStatelessMcpToolMethodCallback
 		implements BiFunction<McpTransportContext, CallToolRequest, CallToolResult> {
 
 	public SyncStatelessMcpToolMethodCallback(ReturnMode returnMode, java.lang.reflect.Method toolMethod,
-			Object toolObject) {
+	                                          Object toolObject) {
 		super(returnMode, toolMethod, toolObject, Exception.class);
 	}
 
 	public SyncStatelessMcpToolMethodCallback(ReturnMode returnMode, java.lang.reflect.Method toolMethod,
-			Object toolObject, Class<? extends Throwable> toolCallExceptionClass) {
+	                                          Object toolObject, Class<? extends Throwable> toolCallExceptionClass) {
 		super(returnMode, toolMethod, toolObject, toolCallExceptionClass);
 	}
 
@@ -79,8 +78,7 @@ public final class SyncStatelessMcpToolMethodCallback
 
 			// Return the processed result
 			return this.processResult(result);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (this.toolCallExceptionClass.isInstance(e)) {
 				return this.createSyncErrorResult(e);
 			}

@@ -16,15 +16,10 @@
 
 package org.springframework.ai.chat.prompt;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.messages.*;
 
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
-import org.springframework.ai.chat.messages.UserMessage;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,11 +34,11 @@ class PromptTests {
 	@Test
 	void whenContentIsNullThenThrow() {
 		assertThatThrownBy(() -> new Prompt((String) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 
 		assertThatThrownBy(() -> new Prompt((String) null, ChatOptions.builder().build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Content must not be null for SYSTEM or USER messages");
 	}
 
 	@Test
@@ -58,21 +53,21 @@ class PromptTests {
 	@Test
 	void whenMessageIsNullThenThrow() {
 		assertThatThrownBy(() -> new Prompt((Message) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot contain null elements");
+				.hasMessageContaining("messages cannot contain null elements");
 
 		assertThatThrownBy(() -> new Prompt((Message) null, ChatOptions.builder().build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("messages cannot contain null elements");
 	}
 
 	@Test
 	void whenMessageListIsNullThenThrow() {
 		assertThatThrownBy(() -> new Prompt((List<Message>) null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot be null");
+				.hasMessageContaining("messages cannot be null");
 
 		assertThatThrownBy(() -> new Prompt((List<Message>) null, ChatOptions.builder().build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("messages cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("messages cannot be null");
 	}
 
 	@Test
@@ -166,8 +161,8 @@ class PromptTests {
 	@Test
 	void getSystemMessageWhenMultiple() {
 		Prompt prompt = Prompt.builder()
-			.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
-			.build();
+				.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
+				.build();
 
 		assertThat(prompt.getSystemMessage()).isNotNull();
 		assertThat(prompt.getSystemMessage().getText()).isEqualTo("Hello");
@@ -204,8 +199,8 @@ class PromptTests {
 	@Test
 	void augmentSystemMessageWhenMultiple() {
 		Prompt prompt = Prompt.builder()
-			.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
-			.build();
+				.messages(new SystemMessage("Hello"), new SystemMessage("How are you?"))
+				.build();
 
 		assertThat(prompt.getSystemMessage()).isNotNull();
 		assertThat(prompt.getSystemMessage().getText()).isEqualTo("Hello");
@@ -236,7 +231,7 @@ class PromptTests {
 
 	@Test
 	void augmentSystemMessageWhenNotFirst() {
-		Message[] messages = { new UserMessage("Hi"), new SystemMessage("Hello") };
+		Message[] messages = {new UserMessage("Hi"), new SystemMessage("Hello")};
 		Prompt prompt = Prompt.builder().messages(messages).build();
 
 		assertThat(prompt.getSystemMessage()).isNotNull();
@@ -312,8 +307,8 @@ class PromptTests {
 	@Test
 	void getLastUserOrToolResponseMessageWhenOnlyToolResponse() {
 		ToolResponseMessage toolResponse = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse("toolId", "toolName", "result")))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse("toolId", "toolName", "result")))
+				.build();
 		Prompt prompt = Prompt.builder().messages(toolResponse).build();
 
 		assertThat(prompt.getLastUserOrToolResponseMessage()).isNotNull();
@@ -324,8 +319,8 @@ class PromptTests {
 	void getLastUserOrToolResponseMessageWhenBothPresent() {
 		UserMessage userMsg = new UserMessage("User question");
 		ToolResponseMessage toolResponse = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse("toolId", "toolName", "result")))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse("toolId", "toolName", "result")))
+				.build();
 
 		Prompt prompt = Prompt.builder().messages(userMsg, new AssistantMessage("AI response"), toolResponse).build();
 
@@ -337,8 +332,8 @@ class PromptTests {
 	@Test
 	void getLastUserOrToolResponseMessageWhenMultipleUserMessages() {
 		Prompt prompt = Prompt.builder()
-			.messages(new UserMessage("First question"), new UserMessage("Second question"))
-			.build();
+				.messages(new UserMessage("First question"), new UserMessage("Second question"))
+				.build();
 
 		// Should return the last UserMessage
 		assertThat(prompt.getLastUserOrToolResponseMessage()).isNotNull();
@@ -370,8 +365,8 @@ class PromptTests {
 		// Test with tool response before user message
 		UserMessage userMsg = new UserMessage("Latest user message");
 		ToolResponseMessage toolResponse = ToolResponseMessage.builder()
-			.responses(List.of(new ToolResponseMessage.ToolResponse("toolId", "toolName", "result")))
-			.build();
+				.responses(List.of(new ToolResponseMessage.ToolResponse("toolId", "toolName", "result")))
+				.build();
 
 		Prompt prompt = Prompt.builder().messages(toolResponse, new SystemMessage("System"), userMsg).build();
 

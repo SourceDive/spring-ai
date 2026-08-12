@@ -16,23 +16,9 @@
 
 package org.springframework.ai.mcp.annotation.method.tool.utils;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.github.victools.jsonschema.generator.Module;
-import com.github.victools.jsonschema.generator.Option;
-import com.github.victools.jsonschema.generator.OptionPreset;
-import com.github.victools.jsonschema.generator.SchemaGenerator;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
-import com.github.victools.jsonschema.generator.SchemaVersion;
+import com.github.victools.jsonschema.generator.*;
 import com.github.victools.jsonschema.module.jackson.JacksonOption;
 import com.github.victools.jsonschema.module.jackson.JacksonSchemaModule;
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module;
@@ -44,8 +30,6 @@ import io.modelcontextprotocol.util.Assert;
 import io.modelcontextprotocol.util.Utils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.node.ObjectNode;
-
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.McpToolParam;
@@ -59,6 +43,15 @@ import org.springframework.core.KotlinDetector;
 import org.springframework.core.Nullness;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ConcurrentReferenceHashMap;
+import tools.jackson.databind.node.ObjectNode;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public final class McpJsonSchemaGenerator {
 
@@ -90,13 +83,13 @@ public final class McpJsonSchemaGenerator {
 
 		SchemaGeneratorConfigBuilder subtypeConfigBuilder = new SchemaGeneratorConfigBuilder(
 				SchemaVersion.DRAFT_2020_12, OptionPreset.PLAIN_JSON)
-			.with(jacksonModule)
-			.with(openApiModule)
-			.with(springAiSchemaModule)
-			.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-			.with(Option.STANDARD_FORMATS)
-			.with(Option.PLAIN_DEFINITION_KEYS)
-			.without(Option.SCHEMA_VERSION_INDICATOR);
+				.with(jacksonModule)
+				.with(openApiModule)
+				.with(springAiSchemaModule)
+				.with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+				.with(Option.STANDARD_FORMATS)
+				.with(Option.PLAIN_DEFINITION_KEYS)
+				.without(Option.SCHEMA_VERSION_INDICATOR);
 
 		if (KotlinDetector.isKotlinReflectPresent()) {
 			subtypeConfigBuilder.with(new KotlinModule());
@@ -118,7 +111,7 @@ public final class McpJsonSchemaGenerator {
 	private static String internalGenerateFromMethodArguments(Method method) {
 		// Check if method has CallToolRequest parameter
 		boolean hasCallToolRequestParam = Arrays.stream(method.getParameterTypes())
-			.anyMatch(type -> CallToolRequest.class.isAssignableFrom(type));
+				.anyMatch(type -> CallToolRequest.class.isAssignableFrom(type));
 
 		// If method has CallToolRequest, return minimal schema unless there are other
 		// non-infrastructure parameters alongside it.
@@ -169,11 +162,11 @@ public final class McpJsonSchemaGenerator {
 			// Skip MCP infrastructure parameter types
 			if (parameterType instanceof Class<?> parameterClass
 					&& (ClassUtils.isAssignable(McpSyncRequestContext.class, parameterClass)
-							|| ClassUtils.isAssignable(McpAsyncRequestContext.class, parameterClass)
-							|| ClassUtils.isAssignable(McpSyncServerExchange.class, parameterClass)
-							|| ClassUtils.isAssignable(McpAsyncServerExchange.class, parameterClass)
-							|| ClassUtils.isAssignable(McpTransportContext.class, parameterClass)
-							|| ClassUtils.isAssignable(CallToolRequest.class, parameterClass))) {
+					|| ClassUtils.isAssignable(McpAsyncRequestContext.class, parameterClass)
+					|| ClassUtils.isAssignable(McpSyncServerExchange.class, parameterClass)
+					|| ClassUtils.isAssignable(McpAsyncServerExchange.class, parameterClass)
+					|| ClassUtils.isAssignable(McpTransportContext.class, parameterClass)
+					|| ClassUtils.isAssignable(CallToolRequest.class, parameterClass))) {
 				continue;
 			}
 
@@ -207,6 +200,7 @@ public final class McpJsonSchemaGenerator {
 	/**
 	 * Generate a JSON Schema for a class type. Delegates to
 	 * {@link org.springframework.ai.util.json.schema.JsonSchemaGenerator#generateForType}.
+	 *
 	 * @param clazz the class to generate a schema for
 	 * @return the JSON Schema as a string
 	 */
@@ -218,6 +212,7 @@ public final class McpJsonSchemaGenerator {
 	/**
 	 * Generate a JSON Schema for a generic type. Delegates to
 	 * {@link org.springframework.ai.util.json.schema.JsonSchemaGenerator#generateForType}.
+	 *
 	 * @param type the type to generate a schema for
 	 * @return the JSON Schema as a string
 	 */
@@ -233,6 +228,7 @@ public final class McpJsonSchemaGenerator {
 
 	/**
 	 * Check if a method has a CallToolRequest parameter.
+	 *
 	 * @param method The method to check
 	 * @return true if the method has a CallToolRequest parameter, false otherwise
 	 */

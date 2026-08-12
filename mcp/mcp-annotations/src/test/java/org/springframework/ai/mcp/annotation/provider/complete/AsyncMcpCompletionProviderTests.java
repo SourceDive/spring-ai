@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.complete;
 
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncCompletionSpecification;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
@@ -26,10 +24,11 @@ import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
 import io.modelcontextprotocol.spec.McpSchema.PromptReference;
 import io.modelcontextprotocol.spec.McpSchema.ResourceReference;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpComplete;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpComplete;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,7 +44,7 @@ public class AsyncMcpCompletionProviderTests {
 	@Test
 	void testConstructorWithNullCompleteObjects() {
 		assertThatThrownBy(() -> new AsyncMcpCompleteProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("completeObjects cannot be null");
+				.hasMessageContaining("completeObjects cannot be null");
 	}
 
 	@Test
@@ -355,7 +354,7 @@ public class AsyncMcpCompletionProviderTests {
 			assertThat(completeResult.completion()).isNotNull();
 			assertThat(completeResult.completion().values()).hasSize(1);
 			assertThat(completeResult.completion().values().get(0))
-				.isEqualTo("Completion with exchange: present, value: value");
+					.isEqualTo("Completion with exchange: present, value: value");
 		}).verifyComplete();
 	}
 

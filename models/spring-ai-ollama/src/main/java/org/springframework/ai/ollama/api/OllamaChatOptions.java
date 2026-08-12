@@ -16,20 +16,19 @@
 
 package org.springframework.ai.ollama.api;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.model.tool.DefaultToolCallingChatOptions;
 import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.util.JsonHelper;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Helper class for creating strongly-typed Ollama options.
@@ -39,11 +38,11 @@ import org.springframework.ai.util.JsonHelper;
  * @author Ilayaperumal Gopinathan
  * @author Nicolas Krier
  * @author Sebastien Deleuze
- * @since 0.8.0
  * @see <a href=
  * "https://github.com/ollama/ollama/blob/main/docs/modelfile.mdx#valid-parameters-and-values">Ollama
  * Valid Parameters and Values</a>
  * @see <a href="https://github.com/ollama/ollama/blob/main/api/types.go">Ollama Types</a>
+ * @since 0.8.0
  */
 public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutputChatOptions {
 
@@ -52,17 +51,17 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 	private static final List<String> NON_SUPPORTED_FIELDS = List.of("model", "format", "keep_alive", "truncate");
 
 	protected OllamaChatOptions(@Nullable Boolean useNUMA, @Nullable Integer numCtx, @Nullable Integer numBatch,
-			@Nullable Integer numGPU, @Nullable Integer mainGPU, @Nullable Boolean lowVRAM, @Nullable Boolean f16KV,
-			@Nullable Boolean logitsAll, @Nullable Boolean vocabOnly, @Nullable Boolean useMMap,
-			@Nullable Boolean useMLock, @Nullable Integer numThread, @Nullable Integer numKeep, @Nullable Integer seed,
-			@Nullable Integer numPredict, @Nullable Integer topK, @Nullable Double topP, @Nullable Double minP,
-			@Nullable Float tfsZ, @Nullable Float typicalP, @Nullable Integer repeatLastN, @Nullable Double temperature,
-			@Nullable Double repeatPenalty, @Nullable Double presencePenalty, @Nullable Double frequencyPenalty,
-			@Nullable Integer mirostat, @Nullable Float mirostatTau, @Nullable Float mirostatEta,
-			@Nullable Boolean penalizeNewline, @Nullable List<String> stop, @Nullable String model,
-			@Nullable Object format, @Nullable String keepAlive, @Nullable Boolean truncate,
-			@Nullable ThinkOption thinkOption, @Nullable List<ToolCallback> toolCallbacks,
-			@Nullable Map<String, Object> toolContext) {
+	                            @Nullable Integer numGPU, @Nullable Integer mainGPU, @Nullable Boolean lowVRAM, @Nullable Boolean f16KV,
+	                            @Nullable Boolean logitsAll, @Nullable Boolean vocabOnly, @Nullable Boolean useMMap,
+	                            @Nullable Boolean useMLock, @Nullable Integer numThread, @Nullable Integer numKeep, @Nullable Integer seed,
+	                            @Nullable Integer numPredict, @Nullable Integer topK, @Nullable Double topP, @Nullable Double minP,
+	                            @Nullable Float tfsZ, @Nullable Float typicalP, @Nullable Integer repeatLastN, @Nullable Double temperature,
+	                            @Nullable Double repeatPenalty, @Nullable Double presencePenalty, @Nullable Double frequencyPenalty,
+	                            @Nullable Integer mirostat, @Nullable Float mirostatTau, @Nullable Float mirostatEta,
+	                            @Nullable Boolean penalizeNewline, @Nullable List<String> stop, @Nullable String model,
+	                            @Nullable Object format, @Nullable String keepAlive, @Nullable Boolean truncate,
+	                            @Nullable ThinkOption thinkOption, @Nullable List<ToolCallback> toolCallbacks,
+	                            @Nullable Map<String, Object> toolContext) {
 		this.useNUMA = useNUMA;
 		this.numCtx = numCtx;
 		this.numBatch = numBatch;
@@ -889,8 +888,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 		public B model(@Nullable OllamaModel model) {
 			if (model == null) {
 				this.model((String) null);
-			}
-			else {
+			} else {
 				this.model(model.id());
 			}
 			return self();
@@ -1043,6 +1041,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 		 * process in the response's thinking field.
 		 * <p>
 		 * Supported by models: Qwen 3, DeepSeek-v3.1, DeepSeek R1
+		 *
 		 * @return this builder
 		 * @see #disableThinking()
 		 * @see #thinkLow()
@@ -1054,6 +1053,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 
 		/**
 		 * Disable thinking mode for the model.
+		 *
 		 * @return this builder
 		 * @see #enableThinking()
 		 */
@@ -1067,6 +1067,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 		 * <p>
 		 * GPT-OSS requires one of: low, medium, high. Boolean enable/disable is not
 		 * supported for this model.
+		 *
 		 * @return this builder
 		 * @see #thinkMedium()
 		 * @see #thinkHigh()
@@ -1078,6 +1079,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 
 		/**
 		 * Set thinking level to "medium" (for GPT-OSS model).
+		 *
 		 * @return this builder
 		 * @see #thinkLow()
 		 * @see #thinkHigh()
@@ -1089,6 +1091,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 
 		/**
 		 * Set thinking level to "high" (for GPT-OSS model).
+		 *
 		 * @return this builder
 		 * @see #thinkLow()
 		 * @see #thinkMedium()
@@ -1102,6 +1105,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 		 * Set the think option explicitly. Use {@link #enableThinking()},
 		 * {@link #disableThinking()}, {@link #thinkLow()}, {@link #thinkMedium()}, or
 		 * {@link #thinkHigh()} for more convenient alternatives.
+		 *
 		 * @param thinkOption the think option
 		 * @return this builder
 		 */
@@ -1113,8 +1117,7 @@ public class OllamaChatOptions implements ToolCallingChatOptions, StructuredOutp
 		public B outputSchema(@Nullable String outputSchema) {
 			if (outputSchema == null) {
 				this.format = null;
-			}
-			else {
+			} else {
 				this.format = jsonHelper.fromJsonToMap(outputSchema);
 			}
 			return self();

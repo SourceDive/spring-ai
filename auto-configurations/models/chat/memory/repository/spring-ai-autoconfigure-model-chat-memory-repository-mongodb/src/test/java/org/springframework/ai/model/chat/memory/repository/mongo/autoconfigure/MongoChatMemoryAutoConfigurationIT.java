@@ -16,13 +16,7 @@
 
 package org.springframework.ai.model.chat.memory.repository.mongo.autoconfigure;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.mongo.Conversation;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -33,11 +27,16 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(properties = { "spring.ai.chat.memory.repository.mongo.create-indices=true" })
+@TestPropertySource(properties = {"spring.ai.chat.memory.repository.mongo.create-indices=true"})
 class MongoChatMemoryAutoConfigurationIT {
 
 	@Autowired

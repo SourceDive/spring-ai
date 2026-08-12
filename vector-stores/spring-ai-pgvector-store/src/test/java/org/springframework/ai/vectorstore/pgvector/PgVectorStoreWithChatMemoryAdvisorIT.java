@@ -16,21 +16,12 @@
 
 package org.springframework.ai.vectorstore.pgvector;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -46,6 +37,14 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.NonNull;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,10 +64,10 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 	@Container
 	@SuppressWarnings("resource")
 	static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>(PgVectorImage.DEFAULT_IMAGE)
-		.withUsername("postgres")
-		.withPassword("postgres");
+			.withUsername("postgres")
+			.withPassword("postgres");
 
-	float[] embed = { 0.003961659F, -0.0073295482F, 0.02663665F };
+	float[] embed = {0.003961659F, -0.0073295482F, 0.02663665F};
 
 	private static @NonNull ChatModel chatModelAlwaysReturnsTheSameReply() {
 		ChatModel chatModel = mock(ChatModel.class);
@@ -92,10 +91,10 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 	private static PgVectorStore createPgVectorStoreUsingTestcontainer(EmbeddingModel embeddingModel) throws Exception {
 		JdbcTemplate jdbcTemplate = createJdbcTemplateWithConnectionToTestcontainer();
 		return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-			.dimensions(3) // match
-			// embeddings
-			.initializeSchema(true)
-			.build();
+				.dimensions(3) // match
+				// embeddings
+				.initializeSchema(true)
+				.build();
 	}
 
 	private static @NonNull JdbcTemplate createJdbcTemplateWithConnectionToTestcontainer() {
@@ -125,6 +124,7 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 
 	/**
 	 * Create a mock ChatModel that supports streaming responses for testing.
+	 *
 	 * @return A mock ChatModel that returns a predefined streaming response
 	 */
 	private static @NonNull ChatModel chatModelWithStreamingSupport() {
@@ -161,6 +161,7 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 	 * Create a mock ChatModel that simulates the problematic streaming behavior. This
 	 * mock includes a final empty message that triggers the bug in
 	 * VectorStoreChatMemoryAdvisor.
+	 *
 	 * @return A mock ChatModel that returns a problematic streaming response
 	 */
 	private static @NonNull ChatModel chatModelWithProblematicStreamingBehavior() {
@@ -214,13 +215,13 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 
 		// do the chat
 		ChatClient.builder(chatModel)
-			.build()
-			.prompt()
-			.user("joke")
-			.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
-				.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.user("joke")
+				.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
+						.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.chatResponse();
 
 		verifyRequestHasBeenAdvisedWithMessagesFromVectorStore(chatModel);
 	}
@@ -237,14 +238,14 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 
 		// do the chat
 		ChatClient.builder(chatModel)
-			.build()
-			.prompt()
-			.system("You are a helpful assistant.")
-			.user("joke")
-			.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
-				.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.call()
-			.chatResponse();
+				.build()
+				.prompt()
+				.system("You are a helpful assistant.")
+				.user("joke")
+				.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
+						.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.call()
+				.chatResponse();
 
 		ArgumentCaptor<Prompt> promptCaptor = ArgumentCaptor.forClass(Prompt.class);
 		verify(chatModel).call(promptCaptor.capture());
@@ -267,7 +268,7 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 	 * Test that streaming chats with {@link VectorStoreChatMemoryAdvisor} get advised
 	 * with similar messages from the vector store and properly handle streaming
 	 * responses.
-	 *
+	 * <p>
 	 * This test verifies that the fix for the bug reported in
 	 * https://github.com/spring-projects/spring-ai/issues/3152 works correctly. The
 	 * VectorStoreChatMemoryAdvisor now properly handles streaming responses and saves the
@@ -291,11 +292,11 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 
 		// Execute a streaming chat request
 		Flux<String> responseStream = chatClient.prompt()
-			.user("joke")
-			.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
-				.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.stream()
-			.content();
+				.user("joke")
+				.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
+						.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.stream()
+				.content();
 
 		// Collect all streaming chunks
 		List<String> streamingChunks = responseStream.collectList().block();
@@ -362,11 +363,11 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 		// Execute a streaming chat request
 		// This should now succeed with our fix
 		Flux<String> responseStream = chatClient.prompt()
-			.user("joke")
-			.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
-				.param(ChatMemory.CONVERSATION_ID, conversationId))
-			.stream()
-			.content();
+				.user("joke")
+				.advisors(a -> a.advisors(VectorStoreChatMemoryAdvisor.builder(store).build())
+						.param(ChatMemory.CONVERSATION_ID, conversationId))
+				.stream()
+				.content();
 
 		// Collect all streaming chunks - this should no longer throw an exception
 		List<String> streamingChunks = responseStream.collectList().block();
@@ -402,8 +403,8 @@ class PgVectorStoreWithChatMemoryAdvisorIT {
 		EmbeddingModel embeddingModel = mock(EmbeddingModel.class);
 
 		Mockito.doAnswer(invocationOnMock -> List.of(this.embed, this.embed))
-			.when(embeddingModel)
-			.embed(ArgumentMatchers.any(), any(), any());
+				.when(embeddingModel)
+				.embed(ArgumentMatchers.any(), any(), any());
 		given(embeddingModel.embed(any(String.class))).willReturn(this.embed);
 		return embeddingModel;
 	}

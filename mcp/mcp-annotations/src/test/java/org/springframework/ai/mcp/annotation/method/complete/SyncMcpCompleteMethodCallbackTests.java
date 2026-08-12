@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.method.complete;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.BiFunction;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CompleteRequest;
@@ -28,13 +24,16 @@ import io.modelcontextprotocol.spec.McpSchema.CompleteResult.CompleteCompletion;
 import io.modelcontextprotocol.spec.McpSchema.PromptReference;
 import io.modelcontextprotocol.spec.McpSchema.ResourceReference;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.ai.mcp.annotation.McpComplete;
 import org.springframework.ai.mcp.annotation.McpMeta;
 import org.springframework.ai.mcp.annotation.McpProgressToken;
 import org.springframework.ai.mcp.annotation.context.McpAsyncRequestContext;
 import org.springframework.ai.mcp.annotation.context.McpSyncRequestContext;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -54,11 +53,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionWithRequest", CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -79,11 +78,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -104,11 +103,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.CompleteArgument.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -128,11 +127,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionWithValue", String.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -153,11 +152,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		McpComplete completeAnnotation = method.getAnnotation(McpComplete.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.complete(completeAnnotation)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.complete(completeAnnotation)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -178,11 +177,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		McpComplete completeAnnotation = method.getAnnotation(McpComplete.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.complete(completeAnnotation)
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.complete(completeAnnotation)
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new ResourceReference("test://value"),
@@ -202,11 +201,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionObject", CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -226,11 +225,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionList", CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -251,11 +250,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionString", CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -275,12 +274,12 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("invalidReturnType", CompleteRequest.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Method must return either CompleteResult, CompleteCompletion, List<String>, or String");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Method must return either CompleteResult, CompleteCompletion, List<String>, or String");
 	}
 
 	@Test
@@ -289,11 +288,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("invalidParameters", int.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method parameters must be exchange, CompleteRequest, CompleteArgument, or String");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method parameters must be exchange, CompleteRequest, CompleteArgument, or String");
 	}
 
 	@Test
@@ -303,11 +302,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class, String.class, String.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method can have at most 3 input parameters");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method can have at most 3 input parameters");
 	}
 
 	@Test
@@ -316,11 +315,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("invalidParameterType", Object.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method parameters must be exchange, CompleteRequest, CompleteArgument, or String");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method parameters must be exchange, CompleteRequest, CompleteArgument, or String");
 	}
 
 	@Test
@@ -330,11 +329,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpSyncServerExchange.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one exchange parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one exchange parameter");
 	}
 
 	@Test
@@ -344,11 +343,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one CompleteRequest parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one CompleteRequest parameter");
 	}
 
 	@Test
@@ -358,11 +357,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.CompleteArgument.class, CompleteRequest.CompleteArgument.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one CompleteArgument parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one CompleteArgument parameter");
 	}
 
 	@Test
@@ -371,8 +370,8 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionWithRequest", CompleteRequest.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder().method(method).bean(provider).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Either prompt or uri must be provided");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Either prompt or uri must be provided");
 	}
 
 	@Test
@@ -381,12 +380,12 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionWithRequest", CompleteRequest.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.uri("test://resource")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Only one of prompt or uri can be provided");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.uri("test://resource")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Only one of prompt or uri can be provided");
 	}
 
 	@Test
@@ -395,16 +394,16 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("getCompletionWithRequest", CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 
 		assertThatThrownBy(() -> callback.apply(exchange, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Request must not be null");
+				.hasMessageContaining("Request must not be null");
 	}
 
 	@Test
@@ -414,11 +413,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -440,11 +439,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpSyncServerExchange.class, String.class, String.class, CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -457,7 +456,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		assertThat(result.completion().values()).hasSize(1);
 		// Since CompleteRequest doesn't have progressToken, it should be null
 		assertThat(result.completion().values().get(0))
-			.isEqualTo("Mixed completion (no token) with value: value and request: value");
+				.isEqualTo("Mixed completion (no token) with value: value and request: value");
 	}
 
 	@Test
@@ -467,11 +466,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				String.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one @McpProgressToken parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one @McpProgressToken parameter");
 	}
 
 	@Test
@@ -481,11 +480,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -506,11 +505,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -531,11 +530,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpSyncServerExchange.class, McpMeta.class, String.class, CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -547,7 +546,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		assertThat(result.completion()).isNotNull();
 		assertThat(result.completion().values()).hasSize(1);
 		assertThat(result.completion().values().get(0))
-			.isEqualTo("Mixed completion (meta: test-value) with value: value and request: value");
+				.isEqualTo("Mixed completion (meta: test-value) with value: value and request: value");
 	}
 
 	@Test
@@ -556,11 +555,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 		Method method = TestCompleteProvider.class.getMethod("duplicateMetaParameters", McpMeta.class, McpMeta.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one McpMeta parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one McpMeta parameter");
 	}
 
 	@Test
@@ -570,11 +569,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpSyncRequestContext.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -595,11 +594,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpSyncRequestContext.class, String.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		CompleteRequest request = new CompleteRequest(new PromptReference("test-prompt"),
@@ -611,7 +610,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		assertThat(result.completion()).isNotNull();
 		assertThat(result.completion().values()).hasSize(1);
 		assertThat(result.completion().values().get(0))
-			.isEqualTo("Completion with sync context and value: value for: value");
+				.isEqualTo("Completion with sync context and value: value for: value");
 	}
 
 	@Test
@@ -621,11 +620,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpSyncRequestContext.class, McpSyncRequestContext.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method cannot have more than one request context parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method cannot have more than one request context parameter");
 	}
 
 	@Test
@@ -635,12 +634,12 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpAsyncRequestContext.class);
 
 		assertThatThrownBy(() -> SyncMcpCompleteMethodCallback.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining(
-					"Sync complete methods should use McpSyncRequestContext instead of McpAsyncRequestContext parameter");
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining(
+						"Sync complete methods should use McpSyncRequestContext instead of McpAsyncRequestContext parameter");
 	}
 
 	@Test
@@ -650,11 +649,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
 		// Create a CompleteRequest with progressToken using reflection or a builder
@@ -672,7 +671,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		assertThat(result.completion()).isNotNull();
 		assertThat(result.completion().values()).hasSize(1);
 		assertThat(result.completion().values().get(0))
-			.isEqualTo("Completion with progress (token: progress-123) for: value");
+				.isEqualTo("Completion with progress (token: progress-123) for: value");
 	}
 
 	@Test
@@ -682,11 +681,11 @@ public class SyncMcpCompleteMethodCallbackTests {
 				McpTransportContext.class, CompleteRequest.class);
 
 		BiFunction<McpSyncServerExchange, CompleteRequest, CompleteResult> callback = SyncMcpCompleteMethodCallback
-			.builder()
-			.method(method)
-			.bean(provider)
-			.prompt("test-prompt")
-			.build();
+				.builder()
+				.method(method)
+				.bean(provider)
+				.prompt("test-prompt")
+				.build();
 
 		McpTransportContext transportContext = mock(McpTransportContext.class);
 		McpSyncServerExchange exchange = mock(McpSyncServerExchange.class);
@@ -757,7 +756,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		}
 
 		public CompleteResult tooManyParameters(McpSyncServerExchange exchange, CompleteRequest request,
-				String extraParam, String extraParam2) {
+		                                        String extraParam, String extraParam2) {
 			return new CompleteResult(new CompleteCompletion(List.of(), 0, false));
 		}
 
@@ -766,7 +765,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		}
 
 		public CompleteResult duplicateExchangeParameters(McpSyncServerExchange exchange1,
-				McpSyncServerExchange exchange2) {
+		                                                  McpSyncServerExchange exchange2) {
 			return new CompleteResult(new CompleteCompletion(List.of(), 0, false));
 		}
 
@@ -775,26 +774,26 @@ public class SyncMcpCompleteMethodCallbackTests {
 		}
 
 		public CompleteResult duplicateArgumentParameters(CompleteRequest.CompleteArgument arg1,
-				CompleteRequest.CompleteArgument arg2) {
+		                                                  CompleteRequest.CompleteArgument arg2) {
 			return new CompleteResult(new CompleteCompletion(List.of(), 0, false));
 		}
 
 		public CompleteResult getCompletionWithProgressToken(@McpProgressToken String progressToken,
-				CompleteRequest request) {
+		                                                     CompleteRequest request) {
 			String tokenInfo = progressToken != null ? " (token: " + progressToken + ")" : " (no token)";
 			return new CompleteResult(new CompleteCompletion(
 					List.of("Completion with progress" + tokenInfo + " for: " + request.argument().value()), 1, false));
 		}
 
 		public CompleteResult getCompletionWithMixedAndProgress(McpSyncServerExchange exchange,
-				@McpProgressToken String progressToken, String value, CompleteRequest request) {
+		                                                        @McpProgressToken String progressToken, String value, CompleteRequest request) {
 			String tokenInfo = progressToken != null ? " (token: " + progressToken + ")" : " (no token)";
 			return new CompleteResult(new CompleteCompletion(List.of("Mixed completion" + tokenInfo + " with value: "
 					+ value + " and request: " + request.argument().value()), 1, false));
 		}
 
 		public CompleteResult duplicateProgressTokenParameters(@McpProgressToken String token1,
-				@McpProgressToken String token2) {
+		                                                       @McpProgressToken String token2) {
 			return new CompleteResult(new CompleteCompletion(List.of(), 0, false));
 		}
 
@@ -806,7 +805,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		}
 
 		public CompleteResult getCompletionWithMetaAndMixed(McpSyncServerExchange exchange, McpMeta meta, String value,
-				CompleteRequest request) {
+		                                                    CompleteRequest request) {
 			String metaInfo = meta != null && meta.get("key") != null ? " (meta: " + meta.get("key") + ")"
 					: " (no meta)";
 			return new CompleteResult(new CompleteCompletion(List.of("Mixed completion" + metaInfo + " with value: "
@@ -831,7 +830,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		}
 
 		public CompleteResult duplicateSyncRequestContextParameters(McpSyncRequestContext context1,
-				McpSyncRequestContext context2) {
+		                                                            McpSyncRequestContext context2) {
 			return new CompleteResult(new CompleteCompletion(List.of(), 0, false));
 		}
 
@@ -844,7 +843,7 @@ public class SyncMcpCompleteMethodCallbackTests {
 		}
 
 		public CompleteResult getCompletionWithTransportContext(McpTransportContext transportContext,
-				CompleteRequest request) {
+		                                                        CompleteRequest request) {
 			if (transportContext == null) {
 				throw new IllegalStateException("Transport context must not be null");
 			}

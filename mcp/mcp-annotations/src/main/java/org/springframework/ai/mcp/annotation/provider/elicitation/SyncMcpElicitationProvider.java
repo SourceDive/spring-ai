@@ -16,22 +16,21 @@
 
 package org.springframework.ai.mcp.annotation.provider.elicitation;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.McpElicitation;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.context.StructuredElicitResult;
 import org.springframework.ai.mcp.annotation.method.elicitation.SyncElicitationSpecification;
 import org.springframework.ai.mcp.annotation.method.elicitation.SyncMcpElicitationMethodCallback;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Provider for synchronous elicitation callbacks.
@@ -70,8 +69,9 @@ public class SyncMcpElicitationProvider {
 
 	/**
 	 * Create a new SyncMcpElicitationProvider.
+	 *
 	 * @param elicitationObjects the objects containing methods annotated with
-	 * {@link McpElicitation}
+	 *                           {@link McpElicitation}
 	 */
 	public SyncMcpElicitationProvider(List<Object> elicitationObjects) {
 		Assert.notNull(elicitationObjects, "elicitationObjects cannot be null");
@@ -80,34 +80,35 @@ public class SyncMcpElicitationProvider {
 
 	/**
 	 * Get the elicitation specifications.
+	 *
 	 * @return the elicitation specifications
 	 * @throws IllegalStateException if no elicitation methods are found or if multiple
-	 * elicitation methods are found
+	 *                               elicitation methods are found
 	 */
 	public List<SyncElicitationSpecification> getElicitationSpecifications() {
 		List<SyncElicitationSpecification> elicitationHandlers = this.elicitationObjects.stream()
-			.map(elicitationObject -> Stream.of(doGetClassMethods(elicitationObject))
-				.filter(method -> method.isAnnotationPresent(McpElicitation.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.filter(method -> ElicitResult.class.isAssignableFrom(method.getReturnType())
-						|| StructuredElicitResult.class.isAssignableFrom(method.getReturnType()))
-				.filter(method -> method.getParameterCount() == 1
-						&& ElicitRequest.class.isAssignableFrom(method.getParameterTypes()[0]))
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpElicitationMethod -> {
-					var elicitationAnnotation = mcpElicitationMethod.getAnnotation(McpElicitation.class);
+				.map(elicitationObject -> Stream.of(doGetClassMethods(elicitationObject))
+						.filter(method -> method.isAnnotationPresent(McpElicitation.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.filter(method -> ElicitResult.class.isAssignableFrom(method.getReturnType())
+								|| StructuredElicitResult.class.isAssignableFrom(method.getReturnType()))
+						.filter(method -> method.getParameterCount() == 1
+								&& ElicitRequest.class.isAssignableFrom(method.getParameterTypes()[0]))
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpElicitationMethod -> {
+							var elicitationAnnotation = mcpElicitationMethod.getAnnotation(McpElicitation.class);
 
-					Function<ElicitRequest, ElicitResult> methodCallback = SyncMcpElicitationMethodCallback.builder()
-						.method(mcpElicitationMethod)
-						.bean(elicitationObject)
-						.elicitation(elicitationAnnotation)
-						.build();
+							Function<ElicitRequest, ElicitResult> methodCallback = SyncMcpElicitationMethodCallback.builder()
+									.method(mcpElicitationMethod)
+									.bean(elicitationObject)
+									.elicitation(elicitationAnnotation)
+									.build();
 
-					return new SyncElicitationSpecification(elicitationAnnotation.clients(), methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncElicitationSpecification(elicitationAnnotation.clients(), methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (elicitationHandlers.isEmpty()) {
 			logger.warn("No elicitation methods found");
@@ -123,6 +124,7 @@ public class SyncMcpElicitationProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

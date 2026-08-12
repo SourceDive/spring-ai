@@ -16,16 +16,8 @@
 
 package org.springframework.ai.mcp.annotation.spring;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import io.modelcontextprotocol.server.McpServerFeatures.AsyncCompletionSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.AsyncPromptSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceTemplateSpecification;
-import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.*;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures;
-
 import org.springframework.ai.mcp.annotation.method.changed.prompt.AsyncPromptListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.resource.AsyncResourceListChangedSpecification;
 import org.springframework.ai.mcp.annotation.method.changed.tool.AsyncToolListChangedSpecification;
@@ -48,6 +40,9 @@ import org.springframework.ai.mcp.annotation.provider.resource.AsyncStatelessMcp
 import org.springframework.ai.mcp.annotation.provider.sampling.AsyncMcpSamplingProvider;
 import org.springframework.ai.mcp.annotation.provider.tool.AsyncMcpToolProvider;
 import org.springframework.ai.mcp.annotation.provider.tool.AsyncStatelessMcpToolProvider;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author Christian Tzolov
@@ -136,7 +131,7 @@ public final class AsyncMcpAnnotationProviders {
 	public static List<AsyncResourceListChangedSpecification> resourceListChangedSpecifications(
 			List<Object> resourceListChangedObjects) {
 		return new SpringAiAsyncMcpResourceListChangedProvider(resourceListChangedObjects)
-			.getResourceListChangedSpecifications();
+				.getResourceListChangedSpecifications();
 	}
 
 	// TOOL LIST CHANGED
@@ -149,7 +144,7 @@ public final class AsyncMcpAnnotationProviders {
 	public static List<AsyncPromptListChangedSpecification> promptListChangedSpecifications(
 			List<Object> promptListChangedObjects) {
 		return new SpringAiAsyncMcpPromptListChangedProvider(promptListChangedObjects)
-			.getPromptListChangedSpecifications();
+				.getPromptListChangedSpecifications();
 	}
 
 	// LOGGING (CLIENT)

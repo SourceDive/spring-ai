@@ -31,6 +31,7 @@ public interface ToolCallbackResolver {
 	/**
 	 * Resolve the {@link ToolCallback} for the given tool name.
 	 */
-	@Nullable ToolCallback resolve(String toolName);
+	@Nullable
+	ToolCallback resolve(String toolName);
 
 }

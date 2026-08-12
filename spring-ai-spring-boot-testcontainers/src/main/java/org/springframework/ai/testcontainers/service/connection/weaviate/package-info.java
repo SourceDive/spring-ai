@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.testcontainers.service.connection.weaviate;
 
-import org.jspecify.annotations.NullMarked;

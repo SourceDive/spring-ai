@@ -16,29 +16,25 @@
 
 package org.springframework.ai.vectorstore;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.CleanupMode;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.vectorstore.filter.Filter;
+
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.CleanupMode;
-import org.junit.jupiter.api.io.TempDir;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.vectorstore.filter.Filter;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Jemin Huh
@@ -56,18 +52,18 @@ class SimpleVectorStoreWithFilterTests {
 	void setUp() {
 		this.mockEmbeddingModel = mock(EmbeddingModel.class);
 		when(this.mockEmbeddingModel.dimensions()).thenReturn(3);
-		when(this.mockEmbeddingModel.embed(any(String.class))).thenReturn(new float[] { 0.1f, 0.2f, 0.3f });
-		when(this.mockEmbeddingModel.embed(any(Document.class))).thenReturn(new float[] { 0.1f, 0.2f, 0.3f });
+		when(this.mockEmbeddingModel.embed(any(String.class))).thenReturn(new float[]{0.1f, 0.2f, 0.3f});
+		when(this.mockEmbeddingModel.embed(any(Document.class))).thenReturn(new float[]{0.1f, 0.2f, 0.3f});
 		this.vectorStore = SimpleVectorStore.builder(this.mockEmbeddingModel).build();
 	}
 
 	@Test
 	void shouldAddAndRetrieveDocumentWithFilter() {
 		Document doc = Document.builder()
-			.id("1")
-			.text("test content")
-			.metadata(Map.of("country", "BG", "year", 2020, "activationDate", "1970-01-01T00:00:02Z"))
-			.build();
+				.id("1")
+				.text("test content")
+				.metadata(Map.of("country", "BG", "year", 2020, "activationDate", "1970-01-01T00:00:02Z"))
+				.build();
 
 		this.vectorStore.add(List.of(doc));
 
@@ -85,9 +81,9 @@ class SimpleVectorStoreWithFilterTests {
 		assertThat(results).hasSize(0);
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("test content")
-			.filterExpression("country == 'BG' && year == 2020")
-			.build());
+				.query("test content")
+				.filterExpression("country == 'BG' && year == 2020")
+				.build());
 		assertThat(results).hasSize(1).first().satisfies(result -> {
 			assertThat(result.getId()).isEqualTo("1");
 			assertThat(result.getText()).isEqualTo("test content");
@@ -96,9 +92,9 @@ class SimpleVectorStoreWithFilterTests {
 		});
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("test content")
-			.filterExpression("country == 'BG' && year == 2024")
-			.build());
+				.query("test content")
+				.filterExpression("country == 'BG' && year == 2024")
+				.build());
 		assertThat(results).hasSize(0);
 
 		results = this.vectorStore.similaritySearch(
@@ -115,10 +111,10 @@ class SimpleVectorStoreWithFilterTests {
 		assertThat(results).hasSize(0);
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("test content")
-			.filterExpression(
-					new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(2000))))
-			.build());
+				.query("test content")
+				.filterExpression(
+						new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(2000))))
+				.build());
 		assertThat(results).hasSize(1).first().satisfies(result -> {
 			assertThat(result.getId()).isEqualTo("1");
 			assertThat(result.getText()).isEqualTo("test content");
@@ -127,10 +123,10 @@ class SimpleVectorStoreWithFilterTests {
 		});
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("test content")
-			.filterExpression(
-					new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(3000))))
-			.build());
+				.query("test content")
+				.filterExpression(
+						new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(3000))))
+				.build());
 		assertThat(results).hasSize(0);
 
 	}
@@ -139,15 +135,15 @@ class SimpleVectorStoreWithFilterTests {
 	void shouldAddMultipleDocumentsWithFilter() {
 		List<Document> docs = Arrays.asList(
 				Document.builder()
-					.id("1")
-					.text("first")
-					.metadata(Map.of("country", "BG", "year", 2020, "activationDate", "1970-01-01T00:00:02Z"))
-					.build(),
+						.id("1")
+						.text("first")
+						.metadata(Map.of("country", "BG", "year", 2020, "activationDate", "1970-01-01T00:00:02Z"))
+						.build(),
 				Document.builder()
-					.id("2")
-					.text("second")
-					.metadata(Map.of("country", "KR", "year", 2022, "activationDate", "1970-01-01T00:00:03Z"))
-					.build());
+						.id("2")
+						.text("second")
+						.metadata(Map.of("country", "KR", "year", 2022, "activationDate", "1970-01-01T00:00:03Z"))
+						.build());
 
 		this.vectorStore.add(docs);
 
@@ -155,7 +151,7 @@ class SimpleVectorStoreWithFilterTests {
 		assertThat(results).hasSize(2).extracting(Document::getId).containsExactlyInAnyOrder("1", "2");
 
 		results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("first").filterExpression("country == 'BG'").build());
+				.similaritySearch(SearchRequest.builder().query("first").filterExpression("country == 'BG'").build());
 		assertThat(results).hasSize(1).first().satisfies(result -> {
 			assertThat(result.getId()).isEqualTo("1");
 			assertThat(result.getText()).isEqualTo("first");
@@ -164,7 +160,7 @@ class SimpleVectorStoreWithFilterTests {
 		});
 
 		results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("first").filterExpression("country == 'NL'").build());
+				.similaritySearch(SearchRequest.builder().query("first").filterExpression("country == 'NL'").build());
 		assertThat(results).hasSize(0);
 
 		results = this.vectorStore.similaritySearch(
@@ -186,9 +182,9 @@ class SimpleVectorStoreWithFilterTests {
 		});
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("test content")
-			.filterExpression("country == 'KR' && year == 2024")
-			.build());
+				.query("test content")
+				.filterExpression("country == 'KR' && year == 2024")
+				.build());
 		assertThat(results).hasSize(0);
 
 		results = this.vectorStore.similaritySearch(
@@ -205,10 +201,10 @@ class SimpleVectorStoreWithFilterTests {
 		assertThat(results).hasSize(1);
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("first")
-			.filterExpression(
-					new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(2000))))
-			.build());
+				.query("first")
+				.filterExpression(
+						new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(2000))))
+				.build());
 		assertThat(results).hasSize(1).first().satisfies(result -> {
 			assertThat(result.getId()).isEqualTo("1");
 			assertThat(result.getText()).isEqualTo("first");
@@ -217,11 +213,11 @@ class SimpleVectorStoreWithFilterTests {
 		});
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("first")
-			.filterExpression(new Filter.Expression(AND,
-					new Filter.Expression(GTE, new Filter.Key("activationDate"), new Filter.Value(new Date(2000))),
-					new Filter.Expression(LTE, new Filter.Key("activationDate"), new Filter.Value(new Date(3000)))))
-			.build());
+				.query("first")
+				.filterExpression(new Filter.Expression(AND,
+						new Filter.Expression(GTE, new Filter.Key("activationDate"), new Filter.Value(new Date(2000))),
+						new Filter.Expression(LTE, new Filter.Key("activationDate"), new Filter.Value(new Date(3000)))))
+				.build());
 		assertThat(results).hasSize(2).first().satisfies(result -> {
 			assertThat(result.getId()).isEqualTo("1");
 			assertThat(result.getText()).isEqualTo("first");
@@ -230,20 +226,20 @@ class SimpleVectorStoreWithFilterTests {
 		});
 
 		results = this.vectorStore.similaritySearch(SearchRequest.builder()
-			.query("test content")
-			.filterExpression(
-					new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(3000))))
-			.build());
+				.query("test content")
+				.filterExpression(
+						new Filter.Expression(EQ, new Filter.Key("activationDate"), new Filter.Value(new Date(3000))))
+				.build());
 		assertThat(results).hasSize(1);
 	}
 
 	@Test
 	void shouldFilterByStringEquality() {
 		Document doc = Document.builder()
-			.id("1")
-			.text("sample content")
-			.metadata(Map.of("category", "category1"))
-			.build();
+				.id("1")
+				.text("sample content")
+				.metadata(Map.of("category", "category1"))
+				.build();
 
 		this.vectorStore.add(List.of(doc));
 
@@ -261,7 +257,7 @@ class SimpleVectorStoreWithFilterTests {
 		this.vectorStore.add(List.of(doc));
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("item").filterExpression("value == 1").build());
+				.similaritySearch(SearchRequest.builder().query("item").filterExpression("value == 1").build());
 
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getMetadata()).containsEntry("value", 1);
@@ -304,7 +300,7 @@ class SimpleVectorStoreWithFilterTests {
 		this.vectorStore.add(List.of(doc));
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("test").filterExpression("type == 'image'").build());
+				.similaritySearch(SearchRequest.builder().query("test").filterExpression("type == 'image'").build());
 
 		assertThat(results).isEmpty();
 	}
@@ -318,7 +314,7 @@ class SimpleVectorStoreWithFilterTests {
 		this.vectorStore.add(docs);
 
 		List<Document> results = this.vectorStore
-			.similaritySearch(SearchRequest.builder().query("instance").filterExpression("enabled == true").build());
+				.similaritySearch(SearchRequest.builder().query("instance").filterExpression("enabled == true").build());
 
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0).getId()).isEqualTo("1");

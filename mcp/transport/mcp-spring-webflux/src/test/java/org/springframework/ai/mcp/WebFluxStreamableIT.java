@@ -16,10 +16,6 @@
 
 package org.springframework.ai.mcp;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.AbstractMcpClientServerIntegrationTests;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
@@ -32,9 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.provider.Arguments;
-import reactor.netty.DisposableServer;
-import reactor.netty.http.server.HttpServer;
-
 import org.springframework.ai.mcp.client.webflux.transport.WebClientStreamableHttpTransport;
 import org.springframework.ai.mcp.server.webflux.transport.WebFluxStreamableServerTransportProvider;
 import org.springframework.http.server.reactive.HttpHandler;
@@ -42,6 +35,12 @@ import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
+import reactor.netty.DisposableServer;
+import reactor.netty.http.server.HttpServer;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Timeout(15)
 class WebFluxStreamableIT extends AbstractMcpClientServerIntegrationTests {
@@ -53,7 +52,7 @@ class WebFluxStreamableIT extends AbstractMcpClientServerIntegrationTests {
 	private WebFluxStreamableServerTransportProvider mcpStreamableServerTransportProvider;
 
 	static McpTransportContextExtractor<ServerRequest> TEST_CONTEXT_EXTRACTOR = r -> McpTransportContext
-		.create(Map.of("important", "value"));
+			.create(Map.of("important", "value"));
 
 	static Stream<Arguments> clientsForTesting() {
 		return Stream.of(Arguments.of("httpclient"), Arguments.of("webflux"));
@@ -63,17 +62,17 @@ class WebFluxStreamableIT extends AbstractMcpClientServerIntegrationTests {
 	protected void prepareClients(int port, String mcpEndpoint) {
 
 		clientBuilders
-			.put("httpclient",
-					McpClient.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
-						.endpoint(CUSTOM_MESSAGE_ENDPOINT)
-						.build()).requestTimeout(Duration.ofHours(10)));
+				.put("httpclient",
+						McpClient.sync(HttpClientStreamableHttpTransport.builder("http://127.0.0.1:" + port)
+								.endpoint(CUSTOM_MESSAGE_ENDPOINT)
+								.build()).requestTimeout(Duration.ofHours(10)));
 		clientBuilders.put("webflux",
 				McpClient
-					.sync(WebClientStreamableHttpTransport
-						.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
-						.endpoint(CUSTOM_MESSAGE_ENDPOINT)
-						.build())
-					.requestTimeout(Duration.ofHours(10)));
+						.sync(WebClientStreamableHttpTransport
+								.builder(WebClient.builder().baseUrl("http://127.0.0.1:" + port))
+								.endpoint(CUSTOM_MESSAGE_ENDPOINT)
+								.build())
+						.requestTimeout(Duration.ofHours(10)));
 	}
 
 	@Override
@@ -90,12 +89,12 @@ class WebFluxStreamableIT extends AbstractMcpClientServerIntegrationTests {
 	public void before() {
 
 		this.mcpStreamableServerTransportProvider = WebFluxStreamableServerTransportProvider.builder()
-			.messageEndpoint(CUSTOM_MESSAGE_ENDPOINT)
-			.contextExtractor(TEST_CONTEXT_EXTRACTOR)
-			.build();
+				.messageEndpoint(CUSTOM_MESSAGE_ENDPOINT)
+				.contextExtractor(TEST_CONTEXT_EXTRACTOR)
+				.build();
 
 		HttpHandler httpHandler = RouterFunctions
-			.toHttpHandler(this.mcpStreamableServerTransportProvider.getRouterFunction());
+				.toHttpHandler(this.mcpStreamableServerTransportProvider.getRouterFunction());
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(httpHandler);
 		this.httpServer = HttpServer.create().port(0).handle(adapter).bindNow();
 

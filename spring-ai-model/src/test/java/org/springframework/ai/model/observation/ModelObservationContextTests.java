@@ -36,9 +36,9 @@ class ModelObservationContextTests {
 	void whenRequestAndMetadataThenReturn() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -47,43 +47,43 @@ class ModelObservationContextTests {
 	void whenRequestIsNullThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>(null,
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.EMBEDDING.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("request cannot be null");
+						.operationType(AiOperationType.EMBEDDING.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build()))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("request cannot be null");
 	}
 
 	@Test
 	void whenOperationMetadataIsNullThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request", null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("operationMetadata cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("operationMetadata cannot be null");
 	}
 
 	@Test
 	void whenOperationMetadataIsMissingOperationTypeThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().provider(AiProvider.OLLAMA.value()).build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("operationType cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("operationType cannot be null or empty");
 	}
 
 	@Test
 	void whenOperationMetadataIsMissingProviderThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().operationType(AiOperationType.IMAGE.value()).build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("provider cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("provider cannot be null or empty");
 	}
 
 	@Test
 	void whenResponseThenReturn() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		observationContext.setResponse("test response");
 
 		assertThat(observationContext).isNotNull();
@@ -93,46 +93,46 @@ class ModelObservationContextTests {
 	void whenResponseIsNullThenThrow() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		assertThatThrownBy(() -> observationContext.setResponse(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("response cannot be null");
+				.hasMessageContaining("response cannot be null");
 	}
 
 	@Test
 	void whenEmptyOperationTypeThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().operationType("").provider(AiProvider.OLLAMA.value()).build()))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void whenEmptyProviderThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().operationType(AiOperationType.CHAT.value()).provider("").build()))
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void whenDifferentProvidersThenReturn() {
 		var ollamaContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		var openaiContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OPENAI.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OPENAI.value())
+						.build());
 
 		var anthropicContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.ANTHROPIC.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.ANTHROPIC.value())
+						.build());
 
 		assertThat(ollamaContext).isNotNull();
 		assertThat(openaiContext).isNotNull();
@@ -143,9 +143,9 @@ class ModelObservationContextTests {
 	void whenComplexObjectTypesAreUsedThenReturn() {
 		var observationContext = new ModelObservationContext<Integer, Boolean>(12345,
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		observationContext.setResponse(true);
 
 		assertThat(observationContext).isNotNull();
@@ -156,9 +156,9 @@ class ModelObservationContextTests {
 		var testRequest = "test request content";
 		var observationContext = new ModelObservationContext<String, String>(testRequest,
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		assertThat(observationContext.getRequest()).isEqualTo(testRequest);
 	}
@@ -167,9 +167,9 @@ class ModelObservationContextTests {
 	void whenGetResponseBeforeSettingThenReturnNull() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		assertThat(observationContext.getResponse()).isNull();
 	}
@@ -179,9 +179,9 @@ class ModelObservationContextTests {
 		var testResponse = "test response content";
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		observationContext.setResponse(testResponse);
 
 		assertThat(observationContext.getResponse()).isEqualTo(testResponse);
@@ -190,9 +190,9 @@ class ModelObservationContextTests {
 	@Test
 	void whenGetOperationMetadataThenReturn() {
 		var metadata = AiOperationMetadata.builder()
-			.operationType(AiOperationType.EMBEDDING.value())
-			.provider(AiProvider.OPENAI.value())
-			.build();
+				.operationType(AiOperationType.EMBEDDING.value())
+				.provider(AiProvider.OPENAI.value())
+				.build();
 		var observationContext = new ModelObservationContext<String, String>("test request", metadata);
 
 		assertThat(observationContext.getOperationMetadata()).isEqualTo(metadata);
@@ -202,9 +202,9 @@ class ModelObservationContextTests {
 	void whenSetResponseMultipleTimesThenLastValueWins() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		observationContext.setResponse("first response");
 		observationContext.setResponse("second response");
@@ -217,25 +217,25 @@ class ModelObservationContextTests {
 	void whenWhitespaceOnlyOperationTypeThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().operationType("   ").provider(AiProvider.OLLAMA.value()).build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("operationType cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("operationType cannot be null or empty");
 	}
 
 	@Test
 	void whenWhitespaceOnlyProviderThenThrow() {
 		assertThatThrownBy(() -> new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder().operationType(AiOperationType.CHAT.value()).provider("   ").build()))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("provider cannot be null or empty");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("provider cannot be null or empty");
 	}
 
 	@Test
 	void whenEmptyStringRequestThenReturn() {
 		var observationContext = new ModelObservationContext<String, String>("",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 
 		assertThat(observationContext).isNotNull();
 		assertThat(observationContext.getRequest()).isEqualTo("");
@@ -245,9 +245,9 @@ class ModelObservationContextTests {
 	void whenEmptyStringResponseThenReturn() {
 		var observationContext = new ModelObservationContext<String, String>("test request",
 				AiOperationMetadata.builder()
-					.operationType(AiOperationType.CHAT.value())
-					.provider(AiProvider.OLLAMA.value())
-					.build());
+						.operationType(AiOperationType.CHAT.value())
+						.provider(AiProvider.OLLAMA.value())
+						.build());
 		observationContext.setResponse("");
 
 		assertThat(observationContext.getResponse()).isEqualTo("");

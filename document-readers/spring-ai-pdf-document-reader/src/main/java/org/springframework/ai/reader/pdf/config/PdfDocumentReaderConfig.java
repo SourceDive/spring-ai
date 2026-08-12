@@ -51,6 +51,7 @@ public final class PdfDocumentReaderConfig {
 
 	/**
 	 * Start building a new configuration.
+	 *
 	 * @return The entry point for creating a new configuration.
 	 */
 	public static PdfDocumentReaderConfig.Builder builder() {
@@ -82,6 +83,7 @@ public final class PdfDocumentReaderConfig {
 
 		/**
 		 * Formatter of the extracted text.
+		 *
 		 * @param pageExtractedTextFormatter Instance of the PageExtractedTextFormatter.
 		 * @return this builder
 		 */
@@ -95,6 +97,7 @@ public final class PdfDocumentReaderConfig {
 		/**
 		 * How many pages to put in a single Document instance. 0 stands for all pages.
 		 * Defaults to 1.
+		 *
 		 * @param pagesPerDocument Number of page's content to group in single Document.
 		 * @return this builder
 		 */
@@ -106,6 +109,7 @@ public final class PdfDocumentReaderConfig {
 
 		/**
 		 * Configures the Pdf reader page top margin. Defaults to 0.
+		 *
 		 * @param topMargin page top margin to use
 		 * @return this builder
 		 */
@@ -117,6 +121,7 @@ public final class PdfDocumentReaderConfig {
 
 		/**
 		 * Configures the Pdf reader page bottom margin. Defaults to 0.
+		 *
 		 * @param bottomMargin page top margin to use
 		 * @return this builder
 		 */
@@ -128,8 +133,9 @@ public final class PdfDocumentReaderConfig {
 
 		/**
 		 * Configures the Pdf reader reverse paragraph position. Defaults to false.
+		 *
 		 * @param reversedParagraphPosition to reverse or not the paragraph position
-		 * withing a page.
+		 *                                  withing a page.
 		 * @return this builder
 		 */
 		public Builder withReversedParagraphPosition(boolean reversedParagraphPosition) {

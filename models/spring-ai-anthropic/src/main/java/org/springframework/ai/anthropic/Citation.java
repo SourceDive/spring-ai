@@ -44,8 +44,8 @@ import org.springframework.util.Assert;
  * </ul>
  *
  * @author Soby Chacko
- * @since 1.1.0
  * @see AnthropicCitationDocument
+ * @since 1.1.0
  */
 public final class Citation {
 
@@ -54,16 +54,24 @@ public final class Citation {
 	 */
 	public enum LocationType {
 
-		/** Character-based location for plain text documents */
+		/**
+		 * Character-based location for plain text documents
+		 */
 		CHAR_LOCATION,
 
-		/** Page-based location for PDF documents */
+		/**
+		 * Page-based location for PDF documents
+		 */
 		PAGE_LOCATION,
 
-		/** Block-based location for custom content documents */
+		/**
+		 * Block-based location for custom content documents
+		 */
 		CONTENT_BLOCK_LOCATION,
 
-		/** URL-based location for web search results */
+		/**
+		 * URL-based location for web search results
+		 */
 		WEB_SEARCH_RESULT_LOCATION
 
 	}
@@ -101,15 +109,16 @@ public final class Citation {
 
 	/**
 	 * Create a character location citation for plain text documents.
-	 * @param citedText the text that was cited from the document
-	 * @param documentIndex the index of the document (0-based)
-	 * @param documentTitle the title of the document
+	 *
+	 * @param citedText      the text that was cited from the document
+	 * @param documentIndex  the index of the document (0-based)
+	 * @param documentTitle  the title of the document
 	 * @param startCharIndex the starting character index (0-based, inclusive)
-	 * @param endCharIndex the ending character index (exclusive)
+	 * @param endCharIndex   the ending character index (exclusive)
 	 * @return a new Citation with CHAR_LOCATION type
 	 */
 	public static Citation ofCharLocation(String citedText, int documentIndex, @Nullable String documentTitle,
-			int startCharIndex, int endCharIndex) {
+	                                      int startCharIndex, int endCharIndex) {
 		Citation citation = new Citation(LocationType.CHAR_LOCATION, citedText, documentIndex, documentTitle);
 		citation.startCharIndex = startCharIndex;
 		citation.endCharIndex = endCharIndex;
@@ -118,15 +127,16 @@ public final class Citation {
 
 	/**
 	 * Create a page location citation for PDF documents.
-	 * @param citedText the text that was cited from the document
-	 * @param documentIndex the index of the document (0-based)
-	 * @param documentTitle the title of the document
+	 *
+	 * @param citedText       the text that was cited from the document
+	 * @param documentIndex   the index of the document (0-based)
+	 * @param documentTitle   the title of the document
 	 * @param startPageNumber the starting page number (1-based, inclusive)
-	 * @param endPageNumber the ending page number (exclusive)
+	 * @param endPageNumber   the ending page number (exclusive)
 	 * @return a new Citation with PAGE_LOCATION type
 	 */
 	public static Citation ofPageLocation(String citedText, int documentIndex, @Nullable String documentTitle,
-			int startPageNumber, int endPageNumber) {
+	                                      int startPageNumber, int endPageNumber) {
 		Citation citation = new Citation(LocationType.PAGE_LOCATION, citedText, documentIndex, documentTitle);
 		citation.startPageNumber = startPageNumber;
 		citation.endPageNumber = endPageNumber;
@@ -135,15 +145,16 @@ public final class Citation {
 
 	/**
 	 * Create a content block location citation for custom content documents.
-	 * @param citedText the text that was cited from the document
-	 * @param documentIndex the index of the document (0-based)
-	 * @param documentTitle the title of the document
+	 *
+	 * @param citedText       the text that was cited from the document
+	 * @param documentIndex   the index of the document (0-based)
+	 * @param documentTitle   the title of the document
 	 * @param startBlockIndex the starting content block index (0-based, inclusive)
-	 * @param endBlockIndex the ending content block index (exclusive)
+	 * @param endBlockIndex   the ending content block index (exclusive)
 	 * @return a new Citation with CONTENT_BLOCK_LOCATION type
 	 */
 	public static Citation ofContentBlockLocation(String citedText, int documentIndex, @Nullable String documentTitle,
-			int startBlockIndex, int endBlockIndex) {
+	                                              int startBlockIndex, int endBlockIndex) {
 		Citation citation = new Citation(LocationType.CONTENT_BLOCK_LOCATION, citedText, documentIndex, documentTitle);
 		citation.startBlockIndex = startBlockIndex;
 		citation.endBlockIndex = endBlockIndex;
@@ -154,8 +165,9 @@ public final class Citation {
 	 * Create a web search result location citation. For this type,
 	 * {@link #getDocumentIndex()} returns 0 and is not meaningful — use {@link #getUrl()}
 	 * instead.
-	 * @param citedText the text that was cited from the search result
-	 * @param url the URL of the search result
+	 *
+	 * @param citedText     the text that was cited from the search result
+	 * @param url           the URL of the search result
 	 * @param documentTitle the title of the web page
 	 * @return a new Citation with WEB_SEARCH_RESULT_LOCATION type
 	 */

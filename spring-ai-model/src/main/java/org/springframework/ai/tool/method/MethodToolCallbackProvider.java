@@ -16,20 +16,8 @@
 
 package org.springframework.ai.tool.method;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.annotation.Tool;
@@ -41,6 +29,17 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A {@link ToolCallbackProvider} that builds {@link ToolCallback} instances from
@@ -68,11 +67,11 @@ public final class MethodToolCallbackProvider implements ToolCallbackProvider {
 
 		for (Object toolObject : toolObjects) {
 			List<Method> toolMethods = Stream
-				.of(ReflectionUtils.getDeclaredMethods(
-						AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
-				.filter(this::isToolAnnotatedMethod)
-				.filter(toolMethod -> !isFunctionalType(toolMethod))
-				.toList();
+					.of(ReflectionUtils.getDeclaredMethods(
+							AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
+					.filter(this::isToolAnnotatedMethod)
+					.filter(toolMethod -> !isFunctionalType(toolMethod))
+					.toList();
 
 			if (toolMethods.isEmpty()) {
 				throw new IllegalArgumentException("No @Tool annotated methods found in " + toolObject + ". "
@@ -85,22 +84,22 @@ public final class MethodToolCallbackProvider implements ToolCallbackProvider {
 	@Override
 	public ToolCallback[] getToolCallbacks() {
 		var toolCallbacks = this.toolObjects.stream()
-			.map(toolObject -> Stream
-				.of(ReflectionUtils.getDeclaredMethods(
-						AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
-				.filter(this::isToolAnnotatedMethod)
-				.filter(toolMethod -> !isFunctionalType(toolMethod))
-				.filter(ReflectionUtils.USER_DECLARED_METHODS::matches)
-				.map(toolMethod -> MethodToolCallback.builder()
-					.toolDefinition(ToolDefinitions.from(toolMethod))
-					.toolMetadata(ToolMetadata.from(toolMethod))
-					.toolMethod(toolMethod)
-					.toolObject(toolObject)
-					.toolCallResultConverter(ToolUtils.getToolCallResultConverter(toolMethod))
-					.build())
-				.toArray(ToolCallback[]::new))
-			.flatMap(Stream::of)
-			.toArray(ToolCallback[]::new);
+				.map(toolObject -> Stream
+						.of(ReflectionUtils.getDeclaredMethods(
+								AopUtils.isAopProxy(toolObject) ? AopUtils.getTargetClass(toolObject) : toolObject.getClass()))
+						.filter(this::isToolAnnotatedMethod)
+						.filter(toolMethod -> !isFunctionalType(toolMethod))
+						.filter(ReflectionUtils.USER_DECLARED_METHODS::matches)
+						.map(toolMethod -> MethodToolCallback.builder()
+								.toolDefinition(ToolDefinitions.from(toolMethod))
+								.toolMetadata(ToolMetadata.from(toolMethod))
+								.toolMethod(toolMethod)
+								.toolObject(toolObject)
+								.toolCallResultConverter(ToolUtils.getToolCallResultConverter(toolMethod))
+								.build())
+						.toArray(ToolCallback[]::new))
+				.flatMap(Stream::of)
+				.toArray(ToolCallback[]::new);
 
 		validateToolCallbacks(toolCallbacks);
 

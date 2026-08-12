@@ -16,16 +16,15 @@
 
 package org.springframework.ai.mcp;
 
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
 import org.springframework.ai.tool.ToolCallback;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -58,9 +57,9 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpSyncClient client2 = createMockClient("client2", "tool2");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(client1)
-			.addMcpClient(client2)
-			.build();
+				.addMcpClient(client1)
+				.addMcpClient(client2)
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();
@@ -90,8 +89,8 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpSyncClient client2 = createMockClient("client2", "tool2");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.mcpClients(client1, client2)
-			.build();
+				.mcpClients(client1, client2)
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();
@@ -105,9 +104,9 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpToolFilter customFilter = (connectionInfo, tool) -> tool.name().startsWith("filtered");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(client)
-			.toolFilter(customFilter)
-			.build();
+				.addMcpClient(client)
+				.toolFilter(customFilter)
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();
@@ -122,9 +121,9 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpToolNamePrefixGenerator customGenerator = (connectionInfo, tool) -> "custom_" + tool.name();
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(client)
-			.toolNamePrefixGenerator(customGenerator)
-			.build();
+				.addMcpClient(client)
+				.toolNamePrefixGenerator(customGenerator)
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();
@@ -140,10 +139,10 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpToolNamePrefixGenerator customGenerator = (connectionInfo, tool) -> "prefix_" + tool.name();
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(client)
-			.toolFilter(customFilter)
-			.toolNamePrefixGenerator(customGenerator)
-			.build();
+				.addMcpClient(client)
+				.toolFilter(customFilter)
+				.toolNamePrefixGenerator(customGenerator)
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();
@@ -155,24 +154,24 @@ class SyncMcpToolCallbackProviderBuilderTest {
 	void builderShouldThrowExceptionWhenClientListIsNull() {
 
 		assertThatThrownBy(() -> SyncMcpToolCallbackProvider.builder().mcpClients((List<McpSyncClient>) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("MCP clients list must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("MCP clients list must not be null");
 	}
 
 	@Test
 	void builderShouldThrowExceptionWhenClientArrayIsNull() {
 
 		assertThatThrownBy(() -> SyncMcpToolCallbackProvider.builder().mcpClients((McpSyncClient[]) null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("MCP clients array must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("MCP clients array must not be null");
 	}
 
 	@Test
 	void builderShouldThrowExceptionWhenAddingNullClient() {
 
 		assertThatThrownBy(() -> SyncMcpToolCallbackProvider.builder().addMcpClient(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("MCP client must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("MCP client must not be null");
 	}
 
 	@Test
@@ -181,8 +180,8 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpSyncClient client = createMockClient("client", "tool");
 
 		assertThatThrownBy(() -> SyncMcpToolCallbackProvider.builder().addMcpClient(client).toolFilter(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Tool filter must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Tool filter must not be null");
 	}
 
 	@Test
@@ -192,8 +191,8 @@ class SyncMcpToolCallbackProviderBuilderTest {
 
 		assertThatThrownBy(
 				() -> SyncMcpToolCallbackProvider.builder().addMcpClient(client).toolNamePrefixGenerator(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("Tool name prefix generator must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Tool name prefix generator must not be null");
 	}
 
 	@Test
@@ -205,11 +204,11 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpToolNamePrefixGenerator generator = new DefaultMcpToolNamePrefixGenerator();
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(client1)
-			.addMcpClient(client2)
-			.toolFilter(filter)
-			.toolNamePrefixGenerator(generator)
-			.build();
+				.addMcpClient(client1)
+				.addMcpClient(client2)
+				.toolFilter(filter)
+				.toolNamePrefixGenerator(generator)
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();
@@ -224,9 +223,9 @@ class SyncMcpToolCallbackProviderBuilderTest {
 		McpSyncClient client3 = createMockClient("client3", "tool3");
 
 		SyncMcpToolCallbackProvider provider = SyncMcpToolCallbackProvider.builder()
-			.addMcpClient(client1)
-			.mcpClients(List.of(client2, client3)) // This should replace client1
-			.build();
+				.addMcpClient(client1)
+				.mcpClients(List.of(client2, client3)) // This should replace client1
+				.build();
 
 		assertThat(provider).isNotNull();
 		ToolCallback[] callbacks = provider.getToolCallbacks();

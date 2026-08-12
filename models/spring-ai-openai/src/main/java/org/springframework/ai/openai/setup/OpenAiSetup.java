@@ -16,13 +16,6 @@
 
 package org.springframework.ai.openai.setup;
 
-import java.net.Proxy;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.openai.azure.AzureOpenAIServiceVersion;
 import com.openai.azure.credential.AzureApiKeyCredential;
 import com.openai.client.OpenAIClient;
@@ -37,9 +30,15 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.openai.http.okhttp.OpenAiHttpClientBuilderCustomizer;
 import org.springframework.ai.openai.http.okhttp.SpringAiOpenAiHttpClient;
+
+import java.net.Proxy;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Helps configure the OpenAI Java SDK, depending on the platform used. This code is
@@ -93,11 +92,11 @@ public final class OpenAiSetup {
 	 * {@link org.springframework.ai.openai.AbstractOpenAiOptions.AbstractBuilder#apiKey(org.springframework.ai.model.ApiKey)}.
 	 */
 	public static OpenAIClient setupSyncClient(@Nullable String baseUrl, @Nullable String apiKey,
-			@Nullable Credential credential, @Nullable String azureDeploymentName,
-			@Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
-			boolean isAzure, boolean isGitHubModels, @Nullable String modelName, Duration timeout, int maxRetries,
-			@Nullable Proxy proxy, @Nullable Map<String, String> customHeaders, ObservationRegistry observationRegistry,
-			@Nullable MeterRegistry meterRegistry, List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                           @Nullable Credential credential, @Nullable String azureDeploymentName,
+	                                           @Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
+	                                           boolean isAzure, boolean isGitHubModels, @Nullable String modelName, Duration timeout, int maxRetries,
+	                                           @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders, ObservationRegistry observationRegistry,
+	                                           @Nullable MeterRegistry meterRegistry, List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		baseUrl = detectBaseUrlFromEnv(baseUrl);
 		var modelProvider = detectModelProvider(isAzure, isGitHubModels, baseUrl, azureDeploymentName,
@@ -120,11 +119,11 @@ public final class OpenAiSetup {
 	}
 
 	public static OpenAIClientAsync setupAsyncClient(@Nullable String baseUrl, @Nullable String apiKey,
-			@Nullable Credential credential, @Nullable String azureDeploymentName,
-			@Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
-			boolean isAzure, boolean isGitHubModels, @Nullable String modelName, Duration timeout, int maxRetries,
-			@Nullable Proxy proxy, @Nullable Map<String, String> customHeaders, ObservationRegistry observationRegistry,
-			@Nullable MeterRegistry meterRegistry, List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                                 @Nullable Credential credential, @Nullable String azureDeploymentName,
+	                                                 @Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
+	                                                 boolean isAzure, boolean isGitHubModels, @Nullable String modelName, Duration timeout, int maxRetries,
+	                                                 @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders, ObservationRegistry observationRegistry,
+	                                                 @Nullable MeterRegistry meterRegistry, List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		baseUrl = detectBaseUrlFromEnv(baseUrl);
 		var modelProvider = detectModelProvider(isAzure, isGitHubModels, baseUrl, azureDeploymentName,
@@ -147,43 +146,40 @@ public final class OpenAiSetup {
 	}
 
 	private static ClientOptions buildClientOptions(@Nullable String baseUrl, ModelProvider modelProvider,
-			@Nullable String modelName, @Nullable String azureDeploymentName,
-			@Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
-			Duration timeout, int maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
-			@Nullable String calculatedApiKey, @Nullable Credential credential, ObservationRegistry observationRegistry,
-			@Nullable MeterRegistry meterRegistry, List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                                @Nullable String modelName, @Nullable String azureDeploymentName,
+	                                                @Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
+	                                                Duration timeout, int maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
+	                                                @Nullable String calculatedApiKey, @Nullable Credential credential, ObservationRegistry observationRegistry,
+	                                                @Nullable MeterRegistry meterRegistry, List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		SpringAiOpenAiHttpClient.Builder httpBuilder = SpringAiOpenAiHttpClient.builder()
-			.observationRegistry(observationRegistry)
-			.meterRegistry(meterRegistry)
-			.timeout(timeout)
-			.proxy(proxy);
+				.observationRegistry(observationRegistry)
+				.meterRegistry(meterRegistry)
+				.timeout(timeout)
+				.proxy(proxy);
 
 		for (OpenAiHttpClientBuilderCustomizer customizer : httpClientCustomizers) {
 			customizer.customize(httpBuilder);
 		}
 
 		ClientOptions.Builder clientOptions = ClientOptions.builder()
-			.httpClient(httpBuilder.build())
-			.baseUrl(calculateBaseUrl(baseUrl, modelProvider, modelName, azureDeploymentName))
-			.organization(organizationId)
-			.timeout(timeout)
-			.maxRetries(maxRetries)
-			.putHeader("User-Agent", DEFAULT_USER_AGENT);
+				.httpClient(httpBuilder.build())
+				.baseUrl(calculateBaseUrl(baseUrl, modelProvider, modelName, azureDeploymentName))
+				.organization(organizationId)
+				.timeout(timeout)
+				.maxRetries(maxRetries)
+				.putHeader("User-Agent", DEFAULT_USER_AGENT);
 
 		if (calculatedApiKey != null) {
 			if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY) {
 				clientOptions.credential(AzureApiKeyCredential.create(calculatedApiKey));
-			}
-			else {
+			} else {
 				clientOptions.apiKey(calculatedApiKey);
 			}
-		}
-		else {
+		} else {
 			if (credential != null) {
 				clientOptions.credential(credential);
-			}
-			else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY) {
+			} else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY) {
 				clientOptions.credential(azureAuthentication());
 			}
 		}
@@ -193,8 +189,8 @@ public final class OpenAiSetup {
 		}
 		if (customHeaders != null) {
 			clientOptions.putAllHeaders(customHeaders.entrySet()
-				.stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> Collections.singletonList(entry.getValue()))));
+					.stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, entry -> Collections.singletonList(entry.getValue()))));
 		}
 
 		return clientOptions.build();
@@ -206,42 +202,42 @@ public final class OpenAiSetup {
 	 * empty API key is provided to signal no-auth mode.
 	 */
 	private static ClientOptions buildNoAuthClientOptions(@Nullable String baseUrl, ModelProvider modelProvider,
-			@Nullable String modelName, @Nullable String azureDeploymentName,
-			@Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
-			Duration timeout, int maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
-			ObservationRegistry observationRegistry, @Nullable MeterRegistry meterRegistry,
-			List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
+	                                                      @Nullable String modelName, @Nullable String azureDeploymentName,
+	                                                      @Nullable AzureOpenAIServiceVersion azureOpenAiServiceVersion, @Nullable String organizationId,
+	                                                      Duration timeout, int maxRetries, @Nullable Proxy proxy, @Nullable Map<String, String> customHeaders,
+	                                                      ObservationRegistry observationRegistry, @Nullable MeterRegistry meterRegistry,
+	                                                      List<OpenAiHttpClientBuilderCustomizer> httpClientCustomizers) {
 
 		SpringAiOpenAiHttpClient.Builder httpBuilder = SpringAiOpenAiHttpClient.builder()
-			.observationRegistry(observationRegistry)
-			.meterRegistry(meterRegistry)
-			.timeout(timeout)
-			.proxy(proxy);
+				.observationRegistry(observationRegistry)
+				.meterRegistry(meterRegistry)
+				.timeout(timeout)
+				.proxy(proxy);
 
 		// No API Key defined, so remove the mandatory "Authorization" header.
 		httpBuilder
-			.interceptor(chain -> chain.proceed(chain.request().newBuilder().removeHeader("Authorization").build()));
+				.interceptor(chain -> chain.proceed(chain.request().newBuilder().removeHeader("Authorization").build()));
 
 		for (OpenAiHttpClientBuilderCustomizer customizer : httpClientCustomizers) {
 			customizer.customize(httpBuilder);
 		}
 
 		ClientOptions.Builder clientOptions = ClientOptions.builder()
-			.httpClient(httpBuilder.build())
-			.apiKey(NO_AUTH_PLACEHOLDER_KEY)
-			.baseUrl(calculateBaseUrl(baseUrl, modelProvider, modelName, azureDeploymentName))
-			.organization(organizationId)
-			.timeout(timeout)
-			.maxRetries(maxRetries)
-			.putHeader("User-Agent", DEFAULT_USER_AGENT);
+				.httpClient(httpBuilder.build())
+				.apiKey(NO_AUTH_PLACEHOLDER_KEY)
+				.baseUrl(calculateBaseUrl(baseUrl, modelProvider, modelName, azureDeploymentName))
+				.organization(organizationId)
+				.timeout(timeout)
+				.maxRetries(maxRetries)
+				.putHeader("User-Agent", DEFAULT_USER_AGENT);
 
 		if (azureOpenAiServiceVersion != null) {
 			clientOptions.azureServiceVersion(azureOpenAiServiceVersion);
 		}
 		if (customHeaders != null) {
 			clientOptions.putAllHeaders(customHeaders.entrySet()
-				.stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, entry -> Collections.singletonList(entry.getValue()))));
+					.stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, entry -> Collections.singletonList(entry.getValue()))));
 		}
 
 		return clientOptions.build();
@@ -264,8 +260,8 @@ public final class OpenAiSetup {
 	}
 
 	public static ModelProvider detectModelProvider(boolean isMicrosoftFoundry, boolean isGitHubModels,
-			@Nullable String baseUrl, @Nullable String azureDeploymentName,
-			@Nullable AzureOpenAIServiceVersion azureOpenAIServiceVersion) {
+	                                                @Nullable String baseUrl, @Nullable String azureDeploymentName,
+	                                                @Nullable AzureOpenAIServiceVersion azureOpenAIServiceVersion) {
 
 		if (isMicrosoftFoundry) {
 			return ModelProvider.MICROSOFT_FOUNDRY; // Forced by the user
@@ -278,8 +274,7 @@ public final class OpenAiSetup {
 					|| baseUrl.endsWith("cognitiveservices.azure.com")
 					|| baseUrl.endsWith("cognitiveservices.azure.com/")) {
 				return ModelProvider.MICROSOFT_FOUNDRY;
-			}
-			else if (baseUrl.startsWith(GITHUB_MODELS_URL)) {
+			} else if (baseUrl.startsWith(GITHUB_MODELS_URL)) {
 				return ModelProvider.GITHUB_MODELS;
 			}
 		}
@@ -290,15 +285,14 @@ public final class OpenAiSetup {
 	}
 
 	static String calculateBaseUrl(@Nullable String baseUrl, ModelProvider modelProvider, @Nullable String modelName,
-			@Nullable String azureDeploymentName) {
+	                               @Nullable String azureDeploymentName) {
 
 		if (modelProvider == ModelProvider.OPEN_AI) {
 			if (baseUrl == null || baseUrl.isBlank()) {
 				return OPENAI_URL;
 			}
 			return baseUrl;
-		}
-		else if (modelProvider == ModelProvider.GITHUB_MODELS) {
+		} else if (modelProvider == ModelProvider.GITHUB_MODELS) {
 			if (baseUrl == null || baseUrl.isBlank()) {
 				return GITHUB_MODELS_URL;
 			}
@@ -307,8 +301,7 @@ public final class OpenAiSetup {
 				return baseUrl;
 			}
 			return GITHUB_MODELS_URL;
-		}
-		else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY) {
+		} else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY) {
 			if (baseUrl == null || baseUrl.isBlank()) {
 				throw new IllegalArgumentException("Base URL must be provided for Microsoft Foundry.");
 			}
@@ -317,8 +310,7 @@ public final class OpenAiSetup {
 				tmpUrl = baseUrl.substring(0, baseUrl.length() - 1);
 			}
 			return tmpUrl;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unknown model provider: " + modelProvider);
 		}
 	}
@@ -326,8 +318,7 @@ public final class OpenAiSetup {
 	static Credential azureAuthentication() {
 		try {
 			return AzureInternalOpenAiHelper.getAzureCredential();
-		}
-		catch (NoClassDefFoundError e) {
+		} catch (NoClassDefFoundError e) {
 			throw new IllegalArgumentException("Microsoft Foundry was detected, but no credential was provided. "
 					+ "If you want to use passwordless authentication, you need to add the Azure Identity library (groupId=`com.azure`, artifactId=`azure-identity`) to your classpath.");
 		}
@@ -336,14 +327,11 @@ public final class OpenAiSetup {
 	static @Nullable String detectApiKey(ModelProvider modelProvider) {
 		if (modelProvider == ModelProvider.OPEN_AI && System.getenv(OPENAI_API_KEY) != null) {
 			return System.getenv(OPENAI_API_KEY);
-		}
-		else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY && System.getenv(MICROSOFT_FOUNDRY_API_KEY) != null) {
+		} else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY && System.getenv(MICROSOFT_FOUNDRY_API_KEY) != null) {
 			return System.getenv(MICROSOFT_FOUNDRY_API_KEY);
-		}
-		else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY && System.getenv(OPENAI_API_KEY) != null) {
+		} else if (modelProvider == ModelProvider.MICROSOFT_FOUNDRY && System.getenv(OPENAI_API_KEY) != null) {
 			return System.getenv(OPENAI_API_KEY);
-		}
-		else if (modelProvider == ModelProvider.GITHUB_MODELS && System.getenv(GITHUB_TOKEN) != null) {
+		} else if (modelProvider == ModelProvider.GITHUB_MODELS && System.getenv(GITHUB_TOKEN) != null) {
 			return System.getenv(GITHUB_TOKEN);
 		}
 		return null;

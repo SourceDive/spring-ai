@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.template;
 
-import org.jspecify.annotations.NullMarked;

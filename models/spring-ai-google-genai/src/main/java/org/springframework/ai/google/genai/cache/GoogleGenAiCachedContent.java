@@ -16,18 +16,17 @@
 
 package org.springframework.ai.google.genai.cache;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.genai.types.CachedContent;
 import com.google.genai.types.CachedContentUsageMetadata;
 import com.google.genai.types.Content;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 
 /**
  * Represents cached content in Google GenAI for reusing large contexts across multiple
@@ -40,34 +39,44 @@ import org.springframework.util.Assert;
 public final class GoogleGenAiCachedContent {
 
 	@JsonProperty("name")
-	@Nullable private final String name;
+	@Nullable
+	private final String name;
 
 	@JsonProperty("model")
-	@Nullable private final String model;
+	@Nullable
+	private final String model;
 
 	@JsonProperty("display_name")
-	@Nullable private final String displayName;
+	@Nullable
+	private final String displayName;
 
 	@JsonProperty("create_time")
-	@Nullable private final Instant createTime;
+	@Nullable
+	private final Instant createTime;
 
 	@JsonProperty("update_time")
-	@Nullable private final Instant updateTime;
+	@Nullable
+	private final Instant updateTime;
 
 	@JsonProperty("expire_time")
-	@Nullable private final Instant expireTime;
+	@Nullable
+	private final Instant expireTime;
 
 	@JsonProperty("ttl")
-	@Nullable private final Duration ttl;
+	@Nullable
+	private final Duration ttl;
 
 	@JsonProperty("contents")
-	@Nullable private final List<Content> contents;
+	@Nullable
+	private final List<Content> contents;
 
 	@JsonProperty("system_instruction")
-	@Nullable private final Content systemInstruction;
+	@Nullable
+	private final Content systemInstruction;
 
 	@JsonProperty("usage_metadata")
-	@Nullable private final CachedContentUsageMetadata usageMetadata;
+	@Nullable
+	private final CachedContentUsageMetadata usageMetadata;
 
 	private GoogleGenAiCachedContent(Builder builder) {
 		this.name = builder.name;
@@ -84,6 +93,7 @@ public final class GoogleGenAiCachedContent {
 
 	/**
 	 * Creates a GoogleGenAiCachedContent from the SDK's CachedContent.
+	 *
 	 * @param cachedContent the SDK cached content
 	 * @return a new GoogleGenAiCachedContent instance
 	 */
@@ -93,11 +103,11 @@ public final class GoogleGenAiCachedContent {
 		}
 
 		Builder builder = builder().name(cachedContent.name().orElse(null))
-			.model(cachedContent.model().orElse(null))
-			.displayName(cachedContent.displayName().orElse(null))
-			.createTime(cachedContent.createTime().orElse(null))
-			.updateTime(cachedContent.updateTime().orElse(null))
-			.expireTime(cachedContent.expireTime().orElse(null));
+				.model(cachedContent.model().orElse(null))
+				.displayName(cachedContent.displayName().orElse(null))
+				.createTime(cachedContent.createTime().orElse(null))
+				.updateTime(cachedContent.updateTime().orElse(null))
+				.expireTime(cachedContent.expireTime().orElse(null));
 
 		// Note: ttl, contents, and systemInstruction are not available in the SDK's
 		// CachedContent
@@ -149,6 +159,7 @@ public final class GoogleGenAiCachedContent {
 
 	/**
 	 * Checks if the cached content has expired.
+	 *
 	 * @return true if expired, false otherwise
 	 */
 	public boolean isExpired() {
@@ -160,6 +171,7 @@ public final class GoogleGenAiCachedContent {
 
 	/**
 	 * Gets the remaining time to live for the cached content.
+	 *
 	 * @return the remaining TTL, or null if no expiration
 	 */
 	public @Nullable Duration getRemainingTtl() {
@@ -183,25 +195,35 @@ public final class GoogleGenAiCachedContent {
 
 	public static final class Builder {
 
-		@Nullable private String name;
+		@Nullable
+		private String name;
 
-		@Nullable private String model;
+		@Nullable
+		private String model;
 
-		@Nullable private String displayName;
+		@Nullable
+		private String displayName;
 
-		@Nullable private Instant createTime;
+		@Nullable
+		private Instant createTime;
 
-		@Nullable private Instant updateTime;
+		@Nullable
+		private Instant updateTime;
 
-		@Nullable private Instant expireTime;
+		@Nullable
+		private Instant expireTime;
 
-		@Nullable private Duration ttl;
+		@Nullable
+		private Duration ttl;
 
-		@Nullable private List<Content> contents;
+		@Nullable
+		private List<Content> contents;
 
-		@Nullable private Content systemInstruction;
+		@Nullable
+		private Content systemInstruction;
 
-		@Nullable private CachedContentUsageMetadata usageMetadata;
+		@Nullable
+		private CachedContentUsageMetadata usageMetadata;
 
 		private Builder() {
 		}

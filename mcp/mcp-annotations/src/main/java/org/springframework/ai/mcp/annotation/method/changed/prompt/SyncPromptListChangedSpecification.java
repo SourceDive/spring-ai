@@ -16,14 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.prompt;
 
+import io.modelcontextprotocol.spec.McpSchema;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import io.modelcontextprotocol.spec.McpSchema;
-
 public record SyncPromptListChangedSpecification(String[] clients,
-		Consumer<List<McpSchema.Prompt>> promptListChangeHandler) {
+                                                 Consumer<List<McpSchema.Prompt>> promptListChangeHandler) {
 
 	public SyncPromptListChangedSpecification {
 		Objects.requireNonNull(clients, "clients must not be null");

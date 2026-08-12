@@ -16,22 +16,21 @@
 
 package org.springframework.ai.vectorstore;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.content.Content;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.document.id.IdGenerator;
 import org.springframework.ai.document.id.RandomIdGenerator;
 import org.springframework.util.Assert;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * An immutable {@link Content} implementation representing content, metadata, and its
@@ -51,18 +50,20 @@ final class SimpleVectorStoreContent implements Content {
 	/**
 	 * Creates a new instance with the given content, empty metadata, and embedding
 	 * vector.
-	 * @param text the content text, must not be null
+	 *
+	 * @param text      the content text, must not be null
 	 * @param embedding the embedding vector, must not be null
 	 */
 	SimpleVectorStoreContent(@JsonProperty("text") @JsonAlias("content") String text,
-			@JsonProperty("embedding") float[] embedding) {
+	                         @JsonProperty("embedding") float[] embedding) {
 		this(text, new HashMap<>(), embedding);
 	}
 
 	/**
 	 * Creates a new instance with the given content, metadata, and embedding vector.
-	 * @param text the content text, must not be null
-	 * @param metadata the metadata map, must not be null
+	 *
+	 * @param text      the content text, must not be null
+	 * @param metadata  the metadata map, must not be null
 	 * @param embedding the embedding vector, must not be null
 	 */
 	SimpleVectorStoreContent(String text, Map<String, Object> metadata, float[] embedding) {
@@ -72,10 +73,11 @@ final class SimpleVectorStoreContent implements Content {
 	/**
 	 * Creates a new instance with the given content, metadata, custom ID generator, and
 	 * embedding vector.
-	 * @param text the content text, must not be null
-	 * @param metadata the metadata map, must not be null
+	 *
+	 * @param text        the content text, must not be null
+	 * @param metadata    the metadata map, must not be null
 	 * @param idGenerator the ID generator to use, must not be null
-	 * @param embedding the embedding vector, must not be null
+	 * @param embedding   the embedding vector, must not be null
 	 */
 	SimpleVectorStoreContent(String text, Map<String, Object> metadata, IdGenerator idGenerator, float[] embedding) {
 		this(idGenerator.generateId(text, metadata), text, metadata, embedding);
@@ -83,16 +85,17 @@ final class SimpleVectorStoreContent implements Content {
 
 	/**
 	 * Creates a new instance with all fields specified.
-	 * @param id the unique identifier, must not be empty
-	 * @param text the content text, must not be null
-	 * @param metadata the metadata map, must not be null
+	 *
+	 * @param id        the unique identifier, must not be empty
+	 * @param text      the content text, must not be null
+	 * @param metadata  the metadata map, must not be null
 	 * @param embedding the embedding vector, must not be null
 	 * @throws IllegalArgumentException if any parameter is null or if id is empty
 	 */
 	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	SimpleVectorStoreContent(@JsonProperty("id") @Nullable String id,
-			@JsonProperty("text") @JsonAlias("content") String text,
-			@JsonProperty("metadata") Map<String, Object> metadata, @JsonProperty("embedding") float[] embedding) {
+	                         @JsonProperty("text") @JsonAlias("content") String text,
+	                         @JsonProperty("metadata") Map<String, Object> metadata, @JsonProperty("embedding") float[] embedding) {
 
 		if (id != null) {
 			Assert.hasText(id, "id must not be null or empty");
@@ -124,6 +127,7 @@ final class SimpleVectorStoreContent implements Content {
 
 	/**
 	 * Returns a defensive copy of the embedding vector.
+	 *
 	 * @return a new array containing the embedding vector
 	 */
 	public float[] getEmbedding() {

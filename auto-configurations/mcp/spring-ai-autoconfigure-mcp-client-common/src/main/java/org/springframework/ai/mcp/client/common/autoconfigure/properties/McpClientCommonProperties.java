@@ -16,9 +16,9 @@
 
 package org.springframework.ai.mcp.client.common.autoconfigure.properties;
 
-import java.time.Duration;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
 
 /**
  * Common Configuration properties for the Model Context Protocol (MCP) clients shared for

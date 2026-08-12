@@ -18,15 +18,15 @@ package org.springframework.ai.bedrock.api;
 
 // @formatter:off
 
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.ai.util.JacksonUtils;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.core.publisher.Sinks.EmitFailureHandler;
@@ -38,17 +38,12 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
-import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
-import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
-import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamRequest;
-import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamResponseHandler;
-import software.amazon.awssdk.services.bedrockruntime.model.ResponseStream;
+import software.amazon.awssdk.services.bedrockruntime.model.*;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
-import org.springframework.ai.util.JacksonUtils;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 /**
  * Abstract class for the Bedrock API. It provides the basic functionality to invoke the chat completion model and

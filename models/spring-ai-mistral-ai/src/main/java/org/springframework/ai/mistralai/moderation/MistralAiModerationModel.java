@@ -16,32 +16,23 @@
 
 package org.springframework.ai.mistralai.moderation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.mistralai.api.MistralAiModerationApi;
 import org.springframework.ai.mistralai.api.MistralAiModerationApi.MistralAiModerationRequest;
 import org.springframework.ai.mistralai.api.MistralAiModerationApi.MistralAiModerationResponse;
 import org.springframework.ai.mistralai.api.MistralAiModerationApi.MistralAiModerationResult;
 import org.springframework.ai.model.ModelOptionsUtils;
-import org.springframework.ai.moderation.Categories;
-import org.springframework.ai.moderation.CategoryScores;
-import org.springframework.ai.moderation.Generation;
-import org.springframework.ai.moderation.Moderation;
-import org.springframework.ai.moderation.ModerationModel;
-import org.springframework.ai.moderation.ModerationOptions;
-import org.springframework.ai.moderation.ModerationPrompt;
-import org.springframework.ai.moderation.ModerationResponse;
-import org.springframework.ai.moderation.ModerationResult;
+import org.springframework.ai.moderation.*;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Ricken Bazolo
@@ -59,7 +50,7 @@ public class MistralAiModerationModel implements ModerationModel {
 	private final MistralAiModerationOptions options;
 
 	public MistralAiModerationModel(MistralAiModerationApi mistralAiModerationApi, RetryTemplate retryTemplate,
-			MistralAiModerationOptions options) {
+	                                MistralAiModerationOptions options) {
 		Assert.notNull(mistralAiModerationApi, "mistralAiModerationApi must not be null");
 		Assert.notNull(retryTemplate, "retryTemplate must not be null");
 		Assert.notNull(options, "options must not be null");
@@ -91,7 +82,7 @@ public class MistralAiModerationModel implements ModerationModel {
 	}
 
 	private ModerationResponse convertResponse(ResponseEntity<MistralAiModerationResponse> moderationResponseEntity,
-			MistralAiModerationRequest mistralAiModerationRequest) {
+	                                           MistralAiModerationRequest mistralAiModerationRequest) {
 		var moderationApiResponse = moderationResponseEntity.getBody();
 		if (moderationApiResponse == null) {
 			if (logger.isWarnEnabled()) {
@@ -108,45 +99,45 @@ public class MistralAiModerationModel implements ModerationModel {
 				CategoryScores categoryScores = null;
 				if (result.categories() != null) {
 					categories = Categories.builder()
-						.sexual(result.categories().sexual())
-						.pii(result.categories().pii())
-						.law(result.categories().law())
-						.financial(result.categories().financial())
-						.health(result.categories().health())
-						.dangerousAndCriminalContent(result.categories().dangerousAndCriminalContent())
-						.violence(result.categories().violenceAndThreats())
-						.hate(result.categories().hateAndDiscrimination())
-						.selfHarm(result.categories().selfHarm())
-						.build();
+							.sexual(result.categories().sexual())
+							.pii(result.categories().pii())
+							.law(result.categories().law())
+							.financial(result.categories().financial())
+							.health(result.categories().health())
+							.dangerousAndCriminalContent(result.categories().dangerousAndCriminalContent())
+							.violence(result.categories().violenceAndThreats())
+							.hate(result.categories().hateAndDiscrimination())
+							.selfHarm(result.categories().selfHarm())
+							.build();
 				}
 				if (result.categoryScores() != null) {
 					categoryScores = CategoryScores.builder()
-						.sexual(result.categoryScores().sexual())
-						.pii(result.categoryScores().pii())
-						.law(result.categoryScores().law())
-						.financial(result.categoryScores().financial())
-						.health(result.categoryScores().health())
-						.dangerousAndCriminalContent(result.categoryScores().dangerousAndCriminalContent())
-						.violence(result.categoryScores().violenceAndThreats())
-						.hate(result.categoryScores().hateAndDiscrimination())
-						.selfHarm(result.categoryScores().selfHarm())
-						.build();
+							.sexual(result.categoryScores().sexual())
+							.pii(result.categoryScores().pii())
+							.law(result.categoryScores().law())
+							.financial(result.categoryScores().financial())
+							.health(result.categoryScores().health())
+							.dangerousAndCriminalContent(result.categoryScores().dangerousAndCriminalContent())
+							.violence(result.categoryScores().violenceAndThreats())
+							.hate(result.categoryScores().hateAndDiscrimination())
+							.selfHarm(result.categoryScores().selfHarm())
+							.build();
 				}
 				var moderationResult = ModerationResult.builder()
-					.categories(Objects.requireNonNull(categories))
-					.categoryScores(Objects.requireNonNull(categoryScores))
-					.flagged(result.flagged())
-					.build();
+						.categories(Objects.requireNonNull(categories))
+						.categoryScores(Objects.requireNonNull(categoryScores))
+						.flagged(result.flagged())
+						.build();
 				moderationResults.add(moderationResult);
 			}
 
 		}
 
 		var moderation = Moderation.builder()
-			.id(moderationApiResponse.id())
-			.model(moderationApiResponse.model())
-			.results(moderationResults)
-			.build();
+				.id(moderationApiResponse.id())
+				.model(moderationApiResponse.model())
+				.results(moderationResults)
+				.build();
 
 		return new ModerationResponse(new Generation(moderation));
 	}
@@ -162,8 +153,8 @@ public class MistralAiModerationModel implements ModerationModel {
 		private RetryTemplate retryTemplate = RetryUtils.DEFAULT_RETRY_TEMPLATE;
 
 		private MistralAiModerationOptions options = MistralAiModerationOptions.builder()
-			.model(MistralAiModerationApi.Model.MISTRAL_MODERATION.getValue())
-			.build();
+				.model(MistralAiModerationApi.Model.MISTRAL_MODERATION.getValue())
+				.build();
 
 		public Builder mistralAiModerationApi(MistralAiModerationApi mistralAiModerationApi) {
 			this.mistralAiModerationApi = mistralAiModerationApi;

@@ -16,13 +16,12 @@
 
 package org.springframework.ai.chat.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,11 +37,11 @@ class ChatClientResponseTests {
 	@Test
 	void whenContextIsNullThenThrow() {
 		assertThatThrownBy(() -> new ChatClientResponse(null, null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.hasMessage("context cannot be null");
 
 		assertThatThrownBy(() -> ChatClientResponse.builder().chatResponse(null).context(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("context cannot be null");
 	}
 
 	@Test
@@ -50,7 +49,7 @@ class ChatClientResponseTests {
 		Map<String, Object> context = new HashMap<>();
 		context.put(null, "something");
 		assertThatThrownBy(() -> new ChatClientResponse(null, context)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("context keys cannot be null");
+				.hasMessage("context keys cannot be null");
 	}
 
 	@Test
@@ -135,9 +134,9 @@ class ChatClientResponseTests {
 	@Test
 	void whenBuilderContextWithNullValueThenCreateSuccessfully() {
 		ChatClientResponse response = ChatClientResponse.builder()
-			.context("key1", "value1")
-			.context("key2", null)
-			.build();
+				.context("key1", "value1")
+				.context("key2", null)
+				.build();
 
 		assertThat(response.context()).containsEntry("key1", "value1");
 		assertThat(response.context()).containsEntry("key2", null);

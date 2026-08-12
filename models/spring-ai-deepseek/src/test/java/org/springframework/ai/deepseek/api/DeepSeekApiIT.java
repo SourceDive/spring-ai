@@ -16,19 +16,14 @@
 
 package org.springframework.ai.deepseek.api;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.ai.deepseek.api.DeepSeekApi.*;
+import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.Role;
+import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Flux;
 
-import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletion;
-import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionChunk;
-import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage;
-import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionMessage.Role;
-import org.springframework.ai.deepseek.api.DeepSeekApi.ChatCompletionRequest;
-import org.springframework.ai.deepseek.api.DeepSeekApi.ChatModel;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

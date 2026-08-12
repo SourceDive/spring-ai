@@ -40,8 +40,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Piotr Olaszewski
  */
 @SpringBootTest(classes = AzureOpenAiAudioTranscriptionModelIT.TestConfiguration.class)
-@EnabledIfEnvironmentVariables({ @EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
-		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+") })
+@EnabledIfEnvironmentVariables({@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_API_KEY", matches = ".+"),
+		@EnabledIfEnvironmentVariable(named = "AZURE_OPENAI_ENDPOINT", matches = ".+")})
 class AzureOpenAiAudioTranscriptionModelIT {
 
 	@Value("classpath:/speech.flac")
@@ -53,9 +53,9 @@ class AzureOpenAiAudioTranscriptionModelIT {
 	@Test
 	void transcriptionTest() {
 		OpenAiAudioTranscriptionOptions transcriptionOptions = OpenAiAudioTranscriptionOptions.builder()
-			.responseFormat(AudioResponseFormat.TEXT)
-			.temperature(0f)
-			.build();
+				.responseFormat(AudioResponseFormat.TEXT)
+				.temperature(0f)
+				.build();
 		AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(this.audioFile,
 				transcriptionOptions);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(transcriptionRequest);
@@ -68,11 +68,11 @@ class AzureOpenAiAudioTranscriptionModelIT {
 		AudioResponseFormat responseFormat = AudioResponseFormat.VTT;
 
 		OpenAiAudioTranscriptionOptions transcriptionOptions = OpenAiAudioTranscriptionOptions.builder()
-			.language("en")
-			.prompt("Ask not this, but ask that")
-			.temperature(0f)
-			.responseFormat(responseFormat)
-			.build();
+				.language("en")
+				.prompt("Ask not this, but ask that")
+				.temperature(0f)
+				.responseFormat(responseFormat)
+				.build();
 		AudioTranscriptionPrompt transcriptionRequest = new AudioTranscriptionPrompt(this.audioFile,
 				transcriptionOptions);
 		AudioTranscriptionResponse response = this.transcriptionModel.call(transcriptionRequest);
@@ -86,12 +86,12 @@ class AzureOpenAiAudioTranscriptionModelIT {
 		@Bean
 		public OpenAiAudioTranscriptionModel azureOpenAiChatModel() {
 			return OpenAiAudioTranscriptionModel.builder()
-				.options(OpenAiAudioTranscriptionOptions.builder()
-					.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
-					.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
-					.deploymentName("whisper")
-					.build())
-				.build();
+					.options(OpenAiAudioTranscriptionOptions.builder()
+							.baseUrl(System.getenv("AZURE_OPENAI_ENDPOINT"))
+							.apiKey(System.getenv("AZURE_OPENAI_API_KEY"))
+							.deploymentName("whisper")
+							.build())
+					.build();
 		}
 
 	}

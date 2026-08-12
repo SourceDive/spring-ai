@@ -51,15 +51,15 @@ public class OllamaApiAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public OllamaApi ollamaApi(OllamaConnectionDetails connectionDetails,
-			ObjectProvider<RestClient.Builder> restClientBuilderProvider,
-			ObjectProvider<WebClient.Builder> webClientBuilderProvider,
-			ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
+	                           ObjectProvider<RestClient.Builder> restClientBuilderProvider,
+	                           ObjectProvider<WebClient.Builder> webClientBuilderProvider,
+	                           ObjectProvider<ResponseErrorHandler> responseErrorHandler) {
 		return OllamaApi.builder()
-			.baseUrl(connectionDetails.getBaseUrl())
-			.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
-			.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
-			.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
-			.build();
+				.baseUrl(connectionDetails.getBaseUrl())
+				.restClientBuilder(restClientBuilderProvider.getIfAvailable(RestClient::builder))
+				.webClientBuilder(webClientBuilderProvider.getIfAvailable(WebClient::builder))
+				.responseErrorHandler(responseErrorHandler.getIfAvailable(() -> RetryUtils.DEFAULT_RESPONSE_ERROR_HANDLER))
+				.build();
 	}
 
 	static class PropertiesOllamaConnectionDetails implements OllamaConnectionDetails {

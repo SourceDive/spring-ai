@@ -16,13 +16,13 @@
 
 package org.springframework.ai.vectorstore.cassandra;
 
-import java.time.Duration;
-
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.time.Duration;
 
 /**
  * Utility class for working with Cassandra schema.
@@ -43,8 +43,7 @@ public final class SchemaUtil {
 			logger.warn("Waiting for cluster schema agreement, sleeping 10s…");
 			try {
 				Thread.sleep(Duration.ofSeconds(10).toMillis());
-			}
-			catch (InterruptedException ex) {
+			} catch (InterruptedException ex) {
 				Thread.currentThread().interrupt();
 				throw new IllegalStateException(ex);
 			}
@@ -57,9 +56,9 @@ public final class SchemaUtil {
 	public static void ensureKeyspaceExists(CqlSession session, String keyspaceName) {
 		if (session.getMetadata().getKeyspace(keyspaceName).isEmpty()) {
 			SimpleStatement keyspaceStmt = SchemaBuilder.createKeyspace(keyspaceName)
-				.ifNotExists()
-				.withSimpleStrategy(1)
-				.build();
+					.ifNotExists()
+					.withSimpleStrategy(1)
+					.build();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + keyspaceStmt.getQuery());

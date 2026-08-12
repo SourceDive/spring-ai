@@ -16,15 +16,14 @@
 
 package org.springframework.ai.mcp.annotation.method.changed.tool;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Consumer;
-
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.mcp.annotation.McpToolListChanged;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,15 +37,15 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 
 	private static final List<McpSchema.Tool> TEST_TOOLS = List.of(
 			McpSchema.Tool.builder()
-				.name("test-tool-1")
-				.description("Test Tool 1")
-				.inputSchema(McpJsonDefaults.getMapper(), "{}")
-				.build(),
+					.name("test-tool-1")
+					.description("Test Tool 1")
+					.inputSchema(McpJsonDefaults.getMapper(), "{}")
+					.build(),
 			McpSchema.Tool.builder()
-				.name("test-tool-2")
-				.description("Test Tool 2")
-				.inputSchema(McpJsonDefaults.getMapper(), "{}")
-				.build());
+					.name("test-tool-2")
+					.description("Test Tool 2")
+					.inputSchema(McpJsonDefaults.getMapper(), "{}")
+					.build());
 
 	@Test
 	void testValidMethodWithToolList() throws Exception {
@@ -54,9 +53,9 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleToolListChanged", List.class);
 
 		Consumer<List<McpSchema.Tool>> callback = SyncMcpToolListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		callback.accept(TEST_TOOLS);
 
@@ -72,8 +71,8 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidReturnType", List.class);
 
 		assertThatThrownBy(() -> SyncMcpToolListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have void return type");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have void return type");
 	}
 
 	@Test
@@ -82,8 +81,8 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterCount", List.class, String.class);
 
 		assertThatThrownBy(() -> SyncMcpToolListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Tool>)");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Tool>)");
 	}
 
 	@Test
@@ -92,8 +91,8 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("invalidParameterType", String.class);
 
 		assertThatThrownBy(() -> SyncMcpToolListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Parameter must be of type List<McpSchema.Tool>");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Parameter must be of type List<McpSchema.Tool>");
 	}
 
 	@Test
@@ -102,8 +101,8 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = InvalidMethods.class.getMethod("noParameters");
 
 		assertThatThrownBy(() -> SyncMcpToolListChangedMethodCallback.builder().method(method).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Tool>)");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must have exactly 1 parameter (List<McpSchema.Tool>)");
 	}
 
 	@Test
@@ -112,12 +111,12 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleToolListChanged", List.class);
 
 		Consumer<List<McpSchema.Tool>> callback = SyncMcpToolListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		assertThatThrownBy(() -> callback.accept(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Updated tools list must not be null");
+				.hasMessageContaining("Updated tools list must not be null");
 	}
 
 	@Test
@@ -126,9 +125,9 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleToolListChanged", List.class);
 
 		Consumer<List<McpSchema.Tool>> callback = SyncMcpToolListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		List<McpSchema.Tool> emptyList = List.of();
 		callback.accept(emptyList);
@@ -142,8 +141,8 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		ValidMethods bean = new ValidMethods();
 
 		assertThatThrownBy(() -> SyncMcpToolListChangedMethodCallback.builder().method(null).bean(bean).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Method must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -151,8 +150,8 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = ValidMethods.class.getMethod("handleToolListChanged", List.class);
 
 		assertThatThrownBy(() -> SyncMcpToolListChangedMethodCallback.builder().method(method).bean(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Bean must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Bean must not be null");
 	}
 
 	@Test
@@ -171,13 +170,13 @@ public class SyncMcpToolListChangedMethodCallbackTests {
 		Method method = ThrowingMethod.class.getMethod("handleToolListChanged", List.class);
 
 		Consumer<List<McpSchema.Tool>> callback = SyncMcpToolListChangedMethodCallback.builder()
-			.method(method)
-			.bean(bean)
-			.build();
+				.method(method)
+				.bean(bean)
+				.build();
 
 		assertThatThrownBy(() -> callback.accept(TEST_TOOLS))
-			.isInstanceOf(AbstractMcpToolListChangedMethodCallback.McpToolListChangedConsumerMethodException.class)
-			.hasMessageContaining("Error invoking tool list changed consumer method");
+				.isInstanceOf(AbstractMcpToolListChangedMethodCallback.McpToolListChangedConsumerMethodException.class)
+				.hasMessageContaining("Error invoking tool list changed consumer method");
 	}
 
 	/**

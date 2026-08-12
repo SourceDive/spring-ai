@@ -16,17 +16,16 @@
 
 package org.springframework.ai.tool.augment;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.augment.ToolInputSchemaAugmenter.AugmentedArgumentType;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.ai.util.JsonHelper;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * This class wraps an existing {@link ToolCallback} and modifies its input schema to
@@ -73,8 +72,8 @@ public class AugmentedToolCallback<T extends Record> implements ToolCallback {
 	private boolean removeAugmentedArgumentsAfterProcessing = false;
 
 	public AugmentedToolCallback(ToolCallback delegate, Class<T> augmentedArgumentsClass,
-			@Nullable Consumer<AugmentedArgumentEvent<T>> augmentedArgumentsConsumer,
-			boolean removeExtraArgumentsAfterProcessing) {
+	                             @Nullable Consumer<AugmentedArgumentEvent<T>> augmentedArgumentsConsumer,
+	                             boolean removeExtraArgumentsAfterProcessing) {
 		Assert.notNull(delegate, "Delegate ToolCallback must not be null");
 		Assert.notNull(augmentedArgumentsClass, "Argument types must not be null");
 		Assert.isTrue(augmentedArgumentsClass.isRecord(), "Argument types must be a Record type");
@@ -87,10 +86,10 @@ public class AugmentedToolCallback<T extends Record> implements ToolCallback {
 		String augmentedSchema = ToolInputSchemaAugmenter.augmentToolInputSchema(originalSchema,
 				this.augmentedArgumentTypes);
 		this.augmentedToolDefinition = ToolDefinition.builder()
-			.name(this.delegate.getToolDefinition().name())
-			.description(this.delegate.getToolDefinition().description())
-			.inputSchema(augmentedSchema)
-			.build();
+				.name(this.delegate.getToolDefinition().name())
+				.description(this.delegate.getToolDefinition().description())
+				.inputSchema(augmentedSchema)
+				.build();
 
 		this.augmentedArgumentsClass = augmentedArgumentsClass;
 		this.augmentedArgumentsConsumer = augmentedArgumentsConsumer;
@@ -116,6 +115,7 @@ public class AugmentedToolCallback<T extends Record> implements ToolCallback {
 	 * Handles the augmented arguments in the tool input. It extracts the augmented
 	 * arguments from the tool input, processes them using the provided consumer, and
 	 * optionally removes them from the tool input.
+	 *
 	 * @param toolInput the input as received from the LLM.
 	 * @return the input to send to the delegate ToolCallback
 	 */
@@ -126,7 +126,7 @@ public class AugmentedToolCallback<T extends Record> implements ToolCallback {
 		if (this.augmentedArgumentsConsumer != null) {
 			T augmentedArguments = jsonHelper.fromJson(toolInput, this.augmentedArgumentsClass);
 			this.augmentedArgumentsConsumer
-				.accept(new AugmentedArgumentEvent<>(this.augmentedToolDefinition, toolInput, augmentedArguments));
+					.accept(new AugmentedArgumentEvent<>(this.augmentedToolDefinition, toolInput, augmentedArguments));
 		}
 
 		// Optionally remove the extra arguments from the toolInput

@@ -16,17 +16,16 @@
 
 package org.springframework.ai.mistralai;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
 import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.mistralai.api.MistralAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,13 +58,13 @@ class MistralAiEmbeddingIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "mistral-embed, 1024", "codestral-embed, 1536" })
+	@CsvSource({"mistral-embed, 1024", "codestral-embed, 1536"})
 	void optionsEmbedding(String model, int dimensions) {
 		var mistralAiEmbeddingOptions = MistralAiEmbeddingOptions.builder().model(model).build();
 		var anotherMistralAiEmbeddingModel = MistralAiEmbeddingModel.builder()
-			.mistralAiApi(this.mistralAiApi)
-			.options(mistralAiEmbeddingOptions)
-			.build();
+				.mistralAiApi(this.mistralAiApi)
+				.options(mistralAiEmbeddingOptions)
+				.build();
 		var embeddingResponse = anotherMistralAiEmbeddingModel.embedForResponse(List.of("Hello World", "World is big"));
 		assertThat(embeddingResponse.getResults()).hasSize(2);
 		embeddingResponse.getResults().forEach(result -> {
@@ -79,7 +78,7 @@ class MistralAiEmbeddingIT {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "mistral-embed, 1024", "codestral-embed, 1536" })
+	@CsvSource({"mistral-embed, 1024", "codestral-embed, 1536"})
 	void calledOptionsEmbedding(String model, int dimensions) {
 		var mistralAiEmbeddingOptions = MistralAiEmbeddingOptions.builder().model(model).build();
 		var embeddingRequest = new EmbeddingRequest(List.of("Hello World", "World is big", "We are small"),

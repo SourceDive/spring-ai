@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.transformer.splitter;
 
-import org.jspecify.annotations.NullMarked;

@@ -72,7 +72,7 @@ public abstract class AbstractChatOptionsTests<O extends ChatOptions, B extends 
 	 * Return an instance of a builder that should not error when calling
 	 * {@link Builder#build()}. This may mean setting some required fields, depending on
 	 * the semantics of the particular options class.
-	 *
+	 * <p>
 	 * This convenience method helps reduce repetitive boilerplate code used in each and
 	 * every test.
 	 */

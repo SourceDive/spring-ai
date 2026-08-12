@@ -44,28 +44,28 @@ import static org.mockito.Mockito.mock;
 class ImageObservationAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-		.withConfiguration(AutoConfigurations.of(ImageObservationAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ImageObservationAutoConfiguration.class));
 
 	@Test
 	void imageModelPromptContentHandlerNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void imageModelPromptContentHandlerWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void imageModelPromptContentHandlerEnabledNoTracer(CapturedOutput output) {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withPropertyValues("spring.ai.image.observations.log-prompt=true")
-			.run(context -> assertThat(context).hasSingleBean(ImageModelPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.image.observations.log-prompt=true")
+				.run(context -> assertThat(context).hasSingleBean(ImageModelPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 		assertThat(output).contains(
 				"You have enabled logging out the image prompt content with the risk of exposing sensitive or private information. Please, be careful!");
 	}
@@ -73,9 +73,9 @@ class ImageObservationAutoConfigurationTests {
 	@Test
 	void imageModelPromptContentHandlerEnabledWithTracer(CapturedOutput output) {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withPropertyValues("spring.ai.image.observations.log-prompt=true")
-			.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
-				.hasSingleBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.image.observations.log-prompt=true")
+				.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
+						.hasSingleBean(TracingAwareLoggingObservationHandler.class));
 		assertThat(output).contains(
 				"You have enabled logging out the image prompt content with the risk of exposing sensitive or private information. Please, be careful!");
 	}
@@ -83,52 +83,52 @@ class ImageObservationAutoConfigurationTests {
 	@Test
 	void imageModelPromptContentHandlerDisabledNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withPropertyValues("spring.ai.image.observations.log-prompt=false")
-			.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.image.observations.log-prompt=false")
+				.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void imageModelPromptContentHandlerDisabledWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withPropertyValues("spring.ai.image.observations.log-prompt=false")
-			.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withPropertyValues("spring.ai.image.observations.log-prompt=false")
+				.run(context -> assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customChatClientPromptContentObservationHandlerNoTracer() {
 		this.contextRunner.withClassLoader(new FilteredClassLoader(Tracer.class))
-			.withUserConfiguration(CustomImageModelPromptContentObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.image.observations.log-prompt=true")
-			.run(context -> assertThat(context).hasSingleBean(ImageModelPromptContentObservationHandler.class)
-				.hasBean("customImageModelPromptContentObservationHandler")
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withUserConfiguration(CustomImageModelPromptContentObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.image.observations.log-prompt=true")
+				.run(context -> assertThat(context).hasSingleBean(ImageModelPromptContentObservationHandler.class)
+						.hasBean("customImageModelPromptContentObservationHandler")
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 
 	}
 
 	@Test
 	void customChatClientPromptContentObservationHandlerWithTracer() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withUserConfiguration(CustomImageModelPromptContentObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.image.observations.log-prompt=true")
-			.run(context -> assertThat(context).hasSingleBean(ImageModelPromptContentObservationHandler.class)
-				.hasBean("customImageModelPromptContentObservationHandler")
-				.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
+				.withUserConfiguration(CustomImageModelPromptContentObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.image.observations.log-prompt=true")
+				.run(context -> assertThat(context).hasSingleBean(ImageModelPromptContentObservationHandler.class)
+						.hasBean("customImageModelPromptContentObservationHandler")
+						.doesNotHaveBean(TracingAwareLoggingObservationHandler.class));
 	}
 
 	@Test
 	void customTracingAwareLoggingObservationHandler() {
 		this.contextRunner.withUserConfiguration(TracerConfiguration.class)
-			.withUserConfiguration(CustomTracingAwareLoggingObservationHandlerConfiguration.class)
-			.withPropertyValues("spring.ai.image.observations.log-prompt=true")
-			.run(context -> {
-				assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
-					.hasSingleBean(TracingAwareLoggingObservationHandler.class)
-					.hasBean("imageModelPromptContentObservationHandler");
-				assertThat(context.getBean(TracingAwareLoggingObservationHandler.class))
-					.isSameAs(CustomTracingAwareLoggingObservationHandlerConfiguration.handlerInstance);
-			});
+				.withUserConfiguration(CustomTracingAwareLoggingObservationHandlerConfiguration.class)
+				.withPropertyValues("spring.ai.image.observations.log-prompt=true")
+				.run(context -> {
+					assertThat(context).doesNotHaveBean(ImageModelPromptContentObservationHandler.class)
+							.hasSingleBean(TracingAwareLoggingObservationHandler.class)
+							.hasBean("imageModelPromptContentObservationHandler");
+					assertThat(context.getBean(TracingAwareLoggingObservationHandler.class))
+							.isSameAs(CustomTracingAwareLoggingObservationHandlerConfiguration.handlerInstance);
+				});
 
 	}
 

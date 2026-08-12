@@ -16,14 +16,10 @@
 
 package org.springframework.ai.chat.client.observation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.Advisor;
@@ -32,6 +28,9 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,8 +52,8 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenMandatoryRequestOptionsThenReturn() {
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.build();
 
 		assertThat(observationContext).isNotNull();
 	}
@@ -62,9 +61,9 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenNullAdvisorsThenReturn() {
 		assertThatThrownBy(() -> ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(null)
-			.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("advisors cannot be null");
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(null)
+				.build()).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("advisors cannot be null");
 	}
 
 	@Test
@@ -73,16 +72,16 @@ class ChatClientObservationContextTests {
 		advisors.add(mock(Advisor.class));
 		advisors.add(null);
 		assertThatThrownBy(() -> ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(advisors)
-			.build()).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("advisors cannot contain null elements");
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(advisors)
+				.build()).isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("advisors cannot contain null elements");
 	}
 
 	@Test
 	void whenNullRequestThenThrowException() {
 		assertThatThrownBy(() -> ChatClientObservationContext.builder().request(null).build())
-			.isInstanceOf(IllegalStateException.class);
+				.isInstanceOf(IllegalStateException.class);
 	}
 
 	@Test
@@ -90,9 +89,9 @@ class ChatClientObservationContextTests {
 		List<Advisor> advisors = List.of(mock(Advisor.class), mock(Advisor.class));
 
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(advisors)
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(advisors)
+				.build();
 
 		assertThat(observationContext).isNotNull();
 		assertThat(observationContext.getAdvisors()).hasSize(2);
@@ -107,9 +106,9 @@ class ChatClientObservationContextTests {
 		advisors.add(mock(Advisor.class));
 
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(advisors)
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(advisors)
+				.build();
 
 		int originalSize = observationContext.getAdvisors().size();
 
@@ -129,9 +128,9 @@ class ChatClientObservationContextTests {
 		List<Advisor> advisors = List.of(mock(Advisor.class));
 
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(advisors)
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(advisors)
+				.build();
 
 		var returnedAdvisors = observationContext.getAdvisors();
 
@@ -143,15 +142,15 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenRequestWithNullPromptThenThrowException() {
 		assertThatThrownBy(() -> ChatClientRequest.builder().prompt(null).build())
-			.isInstanceOf(IllegalArgumentException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void whenEmptyAdvisorsListThenReturn() {
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.advisors(List.of())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.advisors(List.of())
+				.build();
 
 		assertThat(observationContext).isNotNull();
 		assertThat(observationContext.getAdvisors()).isEmpty();
@@ -170,7 +169,7 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenBuilderReusedThenReturnDifferentInstances() {
 		var builder = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build());
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build());
 
 		var context1 = builder.build();
 		var context2 = builder.build();
@@ -181,8 +180,8 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenNoAdvisorsSpecifiedThenGetAdvisorsReturnsEmptyOrNull() {
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt()).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt()).build())
+				.build();
 
 		// Should return either empty list or null when no advisors specified
 		assertThat(observationContext.getAdvisors()).satisfiesAnyOf(advisors -> assertThat(advisors).isNull(),
@@ -192,13 +191,13 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenSetChatClientResponseThenReturnTheSameResponse() {
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt("Test prompt")).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt("Test prompt")).build())
+				.build();
 		var response = ChatClientResponse.builder()
-			.chatResponse(ChatResponse.builder()
-				.generations(List.of(new Generation(new AssistantMessage("Test message"))))
-				.build())
-			.build();
+				.chatResponse(ChatResponse.builder()
+						.generations(List.of(new Generation(new AssistantMessage("Test message"))))
+						.build())
+				.build();
 
 		observationContext.setResponse(response);
 		assertThat(observationContext.getResponse()).isSameAs(response);
@@ -207,8 +206,8 @@ class ChatClientObservationContextTests {
 	@Test
 	void whenSetChatClientResponseWithNullChatResponseThenReturnNull() {
 		var observationContext = ChatClientObservationContext.builder()
-			.request(ChatClientRequest.builder().prompt(new Prompt("Test prompt")).build())
-			.build();
+				.request(ChatClientRequest.builder().prompt(new Prompt("Test prompt")).build())
+				.build();
 
 		observationContext.setResponse(null);
 		assertThat(observationContext.getResponse()).isNull();

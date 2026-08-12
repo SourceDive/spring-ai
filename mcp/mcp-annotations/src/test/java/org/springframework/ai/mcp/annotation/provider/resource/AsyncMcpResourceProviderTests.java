@@ -16,8 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.resource;
 
-import java.util.List;
-
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceTemplateSpecification;
@@ -26,10 +24,11 @@ import io.modelcontextprotocol.spec.McpSchema.ReadResourceResult;
 import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
 import io.modelcontextprotocol.spec.McpSchema.TextResourceContents;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.mcp.annotation.McpResource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.ai.mcp.annotation.McpResource;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,7 +44,7 @@ public class AsyncMcpResourceProviderTests {
 	@Test
 	void testConstructorWithNullResourceObjects() {
 		assertThatThrownBy(() -> new AsyncMcpResourceProvider(null)).isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("resourceObjects cannot be null");
+				.hasMessageContaining("resourceObjects cannot be null");
 	}
 
 	@Test
@@ -289,7 +288,7 @@ public class AsyncMcpResourceProviderTests {
 
 		assertThat(resourceTemplateSpecs).hasSize(1);
 		assertThat(resourceTemplateSpecs.get(0).resourceTemplate().uriTemplate())
-			.isEqualTo("variable://resource/{id}/{type}");
+				.isEqualTo("variable://resource/{id}/{type}");
 		assertThat(resourceTemplateSpecs.get(0).resourceTemplate().name()).isEqualTo("variable-resource");
 
 		// Test that the handler works with URI variables
@@ -302,7 +301,7 @@ public class AsyncMcpResourceProviderTests {
 			ResourceContents content = readResult.contents().get(0);
 			assertThat(content).isInstanceOf(TextResourceContents.class);
 			assertThat(((TextResourceContents) content).text())
-				.isEqualTo("Resource content for id: 123, type: document");
+					.isEqualTo("Resource content for id: 123, type: document");
 		}).verifyComplete();
 	}
 
@@ -425,7 +424,7 @@ public class AsyncMcpResourceProviderTests {
 			ResourceContents content = readResult.contents().get(0);
 			assertThat(content).isInstanceOf(TextResourceContents.class);
 			assertThat(((TextResourceContents) content).text())
-				.isEqualTo("Resource with exchange: present, URI: exchange://resource");
+					.isEqualTo("Resource with exchange: present, URI: exchange://resource");
 		}).verifyComplete();
 	}
 

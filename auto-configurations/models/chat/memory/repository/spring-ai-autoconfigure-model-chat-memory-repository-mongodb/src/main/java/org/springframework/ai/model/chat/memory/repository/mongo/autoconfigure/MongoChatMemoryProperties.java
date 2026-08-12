@@ -16,9 +16,9 @@
 
 package org.springframework.ai.model.chat.memory.repository.mongo.autoconfigure;
 
-import java.time.Duration;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.time.Duration;
 
 /**
  * Properties for configuring the MongoDB ChatMemory repository.

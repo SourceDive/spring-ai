@@ -16,12 +16,11 @@
 
 package org.springframework.ai.model.tool;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.messages.Message;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.ai.chat.messages.Message;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,8 +35,8 @@ class DefaultToolExecutionResultTests {
 	@Test
 	void whenConversationHistoryIsNullThenThrow() {
 		assertThatThrownBy(() -> DefaultToolExecutionResult.builder().conversationHistory(null).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("conversationHistory cannot be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("conversationHistory cannot be null");
 	}
 
 	@Test
@@ -45,17 +44,17 @@ class DefaultToolExecutionResultTests {
 		var history = new ArrayList<Message>();
 		history.add(null);
 		assertThatThrownBy(() -> DefaultToolExecutionResult.builder().conversationHistory(history).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("conversationHistory cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("conversationHistory cannot contain null elements");
 	}
 
 	@Test
 	void builder() {
 		var conversationHistory = new ArrayList<Message>();
 		var result = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(true)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(true)
+				.build();
 		assertThat(result.conversationHistory()).isEqualTo(conversationHistory);
 		assertThat(result.returnDirect()).isTrue();
 	}
@@ -73,9 +72,9 @@ class DefaultToolExecutionResultTests {
 	void whenBuilderWithReturnDirectFalse() {
 		var conversationHistory = new ArrayList<Message>();
 		var result = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(false)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(false)
+				.build();
 
 		assertThat(result.conversationHistory()).isEqualTo(conversationHistory);
 		assertThat(result.returnDirect()).isFalse();
@@ -85,9 +84,9 @@ class DefaultToolExecutionResultTests {
 	void whenConversationHistoryIsEmpty() {
 		var conversationHistory = new ArrayList<Message>();
 		var result = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(true)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(true)
+				.build();
 
 		assertThat(result.conversationHistory()).isEmpty();
 		assertThat(result.returnDirect()).isTrue();
@@ -102,9 +101,9 @@ class DefaultToolExecutionResultTests {
 		conversationHistory.add(message2);
 
 		var result = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(false)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(false)
+				.build();
 
 		assertThat(result.conversationHistory()).hasSize(2);
 		assertThat(result.conversationHistory()).containsExactly(message1, message2);
@@ -119,8 +118,8 @@ class DefaultToolExecutionResultTests {
 		history.add(new org.springframework.ai.chat.messages.AssistantMessage("Last message"));
 
 		assertThatThrownBy(() -> DefaultToolExecutionResult.builder().conversationHistory(history).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("conversationHistory cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("conversationHistory cannot contain null elements");
 	}
 
 	@Test
@@ -131,8 +130,8 @@ class DefaultToolExecutionResultTests {
 		history.add(new org.springframework.ai.chat.messages.UserMessage("Valid message"));
 
 		assertThatThrownBy(() -> DefaultToolExecutionResult.builder().conversationHistory(history).build())
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("conversationHistory cannot contain null elements");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("conversationHistory cannot contain null elements");
 	}
 
 	@Test
@@ -178,14 +177,14 @@ class DefaultToolExecutionResultTests {
 		conversationHistory.add(new org.springframework.ai.chat.messages.UserMessage("Test message"));
 
 		var result1 = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(true)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(true)
+				.build();
 
 		var result2 = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(true)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(true)
+				.build();
 
 		assertThat(result1).isEqualTo(result2);
 		assertThat(result1.hashCode()).isEqualTo(result2.hashCode());
@@ -197,9 +196,9 @@ class DefaultToolExecutionResultTests {
 				new org.springframework.ai.chat.messages.UserMessage("Hi!"));
 
 		var result = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(false)
-			.build();
+				.conversationHistory(conversationHistory)
+				.returnDirect(false)
+				.build();
 
 		assertThat(result.conversationHistory()).hasSize(2);
 		assertThat(result.conversationHistory()).isEqualTo(conversationHistory);
@@ -211,10 +210,10 @@ class DefaultToolExecutionResultTests {
 		conversationHistory.add(new org.springframework.ai.chat.messages.UserMessage("Test"));
 
 		var builder = DefaultToolExecutionResult.builder()
-			.conversationHistory(conversationHistory)
-			.returnDirect(true)
-			.returnDirect(false)
-			.returnDirect(true);
+				.conversationHistory(conversationHistory)
+				.returnDirect(true)
+				.returnDirect(false)
+				.returnDirect(true);
 
 		var result = builder.build();
 

@@ -16,32 +16,17 @@
 
 package org.springframework.ai.vectorstore.bedrockknowledgebase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
-import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
-import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalFilter;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultLocation;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveRequest;
-import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveResponse;
-import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
-import software.amazon.awssdk.services.bedrockagentruntime.model.VectorSearchBedrockRerankingConfiguration;
-import software.amazon.awssdk.services.bedrockagentruntime.model.VectorSearchBedrockRerankingModelConfiguration;
-import software.amazon.awssdk.services.bedrockagentruntime.model.VectorSearchRerankingConfiguration;
-import software.amazon.awssdk.services.bedrockagentruntime.model.VectorSearchRerankingConfigurationType;
-
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentMetadata;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.util.Assert;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
+import software.amazon.awssdk.services.bedrockagentruntime.model.*;
+
+import java.util.*;
 
 /**
  * Amazon Bedrock Knowledge Base implementation of {@link VectorStore}.
@@ -52,10 +37,10 @@ import org.springframework.util.Assert;
  * </p>
  *
  * @author Yuriy Bezsonov
- * @since 2.0.0
  * @see <a href=
  * "https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html"> Amazon
  * Bedrock Knowledge Bases</a>
+ * @since 2.0.0
  */
 public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
@@ -90,7 +75,8 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 	/**
 	 * Creates a new builder for BedrockKnowledgeBaseVectorStore.
-	 * @param client the Bedrock Agent Runtime client
+	 *
+	 * @param client          the Bedrock Agent Runtime client
 	 * @param knowledgeBaseId the ID of the Knowledge Base to query
 	 * @return a new builder instance
 	 */
@@ -135,10 +121,10 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 			RetrieveResponse response = executeRetrieve(request.getQuery(), topK, bedrockFilter, nextToken);
 
 			List<Document> pageDocuments = response.retrievalResults()
-				.stream()
-				.filter(r -> r.score() != null && r.score() >= threshold)
-				.map(this::toDocument)
-				.toList();
+					.stream()
+					.filter(r -> r.score() != null && r.score() >= threshold)
+					.map(this::toDocument)
+					.toList();
 
 			allDocuments.addAll(pageDocuments);
 			nextToken = response.nextToken();
@@ -153,11 +139,11 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 	}
 
 	private RetrieveResponse executeRetrieve(final String query, final int topK, @Nullable final RetrievalFilter filter,
-			@Nullable final String nextToken) {
+	                                         @Nullable final String nextToken) {
 
 		RetrieveRequest.Builder requestBuilder = RetrieveRequest.builder()
-			.knowledgeBaseId(this.knowledgeBaseId)
-			.retrievalQuery(q -> q.text(query));
+				.knowledgeBaseId(this.knowledgeBaseId)
+				.retrievalQuery(q -> q.text(query));
 
 		requestBuilder.retrievalConfiguration(config -> config.vectorSearchConfiguration(vs -> {
 			vs.numberOfResults(topK);
@@ -182,16 +168,16 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 	private VectorSearchRerankingConfiguration buildRerankingConfig() {
 		VectorSearchRerankingConfigurationType type = VectorSearchRerankingConfigurationType.BEDROCK_RERANKING_MODEL;
 		VectorSearchBedrockRerankingModelConfiguration modelConfig = VectorSearchBedrockRerankingModelConfiguration
-			.builder()
-			.modelArn(this.rerankingModelArn)
-			.build();
+				.builder()
+				.modelArn(this.rerankingModelArn)
+				.build();
 		VectorSearchBedrockRerankingConfiguration bedrockConfig = VectorSearchBedrockRerankingConfiguration.builder()
-			.modelConfiguration(modelConfig)
-			.build();
+				.modelConfiguration(modelConfig)
+				.build();
 		return VectorSearchRerankingConfiguration.builder()
-			.type(type)
-			.bedrockRerankingConfiguration(bedrockConfig)
-			.build();
+				.type(type)
+				.bedrockRerankingConfiguration(bedrockConfig)
+				.build();
 	}
 
 	Document toDocument(final KnowledgeBaseRetrievalResult result) {
@@ -200,8 +186,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		if (score != null) {
 			metadata.put(DocumentMetadata.DISTANCE.value(), 1.0 - score);
-		}
-		else {
+		} else {
 			score = 0.0;
 		}
 
@@ -221,7 +206,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 	}
 
 	private void extractLocationMetadata(@Nullable final RetrievalResultLocation loc,
-			final Map<String, Object> metadata) {
+	                                     final Map<String, Object> metadata) {
 		if (loc == null) {
 			return;
 		}
@@ -230,27 +215,20 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		if (loc.s3Location() != null) {
 			metadata.put("source", loc.s3Location().uri());
-		}
-		else if (loc.confluenceLocation() != null) {
+		} else if (loc.confluenceLocation() != null) {
 			metadata.put("source", loc.confluenceLocation().url());
-		}
-		else if (loc.sharePointLocation() != null) {
+		} else if (loc.sharePointLocation() != null) {
 			metadata.put("source", loc.sharePointLocation().url());
-		}
-		else if (loc.salesforceLocation() != null) {
+		} else if (loc.salesforceLocation() != null) {
 			metadata.put("source", loc.salesforceLocation().url());
-		}
-		else if (loc.webLocation() != null) {
+		} else if (loc.webLocation() != null) {
 			metadata.put("source", loc.webLocation().url());
-		}
-		else if (loc.kendraDocumentLocation() != null) {
+		} else if (loc.kendraDocumentLocation() != null) {
 			metadata.put("source", loc.kendraDocumentLocation().uri());
-		}
-		else if (loc.sqlLocation() != null) {
+		} else if (loc.sqlLocation() != null) {
 			metadata.put("source", loc.sqlLocation().query());
 			metadata.put("sourceType", "SQL");
-		}
-		else if (loc.customDocumentLocation() != null) {
+		} else if (loc.customDocumentLocation() != null) {
 			metadata.put("source", loc.customDocumentLocation().id());
 			metadata.put("sourceType", "CUSTOM");
 		}
@@ -315,6 +293,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 	/**
 	 * Returns the Knowledge Base ID this store is configured to query.
+	 *
 	 * @return the Knowledge Base ID
 	 */
 	public String getKnowledgeBaseId() {
@@ -349,6 +328,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		/**
 		 * Sets the default number of results to return.
+		 *
 		 * @param topK the number of results (default: 5)
 		 * @return this builder
 		 */
@@ -360,6 +340,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		/**
 		 * Sets the default similarity threshold for filtering results.
+		 *
 		 * @param similarityThreshold minimum score (0.0 to 1.0)
 		 * @return this builder
 		 */
@@ -372,6 +353,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		/**
 		 * Sets the search type to use for queries.
+		 *
 		 * @param searchType HYBRID or SEMANTIC
 		 * @return this builder
 		 */
@@ -382,6 +364,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		/**
 		 * Enables reranking with a Bedrock reranking model.
+		 *
 		 * @param modelArn the ARN of the Bedrock reranking model
 		 * @return this builder
 		 */
@@ -392,6 +375,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		/**
 		 * Sets a custom filter expression converter.
+		 *
 		 * @param filterConverter the filter converter to use
 		 * @return this builder
 		 */
@@ -402,6 +386,7 @@ public final class BedrockKnowledgeBaseVectorStore implements VectorStore {
 
 		/**
 		 * Builds the BedrockKnowledgeBaseVectorStore.
+		 *
 		 * @return a new BedrockKnowledgeBaseVectorStore instance
 		 */
 		public BedrockKnowledgeBaseVectorStore build() {

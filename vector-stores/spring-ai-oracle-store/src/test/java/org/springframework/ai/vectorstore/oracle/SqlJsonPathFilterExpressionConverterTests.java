@@ -16,12 +16,11 @@
 
 package org.springframework.ai.vectorstore.oracle;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionTextParser;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

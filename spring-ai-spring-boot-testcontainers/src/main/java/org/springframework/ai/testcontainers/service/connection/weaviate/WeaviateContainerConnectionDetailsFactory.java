@@ -16,11 +16,10 @@
 
 package org.springframework.ai.testcontainers.service.connection.weaviate;
 
-import org.testcontainers.weaviate.WeaviateContainer;
-
 import org.springframework.ai.vectorstore.weaviate.autoconfigure.WeaviateConnectionDetails;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionDetailsFactory;
 import org.springframework.boot.testcontainers.service.connection.ContainerConnectionSource;
+import org.testcontainers.weaviate.WeaviateContainer;
 
 /**
  * @author Eddú Meléndez

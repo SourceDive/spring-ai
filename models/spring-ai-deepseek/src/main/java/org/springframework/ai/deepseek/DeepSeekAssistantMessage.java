@@ -16,14 +16,13 @@
 
 package org.springframework.ai.deepseek;
 
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.content.Media;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.ai.chat.messages.AssistantMessage;
-import org.springframework.ai.content.Media;
 
 /**
  * @author Mark Pollack
@@ -37,7 +36,7 @@ public class DeepSeekAssistantMessage extends AssistantMessage {
 	private @Nullable String reasoningContent;
 
 	protected DeepSeekAssistantMessage(@Nullable String content, @Nullable String reasoningContent,
-			@Nullable Boolean prefix, Map<String, Object> properties, List<ToolCall> toolCalls, List<Media> media) {
+	                                   @Nullable Boolean prefix, Map<String, Object> properties, List<ToolCall> toolCalls, List<Media> media) {
 		super(content, properties, toolCalls, media);
 		this.reasoningContent = reasoningContent;
 		this.prefix = prefix;
@@ -50,7 +49,7 @@ public class DeepSeekAssistantMessage extends AssistantMessage {
 
 	@Deprecated(forRemoval = true, since = "2.0.0")
 	public static DeepSeekAssistantMessage prefixAssistantMessage(@Nullable String content,
-			@Nullable String reasoningContent) {
+	                                                              @Nullable String reasoningContent) {
 		return new Builder().content(content).prefix(true).reasoningContent(reasoningContent).build();
 	}
 

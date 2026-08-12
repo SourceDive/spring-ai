@@ -16,20 +16,11 @@
 
 package org.springframework.ai.openai.chat.client;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.openai.models.chat.completions.ChatCompletionCreateParams.Modality;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import reactor.core.publisher.Flux;
-
 import org.springframework.ai.chat.client.AdvisorParams;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -56,6 +47,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -300,7 +299,7 @@ class OpenAiChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o" })
+	@ValueSource(strings = {"gpt-4o"})
 	void multiModalityEmbeddedImage(String modelName) throws IOException {
 
 		// @formatter:off
@@ -315,7 +314,7 @@ class OpenAiChatClientIT {
 	}
 
 	@ParameterizedTest(name = "{0} : {displayName} ")
-	@ValueSource(strings = { "gpt-4o" })
+	@ValueSource(strings = {"gpt-4o"})
 	void multiModalityImageUrl(String modelName) throws IOException {
 
 		URL url = new URL("https://docs.spring.io/spring-ai/reference/_images/multimodal.test.png");
@@ -353,13 +352,13 @@ class OpenAiChatClientIT {
 	void multiModalityAudioResponse() {
 
 		ChatResponse response = ChatClient.create(this.chatModel)
-			.prompt("Tell me joke about Spring Framework")
-			.options(OpenAiChatOptions.builder()
-				.model("gpt-audio")
-				.outputAudio(new AudioParameters(AudioParameters.Voice.ALLOY, AudioParameters.AudioResponseFormat.WAV))
-				.outputModalities(List.of(Modality.TEXT.asString(), Modality.AUDIO.asString())))
-			.call()
-			.chatResponse();
+				.prompt("Tell me joke about Spring Framework")
+				.options(OpenAiChatOptions.builder()
+						.model("gpt-audio")
+						.outputAudio(new AudioParameters(AudioParameters.Voice.ALLOY, AudioParameters.AudioResponseFormat.WAV))
+						.outputModalities(List.of(Modality.TEXT.asString(), Modality.AUDIO.asString())))
+				.call()
+				.chatResponse();
 
 		assertThat(response).isNotNull();
 		assertThat(response.getResult().getOutput().getMedia().get(0).getDataAsByteArray()).isNotEmpty();

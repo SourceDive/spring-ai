@@ -27,9 +27,9 @@ import org.springframework.util.Assert;
  * evaluation).
  *
  * @param operationType The type of operation performed by the model. Whenever possible, a
- * value from {@link AiOperationType}.
- * @param provider The name of the system providing the model service. Whenever possible,
- * a value from {@link AiProvider}.
+ *                      value from {@link AiOperationType}.
+ * @param provider      The name of the system providing the model service. Whenever possible,
+ *                      a value from {@link AiProvider}.
  * @author Thomas Vitale
  * @since 1.0.0
  */
@@ -49,7 +49,7 @@ public record AiOperationMetadata(String operationType, String provider) {
 	 * Create a new {@link Builder} instance.
 	 * @return a new {@link Builder} instance
 	 */
-	public static Builder builder() {
+	public static Builder builder () {
 		return new Builder();
 	}
 

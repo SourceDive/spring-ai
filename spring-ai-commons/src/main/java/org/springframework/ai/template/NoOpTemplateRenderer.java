@@ -16,11 +16,10 @@
 
 package org.springframework.ai.template;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.util.Assert;
+
+import java.util.Map;
 
 /**
  * No-op implementation of {@link TemplateRenderer} that returns the template unchanged.

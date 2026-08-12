@@ -16,11 +16,6 @@
 
 package org.springframework.ai.mcp.annotation.provider.prompt;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.server.McpStatelessServerFeatures.SyncPromptSpecification;
 import io.modelcontextprotocol.spec.McpSchema.GetPromptRequest;
@@ -28,15 +23,19 @@ import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
 import io.modelcontextprotocol.util.Assert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.ai.mcp.annotation.McpPrompt;
 import org.springframework.ai.mcp.annotation.adapter.PromptAdapter;
 import org.springframework.ai.mcp.annotation.common.McpPredicates;
 import org.springframework.ai.mcp.annotation.method.prompt.SyncStatelessMcpPromptMethodCallback;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
+
 /**
  * Provider for synchronous stateless MCP prompt methods.
- *
+ * <p>
  * This provider creates prompt specifications for methods annotated with
  * {@link McpPrompt} that are designed to work in a stateless manner using
  * {@link McpTransportContext}.
@@ -51,8 +50,9 @@ public class SyncStatelessMcpPromptProvider {
 
 	/**
 	 * Create a new SyncStatelessMcpPromptProvider.
+	 *
 	 * @param promptObjects the objects containing methods annotated with
-	 * {@link McpPrompt}
+	 *                      {@link McpPrompt}
 	 */
 	public SyncStatelessMcpPromptProvider(List<Object> promptObjects) {
 		Assert.notNull(promptObjects, "promptObjects cannot be null");
@@ -61,32 +61,33 @@ public class SyncStatelessMcpPromptProvider {
 
 	/**
 	 * Get the stateless prompt specifications.
+	 *
 	 * @return the list of stateless prompt specifications
 	 */
 	public List<SyncPromptSpecification> getPromptSpecifications() {
 
 		List<SyncPromptSpecification> promptSpecs = this.promptObjects.stream()
-			.map(promptObject -> Stream.of(doGetClassMethods(promptObject))
-				.filter(method -> method.isAnnotationPresent(McpPrompt.class))
-				.filter(McpPredicates.filterReactiveReturnTypeMethod())
-				.filter(McpPredicates.filterMethodWithBidirectionalParameters())
-				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-				.map(mcpPromptMethod -> {
-					var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
-					var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
+				.map(promptObject -> Stream.of(doGetClassMethods(promptObject))
+						.filter(method -> method.isAnnotationPresent(McpPrompt.class))
+						.filter(McpPredicates.filterReactiveReturnTypeMethod())
+						.filter(McpPredicates.filterMethodWithBidirectionalParameters())
+						.sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+						.map(mcpPromptMethod -> {
+							var promptAnnotation = mcpPromptMethod.getAnnotation(McpPrompt.class);
+							var mcpPrompt = PromptAdapter.asPrompt(promptAnnotation, mcpPromptMethod);
 
-					BiFunction<McpTransportContext, GetPromptRequest, GetPromptResult> methodCallback = SyncStatelessMcpPromptMethodCallback
-						.builder()
-						.method(mcpPromptMethod)
-						.bean(promptObject)
-						.prompt(mcpPrompt)
-						.build();
+							BiFunction<McpTransportContext, GetPromptRequest, GetPromptResult> methodCallback = SyncStatelessMcpPromptMethodCallback
+									.builder()
+									.method(mcpPromptMethod)
+									.bean(promptObject)
+									.prompt(mcpPrompt)
+									.build();
 
-					return new SyncPromptSpecification(mcpPrompt, methodCallback);
-				})
-				.toList())
-			.flatMap(List::stream)
-			.toList();
+							return new SyncPromptSpecification(mcpPrompt, methodCallback);
+						})
+						.toList())
+				.flatMap(List::stream)
+				.toList();
 
 		if (promptSpecs.isEmpty()) {
 			if (logger.isWarnEnabled()) {
@@ -99,6 +100,7 @@ public class SyncStatelessMcpPromptProvider {
 
 	/**
 	 * Returns the methods of the given bean class.
+	 *
 	 * @param bean the bean instance
 	 * @return the methods of the bean class
 	 */

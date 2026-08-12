@@ -16,13 +16,13 @@
 
 package org.springframework.ai.openai.chat.client;
 
-import java.util.Map;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
 import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+
+import java.util.Map;
 
 /**
  * Drawing inspiration from the human strategy of re-reading, this advisor implements a
@@ -57,14 +57,14 @@ public class ReReadingAdvisor implements BaseAdvisor {
 	@Override
 	public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
 		String augmentedUserText = PromptTemplate.builder()
-			.template(this.re2AdviseTemplate)
-			.variables(Map.of("re2_input_query", chatClientRequest.prompt().getUserMessage().getText()))
-			.build()
-			.render();
+				.template(this.re2AdviseTemplate)
+				.variables(Map.of("re2_input_query", chatClientRequest.prompt().getUserMessage().getText()))
+				.build()
+				.render();
 
 		return chatClientRequest.mutate()
-			.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
-			.build();
+				.prompt(chatClientRequest.prompt().augmentUserMessage(augmentedUserText))
+				.build();
 	}
 
 	@Override

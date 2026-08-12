@@ -16,27 +16,17 @@
 
 package org.springframework.ai.vectorstore.typesense;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Pablo Sanchidrian
@@ -54,8 +44,8 @@ class TypesenseFilterExpressionConverterTests {
 	@Test
 	void testEqAndGte() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("metadata.genre: \"drama\" && metadata.year: >= 2020");
 	}
 
@@ -75,7 +65,7 @@ class TypesenseFilterExpressionConverterTests {
 	@Test
 	void testNin() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv"))));
+				.convertExpression(new Expression(NIN, new Key("city"), new Value(List.of("Sofia", "Plovdiv"))));
 		assertThat(vectorExpr).isEqualTo("metadata.city: != [\"Sofia\",\"Plovdiv\"]");
 	}
 
@@ -100,38 +90,38 @@ class TypesenseFilterExpressionConverterTests {
 	@Test
 	void testOr() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(EQ, new Key("country"), new Value("BG")),
-					new Expression(EQ, new Key("country"), new Value("NL"))));
+				.convertExpression(new Expression(OR, new Expression(EQ, new Key("country"), new Value("BG")),
+						new Expression(EQ, new Key("country"), new Value("NL"))));
 		assertThat(vectorExpr).isEqualTo("metadata.country: \"BG\" || metadata.country: \"NL\"");
 	}
 
 	@Test
 	void testBoolean() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("isOpen"), new Value(true)),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr).isEqualTo("metadata.isOpen: true && metadata.year: >= 2020");
 	}
 
 	@Test
 	void testDecimal() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 		assertThat(vectorExpr).isEqualTo("metadata.temperature: >= -15.6 && metadata.temperature: <= 20.13");
 	}
 
 	@Test
 	void testNestedFieldWithDots() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("address.city"), new Value("Sofia")));
+				.convertExpression(new Expression(EQ, new Key("address.city"), new Value("Sofia")));
 		assertThat(vectorExpr).isEqualTo("metadata.address.city: \"Sofia\"");
 	}
 
 	@Test
 	void testHyphenInFieldName() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("my-field"), new Value("test")));
+				.convertExpression(new Expression(EQ, new Key("my-field"), new Value("test")));
 		assertThat(vectorExpr).isEqualTo("metadata.my-field: \"test\"");
 	}
 
@@ -150,40 +140,40 @@ class TypesenseFilterExpressionConverterTests {
 	void keyWithColonIsRejected() {
 		assertThatThrownBy(
 				() -> this.converter.convertExpression(new Expression(EQ, new Key("field:evil"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
 	void keyWithOperatorInjectionIsRejected() {
 		assertThatThrownBy(() -> this.converter
-			.convertExpression(new Expression(EQ, new Key("country:BG && metadata.secret"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.convertExpression(new Expression(EQ, new Key("country:BG && metadata.secret"), new Value("v"))))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
 	void keyWithSpaceIsRejected() {
 		assertThatThrownBy(
 				() -> this.converter.convertExpression(new Expression(EQ, new Key("my field"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
 	void keyWithBracketsIsRejected() {
 		assertThatThrownBy(
 				() -> this.converter.convertExpression(new Expression(EQ, new Key("field[0]"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
 	void keyWithPipeIsRejected() {
 		assertThatThrownBy(
 				() -> this.converter.convertExpression(new Expression(EQ, new Key("field||evil"), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 	@Test
@@ -192,8 +182,8 @@ class TypesenseFilterExpressionConverterTests {
 		// invalid for Typesense field names
 		assertThatThrownBy(
 				() -> this.converter.convertExpression(new Expression(EQ, new Key("\"my field\""), new Value("v"))))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("Not allowed filter identifier name");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("Not allowed filter identifier name");
 	}
 
 }

@@ -55,8 +55,8 @@ public class OpenAiModerationModelNoOpApiKeysIT {
 		@Bean
 		public OpenAiModerationModel openAiModerationClient() {
 			return OpenAiModerationModel.builder()
-				.options(OpenAiModerationOptions.builder().apiKey(new NoopApiKey()).build())
-				.build();
+					.options(OpenAiModerationOptions.builder().apiKey(new NoopApiKey()).build())
+					.build();
 		}
 
 	}

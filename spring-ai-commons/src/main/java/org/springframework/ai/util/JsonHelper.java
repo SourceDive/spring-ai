@@ -16,19 +16,18 @@
 
 package org.springframework.ai.util;
 
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.util.Assert;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.json.JsonMapper;
 
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.util.Assert;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Helper for JSON processing.
@@ -54,6 +53,7 @@ public class JsonHelper {
 
 	/**
 	 * Converts a JSON string to a Java object.
+	 *
 	 * @param json the JSON string to parse
 	 * @param type the target type
 	 * @return the converted object
@@ -64,14 +64,14 @@ public class JsonHelper {
 
 		try {
 			return this.jsonMapper.readValue(json, type);
-		}
-		catch (JacksonException ex) {
+		} catch (JacksonException ex) {
 			throw new IllegalStateException("Conversion from JSON to %s failed".formatted(type.getName()), ex);
 		}
 	}
 
 	/**
 	 * Converts a JSON string to a Java object.
+	 *
 	 * @param json the JSON string to parse
 	 * @param type the target type
 	 * @return the converted object
@@ -82,14 +82,14 @@ public class JsonHelper {
 
 		try {
 			return this.jsonMapper.readValue(json, this.jsonMapper.constructType(type));
-		}
-		catch (JacksonException ex) {
+		} catch (JacksonException ex) {
 			throw new IllegalStateException("Conversion from JSON to %s failed".formatted(type.getTypeName()), ex);
 		}
 	}
 
 	/**
 	 * Converts a JSON string to a Java object.
+	 *
 	 * @param json the JSON string to parse
 	 * @param type the target type
 	 * @return the converted object
@@ -100,8 +100,7 @@ public class JsonHelper {
 
 		try {
 			return this.jsonMapper.readValue(json, this.jsonMapper.constructType(type.getType()));
-		}
-		catch (JacksonException ex) {
+		} catch (JacksonException ex) {
 			throw new IllegalStateException("Conversion from JSON to %s failed".formatted(type.getType().getTypeName()),
 					ex);
 		}
@@ -109,6 +108,7 @@ public class JsonHelper {
 
 	/**
 	 * Converts the given JSON string to a Map of String and Object.
+	 *
 	 * @param json the JSON string to parse
 	 * @return the converted map
 	 */
@@ -116,8 +116,7 @@ public class JsonHelper {
 		try {
 			Map<String, Object> map = this.jsonMapper.readValue(json, MAP_TYPE_REF);
 			return map != null ? map : Collections.emptyMap();
-		}
-		catch (JacksonException ex) {
+		} catch (JacksonException ex) {
 			throw new IllegalStateException(
 					"Conversion from JSON to %s failed".formatted(MAP_TYPE_REF.getType().getTypeName()), ex);
 		}
@@ -132,8 +131,9 @@ public class JsonHelper {
 
 	/**
 	 * Converts a Java object to a JSON string.
+	 *
 	 * @param forwardIfValidJson when true and object being a valid JSON string, just
-	 * return it
+	 *                           return it
 	 */
 	public String toJson(@Nullable Object object, boolean forwardIfValidJson) {
 		if (forwardIfValidJson && object instanceof String str && isValidJson(str)) {
@@ -149,15 +149,15 @@ public class JsonHelper {
 		try {
 			this.jsonMapper.readTree(input);
 			return true;
-		}
-		catch (JacksonException e) {
+		} catch (JacksonException e) {
 			return false;
 		}
 	}
 
 	/**
 	 * Converts a map to a Java object.
-	 * @param map the map to convert
+	 *
+	 * @param map  the map to convert
 	 * @param type the target type
 	 * @return the converted object
 	 */
@@ -167,7 +167,8 @@ public class JsonHelper {
 
 	/**
 	 * Converts a map to a Java object.
-	 * @param map the map to convert
+	 *
+	 * @param map  the map to convert
 	 * @param type the target type
 	 * @return the converted object
 	 */
@@ -183,8 +184,9 @@ public class JsonHelper {
 	/**
 	 * Convert a Java Object to a typed Object. Based on the implementation in
 	 * MethodToolCallback.
+	 *
 	 * @param value the object to convert
-	 * @param type the target type
+	 * @param type  the target type
 	 * @return the converted typed object
 	 */
 	public Object convertToTypedObject(Object value, Class<?> type) {
@@ -195,8 +197,7 @@ public class JsonHelper {
 		if (value instanceof String jsonString) {
 			try {
 				result = this.jsonMapper.convertValue(jsonString, type);
-			}
-			catch (DatabindException e) {
+			} catch (DatabindException e) {
 				// If the type is a raw string that should read as JSON String,
 				// parsing will fail but pass the following toJson -> fromJson cycle.
 				// Example: LocalDate, with jsonString = "2026-04-22", which is not valid

@@ -16,10 +16,7 @@
 
 package org.springframework.ai.chat.client.advisor;
 
-import java.util.Map;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.chat.client.ChatClientAttributes;
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
@@ -32,6 +29,8 @@ import org.springframework.ai.model.tool.StructuredOutputChatOptions;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
 
 /**
  * A {@link CallAdvisor} that uses a {@link ChatModel} to generate a response.
@@ -58,9 +57,9 @@ public final class ChatModelCallAdvisor implements CallAdvisor {
 		ChatResponse chatResponse = this.chatModel.call(formattedChatClientRequest.prompt());
 
 		return ChatClientResponse.builder()
-			.chatResponse(chatResponse)
-			.context(Map.copyOf(formattedChatClientRequest.context()))
-			.build();
+				.chatResponse(chatResponse)
+				.context(Map.copyOf(formattedChatClientRequest.context()))
+				.build();
 	}
 
 	private static ChatClientRequest augmentWithFormatInstructions(ChatClientRequest chatClientRequest) {
@@ -68,36 +67,36 @@ public final class ChatModelCallAdvisor implements CallAdvisor {
 		String outputFormat = (String) chatClientRequest.context().get(ChatClientAttributes.OUTPUT_FORMAT.getKey());
 
 		String outputSchema = (String) chatClientRequest.context()
-			.get(ChatClientAttributes.STRUCTURED_OUTPUT_SCHEMA.getKey());
+				.get(ChatClientAttributes.STRUCTURED_OUTPUT_SCHEMA.getKey());
 
 		if (!StringUtils.hasText(outputFormat) && !StringUtils.hasText(outputSchema)) {
 			return chatClientRequest;
 		}
 
 		boolean usesNativeStructuredOutput = chatClientRequest.context()
-			.containsKey(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey());
+				.containsKey(ChatClientAttributes.STRUCTURED_OUTPUT_NATIVE.getKey());
 
 		if (usesNativeStructuredOutput && StringUtils.hasText(outputSchema) && chatClientRequest.prompt()
-			.getOptions() instanceof StructuredOutputChatOptions structuredOutputChatOptions) {
+				.getOptions() instanceof StructuredOutputChatOptions structuredOutputChatOptions) {
 
 			var augmentedOptions = structuredOutputChatOptions.mutate().outputSchema(outputSchema).build();
 			Prompt augmentedPrompt = chatClientRequest.prompt().mutate().chatOptions(augmentedOptions).build();
 
 			return ChatClientRequest.builder()
-				.prompt(augmentedPrompt)
-				.context(Map.copyOf(chatClientRequest.context()))
-				.build();
+					.prompt(augmentedPrompt)
+					.context(Map.copyOf(chatClientRequest.context()))
+					.build();
 		}
 
 		Prompt augmentedPrompt = chatClientRequest.prompt()
-			.augmentUserMessage(userMessage -> userMessage.mutate()
-				.text(userMessage.getText() + System.lineSeparator() + outputFormat)
-				.build());
+				.augmentUserMessage(userMessage -> userMessage.mutate()
+						.text(userMessage.getText() + System.lineSeparator() + outputFormat)
+						.build());
 
 		return ChatClientRequest.builder()
-			.prompt(augmentedPrompt)
-			.context(Map.copyOf(chatClientRequest.context()))
-			.build();
+				.prompt(augmentedPrompt)
+				.context(Map.copyOf(chatClientRequest.context()))
+				.build();
 	}
 
 	@Override

@@ -16,8 +16,6 @@
 
 package org.springframework.ai.chat.client.observation;
 
-import java.util.List;
-
 import io.micrometer.common.KeyValue;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.CallAdvisor;
@@ -41,6 +38,8 @@ import org.springframework.ai.observation.conventions.SpringAiKind;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.DefaultToolDefinition;
 import org.springframework.ai.tool.definition.ToolDefinition;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,7 +74,7 @@ class DefaultChatClientObservationConventionTests {
 
 			@Override
 			public ChatClientResponse adviseCall(ChatClientRequest chatClientRequest,
-					CallAdvisorChain callAdvisorChain) {
+			                                     CallAdvisorChain callAdvisorChain) {
 				return null;
 			}
 
@@ -111,20 +110,20 @@ class DefaultChatClientObservationConventionTests {
 	@Test
 	void shouldHaveContextualName() {
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(this.request)
-			.stream(true)
-			.build();
+				.request(this.request)
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.getContextualName(observationContext))
-			.isEqualTo("%s %s".formatted(AiProvider.SPRING_AI.value(), SpringAiKind.CHAT_CLIENT.value()));
+				.isEqualTo("%s %s".formatted(AiProvider.SPRING_AI.value(), SpringAiKind.CHAT_CLIENT.value()));
 	}
 
 	@Test
 	void supportsOnlyChatClientObservationContext() {
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(this.request)
-			.stream(true)
-			.build();
+				.request(this.request)
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.supportsContext(observationContext)).isTrue();
 		assertThat(this.observationConvention.supportsContext(new Observation.Context())).isFalse();
@@ -133,9 +132,9 @@ class DefaultChatClientObservationConventionTests {
 	@Test
 	void shouldHaveRequiredKeyValues() {
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(this.request)
-			.stream(true)
-			.build();
+				.request(this.request)
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.getLowCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(LowCardinalityKeyNames.SPRING_AI_KIND.asString(), "chat_client"),
@@ -145,19 +144,19 @@ class DefaultChatClientObservationConventionTests {
 	@Test
 	void shouldHaveOptionalKeyValues() {
 		var request = ChatClientRequest.builder()
-			.prompt(new Prompt("",
-					ToolCallingChatOptions.builder()
-						.toolCallbacks(dummyFunction("toolCallback1"), dummyFunction("toolCallback2"))
-						.build()))
-			.context(ChatMemory.CONVERSATION_ID, "007")
-			.build();
+				.prompt(new Prompt("",
+						ToolCallingChatOptions.builder()
+								.toolCallbacks(dummyFunction("toolCallback1"), dummyFunction("toolCallback2"))
+								.build()))
+				.context(ChatMemory.CONVERSATION_ID, "007")
+				.build();
 
 		ChatClientObservationContext observationContext = ChatClientObservationContext.builder()
-			.request(request)
-			.format("json")
-			.advisors(List.of(dummyAdvisor("advisor1"), dummyAdvisor("advisor2")))
-			.stream(true)
-			.build();
+				.request(request)
+				.format("json")
+				.advisors(List.of(dummyAdvisor("advisor1"), dummyAdvisor("advisor2")))
+				.stream(true)
+				.build();
 
 		assertThat(this.observationConvention.getHighCardinalityKeyValues(observationContext)).contains(
 				KeyValue.of(HighCardinalityKeyNames.CHAT_CLIENT_ADVISORS.asString(), """

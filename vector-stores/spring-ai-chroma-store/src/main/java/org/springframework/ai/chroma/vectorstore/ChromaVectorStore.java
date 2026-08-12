@@ -16,16 +16,9 @@
 
 package org.springframework.ai.chroma.vectorstore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.chroma.vectorstore.ChromaApi.AddEmbeddingsRequest;
 import org.springframework.ai.chroma.vectorstore.ChromaApi.DeleteEmbeddingsRequest;
 import org.springframework.ai.chroma.vectorstore.ChromaApi.Embedding;
@@ -46,6 +39,12 @@ import org.springframework.ai.vectorstore.observation.VectorStoreObservationCont
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link ChromaVectorStore} is a concrete implementation of the {@link VectorStore}
@@ -101,8 +100,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 		if (builder.initializeImmediately) {
 			try {
 				afterPropertiesSet();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new IllegalStateException("Failed to initialize ChromaVectorStore", e);
 			}
 		}
@@ -130,8 +128,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 					collection = this.chromaApi.createCollection(this.tenantName, this.databaseName,
 							new ChromaApi.CreateCollectionRequest(this.collectionName));
-				}
-				else {
+				} else {
 					throw new RuntimeException("Collection " + this.collectionName + " with the tenant: "
 							+ this.tenantName + " and the database: " + this.databaseName
 							+ " doesn't exist and won't be created as the initializeSchema is set to false.");
@@ -194,8 +191,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 			DeleteEmbeddingsRequest deleteRequest = new DeleteEmbeddingsRequest(null, whereClause);
 			this.chromaApi.deleteEmbeddings(this.tenantName, this.databaseName, this.requireCollectionId(),
 					deleteRequest);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete documents by filter: " + e.getMessage(), e);
 			}
@@ -233,11 +229,11 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 				metadata.put(DocumentMetadata.DISTANCE.value(), distance);
 				Document document = Document.builder()
-					.id(id)
-					.text(content)
-					.metadata(metadata)
-					.score(1.0 - distance)
-					.build();
+						.id(id)
+						.text(content)
+						.metadata(metadata)
+						.score(1.0 - distance)
+						.build();
 				responseDocuments.add(document);
 			}
 		}
@@ -253,8 +249,8 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 	@Override
 	public VectorStoreObservationContext.Builder createObservationContextBuilder(String operationName) {
 		return VectorStoreObservationContext.builder(VectorStoreProvider.CHROMA.value(), operationName)
-			.dimensions(this.embeddingModel.dimensions())
-			.collectionName(this.collectionName + ":" + this.requireCollectionId());
+				.dimensions(this.embeddingModel.dimensions())
+				.collectionName(this.collectionName + ":" + this.requireCollectionId());
 	}
 
 	private String requireCollectionId() {
@@ -300,6 +296,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the tenant name.
+		 *
 		 * @param tenantName the name of the tenant
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -312,6 +309,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the database name.
+		 *
 		 * @param databaseName the name of the database
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -324,6 +322,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the collection name.
+		 *
 		 * @param collectionName the name of the collection
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if collectionName is null or empty
@@ -336,6 +335,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to initialize the schema.
+		 *
 		 * @param initializeSchema true to initialize schema, false otherwise
 		 * @return the builder instance
 		 */
@@ -346,6 +346,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets the filter expression converter.
+		 *
 		 * @param converter the filter expression converter to use
 		 * @return the builder instance
 		 * @throws IllegalArgumentException if converter is null
@@ -358,6 +359,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Sets whether to initialize immediately.
+		 *
 		 * @param initialize true to initialize immediately, false otherwise
 		 * @return the builder instance
 		 */
@@ -368,6 +370,7 @@ public class ChromaVectorStore extends AbstractObservationVectorStore implements
 
 		/**
 		 * Builds the {@link ChromaVectorStore} instance.
+		 *
 		 * @return a new ChromaVectorStore instance
 		 * @throws IllegalStateException if the builder is in an invalid state
 		 */

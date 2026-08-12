@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.fail;
 class GoogleGenAiChatPriorityIT {
 
 	@ParameterizedTest
-	@ValueSource(strings = { "flex", "standard", "priority" })
+	@ValueSource(strings = {"flex", "standard", "priority"})
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_API_KEY", matches = ".+")
 	void testPriorityServiceTier(String serviceTier) {
 		Client genAiClient = Client.builder().apiKey(System.getenv("GOOGLE_API_KEY")).build();
@@ -43,15 +43,15 @@ class GoogleGenAiChatPriorityIT {
 
 	@Disabled("Current Vertex AI backend dont support it yet")
 	@ParameterizedTest
-	@ValueSource(strings = { "flex", "standard", "priority" })
+	@ValueSource(strings = {"flex", "standard", "priority"})
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_CLOUD_PROJECT", matches = ".+")
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_CLOUD_LOCATION", matches = ".+")
 	void testPriorityServiceTierVertex(String serviceTier) {
 		Client genAiClient = Client.builder()
-			.project(System.getenv("GOOGLE_CLOUD_PROJECT"))
-			.location(System.getenv("GOOGLE_CLOUD_LOCATION"))
-			.vertexAI(true)
-			.build();
+				.project(System.getenv("GOOGLE_CLOUD_PROJECT"))
+				.location(System.getenv("GOOGLE_CLOUD_LOCATION"))
+				.vertexAI(true)
+				.build();
 		runTest(genAiClient, serviceTier);
 	}
 
@@ -59,12 +59,12 @@ class GoogleGenAiChatPriorityIT {
 		GoogleGenAiServiceTier tier = GoogleGenAiServiceTier.valueOf(serviceTier.toUpperCase());
 
 		var chatModel = GoogleGenAiChatModel.builder()
-			.genAiClient(genAiClient)
-			.options(GoogleGenAiChatOptions.builder()
-				.model(GoogleGenAiChatModel.ChatModel.GEMINI_3_5_FLASH)
-				.serviceTier(tier)
-				.build())
-			.build();
+				.genAiClient(genAiClient)
+				.options(GoogleGenAiChatOptions.builder()
+						.model(GoogleGenAiChatModel.ChatModel.GEMINI_3_5_FLASH)
+						.serviceTier(tier)
+						.build())
+				.build();
 
 		try {
 			var response = chatModel.call(new Prompt("Explain the importance of service tiers in cloud APIs."));
@@ -72,8 +72,7 @@ class GoogleGenAiChatPriorityIT {
 			assertThat(response).isNotNull();
 			assertThat(response.getResult()).isNotNull();
 			assertThat(response.getResult().getOutput().getText()).isNotBlank();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			fail("Unexpected failure: " + e.getMessage());
 		}
 	}

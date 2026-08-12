@@ -16,19 +16,18 @@
 
 package org.springframework.ai.mcp.client.webflux.transport;
 
-import java.util.function.Function;
-
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpTransportSessionClosedException;
 import io.modelcontextprotocol.spec.ProtocolVersions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import reactor.test.StepVerifier;
 
-import org.springframework.web.reactive.function.client.WebClient;
+import java.util.function.Function;
 
 class WebClientStreamableHttpTransportIT {
 
@@ -38,9 +37,9 @@ class WebClientStreamableHttpTransportIT {
 
 	@SuppressWarnings("resource")
 	static GenericContainer<?> container = new GenericContainer<>("docker.io/node:lts-alpine3.23")
-		.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 streamableHttp")
-		.withExposedPorts(3001)
-		.waitingFor(Wait.forHttp("/").forStatusCode(404));
+			.withCommand("npx -y @modelcontextprotocol/server-everything@2025.12.18 streamableHttp")
+			.withExposedPorts(3001)
+			.waitingFor(Wait.forHttp("/").forStatusCode(404));
 
 	@BeforeAll
 	static void startContainer() {
@@ -68,8 +67,8 @@ class WebClientStreamableHttpTransportIT {
 				"test-id", initializeRequest);
 
 		StepVerifier.create(transport.sendMessage(testMessage))
-			.expectErrorMessage("Transport has already been closed.")
-			.verify();
+				.expectErrorMessage("Transport has already been closed.")
+				.verify();
 	}
 
 	@Test
@@ -87,9 +86,9 @@ class WebClientStreamableHttpTransportIT {
 		StepVerifier.create(transport.closeGracefully()).verifyComplete();
 
 		StepVerifier.create(transport.sendMessage(testMessage))
-			.expectErrorMatches(err -> err instanceof McpTransportSessionClosedException
-					&& err.getMessage().equals("Transport has already been closed."))
-			.verify();
+				.expectErrorMatches(err -> err instanceof McpTransportSessionClosedException
+						&& err.getMessage().equals("Transport has already been closed."))
+				.verify();
 	}
 
 }

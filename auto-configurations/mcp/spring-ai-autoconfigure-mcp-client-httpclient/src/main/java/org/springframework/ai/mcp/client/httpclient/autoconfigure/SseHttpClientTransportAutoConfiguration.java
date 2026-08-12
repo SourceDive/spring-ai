@@ -16,15 +16,8 @@
 
 package org.springframework.ai.mcp.client.httpclient.autoconfigure;
 
-import java.net.http.HttpClient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.json.jackson3.JacksonMcpJsonMapper;
-import tools.jackson.databind.json.JsonMapper;
-
 import org.springframework.ai.mcp.client.common.autoconfigure.McpSseClientConnectionDetails;
 import org.springframework.ai.mcp.client.common.autoconfigure.NamedClientMcpTransport;
 import org.springframework.ai.mcp.client.common.autoconfigure.PropertiesMcpSseClientConnectionDetails;
@@ -39,6 +32,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.log.LogAccessor;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.net.http.HttpClient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Auto-configuration for Server-Sent Events (SSE) HTTP client transport in the Model
@@ -63,7 +62,7 @@ import org.springframework.core.log.LogAccessor;
  * @see McpSseClientProperties
  */
 @AutoConfiguration
-@EnableConfigurationProperties({ McpSseClientProperties.class, McpClientCommonProperties.class })
+@EnableConfigurationProperties({McpSseClientProperties.class, McpClientCommonProperties.class})
 @ConditionalOnProperty(prefix = McpClientCommonProperties.CONFIG_PREFIX, name = "enabled", havingValue = "true",
 		matchIfMissing = true)
 @Deprecated(since = "2.0.0", forRemoval = true)
@@ -88,18 +87,19 @@ public class SseHttpClientTransportAutoConfiguration {
 	 * <li>JsonMapper for JSON processing
 	 * <li>A sync or async HTTP request customizer. Sync takes precedence.
 	 * </ul>
-	 * @param connectionDetails the SSE client connection details containing server
-	 * configurations
-	 * @param jsonMapperProvider the provider for JsonMapper or a new instance if not
-	 * available
+	 *
+	 * @param connectionDetails    the SSE client connection details containing server
+	 *                             configurations
+	 * @param jsonMapperProvider   the provider for JsonMapper or a new instance if not
+	 *                             available
 	 * @param transportCustomizers provider for
-	 * {@link McpClientCustomizer<HttpClientSseClientTransport.Builder>} beans
+	 *                             {@link McpClientCustomizer<HttpClientSseClientTransport.Builder>} beans
 	 * @return list of named MCP transports
 	 */
 	@Bean
 	public List<NamedClientMcpTransport> sseHttpClientTransports(McpSseClientConnectionDetails connectionDetails,
-			ObjectProvider<JsonMapper> jsonMapperProvider,
-			ObjectProvider<McpClientCustomizer<HttpClientSseClientTransport.Builder>> transportCustomizers) {
+	                                                             ObjectProvider<JsonMapper> jsonMapperProvider,
+	                                                             ObjectProvider<McpClientCustomizer<HttpClientSseClientTransport.Builder>> transportCustomizers) {
 
 		JsonMapper jsonMapper = jsonMapperProvider.getIfAvailable(JsonMapper::new);
 
@@ -118,17 +118,16 @@ public class SseHttpClientTransportAutoConfiguration {
 
 			try {
 				var transportBuilder = HttpClientSseClientTransport.builder(baseUrl)
-					.sseEndpoint(sseEndpoint)
-					.clientBuilder(HttpClient.newBuilder())
-					.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
+						.sseEndpoint(sseEndpoint)
+						.clientBuilder(HttpClient.newBuilder())
+						.jsonMapper(new JacksonMcpJsonMapper(jsonMapper));
 
 				for (McpClientCustomizer<HttpClientSseClientTransport.Builder> customizer : transportCustomizers) {
 					customizer.customize(connectionName, transportBuilder);
 				}
 
 				sseTransports.add(new NamedClientMcpTransport(connectionName, transportBuilder.build()));
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw new IllegalArgumentException("Failed to create SSE transport for connection '" + connectionName
 						+ "'. Check URL splitting: url='" + baseUrl + "', sse-endpoint='" + sseEndpoint
 						+ "'. Full URL should be split as: url=http://host:port, sse-endpoint=/path/to/endpoint", e);

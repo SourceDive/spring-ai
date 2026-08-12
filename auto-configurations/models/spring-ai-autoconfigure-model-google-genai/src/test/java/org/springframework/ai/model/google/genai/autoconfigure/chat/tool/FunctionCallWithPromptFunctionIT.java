@@ -16,12 +16,9 @@
 
 package org.springframework.ai.model.google.genai.autoconfigure.chat.tool;
 
-import java.util.List;
-
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -37,6 +34,8 @@ import org.springframework.ai.tool.function.FunctionToolCallback;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -51,10 +50,10 @@ public class FunctionCallWithPromptFunctionIT {
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_API_KEY", matches = ".+")
 	void functionCallTestWithApiKey() {
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.google.genai.api-key=" + System.getenv("GOOGLE_API_KEY"),
-					"spring.ai.google.genai.chat.model=" + this.modelName)
-			.withConfiguration(AutoConfigurations.of(GoogleGenAiChatAutoConfiguration.class,
-					SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class));
+				.withPropertyValues("spring.ai.google.genai.api-key=" + System.getenv("GOOGLE_API_KEY"),
+						"spring.ai.google.genai.chat.model=" + this.modelName)
+				.withConfiguration(AutoConfigurations.of(GoogleGenAiChatAutoConfiguration.class,
+						SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class));
 
 		contextRunner.run(context -> {
 
@@ -67,28 +66,28 @@ public class FunctionCallWithPromptFunctionIT {
 					""");
 
 			var promptOptions = GoogleGenAiChatOptions.builder()
-				.model(this.modelName)
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.model(this.modelName)
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description("Get the weather in location")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			var chatClient = ChatClient
-				.builder(chatModel, ObservationRegistry.NOOP, null, null,
-						ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-				.build();
+					.builder(chatModel, ObservationRegistry.NOOP, null, null,
+							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+					.build();
 
 			ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
-				.call()
-				.chatResponse();
+					.call()
+					.chatResponse();
 
 			assertThat(response.getResult().getOutput().getText()).contains("30.789", "10.456", "15.123");
 
 			// Verify that no function call is made.
 			response = chatClient.prompt(new Prompt(List.of(userMessage), GoogleGenAiChatOptions.builder().build()))
-				.call()
-				.chatResponse();
+					.call()
+					.chatResponse();
 
 			assertThat(response.getResult().getOutput().getText()).doesNotContain("30.789", "10.456", "15.123");
 
@@ -100,11 +99,11 @@ public class FunctionCallWithPromptFunctionIT {
 	@EnabledIfEnvironmentVariable(named = "GOOGLE_CLOUD_LOCATION", matches = ".+")
 	void functionCallTestWithVertexAi() {
 		ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withPropertyValues("spring.ai.google.genai.project-id=" + System.getenv("GOOGLE_CLOUD_PROJECT"),
-					"spring.ai.google.genai.location=" + System.getenv("GOOGLE_CLOUD_LOCATION"),
-					"spring.ai.google.genai.chat.model=" + this.modelName)
-			.withConfiguration(AutoConfigurations.of(GoogleGenAiChatAutoConfiguration.class,
-					SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class));
+				.withPropertyValues("spring.ai.google.genai.project-id=" + System.getenv("GOOGLE_CLOUD_PROJECT"),
+						"spring.ai.google.genai.location=" + System.getenv("GOOGLE_CLOUD_LOCATION"),
+						"spring.ai.google.genai.chat.model=" + this.modelName)
+				.withConfiguration(AutoConfigurations.of(GoogleGenAiChatAutoConfiguration.class,
+						SpringAiRetryAutoConfiguration.class, ToolCallingAutoConfiguration.class));
 
 		contextRunner.run(context -> {
 
@@ -112,9 +111,9 @@ public class FunctionCallWithPromptFunctionIT {
 			ToolCallingManager toolCallingManager = context.getBean(ToolCallingManager.class);
 
 			var chatClient = ChatClient
-				.builder(chatModel, ObservationRegistry.NOOP, null, null,
-						ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
-				.build();
+					.builder(chatModel, ObservationRegistry.NOOP, null, null,
+							ToolCallingAdvisor.builder().toolCallingManager(toolCallingManager))
+					.build();
 
 			var userMessage = new UserMessage("""
 					What's the weather like in San Francisco, Paris and in Tokyo?
@@ -122,16 +121,16 @@ public class FunctionCallWithPromptFunctionIT {
 					""");
 
 			var promptOptions = GoogleGenAiChatOptions.builder()
-				.model(this.modelName)
-				.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
-					.description("Get the weather in location")
-					.inputType(MockWeatherService.Request.class)
-					.build()))
-				.build();
+					.model(this.modelName)
+					.toolCallbacks(List.of(FunctionToolCallback.builder("CurrentWeatherService", new MockWeatherService())
+							.description("Get the weather in location")
+							.inputType(MockWeatherService.Request.class)
+							.build()))
+					.build();
 
 			ChatResponse response = chatClient.prompt(new Prompt(List.of(userMessage), promptOptions))
-				.call()
-				.chatResponse();
+					.call()
+					.chatResponse();
 
 			assertThat(response.getResult().getOutput().getText()).contains("30.789", "10.456", "15.123");
 

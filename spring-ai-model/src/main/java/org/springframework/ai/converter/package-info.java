@@ -31,4 +31,3 @@
 @NullMarked
 package org.springframework.ai.converter;
 
-import org.jspecify.annotations.NullMarked;

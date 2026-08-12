@@ -16,11 +16,10 @@
 
 package org.springframework.ai.moderation;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
-
 import org.springframework.ai.model.ModelRequest;
+
+import java.util.Objects;
 
 /**
  * Represents a prompt for moderation containing a single message and the options for the

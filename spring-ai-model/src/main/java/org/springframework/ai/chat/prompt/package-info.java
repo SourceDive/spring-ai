@@ -17,4 +17,3 @@
 @NullMarked
 package org.springframework.ai.chat.prompt;
 
-import org.jspecify.annotations.NullMarked;

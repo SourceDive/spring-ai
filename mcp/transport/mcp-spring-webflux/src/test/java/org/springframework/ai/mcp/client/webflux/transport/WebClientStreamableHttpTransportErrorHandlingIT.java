@@ -16,6 +16,16 @@
 
 package org.springframework.ai.mcp.client.webflux.transport;
 
+import com.sun.net.httpserver.HttpServer;
+import io.modelcontextprotocol.spec.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Duration;
@@ -24,27 +34,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import com.sun.net.httpserver.HttpServer;
-import io.modelcontextprotocol.spec.HttpHeaders;
-import io.modelcontextprotocol.spec.McpClientTransport;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpTransportException;
-import io.modelcontextprotocol.spec.McpTransportSessionNotFoundException;
-import io.modelcontextprotocol.spec.ProtocolVersions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import org.springframework.web.reactive.function.client.WebClient;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for error handling in WebClientStreamableHttpTransport. Addresses concurrency
@@ -106,8 +98,7 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 			if (this.firstRequestLatch.getCount() > 0) {
 				// // First request - should have no session ID
 				this.firstRequestLatch.countDown();
-			}
-			else if (this.secondRequestLatch.getCount() > 0) {
+			} else if (this.secondRequestLatch.getCount() > 0) {
 				// Second request - should have session ID
 				this.secondRequestLatch.countDown();
 			}
@@ -124,8 +115,7 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 				String response = "{\"jsonrpc\":\"2.0\",\"result\":{},\"id\":\"test-id\"}";
 				exchange.sendResponseHeaders(200, response.length());
 				exchange.getResponseBody().write(response.getBytes());
-			}
-			else {
+			} else {
 				exchange.sendResponseHeaders(status, 0);
 			}
 			exchange.close();
@@ -158,10 +148,10 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 		var testMessage = createTestMessage();
 
 		StepVerifier.create(this.transport.sendMessage(testMessage))
-			.expectErrorMatches(throwable -> throwable instanceof McpTransportException
-					&& throwable.getMessage().contains("Not Found") && throwable.getMessage().contains("404")
-					&& !(throwable instanceof McpTransportSessionNotFoundException))
-			.verify(Duration.ofSeconds(5));
+				.expectErrorMatches(throwable -> throwable instanceof McpTransportException
+						&& throwable.getMessage().contains("Not Found") && throwable.getMessage().contains("404")
+						&& !(throwable instanceof McpTransportSessionNotFoundException))
+				.verify(Duration.ofSeconds(5));
 	}
 
 	/**
@@ -200,8 +190,8 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 		// Use delaySubscription to ensure session is fully processed before next
 		// request
 		StepVerifier.create(Mono.delay(Duration.ofMillis(200)).then(this.transport.sendMessage(testMessage)))
-			.expectError(McpTransportSessionNotFoundException.class)
-			.verify(Duration.ofSeconds(5));
+				.expectError(McpTransportSessionNotFoundException.class)
+				.verify(Duration.ofSeconds(5));
 
 		// Wait for second request to be made
 		assertThat(this.secondRequestLatch.await(5, TimeUnit.SECONDS)).isTrue();
@@ -226,10 +216,10 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 		var testMessage = createTestMessage();
 
 		StepVerifier.create(this.transport.sendMessage(testMessage))
-			.expectErrorMatches(throwable -> throwable instanceof McpTransportException
-					&& throwable.getMessage().contains("Bad Request") && throwable.getMessage().contains("400")
-					&& !(throwable instanceof McpTransportSessionNotFoundException))
-			.verify(Duration.ofSeconds(10));
+				.expectErrorMatches(throwable -> throwable instanceof McpTransportException
+						&& throwable.getMessage().contains("Bad Request") && throwable.getMessage().contains("400")
+						&& !(throwable instanceof McpTransportSessionNotFoundException))
+				.verify(Duration.ofSeconds(10));
 	}
 
 	/**
@@ -271,8 +261,8 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 		// Use delaySubscription to ensure session is fully processed before next
 		// request
 		StepVerifier.create(Mono.delay(Duration.ofMillis(200)).then(this.transport.sendMessage(testMessage)))
-			.expectError(McpTransportSessionNotFoundException.class)
-			.verify(Duration.ofSeconds(5));
+				.expectError(McpTransportSessionNotFoundException.class)
+				.verify(Duration.ofSeconds(5));
 
 		// Wait for second request to be made
 		boolean secondCompleted = this.secondRequestLatch.await(5, TimeUnit.SECONDS);
@@ -303,7 +293,7 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 			// Simulate session loss - return 404
 			this.serverResponseStatus.set(404);
 			return this.transport.sendMessage(testMessage)
-				.onErrorResume(McpTransportSessionNotFoundException.class, e -> Mono.empty());
+					.onErrorResume(McpTransportSessionNotFoundException.class, e -> Mono.empty());
 		})).then(Mono.defer(() -> {
 			// Now server is back with new session
 			this.serverResponseStatus.set(200);
@@ -344,12 +334,10 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 				if (status == 404 && requestSessionId != null) {
 					// 404 with session ID - should trigger SessionNotFoundException
 					exchange.sendResponseHeaders(404, 0);
-				}
-				else if (status == 404) {
+				} else if (status == 404) {
 					// 404 without session ID - should trigger McpTransportException
 					exchange.sendResponseHeaders(404, 0);
-				}
-				else {
+				} else {
 					// Normal SSE response
 					exchange.getResponseHeaders().set("Content-Type", "text/event-stream");
 					exchange.sendResponseHeaders(200, 0);
@@ -357,8 +345,7 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 					String sseData = "event: message\ndata: {\"jsonrpc\":\"2.0\",\"method\":\"test\",\"params\":{}}\n\n";
 					exchange.getResponseBody().write(sseData.getBytes());
 				}
-			}
-			else {
+			} else {
 				// POST request handling
 				exchange.getResponseHeaders().set("Content-Type", "application/json");
 				String responseSessionId = this.currentServerSessionId.get();
@@ -377,9 +364,9 @@ public class WebClientStreamableHttpTransportErrorHandlingIT {
 		this.currentServerSessionId.set("sse-session-1");
 
 		var transport = WebClientStreamableHttpTransport.builder(WebClient.builder().baseUrl(this.host))
-			.endpoint("/mcp-sse")
-			.openConnectionOnStartup(true) // This will trigger GET request on connect
-			.build();
+				.endpoint("/mcp-sse")
+				.openConnectionOnStartup(true) // This will trigger GET request on connect
+				.build();
 
 		// First connect successfully
 		StepVerifier.create(transport.connect(msg -> msg)).verifyComplete();

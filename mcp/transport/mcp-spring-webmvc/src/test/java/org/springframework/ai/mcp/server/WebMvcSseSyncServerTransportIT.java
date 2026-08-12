@@ -80,8 +80,7 @@ class WebMvcSseSyncServerTransportIT extends AbstractMcpSyncServerTests {
 		try {
 			this.tomcat.start();
 			this.tomcat.getConnector(); // Create and start the connector
-		}
-		catch (LifecycleException e) {
+		} catch (LifecycleException e) {
 			throw new RuntimeException("Failed to start Tomcat", e);
 		}
 
@@ -104,8 +103,7 @@ class WebMvcSseSyncServerTransportIT extends AbstractMcpSyncServerTests {
 			try {
 				this.tomcat.stop();
 				this.tomcat.destroy();
-			}
-			catch (LifecycleException e) {
+			} catch (LifecycleException e) {
 				throw new RuntimeException("Failed to stop Tomcat", e);
 			}
 		}

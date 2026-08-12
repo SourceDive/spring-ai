@@ -48,8 +48,8 @@ class Neo4jVectorStoreBuilderTests {
 	void customFilterExpressionConverter() {
 		FilterExpressionConverter custom = mock(FilterExpressionConverter.class);
 		Neo4jVectorStore store = Neo4jVectorStore.builder(this.driver, this.embeddingModel)
-			.filterExpressionConverter(custom)
-			.build();
+				.filterExpressionConverter(custom)
+				.build();
 		Object converter = ReflectionTestUtils.getField(store, "filterExpressionConverter");
 		assertThat(converter).isSameAs(custom);
 	}
@@ -58,8 +58,8 @@ class Neo4jVectorStoreBuilderTests {
 	void nullFilterExpressionConverterThrows() {
 		assertThatThrownBy(
 				() -> Neo4jVectorStore.builder(this.driver, this.embeddingModel).filterExpressionConverter(null))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("FilterExpressionConverter must not be null");
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessageContaining("FilterExpressionConverter must not be null");
 	}
 
 }

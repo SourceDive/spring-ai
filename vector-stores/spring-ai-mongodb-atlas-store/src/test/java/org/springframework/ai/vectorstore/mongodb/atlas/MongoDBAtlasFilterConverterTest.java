@@ -16,27 +16,17 @@
 
 package org.springframework.ai.vectorstore.mongodb.atlas;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ai.vectorstore.filter.Filter.Expression;
 import org.springframework.ai.vectorstore.filter.Filter.Group;
 import org.springframework.ai.vectorstore.filter.Filter.Key;
 import org.springframework.ai.vectorstore.filter.Filter.Value;
 import org.springframework.ai.vectorstore.filter.FilterExpressionConverter;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.AND;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.EQ;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.GTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.IN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LT;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.LTE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NE;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.NIN;
-import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.OR;
+import static org.springframework.ai.vectorstore.filter.Filter.ExpressionType.*;
 
 /**
  * @author Christopher Smith
@@ -56,10 +46,10 @@ public class MongoDBAtlasFilterConverterTest {
 	public void tesEqAndGte() {
 		// genre == "drama" AND year >= 2020
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
-					new Expression(GTE, new Key("year"), new Value(2020))));
+				.convertExpression(new Expression(AND, new Expression(EQ, new Key("genre"), new Value("drama")),
+						new Expression(GTE, new Key("year"), new Value(2020))));
 		assertThat(vectorExpr)
-			.isEqualTo("{$and:[{\"metadata.genre\":{$eq:\"drama\"}},{\"metadata.year\":{$gte:2020}}]}");
+				.isEqualTo("{$and:[{\"metadata.genre\":{$eq:\"drama\"}},{\"metadata.year\":{$gte:2020}}]}");
 	}
 
 	@Test
@@ -74,9 +64,9 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testNe() {
 		// year >= 2020 OR country == "BG" AND city != "Sofia"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
-					new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
-							new Expression(NE, new Key("city"), new Value("Sofia")))));
+				.convertExpression(new Expression(OR, new Expression(GTE, new Key("year"), new Value(2020)),
+						new Expression(AND, new Expression(EQ, new Key("country"), new Value("BG")),
+								new Expression(NE, new Key("city"), new Value("Sofia")))));
 		assertThat(vectorExpr).isEqualTo(
 				"{$or:[{\"metadata.year\":{$gte:2020}},{$and:[{\"metadata.country\":{$eq:\"BG\"}},{\"metadata.city\":{$ne:\"Sofia\"}}]}]}");
 	}
@@ -108,21 +98,21 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testDecimal() {
 		// temperature >= -15.6 && temperature <= +20.13
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
-					new Expression(LTE, new Key("temperature"), new Value(20.13))));
+				.convertExpression(new Expression(AND, new Expression(GTE, new Key("temperature"), new Value(-15.6)),
+						new Expression(LTE, new Key("temperature"), new Value(20.13))));
 
 		assertThat(vectorExpr)
-			.isEqualTo("{$and:[{\"metadata.temperature\":{$gte:-15.6}},{\"metadata.temperature\":{$lte:20.13}}]}");
+				.isEqualTo("{$and:[{\"metadata.temperature\":{$gte:-15.6}},{\"metadata.temperature\":{$lte:20.13}}]}");
 	}
 
 	@Test
 	public void testComplexIdentifiers() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("country 1 2 3"), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.country 1 2 3\":{$eq:\"BG\"}}");
 
 		vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
+				.convertExpression(new Expression(EQ, new Key("\"country 1 2 3\""), new Value("BG")));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.\\\"country 1 2 3\\\"\":{$eq:\"BG\"}}");
 
 		vectorExpr = this.converter.convertExpression(new Expression(EQ, new Key("'country 1 2 3'"), new Value("BG")));
@@ -154,7 +144,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testNin() {
 		// region not in ["A", "B", "C"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(NIN, new Key("region"), new Value(List.of("A", "B", "C"))));
+				.convertExpression(new Expression(NIN, new Key("region"), new Value(List.of("A", "B", "C"))));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.region\":{$nin:[\"A\",\"B\",\"C\"]}}");
 	}
 
@@ -199,7 +189,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testLongValue() {
 		// timestamp >= 1640995200000L
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(GTE, new Key("timestamp"), new Value(1640995200000L)));
+				.convertExpression(new Expression(GTE, new Key("timestamp"), new Value(1640995200000L)));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.timestamp\":{$gte:1640995200000}}");
 	}
 
@@ -214,7 +204,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testMixedTypesList() {
 		// tags in [1, "priority", true]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("tags"), new Value(List.of(1, "priority", true))));
+				.convertExpression(new Expression(IN, new Key("tags"), new Value(List.of(1, "priority", true))));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.tags\":{$in:[1,\"priority\",true]}}");
 	}
 
@@ -222,7 +212,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testEmptyList() {
 		// categories in []
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("categories"), new Value(List.of())));
+				.convertExpression(new Expression(IN, new Key("categories"), new Value(List.of())));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.categories\":{$in:[]}}");
 	}
 
@@ -230,7 +220,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testSingleItemList() {
 		// status in ["active"]
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
+				.convertExpression(new Expression(IN, new Key("status"), new Value(List.of("active"))));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.status\":{$in:[\"active\"]}}");
 	}
 
@@ -238,7 +228,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testKeyWithDots() {
 		// "value.field" >= 18
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(GTE, new Key("value.field"), new Value(18)));
+				.convertExpression(new Expression(GTE, new Key("value.field"), new Value(18)));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.value.field\":{$gte:18}}");
 	}
 
@@ -246,7 +236,7 @@ public class MongoDBAtlasFilterConverterTest {
 	public void testKeyWithSpecialCharacters() {
 		// "field-name_with@symbols" == "value"
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("field-name_with@symbols"), new Value("value")));
+				.convertExpression(new Expression(EQ, new Key("field-name_with@symbols"), new Value("value")));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.field-name_with@symbols\":{$eq:\"value\"}}");
 	}
 
@@ -293,28 +283,28 @@ public class MongoDBAtlasFilterConverterTest {
 		// Test with a very long string value
 		String longValue = "This is a very long string that might be used as a value in a filter expression to test how the converter handles lengthy text content that could potentially cause issues with string manipulation or JSON formatting";
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("content"), new Value(longValue)));
+				.convertExpression(new Expression(EQ, new Key("content"), new Value(longValue)));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.content\":{$eq:\"" + longValue + "\"}}");
 	}
 
 	@Test
 	public void testKeyWithSingleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
+				.convertExpression(new Expression(EQ, new Key("x' OR 1=1--"), new Value("dummy")));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.x' OR 1=1--\":{$eq:\"dummy\"}}");
 	}
 
 	@Test
 	public void testKeyWithDoubleQuote() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\"inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\"inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.key\\\"inject\":{$eq:\"v\"}}");
 	}
 
 	@Test
 	public void testKeyWithBackslash() {
 		String vectorExpr = this.converter
-			.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
+				.convertExpression(new Expression(EQ, new Key("key\\inject"), new Value("v")));
 		assertThat(vectorExpr).isEqualTo("{\"metadata.key\\\\inject\":{$eq:\"v\"}}");
 	}
 
